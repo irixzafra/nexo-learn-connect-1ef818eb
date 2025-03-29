@@ -11,6 +11,8 @@ import Unauthorized from '@/pages/Unauthorized';
 import Index from '@/pages/Index';
 import PaymentSuccess from '@/pages/payment/PaymentSuccess';
 import PaymentCancel from '@/pages/payment/PaymentCancel';
+import Courses from '@/pages/CoursesCatalog';
+import CourseDetail from '@/pages/CourseDetail';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -24,6 +26,8 @@ const PublicRoutes: React.FC = () => {
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/payment/success" element={<PaymentSuccess />} />
       <Route path="/payment/cancel" element={<PaymentCancel />} />
+      <Route path="/courses" element={<Courses />} />
+      <Route path="/courses/:id" element={<CourseDetail />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
