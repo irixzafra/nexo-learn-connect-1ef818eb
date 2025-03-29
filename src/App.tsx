@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -31,6 +30,7 @@ import Billing from "./pages/placeholder/Billing";
 import Settings from "./pages/placeholder/Settings";
 
 // Instructor pages
+import InstructorDashboard from "./pages/instructor/Dashboard";
 import InstructorStudents from "./pages/instructor/Students";
 import CoursesList from "./pages/instructor/CoursesList";
 import CreateCourse from "./pages/instructor/CreateCourse";
@@ -134,7 +134,7 @@ const App = () => (
                 {/* Instructor routes */}
                 <Route path="/instructor/dashboard" element={
                   <ProtectedRoute requiredRole="instructor">
-                    <Home />
+                    <InstructorDashboard />
                   </ProtectedRoute>
                 } />
                 <Route path="/instructor/students" element={
