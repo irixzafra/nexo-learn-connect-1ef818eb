@@ -1,47 +1,45 @@
 
 # Nexo Project - Guía de Desarrollo
 
-**Versión:** 1.3
-**Última Actualización:** 2023-10-31
+**Versión:** 1.4
+**Última Actualización:** 2023-11-01
 **Estado:** Fase 1 (MVP) - En desarrollo
 
-## 1. VISIÓN GENERAL DEL PROYECTO
+## 1. VISIÓN GENERAL
 
-**Objetivo:** Nexo integra un Sistema de Gestión de Aprendizaje (LMS), funcionalidades ERP básicas y características de comunidad en una plataforma educativa unificada.
+Nexo es una plataforma educativa unificada que integra funcionalidades LMS, ERP y comunidad.
 
-**Principios Clave:**
-- **Usuario Primero:** Interfaz intuitiva con shadcn/ui y Tailwind CSS
-- **Tecnología Sólida:** React, TypeScript, Supabase, React Query
-- **Modularidad:** Estructura organizada en `src/features/*`
-- **Desarrollo Iterativo:** Implementación por fases priorizadas
-- **Seguridad Integral:** Políticas RLS de Supabase, autenticación robusta
+**Principios:**
+- Experiencia de usuario intuitiva
+- Tecnología confiable y moderna
+- Arquitectura modular
+- Desarrollo iterativo
+- Seguridad por diseño
 
-**Roles de Usuario:**
+**Roles:**
 - **Estudiante:** Acceso a cursos, seguimiento de progreso
-- **Instructor:** Creación y gestión de cursos, seguimiento de estudiantes
-- **Administrador:** Gestión de usuarios, configuración del sistema
+- **Instructor:** Creación y gestión de cursos
+- **Administrador:** Gestión de usuarios y sistema
 
 ## 2. STACK TECNOLÓGICO
 
-- **Frontend:** React 18+, TypeScript, Vite, shadcn/ui, Tailwind CSS
-- **Estado y Navegación:** React Query, React Context, React Router v6
-- **Formularios y Validación:** React Hook Form, Zod
-- **Backend:** Supabase (PostgreSQL, Auth, Storage, Edge Functions)
-- **Herramientas Adicionales:** Tiptap (editor), Stripe (pagos), i18next (internacionalización)
+- **Frontend:** React, TypeScript, Tailwind CSS, shadcn/ui
+- **Estado:** React Query, Context API
+- **Validación:** React Hook Form, Zod
+- **Backend:** Supabase (Auth, DB, Storage)
+- **Extras:** Tiptap (editor), Stripe (pagos)
 
-## 3. ARQUITECTURA DEL SISTEMA
+## 3. ARQUITECTURA
 
 **Frontend:**
-- Aplicación SPA React (Vite)
-- Estructura modular en `src/features/*`
-- Componentes compartidos en `src/components`
-- Hooks y utilidades en `src/hooks`, `src/lib`
+- Aplicación SPA React
+- Componentes en `src/components`
+- Features en `src/features`
 - Layouts: `PublicLayout` y `AppLayout`
 
 **Backend:**
-- Supabase Platform
-- Seguridad: Row Level Security (RLS)
-- APIs: RPC/Edge Functions
+- Supabase con Row Level Security
+- Tablas relacionales en PostgreSQL
 
 ## 4. ESQUEMA DE BASE DE DATOS
 
@@ -118,31 +116,30 @@ CREATE TABLE public.payments (
 );
 ```
 
-## 5. RUTAS Y ACCESO POR ROL
+## 5. RUTAS Y ACCESO
 
-**Rutas Públicas:**
+**Públicas:**
 - `/`: Landing page
 - `/auth/login`: Inicio de sesión
 - `/auth/register`: Registro
 - `/courses`: Catálogo de cursos
-- `/courses/:id`: Detalles de curso
 
-**Rutas Comunes (Autenticado):**
-- `/home`: Dashboard del usuario
-- `/profile`: Perfil del usuario
-- `/settings`: Configuración de cuenta
+**Autenticadas:**
+- `/home`: Dashboard
+- `/profile`: Perfil de usuario
+- `/settings`: Configuración
 
-**Rutas Estudiante:**
+**Estudiante:**
 - `/student/my-courses`: Cursos inscritos
 - `/learn/courses/:courseId/lessons/:lessonId`: Vista de lección
 
-**Rutas Instructor:**
+**Instructor:**
 - `/instructor/courses`: Gestión de cursos
 - `/instructor/courses/new`: Creación de curso
 - `/instructor/courses/:id/edit`: Edición de curso
 - `/instructor/students`: Gestión de estudiantes
 
-**Rutas Administrador:**
+**Administrador:**
 - `/admin/users`: Gestión de usuarios
 - `/admin/courses`: Gestión de todos los cursos
 - `/admin/impersonate`: Impersonación de usuarios
@@ -156,7 +153,7 @@ CREATE TABLE public.payments (
 - [x] Inicio de Sesión
 - [x] Contexto de Autenticación
 - [x] Cambio de Vista de Rol (Admin)
-- [ ] Visualización de Perfil de Usuario
+- [x] Visualización de Perfil de Usuario
 - [ ] Creación de Cursos (Metadatos)
 - [ ] Edición de Estructura del Curso
 - [ ] Edición de Contenido de Lección
@@ -172,7 +169,7 @@ CREATE TABLE public.payments (
 - [ ] Datos de Prueba Iniciales
 - [ ] Internacionalización (Base)
 
-### Fase 2: Enriquecimiento LMS e Interacción
+### Fase 2: Enriquecimiento
 
 - [ ] Seguimiento de Progreso del Estudiante
 - [ ] Comentarios en Lecciones
@@ -181,7 +178,7 @@ CREATE TABLE public.payments (
 - [ ] Notificaciones en UI
 - [ ] Calificaciones y Retroalimentación
 
-### Fase 3+: Futuras Mejoras
+### Fase 3: Expansión
 
 - [ ] Dashboards Avanzados
 - [ ] Reportes y Analíticas
@@ -191,23 +188,21 @@ CREATE TABLE public.payments (
 
 ## 7. SOLICITUDES DE IMPLEMENTACIÓN
 
-Para solicitar la implementación de una nueva funcionalidad, agregue una entrada con el siguiente formato:
+Para solicitar una nueva funcionalidad, agregue una entrada así:
 
 ```
 ### Solicitud: [Nombre de la Funcionalidad]
-**Descripción:** [Breve descripción de lo que se necesita]
+**Descripción:** [Breve descripción]
 **Prioridad:** [Alta/Media/Baja]
 **Detalles:**
 - [Punto 1]
 - [Punto 2]
 ```
 
-Ejemplo:
-
-### Solicitud: Perfil de Usuario
-**Descripción:** Implementar la página de perfil de usuario con capacidad de visualización.
+### Solicitud: Creación de Cursos
+**Descripción:** Implementar el flujo de creación de cursos para instructores
 **Prioridad:** Alta
 **Detalles:**
-- Crear página en `/profile` que muestre información del usuario autenticado
-- Mostrar nombre, email, rol y fecha de registro
-- Diseño consistente con el resto de la aplicación
+- Crear formulario de creación con título, descripción y precio
+- Implementar subida de imagen de portada
+- Permitir guardar como borrador o publicar
