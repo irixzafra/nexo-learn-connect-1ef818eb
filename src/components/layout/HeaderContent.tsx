@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { useAuth } from '@/contexts/AuthContext';
 import { UserMenu } from './header/UserMenu';
 import { RoleIndicator } from './header/RoleIndicator';
 import { HeaderActions } from './header/HeaderActions';
@@ -21,12 +20,25 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
     if (path.length === 0) return 'Inicio';
     
     const lastSegment = path[path.length - 1];
-    // Convertir a título (primera letra mayúscula, resto minúscula)
-    return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).toLowerCase();
+    
+    // Mapeo específico para traducir algunos términos en inglés o darles mejor formato
+    const titleMap: { [key: string]: string } = {
+      'profile': 'Mi Perfil',
+      'courses': 'Cursos',
+      'my-courses': 'Mis Cursos',
+      'settings': 'Configuración',
+      'messages': 'Mensajes',
+      'calendar': 'Calendario',
+      'admin': 'Administración',
+      'instructor': 'Instructor'
+    };
+    
+    return titleMap[lastSegment] || 
+      (lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).toLowerCase());
   };
   
   return (
-    <div className="w-full py-2 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-20 border-b">
+    <header className="w-full py-2 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-20 border-b">
       <div className="container mx-auto flex justify-between items-center h-14">
         {/* Left side */}
         <div className="flex items-center gap-2">
@@ -41,7 +53,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
           <UserMenu />
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 

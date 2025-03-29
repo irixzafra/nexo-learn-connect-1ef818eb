@@ -41,11 +41,11 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* New: Sistemas routes */}
+      {/* Sistemas routes */}
       <Route path="/sistemas/*" element={
         <ProtectedRoute>
           <AppLayout>
-            <div className="p-6">
+            <div className="container mx-auto px-4 py-6">
               <h1 className="text-2xl font-bold mb-4">Sistemas</h1>
               <p className="text-muted-foreground">Esta sección está en desarrollo.</p>
             </div>
@@ -56,13 +56,17 @@ const AppRouter: React.FC = () => {
       {/* Course catalog and detail routes with proper layout */}
       <Route path="/courses" element={
         <AppLayout>
-          <CoursesCatalog />
+          <div className="container mx-auto px-4 py-6">
+            <CoursesCatalog />
+          </div>
         </AppLayout>
       } />
       
       <Route path="/courses/:id" element={
         <AppLayout>
-          <CourseDetail />
+          <div className="container mx-auto px-4 py-6">
+            <CourseDetail />
+          </div>
         </AppLayout>
       } />
       
@@ -77,7 +81,9 @@ const AppRouter: React.FC = () => {
       <Route path="/profile" element={
         <ProtectedRoute>
           <AppLayout>
-            <Profile />
+            <div className="container mx-auto px-4 py-6">
+              <Profile />
+            </div>
           </AppLayout>
         </ProtectedRoute>
       } />

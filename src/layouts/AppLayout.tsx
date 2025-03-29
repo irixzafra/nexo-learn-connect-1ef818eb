@@ -51,7 +51,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     localStorage.setItem('viewAsRole', viewAsRole);
   }, [viewAsRole]);
 
-  // Effect para limpiar el rol de vista si no es admin
+  // Efecto para limpiar el rol de vista si no es admin
   useEffect(() => {
     if (userRole !== 'admin' && viewAsRole !== 'current') {
       setViewAsRole('current');
@@ -86,10 +86,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             userRole={userRole} 
             viewingAs={viewAsRole !== 'current' ? viewAsRole : null} 
           />
-          <main className="flex-1 px-4 py-6 overflow-auto">
-            <div className="container mx-auto">
-              {children}
-            </div>
+          <main className="flex-1 overflow-auto">
+            {children}
           </main>
         </div>
       </div>
