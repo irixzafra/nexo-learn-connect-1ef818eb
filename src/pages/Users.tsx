@@ -23,6 +23,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import AppLayout from "@/layouts/AppLayout";
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -217,83 +218,85 @@ const Users: React.FC = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Usuarios</h1>
+    <AppLayout>
+      <div className="container mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-6">Usuarios</h1>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Usuarios</CardTitle>
-          <CardDescription>
-            {userRole === 'admin' 
-              ? "Administra todos los usuarios de la plataforma" 
-              : "Usuarios registrados en la plataforma"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {userRole === 'admin' && (
-            <div className="flex items-center space-x-2 mb-4">
-              <Switch 
-                id="adminTools" 
-                checked={showAdminTools}
-                onCheckedChange={setShowAdminTools}
-              />
-              <Label htmlFor="adminTools">Mostrar herramientas de administración</Label>
-            </div>
-          )}
-          
-          {isLoading ? (
-            <div className="flex justify-center py-8">
-              <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nombre</TableHead>
-                  <TableHead>Rol</TableHead>
-                  <TableHead>Fecha de registro</TableHead>
-                  {userRole === 'admin' && <TableHead>Acciones</TableHead>}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.length > 0 ? (
-                  users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">
-                        {user.full_name || 'Usuario sin nombre'}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className={getRoleBadgeColor(user.role)}>
-                          {user.role}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(user.created_at || '').toLocaleDateString()}
-                      </TableCell>
-                      {userRole === 'admin' && (
-                        <TableCell>
-                          <UserRoleSwitcher 
-                            userId={user.id}
-                            currentRole={user.role}
-                            onRoleChange={handleRoleChange}
-                          />
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  ))
-                ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Lista de Usuarios</CardTitle>
+            <CardDescription>
+              {userRole === 'admin' 
+                ? "Administra todos los usuarios de la plataforma" 
+                : "Usuarios registrados en la plataforma"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {userRole === 'admin' && (
+              <div className="flex items-center space-x-2 mb-4">
+                <Switch 
+                  id="adminTools" 
+                  checked={showAdminTools}
+                  onCheckedChange={setShowAdminTools}
+                />
+                <Label htmlFor="adminTools">Mostrar herramientas de administración</Label>
+              </div>
+            )}
+            
+            {isLoading ? (
+              <div className="flex justify-center py-8">
+                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={userRole === 'admin' ? 4 : 3} className="text-center h-24">
-                      No hay usuarios para mostrar
-                    </TableCell>
+                    <TableHead>Nombre</TableHead>
+                    <TableHead>Rol</TableHead>
+                    <TableHead>Fecha de registro</TableHead>
+                    {userRole === 'admin' && <TableHead>Acciones</TableHead>}
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+                </TableHeader>
+                <TableBody>
+                  {users.length > 0 ? (
+                    users.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">
+                          {user.full_name || 'Usuario sin nombre'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={getRoleBadgeColor(user.role)}>
+                            {user.role}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {new Date(user.created_at || '').toLocaleDateString()}
+                        </TableCell>
+                        {userRole === 'admin' && (
+                          <TableCell>
+                            <UserRoleSwitcher 
+                              userId={user.id}
+                              currentRole={user.role}
+                              onRoleChange={handleRoleChange}
+                            />
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={userRole === 'admin' ? 4 : 3} className="text-center h-24">
+                        No hay usuarios para mostrar
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </AppLayout>
   );
 };
 

@@ -64,6 +64,7 @@ const App = () => (
           <TestDataProvider>
             <TooltipProvider>
               <Routes>
+                {/* Public routes */}
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/auth/register" element={<Register />} />
@@ -73,6 +74,7 @@ const App = () => (
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/scholarships" element={<Scholarships />} />
               
+                {/* Protected routes */}
                 <Route path="/home" element={
                   <ProtectedRoute>
                     <Home />
@@ -129,6 +131,12 @@ const App = () => (
                   </ProtectedRoute>
                 } />
               
+                {/* Instructor routes */}
+                <Route path="/instructor/dashboard" element={
+                  <ProtectedRoute requiredRole="instructor">
+                    <Home />
+                  </ProtectedRoute>
+                } />
                 <Route path="/instructor/students" element={
                   <ProtectedRoute requiredRole="instructor">
                     <InstructorStudents />
@@ -160,6 +168,17 @@ const App = () => (
                   </ProtectedRoute>
                 } />
               
+                {/* Admin routes */}
+                <Route path="/admin/dashboard" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <Home />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/content" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <Home />
+                  </ProtectedRoute>
+                } />
                 <Route path="/admin/test-data" element={
                   <ProtectedRoute requiredRole="admin">
                     <TestDataManagement />
