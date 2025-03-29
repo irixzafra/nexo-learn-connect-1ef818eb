@@ -28,43 +28,12 @@ export const useLogin = () => {
       if (authData.user) {
         toast.success('Inicio de sesión exitoso');
         
-        // Verificamos con console.log para depurar
-        console.log('Login successful, userRole from context:', userRole);
-        
-        // Verificamos el rol directamente desde metadata de Supabase
-        const { data: userData } = await supabase.auth.getUser();
-        const userMetadata = userData?.user?.user_metadata;
-        const roleFromMetadata = userMetadata && userMetadata.role ? userMetadata.role : null;
-        
-        console.log('Role from Supabase metadata:', roleFromMetadata);
-        
-        // Para asegurarnos, hacemos una consulta directa a la tabla de perfiles
-        let profileRole = null;
-        if (authData.user.id) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', authData.user.id)
-            .single();
-            
-          profileRole = profileData?.role;
-          console.log('Role from profiles table:', profileRole);
-        }
-        
-        // Determinamos el rol efectivo con esta prioridad: metadata > perfil > contexto
-        const effectiveRole = roleFromMetadata || profileRole || userRole || 'student';
-        console.log('Effective role for redirect:', effectiveRole);
-        
-        // Redirigimos según el rol efectivo
-        if (effectiveRole === 'admin') {
-          console.log('Redirecting admin to landing page');
+        // Simple redirection based on role from Auth context
+        if (userRole === 'admin') {
           navigate('/');
-        } else if (effectiveRole === 'instructor') {
-          console.log('Redirecting instructor to courses page');
+        } else if (userRole === 'instructor') {
           navigate('/instructor/courses');
         } else {
-          // Default para estudiantes
-          console.log('Redirecting student to my-courses page');
           navigate('/my-courses');
         }
       }

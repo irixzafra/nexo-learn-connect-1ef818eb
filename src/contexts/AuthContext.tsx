@@ -57,22 +57,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // If we have a user, try to determine their role and fetch profile
         if (session?.user) {
-          const metadata = session.user.user_metadata;
-          console.log('User metadata:', metadata);
-          
-          if (metadata && metadata.role) {
-            console.log('Setting user role from metadata:', metadata.role);
-            setUserRole(metadata.role as UserRole);
-          } else {
-            // Default to student if no role is specified
-            console.log('No role in metadata, defaulting to student');
-            setUserRole('student');
-          }
-          
-          // Fetch user profile
+          // Fetch user profile first
           const profileData = await fetchUserProfile(session.user.id);
           console.log('Fetched profile data:', profileData);
           setProfile(profileData);
+          
+          // Set role from profile if available
+          if (profileData && profileData.role) {
+            console.log('Setting user role from profile:', profileData.role);
+            setUserRole(profileData.role);
+          } else {
+            // Default to student if no role is found
+            console.log('No role in profile, defaulting to student');
+            setUserRole('student');
+          }
         } else {
           setUserRole(null);
           setProfile(null);
@@ -88,21 +86,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        const metadata = session.user.user_metadata;
-        console.log('Initial user metadata:', metadata);
-        
-        if (metadata && metadata.role) {
-          console.log('Setting initial user role from metadata:', metadata.role);
-          setUserRole(metadata.role as UserRole);
-        } else {
-          console.log('No initial role in metadata, defaulting to student');
-          setUserRole('student');
-        }
-        
         // Fetch user profile
         const profileData = await fetchUserProfile(session.user.id);
         console.log('Initial profile data:', profileData);
         setProfile(profileData);
+        
+        // Set role from profile if available
+        if (profileData && profileData.role) {
+          console.log('Setting initial user role from profile:', profileData.role);
+          setUserRole(profileData.role);
+        } else {
+          console.log('No initial role in profile, defaulting to student');
+          setUserRole('student');
+        }
       }
       
       setIsLoading(false);

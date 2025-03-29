@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { loginSchema, type LoginFormValues } from '@/lib/validations/auth';
 import { useLogin } from '@/hooks/use-login';
@@ -81,19 +81,12 @@ const Login: React.FC = () => {
               </form>
             </Form>
             
-            <div className="mt-4 space-y-2">
-              <p className="text-sm text-center text-muted-foreground">
+            <div className="mt-4 text-center">
+              <p className="text-sm text-muted-foreground">
                 ¿No tienes una cuenta?{' '}
                 <Link to="/auth/register" className="text-primary hover:underline">
                   Regístrate
                 </Link>
-              </p>
-              
-              <p className="text-xs text-center text-muted-foreground">
-                <strong>Usuarios de prueba:</strong><br />
-                Admin: admin@nexo.com / Admin123!<br />
-                Instructor: instructor@nexo.com / Instructor123!<br />
-                Estudiante: student@nexo.com / Student123!
               </p>
             </div>
           </CardContent>
