@@ -15,6 +15,18 @@ interface UserResult {
   role: UserRole;
 }
 
+// Define a type for the user data returned from Supabase Auth API
+interface SupabaseUser {
+  id: string;
+  email: string;
+  [key: string]: any; // For any other properties
+}
+
+interface SupabaseUsersResponse {
+  users?: SupabaseUser[];
+  [key: string]: any; // For any other properties
+}
+
 interface UserRoleSearchProps {
   onClose?: () => void;
 }
@@ -49,7 +61,10 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
       if (emailError) throw emailError;
 
       // Búsqueda por nombre (coincidencia parcial)
-      const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers();
+      const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers() as unknown as {
+        data: SupabaseUsersResponse | null;
+        error: any;
+      };
       
       if (usersError) throw usersError;
 
