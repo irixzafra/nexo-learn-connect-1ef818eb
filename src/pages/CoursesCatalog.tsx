@@ -43,16 +43,16 @@ const CoursesCatalog: React.FC = () => {
     try {
       console.log("Fetching courses...");
       
-      // Try an alternative approach to avoid RLS recursion issue
-      const { data, error } = await supabase
+      // Use an optimized query to avoid the RLS recursion issue
+      const { data, error: supabaseError } = await supabase
         .from('courses')
-        .select('*')
+        .select('id, title, description, price, currency, instructor_id, created_at, featured_instructor, cover_image_url, level, duration_text')
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error("Supabase error:", error);
-        throw error;
+      if (supabaseError) {
+        console.error("Supabase error:", supabaseError);
+        throw supabaseError;
       }
       
       console.log("Courses fetched:", data);
@@ -100,87 +100,89 @@ const CoursesCatalog: React.FC = () => {
           </div>
         </div>
 
-        {error && (
-          <Card className="mb-6 border-destructive bg-destructive/10">
-            <CardContent className="flex items-center gap-2 py-4">
-              <AlertCircle className="h-5 w-5 text-destructive" />
-              <p className="text-destructive">{error}</p>
-            </CardContent>
-            <CardFooter className="border-t pt-4 bg-background/50">
-              <Button variant="outline" onClick={() => fetchCourses()}>
-                Intentar de nuevo
-              </Button>
-            </CardFooter>
-          </Card>
-        )}
+        <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+          {error && (
+            <Card className="mb-6 border-destructive bg-destructive/5">
+              <CardContent className="flex items-center gap-3 py-4">
+                <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0" />
+                <p className="text-destructive">{error}</p>
+              </CardContent>
+              <CardFooter className="border-t pt-4 bg-background/50">
+                <Button variant="outline" onClick={() => fetchCourses()}>
+                  Intentar de nuevo
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
 
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : !error && filteredCourses.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-10">
-              {searchTerm ? (
-                <>
-                  <p className="text-muted-foreground mb-4">
-                    No se encontraron cursos que coincidan con "{searchTerm}"
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : !error && filteredCourses.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-10">
+                {searchTerm ? (
+                  <>
+                    <p className="text-muted-foreground mb-4">
+                      No se encontraron cursos que coincidan con "{searchTerm}"
+                    </p>
+                    <Button variant="outline" onClick={() => setSearchTerm('')}>
+                      Mostrar todos los cursos
+                    </Button>
+                  </>
+                ) : (
+                  <p className="text-muted-foreground">
+                    No hay cursos disponibles en este momento
                   </p>
-                  <Button variant="outline" onClick={() => setSearchTerm('')}>
-                    Mostrar todos los cursos
-                  </Button>
-                </>
-              ) : (
-                <p className="text-muted-foreground">
-                  No hay cursos disponibles en este momento
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        ) : !error && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCourses.map((course) => (
-              <Card key={course.id} className="flex flex-col h-full transition-all hover:shadow-md">
-                <CardHeader>
-                  <CardTitle className="line-clamp-2">{course.title}</CardTitle>
-                  <CardDescription>
-                    Por {course.featured_instructor || 'Instructor'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p className="text-muted-foreground line-clamp-3 mb-4">
-                    {course.description || 'Sin descripción disponible'}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    <Badge variant="outline" className="text-base font-semibold">
-                      {course.price > 0 
-                        ? formatCurrency(course.price, course.currency) 
-                        : 'Gratis'}
-                    </Badge>
-                    {course.level && (
-                      <Badge variant="secondary" className="text-xs">
-                        {course.level}
+                )}
+              </CardContent>
+            </Card>
+          ) : !error && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredCourses.map((course) => (
+                <Card key={course.id} className="flex flex-col h-full transition-all hover:shadow-md">
+                  <CardHeader>
+                    <CardTitle className="line-clamp-2">{course.title}</CardTitle>
+                    <CardDescription>
+                      Por {course.featured_instructor || 'Instructor'}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-grow">
+                    <p className="text-muted-foreground line-clamp-3 mb-4">
+                      {course.description || 'Sin descripción disponible'}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <Badge variant="outline" className="text-base font-semibold">
+                        {course.price > 0 
+                          ? formatCurrency(course.price, course.currency) 
+                          : 'Gratis'}
                       </Badge>
-                    )}
-                    {course.duration_text && (
-                      <Badge variant="secondary" className="text-xs">
-                        {course.duration_text}
-                      </Badge>
-                    )}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button asChild className="w-full">
-                    <Link to={`/courses/${course.id}`}>
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Ver Curso
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        )}
+                      {course.level && (
+                        <Badge variant="secondary" className="text-xs">
+                          {course.level}
+                        </Badge>
+                      )}
+                      {course.duration_text && (
+                        <Badge variant="secondary" className="text-xs">
+                          {course.duration_text}
+                        </Badge>
+                      )}
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button asChild className="w-full">
+                      <Link to={`/courses/${course.id}`}>
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        Ver Curso
+                      </Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          )}
+        </ErrorBoundary>
       </div>
     </AppLayout>
   );
