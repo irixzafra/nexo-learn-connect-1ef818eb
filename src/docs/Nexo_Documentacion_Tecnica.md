@@ -1,4 +1,3 @@
-
 ## FIX-CATALOG-LOAD-ERROR-01: Solución a Error de Carga del Catálogo de Cursos
 
 ### Problema
@@ -120,6 +119,55 @@ Para evitar problemas similares en el futuro:
 3. **Monitoreo y logging:**
    - Mantener un sistema de logging detallado para identificar rápidamente problemas similares
    - Implementar mejor manejo de errores a nivel de aplicación
+
+## FIX-ROUTING-404-ERRORS-01: Corrección de Errores 404 en Rutas Principales
+
+### Problema
+Las páginas principales de la aplicación, incluyendo `/courses` y `/my-courses`, estaban mostrando errores 404, lo que indicaba un problema fundamental con el sistema de enrutamiento.
+
+### Causa Raíz
+1. Configuración incorrecta de rutas en `AppRouter.tsx`:
+   - Rutas anidadas mal estructuradas
+   - Falta de rutas explícitas para secciones clave como `/courses` y `/my-courses`
+   - Problema de ambigüedad en la gestión de rutas entre `PublicRoutes` y `UserRoutes`
+
+2. Problemas específicos con la ruta `/courses`:
+   - La ruta estaba configurada como una ruta anidada (`/courses/*`) que redirigía a diferentes componentes según el estado de autenticación, causando inconsistencias
+   - El componente `CoursesCatalog` no estaba correctamente asociado a la ruta principal `/courses`
+
+3. Problemas con la ruta `/my-courses`:
+   - Redireccionamiento incorrecto para usuarios autenticados
+   - Falta de manejo adecuado de la ruta en el componente `UserRoutes`
+
+### Solución Implementada
+
+1. Reestructuración de `AppRouter.tsx`:
+   - Se eliminó el enfoque de rutas comodín anidadas (`/courses/*`) que causaba ambigüedad
+   - Se implementaron rutas explícitas y directas para `/courses` y `/courses/:id`
+   - Se simplificó el redireccionamiento para `/my-courses` hacia `/home/my-courses` para usuarios autenticados
+
+2. Corrección de la ruta del catálogo de cursos:
+   - Se asoció directamente la ruta `/courses` con el componente `CoursesCatalog`
+   - Se importó explícitamente el componente `CoursesCatalog` en `AppRouter.tsx`
+   - Se eliminaron las referencias duplicadas a la ruta `/courses` en otros archivos de rutas
+
+3. Optimización de `UserRoutes.tsx`:
+   - Se eliminaron rutas duplicadas en `UserRoutes` que ya existían en `AppRouter`
+   - Se aseguró que la ruta `/my-courses` dentro del contexto autenticado use el componente correcto
+
+4. Mejora en la gestión de rutas protegidas:
+   - Se aseguró que todas las rutas protegidas utilicen correctamente el componente `ProtectedRoute`
+   - Se implementó un manejo más robusto de la autenticación para rutas que requieren estado autenticado
+
+### Verificación
+- Se comprobó que la página `/courses` carga correctamente el componente `CoursesCatalog`
+- Se verificó que `/my-courses` redirige correctamente a `/home/my-courses` para usuarios autenticados
+- Se confirmó que no hay errores 404 para las rutas principales de la aplicación
+
+### Mejoras a implementar
+- La ruta `/courses` ahora carga correctamente pero mostraba el contenido del Dashboard en lugar del catálogo de cursos
+- Se corrigió esto en la versión final asegurando que la ruta `/courses` esté directamente asociada al componente `CoursesCatalog`
+- Se mejoró el hook `useEnrolledCourses` para depurar correctamente la carga de cursos matriculados en la página `/my-courses`
 
 ## FEAT-SETTINGS-PAGE-V1: Página de Configuración de Usuario
 

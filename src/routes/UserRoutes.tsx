@@ -89,8 +89,6 @@ const UserRoutes: React.FC = () => {
           </ProtectedRoute>
         }
       />
-      <Route path="/courses" element={<Courses />} />
-      <Route path="/courses/:id" element={<CourseDetail />} />
     </Routes>
   );
 };

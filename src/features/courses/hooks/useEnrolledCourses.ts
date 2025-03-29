@@ -11,19 +11,26 @@ export const useEnrolledCourses = (userId?: string) => {
       try {
         if (!userId) return [];
 
+        console.log("Fetching enrolled courses for user:", userId);
+
         // First get enrollment IDs
         const { data: enrollments, error: enrollmentsError } = await supabase
           .from("enrollments")
           .select("course_id")
           .eq("user_id", userId);
 
-        if (enrollmentsError) throw enrollmentsError;
+        if (enrollmentsError) {
+          console.error("Error fetching enrollments:", enrollmentsError);
+          throw enrollmentsError;
+        }
+
+        console.log("Found enrollments:", enrollments?.length || 0);
 
         if (enrollments.length === 0) return [];
 
         const courseIds = enrollments.map((enrollment) => enrollment.course_id);
 
-        // Then fetch course details with optimized query to avoid RLS recursion
+        // Then fetch course details
         const { data: courses, error: coursesError } = await supabase
           .from("courses")
           .select(`
@@ -33,16 +40,22 @@ export const useEnrolledCourses = (userId?: string) => {
           `)
           .in("id", courseIds);
 
-        if (coursesError) throw coursesError;
+        if (coursesError) {
+          console.error("Error fetching courses:", coursesError);
+          throw coursesError;
+        }
+
+        console.log("Retrieved enrolled courses:", courses?.length || 0);
 
         // Process the response to match the Course type
         return courses.map(course => {
           // Handle the instructor object properly
-          // The query returns instructor as an array with a single object
           const instructorArray = course.instructor as unknown as Array<{id: string, full_name: string}>;
           
           return {
             ...course,
+            // Normalize currency field to match the Course type
+            currency: (course.currency?.toLowerCase() === 'usd' ? 'usd' : 'eur') as 'eur' | 'usd',
             instructor: instructorArray && instructorArray.length > 0 
               ? { id: instructorArray[0].id, full_name: instructorArray[0].full_name }
               : undefined

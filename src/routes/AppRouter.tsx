@@ -9,6 +9,8 @@ import NotFound from '@/pages/NotFound';
 import Profile from '@/pages/Profile';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
+import CoursesCatalog from '@/pages/CoursesCatalog';
+import CourseDetail from '@/pages/CourseDetail';
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -35,8 +37,11 @@ const AppRouter: React.FC = () => {
       {/* Index redirect to home or landing page */}
       <Route path="/index" element={<Navigate to="/" replace />} />
       
-      {/* Special routes for courses that should be accessible from both public and user contexts */}
-      <Route path="/courses/*" element={isAuthenticated ? <UserRoutes /> : <PublicRoutes />} />
+      {/* Course catalog and detail routes that should be accessible to everyone */}
+      <Route path="/courses" element={<CoursesCatalog />} />
+      <Route path="/courses/:id" element={<CourseDetail />} />
+      
+      {/* My courses redirect for authenticated users */}
       <Route path="/my-courses" element={
         <ProtectedRoute>
           <Navigate to="/home/my-courses" replace />
