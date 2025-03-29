@@ -11,12 +11,14 @@ export type Database = {
     Tables: {
       courses: {
         Row: {
+          category: string
           cover_image_url: string | null
           created_at: string
           currency: string
           description: string | null
           display_order: number | null
           duration_text: string | null
+          featured_instructor: string | null
           id: string
           instructor_id: string
           is_featured_on_landing: boolean | null
@@ -31,12 +33,14 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          category?: string
           cover_image_url?: string | null
           created_at?: string
           currency?: string
           description?: string | null
           display_order?: number | null
           duration_text?: string | null
+          featured_instructor?: string | null
           id?: string
           instructor_id: string
           is_featured_on_landing?: boolean | null
@@ -51,12 +55,14 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          category?: string
           cover_image_url?: string | null
           created_at?: string
           currency?: string
           description?: string | null
           display_order?: number | null
           duration_text?: string | null
+          featured_instructor?: string | null
           id?: string
           instructor_id?: string
           is_featured_on_landing?: boolean | null
