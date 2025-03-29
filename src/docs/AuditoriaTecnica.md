@@ -1,8 +1,7 @@
-
 # Informe de Auditoría Técnica - Nexo LMS
 
-**Versión:** 1.9  
-**Fecha:** 2024-04-16  
+**Versión:** 2.0  
+**Fecha:** 2024-04-22  
 **Estado:** Fase 1 (MVP) - En desarrollo activo
 
 ## 1. Confirmación de Documentación
@@ -11,6 +10,7 @@ La Parte II (Documentación Técnica) del Nexo PSOT está actualizada con la doc
 
 - **CORE-UI-ROLES-01**: Sistema mejorado de gestión de roles con búsqueda dinámica en tiempo real.
 - **REFAC-UI-COMPONENTS-02**: Optimización de la experiencia de usuario en componentes administrativos.
+- **CORE-INSTRUCTOR-STATS-01**: Panel de estadísticas para instructores con métricas clave.
 
 ## 2. Adherencia a la Arquitectura Modular (src/features/*)
 
@@ -35,6 +35,11 @@ Se ha implementado una mejora significativa en la organización de componentes:
    - Mejor utilización de componentes shadcn/ui como `Command`, `Popover` y `Dialog`.
    - Implementación de indicadores visuales mejorados para diferentes estados y roles.
    - Eliminación de redundancias en interfaces de búsqueda de usuarios.
+
+3. **Componentes de Dashboard**:
+   - Nueva implementación de tarjetas estadísticas para el dashboard de instructores.
+   - Manejo más robusto de estructuras de datos complejas provenientes de joins en Supabase.
+   - Transformación adecuada de datos anidados para presentación visual.
 
 ## 3. Estado Actual de la Base de Datos
 
@@ -240,6 +245,14 @@ $$;
   - Adaptación automática según el rol del usuario.
   - Indicadores de "previsualización" cuando se está viendo como otro rol.
 
+### Componente: `useDashboardStats`
+
+- **Mejoras implementadas**:
+  - Corrección en el manejo de estructuras de datos anidadas provenientes de joins en Supabase.
+  - Implementación de validaciones seguras para acceder a propiedades en arrays de resultados.
+  - Transformación más robusta de datos para componentes visuales.
+  - Manejo adecuado de tipos TypeScript para prevenir errores en tiempo de compilación.
+
 ### Nuevas Prácticas de UI
 
 1. **Uso de Badges**:
@@ -250,6 +263,11 @@ $$;
    - Integración optimizada del componente `Command` de shadcn/ui para búsquedas.
    - Mejora en accesibilidad y experiencia de usuario en funciones de búsqueda.
    - Actualización dinámica de resultados mientras el usuario escribe.
+
+3. **Visualización de Estadísticas**:
+   - Implementación sistemática de tarjetas de estadísticas con información contextual.
+   - Variantes visuales según tipo de métrica para mejor reconocimiento visual.
+   - Manejo adecuado de estados de carga y vacío para mejor experiencia de usuario.
 
 ## 5. Revisión de Seguridad (RLS y Otras)
 
@@ -452,6 +470,11 @@ USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
    - `useAuth`: Proporciona estado de autenticación y funciones relacionadas.
    - Contexto mejorado para manejar visualización según diferentes roles.
 
+2. **Hooks de Estadísticas y Datos**:
+   - `useDashboardStats`: Proporciona datos estadísticos para el panel de instructores.
+   - `usePopularCourses`: Hook modularizado para obtener cursos populares.
+   - `useRecentEnrollments`: Hook específico para consultar inscripciones recientes.
+
 ## 7. Integración de Monitorización
 
 ### Implementación de Sentry
@@ -485,22 +508,27 @@ USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
 
 1. **Componentes de gran tamaño**:
    - `SidebarFooterContent.tsx` continúa creciendo y podría beneficiarse de mayor modularización.
-   - Considerar la extracción de subcomponentes adicionales.
+   - `useDashboardStats.ts` ha crecido significativamente y debería dividirse en hooks más pequeños y especializados.
 
 2. **Gestión de Estado Global**:
    - Revisar la interacción entre contexto de autenticación y estado de visualización de roles.
    - Considerar un enfoque más centralizado para la gestión de roles y permisos.
 
+3. **Manejo de Consultas a Base de Datos**:
+   - Revisar y optimizar las consultas complejas con múltiples joins.
+   - Considerar el uso de vistas en la base de datos para simplificar consultas recurrentes.
+   - Implementar estrategias de caché más sofisticadas para datos que cambian con poca frecuencia.
+
 ## 9. Conclusiones y Recomendaciones
 
-La plataforma Nexo LMS continúa evolucionando con mejoras significativas en experiencia de usuario, especialmente en la gestión de roles y permisos. Las recientes optimizaciones en la búsqueda de usuarios y la eliminación de redundancias en la interfaz han mejorado notablemente la usabilidad del sistema.
+La plataforma Nexo LMS continúa evolucionando con mejoras significativas en experiencia de usuario y funcionalidades para diferentes roles. Las recientes optimizaciones en la gestión de datos y presentación de estadísticas han mejorado notablemente la utilidad del sistema para instructores.
 
 **Recomendaciones clave**:
 
-1. Continuar con la modularización de componentes grandes.
-2. Implementar pruebas automatizadas para los nuevos componentes de UI.
-3. Considerar la adopción de herramientas de análisis de experiencia de usuario.
-4. Preparar documentación de usuario final para las nuevas funcionalidades.
-5. Revisión de rendimiento en funciones de búsqueda con grandes volúmenes de datos.
+1. Continuar con la modularización de componentes grandes, especialmente el hook `useDashboardStats`.
+2. Implementar pruebas automatizadas para los nuevos componentes de estadísticas.
+3. Considerar la adopción de herramientas de análisis de rendimiento para consultas complejas.
+4. Revisar la estructura de datos para optimizar joins frecuentes.
+5. Preparar documentación de usuario final para las nuevas funcionalidades estadísticas.
 
-La dirección técnica actual es sólida y alineada con los objetivos del proyecto, con un enfoque adecuado en usabilidad y experiencia de usuario.
+La dirección técnica actual es sólida y alineada con los objetivos del proyecto, con un enfoque adecuado en usabilidad, experiencia de usuario y presentación clara de datos relevantes para cada rol.

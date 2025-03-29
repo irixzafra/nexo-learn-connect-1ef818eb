@@ -117,3 +117,68 @@ profileMutation.mutate({ full_name: "Nuevo Nombre" });
 - Solo permite editar el nombre completo, no otros campos del perfil.
 - El campo de rol se muestra pero está deshabilitado (solo administradores pueden cambiar roles).
 - Se requiere un mínimo de 2 caracteres para el nombre para asegurar datos válidos.
+
+## CORE-INSTRUCTOR-STATS-01: Panel de Estadísticas para Instructores
+
+### Resumen
+Panel de control que proporciona a los instructores información estadística sobre sus cursos, incluyendo conteo de cursos, inscripciones y datos de popularidad. Diseñado para facilitar el seguimiento y la toma de decisiones.
+
+### Componentes Clave
+- **useDashboardStats**: Hook personalizado que centraliza todas las consultas a la base de datos para obtener estadísticas relevantes.
+- **DashboardStatCard**: Componente visual para mostrar estadísticas individuales con iconos y formateo apropiado.
+- **PopularCoursesCard**: Tarjeta que muestra los cursos más populares del instructor basado en inscripciones.
+- **RecentEnrollmentsCard**: Listado de las inscripciones más recientes con información del estudiante y curso.
+
+### Base de Datos
+- Utiliza consultas a múltiples tablas relacionadas: `courses`, `enrollments`, y `profiles`.
+- Emplea joins y agregaciones para calcular estadísticas relevantes.
+- Maneja estructuras de datos anidadas resultantes de consultas de join en Supabase.
+
+### Puntos de Integración
+- **AuthContext**: Identifica al instructor actual para filtrar estadísticas relevantes.
+- **React Query**: Gestiona el estado de las consultas y su actualización.
+- **Recharts**: Biblioteca utilizada para visualización de datos estadísticos.
+
+### Flujo de Datos
+1. El hook `useDashboardStats` realiza múltiples consultas a Supabase:
+   - Cuenta de cursos totales del instructor
+   - Cuenta de cursos publicados
+   - Total de inscripciones en todos sus cursos
+   - Listado de inscripciones recientes
+   - Cursos más populares por número de inscripciones
+
+2. Los datos se transforman para manejar correctamente las estructuras de datos anidadas que provienen de los joins en Supabase, especialmente para las relaciones entre tablas.
+
+3. Los componentes visuales consumen estos datos para presentarlos en formato amigable.
+
+### Implementación Técnica
+- Manejo cuidadoso de arrays de resultados en joins de Supabase, asegurando acceso seguro a propiedades anidadas.
+- Gestión de estados de carga y error para cada consulta.
+- Transformación de datos para facilitar su uso en componentes.
+
+### Uso del Sistema
+```tsx
+// Ejemplo de uso del hook de estadísticas
+const { 
+  coursesCount, 
+  publishedCoursesCount, 
+  totalEnrollments,
+  recentEnrollments,
+  popularCourses,
+  isLoading 
+} = useDashboardStats();
+
+// Ejemplo de uso de tarjeta de estadística
+<DashboardStatCard
+  title="Cursos Totales"
+  value={coursesCount}
+  icon={Book}
+  description="Cursos creados"
+  loading={isLoading}
+/>
+```
+
+### Limitaciones y Consideraciones
+- El rendimiento puede verse afectado con un gran volumen de datos.
+- Para instructores con muchos cursos, se recomienda implementar paginación adicional.
+- La estructura de datos requiere validación cuidadosa debido a los joins anidados de Supabase.
