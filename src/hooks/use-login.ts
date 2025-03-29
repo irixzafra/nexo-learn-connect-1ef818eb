@@ -19,6 +19,7 @@ export const useLogin = () => {
       });
 
       if (error) {
+        console.error('Error durante el inicio de sesión:', error);
         throw error;
       }
 
@@ -29,7 +30,7 @@ export const useLogin = () => {
     } catch (error: any) {
       console.error('Error durante el inicio de sesión:', error);
       
-      if (error.message.includes('Invalid login credentials')) {
+      if (error.message && error.message.includes('Invalid login credentials')) {
         toast.error('Credenciales inválidas. Por favor verifica tu email y contraseña.');
       } else {
         toast.error('Error al iniciar sesión. Por favor intenta nuevamente.');
