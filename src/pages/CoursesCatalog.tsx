@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Search, BookOpen } from 'lucide-react';
+import { toast } from 'sonner';
 
 type Course = {
   id: string;
@@ -41,10 +42,15 @@ const CoursesCatalog: React.FC = () => {
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setCourses(data as Course[]);
+      if (error) {
+        throw error;
+      }
+      
+      console.log("Courses fetched:", data);
+      setCourses(data || []);
     } catch (error) {
       console.error('Error fetching courses:', error);
+      toast.error('Error al cargar los cursos. Por favor, inténtelo de nuevo más tarde.');
     } finally {
       setIsLoading(false);
     }
