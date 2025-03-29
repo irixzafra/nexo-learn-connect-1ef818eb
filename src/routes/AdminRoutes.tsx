@@ -1,9 +1,13 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import TestDataManagement from '@/pages/admin/TestDataManagement';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
+import NotFound from '@/pages/NotFound';
+
+// Admin Pages
+import AdminDashboard from '@/pages/admin/dashboard';
+import TestDataManagement from '@/pages/admin/TestDataManagement';
 import Users from '@/pages/placeholder/Users';
 import Billing from '@/pages/placeholder/Billing';
 
@@ -19,7 +23,7 @@ const AdminRoutes: React.FC = () => {
         path="/dashboard"
         element={
           <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
-            <h1>Panel de Administración (en desarrollo)</h1>
+            <AdminDashboard />
           </ProtectedRoute>
         }
       />
@@ -51,7 +55,7 @@ const AdminRoutes: React.FC = () => {
         path="*"
         element={
           <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
-            <div>Página no encontrada en administración</div>
+            <NotFound />
           </ProtectedRoute>
         }
       />

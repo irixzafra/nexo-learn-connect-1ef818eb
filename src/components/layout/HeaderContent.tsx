@@ -11,10 +11,11 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
-import { Link } from 'react-router-dom';
-import { Bell, Settings, User, LogOut, Edit, CheckSquare } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Bell, Settings, User, LogOut, Edit, CheckSquare, Home, HelpCircle } from 'lucide-react';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface HeaderContentProps {
   userRole: string | null;
@@ -24,6 +25,7 @@ interface HeaderContentProps {
 const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) => {
   const { user, profile, logout } = useAuth();
   const { isEditMode, toggleEditMode } = useEditMode();
+  const navigate = useNavigate();
 
   // Get user initials for avatar fallback
   const getUserInitials = () => {
@@ -35,6 +37,12 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
       return profile.full_name.substring(0, 2).toUpperCase();
     }
     return user?.email?.substring(0, 2).toUpperCase() || 'UN';
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    toast.success("Sesión cerrada exitosamente");
+    navigate('/auth/login');
   };
 
   return (
@@ -50,6 +58,14 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
       </div>
       
       <div className="flex items-center gap-4">
+        {/* Breadcrumb con acceso rápido al inicio */}
+        <Button variant="ghost" size="sm" asChild className="hidden md:flex">
+          <Link to="/home" className="gap-2">
+            <Home className="h-4 w-4" />
+            <span>Inicio</span>
+          </Link>
+        </Button>
+        
         {/* Edit Mode Toggle en el header - solo visible para admins */}
         {userRole === 'admin' && (
           <Button
@@ -82,6 +98,12 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
             <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center text-[10px] text-white">
               2
             </span>
+          </Link>
+        </Button>
+        
+        <Button variant="ghost" size="icon" asChild className="hidden sm:flex">
+          <Link to="/help">
+            <HelpCircle className="h-5 w-5" />
           </Link>
         </Button>
         
@@ -121,7 +143,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
             <DropdownMenuSeparator />
             <DropdownMenuItem 
               className="text-red-600 cursor-pointer"
-              onClick={() => logout()}
+              onClick={handleLogout}
             >
               <LogOut className="mr-2 h-4 w-4" />
               <span>Cerrar Sesión</span>

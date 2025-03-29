@@ -51,7 +51,11 @@ const InstructorRoutes = () => {
           <EditLesson />
         </ProtectedRoute>
       } />
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={
+        <ProtectedRoute requiredRole="instructor">
+          <NotFound />
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 };
