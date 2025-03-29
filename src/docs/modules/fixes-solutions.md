@@ -52,10 +52,11 @@ La implementación utiliza el contexto de autenticación y props específicas pa
 ## FIX-CATALOG-LOAD-ERROR-01: Corrección del Error en Catálogo de Cursos
 
 ### Problema
-La página de catálogo de cursos (/courses) mostraba errores del tipo "Could not find relationship" debido a problemas en la consulta a la base de datos y en el manejo de tipos de datos.
+La página de catálogo de cursos (/courses) mostraba errores del tipo "Could not find relationship" y "infinite recursion detected in policy" debido a problemas en la consulta a la base de datos, en el manejo de tipos de datos, y en las políticas de seguridad RLS.
 
 ### Solución Implementada
-Se realizaron dos correcciones principales:
+Se realizaron tres correcciones principales:
+
 1. **Simplificación de la consulta a la base de datos**: 
    - Se eliminó la dependencia de joins complejos que causaban el error de relación
    - Se modificó la consulta para usar sólo la tabla `courses` sin joins adicionales
@@ -66,15 +67,23 @@ Se realizaron dos correcciones principales:
    - Se normalizó el valor a minúsculas y se validó contra los valores permitidos ('eur', 'usd')
    - Se estableció un valor predeterminado seguro ('eur') para casos donde el valor no fuera válido
 
+3. **Corrección de las políticas RLS (Row Level Security)**:
+   - Se eliminaron las políticas que causaban recursión infinita
+   - Se implementó una función de seguridad definida (security definer) para verificar roles sin acceder directamente a la tabla `courses`
+   - Se crearon políticas separadas para visualización pública, instructores y administradores
+   - Se establecieron permisos apropiados basados en el rol del usuario y la propiedad del curso
+
 ### Impacto
 La corrección permite:
 - Carga correcta y consistente del catálogo de cursos
 - Eliminación de errores en consola relacionados con tipos de datos
+- Resolución del problema de recursión infinita en las políticas RLS
 - Mejor rendimiento al reducir la complejidad de las consultas
 - Experiencia de usuario más fluida sin interrupciones por errores
+- Seguridad mejorada con políticas RLS correctamente implementadas
 
 ### Comentarios Técnicos
-La implementación incluye mejoras en el manejo de errores y la estructura de los datos, asegurando una transformación correcta de los datos desde la base de datos al formato requerido por los componentes de UI.
+La implementación incluye mejoras en el manejo de errores, la estructura de los datos, y las políticas de seguridad, asegurando una transformación correcta de los datos desde la base de datos al formato requerido por los componentes de UI y un acceso seguro a los datos.
 
 ## FIX-ROUTING-404-ERRORS-01: Corrección de Errores 404 en Rutas
 
