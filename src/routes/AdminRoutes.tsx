@@ -11,6 +11,11 @@ import TestDataManagement from '@/pages/admin/TestDataManagement';
 const AdminRoutes = () => {
   return (
     <Routes>
+      <Route path="/" element={
+        <ProtectedRoute requiredRole="admin">
+          <Home />
+        </ProtectedRoute>
+      } />
       <Route path="/dashboard" element={
         <ProtectedRoute requiredRole="admin">
           <Home />

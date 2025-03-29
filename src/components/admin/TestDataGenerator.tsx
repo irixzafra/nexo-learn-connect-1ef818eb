@@ -33,10 +33,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Trash2, Database, PlusCircle, Download } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2, Database, PlusCircle } from 'lucide-react';
 
 const dataTypeLabels: Record<TestDataType, string> = {
   course: 'Cursos',
@@ -46,11 +54,9 @@ const dataTypeLabels: Record<TestDataType, string> = {
 };
 
 const TestDataGenerator: React.FC = () => {
-  const { testData, generateTestData, clearTestData, isGenerating } = useTestData();
+  const { testData, generateTestData, clearTestData, deleteTestDataItem, isGenerating } = useTestData();
   const [selectedType, setSelectedType] = useState<TestDataType>('course');
   const [count, setCount] = useState<number>(5);
-  const { user } = useAuth();
-  const [isImporting, setIsImporting] = useState(false);
 
   const handleGenerate = () => {
     if (count > 0 && count <= 100) {
@@ -58,156 +64,12 @@ const TestDataGenerator: React.FC = () => {
     }
   };
 
-  // Function to import test data to Supabase
-  const importToSupabase = async (type: TestDataType) => {
-    if (!user) {
-      toast.error('Debes iniciar sesión para importar datos');
-      return;
-    }
-
-    setIsImporting(true);
-    try {
-      const items = testData[type];
-      if (items.length === 0) {
-        toast.error(`No hay datos de ${dataTypeLabels[type].toLowerCase()} para importar`);
-        return;
-      }
-
-      // Process based on data type
-      switch (type) {
-        case 'user':
-          await importUsers(items);
-          break;
-        case 'course':
-          await importCourses(items, user.id);
-          break;
-        case 'lesson':
-          await importLessons(items, user.id);
-          break;
-        case 'message':
-          toast.info('Importación de mensajes no implementada aún');
-          break;
-      }
-
-      toast.success(`${items.length} ${dataTypeLabels[type].toLowerCase()} importados correctamente`);
-    } catch (error) {
-      console.error('Error importing data:', error);
-      toast.error(`Error al importar ${dataTypeLabels[type].toLowerCase()}: ${error.message}`);
-    } finally {
-      setIsImporting(false);
-    }
+  const handleDeleteAll = (type?: TestDataType) => {
+    clearTestData(type);
   };
 
-  // Import users to Supabase
-  const importUsers = async (items) => {
-    for (const item of items) {
-      const userData = item.data;
-      
-      // Create auth user (This would typically be done through auth API or admin functions)
-      // For demo, we'll just create profiles
-      const { error } = await supabase
-        .from('profiles')
-        .insert({
-          id: item.id,
-          full_name: userData.fullName,
-          role: userData.role,
-          created_at: new Date(item.createdAt).toISOString()
-        });
-      
-      if (error) throw error;
-    }
-  };
-
-  // Import courses to Supabase
-  const importCourses = async (items, instructorId) => {
-    for (const item of items) {
-      const courseData = item.data;
-      
-      const { data: course, error } = await supabase
-        .from('courses')
-        .insert({
-          id: item.id,
-          title: courseData.title,
-          description: courseData.description,
-          price: courseData.price,
-          instructor_id: instructorId,
-          currency: 'eur',
-          is_published: courseData.published,
-          cover_image_url: courseData.coverImage,
-          level: courseData.level,
-          duration_text: `${courseData.duration} horas`,
-          created_at: new Date(item.createdAt).toISOString()
-        })
-        .select()
-        .single();
-      
-      if (error) throw error;
-    }
-  };
-
-  // Import lessons to Supabase
-  const importLessons = async (items, instructorId) => {
-    // First, get available courses or create a default one if none exists
-    let courseId;
-    const { data: courses } = await supabase
-      .from('courses')
-      .select('id')
-      .limit(1);
-
-    if (!courses || courses.length === 0) {
-      // Create a default course
-      const { data: newCourse, error } = await supabase
-        .from('courses')
-        .insert({
-          title: 'Curso por defecto',
-          description: 'Curso creado automáticamente para las lecciones de prueba',
-          price: 0,
-          instructor_id: instructorId,
-          currency: 'eur',
-          is_published: true
-        })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      courseId = newCourse.id;
-    } else {
-      courseId = courses[0].id;
-    }
-
-    // Create a module
-    const { data: module, error: moduleError } = await supabase
-      .from('modules')
-      .insert({
-        course_id: courseId,
-        title: 'Módulo de prueba',
-        module_order: 1
-      })
-      .select()
-      .single();
-    
-    if (moduleError) throw moduleError;
-
-    // Create lessons
-    for (const item of items) {
-      const lessonData = item.data;
-      
-      const { error } = await supabase
-        .from('lessons')
-        .insert({
-          id: item.id,
-          module_id: module.id,
-          course_id: courseId,
-          title: lessonData.title,
-          content_type: lessonData.videoUrl ? 'video' : 'text',
-          content_text: lessonData.content ? JSON.stringify({ content: lessonData.content }) : null,
-          content_video_url: lessonData.videoUrl || null,
-          lesson_order: lessonData.order,
-          is_previewable: lessonData.completed
-        });
-      
-      if (error) throw error;
-    }
+  const handleDeleteItem = (type: TestDataType, id: string) => {
+    deleteTestDataItem(type, id);
   };
 
   return (
@@ -302,10 +164,7 @@ const TestDataGenerator: React.FC = () => {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  onClick={() => {
-                                    // Aquí se implementaría la eliminación individual
-                                    // pero usamos clearTestData para simplificar
-                                  }}
+                                  onClick={() => handleDeleteItem(type as TestDataType, item.id)}
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -318,27 +177,37 @@ const TestDataGenerator: React.FC = () => {
                   </div>
                   
                   {testData[type as TestDataType].length > 0 && (
-                    <div className="mt-4 flex justify-between">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => importToSupabase(type as TestDataType)}
-                        disabled={isImporting}
-                        className="flex items-center gap-1"
-                      >
-                        <Download className="h-4 w-4" />
-                        <span>Importar a Supabase</span>
-                      </Button>
-                      
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => clearTestData(type as TestDataType)}
-                        className="flex items-center gap-1"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        <span>Eliminar todos</span>
-                      </Button>
+                    <div className="mt-4 flex justify-end">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="flex items-center gap-1"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span>Eliminar todos</span>
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Esta acción eliminará todos los datos de prueba de tipo "{label.toLowerCase()}". 
+                              Esta acción no se puede deshacer.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteAll(type as TestDataType)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Eliminar todos
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   )}
                 </TabsContent>
@@ -348,15 +217,36 @@ const TestDataGenerator: React.FC = () => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between border-t pt-4">
-        <Button 
-          variant="outline" 
-          onClick={() => clearTestData()}
-          disabled={
-            Object.values(testData).every(items => items.length === 0)
-          }
-        >
-          Eliminar todos los datos
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              variant="outline" 
+              disabled={
+                Object.values(testData).every(items => items.length === 0)
+              }
+            >
+              Eliminar todos los datos
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Eliminar todos los datos de prueba?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta acción eliminará TODOS los datos de prueba de todos los tipos.
+                Esta acción no se puede deshacer.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => handleDeleteAll()}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Eliminar todos
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardFooter>
     </Card>
   );

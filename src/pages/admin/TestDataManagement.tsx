@@ -13,7 +13,7 @@ const TestDataManagement: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirigir si no es administrador
+    // Redirect if not an admin
     if (userRole !== 'admin') {
       navigate('/unauthorized');
     }
@@ -26,7 +26,7 @@ const TestDataManagement: React.FC = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/admin/dashboard')}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
