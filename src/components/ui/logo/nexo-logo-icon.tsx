@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Atom } from 'lucide-react';
@@ -21,20 +20,6 @@ export const NexoLogoIcon: React.FC<NexoLogoIconProps> = ({
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
       >
         <Atom className="w-5 h-5 text-white" />
-        {animate && (
-          <motion.div
-            className="absolute inset-0 rounded-full border-2 border-blue-300 border-opacity-50"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [1, 0, 1]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-        )}
       </motion.div>
     </div>
   );

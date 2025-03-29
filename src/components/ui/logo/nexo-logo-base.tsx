@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { Atom } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -7,11 +7,13 @@ import { motion } from 'framer-motion';
 interface NexoLogoBaseProps {
   className?: string;
   animate?: boolean;
+  subtitle?: string;
 }
 
 export const NexoLogoBase: React.FC<NexoLogoBaseProps> = ({ 
   className, 
-  animate = true 
+  animate = true,
+  subtitle = "ecosistema creativo"
 }) => {
   return (
     <div className={cn("flex items-center", className)}>
@@ -21,20 +23,7 @@ export const NexoLogoBase: React.FC<NexoLogoBaseProps> = ({
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
       >
         <Atom className="w-5 h-5 text-white" />
-        {animate && (
-          <motion.div
-            className="absolute inset-0 rounded-full border-2 border-blue-300 border-opacity-50"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [1, 0, 1]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-        )}
+        {/* Removed the border animation */}
       </motion.div>
       
       <div className="flex flex-col ml-3">
@@ -46,7 +35,7 @@ export const NexoLogoBase: React.FC<NexoLogoBaseProps> = ({
           nexo
         </motion.div>
         <span className="text-xs text-muted-foreground font-medium">
-          LEARNING PLATFORM
+          {subtitle}
         </span>
       </div>
     </div>

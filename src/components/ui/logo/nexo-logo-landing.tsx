@@ -15,7 +15,7 @@ interface NexoLogoLandingProps {
 export const NexoLogoLanding: React.FC<NexoLogoLandingProps> = ({ 
   className, 
   animate = true,
-  subtitle = "LEARNING PLATFORM"
+  subtitle = "ecosistema creativo"
 }) => {
   const logoText = "nexo";
   const particlesCount = 12;

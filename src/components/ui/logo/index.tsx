@@ -12,6 +12,7 @@ export interface NexoLogoProps {
 
 export const NexoLogo: React.FC<NexoLogoProps> = ({ 
   variant = 'default',
+  subtitle = "ecosistema creativo",
   ...props
 }) => {
   if (variant === 'icon') {
@@ -19,10 +20,10 @@ export const NexoLogo: React.FC<NexoLogoProps> = ({
   }
   
   if (variant === 'landing') {
-    return <NexoLogoLanding {...props} />;
+    return <NexoLogoLanding subtitle={subtitle} {...props} />;
   }
   
-  return <NexoLogoBase {...props} />;
+  return <NexoLogoBase subtitle={subtitle} {...props} />;
 };
 
 export * from './nexo-logo-base';
