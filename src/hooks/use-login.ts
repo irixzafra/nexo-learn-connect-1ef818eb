@@ -29,16 +29,30 @@ export const useLogin = () => {
         toast.success('Inicio de sesión exitoso');
         
         // Verificamos con console.log para depurar
-        console.log('Login successful, userRole:', userRole);
+        console.log('Login successful, userRole from context:', userRole);
         
-        // Hacemos una comprobación del rol del usuario en su metadata
-        const userMetadata = authData.user.user_metadata;
+        // Verificamos el rol directamente desde metadata de Supabase
+        const { data: userData } = await supabase.auth.getUser();
+        const userMetadata = userData?.user?.user_metadata;
         const roleFromMetadata = userMetadata && userMetadata.role ? userMetadata.role : null;
         
-        console.log('Role from metadata:', roleFromMetadata);
+        console.log('Role from Supabase metadata:', roleFromMetadata);
         
-        // Usamos el rol de metadata si está disponible, o recurrimos al contexto
-        const effectiveRole = roleFromMetadata || userRole;
+        // Para asegurarnos, hacemos una consulta directa a la tabla de perfiles
+        let profileRole = null;
+        if (authData.user.id) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', authData.user.id)
+            .single();
+            
+          profileRole = profileData?.role;
+          console.log('Role from profiles table:', profileRole);
+        }
+        
+        // Determinamos el rol efectivo con esta prioridad: metadata > perfil > contexto
+        const effectiveRole = roleFromMetadata || profileRole || userRole || 'student';
         console.log('Effective role for redirect:', effectiveRole);
         
         // Redirigimos según el rol efectivo

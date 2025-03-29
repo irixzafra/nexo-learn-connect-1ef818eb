@@ -17,6 +17,7 @@ const EditModeToggle: React.FC = () => {
   
   // Si no eres administrador, no muestra el botón
   if (userRole !== 'admin') {
+    console.log('Not showing edit button because userRole is not admin:', userRole);
     return null;
   }
 
