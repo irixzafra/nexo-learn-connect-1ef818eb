@@ -22,7 +22,7 @@ const AdminRoutes: React.FC = () => {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
+          <ProtectedRoute requiredRole="admin" fallbackPath="/unauthorized">
             <AdminDashboard />
           </ProtectedRoute>
         }
@@ -30,7 +30,7 @@ const AdminRoutes: React.FC = () => {
       <Route
         path="/test-data"
         element={
-          <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
+          <ProtectedRoute requiredRole="admin" fallbackPath="/unauthorized">
             <TestDataManagement />
           </ProtectedRoute>
         }
@@ -38,7 +38,7 @@ const AdminRoutes: React.FC = () => {
       <Route
         path="/users"
         element={
-          <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
+          <ProtectedRoute requiredRole="admin" fallbackPath="/unauthorized">
             <Users />
           </ProtectedRoute>
         }
@@ -46,7 +46,7 @@ const AdminRoutes: React.FC = () => {
       <Route
         path="/billing"
         element={
-          <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
+          <ProtectedRoute requiredRole="admin" fallbackPath="/unauthorized">
             <Billing />
           </ProtectedRoute>
         }
@@ -54,7 +54,7 @@ const AdminRoutes: React.FC = () => {
       <Route
         path="*"
         element={
-          <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
+          <ProtectedRoute requiredRole="admin" fallbackPath="/unauthorized">
             <NotFound />
           </ProtectedRoute>
         }
