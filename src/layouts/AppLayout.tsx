@@ -5,6 +5,7 @@ import { UserRole } from '@/types/auth';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/layout/AppSidebar';
 import HeaderContent from '@/components/layout/HeaderContent';
+import { trackRoleSwitch } from '@/lib/sentry';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -23,17 +24,24 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const effectiveRole = getEffectiveRole();
 
+  const handleRoleChange = (role: UserRole) => {
+    if (userRole) {
+      trackRoleSwitch(userRole, role);
+    }
+    setViewAsRole(role as ViewAsRole);
+  };
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-muted/10">
         <AppSidebar 
           viewAsRole={viewAsRole}
-          onRoleChange={(role) => setViewAsRole(role as ViewAsRole)}
+          onRoleChange={handleRoleChange}
         />
         
         <div className="flex-1 min-w-0 overflow-auto">
-          <header className="border-b bg-background">
-            <HeaderContent userRole={userRole} />
+          <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur-sm">
+            <HeaderContent userRole={userRole} viewingAs={viewAsRole !== 'current' ? viewAsRole : null} />
           </header>
           
           <main className="min-h-[calc(100vh-60px)]">
