@@ -1,222 +1,152 @@
 
-import React, { useState } from 'react';
-import { useTestData, TestDataType } from '@/contexts/test-data';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { Button } from '@/components/ui/button';
+import React, { useState, useRef } from 'react';
+import { useTestData, TestDataType } from '@/contexts/TestDataContext';
 import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle,
+  CardFooter
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DeleteTypeDataDialog } from './DeleteTypeDataDialog';
-import { Eye, MoreHorizontal, Trash2 } from 'lucide-react';
-import { MoreDropdownMenu } from './MoreDropdownMenu';
+import { Trash2, Check, Calendar, FileText } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface DataTypeTabContentProps {
   type: TestDataType;
   label: string;
 }
 
-export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({ type, label }) => {
-  const { testData, selectItem, selectedItems, deleteTestDataItem, deleteSelectedItems, selectAllItems } = useTestData();
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
+export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({ 
+  type, 
+  label 
+}) => {
+  const { testData, clearTestData, deleteSelectedItems, selectedItems, selectItem, selectAllItems } = useTestData();
+  const items = testData[type];
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const data = testData[type];
-  const selectedItemIds = selectedItems[type];
-  const allSelected = data.length > 0 && selectedItemIds.length === data.length;
+  // Using the selected items directly from context
+  const selectedIds = selectedItems[type];
 
-  const handleSelectAll = (checked: boolean) => {
-    selectAllItems(type, checked);
+  // Select/deselect all items
+  const handleSelectAll = () => {
+    selectAllItems(type, selectedIds.length !== items.length);
   };
 
-  const handleSelectItem = (id: string, checked: boolean) => {
-    selectItem(type, id, checked);
+  // Handle individual item selection
+  const handleSelectItem = (id: string) => {
+    selectItem(type, id, !selectedIds.includes(id));
   };
 
-  const handleDeleteItem = (id: string) => {
-    deleteTestDataItem(type, id);
-  };
+  // Calculate if the header checkbox should be in an indeterminate state
+  const isIndeterminate = selectedIds.length > 0 && selectedIds.length < items.length;
+  const isAllSelected = items.length > 0 && selectedIds.length === items.length;
 
-  const handleDeleteSelected = () => {
-    deleteSelectedItems(type);
-  };
+  // Create a ref for the checkbox
+  const checkboxRef = useRef<HTMLButtonElement>(null);
 
-  const toggleColumnVisibility = (field: string) => {
-    setVisibleColumns(prev => {
-      if (prev.includes(field)) {
-        return prev.filter(col => col !== field);
-      } else {
-        return [...prev, field];
-      }
-    });
-  };
-
-  const columns: GridColDef[] = React.useMemo(() => {
-    if (data.length === 0) {
-      return [];
+  // Update indeterminate state using a side effect
+  React.useEffect(() => {
+    if (checkboxRef.current) {
+      // We need to use DOM API to set indeterminate state
+      // This is a workaround since indeterminate is not a standard prop in React
+      (checkboxRef.current as any).indeterminate = isIndeterminate;
     }
-
-    const firstItem = data[0].data;
-    const keys = Object.keys(firstItem);
-
-    const initialVisibleColumns = keys.slice(0, 3);
-    setVisibleColumns(initialVisibleColumns);
-
-    return [
-      { 
-        field: 'select', 
-        headerName: '', 
-        width: 60, 
-        sortable: false,
-        renderHeader: () => (
-          <Checkbox
-            checked={allSelected}
-            onCheckedChange={(checked) => handleSelectAll(!!checked)}
-            aria-label="Select all"
-          />
-        ),
-        renderCell: (params) => (
-          <Checkbox
-            checked={selectedItemIds.includes(params.row.id)}
-            onCheckedChange={(checked) => handleSelectItem(params.row.id, !!checked)}
-            aria-label={`Select row ${params.row.id}`}
-          />
-        ),
-      },
-      { field: 'name', headerName: 'Nombre', width: 200 },
-      { field: 'createdAt', headerName: 'Creado', width: 150 },
-      ...keys.map(key => ({
-        field: key,
-        headerName: key,
-        width: 200,
-        hide: !initialVisibleColumns.includes(key),
-        renderCell: (params: GridRenderCellParams) => (
-          <div className="whitespace-nowrap overflow-x-auto">
-            {JSON.stringify(params.value)}
-          </div>
-        ),
-      })),
-      {
-        field: 'actions',
-        headerName: 'Acciones',
-        width: 120,
-        sortable: false,
-        renderCell: (params) => (
-          <div className="flex items-center gap-2">
-            <MoreDropdownMenu>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Eye className="h-4 w-4 mr-2" />
-                    Ver
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Detalles de {label.slice(0, -1).toLowerCase()}</DialogTitle>
-                    <DialogDescription>
-                      <pre className="mt-4 rounded-md bg-muted/50 p-4 font-mono text-sm">
-                        {JSON.stringify(params.row, null, 2)}
-                      </pre>
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-              <Button variant="ghost" size="sm" onClick={() => handleDeleteItem(params.row.id)}>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Eliminar
-              </Button>
-            </MoreDropdownMenu>
-          </div>
-        ),
-      },
-    ];
-  }, [testData, type, selectedItems, allSelected, visibleColumns, selectItem, selectAllItems, deleteTestDataItem]);
-
-  const rows = data.map(item => ({
-    id: item.id,
-    name: item.name,
-    createdAt: item.createdAt,
-    ...item.data,
-  }));
+  }, [isIndeterminate]);
 
   return (
-    <div className="w-full">
-      {data.length > 0 ? (
-        <>
-          <div className="flex justify-between items-center mb-4">
-            <Button variant="destructive" size="sm" onClick={handleDeleteSelected} disabled={selectedItemIds.length === 0}>
-              <Trash2 className="h-4 w-4 mr-2" />
-              Eliminar seleccionados ({selectedItemIds.length})
-            </Button>
-            <div className="flex items-center gap-2">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <MoreHorizontal className="h-4 w-4 mr-2" />
-                    Columnas
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Mostrar / Ocultar columnas</DialogTitle>
-                    <DialogDescription>
-                      Selecciona las columnas que quieres ver en la tabla.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-2 mt-4">
-                    {columns.slice(3, -1).map(col => (
-                      <label key={col.field} className="flex items-center space-x-2">
-                        <Checkbox
-                          checked={!col.hide}
-                          onCheckedChange={() => toggleColumnVisibility(col.field)}
-                        />
-                        <span>{col.headerName}</span>
-                      </label>
-                    ))}
-                  </div>
-                </DialogContent>
-              </Dialog>
-              <Button variant="destructive" size="sm" onClick={() => setIsDeleteDialogOpen(true)}>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Eliminar todos
-              </Button>
-            </div>
-          </div>
-          <div style={{ height: 400, width: '100%' }}>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 5,
-                  },
-                },
-              }}
-              pageSizeOptions={[5, 10, 20]}
-              checkboxSelection
-              disableRowSelectionOnClick
+    <Card className="shadow-sm border-muted">
+      <CardHeader className="pb-2 bg-muted/10">
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg font-medium flex items-center gap-2">
+            <FileText className="h-4 w-4 text-muted-foreground" />
+            {label} ({items.length})
+          </CardTitle>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              checked={isAllSelected}
+              ref={checkboxRef}
+              onCheckedChange={handleSelectAll}
+              aria-label="Seleccionar todos"
+              className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
             />
+            <span className="text-sm text-muted-foreground">
+              {selectedIds.length} seleccionados
+            </span>
           </div>
-        </>
-      ) : (
-        <div className="text-center p-4 border rounded-md bg-muted/20 text-muted-foreground">
-          No hay datos de tipo {label.toLowerCase()} generados.
         </div>
-      )}
-
+      </CardHeader>
+      
+      <CardContent className="p-0">
+        {items.length > 0 ? (
+          <div className="max-h-96 overflow-y-auto divide-y divide-muted">
+            {items.map((item) => (
+              <div 
+                key={item.id} 
+                className={cn(
+                  "flex items-center space-x-3 p-3 hover:bg-muted/30 transition-colors",
+                  selectedIds.includes(item.id) && "bg-muted/20"
+                )}
+              >
+                <Checkbox 
+                  checked={selectedIds.includes(item.id)}
+                  onCheckedChange={() => handleSelectItem(item.id)}
+                  className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                />
+                <div className="flex-1 truncate">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">{item.name || item.id}</span>
+                    {item.createdAt && (
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {new Date(item.createdAt).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="py-10 text-center text-muted-foreground flex flex-col items-center gap-2">
+            <FileText className="h-8 w-8 text-muted-foreground/50" />
+            <p>No hay datos de {label.toLowerCase()} disponibles</p>
+          </div>
+        )}
+      </CardContent>
+      
+      <CardFooter className="flex justify-between pt-3 pb-3 border-t bg-muted/10 gap-2">
+        <Button 
+          variant="destructive" 
+          size="sm"
+          disabled={items.length === 0}
+          onClick={() => setShowDeleteDialog(true)}
+          className="gap-1"
+        >
+          <Trash2 className="h-4 w-4" />
+          Eliminar todos
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          size="sm"
+          disabled={selectedIds.length === 0}
+          onClick={() => deleteSelectedItems(type)}
+          className="gap-1"
+        >
+          <Check className="h-4 w-4" />
+          Eliminar seleccionados ({selectedIds.length})
+        </Button>
+      </CardFooter>
+      
       <DeleteTypeDataDialog 
-        type={type} 
+        type={type}
         label={label}
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
+        onOpenChange={setShowDeleteDialog}
+        open={showDeleteDialog}
       />
-    </div>
+    </Card>
   );
 };
