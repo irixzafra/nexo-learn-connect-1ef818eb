@@ -131,10 +131,10 @@ export const useDashboardStats = () => {
           id: enrollment.id,
           enrolled_at: enrollment.enrolled_at,
           profiles: {
-            full_name: enrollment.profiles?.full_name || 'Unknown User'
+            full_name: enrollment.profiles ? enrollment.profiles.full_name : 'Unknown User'
           },
           courses: {
-            title: enrollment.courses?.title || 'Unknown Course'
+            title: enrollment.courses ? enrollment.courses.title : 'Unknown Course'
           }
         }));
       } catch (error: any) {
