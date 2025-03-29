@@ -8,12 +8,9 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Check, ChevronRight, Search, Shield, UserRound, ArrowLeftRight, UserCog, User } from 'lucide-react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Check, ChevronRight, Shield, UserRound, ArrowLeftRight, UserCog, User } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { UserRoleSearch } from './UserRoleSearch';
-import { cn } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from "@/components/ui/separator";
 import { Command, CommandList, CommandInput, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
@@ -79,6 +76,12 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
 
   const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== userRole;
 
+  const handleSearchInputClick = () => {
+    // Open the search dialog when clicking on the search input
+    setOpen(false);
+    setIsSearchDialogOpen(true);
+  };
+
   return (
     <div className="px-2 py-1">
       <div className="flex items-center justify-between mb-2">
@@ -114,6 +117,7 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
               value={searchTerm}
               onValueChange={setSearchTerm}
               className="h-9"
+              onClick={handleSearchInputClick}
             />
             
             <CommandList>
@@ -174,20 +178,6 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
                   </CommandGroup>
                 </>
               )}
-              
-              <Separator className="my-1" />
-              <CommandGroup heading="Usuarios">
-                <CommandItem 
-                  onSelect={() => {
-                    setOpen(false);
-                    setIsSearchDialogOpen(true);
-                  }}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <Search className="h-4 w-4" />
-                  <span>Buscar usuarios</span>
-                </CommandItem>
-              </CommandGroup>
             </CommandList>
           </Command>
         </PopoverContent>

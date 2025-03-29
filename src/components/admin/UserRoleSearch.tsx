@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -37,6 +37,81 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<UserResult[]>([]);
   const { toast } = useToast();
+
+  // Effect to handle dynamic search as user types
+  useEffect(() => {
+    const searchUsers = async () => {
+      if (!searchTerm || searchTerm.length < 2) {
+        setSearchResults([]);
+        return;
+      }
+
+      setIsSearching(true);
+      
+      try {
+        // Búsqueda por email o nombre
+        const { data: emailResults, error: emailError } = await supabase
+          .from('profiles')
+          .select('id, full_name, role')
+          .or(`email.ilike.%${searchTerm}%,full_name.ilike.%${searchTerm}%`)
+          .limit(5);
+
+        if (emailError) throw emailError;
+
+        // Obtener datos de usuario desde auth.users
+        const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers() as unknown as {
+          data: SupabaseUsersResponse | null;
+          error: any;
+        };
+        
+        if (usersError) throw usersError;
+
+        // Combinar resultados y eliminar duplicados
+        const combinedResults: UserResult[] = [];
+        
+        if (emailResults && emailResults.length > 0) {
+          for (const profile of emailResults) {
+            // Buscar el usuario correspondiente para obtener el email
+            const user = usersData?.users?.find(u => u.id === profile.id);
+            if (user) {
+              combinedResults.push({
+                id: profile.id,
+                email: user.email || 'Sin email',
+                full_name: profile.full_name || 'Sin nombre',
+                role: profile.role
+              });
+            }
+          }
+        }
+
+        setSearchResults(combinedResults);
+      } catch (error) {
+        console.error('Error al buscar usuarios:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    // Debounce the search to avoid too many requests
+    const timerId = setTimeout(() => {
+      searchUsers();
+    }, 300);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [searchTerm]);
+
+  const handleRoleChanged = () => {
+    // Re-search to update results
+    if (searchTerm.length >= 2) {
+      handleSearch();
+    }
+    toast({
+      title: "Rol actualizado",
+      description: "El rol del usuario ha sido actualizado correctamente.",
+    });
+  };
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
@@ -107,15 +182,6 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
     }
   };
 
-  const handleRoleChanged = () => {
-    // Actualizar resultados
-    handleSearch();
-    toast({
-      title: "Rol actualizado",
-      description: "El rol del usuario ha sido actualizado correctamente.",
-    });
-  };
-
   const getRoleIcon = (role: UserRole) => {
     switch (role) {
       case 'admin':
@@ -152,6 +218,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             className="pl-9"
+            autoFocus
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         </div>
@@ -169,7 +236,13 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
       </div>
 
       <div className="space-y-4">
-        {searchResults.length > 0 ? (
+        {isSearching && (
+          <div className="flex justify-center py-4">
+            <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></div>
+          </div>
+        )}
+        
+        {!isSearching && searchResults.length > 0 ? (
           <div className="space-y-4">
             {searchResults.map((user) => (
               <div key={user.id} className="border rounded-lg p-4">
@@ -202,9 +275,15 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
               </div>
             ))}
           </div>
-        ) : !isSearching && (
+        ) : !isSearching && searchTerm.length > 0 && (
           <div className="text-center py-6 text-muted-foreground">
-            {searchTerm ? "No se encontraron resultados" : "Busca usuarios por nombre o email"}
+            No se encontraron resultados
+          </div>
+        )}
+        
+        {!isSearching && searchTerm.length === 0 && (
+          <div className="text-center py-6 text-muted-foreground">
+            Ingresa un nombre o email para buscar usuarios
           </div>
         )}
       </div>
