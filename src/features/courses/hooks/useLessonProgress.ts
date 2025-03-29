@@ -19,6 +19,7 @@ type LessonProgress = {
 type LessonProgressUpdate = {
   is_completed?: boolean;
   last_position?: number;
+  completion_date?: string | null;
 };
 
 export const useLessonProgress = (
@@ -125,7 +126,7 @@ export const useLessonProgress = (
 
       if (existingProgress) {
         // Update existing record
-        const updateData = { ...updates };
+        const updateData: LessonProgressUpdate = { ...updates };
         
         // If marking as completed, add completion date
         if (updates.is_completed) {
