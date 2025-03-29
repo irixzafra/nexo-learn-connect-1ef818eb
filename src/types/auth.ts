@@ -1,17 +1,23 @@
 
-export type UserRole = 'student' | 'instructor' | 'admin';
+export type UserRole = 'admin' | 'instructor' | 'student';
 
-export interface User {
+export interface UserProfile {
   id: string;
-  email: string;
-  fullName: string | null;
+  full_name?: string;
   role: UserRole;
+  avatar_url?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export interface AuthContextType {
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  user: User | null;
-  userRole: UserRole | null;
-  logout: () => Promise<void>;
+export interface RegisterFormValues {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  fullName: string;
+}
+
+export interface LoginFormValues {
+  email: string;
+  password: string;
 }
