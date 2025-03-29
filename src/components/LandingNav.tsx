@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { NexoLogo } from '@/components/ui/logo';
+import { NexoLogo } from '@/components/ui/nexo-logo';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
   DropdownMenu, 

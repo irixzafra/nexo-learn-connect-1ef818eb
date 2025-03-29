@@ -1,3 +1,4 @@
+
 import {
   Home,
   Book,
@@ -6,7 +7,8 @@ import {
   MessageSquare,
   Settings,
   ChevronDown,
-  TestTube
+  TestTube,
+  Users
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -86,7 +88,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton>
-                <NavLink to="/home">
+                <NavLink to="/home" end>
                   <Home className="h-4 w-4" />
                   <span>Inicio</span>
                 </NavLink>
@@ -108,6 +110,8 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            {/* Solo mostramos enlaces a funcionalidades implementadas */}
+            {/*
             <SidebarMenuItem>
               <SidebarMenuButton>
                 <NavLink to="/home/calendar">
@@ -124,6 +128,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            */}
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
@@ -144,7 +149,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
                       <SidebarMenuItem>
                         <SidebarMenuButton>
                           <NavLink to="/home/users">
-                            <Settings className="h-4 w-4" />
+                            <Users className="h-4 w-4" />
                             <span>Usuarios</span>
                           </NavLink>
                         </SidebarMenuButton>
@@ -155,6 +160,52 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
                           <NavLink to="/admin/test-data">
                             <TestTube className="h-4 w-4" />
                             <span>Datos de Prueba</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </>
+      )}
+      
+      {/* Instructor Links */}
+      {userRole === 'instructor' && (
+        <>
+          <Accordion type="single" collapsible>
+            <AccordionItem value="instructor">
+              <AccordionTrigger className='hover:no-underline'>
+                Instructor
+                <ChevronDown className="h-4 w-4" />
+              </AccordionTrigger>
+              <AccordionContent>
+                <SidebarGroup>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton>
+                          <NavLink to="/instructor/dashboard">
+                            <Home className="h-4 w-4" />
+                            <span>Dashboard</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton>
+                          <NavLink to="/instructor/courses">
+                            <Book className="h-4 w-4" />
+                            <span>Mis Cursos</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton>
+                          <NavLink to="/instructor/students">
+                            <Users className="h-4 w-4" />
+                            <span>Estudiantes</span>
                           </NavLink>
                         </SidebarMenuButton>
                       </SidebarMenuItem>

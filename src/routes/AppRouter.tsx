@@ -12,8 +12,13 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 const AppRouter: React.FC = () => {
   return (
     <Routes>
+      {/* Public routes are accessible without authentication */}
       <Route path="/*" element={<PublicRoutes />} />
+      
+      {/* User routes for standard authenticated users */}
       <Route path="/home/*" element={<UserRoutes />} />
+      
+      {/* Role-specific routes */}
       <Route path="/instructor/*" element={<InstructorRoutes />} />
       <Route path="/admin/*" element={<AdminRoutes />} />
       
@@ -24,6 +29,10 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
+      {/* Index redirect to home or landing page */}
+      <Route path="/index" element={<Navigate to="/" replace />} />
+      
+      {/* Catch-all route for not found pages */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
