@@ -30,10 +30,12 @@ const CoursesCatalog: React.FC = () => {
     try {
       console.log("Fetching courses...");
       
-      // Evitamos usar la conexión del src/lib/supabase.ts y usamos la de integrations directamente
       const { data, error: supabaseError } = await supabase
         .from('courses')
-        .select('*')
+        .select(`
+          *,
+          instructor:profiles(id, full_name)
+        `)
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
@@ -45,12 +47,29 @@ const CoursesCatalog: React.FC = () => {
       console.log("Cursos obtenidos:", data);
       
       // Transform the data to ensure it matches the Course type
-      const typedCourses: Course[] = data?.map((course: any) => ({
-        ...course,
-        currency: (course.currency === 'eur' || course.currency === 'usd') 
-          ? course.currency 
-          : 'eur' // Default to 'eur' if not a valid value
-      })) || [];
+      const typedCourses: Course[] = data?.map((course: any) => {
+        // Extract instructor from the joined data
+        let instructor = undefined;
+        if (course.instructor) {
+          // Handle the case where instructor might be an array with a single object
+          if (Array.isArray(course.instructor) && course.instructor.length > 0) {
+            instructor = {
+              id: course.instructor[0].id,
+              full_name: course.instructor[0].full_name
+            };
+          } else if (typeof course.instructor === 'object') {
+            instructor = course.instructor;
+          }
+        }
+
+        return {
+          ...course,
+          instructor,
+          currency: (course.currency === 'eur' || course.currency === 'usd') 
+            ? course.currency 
+            : 'eur' // Default to 'eur' if not a valid value
+        } as Course;
+      }) || [];
       
       setCourses(typedCourses);
     } catch (error: any) {
