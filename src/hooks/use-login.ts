@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { LoginFormValues } from '@/lib/validations/auth';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { userRole } = useAuth();
 
   const login = async (data: LoginFormValues) => {
     setIsLoading(true);
@@ -25,7 +27,16 @@ export const useLogin = () => {
 
       if (authData.user) {
         toast.success('Inicio de sesión exitoso');
-        navigate('/home');
+        
+        // Redirect based on user role
+        if (userRole === 'admin') {
+          navigate('/admin/dashboard');
+        } else if (userRole === 'instructor') {
+          navigate('/instructor/courses');
+        } else {
+          // Default for students
+          navigate('/my-courses');
+        }
       }
     } catch (error: any) {
       console.error('Error durante el inicio de sesión:', error);
