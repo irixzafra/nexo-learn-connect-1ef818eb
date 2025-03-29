@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -99,7 +98,9 @@ const EditLesson: React.FC = () => {
       toast.success('Contenido de la lección actualizado correctamente');
       queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
       queryClient.invalidateQueries({ queryKey: ['courseLessons', courseId] });
-      queryClient.invalidateQueries({ queryKey: ['moduleModules', moduleId] });
+      if (lesson?.module_id) {
+        queryClient.invalidateQueries({ queryKey: ['moduleModules', lesson.module_id] });
+      }
     },
     onError: (error) => {
       console.error('Error al actualizar el contenido de la lección:', error);
