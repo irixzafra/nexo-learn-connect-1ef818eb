@@ -19,9 +19,7 @@ const InstructorRoutes = () => {
     <Routes>
       <Route path="/dashboard" element={
         <ProtectedRoute requiredRole="instructor">
-          <AppLayout>
-            <InstructorDashboard />
-          </AppLayout>
+          <InstructorDashboard />
         </ProtectedRoute>
       } />
       <Route path="/students" element={
