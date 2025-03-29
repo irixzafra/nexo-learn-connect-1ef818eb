@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
@@ -14,7 +13,9 @@ import {
   School,
   Cog,
   Shield,
-  PlusCircle
+  PlusCircle,
+  BarChart3,
+  Server
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
@@ -32,6 +33,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
     aprendizaje: true,
     comunidad: false,
     gestion: true,
+    sistemas: true,
     cuenta: false
   };
 
@@ -68,6 +70,56 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
+
+      {/* Grupo Sistemas - Nuevo */}
+      <div className="px-3">
+        <Collapsible 
+          open={openGroups.sistemas} 
+          onOpenChange={() => toggleGroup('sistemas')}
+          className="space-y-2"
+        >
+          <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-sm font-medium hover:text-primary transition-colors">
+            <span>Sistemas</span>
+            <div className={cn(
+              "h-5 w-5 rounded-md flex items-center justify-center transition-colors",
+              openGroups.sistemas ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            )}>
+              <PlusCircle className={cn(
+                "h-3.5 w-3.5 transition-transform", 
+                openGroups.sistemas && "rotate-45"
+              )} />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-1 pl-1">
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton>
+                      <NavLink to="/sistemas/dashboard" className={({ isActive }) => 
+                        isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
+                      }>
+                        <BarChart3 className="h-4 w-4 mr-3 flex-shrink-0" />
+                        <span>Monitoreo</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton>
+                      <NavLink to="/sistemas/servers" className={({ isActive }) => 
+                        isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
+                      }>
+                        <Server className="h-4 w-4 mr-3 flex-shrink-0" />
+                        <span>Servidores</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
 
       {/* Grupo Aprendizaje */}
       <div className="px-3">

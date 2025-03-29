@@ -41,6 +41,18 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
+      {/* New: Sistemas routes */}
+      <Route path="/sistemas/*" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <div className="p-6">
+              <h1 className="text-2xl font-bold mb-4">Sistemas</h1>
+              <p className="text-muted-foreground">Esta sección está en desarrollo.</p>
+            </div>
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      
       {/* Course catalog and detail routes with proper layout */}
       <Route path="/courses" element={
         <AppLayout>
