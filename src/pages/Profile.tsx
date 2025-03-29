@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AppLayout from '@/layouts/AppLayout';
@@ -69,7 +70,7 @@ const Profile: React.FC = () => {
 
   return (
     <AppLayout>
-      <div className="container mx-auto py-8 px-4 md:px-6">
+      <div className="max-w-screen-xl mx-auto py-8 px-4 md:px-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
             <h1 className="text-3xl font-bold">Mi Perfil</h1>
