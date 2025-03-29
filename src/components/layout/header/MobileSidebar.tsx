@@ -5,12 +5,18 @@ import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { NexoLogo } from '@/components/ui/nexo-logo';
 import SidebarNavigation from '../SidebarNavigation';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MobileSidebarProps {
   viewAsRole: string;
 }
 
 export const MobileSidebar: React.FC<MobileSidebarProps> = ({ viewAsRole }) => {
+  const isMobile = useIsMobile();
+  
+  // If not on mobile, don't render anything
+  if (!isMobile) return null;
+  
   return (
     <div className="md:hidden">
       <Sheet>
