@@ -11,7 +11,7 @@ import {
   SidebarInset,
   SidebarTrigger,
   SidebarRail
-} from "./sidebar-components"
+} from "./components"
 import {
   SidebarGroup,
   SidebarGroupLabel,
