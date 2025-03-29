@@ -293,7 +293,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Usuario llega a / -> Ve contenido atractivo -> Navega por secciones -> Interactúa con CTAs
   * **Interacciones / Relaciones Clave:**
     * Enlaza a /courses, /auth/register, /auth/login
-    * Debe obtener datos de "Carreras Destacadas" (¿manual o desde courses?)
+    * Debe obtener y mostrar específicamente los cursos (courses) que tengan is_published = true Y is_featured_on_landing = true en la sección "Carreras Destacadas"
   * **Pistas UI/UX:**
     * Usar paleta de colores y estilo de las imágenes de referencia (tonos azules/morados/negros, gradientes sutiles, tipografía moderna)
     * Incorporar animaciones fluidas (Framer Motion) en scroll, hover, carga de elementos (efecto "wow" pero optimizado)
@@ -310,6 +310,8 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Acciones Clave:**
     * Acceder UI creación
     * Definir Título, Descripción, Precio, Moneda
+    * Definir Características del Curso (ej: Duración estimada en meses/horas, Nivel [Principiante/Intermedio/Avanzado], Prerrequisitos - inicialmente campos de texto simples)
+    * Marcar/Desmarcar una casilla "Destacar en Landing Page"
     * Añadir: Imagen de Portada (subida a Storage), Slug URL, Título SEO, Descripción SEO
     * Guardar borrador
   * **Flujo Principal:**
@@ -317,10 +319,11 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Interacciones:**
     * Escritura courses
     * Subida a Supabase Storage
+    * Nuevos campos necesarios en la tabla courses para almacenar características (ej: duration_text, level, prerequisites_text) y el flag is_featured_on_landing (BOOLEAN)
   * **Pistas UI/UX:**
     * Formulario incluye campos SEO y carga de imagen
   * **Instrucción Adicional:**
-    * Crea la tabla courses si no existe y añade 1-2 cursos de prueba (ej: "Máster en IA Generativa", "Carrera Desarrollo Full-Stack") con datos ficticios (incluyendo imagen placeholder URL, slug, SEO)
+    * Crea la tabla courses si no existe y añade 1-2 cursos de prueba (ej: "Máster en IA Generativa", "Carrera Desarrollo Full-Stack") con datos ficticios (incluyendo imagen placeholder URL, slug, SEO, y ahora también características de ejemplo y uno marcado como destacado)
   * **Estado:** [ ] Pendiente (Estado del doc anterior [x] pero se añaden requisitos)
 
 * **Funcionalidad: Edición de Estructura del Curso (Módulos y Lecciones)**
@@ -380,7 +383,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Ver lista de cursos
     * Hacer clic en un curso
   * **Flujo Principal:**
-    * Usuario visita /courses -> Se cargan cursos is_published=true -> Se muestran tarjetas (Título, Instructor, Precio, Imagen Portada) -> Clic lleva a detalle curso
+    * Usuario visita /courses -> Se cargan todos los cursos is_published=true -> Se muestran tarjetas (Título, Instructor, Precio, Imagen Portada) -> Clic lleva a detalle curso
   * **Interacciones:**
     * Lectura courses (con cover_image_url), profiles
   * **Pistas UI/UX:**
@@ -485,13 +488,17 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Navegar a /admin/courses
     * Ver tabla cursos
     * Clic en enlace para editar
+    * (Admin) Reordenar la lista de cursos mediante Drag & Drop
   * **Flujo Principal:**
     * Admin va a /admin/courses -> Carga datos courses (+instructor) -> Muestra tabla -> Enlace lleva a edición
   * **Interacciones:**
     * Lectura courses, profiles
+    * Se necesita un campo display_order (INTEGER) en la tabla courses para almacenar el orden personalizado
+    * La acción de Drag & Drop debe actualizar este campo en la base de datos para los cursos afectados
   * **Pistas UI/UX:**
     * Tabla clara
     * Enlace a edición visible. Solo vista/enlace. Paginación/Búsqueda opcional.
+    * La tabla (shadcn/ui) debe soportar Drag & Drop para reordenar filas (investigar librerías como dnd-kit o similares compatibles con tanstack/table si se usa)
   * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Impersonación de Usuarios (Admin)**
@@ -545,6 +552,14 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Pistas UI/UX:**
     * LanguageSwitcher simple (botones/select). (Prioridad baja Fase 1).
   * **Estado:** [ ] Pendiente
+
+* **Funcionalidad General: Ordenamiento Drag & Drop en Vistas de Gestión (Admin/Instructor)**
+  * **Objetivo:**
+    * Permitir a usuarios con permisos (Admin/Instructor) definir un orden visual personalizado para listas de elementos (Cursos, Módulos, Lecciones, Usuarios, etc.) en las tablas de gestión.
+  * **Implementación:**
+    * Cuando se implemente una tabla de gestión para Admins o Instructores donde el orden sea relevante, incluir la funcionalidad de reordenamiento mediante Drag & Drop.
+    * Esto requerirá añadir un campo display_order (o similar) a la tabla correspondiente y actualizarlo en la BD tras la acción de D&D.
+    * Este orden personalizado podría usarse opcionalmente para filtrar o mostrar elementos en otras partes de la aplicación.
 
 ### Fase: Enriquecimiento LMS e Interacción Inicial
 
@@ -647,3 +662,4 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Interfaz clara para calificar
     * Vista clara para estudiante
   * **Estado:** [ ]
+
