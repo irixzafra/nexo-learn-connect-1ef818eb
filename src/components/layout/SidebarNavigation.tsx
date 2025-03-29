@@ -1,208 +1,167 @@
-import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types/auth';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  Home, 
-  Book, 
-  Users, 
-  MessageSquare, 
-  CalendarDays, 
-  CreditCard, 
-  Settings, 
-  Layers, 
-  Database, 
-  GraduationCap, 
-  PanelTop, 
-  FileText,
-  Plus,
+import {
+  Home,
+  Book,
+  GraduationCap,
+  Calendar,
+  MessageSquare,
+  Settings,
+  ChevronDown,
+  TestTube
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Badge } from '@/components/ui/badge';
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useState } from 'react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
-interface NavItem {
-  label: string;
-  href: string;
-  icon: React.ComponentType<any>;
-  badge?: string | number;
-  highlight?: boolean;
+interface SidebarMenuProps {
+  children: React.ReactNode;
 }
 
-interface NavSection {
-  title?: string;
-  items: NavItem[];
+const SidebarMenu: React.FC<SidebarMenuProps> = ({ children }) => (
+  <nav className="grid gap-1">{children}</nav>
+);
+
+interface SidebarMenuItemProps {
+  children: React.ReactNode;
 }
 
-interface SidebarNavigationProps {
-  viewAsRole?: 'current' | UserRole;
+const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ children }) => (
+  <div className="rounded-md hover:bg-secondary">
+    {children}
+  </div>
+);
+
+interface SidebarMenuButtonProps {
+  children: React.ReactNode;
 }
 
-const isActive = (pathname: string, href: string): boolean => {
-  return pathname === href || (href !== '/' && pathname.startsWith(href));
-};
+const SidebarMenuButton: React.FC<SidebarMenuButtonProps> = ({ children }) => (
+  <div className="px-3 py-2 text-sm font-medium transition-colors hover:text-foreground">
+    {children}
+  </div>
+);
 
-export const SidebarNavigation = ({ viewAsRole = 'current' }: SidebarNavigationProps) => {
+interface SidebarGroupProps {
+  children: React.ReactNode;
+}
+
+const SidebarGroup: React.FC<SidebarGroupProps> = ({ children }) => (
+  <div>{children}</div>
+);
+
+interface SidebarGroupLabelProps {
+  children: React.ReactNode;
+}
+
+const SidebarGroupLabel: React.FC<SidebarGroupLabelProps> = ({ children }) => (
+  <div className="mb-2 px-4 text-sm font-semibold opacity-75">{children}</div>
+);
+
+interface SidebarGroupContentProps {
+  children: React.ReactNode;
+}
+
+const SidebarGroupContent: React.FC<SidebarGroupContentProps> = ({ children }) => (
+  <div className="mb-4">{children}</div>
+);
+
+export const SidebarNavigation = () => {
   const { userRole } = useAuth();
-  const effectiveRole = viewAsRole === 'current' ? userRole : viewAsRole;
-  const { pathname } = useLocation();
-
-  const studentSections: NavSection[] = [
-    {
-      items: [
-        { label: 'Inicio', href: '/home', icon: Home },
-        { label: 'Mis Cursos', href: '/my-courses', icon: Book, badge: '2', highlight: true },
-      ]
-    },
-    {
-      title: 'Comunicación',
-      items: [
-        { label: 'Mensajes', href: '/messages', icon: MessageSquare, badge: '3' },
-        { label: 'Calendario', href: '/calendar', icon: CalendarDays },
-      ]
-    },
-    {
-      title: 'Cuenta',
-      items: [
-        { label: 'Facturación', href: '/billing', icon: CreditCard },
-        { label: 'Configuración', href: '/settings', icon: Settings },
-      ]
-    }
-  ];
-
-  const instructorSections: NavSection[] = [
-    {
-      items: [
-        { label: 'Inicio', href: '/home', icon: Home },
-        { label: 'Panel Instructor', href: '/instructor/dashboard', icon: PanelTop },
-      ]
-    },
-    {
-      title: 'Enseñanza',
-      items: [
-        { label: 'Mis Cursos', href: '/instructor/courses', icon: Book },
-        { label: 'Crear Curso', href: '/instructor/courses/new', icon: Plus, highlight: true },
-        { label: 'Estudiantes', href: '/instructor/students', icon: GraduationCap },
-      ]
-    },
-    {
-      title: 'Comunicación',
-      items: [
-        { label: 'Mensajes', href: '/messages', icon: MessageSquare, badge: '3' },
-        { label: 'Calendario', href: '/calendar', icon: CalendarDays },
-      ]
-    },
-    {
-      title: 'Cuenta',
-      items: [
-        { label: 'Facturación', href: '/billing', icon: CreditCard },
-        { label: 'Configuración', href: '/settings', icon: Settings },
-      ]
-    }
-  ];
-
-  const adminSections: NavSection[] = [
-    {
-      items: [
-        { label: 'Inicio', href: '/home', icon: Home },
-        { label: 'Panel Admin', href: '/admin/dashboard', icon: PanelTop },
-      ]
-    },
-    {
-      title: 'Gestión',
-      items: [
-        { label: 'Cursos', href: '/courses', icon: Book },
-        { label: 'Usuarios', href: '/users', icon: Users },
-        { label: 'Contenido', href: '/admin/content', icon: FileText },
-      ]
-    },
-    {
-      title: 'Comunicación',
-      items: [
-        { label: 'Mensajes', href: '/messages', icon: MessageSquare },
-        { label: 'Calendario', href: '/calendar', icon: CalendarDays },
-      ]
-    },
-    {
-      title: 'Sistema',
-      items: [
-        { label: 'Facturación', href: '/billing', icon: CreditCard },
-        { label: 'Datos de Prueba', href: '/admin/test-data', icon: Database },
-        { label: 'Configuración', href: '/settings', icon: Settings },
-      ]
-    }
-  ];
-
-  let navigationSections: NavSection[] = [];
-
-  switch (effectiveRole) {
-    case 'admin':
-      navigationSections = adminSections;
-      break;
-    case 'instructor':
-      navigationSections = instructorSections;
-      break;
-    case 'student':
-    default:
-      navigationSections = studentSections;
-      break;
-  }
+  const [open, setOpen] = useState(false)
 
   return (
-    <div className="flex flex-col space-y-6 py-2">
-      {navigationSections.map((section, idx) => (
-        <div key={idx}>
-          {section.title && (
-            <h3 className="mb-2 ml-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              {section.title}
-            </h3>
-          )}
-          <div className="space-y-1">
-            {section.items.map((item) => (
-              <Tooltip key={item.href} delayDuration={300}>
-                <TooltipTrigger asChild>
-                  <Link
-                    to={item.href}
-                    className={cn(
-                      "flex items-center justify-between rounded-md p-2 text-sm font-medium transition-colors",
-                      isActive(pathname, item.href)
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                      item.highlight && !isActive(pathname, item.href) && "text-primary hover:text-primary-foreground"
-                    )}
-                  >
-                    <span className="flex items-center">
-                      <item.icon className={cn("mr-2 h-4 w-4", 
-                        item.highlight && !isActive(pathname, item.href) && "text-primary"
-                      )} />
-                      <span>{item.label}</span>
-                    </span>
-                    {item.badge && (
-                      <Badge 
-                        variant={isActive(pathname, item.href) ? "outline" : "default"} 
-                        className={cn(
-                          "ml-auto",
-                          !isActive(pathname, item.href) && "bg-primary/10 text-primary hover:bg-primary/20"
-                        )}
-                      >
-                        {item.badge}
-                      </Badge>
-                    )}
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent side="right" className="z-50">
-                  {item.label}
-                </TooltipContent>
-              </Tooltip>
-            ))}
-          </div>
-        </div>
-      ))}
+    <div className="flex flex-col gap-2">
+      <SidebarGroup>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <NavLink to="/home">
+                  <Home className="h-4 w-4" />
+                  <span>Inicio</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <NavLink to="/courses">
+                  <Book className="h-4 w-4" />
+                  <span>Cursos</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <NavLink to="/my-learning">
+                  <GraduationCap className="h-4 w-4" />
+                  <span>Mi aprendizaje</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <NavLink to="/calendar">
+                  <Calendar className="h-4 w-4" />
+                  <span>Calendario</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <NavLink to="/messages">
+                  <MessageSquare className="h-4 w-4" />
+                  <span>Mensajes</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+      
+      {/* Admin Links */}
+      {userRole === 'admin' && (
+        <>
+          <Accordion type="single" collapsible>
+            <AccordionItem value="admin">
+              <AccordionTrigger className='hover:no-underline'>
+                Administración
+                <ChevronDown className="h-4 w-4" />
+              </AccordionTrigger>
+              <AccordionContent>
+                <SidebarGroup>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton asChild>
+                          <NavLink to="/users">
+                            <Settings className="h-4 w-4" />
+                            <span>Usuarios</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      
+                      <SidebarMenuItem>
+                        <SidebarMenuButton asChild>
+                          <NavLink to="/admin/test-data">
+                            <TestTube className="h-4 w-4" />
+                            <span>Datos de Prueba</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </>
+      )}
+      
     </div>
   );
 };
-
-export default SidebarNavigation;
