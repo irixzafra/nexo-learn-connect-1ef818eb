@@ -37,10 +37,10 @@ const LandingNav: React.FC = () => {
           <Link to="/courses" className="text-base font-medium hover:text-primary transition-colors">
             Cursos
           </Link>
-          <Link to="#pricing" className="text-base font-medium hover:text-primary transition-colors">
-            Precios
+          <Link to="/scholarships" className="text-base font-medium hover:text-primary transition-colors">
+            Becas y Ayudas
           </Link>
-          <Link to="#about" className="text-base font-medium hover:text-primary transition-colors">
+          <Link to="/about-us" className="text-base font-medium hover:text-primary transition-colors">
             Nosotros
           </Link>
         </div>

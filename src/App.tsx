@@ -22,6 +22,9 @@ import EditLesson from "./pages/instructor/EditLesson";
 import CoursesCatalog from "./pages/CoursesCatalog";
 import CourseDetail from "./pages/CourseDetail";
 import TestDataManagement from "./pages/admin/TestDataManagement";
+import AboutUs from "./pages/AboutUs";
+import Courses from "./pages/Courses";
+import Scholarships from "./pages/Scholarships";
 
 const Courses = () => (
   <div className="container mx-auto p-6">
@@ -123,6 +126,8 @@ const App = () => (
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 <Route path="/courses" element={<CoursesCatalog />} />
                 <Route path="/courses/:id" element={<CourseDetail />} />
+                <Route path="/about-us" element={<AboutUs />} />
+                <Route path="/scholarships" element={<Scholarships />} />
               
                 <Route path="/home" element={
                   <ProtectedRoute>
