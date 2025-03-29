@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -51,7 +50,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     navigate('/auth/login');
   };
 
-  // Esta función determina el rol que se usará para la UI
   const getEffectiveRole = () => {
     if (viewAsRole === 'current') return userRole;
     return viewAsRole;
@@ -59,7 +57,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const effectiveRole = getEffectiveRole();
 
-  // Esta función obtiene las iniciales del rol para mostrar en el avatar
   const getRoleInitials = (role: string | null) => {
     if (!role) return 'U';
     return role.charAt(0).toUpperCase();
@@ -69,7 +66,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-muted/10">
         <Sidebar className="border-r bg-background">
-          <SidebarHeader className="border-b px-6 py-5">
+          <SidebarHeader className="border-b px-6 py-4">
             <div className="flex items-center">
               <NexoLogo className="h-9 w-auto" />
             </div>
@@ -165,7 +162,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </SidebarContent>
           
           <SidebarFooter className="border-t p-4">
-            {/* Role selector - solo visible para admin */}
             {userRole === 'admin' && (
               <div className="mb-4 px-2">
                 <Select 
@@ -187,7 +183,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </div>
             )}
 
-            {/* User profile and logout */}
             <div className="flex items-center space-x-3 px-2 py-2 rounded-md">
               <Avatar className="h-10 w-10 border-2 border-primary/20">
                 <AvatarFallback className="bg-primary/10 text-primary font-medium">

@@ -33,6 +33,17 @@ export interface Course {
   is_published: boolean;
   created_at: string;
   updated_at: string;
+  // Nuevos campos SEO y características
+  cover_image_url?: string;
+  slug?: string;
+  seo_title?: string;
+  seo_description?: string;
+  is_featured_on_landing?: boolean;
+  duration_text?: string;
+  level?: string;
+  prerequisites_text?: string;
+  display_order?: number;
+  // Relaciones
   instructor?: {
     id: string;
     full_name: string;
