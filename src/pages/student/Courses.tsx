@@ -39,7 +39,7 @@ const StudentCourses: React.FC = () => {
         const courseIds = enrollments.map(enrollment => enrollment.course_id);
         
         // Obtener los detalles de los cursos
-        const { data: courses, error: coursesError } = await supabase
+        const { data: coursesData, error: coursesError } = await supabase
           .from('courses')
           .select(`
             id, 
@@ -48,7 +48,13 @@ const StudentCourses: React.FC = () => {
             cover_image_url,
             duration_text,
             level,
-            instructor:instructor_id (
+            instructor_id,
+            price,
+            currency,
+            is_published,
+            created_at,
+            updated_at,
+            instructor:profiles!instructor_id (
               id, full_name
             )
           `)
@@ -59,7 +65,21 @@ const StudentCourses: React.FC = () => {
           return;
         }
         
-        setEnrolledCourses(courses as Course[]);
+        // Transform the data to match Course type
+        const formattedCourses = coursesData.map(course => {
+          // Ensure we convert the instructor data structure to match our type
+          const instructorData = course.instructor ? {
+            id: course.instructor.id,
+            full_name: course.instructor.full_name
+          } : undefined;
+          
+          return {
+            ...course,
+            instructor: instructorData
+          } as Course;
+        });
+        
+        setEnrolledCourses(formattedCourses);
       } catch (error) {
         console.error('Error in fetchEnrolledCourses:', error);
       } finally {
