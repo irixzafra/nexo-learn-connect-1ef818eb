@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useTestData, TestDataType } from '@/contexts/test-data';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -12,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from '@/components/ui/checkbox';
 import { DeleteTypeDataDialog } from './DeleteTypeDataDialog';
-import { DotsHorizontalIcon, Eye, EyeOff, Trash2 } from 'lucide-react';
+import { Eye, MoreHorizontal, Trash2 } from 'lucide-react';
 import { MoreDropdownMenu } from './MoreDropdownMenu';
 
 interface DataTypeTabContentProps {
@@ -75,14 +76,14 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({ type, la
         renderHeader: () => (
           <Checkbox
             checked={allSelected}
-            onCheckedChange={handleSelectAll}
+            onCheckedChange={(checked) => handleSelectAll(!!checked)}
             aria-label="Select all"
           />
         ),
         renderCell: (params) => (
           <Checkbox
             checked={selectedItemIds.includes(params.row.id)}
-            onCheckedChange={(checked) => handleSelectItem(params.row.id, checked)}
+            onCheckedChange={(checked) => handleSelectItem(params.row.id, !!checked)}
             aria-label={`Select row ${params.row.id}`}
           />
         ),
@@ -157,7 +158,7 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({ type, la
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm">
-                    <DotsHorizontalIcon className="h-4 w-4 mr-2" />
+                    <MoreHorizontal className="h-4 w-4 mr-2" />
                     Columnas
                   </Button>
                 </DialogTrigger>

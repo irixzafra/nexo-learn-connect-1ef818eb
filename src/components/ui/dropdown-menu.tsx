@@ -1,50 +1,21 @@
+
 import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const DropdownMenu = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Root>
->(({ ...props }, ref) => (
-  <DropdownMenuPrimitive.Root {...props} />
-))
-DropdownMenu.displayName = DropdownMenuPrimitive.Root.displayName
+const DropdownMenu = DropdownMenuPrimitive.Root
 
-const DropdownMenuTrigger = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Trigger>
->(({ ...props }, ref) => (
-  <DropdownMenuPrimitive.Trigger ref={ref} {...props} />
-))
-DropdownMenuTrigger.displayName = DropdownMenuPrimitive.Trigger.displayName
+const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 
-const DropdownMenuGroup = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuPrimitive.Group>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Group>
->(({ ...props }, ref) => (
-  <DropdownMenuPrimitive.Group ref={ref} {...props} />
-))
-DropdownMenuGroup.displayName = DropdownMenuPrimitive.Group.displayName
+const DropdownMenuGroup = DropdownMenuPrimitive.Group
 
-const DropdownMenuPortal = ({
-  ...props
-}: DropdownMenuPrimitive.DropdownMenuPortalProps) => (
-  <DropdownMenuPrimitive.Portal {...props} />
-)
-DropdownMenuPortal.displayName = DropdownMenuPrimitive.Portal.displayName
+const DropdownMenuPortal = DropdownMenuPrimitive.Portal
 
 const DropdownMenuSub = DropdownMenuPrimitive.Sub
-DropdownMenuSub.displayName = DropdownMenuPrimitive.Sub.displayName
 
-const DropdownMenuRadioGroup = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuPrimitive.RadioGroup>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioGroup>
->(({ ...props }, ref) => (
-  <DropdownMenuPrimitive.RadioGroup ref={ref} {...props} />
-))
-DropdownMenuRadioGroup.displayName = DropdownMenuPrimitive.RadioGroup.displayName
+const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
 const DropdownMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
