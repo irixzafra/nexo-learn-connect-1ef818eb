@@ -11,6 +11,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import CoursesCatalog from '@/pages/CoursesCatalog';
 import CourseDetail from '@/pages/CourseDetail';
+import StudentCourses from '@/pages/student/Courses';
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -44,7 +45,7 @@ const AppRouter: React.FC = () => {
       {/* My courses redirect for authenticated users */}
       <Route path="/my-courses" element={
         <ProtectedRoute>
-          <Navigate to="/home/my-courses" replace />
+          <StudentCourses />
         </ProtectedRoute>
       } />
       
