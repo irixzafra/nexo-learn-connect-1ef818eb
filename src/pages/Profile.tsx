@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Edit, X } from 'lucide-react';
 import ProfileEditForm from '@/components/profile/ProfileEditForm';
 import UserRoleEditor from '@/components/admin/UserRoleEditor';
+import { captureError, trackUserAction } from '@/lib/sentry';
 
 const Profile: React.FC = () => {
   const { user, profile, userRole } = useAuth();
@@ -42,8 +43,29 @@ const Profile: React.FC = () => {
 
   const handleEditSuccess = () => {
     setIsEditing(false);
+    // Track successful profile update
+    trackUserAction('profile_updated', { 
+      userId: user?.id,
+      role: userRole
+    });
     // Refresh the page to get the updated profile data
     window.location.reload();
+  };
+
+  const handleStartEditing = () => {
+    setIsEditing(true);
+    trackUserAction('profile_edit_started', { 
+      userId: user?.id,
+      role: userRole
+    });
+  };
+
+  const handleCancelEditing = () => {
+    setIsEditing(false);
+    trackUserAction('profile_edit_cancelled', { 
+      userId: user?.id,
+      role: userRole
+    });
   };
 
   const isAdmin = userRole === 'admin';
@@ -64,11 +86,11 @@ const Profile: React.FC = () => {
                 </CardDescription>
               </div>
               {!isEditing ? (
-                <Button variant="outline" size="icon" onClick={() => setIsEditing(true)}>
+                <Button variant="outline" size="icon" onClick={handleStartEditing}>
                   <Edit className="h-4 w-4" />
                 </Button>
               ) : (
-                <Button variant="outline" size="icon" onClick={() => setIsEditing(false)}>
+                <Button variant="outline" size="icon" onClick={handleCancelEditing}>
                   <X className="h-4 w-4" />
                 </Button>
               )}

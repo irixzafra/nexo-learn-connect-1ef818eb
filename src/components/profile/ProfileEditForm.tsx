@@ -17,6 +17,7 @@ import {
 import { UserProfile, UserRole } from '@/types/auth';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/components/ui/use-toast';
+import { captureError } from '@/lib/sentry';
 
 const profileFormSchema = z.object({
   full_name: z.string().min(2, {
@@ -66,6 +67,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
       
       if (error) {
         console.error('Error al actualizar el perfil:', error);
+        captureError(error, { operation: 'updateProfile', userId: user_id });
         toast({
           variant: "destructive",
           title: "Error",
@@ -82,6 +84,11 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
       onSuccess();
     } catch (error) {
       console.error('Error en el envío del formulario:', error);
+      captureError(error, { 
+        operation: 'profileEditSubmit', 
+        userId: user_id,
+        formData: { full_name: data.full_name } 
+      });
       toast({
         variant: "destructive",
         title: "Error",

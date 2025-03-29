@@ -33,6 +33,19 @@ export const trackUserAction = (
     data,
     level: 'info',
   });
+  
+  // Para acciones importantes, también capturamos un evento discreto
+  // que nos permite hacer análisis específicos en Sentry
+  if (action.startsWith('profile_')) {
+    Sentry.captureMessage(`User Action: ${action}`, {
+      level: 'info',
+      tags: {
+        action_type: action,
+        user_id: data?.userId,
+        user_role: data?.role
+      }
+    });
+  }
 };
 
 /**
