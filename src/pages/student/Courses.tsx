@@ -80,9 +80,8 @@ const StudentCourses: React.FC = () => {
         
         // Transform the data to match Course type
         const formattedCourses = coursesData.map(course => {
-          // Fix: Correctly handle the instructor data based on the query result structure
-          // The 'profiles' field is an object, not an array, containing instructor data
-          const instructorData = course.profiles ? {
+          // The type of profiles from Supabase is { id: string, full_name: string } not an array
+          const instructorData = course.profiles && typeof course.profiles === 'object' ? {
             id: course.profiles.id,
             full_name: course.profiles.full_name
           } : undefined;
