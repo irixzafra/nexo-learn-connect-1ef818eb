@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import LandingNav from '@/components/LandingNav';
 
 const LandingPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -22,7 +22,7 @@ const LandingPage: React.FC = () => {
             Cursos, recursos y networking para impulsar tu carrera.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            {user ? (
+            {isAuthenticated ? (
               <Button size="lg" asChild>
                 <Link to="/home">Ir al panel de control</Link>
               </Button>

@@ -12,6 +12,7 @@ interface AuthContextType {
   isLoading: boolean;
   logout: () => Promise<void>;
   isInitialized: boolean;
+  isAuthenticated: boolean; // Added the missing property
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -127,6 +128,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Compute the authentication status based on session existence
+  const isAuthenticated = !!session && !!user;
+
   const value = {
     user,
     session,
@@ -134,7 +138,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     userRole,
     isLoading,
     logout,
-    isInitialized
+    isInitialized,
+    isAuthenticated // Add the new property to the context value
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

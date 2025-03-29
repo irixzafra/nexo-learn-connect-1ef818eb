@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { User, LogIn } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
