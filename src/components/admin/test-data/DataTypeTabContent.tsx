@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTestData, TestDataType } from '@/contexts/TestDataContext';
 import { 
   Card, 
@@ -42,6 +42,18 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
   const isIndeterminate = selectedIds.length > 0 && selectedIds.length < items.length;
   const isAllSelected = items.length > 0 && selectedIds.length === items.length;
 
+  // Create a ref for the checkbox
+  const checkboxRef = useRef<HTMLButtonElement>(null);
+
+  // Update indeterminate state using a side effect
+  React.useEffect(() => {
+    if (checkboxRef.current) {
+      // We need to use DOM API to set indeterminate state
+      // This is a workaround since indeterminate is not a standard prop in React
+      (checkboxRef.current as any).indeterminate = isIndeterminate;
+    }
+  }, [isIndeterminate]);
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -52,12 +64,7 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
           <div className="flex items-center space-x-2">
             <Checkbox 
               checked={isAllSelected}
-              // Manually set indeterminate using ref
-              ref={(checkbox) => {
-                if (checkbox) {
-                  checkbox.indeterminate = isIndeterminate;
-                }
-              }}
+              ref={checkboxRef}
               onCheckedChange={handleSelectAll}
               aria-label="Seleccionar todos"
             />
