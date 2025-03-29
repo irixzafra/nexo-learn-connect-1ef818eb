@@ -46,6 +46,13 @@ export interface Course {
   // Adding the missing properties
   category?: string;
   featured_instructor?: string;
+  // New properties for enhanced filter functionality
+  start_date?: string;
+  end_date?: string; 
+  student_count?: number;
+  rating?: number;
+  tags?: string[];
+  popular_score?: number;
   // Relationships
   instructor?: {
     id: string;

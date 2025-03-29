@@ -15,6 +15,7 @@ import Courses from '@/pages/Courses';
 import CourseDetail from '@/pages/CourseDetail';
 import CourseLanding from '@/pages/CourseLanding';
 import AppLayout from '@/layouts/AppLayout';
+import CoursesCatalog from '@/pages/CoursesCatalog';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -30,7 +31,7 @@ const PublicRoutes: React.FC = () => {
       <Route path="/payment/cancel" element={<PaymentCancel />} />
       <Route path="/courses" element={
         <AppLayout>
-          <Courses />
+          <CoursesCatalog />
         </AppLayout>
       } />
       <Route path="*" element={<NotFound />} />

@@ -1,14 +1,29 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Course } from '@/types/course';
 import { toast } from 'sonner';
 import { featuredCourses } from '@/features/courses/utils/featuredCoursesData';
 
+// Enhanced course data with additional properties for improved filters
+const enhancedFeaturedCourses = featuredCourses.map(course => ({
+  ...course,
+  student_count: Math.floor(Math.random() * 2000) + 50,
+  rating: parseFloat((3 + Math.random() * 2).toFixed(1)),
+  start_date: Math.random() > 0.4 ? 
+    new Date(Date.now() + (Math.random() * 30 * 24 * 60 * 60 * 1000)).toISOString() : 
+    undefined,
+  tags: ['Javascript', 'React', 'Web', 'Frontend', 'Backend', 'UI/UX', 'DevOps']
+    .sort(() => Math.random() - 0.5)
+    .slice(0, Math.floor(Math.random() * 4) + 1),
+  popular_score: Math.floor(Math.random() * 10) + 1,
+  created_at: new Date(Date.now() - (Math.random() * 120 * 24 * 60 * 60 * 1000)).toISOString(),
+}));
+
 export const useCoursesCatalog = () => {
-  const [courses, setCourses] = useState<any[]>(featuredCourses); // Use featuredCourses as fallback
+  const [courses, setCourses] = useState<any[]>(enhancedFeaturedCourses); // Use enhanced data as fallback
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<any>(null);
 
@@ -37,7 +52,14 @@ export const useCoursesCatalog = () => {
           cover_image_url, 
           level, 
           duration_text,
-          featured_instructor
+          featured_instructor,
+          category,
+          tags,
+          start_date,
+          end_date,
+          student_count,
+          rating,
+          popular_score
         `)
         .eq('is_published', true);
 
@@ -51,13 +73,21 @@ export const useCoursesCatalog = () => {
         throw coursesError;
       }
       
-      setCourses(coursesData || []);
+      // Transform the data to include additional properties if needed
+      const enhancedCoursesData = coursesData?.map(course => ({
+        ...course,
+        student_count: course.student_count || Math.floor(Math.random() * 1000),
+        rating: course.rating || parseFloat((3 + Math.random() * 2).toFixed(1)),
+        tags: course.tags || []
+      })) || [];
+      
+      setCourses(enhancedCoursesData);
       */
       
       // For now, we'll use the mock data instead
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 800));
-      setCourses(featuredCourses);
+      setCourses(enhancedFeaturedCourses);
       
     } catch (error: any) {
       console.error('Error al cargar los cursos:', error);
@@ -88,7 +118,6 @@ export const useCoursesCatalog = () => {
   }, []);
 
   const clearFilters = () => {
-    setSelectedLevel(null);
     setSearchTerm('');
     toast.info("Filtros eliminados", {
       description: "Mostrando todos los cursos disponibles"
@@ -96,13 +125,12 @@ export const useCoursesCatalog = () => {
   };
 
   const filteredCourses = courses.filter((course) => {
-    const matchesSearch = !searchTerm || 
+    return !searchTerm || 
       course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (course.description && course.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesLevel = !selectedLevel || course.level.toLowerCase() === selectedLevel.toLowerCase();
-    
-    return matchesSearch && matchesLevel;
+      (course.description && course.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (course.category && course.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (course.featured_instructor && course.featured_instructor.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (course.tags && course.tags.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase())));
   });
 
   return {
@@ -113,8 +141,6 @@ export const useCoursesCatalog = () => {
     debugInfo,
     searchTerm,
     setSearchTerm,
-    selectedLevel,
-    setSelectedLevel,
     clearFilters,
     fetchCourses
   };
