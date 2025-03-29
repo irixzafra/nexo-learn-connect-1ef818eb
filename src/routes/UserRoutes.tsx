@@ -13,83 +13,23 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import Settings from '@/pages/placeholder/Settings';
 import Messages from '@/pages/placeholder/Messages';
 import Calendar from '@/pages/placeholder/Calendar';
+import AppLayout from '@/layouts/AppLayout';
 
 const UserRoutes: React.FC = () => {
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/settings"
-        element={
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/messages"
-        element={
-          <ProtectedRoute>
-            <Messages />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/calendar"
-        element={
-          <ProtectedRoute>
-            <Calendar />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/my-courses"
-        element={
-          <ProtectedRoute>
-            <StudentCourses />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/courses/:courseId/learn"
-        element={
-          <ProtectedRoute>
-            <CourseLearn />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/courses/:courseId/learn/:lessonId"
-        element={
-          <ProtectedRoute>
-            <LessonView />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/checkout/:courseId"
-        element={
-          <ProtectedRoute>
-            <Checkout />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+    <AppLayout>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/my-courses" element={<StudentCourses />} />
+        <Route path="/courses/:courseId/learn" element={<CourseLearn />} />
+        <Route path="/courses/:courseId/learn/:lessonId" element={<LessonView />} />
+        <Route path="/checkout/:courseId" element={<Checkout />} />
+      </Routes>
+    </AppLayout>
   );
 };
 

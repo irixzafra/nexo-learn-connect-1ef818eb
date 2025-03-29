@@ -11,7 +11,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import CoursesCatalog from '@/pages/CoursesCatalog';
 import CourseDetail from '@/pages/CourseDetail';
-import StudentCourses from '@/pages/student/Courses';
+import AppLayout from '@/layouts/AppLayout';
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -22,32 +22,56 @@ const AppRouter: React.FC = () => {
       <Route path="/*" element={<PublicRoutes />} />
       
       {/* User routes for standard authenticated users */}
-      <Route path="/home/*" element={<UserRoutes />} />
+      <Route path="/home/*" element={
+        <ProtectedRoute>
+          <UserRoutes />
+        </ProtectedRoute>
+      } />
       
       {/* Role-specific routes */}
-      <Route path="/instructor/*" element={<InstructorRoutes />} />
-      <Route path="/admin/*" element={<AdminRoutes />} />
+      <Route path="/instructor/*" element={
+        <ProtectedRoute>
+          <InstructorRoutes />
+        </ProtectedRoute>
+      } />
       
-      {/* Direct profile access route */}
+      <Route path="/admin/*" element={
+        <ProtectedRoute>
+          <AdminRoutes />
+        </ProtectedRoute>
+      } />
+      
+      {/* Course catalog and detail routes with proper layout */}
+      <Route path="/courses" element={
+        <AppLayout>
+          <CoursesCatalog />
+        </AppLayout>
+      } />
+      
+      <Route path="/courses/:id" element={
+        <AppLayout>
+          <CourseDetail />
+        </AppLayout>
+      } />
+      
+      {/* My courses route with redirection to user routes */}
+      <Route path="/my-courses" element={
+        <ProtectedRoute>
+          <Navigate to="/home/my-courses" replace />
+        </ProtectedRoute>
+      } />
+      
+      {/* Profile with layout */}
       <Route path="/profile" element={
         <ProtectedRoute>
-          <Profile />
+          <AppLayout>
+            <Profile />
+          </AppLayout>
         </ProtectedRoute>
       } />
       
       {/* Index redirect to home or landing page */}
       <Route path="/index" element={<Navigate to="/" replace />} />
-      
-      {/* Course catalog and detail routes that should be accessible to everyone */}
-      <Route path="/courses" element={<CoursesCatalog />} />
-      <Route path="/courses/:id" element={<CourseDetail />} />
-      
-      {/* My courses redirect for authenticated users */}
-      <Route path="/my-courses" element={
-        <ProtectedRoute>
-          <StudentCourses />
-        </ProtectedRoute>
-      } />
       
       {/* Catch-all route for not found pages */}
       <Route path="*" element={<NotFound />} />
