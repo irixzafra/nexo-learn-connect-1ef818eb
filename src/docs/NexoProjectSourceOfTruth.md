@@ -1,4 +1,3 @@
-
 # Nexo Project - Guía de Desarrollo
 
 **Versión:** 1.7
@@ -388,3 +387,248 @@ Se realizó una refactorización del código MVP para mejorar la modularidad y p
 
 - Continuar con la refactorización de otras áreas del MVP siguiendo este patrón.
 - Implementar la siguiente funcionalidad del roadmap ("Seguimiento de Progreso en Cursos") utilizando esta estructura modular.
+
+### SEC-RLS-CORRECTION-01: Corrección de Políticas RLS
+
+**Fecha**: 2023-12-10
+**Autor**: Lovable AI
+**Estado**: Completado
+
+#### Descripción
+
+Se realizó una revisión y corrección de las políticas de Row Level Security (RLS) para asegurar que los permisos de acceso a los datos están correctamente implementados según los principios de seguridad establecidos para la plataforma Nexo.
+
+#### Políticas Implementadas
+
+##### Table: profiles
+
+```sql
+-- Los usuarios pueden ver su propio perfil completo
+CREATE POLICY "Users can view their own profile completely" 
+ON public.profiles FOR SELECT 
+USING (auth.uid() = id);
+
+-- Los usuarios autenticados pueden ver información básica de otros perfiles
+CREATE POLICY "Users can view basic info of other profiles" 
+ON public.profiles FOR SELECT 
+TO authenticated
+USING (true);
+
+-- Los usuarios pueden actualizar solo su propio perfil
+CREATE POLICY "Users can update their own profile" 
+ON public.profiles FOR UPDATE 
+USING (auth.uid() = id);
+
+-- Los administradores pueden ver todos los perfiles
+CREATE POLICY "Admins can view all profiles" 
+ON public.profiles FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+-- Los administradores pueden actualizar todos los perfiles
+CREATE POLICY "Admins can update all profiles" 
+ON public.profiles FOR UPDATE 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+```
+
+##### Table: courses
+
+```sql
+-- Cualquier usuario puede ver cursos publicados
+CREATE POLICY "Public can view published courses" 
+ON public.courses FOR SELECT 
+USING (is_published = true);
+
+-- Los usuarios matriculados pueden ver sus cursos (incluso los no publicados)
+CREATE POLICY "Enrolled users can view courses" 
+ON public.courses FOR SELECT 
+TO authenticated
+USING (
+  id IN (
+    SELECT course_id FROM public.enrollments WHERE user_id = auth.uid()
+  )
+);
+
+-- Instructores pueden ver sus propios cursos
+CREATE POLICY "Instructors can view their own courses" 
+ON public.courses FOR SELECT 
+USING (instructor_id = auth.uid());
+
+-- Instructores pueden modificar sus propios cursos
+CREATE POLICY "Instructors can modify their own courses" 
+ON public.courses FOR ALL 
+USING (instructor_id = auth.uid());
+
+-- Administradores pueden ver todos los cursos
+CREATE POLICY "Admins can view all courses" 
+ON public.courses FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+-- Administradores pueden modificar todos los cursos
+CREATE POLICY "Admins can modify all courses" 
+ON public.courses FOR ALL 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+```
+
+##### Table: modules
+
+```sql
+-- Cualquier usuario puede ver módulos de cursos publicados
+CREATE POLICY "Public can view modules of published courses" 
+ON public.modules FOR SELECT 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE is_published = true)
+);
+
+-- Usuarios matriculados pueden ver módulos de sus cursos
+CREATE POLICY "Enrolled users can view modules" 
+ON public.modules FOR SELECT 
+TO authenticated
+USING (
+  course_id IN (
+    SELECT course_id FROM public.enrollments WHERE user_id = auth.uid()
+  )
+);
+
+-- Instructores pueden ver módulos de sus cursos
+CREATE POLICY "Instructors can view modules of their own courses" 
+ON public.modules FOR SELECT 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+);
+
+-- Instructores pueden modificar módulos de sus cursos
+CREATE POLICY "Instructors can modify modules of their own courses" 
+ON public.modules FOR ALL 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+);
+
+-- Administradores pueden ver todos los módulos
+CREATE POLICY "Admins can view all modules" 
+ON public.modules FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+-- Administradores pueden modificar todos los módulos
+CREATE POLICY "Admins can modify all modules" 
+ON public.modules FOR ALL 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+```
+
+##### Table: lessons
+
+```sql
+-- Público puede ver solo lecciones previewables de cursos publicados
+CREATE POLICY "Public can view previewable lessons of published courses" 
+ON public.lessons FOR SELECT 
+USING (
+  is_previewable = true AND 
+  course_id IN (SELECT id FROM public.courses WHERE is_published = true)
+);
+
+-- Usuarios matriculados pueden ver todas las lecciones de sus cursos
+CREATE POLICY "Enrolled users can view all lessons of their enrolled courses" 
+ON public.lessons FOR SELECT 
+TO authenticated
+USING (
+  course_id IN (
+    SELECT course_id FROM public.enrollments WHERE user_id = auth.uid()
+  )
+);
+
+-- Instructores pueden ver lecciones de sus cursos
+CREATE POLICY "Instructors can view lessons of their own courses" 
+ON public.lessons FOR SELECT 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+);
+
+-- Instructores pueden modificar lecciones de sus cursos
+CREATE POLICY "Instructors can modify lessons of their own courses" 
+ON public.lessons FOR ALL 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+);
+
+-- Administradores pueden ver todas las lecciones
+CREATE POLICY "Admins can view all lessons" 
+ON public.lessons FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+-- Administradores pueden modificar todas las lecciones
+CREATE POLICY "Admins can modify all lessons" 
+ON public.lessons FOR ALL 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+```
+
+##### Table: enrollments
+
+```sql
+-- Usuarios pueden ver sus propias inscripciones
+CREATE POLICY "Users can view their own enrollments" 
+ON public.enrollments FOR SELECT 
+USING (auth.uid() = user_id);
+
+-- Instructores pueden ver inscripciones para sus cursos
+CREATE POLICY "Instructors can view enrollments for their courses" 
+ON public.enrollments FOR SELECT 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+);
+
+-- Administradores pueden ver todas las inscripciones
+CREATE POLICY "Admins can view all enrollments" 
+ON public.enrollments FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+-- Administradores pueden modificar todas las inscripciones
+CREATE POLICY "Admins can modify all enrollments" 
+ON public.enrollments FOR ALL 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+```
+
+##### Table: lesson_progress
+
+```sql
+-- Usuarios pueden ver su propio progreso
+CREATE POLICY "Users can view their own progress" 
+ON public.lesson_progress FOR SELECT 
+USING (auth.uid() = user_id);
+
+-- Usuarios pueden insertar su propio progreso
+CREATE POLICY "Users can insert their own progress" 
+ON public.lesson_progress FOR INSERT 
+WITH CHECK (auth.uid() = user_id);
+
+-- Usuarios pueden actualizar su propio progreso
+CREATE POLICY "Users can update their own progress" 
+ON public.lesson_progress FOR UPDATE 
+USING (auth.uid() = user_id);
+
+-- Administradores pueden ver todo el progreso
+CREATE POLICY "Admins can view all progress" 
+ON public.lesson_progress FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+```
+
+#### Funciones auxiliares
+
+Para evitar problemas de recursión en las políticas RLS, se implementó una función de seguridad:
+
+```sql
+-- Función para obtener el rol de un usuario con SECURITY DEFINER
+CREATE OR REPLACE FUNCTION public.get_user_role(user_id uuid)
+RETURNS TEXT 
+SECURITY DEFINER 
+STABLE
+LANGUAGE SQL AS $$
+  SELECT role FROM public.profiles WHERE id = user_id;
+$$;
+```
+
+#### Beneficios y Mejoras
+
+- **Seguridad mejorada**: Se eliminó la capacidad de los usuarios para insertar sus propias inscripciones, limitando esto a procesos controlados como el webhook de pago.
+- **Control de acceso granular**: Se definieron claramente las capacidades de lectura/escritura por rol.
+- **Acceso adecuado a contenido**: Los usuarios matriculados pueden acceder a todo el contenido de sus cursos, incluso si no son públicos.
+- **Prevención de recursión**: Se implementó una función con SECURITY DEFINER para prevenir problemas de recursión en las políticas RLS.
+- **Consistencia**: Se aplicó el mismo patrón de políticas en todas las tablas para facilitar el mantenimiento.

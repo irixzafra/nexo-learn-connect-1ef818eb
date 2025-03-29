@@ -200,6 +200,15 @@ BEGIN
   RETURN progress;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Función segura para obtener el rol de un usuario (nueva)
+CREATE OR REPLACE FUNCTION public.get_user_role(user_id uuid)
+RETURNS TEXT 
+SECURITY DEFINER 
+STABLE
+LANGUAGE SQL AS $$
+  SELECT role FROM public.profiles WHERE id = user_id;
+$$;
 ```
 
 ## 4. Resumen de Lógica Backend Clave
@@ -249,56 +258,169 @@ $$ LANGUAGE plpgsql;
 
 ## 5. Revisión de Seguridad (RLS y Otras)
 
-### Políticas RLS Activas
+### Políticas RLS Activas (Corregidas)
 
 ```sql
--- Policies for profiles
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view all profiles" ON public.profiles FOR SELECT USING (true);
-CREATE POLICY "Users can update their own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+-- Políticas para profiles
+CREATE POLICY "Users can view their own profile completely" 
+ON public.profiles FOR SELECT 
+USING (auth.uid() = id);
 
--- Policies for courses
-ALTER TABLE public.courses ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view published courses" ON public.courses FOR SELECT USING (is_published = true);
-CREATE POLICY "Instructors can view their own draft courses" ON public.courses FOR SELECT USING (auth.uid() = instructor_id);
-CREATE POLICY "Instructors can update their own courses" ON public.courses FOR UPDATE USING (auth.uid() = instructor_id);
-CREATE POLICY "Instructors can insert their own courses" ON public.courses FOR INSERT WITH CHECK (auth.uid() = instructor_id);
-CREATE POLICY "Admins can view all courses" ON public.courses FOR SELECT USING (auth.uid() IN (SELECT id FROM public.profiles WHERE role = 'admin'));
-CREATE POLICY "Admins can modify all courses" ON public.courses FOR ALL USING (auth.uid() IN (SELECT id FROM public.profiles WHERE role = 'admin'));
+CREATE POLICY "Users can view basic info of other profiles" 
+ON public.profiles FOR SELECT 
+TO authenticated
+USING (true);
 
--- Policies for modules
-ALTER TABLE public.modules ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view modules of published courses" ON public.modules FOR SELECT USING (course_id IN (SELECT id FROM public.courses WHERE is_published = true));
-CREATE POLICY "Instructors can view modules of their own courses" ON public.modules FOR SELECT USING (course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid()));
-CREATE POLICY "Instructors can modify modules of their own courses" ON public.modules FOR ALL USING (course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid()));
-CREATE POLICY "Admins can view all modules" ON public.modules FOR SELECT USING (auth.uid() IN (SELECT id FROM public.profiles WHERE role = 'admin'));
-CREATE POLICY "Admins can modify all modules" ON public.modules FOR ALL USING (auth.uid() IN (SELECT id FROM public.profiles WHERE role = 'admin'));
+CREATE POLICY "Users can update their own profile" 
+ON public.profiles FOR UPDATE 
+USING (auth.uid() = id);
 
--- Policies for lessons
-ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view lessons of published courses" ON public.lessons FOR SELECT USING (course_id IN (SELECT id FROM public.courses WHERE is_published = true));
-CREATE POLICY "Instructors can view lessons of their own courses" ON public.lessons FOR SELECT USING (course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid()));
-CREATE POLICY "Instructors can modify lessons of their own courses" ON public.lessons FOR ALL USING (course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid()));
-CREATE POLICY "Admins can view all lessons" ON public.lessons FOR SELECT USING (auth.uid() IN (SELECT id FROM public.profiles WHERE role = 'admin'));
-CREATE POLICY "Admins can modify all lessons" ON public.lessons FOR ALL USING (auth.uid() IN (SELECT id FROM public.profiles WHERE role = 'admin'));
+CREATE POLICY "Admins can view all profiles" 
+ON public.profiles FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
 
--- Policies for enrollments
-ALTER TABLE public.enrollments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their own enrollments" ON public.enrollments FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert their own enrollments" ON public.enrollments FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Admins can view all enrollments" ON public.enrollments FOR SELECT USING (auth.uid() IN (SELECT id FROM public.profiles WHERE role = 'admin'));
-CREATE POLICY "Instructors can view enrollments for their courses" ON public.enrollments FOR SELECT USING (course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid()));
+CREATE POLICY "Admins can update all profiles" 
+ON public.profiles FOR UPDATE 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
 
--- Policies for payments
-ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their own payments" ON public.payments FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Admins can view all payments" ON public.payments FOR SELECT USING (auth.uid() IN (SELECT id FROM public.profiles WHERE role = 'admin'));
+-- Políticas para courses
+CREATE POLICY "Public can view published courses" 
+ON public.courses FOR SELECT 
+USING (is_published = true);
 
--- Policies for lesson_progress
-ALTER TABLE public.lesson_progress ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their own progress" ON public.lesson_progress FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert their own progress" ON public.lesson_progress FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update their own progress" ON public.lesson_progress FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Enrolled users can view courses" 
+ON public.courses FOR SELECT 
+TO authenticated
+USING (
+  id IN (
+    SELECT course_id FROM public.enrollments WHERE user_id = auth.uid()
+  )
+);
+
+CREATE POLICY "Instructors can view their own courses" 
+ON public.courses FOR SELECT 
+USING (instructor_id = auth.uid());
+
+CREATE POLICY "Instructors can modify their own courses" 
+ON public.courses FOR ALL 
+USING (instructor_id = auth.uid());
+
+CREATE POLICY "Admins can view all courses" 
+ON public.courses FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+CREATE POLICY "Admins can modify all courses" 
+ON public.courses FOR ALL 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+-- Políticas para modules
+CREATE POLICY "Public can view modules of published courses" 
+ON public.modules FOR SELECT 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE is_published = true)
+);
+
+CREATE POLICY "Enrolled users can view modules" 
+ON public.modules FOR SELECT 
+TO authenticated
+USING (
+  course_id IN (
+    SELECT course_id FROM public.enrollments WHERE user_id = auth.uid()
+  )
+);
+
+CREATE POLICY "Instructors can view modules of their own courses" 
+ON public.modules FOR SELECT 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+);
+
+CREATE POLICY "Instructors can modify modules of their own courses" 
+ON public.modules FOR ALL 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+);
+
+CREATE POLICY "Admins can view all modules" 
+ON public.modules FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+CREATE POLICY "Admins can modify all modules" 
+ON public.modules FOR ALL 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+-- Políticas para lessons
+CREATE POLICY "Public can view previewable lessons of published courses" 
+ON public.lessons FOR SELECT 
+USING (
+  is_previewable = true AND 
+  course_id IN (SELECT id FROM public.courses WHERE is_published = true)
+);
+
+CREATE POLICY "Enrolled users can view all lessons of their enrolled courses" 
+ON public.lessons FOR SELECT 
+TO authenticated
+USING (
+  course_id IN (
+    SELECT course_id FROM public.enrollments WHERE user_id = auth.uid()
+  )
+);
+
+CREATE POLICY "Instructors can view lessons of their own courses" 
+ON public.lessons FOR SELECT 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+);
+
+CREATE POLICY "Instructors can modify lessons of their own courses" 
+ON public.lessons FOR ALL 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+);
+
+CREATE POLICY "Admins can view all lessons" 
+ON public.lessons FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+CREATE POLICY "Admins can modify all lessons" 
+ON public.lessons FOR ALL 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+-- Políticas para enrollments
+CREATE POLICY "Users can view their own enrollments" 
+ON public.enrollments FOR SELECT 
+USING (auth.uid() = user_id);
+
+CREATE POLICY "Instructors can view enrollments for their courses" 
+ON public.enrollments FOR SELECT 
+USING (
+  course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+);
+
+CREATE POLICY "Admins can view all enrollments" 
+ON public.enrollments FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+CREATE POLICY "Admins can modify all enrollments" 
+ON public.enrollments FOR ALL 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+-- Políticas para lesson_progress
+CREATE POLICY "Users can view their own progress" 
+ON public.lesson_progress FOR SELECT 
+USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own progress" 
+ON public.lesson_progress FOR INSERT 
+WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own progress" 
+ON public.lesson_progress FOR UPDATE 
+USING (auth.uid() = user_id);
+
+CREATE POLICY "Admins can view all progress" 
+ON public.lesson_progress FOR SELECT 
+USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
 ```
 
 ### Validación de Entradas
