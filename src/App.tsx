@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,7 +23,7 @@ import Scholarships from "./pages/Scholarships";
 // Dashboard and shared pages
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
-import Users from "./pages/placeholder/Users";
+import Users from "./pages/Users";
 import Messages from "./pages/placeholder/Messages";
 import Calendar from "./pages/placeholder/Calendar";
 import Billing from "./pages/placeholder/Billing";
@@ -86,6 +85,11 @@ const App = () => (
                 <Route path="/my-courses" element={
                   <ProtectedRoute>
                     <StudentCourses />
+                  </ProtectedRoute>
+                } />
+                <Route path="/users" element={
+                  <ProtectedRoute>
+                    <Users />
                   </ProtectedRoute>
                 } />
                 <Route path="/courses/:courseId/learn" element={

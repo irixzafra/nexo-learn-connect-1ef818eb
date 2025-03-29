@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { LoginFormValues } from '@/lib/validations/auth';
 import { toast } from 'sonner';
-import { useAuth } from '@/contexts/AuthContext';
 
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,11 +27,17 @@ export const useLogin = () => {
         toast.success('Inicio de sesión exitoso');
         
         // Get user profile from Supabase to determine role
-        const { data: profileData } = await supabase
+        const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', authData.user.id)
           .single();
+        
+        if (profileError) {
+          console.error('Error al obtener el perfil del usuario:', profileError);
+          navigate('/home');
+          return;
+        }
         
         const userRole = profileData?.role;
         console.log('User logged in with role:', userRole);
