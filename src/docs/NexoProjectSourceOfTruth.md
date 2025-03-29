@@ -289,7 +289,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Lista anidada clara
     * Controles intuitivos (botones, iconos)
     * D&D opcional
-  * **Estado:** [ ]
+  * **Estado:** [x]
 
 * **Funcionalidad: Edición de Contenido de Lección (Texto/Video)**
   * **Objetivo:**
@@ -307,7 +307,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Pistas UI/UX:**
     * Editor Tiptap integrado
     * Input URL claro
-  * **Estado:** [ ]
+  * **Estado:** [x]
 
 * **Funcionalidad: Publicar / Despublicar Curso**
   * **Objetivo:**
@@ -586,3 +586,4 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Interfaz clara para calificar
     * Vista clara para estudiante
   * **Estado:** [ ]
+
