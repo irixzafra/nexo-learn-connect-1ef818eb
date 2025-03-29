@@ -55,7 +55,7 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
         <div className="flex items-center gap-2">
           <Avatar className="h-8 w-8">
             <AvatarFallback>{getInitials(profile?.full_name)}</AvatarFallback>
-            <AvatarImage src={user?.avatar_url || undefined} />
+            <AvatarImage src={profile?.avatar_url || undefined} />
           </Avatar>
           <div className="flex flex-col">
             <span className="text-sm font-medium truncate max-w-[120px]">
