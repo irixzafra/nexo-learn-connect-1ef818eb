@@ -10,6 +10,7 @@ import AdminDashboard from "@/pages/admin/dashboard";
 import TestDataManagement from "@/pages/admin/TestDataManagement";
 import Users from "@/pages/placeholder/Users";
 import Billing from "@/pages/placeholder/Billing";
+import RoleManagement from "@/pages/admin/RoleManagement";
 
 const AdminRoutes = () => {
   return (
@@ -40,6 +41,11 @@ const AdminRoutes = () => {
           <AppLayout>
             <Billing />
           </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/roles" element={
+        <ProtectedRoute requiredRole="admin">
+          <RoleManagement />
         </ProtectedRoute>
       } />
       <Route path="*" element={

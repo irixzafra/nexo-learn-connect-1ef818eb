@@ -9,6 +9,7 @@ import { CommunitySection } from './sidebar/CommunitySection';
 import { InstructorSection } from './sidebar/InstructorSection';
 import { AdminSection } from './sidebar/AdminSection';
 import { AccountSection } from './sidebar/AccountSection';
+import { SistemasSection } from './sidebar/SistemasSection';
 
 interface SidebarNavigationProps {
   viewAsRole?: string;
@@ -55,6 +56,28 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
         </>
       );
       break;
+    case 'sistemas':
+      menuContent = (
+        <>
+          <GeneralSection 
+            expanded={expanded.general} 
+            onToggle={() => toggleGroup('general')} 
+          />
+          <SistemasSection 
+            expanded={expanded.sistemas} 
+            onToggle={() => toggleGroup('sistemas')} 
+          />
+          <AdminSection 
+            expanded={expanded.administration} 
+            onToggle={() => toggleGroup('administration')} 
+          />
+          <AccountSection 
+            expanded={expanded.account} 
+            onToggle={() => toggleGroup('account')} 
+          />
+        </>
+      );
+      break;
     case 'instructor':
       menuContent = (
         <>
@@ -77,6 +100,20 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
           <AccountSection 
             expanded={expanded.account} 
             onToggle={() => toggleGroup('account')} 
+          />
+        </>
+      );
+      break;
+    case 'anonimo':
+      menuContent = (
+        <>
+          <GeneralSection 
+            expanded={expanded.general} 
+            onToggle={() => toggleGroup('general')} 
+          />
+          <LearningSection 
+            expanded={expanded.learning} 
+            onToggle={() => toggleGroup('learning')} 
           />
         </>
       );

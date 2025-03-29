@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from '@/components/ui/use-toast';
-import { UserCog, Shield, User } from 'lucide-react';
+import { UserCog, Shield, User, Terminal, Ghost } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface UserRoleSwitcherProps {
@@ -71,6 +71,10 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
         return <Shield className="h-4 w-4" />;
       case 'instructor':
         return <UserCog className="h-4 w-4" />;
+      case 'sistemas':
+        return <Terminal className="h-4 w-4" />;
+      case 'anonimo':
+        return <Ghost className="h-4 w-4" />;
       case 'student':
         return <User className="h-4 w-4" />;
       default:
@@ -103,10 +107,22 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
               <span>Instructor</span>
             </div>
           </SelectItem>
+          <SelectItem value="sistemas">
+            <div className="flex items-center gap-2">
+              <Terminal className="h-4 w-4" />
+              <span>Sistemas</span>
+            </div>
+          </SelectItem>
           <SelectItem value="student">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4" />
               <span>Estudiante</span>
+            </div>
+          </SelectItem>
+          <SelectItem value="anonimo">
+            <div className="flex items-center gap-2">
+              <Ghost className="h-4 w-4" />
+              <span>Anónimo</span>
             </div>
           </SelectItem>
         </SelectContent>

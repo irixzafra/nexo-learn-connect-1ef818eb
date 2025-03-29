@@ -8,6 +8,7 @@ export type SidebarGroups = {
   administration: boolean;
   instructor: boolean;
   account: boolean;
+  sistemas: boolean;
 };
 
 export const useSidebarState = () => {
@@ -20,7 +21,8 @@ export const useSidebarState = () => {
       community: false,
       administration: true,
       instructor: true,
-      account: true
+      account: true,
+      sistemas: true
     };
   };
   

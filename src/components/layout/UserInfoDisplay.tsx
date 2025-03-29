@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Settings, BookOpen, ArrowLeftRight, UserCog, Shield } from 'lucide-react';
+import { LogOut, User, Settings, BookOpen, ArrowLeftRight, UserCog, Shield, Terminal, Ghost } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import { Badge } from '@/components/ui/badge';
@@ -48,6 +48,10 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
         return 'default';
       case 'instructor':
         return 'secondary';
+      case 'sistemas':
+        return 'destructive';
+      case 'anonimo':
+        return 'outline';
       case 'student':
         return 'outline';
       default:
@@ -61,6 +65,10 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
         return <Shield className="h-4 w-4" />;
       case 'instructor':
         return <UserCog className="h-4 w-4" />;
+      case 'sistemas':
+        return <Terminal className="h-4 w-4" />;
+      case 'anonimo':
+        return <Ghost className="h-4 w-4" />;
       case 'student':
         return <User className="h-4 w-4" />;
       default:
