@@ -186,7 +186,7 @@ COMMENT ON TABLE public.audit_log IS 'Records critical administrative actions fo
 
 ## 6. ROADMAP Y FUNCIONALIDADES PLANIFICADAS
 
-Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fases. Sirve como guía para el desarrollo. El estado indica si la funcionalidad está completada ([x]) o pendiente ([ ]).
+Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fases. Sirve como guía para el desarrollo. El estado indica si la funcionalidad está completada ([x]), en pruebas ([🧪]) o pendiente ([ ]).
 
 ### Fase: Fundación (MVP) - ACTUAL
 
@@ -320,7 +320,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
 * **Funcionalidad: Seguimiento de Progreso en Cursos**
   * **Objetivo:**
     * Permitir a estudiantes y a la plataforma rastrear el avance en los cursos
-  * **Estado:** [ ]
+  * **Estado:** [🧪]
 
 * **Funcionalidad: Comentarios en Lecciones**
   * **Objetivo:**
@@ -632,3 +632,148 @@ $$;
 - **Acceso adecuado a contenido**: Los usuarios matriculados pueden acceder a todo el contenido de sus cursos, incluso si no son públicos.
 - **Prevención de recursión**: Se implementó una función con SECURITY DEFINER para prevenir problemas de recursión en las políticas RLS.
 - **Consistencia**: Se aplicó el mismo patrón de políticas en todas las tablas para facilitar el mantenimiento.
+
+### LMS-PROGRESS-01: Seguimiento de Progreso en Cursos
+
+**Fecha**: 2023-12-15
+**Autor**: Lovable AI
+**Estado**: [🧪] Implementado - En pruebas
+
+#### Descripción
+
+Se implementó un sistema completo de seguimiento de progreso para que los estudiantes puedan rastrear su avance en los cursos en los que están matriculados. El sistema registra qué lecciones han sido completadas, calcula el porcentaje de avance general por curso, y proporciona interfaces visuales para que los estudiantes puedan ver su progreso y continuar desde donde lo dejaron.
+
+#### Componentes Implementados
+
+1. **Tabla de Base de Datos**: `lesson_progress`
+   ```sql
+   CREATE TABLE public.lesson_progress (
+     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+     lesson_id UUID NOT NULL REFERENCES public.lessons(id) ON DELETE CASCADE,
+     course_id UUID NOT NULL REFERENCES public.courses(id) ON DELETE CASCADE,
+     is_completed BOOLEAN NOT NULL DEFAULT false,
+     completion_date TIMESTAMPTZ,
+     last_position NUMERIC DEFAULT 0,
+     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+     UNIQUE(user_id, lesson_id)
+   );
+   ```
+
+2. **Función de Cálculo de Progreso**: `calculate_course_progress`
+   ```sql
+   CREATE OR REPLACE FUNCTION public.calculate_course_progress(
+     course_id_param UUID, 
+     user_id_param UUID
+   )
+   RETURNS NUMERIC
+   LANGUAGE plpgsql
+   AS $$
+   DECLARE
+     total_lessons INT;
+     completed_lessons INT;
+     progress NUMERIC;
+   BEGIN
+     -- Get total number of lessons in the course
+     SELECT COUNT(*) INTO total_lessons 
+     FROM public.lessons 
+     WHERE course_id = course_id_param;
+     
+     -- Get number of completed lessons by the user
+     SELECT COUNT(*) INTO completed_lessons 
+     FROM public.lesson_progress 
+     WHERE course_id = course_id_param 
+       AND user_id = user_id_param 
+       AND is_completed = true;
+     
+     -- Calculate progress percentage (0-100)
+     IF total_lessons > 0 THEN
+       progress := (completed_lessons::NUMERIC / total_lessons::NUMERIC) * 100;
+     ELSE
+       progress := 0;
+     END IF;
+     
+     RETURN progress;
+   END;
+   $$;
+   ```
+
+3. **Políticas RLS para `lesson_progress`**
+   ```sql
+   -- Usuarios pueden ver su propio progreso
+   CREATE POLICY "Users can view their own progress" 
+   ON public.lesson_progress FOR SELECT 
+   USING (auth.uid() = user_id);
+
+   -- Usuarios pueden insertar su propio progreso
+   CREATE POLICY "Users can insert their own progress" 
+   ON public.lesson_progress FOR INSERT 
+   WITH CHECK (auth.uid() = user_id);
+
+   -- Usuarios pueden actualizar su propio progreso
+   CREATE POLICY "Users can update their own progress" 
+   ON public.lesson_progress FOR UPDATE 
+   USING (auth.uid() = user_id);
+
+   -- Administradores pueden ver todo el progreso
+   CREATE POLICY "Admins can view all progress" 
+   ON public.lesson_progress FOR SELECT 
+   USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+
+   -- Instructores pueden ver el progreso de sus cursos
+   CREATE POLICY "Instructors can view progress for their courses" 
+   ON public.lesson_progress FOR SELECT 
+   USING (
+     course_id IN (SELECT id FROM public.courses WHERE instructor_id = auth.uid())
+   );
+   ```
+
+4. **Hooks Frontend**:
+   - `useLessonProgress`: Hook para gestionar el progreso de lecciones individuales
+     ```typescript
+     // Métodos principales:
+     // - markLessonCompleted(): Marca lección como completada
+     // - updateLastPosition(position): Actualiza posición en lecciones tipo video
+     // - updateProgress(updates): Actualiza cualquier aspecto del progreso
+     // - Propiedades: isCompleted, lastPosition, courseProgressPercentage...
+     ```
+   - `useUserCoursesProgress`: Hook para obtener el progreso de múltiples cursos
+     ```typescript
+     // Proporciona:
+     // - coursesProgress: Un mapa de courseId -> porcentaje de progreso
+     // - isLoading: Estado de carga
+     ```
+
+5. **Componentes UI**:
+   - `CourseProgressBar`: Componente visual para mostrar la barra de progreso
+   - `LessonProgressControls`: Botones/controles para marcar lecciones como completadas
+
+6. **Integración en páginas**:
+   - `LessonView.tsx`: Muestra controles de progreso para cada lección
+   - `CourseLearn.tsx`: Visualización del progreso general del curso, lecciones completadas, etc.
+   - `CourseDetail.tsx` y `EnrolledCoursesList`: Muestran el progreso en tarjetas/listados de cursos
+
+#### Flujo de Usuario
+
+1. El estudiante accede a un curso en el que está matriculado
+2. Ve indicadores visuales de su progreso general (porcentaje, barra)
+3. Puede ver qué lecciones ha completado (iconos de check)
+4. Al estudiar una lección, puede marcarla como completada
+5. Para lecciones de video, se registra también la última posición
+6. El sistema le sugiere continuar desde la siguiente lección no completada
+
+#### Consideraciones Técnicas
+
+- La tabla `lesson_progress` tiene una restricción UNIQUE en (user_id, lesson_id) para evitar duplicados
+- Las políticas RLS garantizan que los estudiantes solo puedan ver y modificar su propio progreso
+- Los instructores pueden ver el progreso de los estudiantes en sus cursos
+- La función `calculate_course_progress` está optimizada para calcular el porcentaje por curso
+- El sistema utiliza React Query para cacheo eficiente de datos de progreso
+
+#### Próximas Mejoras (Futuras Fases)
+
+- Añadir análisis avanzados de tiempo dedicado por lección
+- Implementar logros y badges por completar secciones/cursos
+- Añadir recordatorios personalizados basados en patrones de progreso
+- Desarrollar vistas de análisis para instructores/administradores
