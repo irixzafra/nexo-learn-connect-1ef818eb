@@ -2,46 +2,53 @@
 # Nexo Project - Guía de Desarrollo
 
 **Versión:** 1.5
-**Última Actualización:** 2023-11-15
+**Última Actualización:** 2023-11-16
 **Estado:** Fase 1 (MVP) - En desarrollo
 
 ## 1. VISIÓN GENERAL
 
-Nexo es una plataforma educativa unificada que integra funcionalidades LMS, ERP y comunidad.
+Nexo es una plataforma educativa unificada de alta tecnología (enfocada en Másters y FP de IA, Marketing, Creación de Contenidos, etc.) que integra funcionalidades LMS, ERP y comunidad.
 
 **Principios:**
-- Experiencia de usuario intuitiva
-- Tecnología confiable y moderna
-- Arquitectura modular
-- Desarrollo iterativo
-- Seguridad por diseño
+- Experiencia de usuario intuitiva y moderna (ver referencias visuales).
+- Tecnología confiable y escalable.
+- Arquitectura modular (`src/features/*`).
+- Desarrollo iterativo por fases.
+- Seguridad por diseño (RLS estricto).
+- Diseño atractivo y profesional con animaciones fluidas (`Framer Motion`) pero optimizadas.
+- Buen posicionamiento SEO (metadatos gestionables).
 
 **Roles:**
-- **Estudiante:** Acceso a cursos, seguimiento de progreso
-- **Instructor:** Creación y gestión de cursos
-- **Administrador:** Gestión de usuarios y sistema
+- **Estudiante:** Accede a Másters/Carreras, sigue progreso, interactúa.
+- **Instructor:** Crea y gestiona contenido de Másters/Carreras.
+- **Administrador:** Gestiona usuarios, plataforma, contenidos, finanzas.
 
 ## 2. STACK TECNOLÓGICO
 
-- **Frontend:** React, TypeScript, Tailwind CSS, shadcn/ui
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS, shadcn/ui
 - **Estado:** React Query, Context API
 - **Validación:** React Hook Form, Zod
-- **Backend:** Supabase (Auth, DB, Storage)
-- **Extras:** Tiptap (editor), Stripe (pagos)
+- **Backend:** Supabase (Auth, PostgreSQL DB, Storage, Edge/RPC Functions)
+- **Animación:** Framer Motion
+- **Iconos:** Lucide React
+- **Editor:** Tiptap
+- **Pagos:** Stripe
+- **i18n:** i18next (base)
 
 ## 3. ARQUITECTURA
 
 **Frontend:**
-- Aplicación SPA React
-- Componentes en `src/components`
-- Features en `src/features`
-- Layouts: `PublicLayout` y `AppLayout`
+- Aplicación SPA React.
+- Componentes reutilizables (`src/components`).
+- Lógica de negocio modular (`src/features`).
+- Layouts base: `PublicLayout` (Landing, Auth) y `AppLayout` (Dashboard).
 
 **Backend:**
-- Supabase con Row Level Security
-- Tablas relacionales en PostgreSQL
+- Supabase Platform.
+- Seguridad principal: Row Level Security (RLS) en PostgreSQL.
+- Lógica específica/segura: RPC Functions (PL/pgSQL) o Edge Functions (Deno/TS).
 
-## 4. ESQUEMA DE BASE DE DATOS
+## 4. ESQUEMA DE BASE DE DATOS (Inicial - Fase 1)
 
 ```sql
 -- Tipos enumerados
@@ -68,7 +75,12 @@ CREATE TABLE public.courses (
   currency currency_code NOT NULL DEFAULT 'eur',
   is_published BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
+  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+  -- Campos SEO y portada
+  slug TEXT UNIQUE,
+  seo_title TEXT,
+  seo_description TEXT,
+  cover_image_url TEXT
 );
 
 CREATE TABLE public.modules (
@@ -91,7 +103,8 @@ CREATE TABLE public.lessons (
   lesson_order INTEGER NOT NULL DEFAULT 0 CHECK (lesson_order >= 0),
   is_previewable BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
+  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+  slug TEXT UNIQUE
 );
 
 CREATE TABLE public.enrollments (
@@ -114,35 +127,54 @@ CREATE TABLE public.payments (
   metadata JSONB,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
+
+-- Tabla de Auditoría para Impersonación
+CREATE TABLE IF NOT EXISTS public.audit_log (
+  id BIGSERIAL PRIMARY KEY,
+  admin_user_id UUID NOT NULL REFERENCES public.profiles(id),
+  target_user_id UUID REFERENCES public.profiles(id), -- Puede ser NULL si la acción no es sobre un usuario
+  action TEXT NOT NULL, -- Ej: 'IMPERSONATION_START', 'IMPERSONATION_STOP', 'ROLE_CHANGE'
+  details JSONB, -- Detalles adicionales
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+COMMENT ON TABLE public.audit_log IS 'Records critical administrative actions for auditing.';
 ```
 
-## 5. RUTAS Y ACCESO
+## 5. RUTAS Y ACCESO POR ROL (Resumen Inicial)
 
-**Públicas:**
-- `/`: Landing page
-- `/auth/login`: Inicio de sesión
-- `/auth/register`: Registro
-- `/courses`: Catálogo de cursos
+**Públicas (Sin Login):**
+- `/`: Landing Page (Diseño moderno, animaciones, SEO).
+- `/auth/login`: Inicio de sesión.
+- `/auth/register`: Registro.
+- `/courses`: Catálogo de Másters/Carreras.
+- `/courses/[slug]`: Detalle público de un Máster/Carrera (usa slug).
 
-**Autenticadas:**
-- `/home`: Dashboard
-- `/profile`: Perfil de usuario
-- `/settings`: Configuración
+**Autenticadas (Todos los Roles):**
+- `/home` o `/dashboard`: Panel Principal (Contenido adaptado al rol).
+- `/profile`: Perfil del usuario (Vista inicial).
+- `/settings`: Configuración básica (Idioma, Notificaciones - Futuro).
+- `/community`: Feed de Comunidad (Futuro).
+- `/network`: Red de contactos (Futuro).
+- `/messages`: Mensajería directa (Futuro).
 
 **Estudiante:**
-- `/student/my-courses`: Cursos inscritos
-- `/learn/courses/:courseId/lessons/:lessonId`: Vista de lección
+- `/student/my-courses`: Mis Másters/Carreras inscritos.
+- `/learn/courses/[course_slug]/lessons/[lesson_slug]`: Vista de aprendizaje.
 
 **Instructor:**
-- `/instructor/courses`: Gestión de cursos
-- `/instructor/courses/new`: Creación de curso
-- `/instructor/courses/:id/edit`: Edición de curso
-- `/instructor/students`: Gestión de estudiantes
+- `/instructor/dashboard`: Panel de Instructor (Futuro).
+- `/instructor/courses`: Gestión de sus Másters/Carreras.
+- `/instructor/courses/new`: Formulario creación.
+- `/instructor/courses/[course_id]/edit`: Edición completa (estructura, contenido, SEO, publicación).
+- `/instructor/students`: Gestión de estudiantes inscritos (Futuro).
 
 **Administrador:**
-- `/admin/users`: Gestión de usuarios
-- `/admin/courses`: Gestión de todos los cursos
-- `/admin/impersonate`: Impersonación de usuarios
+- `/admin/dashboard`: Panel de Admin (Futuro).
+- `/admin/users`: Gestión de todos los usuarios (Vista/Editar Rol).
+- `/admin/courses`: Gestión de todos los Másters/Carreras (Vista/Publicar/Enlace Editar).
+- `/admin/impersonate`: Interfaz para iniciar/detener impersonación.
+- `/admin/billing`: Gestión financiera (Futuro).
+- `/admin/settings`: Configuración plataforma (Futuro).
 
 ## 6. ROADMAP Y FUNCIONALIDADES PLANIFICADAS
 
@@ -250,46 +282,62 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Página simple, solo lectura (Card?)
   * **Estado:** [x]
 
-* **Funcionalidad: Creación de Cursos (Metadatos)**
+* **Funcionalidad: Landing Page Moderna y Atractiva**
   * **Objetivo:**
-    * Permitir a Instructores/Admins iniciar la creación de un curso
+    * Crear una página de inicio (/) visualmente impactante, profesional y optimizada para SEO que presente Nexo y sus ofertas (Másters/Carreras).
+  * **Acciones Clave del Usuario:**
+    * Ver propuesta de valor
+    * Explorar secciones (ej: Carreras Destacadas)
+    * Hacer clic en CTAs (Call to Action) como "Descubre tu Camino" o "Registrarse"
+  * **Flujo Principal:**
+    * Usuario llega a / -> Ve contenido atractivo -> Navega por secciones -> Interactúa con CTAs
+  * **Interacciones / Relaciones Clave:**
+    * Enlaza a /courses, /auth/register, /auth/login
+    * Debe obtener datos de "Carreras Destacadas" (¿manual o desde courses?)
+  * **Pistas UI/UX:**
+    * Usar paleta de colores y estilo de las imágenes de referencia (tonos azules/morados/negros, gradientes sutiles, tipografía moderna)
+    * Incorporar animaciones fluidas (Framer Motion) en scroll, hover, carga de elementos (efecto "wow" pero optimizado)
+    * Diseño profesional y serio, adecuado a educación superior tecnológica
+    * Secciones Sugeridas: Hero principal con titular potente, sección "Acerca de Nexo", sección "Carreras Destacadas" (usar Cards como en referencia), sección de Testimonios (placeholder), Footer con enlaces
+    * Botón flotante de Chat/Ayuda (como en referencias)
+    * SEO: Implementar metatags (title, description, keywords, OpenGraph) dinámicas o configurables. URLs limpias. Buen performance (optimizar imágenes/animaciones)
+    * Logo: Diseñar/Implementar un logo moderno para "Nexo Learning Platform" o "Nexo Ecosistema Creativo" visible en el header
+  * **Estado:** [ ] Pendiente
+
+* **Funcionalidad: Creación de Cursos (Metadatos y SEO)**
+  * **Objetivo:**
+    * Permitir a Instructores/Admins iniciar creación de Máster/Carrera con datos básicos y SEO
   * **Acciones Clave:**
-    * Acceder a UI creación (form)
+    * Acceder UI creación
     * Definir Título, Descripción, Precio, Moneda
+    * Añadir: Imagen de Portada (subida a Storage), Slug URL, Título SEO, Descripción SEO
     * Guardar borrador
   * **Flujo Principal:**
-    * Acceder a UI -> Rellenar formulario (validado RHF/Zod) -> Guardar -> Nuevo registro en courses (no publicado, instructor_id asignado) -> Redirigido a edición estructura
+    * Acceder UI -> Rellenar formulario (validado) -> Subir imagen -> Guardar -> Nuevo courses (no publicado, instructor_id, campos SEO/imagen) -> Redirigido a edición estructura
   * **Interacciones:**
-    * Escritura en courses
-    * Lee instructor_id del usuario actual
-    * React Query useMutation
+    * Escritura courses
+    * Subida a Supabase Storage
   * **Pistas UI/UX:**
-    * Formulario claro (Input, Textarea, Select)
-    * Feedback guardado
-  * **Estado:** [x]
+    * Formulario incluye campos SEO y carga de imagen
+  * **Instrucción Adicional:**
+    * Crea la tabla courses si no existe y añade 1-2 cursos de prueba (ej: "Máster en IA Generativa", "Carrera Desarrollo Full-Stack") con datos ficticios (incluyendo imagen placeholder URL, slug, SEO)
+  * **Estado:** [ ] Pendiente (Estado del doc anterior [x] pero se añaden requisitos)
 
 * **Funcionalidad: Edición de Estructura del Curso (Módulos y Lecciones)**
   * **Objetivo:**
-    * Permitir organizar el contenido del curso en módulos y lecciones
+    * Permitir organizar el contenido del Máster/Carrera
   * **Acciones Clave:**
-    * (En edición curso) Añadir Módulo
-    * Editar título Módulo
-    * Eliminar Módulo
-    * Reordenar Módulos
-    * Añadir Lección (a módulo)
-    * Editar título Lección
-    * Eliminar Lección
-    * Reordenar Lecciones (dentro módulo)
-    * Navegar a editar contenido lección
+    * CRUD + Reordenar Módulos y Lecciones (títulos/orden)
   * **Flujo Principal:**
-    * Instructor edita curso -> Usa controles UI para manipular módulos/lecciones -> Cambios se guardan en BD (modules, lessons) vía React Query
+    * Edita curso -> Manipula estructura -> Cambios guardados en modules, lessons
   * **Interacciones:**
-    * CRUD + Update (orden) en modules, lessons
+    * CRUD + Update modules, lessons
   * **Pistas UI/UX:**
     * Lista anidada clara
-    * Controles intuitivos (botones, iconos)
-    * D&D opcional
-  * **Estado:** [x]
+    * Controles intuitivos
+  * **Instrucción Adicional:**
+    * Crea las tablas modules y lessons si no existen. Añade 2-3 módulos y 2-3 lecciones de prueba para uno de los cursos creados anteriormente
+  * **Estado:** [ ] Pendiente (Estado del doc anterior [x] pero se añade requisito de datos)
 
 * **Funcionalidad: Edición de Contenido de Lección (Texto/Video)**
   * **Objetivo:**
@@ -307,7 +355,9 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Pistas UI/UX:**
     * Editor Tiptap integrado
     * Input URL claro
-  * **Estado:** [x]
+  * **Instrucción Adicional:**
+    * Añade contenido de prueba (texto lorem ipsum o URL video público) a algunas de las lecciones creadas
+  * **Estado:** [ ] Pendiente (Estado del doc anterior [x] pero se añade requisito de datos)
 
 * **Funcionalidad: Publicar / Despublicar Curso**
   * **Objetivo:**
@@ -320,7 +370,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Update courses
   * **Pistas UI/UX:**
     * Control claro (Switch?)
-  * **Estado:** [ ]
+  * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Catálogo Público de Cursos**
   * **Objetivo:**
@@ -330,29 +380,33 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Ver lista de cursos
     * Hacer clic en un curso
   * **Flujo Principal:**
-    * Usuario visita /courses -> Se cargan cursos is_published=true -> Se muestran tarjetas (Título, Instructor, Precio) -> Clic lleva a detalle curso
+    * Usuario visita /courses -> Se cargan cursos is_published=true -> Se muestran tarjetas (Título, Instructor, Precio, Imagen Portada) -> Clic lleva a detalle curso
   * **Interacciones:**
-    * Lectura courses y profiles (instructor)
+    * Lectura courses (con cover_image_url), profiles
   * **Pistas UI/UX:**
-    * Diseño atractivo (Cards)
+    * Diseño atractivo (Cards como referencia)
     * Carga eficiente
-  * **Estado:** [ ]
+    * Usar imagen portada
+  * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Página de Detalle del Curso**
   * **Objetivo:**
     * Mostrar información completa de un curso y permitir compra o acceso
   * **Acciones Clave:**
-    * Ver Título, Desc, Instructor, Precio, Estructura (Módulos/Lecciones)
-    * Clic en "Comprar" o "Ir al Curso"
+    * Ver detalles (Desc, Instructor, Precio, Estructura)
+    * Clic "Comprar"/"Ir al Curso"
   * **Flujo Principal:**
-    * Usuario llega a /courses/:id -> Se carga info curso y estado inscripción -> UI muestra detalles -> Botón acción correspondiente visible
+    * Usuario llega a /courses/[slug] -> Se carga info curso + estado inscripción -> UI muestra detalles -> Botón acción correspondiente visible
   * **Interacciones:**
-    * Lectura courses, modules, lessons, profiles, enrollments
-    * Llama a flujo Stripe o navega a /learn
+    * Lectura BD
+    * Llama a Stripe / navega a /learn
+    * Usa slug en URL
   * **Pistas UI/UX:**
     * Info bien estructurada
     * CTA claro
-  * **Estado:** [ ]
+    * Usar imagen portada
+    * SEO (usar seo_title, seo_description)
+  * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Acceso Estudiante (Mis Cursos y Vista de Lección)**
   * **Objetivo:**
@@ -371,7 +425,8 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Pistas UI/UX:**
     * Navegación curso clara en /learn
     * Contenido legible/visible
-  * **Estado:** [ ]
+    * Usar slugs en URL si aplica
+  * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Integración de Pago Stripe (Frontend)**
   * **Objetivo:**
@@ -385,7 +440,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Uso stripe-js
   * **Pistas UI/UX:**
     * Feedback de carga en botón
-  * **Estado:** [ ]
+  * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Procesamiento de Pago Stripe (Backend - Webhook)**
   * **Objetivo:**
@@ -402,7 +457,9 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Escritura payments, enrollments
   * **Pistas UI/UX:**
     * (Ninguna directa) Fiabilidad y seguridad backend. Idempotencia.
-  * **Estado:** [ ]
+  * **Instrucción Adicional:**
+    * Crea las tablas payments y enrollments si no existen. Añade 1 inscripción de prueba para el estudiante y curso de prueba
+  * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Vista de Administración de Usuarios (Básica)**
   * **Objetivo:**
@@ -417,7 +474,9 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Pistas UI/UX:**
     * Tabla clara (shadcn/ui)
     * Paginación/Búsqueda básica opcional. Solo vista.
-  * **Estado:** [ ]
+  * **Instrucción Adicional:**
+    * Crea la tabla profiles (si no existe, y el trigger handle_new_user). Asegúrate de tener 1 Admin, 1 Instructor, 1 Estudiante de prueba
+  * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Vista de Administración de Cursos (Básica)**
   * **Objetivo:**
@@ -433,7 +492,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Pistas UI/UX:**
     * Tabla clara
     * Enlace a edición visible. Solo vista/enlace. Paginación/Búsqueda opcional.
-  * **Estado:** [ ]
+  * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Impersonación de Usuarios (Admin)**
   * **Objetivo:**
@@ -455,7 +514,9 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Buscador con sugerencias (Combobox?)
     * Banner impersonación MUY visible
     * Botón detener claro. Alta precaución seguridad.
-  * **Estado:** [ ]
+  * **Instrucción Adicional:**
+    * Crea la tabla audit_log según esquema en Sección 4
+  * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Datos de Prueba Iniciales (Seed)**
   * **Objetivo:**
@@ -463,12 +524,12 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Acciones Clave:**
     * (Desarrollador) Ejecutar script SQL
   * **Flujo Principal:**
-    * Ejecutar seed.sql -> BD poblada con Admin, Instructor, Estudiante, Cursos, Módulos, Lecciones, Inscripción
+    * Ejecutar seed.sql -> BD poblada (usuarios, cursos, etc.)
   * **Interacciones:**
-    * Escritura en múltiples tablas
+    * Escritura BD
   * **Pistas UI/UX:**
-    * Script SQL claro y comentado
-  * **Estado:** [ ]
+    * Script SQL claro. (Nota: Varias tareas anteriores ya piden crear datos de prueba, este script puede consolidar o complementar)
+  * **Estado:** [ ] Pendiente
 
 * **Funcionalidad: Internacionalización (i18n - Base)**
   * **Objetivo:**
@@ -483,7 +544,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Librería i18next
   * **Pistas UI/UX:**
     * LanguageSwitcher simple (botones/select). (Prioridad baja Fase 1).
-  * **Estado:** [ ]
+  * **Estado:** [ ] Pendiente
 
 ### Fase: Enriquecimiento LMS e Interacción Inicial
 
@@ -586,4 +647,3 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Interfaz clara para calificar
     * Vista clara para estudiante
   * **Estado:** [ ]
-

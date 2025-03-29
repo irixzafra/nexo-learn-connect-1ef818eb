@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface NexoLogoProps {
   className?: string;
@@ -17,16 +18,32 @@ export const NexoLogo: React.FC<NexoLogoProps> = ({
   if (variant === 'icon') {
     return (
       <div className={cn("flex items-center", className)}>
-        <span className={cn(baseClasses, iconClasses, "text-primary")}>n</span>
+        <motion.span 
+          className={cn(baseClasses, iconClasses, "text-primary")}
+          whileHover={{ scale: 1.1 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          n
+        </motion.span>
       </div>
     );
   }
   
   return (
     <div className={cn("flex items-center", className)}>
-      <span className={cn(baseClasses, iconClasses, "text-primary")}>n</span>
-      <span className={cn(baseClasses, "text-primary")}>exo</span>
-      <span className={cn("text-muted-foreground font-medium ml-1")}>learn</span>
+      <div className="flex items-center bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-2 py-1 rounded-md mr-2">
+        <motion.span 
+          className={cn(baseClasses, "text-xl")}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          N
+        </motion.span>
+      </div>
+      <div className="flex flex-col items-start">
+        <span className={cn(baseClasses, "text-foreground leading-none")}>NEXO</span>
+        <span className={cn("text-muted-foreground text-xs font-medium")}>LEARNING PLATFORM</span>
+      </div>
     </div>
   );
 };
