@@ -31,6 +31,7 @@ type Module = {
 
 type Lesson = {
   id: string;
+  module_id: string;
   title: string;
   lesson_order: number;
   content_type: 'text' | 'video';
