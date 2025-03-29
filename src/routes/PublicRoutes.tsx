@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 // Landing and public pages
 import LandingPage from "@/pages/LandingPage";
