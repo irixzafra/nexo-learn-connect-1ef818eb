@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Edit, X } from 'lucide-react';
 import ProfileEditForm from '@/components/profile/ProfileEditForm';
+import UserRoleEditor from '@/components/admin/UserRoleEditor';
 
 const Profile: React.FC = () => {
   const { user, profile, userRole } = useAuth();
@@ -44,6 +45,8 @@ const Profile: React.FC = () => {
     // Refresh the page to get the updated profile data
     window.location.reload();
   };
+
+  const isAdmin = userRole === 'admin';
 
   return (
     <AppLayout>
@@ -125,34 +128,46 @@ const Profile: React.FC = () => {
             </CardContent>
           </Card>
           
-          {/* Tarjeta de estadísticas */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Estadísticas</CardTitle>
-              <CardDescription>
-                Resumen de tu actividad
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-muted-foreground text-sm">Cursos Inscritos</p>
-                <p className="text-2xl font-bold">0</p>
-              </div>
-              
-              <div>
-                <p className="text-muted-foreground text-sm">Cursos Completados</p>
-                <p className="text-2xl font-bold">0</p>
-              </div>
-              
-              <div>
-                <p className="text-muted-foreground text-sm">Promedio de Progreso</p>
-                <div className="h-2 w-full bg-muted rounded-full mt-2">
-                  <div className="h-2 w-0 bg-primary rounded-full"></div>
+          {/* Tarjeta de estadísticas y funcionalidades admin */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Estadísticas</CardTitle>
+                <CardDescription>
+                  Resumen de tu actividad
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-muted-foreground text-sm">Cursos Inscritos</p>
+                  <p className="text-2xl font-bold">0</p>
                 </div>
-                <p className="text-sm mt-1">0%</p>
-              </div>
-            </CardContent>
-          </Card>
+                
+                <div>
+                  <p className="text-muted-foreground text-sm">Cursos Completados</p>
+                  <p className="text-2xl font-bold">0</p>
+                </div>
+                
+                <div>
+                  <p className="text-muted-foreground text-sm">Promedio de Progreso</p>
+                  <div className="h-2 w-full bg-muted rounded-full mt-2">
+                    <div className="h-2 w-0 bg-primary rounded-full"></div>
+                  </div>
+                  <p className="text-sm mt-1">0%</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Componente para cambiar rol (solo para administradores) */}
+            {isAdmin && user && profile && (
+              <UserRoleEditor 
+                userId={user.id}
+                userName={profile.full_name || user.email || 'Usuario'}
+                currentRole={profile.role}
+                onRoleChanged={handleEditSuccess}
+              />
+            )}
+          </div>
         </div>
       </div>
     </AppLayout>

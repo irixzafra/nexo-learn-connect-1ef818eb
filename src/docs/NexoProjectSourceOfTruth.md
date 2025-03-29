@@ -289,3 +289,4 @@ El proyecto utiliza Row Level Security (RLS) de PostgreSQL para controlar el acc
 5. Soporte para contenido interactivo en lecciones
 6. Funcionalidades de gamificación
 7. Sistema de mensajería directa entre usuarios
+
