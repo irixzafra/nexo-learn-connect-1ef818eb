@@ -15,9 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { UserProfile, UserRole } from '@/types/auth';
-import { supabase } from '@/lib/supabase';
-import { toast } from 'sonner';
-import { captureError } from '@/lib/sentry';
+import { useProfileEdit } from '@/hooks/use-profile-edit';
 
 const profileFormSchema = z.object({
   full_name: z.string().min(2, {
@@ -42,41 +40,14 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
       role: profile?.role || 'student',
     },
   });
+  
+  const profileMutation = useProfileEdit(user_id);
 
   const onSubmit = async (data: ProfileFormValues) => {
-    try {
-      if (!user_id) {
-        toast.error("Error: No se pudo identificar el perfil de usuario.");
-        return;
-      }
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({ 
-          full_name: data.full_name,
-          role: data.role,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user_id);
-      
-      if (error) {
-        console.error('Error al actualizar el perfil:', error);
-        captureError(error, { operation: 'updateProfile', userId: user_id });
-        toast.error("No se pudo actualizar el perfil. Por favor, inténtalo de nuevo.");
-        return;
-      }
-      
-      toast.success("Perfil actualizado correctamente");
-      onSuccess();
-    } catch (error) {
-      console.error('Error en el envío del formulario:', error);
-      captureError(error, { 
-        operation: 'profileEditSubmit', 
-        userId: user_id,
-        formData: { full_name: data.full_name } 
-      });
-      toast.error("Ocurrió un error al actualizar el perfil.");
-    }
+    profileMutation.mutate(
+      { full_name: data.full_name },
+      { onSuccess }
+    );
   };
 
   return (
@@ -89,7 +60,11 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
             <FormItem>
               <FormLabel>Nombre completo</FormLabel>
               <FormControl>
-                <Input placeholder="Introduce tu nombre completo" {...field} />
+                <Input 
+                  placeholder="Introduce tu nombre completo" 
+                  {...field}
+                  disabled={profileMutation.isPending} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -124,7 +99,12 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
         />
         
         <div className="flex justify-end">
-          <Button type="submit">Guardar cambios</Button>
+          <Button 
+            type="submit" 
+            disabled={profileMutation.isPending}
+          >
+            {profileMutation.isPending ? 'Guardando...' : 'Guardar cambios'}
+          </Button>
         </div>
       </form>
     </Form>
