@@ -21,7 +21,7 @@ const profileFormSchema = z.object({
   full_name: z.string().min(2, {
     message: "El nombre debe tener al menos 2 caracteres.",
   }),
-  role: z.enum(['admin', 'instructor', 'student']).default('student'),
+  role: z.enum(['admin', 'instructor', 'student', 'sistemas', 'anonimo']).default('student'),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -91,6 +91,8 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
                   <SelectItem value="student">Estudiante</SelectItem>
                   <SelectItem value="instructor">Instructor</SelectItem>
                   <SelectItem value="admin">Administrador</SelectItem>
+                  <SelectItem value="sistemas">Sistemas</SelectItem>
+                  <SelectItem value="anonimo">Anónimo</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
