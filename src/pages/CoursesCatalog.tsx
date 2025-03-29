@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle, BookOpen, Compass, Clock, TrendingUp, Filter, Search } from 'lucide-react';
+import { AlertTriangle, BookOpen, Compass, Clock, TrendingUp, Filter, Search, Calendar } from 'lucide-react';
 import { featuredCourses } from '@/features/courses/utils/featuredCoursesData';
 import { useCoursesCatalog } from '@/features/courses/hooks/useCoursesCatalog';
 import { CatalogHeader } from '@/features/courses/components/CatalogHeader';

@@ -229,3 +229,20 @@ export const featuredCourses = [
     updated_at: "2023-10-08T09:40:00Z"
   }
 ];
+
+// Add the missing courseCategories export
+export const courseCategories = [
+  "Todos",
+  "Desarrollo Web",
+  "Ciencia de Datos",
+  "Marketing",
+  "Diseño",
+  "Inteligencia Artificial",
+  "Desarrollo Móvil",
+  "Big Data",
+  "Desarrollo Backend",
+  "DevOps",
+  "Desarrollo de Videojuegos",
+  "Ciberseguridad",
+  "Blockchain"
+];
