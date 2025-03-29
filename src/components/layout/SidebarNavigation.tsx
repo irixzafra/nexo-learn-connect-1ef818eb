@@ -1,9 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import CommonNavigation from './sidebar/CommonNavigation';
-import AdminNavigation from './sidebar/AdminNavigation';
-import InstructorNavigation from './sidebar/InstructorNavigation';
+import GroupedNavigation from './sidebar/GroupedNavigation';
 
 interface SidebarNavigationProps {
   viewAsRole?: string;
@@ -11,17 +9,11 @@ interface SidebarNavigationProps {
 
 export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => {
   const { userRole } = useAuth();
+  
+  // Determinar el rol efectivo para la navegación
+  const effectiveRole = viewAsRole && viewAsRole !== 'current' ? viewAsRole : userRole;
 
   return (
-    <div className="flex flex-col gap-2">
-      {/* Common navigation links for all users */}
-      <CommonNavigation />
-      
-      {/* Admin-specific links */}
-      {userRole === 'admin' && <AdminNavigation />}
-      
-      {/* Instructor-specific links */}
-      {userRole === 'instructor' && <InstructorNavigation />}
-    </div>
+    <GroupedNavigation viewAsRole={effectiveRole} />
   );
 };

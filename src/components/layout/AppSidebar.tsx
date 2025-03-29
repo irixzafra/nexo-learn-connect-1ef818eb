@@ -4,7 +4,8 @@ import {
   Sidebar, 
   SidebarContent, 
   SidebarFooter, 
-  SidebarHeader 
+  SidebarHeader,
+  SidebarTrigger
 } from '@/components/ui/sidebar';
 import { NexoLogo } from '@/components/ui/nexo-logo';
 import { SidebarNavigation } from './SidebarNavigation';
@@ -14,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { UserRole } from '@/types/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 
 type ViewAsRole = UserRole | 'current';
 
@@ -40,43 +42,52 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ viewAsRole, onRoleChange }) => 
   };
   
   return (
-    <Sidebar className="border-r bg-sidebar">
-      <SidebarHeader className="border-b px-6 py-4">
-        <div className="flex items-center">
-          <NexoLogo className="h-9 w-auto" />
-        </div>
-      </SidebarHeader>
+    <>
+      {/* Mobile menu trigger - Only visible on small screens */}
+      <div className="fixed top-4 left-4 z-50 md:hidden">
+        <SidebarTrigger>
+          <Menu className="h-6 w-6" />
+        </SidebarTrigger>
+      </div>
       
-      <SidebarContent className="px-4 py-4">
-        <div className="mb-6 flex flex-col items-center text-center">
-          <Button variant="ghost" className="h-auto p-0" asChild>
-            <Link to="/profile">
-              <Avatar className="h-16 w-16 mb-3 border-2 border-primary/20">
-                <AvatarImage src={user?.user_metadata?.avatar_url} />
-                <AvatarFallback className="text-lg">{getUserInitials()}</AvatarFallback>
-              </Avatar>
-            </Link>
-          </Button>
-          <div className="space-y-1">
-            <h3 className="font-medium truncate max-w-[160px]">
-              {profile?.full_name || user?.email?.split('@')[0]}
-            </h3>
-            <p className="text-xs text-muted-foreground truncate max-w-[160px]">
-              {user?.email}
-            </p>
+      <Sidebar className="border-r bg-sidebar">
+        <SidebarHeader className="border-b px-6 py-4">
+          <div className="flex items-center">
+            <NexoLogo className="h-9 w-auto" />
           </div>
-        </div>
+        </SidebarHeader>
         
-        <SidebarNavigation viewAsRole={viewAsRole} />
-      </SidebarContent>
-      
-      <SidebarFooter className="border-t p-4">
-        <SidebarFooterContent 
-          viewAsRole={viewAsRole} 
-          onRoleChange={onRoleChange} 
-        />
-      </SidebarFooter>
-    </Sidebar>
+        <SidebarContent className="px-3 py-4">
+          <div className="mb-6 flex flex-col items-center text-center">
+            <Button variant="ghost" className="h-auto p-0" asChild>
+              <Link to="/profile">
+                <Avatar className="h-16 w-16 mb-3 border-2 border-primary/20">
+                  <AvatarImage src={user?.user_metadata?.avatar_url} />
+                  <AvatarFallback className="text-lg bg-primary/10">{getUserInitials()}</AvatarFallback>
+                </Avatar>
+              </Link>
+            </Button>
+            <div className="space-y-1">
+              <h3 className="font-medium truncate max-w-[160px]">
+                {profile?.full_name || user?.email?.split('@')[0]}
+              </h3>
+              <p className="text-xs text-muted-foreground truncate max-w-[160px]">
+                {user?.email}
+              </p>
+            </div>
+          </div>
+          
+          <SidebarNavigation viewAsRole={viewAsRole} />
+        </SidebarContent>
+        
+        <SidebarFooter className="border-t p-4">
+          <SidebarFooterContent 
+            viewAsRole={viewAsRole} 
+            onRoleChange={onRoleChange} 
+          />
+        </SidebarFooter>
+      </Sidebar>
+    </>
   );
 };
 

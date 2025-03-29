@@ -32,14 +32,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   };
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={window.innerWidth >= 768}>
       <div className="flex min-h-screen w-full bg-muted/10">
         <AppSidebar 
           viewAsRole={viewAsRole}
           onRoleChange={handleRoleChange}
         />
         
-        <div className="flex-1 min-w-0 overflow-auto">
+        <div className="flex-1 min-w-0 overflow-auto transition-all duration-300">
           <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur-sm">
             <HeaderContent userRole={userRole} viewingAs={viewAsRole !== 'current' ? viewAsRole : null} />
           </header>
