@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState } from 'react';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { supabase } from '@/lib/supabase';
 
 interface EditModeContextType {
@@ -18,16 +18,12 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setIsEditMode((prev) => {
       const newState = !prev;
       if (newState) {
-        toast({
-          title: "Modo de edición activado",
-          description: "Ahora puedes editar los textos haciendo clic en ellos.",
-          duration: 3000,
+        toast.success("Modo de edición activado", {
+          description: "Ahora puedes editar los textos haciendo clic en ellos."
         });
       } else {
-        toast({
-          title: "Modo de edición desactivado",
-          description: "Los cambios han sido guardados.",
-          duration: 3000,
+        toast.success("Modo de edición desactivado", {
+          description: "Los cambios han sido guardados."
         });
       }
       return newState;
@@ -43,26 +39,20 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       if (error) {
         console.error('Error updating text:', error);
-        toast({
-          title: "Error al guardar",
-          description: error.message,
-          variant: "destructive",
+        toast.error("Error al guardar", {
+          description: error.message
         });
         return false;
       }
 
-      toast({
-        title: "Guardado con éxito",
-        description: `El campo ${field} ha sido actualizado.`,
-        duration: 2000,
+      toast.success("Guardado con éxito", {
+        description: `El campo ${field} ha sido actualizado.`
       });
       return true;
     } catch (error) {
       console.error('Error updating text:', error);
-      toast({
-        title: "Error al guardar",
-        description: "Ha ocurrido un error al actualizar el texto.",
-        variant: "destructive",
+      toast.error("Error al guardar", {
+        description: "Ha ocurrido un error al actualizar el texto."
       });
       return false;
     }
