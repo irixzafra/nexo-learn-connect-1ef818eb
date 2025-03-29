@@ -1,16 +1,13 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { NexoLogo } from '@/components/ui/nexo-logo';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UserRole } from '@/types/auth';
+import RoleSwitcher from '@/components/admin/RoleSwitcher';
+import EditModeToggle from '@/components/admin/EditModeToggle';
 import {
   Sidebar,
   SidebarContent,
@@ -163,46 +160,21 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           
           <SidebarFooter className="border-t p-4">
             {userRole === 'admin' && (
-              <div className="mb-4 px-2">
-                <Select 
-                  value={viewAsRole} 
-                  onValueChange={(value) => setViewAsRole(value as ViewAsRole)}
-                >
-                  <SelectTrigger className="w-full bg-muted/50">
-                    <SelectValue placeholder="Ver como" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="current">
-                      Ver como: {userRole && userRole.charAt(0).toUpperCase() + userRole.slice(1)}
-                    </SelectItem>
-                    <SelectItem value="student">Ver como: Estudiante</SelectItem>
-                    <SelectItem value="instructor">Ver como: Instructor</SelectItem>
-                    <SelectItem value="admin">Ver como: Admin</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="mb-4">
+                <RoleSwitcher 
+                  currentViewRole={viewAsRole}
+                  onChange={(role) => setViewAsRole(role as ViewAsRole)}
+                />
               </div>
             )}
 
-            <div className="flex items-center space-x-3 px-2 py-2 rounded-md">
-              <Avatar className="h-10 w-10 border-2 border-primary/20">
-                <AvatarFallback className="bg-primary/10 text-primary font-medium">
-                  {getRoleInitials(effectiveRole)}
-                </AvatarFallback>
-              </Avatar>
-              
-              <div className="flex flex-col flex-1">
-                <span className="text-sm font-medium capitalize">
-                  {effectiveRole || 'Usuario'}
-                </span>
-                {viewAsRole !== 'current' && (
-                  <span className="text-xs text-muted-foreground">Modo vista</span>
-                )}
-              </div>
+            <div className="flex justify-between items-center p-2">
+              {userRole === 'admin' && <EditModeToggle />}
               
               <Button 
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 rounded-full"
+                className="h-9 w-9 rounded-full ml-auto"
                 onClick={handleLogout}
                 title="Cerrar Sesión"
               >
