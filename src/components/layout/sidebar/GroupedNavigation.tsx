@@ -13,17 +13,33 @@ import {
   BookOpen,
   School,
   Cog,
-  Shield
+  Shield,
+  PlusCircle
 } from 'lucide-react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { UserRole } from '@/types/auth';
+import { cn } from '@/lib/utils';
 
 interface GroupedNavigationProps {
   viewAsRole?: string;
 }
 
 const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => {
+  const [openGroups, setOpenGroups] = React.useState({
+    aprendizaje: true,
+    comunidad: false,
+    gestion: true,
+    cuenta: false
+  });
+
+  const toggleGroup = (group: keyof typeof openGroups) => {
+    setOpenGroups(prev => ({
+      ...prev,
+      [group]: !prev[group]
+    }));
+  };
+
   return (
     <div className="flex flex-col gap-2">
       {/* Inicio - Siempre visible */}
@@ -35,7 +51,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                 <NavLink to="/home" end className={({ isActive }) => 
                   isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
                 }>
-                  <Home className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <Home className="h-4 w-4 mr-3 flex-shrink-0" />
                   <span>Inicio</span>
                 </NavLink>
               </SidebarMenuButton>
@@ -45,12 +61,25 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
       </SidebarGroup>
 
       {/* Grupo Aprendizaje */}
-      <Accordion type="single" collapsible defaultValue="aprendizaje">
-        <AccordionItem value="aprendizaje" className="border-none">
-          <AccordionTrigger className="py-2 px-3 rounded-md hover:bg-accent hover:no-underline flex items-center">
-            <span className="text-sm font-medium">Aprendizaje</span>
-          </AccordionTrigger>
-          <AccordionContent>
+      <div className="px-3">
+        <Collapsible 
+          open={openGroups.aprendizaje} 
+          onOpenChange={() => toggleGroup('aprendizaje')}
+          className="space-y-2"
+        >
+          <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-sm font-medium hover:text-primary transition-colors">
+            <span>Aprendizaje</span>
+            <div className={cn(
+              "h-5 w-5 rounded-md flex items-center justify-center transition-colors",
+              openGroups.aprendizaje ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            )}>
+              <PlusCircle className={cn(
+                "h-3.5 w-3.5 transition-transform", 
+                openGroups.aprendizaje && "rotate-45"
+              )} />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-1 pl-1">
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -59,7 +88,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                       <NavLink to="/courses" className={({ isActive }) => 
                         isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
                       }>
-                        <BookOpen className="h-4 w-4 mr-2 flex-shrink-0" />
+                        <BookOpen className="h-4 w-4 mr-3 flex-shrink-0" />
                         <span>Explorar Cursos</span>
                       </NavLink>
                     </SidebarMenuButton>
@@ -69,7 +98,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                       <NavLink to="/home/my-courses" className={({ isActive }) => 
                         isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
                       }>
-                        <GraduationCap className="h-4 w-4 mr-2 flex-shrink-0" />
+                        <GraduationCap className="h-4 w-4 mr-3 flex-shrink-0" />
                         <span>Mis Cursos</span>
                       </NavLink>
                     </SidebarMenuButton>
@@ -77,17 +106,30 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
 
-      {/* Grupo Comunidad - Futuro */}
-      <Accordion type="single" collapsible>
-        <AccordionItem value="comunidad" className="border-none">
-          <AccordionTrigger className="py-2 px-3 rounded-md hover:bg-accent hover:no-underline flex items-center">
-            <span className="text-sm font-medium">Comunidad</span>
-          </AccordionTrigger>
-          <AccordionContent>
+      {/* Grupo Comunidad */}
+      <div className="px-3">
+        <Collapsible 
+          open={openGroups.comunidad} 
+          onOpenChange={() => toggleGroup('comunidad')}
+          className="space-y-2"
+        >
+          <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-sm font-medium hover:text-primary transition-colors">
+            <span>Comunidad</span>
+            <div className={cn(
+              "h-5 w-5 rounded-md flex items-center justify-center transition-colors",
+              openGroups.comunidad ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            )}>
+              <PlusCircle className={cn(
+                "h-3.5 w-3.5 transition-transform", 
+                openGroups.comunidad && "rotate-45"
+              )} />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-1 pl-1">
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -96,7 +138,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                       <NavLink to="/home/messages" className={({ isActive }) => 
                         isActive ? "text-primary opacity-50 flex items-center w-full" : "opacity-50 flex items-center w-full"
                       }>
-                        <MessageSquare className="h-4 w-4 mr-2 flex-shrink-0" />
+                        <MessageSquare className="h-4 w-4 mr-3 flex-shrink-0" />
                         <span>Mensajes (Próximamente)</span>
                       </NavLink>
                     </SidebarMenuButton>
@@ -106,7 +148,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                       <NavLink to="/home/community" className={({ isActive }) => 
                         isActive ? "text-primary opacity-50 flex items-center w-full" : "opacity-50 flex items-center w-full"
                       }>
-                        <Users className="h-4 w-4 mr-2 flex-shrink-0" />
+                        <Users className="h-4 w-4 mr-3 flex-shrink-0" />
                         <span>Red (Próximamente)</span>
                       </NavLink>
                     </SidebarMenuButton>
@@ -114,18 +156,31 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
 
       {/* Grupo Gestión - Solo visible para instructor o admin */}
       {(viewAsRole === 'instructor' || viewAsRole === 'admin') && (
-        <Accordion type="single" collapsible defaultValue="gestion">
-          <AccordionItem value="gestion" className="border-none">
-            <AccordionTrigger className="py-2 px-3 rounded-md hover:bg-accent hover:no-underline flex items-center">
-              <span className="text-sm font-medium">Gestión</span>
-            </AccordionTrigger>
-            <AccordionContent>
+        <div className="px-3">
+          <Collapsible 
+            open={openGroups.gestion} 
+            onOpenChange={() => toggleGroup('gestion')}
+            className="space-y-2"
+          >
+            <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-sm font-medium hover:text-primary transition-colors">
+              <span>Gestión</span>
+              <div className={cn(
+                "h-5 w-5 rounded-md flex items-center justify-center transition-colors",
+                openGroups.gestion ? "bg-primary/10 text-primary" : "hover:bg-muted"
+              )}>
+                <PlusCircle className={cn(
+                  "h-3.5 w-3.5 transition-transform", 
+                  openGroups.gestion && "rotate-45"
+                )} />
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-1 pl-1">
               {viewAsRole === 'instructor' && (
                 <SidebarGroup>
                   <SidebarGroupContent>
@@ -135,7 +190,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                           <NavLink to="/instructor/dashboard" className={({ isActive }) => 
                             isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
                           }>
-                            <LayoutDashboard className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <LayoutDashboard className="h-4 w-4 mr-3 flex-shrink-0" />
                             <span>Dashboard</span>
                           </NavLink>
                         </SidebarMenuButton>
@@ -145,7 +200,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                           <NavLink to="/instructor/courses" className={({ isActive }) => 
                             isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
                           }>
-                            <Book className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <Book className="h-4 w-4 mr-3 flex-shrink-0" />
                             <span>Mis Cursos</span>
                           </NavLink>
                         </SidebarMenuButton>
@@ -155,7 +210,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                           <NavLink to="/instructor/students" className={({ isActive }) => 
                             isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
                           }>
-                            <School className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <School className="h-4 w-4 mr-3 flex-shrink-0" />
                             <span>Estudiantes</span>
                           </NavLink>
                         </SidebarMenuButton>
@@ -174,7 +229,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                           <NavLink to="/admin/users" className={({ isActive }) => 
                             isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
                           }>
-                            <Users className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <Users className="h-4 w-4 mr-3 flex-shrink-0" />
                             <span>Usuarios</span>
                           </NavLink>
                         </SidebarMenuButton>
@@ -184,7 +239,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                           <NavLink to="/admin/test-data" className={({ isActive }) => 
                             isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
                           }>
-                            <Cog className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <Cog className="h-4 w-4 mr-3 flex-shrink-0" />
                             <span>Datos de Prueba</span>
                           </NavLink>
                         </SidebarMenuButton>
@@ -193,18 +248,31 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                   </SidebarGroupContent>
                 </SidebarGroup>
               )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
       )}
 
       {/* Grupo Cuenta */}
-      <Accordion type="single" collapsible>
-        <AccordionItem value="cuenta" className="border-none">
-          <AccordionTrigger className="py-2 px-3 rounded-md hover:bg-accent hover:no-underline flex items-center">
-            <span className="text-sm font-medium">Cuenta</span>
-          </AccordionTrigger>
-          <AccordionContent>
+      <div className="px-3">
+        <Collapsible 
+          open={openGroups.cuenta} 
+          onOpenChange={() => toggleGroup('cuenta')}
+          className="space-y-2"
+        >
+          <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-sm font-medium hover:text-primary transition-colors">
+            <span>Cuenta</span>
+            <div className={cn(
+              "h-5 w-5 rounded-md flex items-center justify-center transition-colors",
+              openGroups.cuenta ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            )}>
+              <PlusCircle className={cn(
+                "h-3.5 w-3.5 transition-transform", 
+                openGroups.cuenta && "rotate-45"
+              )} />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-1 pl-1">
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -213,7 +281,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                       <NavLink to="/profile" className={({ isActive }) => 
                         isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
                       }>
-                        <User className="h-4 w-4 mr-2 flex-shrink-0" />
+                        <User className="h-4 w-4 mr-3 flex-shrink-0" />
                         <span>Perfil</span>
                       </NavLink>
                     </SidebarMenuButton>
@@ -223,7 +291,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                       <NavLink to="/home/settings" className={({ isActive }) => 
                         isActive ? "text-primary opacity-50 flex items-center w-full" : "opacity-50 flex items-center w-full"
                       }>
-                        <Settings className="h-4 w-4 mr-2 flex-shrink-0" />
+                        <Settings className="h-4 w-4 mr-3 flex-shrink-0" />
                         <span>Configuración (Próximamente)</span>
                       </NavLink>
                     </SidebarMenuButton>
@@ -231,9 +299,9 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
     </div>
   );
 };

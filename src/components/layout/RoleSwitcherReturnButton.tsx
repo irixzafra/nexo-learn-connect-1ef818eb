@@ -21,7 +21,7 @@ const RoleSwitcherReturnButton: React.FC<RoleSwitcherReturnButtonProps> = ({
     <Button
       variant="outline"
       size="sm"
-      className="mt-2 w-full flex items-center gap-2 text-xs text-primary"
+      className="mt-2 w-full flex items-center justify-center gap-2 text-xs text-primary border-primary/30 hover:bg-primary/5"
       onClick={() => onRoleChange(userRole as UserRole)}
     >
       <ArrowLeftRight className="h-3 w-3" />

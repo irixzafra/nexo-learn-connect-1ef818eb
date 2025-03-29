@@ -78,15 +78,18 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
             <AvatarImage src={profile?.avatar_url} alt={profile?.full_name || 'User'} />
             <AvatarFallback>{getUserInitials()}</AvatarFallback>
           </Avatar>
-          <div className="flex flex-col items-start text-left">
+          <div className="flex flex-col items-start text-left overflow-hidden">
             <span className="text-sm font-medium truncate max-w-[120px]">
               {profile?.full_name || 'Usuario'}
             </span>
             <div className="flex items-center gap-1">
-              <Badge variant={getRoleBadgeVariant(userRole || undefined)} className="h-5 text-xs">
+              <Badge 
+                variant={getRoleBadgeVariant(userRole || undefined)} 
+                className="h-5 text-xs px-2 py-0 truncate max-w-[120px]"
+              >
                 <div className="flex items-center gap-1">
                   {getRoleIcon(userRole)}
-                  <span className="capitalize">{userRole || 'Usuario'}</span>
+                  <span className="capitalize truncate">{userRole || 'Usuario'}</span>
                 </div>
               </Badge>
             </div>

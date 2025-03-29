@@ -12,8 +12,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
-import { Bell, Settings, User, LogOut } from 'lucide-react';
-import EditModeToggle from '@/components/admin/EditModeToggle';
+import { Bell, Settings, User, LogOut, Edit, CheckSquare } from 'lucide-react';
+import { useEditMode } from '@/contexts/EditModeContext';
+import { cn } from '@/lib/utils';
 
 interface HeaderContentProps {
   userRole: string | null;
@@ -22,6 +23,7 @@ interface HeaderContentProps {
 
 const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) => {
   const { user, profile, logout } = useAuth();
+  const { isEditMode, toggleEditMode } = useEditMode();
 
   // Get user initials for avatar fallback
   const getUserInitials = () => {
@@ -41,7 +43,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
         <SidebarTrigger />
         
         {viewingAs && (
-          <div className="ml-4 px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500 text-xs font-medium rounded-full">
+          <div className="ml-4 px-3 py-1 bg-amber-50 text-amber-800 dark:bg-amber-800/30 dark:text-amber-500 text-xs font-medium rounded-full">
             Viendo como: <span className="capitalize font-semibold">{viewingAs}</span>
           </div>
         )}
@@ -49,7 +51,30 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
       
       <div className="flex items-center gap-4">
         {/* Edit Mode Toggle en el header - solo visible para admins */}
-        {userRole === 'admin' && <EditModeToggle />}
+        {userRole === 'admin' && (
+          <Button
+            variant={isEditMode ? "default" : "outline"}
+            size="sm"
+            onClick={toggleEditMode}
+            className={cn(
+              "gap-2",
+              isEditMode ? 'bg-primary text-primary-foreground' : '',
+              "sm:flex sm:items-center" // Para móvil
+            )}
+          >
+            {isEditMode ? (
+              <>
+                <CheckSquare className="h-4 w-4" />
+                <span className="hidden sm:inline">Editando</span>
+              </>
+            ) : (
+              <>
+                <Edit className="h-4 w-4" />
+                <span className="hidden sm:inline">Editar</span>
+              </>
+            )}
+          </Button>
+        )}
         
         <Button variant="ghost" size="icon" asChild className="relative">
           <Link to="/messages">

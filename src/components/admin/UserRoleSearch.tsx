@@ -8,6 +8,7 @@ import { Search, User, Shield, UserCog } from 'lucide-react';
 import { UserRole } from '@/types/auth';
 import UserRoleEditor from '@/components/admin/UserRoleEditor';
 import { Badge } from '@/components/ui/badge';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 
 interface UserResult {
   id: string;
@@ -210,83 +211,74 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2">
-        <div className="flex-1 relative">
-          <Input
-            placeholder="Buscar por nombre o email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            className="pl-9"
-            autoFocus
-          />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        </div>
-        <Button 
-          onClick={handleSearch} 
-          disabled={isSearching}
-        >
-          {isSearching ? (
-            <span className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></span>
-          ) : (
-            <Search className="h-4 w-4 mr-2" />
-          )}
-          <span>Buscar</span>
-        </Button>
-      </div>
-
-      <div className="space-y-4">
-        {isSearching && (
-          <div className="flex justify-center py-4">
-            <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></div>
-          </div>
-        )}
-        
-        {!isSearching && searchResults.length > 0 ? (
-          <div className="space-y-4">
-            {searchResults.map((user) => (
-              <div key={user.id} className="border rounded-lg p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-muted rounded-full h-10 w-10 flex items-center justify-center">
-                      <User className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <div className="font-medium flex items-center gap-2">
-                        {user.full_name}
-                        <Badge variant={getRoleBadgeVariant(user.role)} className="h-5 text-xs capitalize">
-                          <div className="flex items-center gap-1">
-                            {getRoleIcon(user.role)}
-                            <span>{user.role}</span>
-                          </div>
-                        </Badge>
-                      </div>
-                      <div className="text-sm text-muted-foreground">{user.email}</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <UserRoleEditor 
-                  userId={user.id}
-                  userName={user.full_name}
-                  currentRole={user.role}
-                  onRoleChanged={handleRoleChanged}
-                />
+      <Command className="rounded-lg border shadow-md">
+        <CommandInput
+          placeholder="Buscar por nombre o email..."
+          value={searchTerm}
+          onValueChange={setSearchTerm}
+          className="border-none focus:ring-0"
+          autoFocus
+        />
+        <CommandList>
+          <CommandEmpty>
+            {isSearching ? (
+              <div className="flex justify-center py-4">
+                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></div>
               </div>
-            ))}
-          </div>
-        ) : !isSearching && searchTerm.length > 0 && (
-          <div className="text-center py-6 text-muted-foreground">
-            No se encontraron resultados
-          </div>
-        )}
-        
-        {!isSearching && searchTerm.length === 0 && (
-          <div className="text-center py-6 text-muted-foreground">
-            Ingresa un nombre o email para buscar usuarios
-          </div>
-        )}
-      </div>
+            ) : searchTerm.length > 0 ? (
+              <p className="p-4 text-center text-sm text-muted-foreground">
+                No se encontraron resultados
+              </p>
+            ) : (
+              <p className="p-4 text-center text-sm text-muted-foreground">
+                Ingresa un nombre o email para buscar usuarios
+              </p>
+            )}
+          </CommandEmpty>
+          
+          {searchResults.length > 0 && (
+            <CommandGroup heading="Resultados">
+              {searchResults.map((user) => (
+                <CommandItem 
+                  key={user.id} 
+                  value={user.id}
+                  className="cursor-default block"
+                  onSelect={() => {}}
+                >
+                  <div className="w-full border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-muted rounded-full h-10 w-10 flex items-center justify-center">
+                          <User className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                        <div>
+                          <div className="font-medium flex items-center gap-2">
+                            {user.full_name}
+                            <Badge variant={getRoleBadgeVariant(user.role)} className="h-5 text-xs capitalize">
+                              <div className="flex items-center gap-1">
+                                {getRoleIcon(user.role)}
+                                <span>{user.role}</span>
+                              </div>
+                            </Badge>
+                          </div>
+                          <div className="text-sm text-muted-foreground">{user.email}</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <UserRoleEditor 
+                      userId={user.id}
+                      userName={user.full_name}
+                      currentRole={user.role}
+                      onRoleChanged={handleRoleChanged}
+                    />
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+        </CommandList>
+      </Command>
 
       {searchResults.length > 0 && (
         <div className="flex justify-end">

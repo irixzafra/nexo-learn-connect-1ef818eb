@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import { 
@@ -25,6 +25,7 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   const { userRole, profile } = useAuth();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filteredRoles, setFilteredRoles] = useState<string[]>(['admin', 'instructor', 'student']);
   
   // Solo los administradores pueden cambiar roles
   if (userRole !== 'admin') {
@@ -71,12 +72,16 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     }
   };
 
-  const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== userRole;
+  // Manejar filtrado de roles en tiempo real
+  useEffect(() => {
+    const filtered = ['admin', 'instructor', 'student'].filter(role => 
+      role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      getRoleLabel(role as UserRole).toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredRoles(filtered);
+  }, [searchTerm]);
 
-  const filteredRoles = ['admin', 'instructor', 'student'].filter(role => 
-    role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    getRoleLabel(role as UserRole).toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== userRole;
 
   return (
     <div className="px-2 py-1 mb-2">
@@ -98,7 +103,7 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
               </div>
               <span className="font-medium">{getRoleLabel(effectiveRole as UserRole)}</span>
               {isViewingAsOtherRole && (
-                <Badge variant="outline" className="h-5 text-xs">
+                <Badge variant="outline" className="h-5 text-xs bg-amber-50 text-amber-800 border-amber-200">
                   Vista previa
                 </Badge>
               )}
@@ -113,6 +118,7 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
               value={searchTerm}
               onValueChange={setSearchTerm}
               className="h-9"
+              autoFocus
             />
             
             <CommandList>
