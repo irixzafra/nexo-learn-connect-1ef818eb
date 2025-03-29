@@ -20,6 +20,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 import AppLayout from '@/layouts/AppLayout';
 import { toast } from 'sonner';
 import { Lesson } from '@/types/course';
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 
 // Esta es una implementación básica. Para una edición más rica, se debería integrar
 // Tiptap o algún otro editor WYSIWYG como se menciona en el documento.
@@ -32,6 +33,7 @@ const EditLesson: React.FC = () => {
   const [contentType, setContentType] = useState<'text' | 'video'>('text');
   const [textContent, setTextContent] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
+  const [showVideoPreview, setShowVideoPreview] = useState(false);
 
   // Fetch lesson details
   const { data: lesson, isLoading: isLoadingLesson } = useQuery({
@@ -112,6 +114,39 @@ const EditLesson: React.FC = () => {
     }
 
     await updateLessonMutation.mutateAsync();
+  };
+
+  // Extract video ID from YouTube URL
+  const getYouTubeVideoId = (url: string) => {
+    if (!url) return null;
+    
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  // Generate embed URL
+  const getEmbedUrl = (url: string) => {
+    const videoId = getYouTubeVideoId(url);
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    // Check if it's already an embed URL
+    if (url.includes('youtube.com/embed/')) {
+      return url;
+    }
+    
+    // Handle Vimeo URLs (basic support)
+    if (url.includes('vimeo.com')) {
+      const vimeoId = url.split('/').pop();
+      if (vimeoId) {
+        return `https://player.vimeo.com/video/${vimeoId}`;
+      }
+    }
+    
+    return url; // Return original URL if we can't parse it
   };
 
   if (isLoadingLesson) {
@@ -249,11 +284,51 @@ const EditLesson: React.FC = () => {
                       <label className="block text-sm font-medium mb-2">
                         Vista Previa
                       </label>
-                      <div className="w-full bg-muted p-4 rounded-md">
+                      <div className="md:hidden">
+                        <DrawerTrigger asChild>
+                          <Button
+                            onClick={() => setShowVideoPreview(true)}
+                            className="w-full"
+                            variant="outline"
+                          >
+                            Ver vista previa del video
+                          </Button>
+                        </DrawerTrigger>
+                        <Drawer open={showVideoPreview} onOpenChange={setShowVideoPreview}>
+                          <DrawerContent className="h-[80vh]">
+                            <div className="p-4">
+                              <h3 className="text-lg font-medium mb-2">Vista Previa del Video</h3>
+                              <div className="aspect-video">
+                                <iframe
+                                  src={getEmbedUrl(videoUrl)}
+                                  className="w-full h-full rounded-md"
+                                  title="Vista previa de video"
+                                  allowFullScreen
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                ></iframe>
+                              </div>
+                              <div className="mt-4 flex justify-end">
+                                <Button 
+                                  variant="outline" 
+                                  onClick={() => setShowVideoPreview(false)}
+                                >
+                                  Cerrar
+                                </Button>
+                              </div>
+                            </div>
+                          </DrawerContent>
+                        </Drawer>
+                      </div>
+                      
+                      <div className="hidden md:block bg-muted rounded-md overflow-hidden">
                         <div className="aspect-video">
-                          <p className="text-center p-12 text-muted-foreground">
-                            Vista previa del video disponible en la vista de estudiante
-                          </p>
+                          <iframe
+                            src={getEmbedUrl(videoUrl)}
+                            className="w-full h-full"
+                            title="Vista previa de video"
+                            allowFullScreen
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          ></iframe>
                         </div>
                       </div>
                     </div>

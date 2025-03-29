@@ -360,7 +360,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Input URL claro
   * **Instrucción Adicional:**
     * Añade contenido de prueba (texto lorem ipsum o URL video público) a algunas de las lecciones creadas
-  * **Estado:** [ ] Pendiente (Estado del doc anterior [x] pero se añade requisito de datos)
+  * **Estado:** [x]
 
 * **Funcionalidad: Publicar / Despublicar Curso**
   * **Objetivo:**
