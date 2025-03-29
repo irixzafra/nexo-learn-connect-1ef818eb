@@ -342,3 +342,49 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Objetivo:**
     * Permitir a instructores evaluar las tareas enviadas
   * **Estado:** [ ]
+
+## 7. DOCUMENTACIÓN TÉCNICA
+
+### REFAC-MODULARITY-MVP-01: Refactorización para Modularidad
+
+**Fecha**: [Fecha de Implementación]
+**Autor**: Lovable AI
+**Estado**: Completado
+
+#### Descripción
+
+Se realizó una refactorización del código MVP para mejorar la modularidad y permitir que las grandes áreas funcionales puedan ser potencialmente activadas o desactivadas en diferentes instancias del producto en el futuro.
+
+#### Cambios Implementados
+
+1. **Estructura de Directorios**:
+   - Creación de estructura de carpetas `src/features/` para organizar el código por módulos funcionales.
+   - Módulo inicial `src/features/courses/` para centralizar la funcionalidad del LMS.
+
+2. **Componentes Extraídos**:
+   - `CourseCard`: Componente reutilizable para mostrar tarjetas de cursos en diferentes contextos.
+   - `EnrolledCoursesList`: Componente para mostrar la lista de cursos en los que un estudiante está matriculado.
+
+3. **Hooks Específicos**:
+   - `useEnrolledCourses`: Hook para obtener los cursos en los que un usuario está matriculado, encapsulando toda la lógica de datos.
+
+4. **Desacoplamiento**:
+   - Separación clara entre la lógica de negocio (hooks) y la presentación (componentes).
+   - Simplificación de la página `StudentCourses.tsx` para que solo se ocupe de la composición de los componentes.
+   - Mejora en el manejo de errores y estados de carga.
+
+5. **Manejo de Datos**:
+   - Mejor gestión de los datos obtenidos de Supabase, con validación de tipos adecuada.
+   - Corrección en el manejo de datos de instructor para prevenir errores de tipo.
+
+#### Beneficios
+
+- **Mantenibilidad**: Código más modular y fácil de mantener.
+- **Reutilización**: Componentes que pueden ser utilizados en diferentes partes de la aplicación.
+- **Escalabilidad**: Estructura preparada para la adición de nuevas funcionalidades por módulo.
+- **Desacoplamiento**: Reducción de dependencias directas entre módulos potencialmente activables.
+
+#### Próximos Pasos
+
+- Continuar con la refactorización de otras áreas del MVP siguiendo este patrón.
+- Implementar la siguiente funcionalidad del roadmap ("Seguimiento de Progreso en Cursos") utilizando esta estructura modular.
