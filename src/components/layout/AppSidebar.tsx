@@ -7,7 +7,7 @@ import {
   SidebarHeader 
 } from '@/components/ui/sidebar';
 import { NexoLogo } from '@/components/ui/nexo-logo';
-import SidebarNavigation from './SidebarNavigation';
+import { SidebarNavigation } from './SidebarNavigation';
 import SidebarFooterContent from './SidebarFooterContent';
 import { UserRole } from '@/types/auth';
 
@@ -28,7 +28,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ viewAsRole, onRoleChange }) => 
       </SidebarHeader>
       
       <SidebarContent className="px-4 py-4">
-        <SidebarNavigation />
+        <SidebarNavigation viewAsRole={viewAsRole} />
       </SidebarContent>
       
       <SidebarFooter className="border-t p-4">

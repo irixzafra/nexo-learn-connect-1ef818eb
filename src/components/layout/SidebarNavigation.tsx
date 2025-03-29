@@ -1,3 +1,4 @@
+
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import { ReactNode } from 'react';
@@ -8,7 +9,7 @@ import { cn } from '@/lib/utils';
 interface NavItem {
   label: string;
   href: string;
-  icon: ReactNode;
+  icon: React.ComponentType<any>; // Changed from ReactNode to ComponentType
 }
 
 interface SidebarNavigationProps {
@@ -19,13 +20,13 @@ const isActive = (pathname: string, href: string): boolean => {
   return pathname === href || (href !== '/' && pathname.startsWith(href));
 };
 
-export const SidebarNavigation = ({ viewAsRole = 'current' }: { viewAsRole?: 'current' | UserRole }) => {
+export const SidebarNavigation = ({ viewAsRole = 'current' }: SidebarNavigationProps) => {
   const { userRole } = useAuth();
   const effectiveRole = viewAsRole === 'current' ? userRole : viewAsRole;
   const { pathname } = useLocation();
 
   // Navigation items based on role
-  const studentItems = [
+  const studentItems: NavItem[] = [
     { label: 'Inicio', href: '/home', icon: Home },
     { label: 'Mis Cursos', href: '/my-courses', icon: Book },
     { label: 'Mensajes', href: '/messages', icon: MessageSquare },
@@ -34,7 +35,7 @@ export const SidebarNavigation = ({ viewAsRole = 'current' }: { viewAsRole?: 'cu
     { label: 'Configuración', href: '/settings', icon: Settings },
   ];
 
-  const instructorItems = [
+  const instructorItems: NavItem[] = [
     { label: 'Inicio', href: '/home', icon: Home },
     { label: 'Mis Cursos', href: '/instructor/courses', icon: Book },
     { label: 'Estudiantes', href: '/instructor/students', icon: Users },
@@ -44,7 +45,7 @@ export const SidebarNavigation = ({ viewAsRole = 'current' }: { viewAsRole?: 'cu
     { label: 'Configuración', href: '/settings', icon: Settings },
   ];
 
-  const adminItems = [
+  const adminItems: NavItem[] = [
     { label: 'Inicio', href: '/home', icon: Home },
     { label: 'Cursos', href: '/courses', icon: Book },
     { label: 'Usuarios', href: '/users', icon: Users },
@@ -90,3 +91,6 @@ export const SidebarNavigation = ({ viewAsRole = 'current' }: { viewAsRole?: 'cu
     </div>
   );
 };
+
+// Add default export
+export default SidebarNavigation;
