@@ -15,9 +15,9 @@ const EditModeToggle: React.FC = () => {
     console.log('EditModeToggle rendering, userRole:', userRole);
   }, [userRole]);
   
-  // Si no eres administrador, no muestra el botón
-  if (userRole !== 'admin') {
-    console.log('Not showing edit button because userRole is not admin:', userRole);
+  // Si no eres administrador o sistemas, no muestra el botón
+  if (userRole !== 'admin' && userRole !== 'sistemas') {
+    console.log('Not showing edit button because userRole is not admin or sistemas:', userRole);
     return null;
   }
 
@@ -48,3 +48,4 @@ const EditModeToggle: React.FC = () => {
 };
 
 export default EditModeToggle;
+

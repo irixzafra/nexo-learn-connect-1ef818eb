@@ -4,9 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import AppLayout from '@/layouts/AppLayout';
 import PublicLayout from '@/layouts/PublicLayout';
 import { NexoLogo } from '@/components/ui/nexo-logo';
+import EditModeToggle from '@/components/admin/EditModeToggle';
 
 const AboutUs: React.FC = () => {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   
   const AboutUsContent = () => (
     <div className="max-w-5xl mx-auto px-4 py-12 space-y-10">
@@ -16,6 +17,13 @@ const AboutUs: React.FC = () => {
           Somos un ecosistema educativo de creatividad digital. Más que una plataforma, 
           somos una comunidad.
         </p>
+        
+        {/* Edit Mode Toggle for admin and sistemas users */}
+        {(userRole === 'admin' || userRole === 'sistemas') && (
+          <div className="flex justify-center mt-4">
+            <EditModeToggle />
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -98,3 +106,4 @@ const AboutUs: React.FC = () => {
 };
 
 export default AboutUs;
+

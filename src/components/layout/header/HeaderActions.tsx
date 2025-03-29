@@ -14,8 +14,8 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({ userRole }) => {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Edit Mode Toggle - only visible for admins */}
-      {userRole === 'admin' && (
+      {/* Edit Mode Toggle - only visible for admins and sistemas */}
+      {(userRole === 'admin' || userRole === 'sistemas') && (
         <Button
           variant={isEditMode ? "default" : "outline"}
           size="sm"
@@ -55,3 +55,4 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({ userRole }) => {
     </div>
   );
 };
+
