@@ -1,19 +1,30 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { loginSchema, type LoginFormValues } from '@/lib/validations/auth';
+import { useLogin } from '@/hooks/use-login';
 import PublicLayout from '@/layouts/PublicLayout';
+import { Loader2 } from 'lucide-react';
 
 const Login: React.FC = () => {
-  // Esta es una implementación básica sin validación real
-  // La implementación completa con AuthContext y RHF/Zod se hará en funcionalidades futuras
+  const { login, isLoading } = useLogin();
   
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Login form submitted');
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+  
+  const onSubmit = (data: LoginFormValues) => {
+    login(data);
   };
   
   return (
@@ -27,33 +38,65 @@ const Login: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Correo Electrónico</Label>
-                <Input id="email" type="email" placeholder="usuario@ejemplo.com" required />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Contraseña</Label>
-                  <Link to="/auth/forgot-password" className="text-sm text-primary hover:underline">
-                    ¿Olvidaste tu contraseña?
-                  </Link>
-                </div>
-                <Input id="password" type="password" placeholder="••••••••" required />
-              </div>
-              <Button type="submit" className="w-full">
-                Iniciar Sesión
-              </Button>
-            </form>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <div className="text-sm text-center text-muted-foreground">
-              ¿No tienes una cuenta?{' '}
-              <Link to="/auth/register" className="text-primary hover:underline">
-                Regístrate
-              </Link>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Correo Electrónico</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="email" placeholder="usuario@ejemplo.com" autoComplete="email" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contraseña</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="password" placeholder="••••••••" autoComplete="current-password" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Iniciando sesión...
+                    </>
+                  ) : (
+                    'Iniciar Sesión'
+                  )}
+                </Button>
+              </form>
+            </Form>
+            
+            <div className="mt-4 space-y-2">
+              <p className="text-sm text-center text-muted-foreground">
+                ¿No tienes una cuenta?{' '}
+                <Link to="/auth/register" className="text-primary hover:underline">
+                  Regístrate
+                </Link>
+              </p>
+              
+              <p className="text-xs text-center text-muted-foreground">
+                <strong>Usuarios de prueba:</strong><br />
+                Admin: admin@nexo.com / Admin123!<br />
+                Instructor: instructor@nexo.com / Instructor123!<br />
+                Estudiante: student@nexo.com / Student123!
+              </p>
             </div>
-          </CardFooter>
+          </CardContent>
         </Card>
       </div>
     </PublicLayout>
