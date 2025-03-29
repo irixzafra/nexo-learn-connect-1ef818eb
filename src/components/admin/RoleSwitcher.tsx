@@ -8,11 +8,15 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Check, ChevronRight, Search, Shield, UserRound } from 'lucide-react';
+import { Check, ChevronRight, Search, Shield, UserRound, ArrowLeftRight, UserCog, User } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { UserRoleSearch } from './UserRoleSearch';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from "@/components/ui/separator";
+import { Command, CommandList, CommandInput, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
 
 interface RoleSwitcherProps {
   onChange?: (role: UserRole) => void;
@@ -23,8 +27,10 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   onChange,
   currentViewRole
 }) => {
-  const { userRole } = useAuth();
+  const { userRole, profile } = useAuth();
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   
   // Solo los administradores pueden cambiar roles
   if (userRole !== 'admin') {
@@ -42,6 +48,7 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     if (onChange) {
       onChange(role === 'current' ? userRole! : role);
     }
+    setOpen(false);
   };
 
   const getRoleIcon = (role: UserRole) => {
@@ -49,9 +56,9 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
       case 'admin':
         return <Shield className="h-4 w-4" />;
       case 'instructor':
-        return <UserRound className="h-4 w-4 text-amber-500" />;
+        return <UserCog className="h-4 w-4 text-amber-500" />;
       case 'student':
-        return <UserRound className="h-4 w-4 text-emerald-500" />;
+        return <User className="h-4 w-4 text-emerald-500" />;
       default:
         return <UserRound className="h-4 w-4" />;
     }
@@ -70,20 +77,20 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     }
   };
 
+  const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== userRole;
+
   return (
     <div className="px-2 py-1">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-medium text-muted-foreground">Vista previa como:</span>
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsSearchDialogOpen(true)}>
-          <Search className="h-4 w-4" />
-          <span className="sr-only">Buscar usuarios</span>
-        </Button>
       </div>
       
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button 
             variant="outline" 
+            role="combobox"
+            aria-expanded={open}
             className="flex w-full items-center justify-between p-2 h-auto"
           >
             <div className="flex items-center gap-2">
@@ -91,70 +98,105 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
                 {getRoleIcon(effectiveRole as UserRole)}
               </div>
               <span className="font-medium">{getRoleLabel(effectiveRole as UserRole)}</span>
+              {isViewingAsOtherRole && (
+                <Badge variant="outline" className="h-5 text-xs">
+                  Vista previa
+                </Badge>
+              )}
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-56 p-2">
-          <div className="flex flex-col gap-1">
-            <Button 
-              variant="ghost" 
-              className={cn(
-                "flex justify-start items-center gap-2 h-9", 
-                currentViewRole === 'admin' && "bg-accent"
-              )}
-              onClick={() => handleRoleChange('admin')}
-            >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  <span>Administrador</span>
-                </div>
-                {currentViewRole === 'admin' && <Check className="h-4 w-4" />}
-              </div>
-            </Button>
+        <PopoverContent align="start" className="w-64 p-0" sideOffset={4}>
+          <Command>
+            <CommandInput 
+              placeholder="Buscar roles o usuarios..."
+              value={searchTerm}
+              onValueChange={setSearchTerm}
+              className="h-9"
+            />
             
-            <Button 
-              variant="ghost" 
-              className={cn(
-                "flex justify-start items-center gap-2 h-9", 
-                currentViewRole === 'instructor' && "bg-accent"
+            <CommandList>
+              <CommandEmpty>No se encontraron resultados</CommandEmpty>
+              
+              <CommandGroup heading="Cambiar vista">
+                <CommandItem 
+                  onSelect={() => handleRoleChange('admin')}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      <span>Administrador</span>
+                    </div>
+                    {currentViewRole === 'admin' && <Check className="h-4 w-4" />}
+                  </div>
+                </CommandItem>
+                
+                <CommandItem 
+                  onSelect={() => handleRoleChange('instructor')}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                      <UserCog className="h-4 w-4 text-amber-500" />
+                      <span>Instructor</span>
+                    </div>
+                    {currentViewRole === 'instructor' && <Check className="h-4 w-4" />}
+                  </div>
+                </CommandItem>
+                
+                <CommandItem 
+                  onSelect={() => handleRoleChange('student')}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-emerald-500" />
+                      <span>Estudiante</span>
+                    </div>
+                    {currentViewRole === 'student' && <Check className="h-4 w-4" />}
+                  </div>
+                </CommandItem>
+              </CommandGroup>
+              
+              {isViewingAsOtherRole && (
+                <>
+                  <Separator className="my-1" />
+                  <CommandGroup heading="Acciones">
+                    <CommandItem 
+                      onSelect={() => handleRoleChange('current')}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <ArrowLeftRight className="h-4 w-4" />
+                      <span>Volver a mi rol ({getRoleLabel(userRole as UserRole)})</span>
+                    </CommandItem>
+                  </CommandGroup>
+                </>
               )}
-              onClick={() => handleRoleChange('instructor')}
-            >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-2">
-                  <UserRound className="h-4 w-4 text-amber-500" />
-                  <span>Instructor</span>
-                </div>
-                {currentViewRole === 'instructor' && <Check className="h-4 w-4" />}
-              </div>
-            </Button>
-            
-            <Button 
-              variant="ghost" 
-              className={cn(
-                "flex justify-start items-center gap-2 h-9", 
-                currentViewRole === 'student' && "bg-accent"
-              )}
-              onClick={() => handleRoleChange('student')}
-            >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-2">
-                  <UserRound className="h-4 w-4 text-emerald-500" />
-                  <span>Estudiante</span>
-                </div>
-                {currentViewRole === 'student' && <Check className="h-4 w-4" />}
-              </div>
-            </Button>
-          </div>
+              
+              <Separator className="my-1" />
+              <CommandGroup heading="Usuarios">
+                <CommandItem 
+                  onSelect={() => {
+                    setOpen(false);
+                    setIsSearchDialogOpen(true);
+                  }}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <Search className="h-4 w-4" />
+                  <span>Buscar usuarios</span>
+                </CommandItem>
+              </CommandGroup>
+            </CommandList>
+          </Command>
         </PopoverContent>
       </Popover>
 
       <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Cambiar rol de usuario</DialogTitle>
+            <DialogTitle>Buscar usuarios</DialogTitle>
           </DialogHeader>
           <UserRoleSearch onClose={() => setIsSearchDialogOpen(false)} />
         </DialogContent>

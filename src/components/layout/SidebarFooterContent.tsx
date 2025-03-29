@@ -11,13 +11,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Settings, BookOpen, Search } from 'lucide-react';
+import { LogOut, User, Settings, BookOpen, Search, Shield, UserCog, ArrowLeftRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import RoleSwitcher from '@/components/admin/RoleSwitcher';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { UserRoleSearch } from '@/components/admin/UserRoleSearch';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from "@/components/ui/separator";
 
 // This component is used in the AppSidebar
 type ViewAsRole = UserRole | 'current';
@@ -62,6 +63,19 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
     }
   };
 
+  const getRoleIcon = (role?: UserRole) => {
+    switch (role) {
+      case 'admin':
+        return <Shield className="h-4 w-4" />;
+      case 'instructor':
+        return <UserCog className="h-4 w-4" />;
+      case 'student':
+        return <User className="h-4 w-4" />;
+      default:
+        return <User className="h-4 w-4" />;
+    }
+  };
+
   const isViewingAsOtherRole = viewAsRole !== 'current' && viewAsRole !== userRole;
 
   return (
@@ -73,6 +87,18 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
             currentViewRole={viewAsRole} 
             onChange={onRoleChange}
           />
+
+          {isViewingAsOtherRole && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-2 w-full flex items-center gap-2 text-xs"
+              onClick={() => onRoleChange(userRole as UserRole)}
+            >
+              <ArrowLeftRight className="h-3 w-3" />
+              <span>Volver a mi rol</span>
+            </Button>
+          )}
         </div>
       )}
       
@@ -85,18 +111,20 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
                 <AvatarFallback>{getUserInitials()}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start text-left">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium truncate max-w-[120px]">
-                    {profile?.full_name || 'Usuario'}
-                  </span>
-                  {isViewingAsOtherRole && (
-                    <Badge variant="outline" className="h-5 text-xs">Vista previa</Badge>
-                  )}
-                </div>
+                <span className="text-sm font-medium truncate max-w-[120px]">
+                  {profile?.full_name || 'Usuario'}
+                </span>
                 <div className="flex items-center gap-1">
-                  <Badge variant={getRoleBadgeVariant(userRole || undefined)} className="h-5 text-xs capitalize">
-                    {userRole || 'Usuario'}
+                  <Badge variant={getRoleBadgeVariant(userRole || undefined)} className="h-5 text-xs">
+                    <div className="flex items-center gap-1">
+                      {getRoleIcon(userRole)}
+                      <span className="capitalize">{userRole || 'Usuario'}</span>
+                    </div>
                   </Badge>
+                  
+                  {isViewingAsOtherRole && (
+                    <Badge variant="outline" className="h-5 text-xs ml-1">Previsualización</Badge>
+                  )}
                 </div>
               </div>
             </Button>
@@ -126,6 +154,16 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
                 <Search className="mr-2 h-4 w-4" />
                 <span>Buscar usuarios</span>
               </DropdownMenuItem>
+            )}
+            
+            {isViewingAsOtherRole && userRole === 'admin' && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => onRoleChange(userRole as UserRole)}>
+                  <ArrowLeftRight className="mr-2 h-4 w-4" />
+                  <span>Volver a mi rol</span>
+                </DropdownMenuItem>
+              </>
             )}
             
             <DropdownMenuSeparator />
