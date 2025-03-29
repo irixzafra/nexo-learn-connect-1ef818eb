@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { UserProfile, UserRole } from '@/types/auth';
 import { supabase } from '@/lib/supabase';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { captureError } from '@/lib/sentry';
 
 const profileFormSchema = z.object({
@@ -35,8 +35,6 @@ interface ProfileEditFormProps {
 }
 
 const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onSuccess }) => {
-  const { toast } = useToast();
-  
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
@@ -48,11 +46,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
   const onSubmit = async (data: ProfileFormValues) => {
     try {
       if (!user_id) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "No se pudo identificar el perfil de usuario.",
-        });
+        toast.error("Error: No se pudo identificar el perfil de usuario.");
         return;
       }
       
@@ -68,19 +62,11 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
       if (error) {
         console.error('Error al actualizar el perfil:', error);
         captureError(error, { operation: 'updateProfile', userId: user_id });
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "No se pudo actualizar el perfil. Por favor, inténtalo de nuevo.",
-        });
+        toast.error("No se pudo actualizar el perfil. Por favor, inténtalo de nuevo.");
         return;
       }
       
-      toast({
-        title: "Perfil actualizado",
-        description: "Tu perfil ha sido actualizado correctamente.",
-      });
-      
+      toast.success("Perfil actualizado correctamente");
       onSuccess();
     } catch (error) {
       console.error('Error en el envío del formulario:', error);
@@ -89,11 +75,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
         userId: user_id,
         formData: { full_name: data.full_name } 
       });
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Ocurrió un error al actualizar el perfil.",
-      });
+      toast.error("Ocurrió un error al actualizar el perfil.");
     }
   };
 

@@ -51,11 +51,13 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
         {/* Edit Mode Toggle en el header - solo visible para admins */}
         {userRole === 'admin' && <EditModeToggle />}
         
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center text-[10px] text-white">
-            2
-          </span>
+        <Button variant="ghost" size="icon" asChild className="relative">
+          <Link to="/messages">
+            <Bell className="h-5 w-5" />
+            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center text-[10px] text-white">
+              2
+            </span>
+          </Link>
         </Button>
         
         <DropdownMenu>
