@@ -5,7 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import { Course, Module, Lesson } from "@/types/course";
 
 export const useCourseDetails = (courseId?: string) => {
-  const { data: course, isLoading: isLoadingCourse } = useQuery({
+  const { data: course, isLoading: isLoadingCourse, error: courseError } = useQuery({
     queryKey: ["course", courseId],
     queryFn: async () => {
       try {
@@ -34,9 +34,11 @@ export const useCourseDetails = (courseId?: string) => {
       }
     },
     enabled: !!courseId,
+    retry: 1,
+    retryDelay: 1000,
   });
 
-  const { data: modules = [], isLoading: isLoadingModules } = useQuery({
+  const { data: modules = [], isLoading: isLoadingModules, error: modulesError } = useQuery({
     queryKey: ["courseModules", courseId],
     queryFn: async () => {
       try {
@@ -57,9 +59,11 @@ export const useCourseDetails = (courseId?: string) => {
       }
     },
     enabled: !!courseId,
+    retry: 1,
+    retryDelay: 1000,
   });
 
-  const { data: lessons = [], isLoading: isLoadingLessons } = useQuery({
+  const { data: lessons = [], isLoading: isLoadingLessons, error: lessonsError } = useQuery({
     queryKey: ["courseLessons", courseId],
     queryFn: async () => {
       try {
@@ -80,6 +84,8 @@ export const useCourseDetails = (courseId?: string) => {
       }
     },
     enabled: !!courseId,
+    retry: 1,
+    retryDelay: 1000,
   });
 
   const groupLessonsByModule = () => {
@@ -94,12 +100,14 @@ export const useCourseDetails = (courseId?: string) => {
     : [];
 
   const isLoading = isLoadingCourse || isLoadingModules || isLoadingLessons;
+  const error = courseError || modulesError || lessonsError;
 
   return { 
     course, 
     modules, 
     lessons, 
     modulesWithLessons,
-    isLoading 
+    isLoading,
+    error
   };
 };

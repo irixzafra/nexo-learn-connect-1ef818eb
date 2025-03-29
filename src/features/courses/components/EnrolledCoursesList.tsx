@@ -7,6 +7,7 @@ import { CourseCard } from "./CourseCard";
 import { CourseProgressBar } from "./CourseProgressBar";
 import { useUserCoursesProgress } from "../hooks/useUserCoursesProgress";
 import { Course } from "@/types/course";
+import { Loader2 } from "lucide-react";
 
 interface EnrolledCoursesListProps {
   courses: Course[];
@@ -28,7 +29,7 @@ export const EnrolledCoursesList: React.FC<EnrolledCoursesListProps> = ({
   if (isLoading || isLoadingProgress) {
     return (
       <div className="flex justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }

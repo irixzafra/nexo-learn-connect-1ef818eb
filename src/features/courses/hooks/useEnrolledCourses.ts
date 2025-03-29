@@ -5,7 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import { Course } from "@/types/course";
 
 export const useEnrolledCourses = (userId?: string) => {
-  const { data: enrolledCourses = [], isLoading } = useQuery({
+  const { data: enrolledCourses = [], isLoading, error } = useQuery({
     queryKey: ["enrolledCourses", userId],
     queryFn: async () => {
       try {
@@ -44,7 +44,9 @@ export const useEnrolledCourses = (userId?: string) => {
       }
     },
     enabled: !!userId,
+    retry: 1,
+    retryDelay: 1000,
   });
 
-  return { enrolledCourses, isLoading };
+  return { enrolledCourses, isLoading, error };
 };

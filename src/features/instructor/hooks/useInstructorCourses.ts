@@ -5,7 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import { Course } from "@/types/course";
 
 export const useInstructorCourses = (instructorId?: string) => {
-  const { data: courses = [], isLoading } = useQuery({
+  const { data: courses = [], isLoading, error } = useQuery({
     queryKey: ["instructorCourses", instructorId],
     queryFn: async () => {
       try {
@@ -31,7 +31,9 @@ export const useInstructorCourses = (instructorId?: string) => {
       }
     },
     enabled: !!instructorId,
+    retry: 1,
+    retryDelay: 1000,
   });
 
-  return { courses, isLoading };
+  return { courses, isLoading, error };
 };

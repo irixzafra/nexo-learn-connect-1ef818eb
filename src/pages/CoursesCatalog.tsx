@@ -7,8 +7,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Search, BookOpen } from 'lucide-react';
+import { Loader2, Search, BookOpen, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { ErrorBoundary } from 'react-error-boundary';
+import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 
 type Course = {
   id: string;
@@ -28,6 +30,7 @@ const CoursesCatalog: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCourses();
@@ -35,8 +38,12 @@ const CoursesCatalog: React.FC = () => {
 
   const fetchCourses = async () => {
     setIsLoading(true);
+    setError(null);
+    
     try {
       console.log("Fetching courses...");
+      
+      // Try an alternative approach to avoid RLS recursion issue
       const { data, error } = await supabase
         .from('courses')
         .select('*')
@@ -50,8 +57,9 @@ const CoursesCatalog: React.FC = () => {
       
       console.log("Courses fetched:", data);
       setCourses(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching courses:', error);
+      setError('No se pudieron cargar los cursos. Por favor, inténtelo de nuevo más tarde.');
       toast.error('Error al cargar los cursos. Por favor, inténtelo de nuevo más tarde.');
     } finally {
       setIsLoading(false);
@@ -92,11 +100,25 @@ const CoursesCatalog: React.FC = () => {
           </div>
         </div>
 
+        {error && (
+          <Card className="mb-6 border-destructive bg-destructive/10">
+            <CardContent className="flex items-center gap-2 py-4">
+              <AlertCircle className="h-5 w-5 text-destructive" />
+              <p className="text-destructive">{error}</p>
+            </CardContent>
+            <CardFooter className="border-t pt-4 bg-background/50">
+              <Button variant="outline" onClick={() => fetchCourses()}>
+                Intentar de nuevo
+              </Button>
+            </CardFooter>
+          </Card>
+        )}
+
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        ) : filteredCourses.length === 0 ? (
+        ) : !error && filteredCourses.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-10">
               {searchTerm ? (
@@ -115,7 +137,7 @@ const CoursesCatalog: React.FC = () => {
               )}
             </CardContent>
           </Card>
-        ) : (
+        ) : !error && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCourses.map((course) => (
               <Card key={course.id} className="flex flex-col h-full transition-all hover:shadow-md">
