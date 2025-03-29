@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOfflineCourses } from '@/features/courses/hooks/useOfflineCourses';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CourseCard } from '@/features/courses/components/CourseCard';
 import { Clock, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { connectionService } from '@/lib/offline/connectionService';
 
 interface RecentlyViewedCoursesProps {
   limit?: number;
@@ -12,6 +13,15 @@ interface RecentlyViewedCoursesProps {
 
 export const RecentlyViewedCourses: React.FC<RecentlyViewedCoursesProps> = ({ limit = 3 }) => {
   const { recentCourses, isLoading, refreshRecentCourses } = useOfflineCourses();
+  const [isOnline, setIsOnline] = useState(connectionService.isCurrentlyOnline());
+
+  useEffect(() => {
+    const unsubscribe = connectionService.addListener(online => {
+      setIsOnline(online);
+    });
+    
+    return unsubscribe;
+  }, []);
 
   const displayCourses = recentCourses.slice(0, limit);
 
@@ -39,7 +49,7 @@ export const RecentlyViewedCourses: React.FC<RecentlyViewedCoursesProps> = ({ li
           <div className="grid gap-4">
             {displayCourses.map(course => (
               <Link to={`/courses/${course.id}`} key={course.id}>
-                <CourseCard course={course} size="compact" />
+                <CourseCard course={course} />
               </Link>
             ))}
           </div>

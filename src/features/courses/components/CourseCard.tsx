@@ -1,86 +1,92 @@
 
-import React from "react";
-import { Link } from "react-router-dom";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, User } from "lucide-react";
-import { Course } from "@/types/course";
+import React from 'react';
+import { Course } from '@/types/course';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { StarIcon, Users, Clock } from 'lucide-react';
 
-interface CourseCardProps {
+export interface CourseCardProps {
   course: Course;
-  showContinueButton?: boolean;
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ 
-  course,
-  showContinueButton = true,
-}) => {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("es-ES", {
-      year: "numeric",
-      month: "long",
-    });
-  };
-
-  const formatCurrency = (price: number, currency: "eur" | "usd") => {
-    return new Intl.NumberFormat("es-ES", {
-      style: "currency",
-      currency: currency.toUpperCase(),
-    }).format(price);
-  };
+export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+  // Default placeholder values for any missing properties
+  const {
+    title = 'Título del curso',
+    category = 'Categoría',
+    instructor = 'Instructor',
+    rating = 0,
+    student_count = 0,
+    duration_hours = 0,
+    thumbnail = '/placeholder.svg',
+    tags = []
+  } = course;
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow">
-      <Link to={`/courses/${course.id}`} className="flex-grow">
-        <CardHeader className="pb-2">
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-lg font-bold line-clamp-2">
-              {course.title}
-            </CardTitle>
-            {course.price === 0 ? (
-              <Badge variant="secondary">Gratis</Badge>
-            ) : (
-              <Badge variant="secondary">
-                {formatCurrency(course.price, course.currency as "eur" | "usd")}
-              </Badge>
-            )}
+    <Card className="overflow-hidden hover:shadow-md transition-all cursor-pointer h-full">
+      <div className="aspect-video relative overflow-hidden bg-gray-100 dark:bg-gray-800">
+        <img 
+          src={thumbnail} 
+          alt={title}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = '/placeholder.svg';
+          }}
+        />
+      </div>
+      <CardContent className="p-4">
+        <div className="flex flex-col space-y-2">
+          <div className="space-y-1">
+            <h3 className="font-medium line-clamp-2">{title}</h3>
+            <p className="text-sm text-muted-foreground">{instructor}</p>
           </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-            {course.description || "Sin descripción disponible."}
-          </p>
-          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-            {course.instructor && (
-              <div className="flex items-center gap-1">
-                <User className="h-3.5 w-3.5" />
-                <span>{course.instructor.full_name}</span>
+          
+          <div className="flex items-center text-sm">
+            {rating > 0 && (
+              <div className="flex items-center mr-3">
+                <StarIcon className="h-4 w-4 text-yellow-500 mr-1" />
+                <span>{rating.toFixed(1)}</span>
               </div>
             )}
-            <div className="flex items-center gap-1">
-              <Calendar className="h-3.5 w-3.5" />
-              <span>{formatDate(course.created_at)}</span>
+            
+            {student_count > 0 && (
+              <div className="flex items-center mr-3">
+                <Users className="h-4 w-4 text-muted-foreground mr-1" />
+                <span>{student_count}</span>
+              </div>
+            )}
+            
+            {duration_hours > 0 && (
+              <div className="flex items-center">
+                <Clock className="h-4 w-4 text-muted-foreground mr-1" />
+                <span>{duration_hours}h</span>
+              </div>
+            )}
+          </div>
+          
+          {(category || tags.length > 0) && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {category && (
+                <Badge variant="outline" className="text-xs">
+                  {category}
+                </Badge>
+              )}
+              
+              {tags.slice(0, 2).map((tag, index) => (
+                <Badge key={index} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+              
+              {tags.length > 2 && (
+                <Badge variant="secondary" className="text-xs">
+                  +{tags.length - 2}
+                </Badge>
+              )}
             </div>
-            {course.duration_text && (
-              <div className="flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5" />
-                <span>{course.duration_text}</span>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Link>
-      
-      {showContinueButton && (
-        <CardFooter className="pt-2">
-          <Button asChild variant="default" className="w-full">
-            <Link to={`/courses/${course.id}/learn`}>
-              Continuar aprendizaje
-            </Link>
-          </Button>
-        </CardFooter>
-      )}
+          )}
+        </div>
+      </CardContent>
     </Card>
   );
 };

@@ -1,14 +1,14 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { SidebarProvider } from "@/components/ui/sidebar/sidebar-provider";
-import { SidebarNavigation } from "@/components/layout/SidebarNavigation";
-import { HeaderContent } from "@/components/layout/HeaderContent";
-import { useMobile } from "@/hooks/use-mobile";
+import SidebarNavigation from "@/components/layout/SidebarNavigation";
+import HeaderContent from "@/components/layout/HeaderContent";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { EditModeProvider } from "@/contexts/EditModeContext";
 import { connectionService } from "@/lib/offline/connectionService";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
-  const { isMobile } = useMobile();
+  const isMobile = useIsMobile();
   const [isOnline, setIsOnline] = useState(connectionService.isCurrentlyOnline());
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
 
   return (
     <EditModeProvider>
-      <SidebarProvider mobile={isMobile} defaultCollapsed={false}>
+      <SidebarProvider defaultCollapsed={false}>
         <div className="min-h-screen flex dark:bg-gray-950">
           <SidebarNavigation />
           <main className="flex flex-col flex-1 min-h-screen">

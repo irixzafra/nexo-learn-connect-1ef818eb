@@ -2,16 +2,10 @@
 import React from 'react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserMenu } from './header/UserMenu';
-import { RoleIndicator } from './header/RoleIndicator';
 import { HeaderActions } from './header/HeaderActions';
 import { useLocation } from 'react-router-dom';
 
-interface HeaderContentProps {
-  userRole: string | null;
-  viewingAs: string | null;
-}
-
-const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) => {
+const HeaderContent: React.FC = () => {
   const location = useLocation();
   
   // Extraer el nombre de la página actual del path
@@ -44,12 +38,11 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
         <div className="flex items-center gap-2">
           <SidebarTrigger className="h-8 w-8" />
           <span className="text-lg font-medium">{getPageTitle()}</span>
-          <RoleIndicator viewingAs={viewingAs} />
         </div>
         
         {/* Right side */}
         <div className="flex items-center gap-2">
-          <HeaderActions userRole={userRole} />
+          <HeaderActions />
           <UserMenu />
         </div>
       </div>
