@@ -7,6 +7,7 @@ interface EditModeContextType {
   isEditMode: boolean;
   toggleEditMode: () => void;
   updateText: (table: string, id: string, field: string, value: string) => Promise<boolean>;
+  reorderElements?: (table: string, elements: Array<{ id: string, order: number }>) => Promise<boolean>;
 }
 
 const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
@@ -58,8 +59,42 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  const reorderElements = async (table: string, elements: Array<{ id: string, order: number }>): Promise<boolean> => {
+    try {
+      // Create an array of updates to perform
+      const updates = elements.map(element => ({
+        id: element.id,
+        [element.order.toString().includes('_order') ? element.order.toString() : 'display_order']: element.order
+      }));
+
+      // Update all elements in a single batch operation
+      const { error } = await supabase
+        .from(table)
+        .upsert(updates);
+
+      if (error) {
+        console.error('Error reordering elements:', error);
+        toast.error("Error al reordenar elementos", {
+          description: error.message
+        });
+        return false;
+      }
+
+      toast.success("Elementos reordenados", {
+        description: "Los elementos han sido reordenados correctamente."
+      });
+      return true;
+    } catch (error) {
+      console.error('Error reordering elements:', error);
+      toast.error("Error al reordenar elementos", {
+        description: "Ha ocurrido un error al reordenar los elementos."
+      });
+      return false;
+    }
+  };
+
   return (
-    <EditModeContext.Provider value={{ isEditMode, toggleEditMode, updateText }}>
+    <EditModeContext.Provider value={{ isEditMode, toggleEditMode, updateText, reorderElements }}>
       {children}
     </EditModeContext.Provider>
   );

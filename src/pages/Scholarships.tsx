@@ -1,227 +1,254 @@
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Award, CheckCircle2, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import PublicLayout from '@/layouts/PublicLayout';
+import React from "react";
+import AppLayout from "@/layouts/AppLayout";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { GraduationCap, Award, BookOpen, Calendar } from "lucide-react";
+import InlineEdit from "@/components/admin/InlineEdit";
+import DraggableContent from "@/components/admin/DraggableContent";
 
 const Scholarships: React.FC = () => {
-  return (
-    <PublicLayout>
-      <div className="container mx-auto px-4 py-12 md:py-20">
-        <div className="text-center mb-12 md:mb-16">
-          <motion.h1 
-            className="text-3xl md:text-5xl font-bold mb-4"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            Becas y Ayudas
-          </motion.h1>
-          <motion.p 
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            En Nexo estamos comprometidos en hacer la educación accesible para todos
-          </motion.p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col justify-center"
-          >
-            <h2 className="text-2xl font-bold mb-6">Programa de Becas Nexo</h2>
-            <p className="text-muted-foreground mb-4">
-              Nuestro programa de becas está diseñado para apoyar a estudiantes talentosos que 
-              enfrentan barreras financieras para acceder a educación de calidad.
-            </p>
-            <p className="text-muted-foreground mb-6">
-              Ofrecemos becas que cubren desde el 25% hasta el 100% del costo de nuestros cursos,
-              dependiendo de la situación individual de cada estudiante y su potencial.
-            </p>
+  // Example scholarship items that can be reordered in edit mode
+  const scholarshipItems = [
+    { 
+      id: "scholarship-item-1", 
+      order: 1, 
+      content: (
+        <Card className="h-full">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-primary" />
+              <InlineEdit 
+                table="content" 
+                id="scholarship-1-title" 
+                field="text" 
+                value="Beca de Excelencia Académica" 
+                as="span"
+              />
+            </CardTitle>
+            <CardDescription>
+              <InlineEdit 
+                table="content" 
+                id="scholarship-1-category" 
+                field="text" 
+                value="Programa de Becas 2023" 
+                as="span"
+              />
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
+              <div className="flex items-start gap-2">
+                <Calendar className="h-4 w-4 mt-1 text-muted-foreground" />
                 <div>
-                  <h3 className="font-medium">Becas por Mérito Académico</h3>
-                  <p className="text-sm text-muted-foreground">Para estudiantes con excelente rendimiento académico.</p>
+                  <p className="text-sm font-medium">Fecha límite:</p>
+                  <InlineEdit 
+                    table="content" 
+                    id="scholarship-1-deadline" 
+                    field="text" 
+                    value="30 de Junio, 2023" 
+                    as="p"
+                    className="text-sm text-muted-foreground"
+                  />
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
+              <div className="flex items-start gap-2">
+                <BookOpen className="h-4 w-4 mt-1 text-muted-foreground" />
                 <div>
-                  <h3 className="font-medium">Becas por Necesidad Económica</h3>
-                  <p className="text-sm text-muted-foreground">Ayuda financiera basada en la situación económica del solicitante.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
-                <div>
-                  <h3 className="font-medium">Becas para Grupos Subrepresentados</h3>
-                  <p className="text-sm text-muted-foreground">Apoyo especial para incrementar la diversidad en tecnología y creatividad.</p>
+                  <p className="text-sm font-medium">Descripción:</p>
+                  <InlineEdit 
+                    table="content" 
+                    id="scholarship-1-description" 
+                    field="text" 
+                    value="Beca completa para estudiantes con excelente rendimiento académico en programas de desarrollo web y programación." 
+                    as="p"
+                    className="text-sm text-muted-foreground"
+                    multiline
+                  />
                 </div>
               </div>
             </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex items-center justify-center"
-          >
-            <div className="relative w-full max-w-md">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl transform rotate-3"></div>
-              <Card className="relative bg-card border shadow-sm">
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-2">
-                    <Award className="h-8 w-8 text-primary" />
-                    <CardTitle>Solicita tu Beca</CardTitle>
-                  </div>
-                  <CardDescription>
-                    Completa este formulario para iniciar tu solicitud de beca
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="space-y-2">
-                        <label htmlFor="name" className="text-sm font-medium">
-                          Nombre completo
-                        </label>
-                        <input
-                          id="name"
-                          type="text"
-                          className="w-full p-2 rounded-md border border-input bg-background"
-                          placeholder="Tu nombre completo"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="email" className="text-sm font-medium">
-                          Correo electrónico
-                        </label>
-                        <input
-                          id="email"
-                          type="email"
-                          className="w-full p-2 rounded-md border border-input bg-background"
-                          placeholder="tu@email.com"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="scholarship-type" className="text-sm font-medium">
-                          Tipo de beca
-                        </label>
-                        <select
-                          id="scholarship-type"
-                          className="w-full p-2 rounded-md border border-input bg-background"
-                        >
-                          <option value="">Selecciona una opción</option>
-                          <option value="merit">Mérito Académico</option>
-                          <option value="financial">Necesidad Económica</option>
-                          <option value="diversity">Grupos Subrepresentados</option>
-                        </select>
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full">
-                      Enviar Solicitud
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+          </CardContent>
+        </Card>
+      )
+    },
+    { 
+      id: "scholarship-item-2", 
+      order: 2, 
+      content: (
+        <Card className="h-full">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-primary" />
+              <InlineEdit 
+                table="content" 
+                id="scholarship-2-title" 
+                field="text" 
+                value="Beca para Nuevos Talentos" 
+                as="span"
+              />
+            </CardTitle>
+            <CardDescription>
+              <InlineEdit 
+                table="content" 
+                id="scholarship-2-category" 
+                field="text" 
+                value="Programa de Becas 2023" 
+                as="span"
+              />
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-start gap-2">
+                <Calendar className="h-4 w-4 mt-1 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Fecha límite:</p>
+                  <InlineEdit 
+                    table="content" 
+                    id="scholarship-2-deadline" 
+                    field="text" 
+                    value="15 de Julio, 2023" 
+                    as="p"
+                    className="text-sm text-muted-foreground"
+                  />
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <BookOpen className="h-4 w-4 mt-1 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Descripción:</p>
+                  <InlineEdit 
+                    table="content" 
+                    id="scholarship-2-description" 
+                    field="text" 
+                    value="Programa dirigido a jóvenes talentos que buscan formarse en el ámbito de la tecnología y desarrollo de software." 
+                    as="p"
+                    className="text-sm text-muted-foreground"
+                    multiline
+                  />
+                </div>
+              </div>
             </div>
-          </motion.div>
+          </CardContent>
+        </Card>
+      )
+    },
+    { 
+      id: "scholarship-item-3", 
+      order: 3, 
+      content: (
+        <Card className="h-full">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-primary" />
+              <InlineEdit 
+                table="content" 
+                id="scholarship-3-title" 
+                field="text" 
+                value="Beca de Diversidad en Tech" 
+                as="span"
+              />
+            </CardTitle>
+            <CardDescription>
+              <InlineEdit 
+                table="content" 
+                id="scholarship-3-category" 
+                field="text" 
+                value="Programa de Becas 2023" 
+                as="span"
+              />
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-start gap-2">
+                <Calendar className="h-4 w-4 mt-1 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Fecha límite:</p>
+                  <InlineEdit 
+                    table="content" 
+                    id="scholarship-3-deadline" 
+                    field="text" 
+                    value="30 de Julio, 2023" 
+                    as="p"
+                    className="text-sm text-muted-foreground"
+                  />
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <BookOpen className="h-4 w-4 mt-1 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Descripción:</p>
+                  <InlineEdit 
+                    table="content" 
+                    id="scholarship-3-description" 
+                    field="text" 
+                    value="Programa dirigido a promover la diversidad en el mundo tecnológico, ofreciendo oportunidades de formación en desarrollo de software." 
+                    as="p"
+                    className="text-sm text-muted-foreground"
+                    multiline
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    }
+  ];
+
+  return (
+    <AppLayout>
+      <div className="container mx-auto py-8 px-4 md:px-6">
+        <div className="mb-8 text-center">
+          <InlineEdit 
+            table="content" 
+            id="scholarships-title" 
+            field="text" 
+            value="Becas Disponibles" 
+            as="h1"
+            className="text-3xl font-bold mb-3"
+          />
+          <InlineEdit 
+            table="content" 
+            id="scholarships-subtitle" 
+            field="text" 
+            value="Descubre nuestras oportunidades de becas para impulsar tu carrera en tecnología" 
+            as="p"
+            className="text-lg text-muted-foreground max-w-2xl mx-auto"
+            multiline
+          />
         </div>
 
-        <motion.div 
-          className="bg-accent rounded-lg p-8 mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-        >
-          <h2 className="text-2xl font-bold mb-6">Otras Opciones de Financiación</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-background rounded-lg p-6 shadow-sm">
-              <h3 className="text-xl font-semibold mb-3">Plan de Pago Flexible</h3>
-              <p className="text-muted-foreground mb-4">Divide el costo de tu curso en pagos mensuales sin intereses.</p>
-              <Button variant="outline" size="sm">Más Información</Button>
-            </div>
-            <div className="bg-background rounded-lg p-6 shadow-sm">
-              <h3 className="text-xl font-semibold mb-3">Descuentos Grupales</h3>
-              <p className="text-muted-foreground mb-4">Inscríbete con amigos o colegas y obtén descuentos especiales.</p>
-              <Button variant="outline" size="sm">Más Información</Button>
-            </div>
-            <div className="bg-background rounded-lg p-6 shadow-sm">
-              <h3 className="text-xl font-semibold mb-3">Financiación Empresarial</h3>
-              <p className="text-muted-foreground mb-4">Opciones especiales para empresas que quieren formar a sus empleados.</p>
-              <Button variant="outline" size="sm">Más Información</Button>
-            </div>
-          </div>
-        </motion.div>
+        <DraggableContent 
+          items={scholarshipItems}
+          table="scholarship_items"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
+          itemClassName="flex"
+        />
 
-        <motion.div 
-          className="mb-16"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.9 }}
-        >
-          <h2 className="text-2xl font-bold mb-6 text-center">Preguntas Frecuentes</h2>
-          <Accordion type="single" collapsible className="max-w-3xl mx-auto">
-            <AccordionItem value="item-1">
-              <AccordionTrigger>¿Cuáles son los requisitos para solicitar una beca?</AccordionTrigger>
-              <AccordionContent>
-                Los requisitos varían según el tipo de beca. En general, valoramos la motivación, potencial y situación personal.
-                Para becas académicas, consideramos tu historial educativo. Para becas económicas, evaluamos tu situación financiera.
-                Te recomendamos completar la solicitud con toda la información relevante para aumentar tus posibilidades.
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="item-2">
-              <AccordionTrigger>¿Cuándo sabré si me han concedido la beca?</AccordionTrigger>
-              <AccordionContent>
-                El proceso de evaluación normalmente toma entre 2-3 semanas. Te notificaremos por correo electrónico
-                sobre el resultado de tu solicitud. Si tienes alguna pregunta durante el proceso, no dudes en contactar
-                con nuestro equipo de becas.
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="item-3">
-              <AccordionTrigger>¿Puedo solicitar una beca para cualquier curso?</AccordionTrigger>
-              <AccordionContent>
-                Sí, nuestro programa de becas aplica a todos los cursos disponibles en la plataforma.
-                Sin embargo, algunas becas especiales pueden estar dirigidas a programas específicos.
-                Te recomendamos revisar los detalles de cada beca antes de solicitarla.
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="item-4">
-              <AccordionTrigger>¿Qué pasa si recibo una beca parcial y no puedo pagar el resto?</AccordionTrigger>
-              <AccordionContent>
-                Si recibes una beca parcial, también puedes aplicar a nuestros planes de pago flexible para dividir
-                el costo restante en pagos mensuales sin intereses. Nuestro objetivo es encontrar una solución que
-                funcione para ti, así que no dudes en contactarnos para discutir tus opciones.
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </motion.div>
-
-        <motion.div 
-          className="text-center py-10 border-t border-border"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1 }}
-        >
-          <h2 className="text-2xl font-bold mb-4">¿Tienes Más Preguntas?</h2>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Nuestro equipo está disponible para ayudarte con cualquier duda sobre nuestro programa de becas y ayudas financieras.
-          </p>
-          <Button size="lg">Contactar con el Equipo de Becas</Button>
-        </motion.div>
+        <div className="text-center mt-12">
+          <GraduationCap className="h-12 w-12 mx-auto text-primary mb-4" />
+          <InlineEdit 
+            table="content" 
+            id="scholarships-cta-title" 
+            field="text" 
+            value="¿Quieres solicitar una beca?" 
+            as="h2"
+            className="text-2xl font-bold mb-3"
+          />
+          <InlineEdit 
+            table="content" 
+            id="scholarships-cta-description" 
+            field="text" 
+            value="Completa el formulario de solicitud y nuestro equipo se pondrá en contacto contigo para ofrecerte más información." 
+            as="p"
+            className="text-muted-foreground max-w-xl mx-auto mb-6"
+            multiline
+          />
+        </div>
       </div>
-    </PublicLayout>
+    </AppLayout>
   );
 };
 
