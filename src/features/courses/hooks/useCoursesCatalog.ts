@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { Course } from '@/types/course';
 import { toast } from 'sonner';
 
@@ -16,28 +16,25 @@ export const useCoursesCatalog = () => {
     setError(null);
     
     try {
-      console.log("Fetching courses...");
+      console.log("Fetching courses catalog...");
       
-      // Modificamos la consulta para evitar el problema de la relación entre courses y profiles
-      const { data, error: supabaseError } = await supabase
+      // 1. Obtener cursos publicados
+      const { data: coursesData, error: coursesError } = await supabase
         .from('courses')
-        .select(`
-          *,
-          instructor_id
-        `)
+        .select('*, instructor_id')
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
-      if (supabaseError) {
-        console.error("Error en la consulta a Supabase:", supabaseError);
-        throw supabaseError;
+      if (coursesError) {
+        console.error("Error al obtener cursos:", coursesError);
+        throw coursesError;
       }
       
-      console.log("Cursos obtenidos:", data);
+      console.log("Cursos obtenidos:", coursesData?.length || 0);
       
-      // Ahora obtenemos los datos de los instructores por separado
-      const instructorIds = data?.map(course => course.instructor_id) || [];
-      let instructors = {};
+      // 2. Obtener información de instructores por separado para evitar problemas de RLS
+      const instructorIds = coursesData?.map(course => course.instructor_id) || [];
+      let instructorsMap = {};
       
       if (instructorIds.length > 0) {
         const { data: instructorsData, error: instructorsError } = await supabase
@@ -47,38 +44,56 @@ export const useCoursesCatalog = () => {
           
         if (instructorsError) {
           console.error("Error al obtener datos de instructores:", instructorsError);
-        } else {
-          // Crear un mapa para acceso rápido a los datos de los instructores
-          instructors = instructorsData?.reduce((acc, instructor) => {
+        } else if (instructorsData) {
+          // Convertir array de instructores a un mapa para búsqueda rápida
+          instructorsMap = instructorsData.reduce((acc, instructor) => {
             acc[instructor.id] = instructor;
             return acc;
-          }, {}) || {};
+          }, {});
+          console.log("Datos de instructores obtenidos:", Object.keys(instructorsMap).length);
         }
       }
       
-      // Transform the data to ensure it matches the Course type
-      const typedCourses: Course[] = data?.map((course: any) => {
-        // Add instructor information from our separate fetch
-        let instructor = instructors[course.instructor_id] ? {
-          id: instructors[course.instructor_id].id,
-          full_name: instructors[course.instructor_id].full_name
-        } : undefined;
+      // 3. Transformar y validar los datos
+      const typedCourses: Course[] = coursesData?.map((course: any) => {
+        // Validar y transformar el campo currency
+        let validCurrency: 'eur' | 'usd' = 'eur'; // valor por defecto
+        if (course.currency === 'eur' || course.currency === 'usd') {
+          validCurrency = course.currency;
+        }
+        
+        // Añadir información del instructor si existe
+        const instructor = instructorsMap[course.instructor_id] 
+          ? {
+              id: instructorsMap[course.instructor_id].id,
+              full_name: instructorsMap[course.instructor_id].full_name
+            } 
+          : undefined;
 
         return {
           ...course,
-          instructor,
-          // Ensure currency is correctly typed
-          currency: (course.currency === 'eur' || course.currency === 'usd') 
-            ? course.currency 
-            : 'eur' // Default to 'eur' if not a valid value
+          currency: validCurrency,
+          instructor
         } as Course;
       }) || [];
       
       setCourses(typedCourses);
     } catch (error: any) {
       console.error('Error al cargar los cursos:', error);
-      setError('No se pudieron cargar los cursos. Por favor, inténtelo de nuevo más tarde.');
-      toast.error('Error al cargar los cursos. Por favor, inténtelo de nuevo más tarde.');
+      let errorMessage = 'No se pudieron cargar los cursos. Por favor, inténtelo de nuevo más tarde.';
+      
+      // Mensaje de error más específico para depuración
+      if (error.message) {
+        console.error('Mensaje de error específico:', error.message);
+        
+        // Solo en desarrollo o para administradores podríamos mostrar el mensaje específico
+        if (process.env.NODE_ENV === 'development') {
+          errorMessage += ` (${error.message})`;
+        }
+      }
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
