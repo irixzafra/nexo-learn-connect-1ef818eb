@@ -67,8 +67,8 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
           <>
             {commonSections}
             <SistemasSection 
-              expanded={expanded.infrastructure} 
-              onToggle={() => toggleGroup('infrastructure')} 
+              expanded={expanded.sistemas} 
+              onToggle={() => toggleGroup('sistemas')} 
             />
             <AdminSection 
               expanded={expanded.administration} 
