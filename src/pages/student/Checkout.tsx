@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { 
@@ -24,7 +23,6 @@ const Checkout: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("card");
   
-  // Datos simulados del curso
   const courseData = {
     id: courseId || "1",
     title: "Desarrollo Web Full Stack",
@@ -38,12 +36,10 @@ const Checkout: React.FC = () => {
     image: "public/lovable-uploads/76db81f1-1b84-4977-963b-69a243d7f86a.png" // Imagen subida
   };
 
-  // Función para procesar el pago
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
     
-    // Simulación de procesamiento de pago
     setTimeout(() => {
       setIsProcessing(false);
       toast({
@@ -51,12 +47,9 @@ const Checkout: React.FC = () => {
         description: "Has sido inscrito en el curso exitosamente.",
         duration: 5000,
       });
-      // En un caso real, redirigir a la página de éxito
-      // navigate('/payment/success');
     }, 2000);
   };
 
-  // Formatear precio
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-ES', {
       style: 'currency',
@@ -74,7 +67,6 @@ const Checkout: React.FC = () => {
       <h1 className="text-3xl font-bold mb-6">Completar Compra</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Resumen del curso */}
         <div className="md:col-span-1">
           <Card>
             <CardHeader>
@@ -139,7 +131,6 @@ const Checkout: React.FC = () => {
           </div>
         </div>
         
-        {/* Formulario de pago */}
         <div className="md:col-span-2">
           <Card>
             <CardHeader>
@@ -226,7 +217,7 @@ const Checkout: React.FC = () => {
                   </div>
                 )}
                 
-                <Alert variant="outline" className="border-primary/20 bg-primary/5">
+                <Alert className="border-primary/20 bg-primary/5">
                   <AlertCircle className="h-4 w-4 text-primary" />
                   <AlertTitle>Pago seguro</AlertTitle>
                   <AlertDescription>
