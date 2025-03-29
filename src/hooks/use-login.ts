@@ -28,13 +28,29 @@ export const useLogin = () => {
       if (authData.user) {
         toast.success('Inicio de sesión exitoso');
         
-        // Redirect admin users to landing page instead of admin dashboard
-        if (userRole === 'admin') {
+        // Verificamos con console.log para depurar
+        console.log('Login successful, userRole:', userRole);
+        
+        // Hacemos una comprobación del rol del usuario en su metadata
+        const userMetadata = authData.user.user_metadata;
+        const roleFromMetadata = userMetadata && userMetadata.role ? userMetadata.role : null;
+        
+        console.log('Role from metadata:', roleFromMetadata);
+        
+        // Usamos el rol de metadata si está disponible, o recurrimos al contexto
+        const effectiveRole = roleFromMetadata || userRole;
+        console.log('Effective role for redirect:', effectiveRole);
+        
+        // Redirigimos según el rol efectivo
+        if (effectiveRole === 'admin') {
+          console.log('Redirecting admin to landing page');
           navigate('/');
-        } else if (userRole === 'instructor') {
+        } else if (effectiveRole === 'instructor') {
+          console.log('Redirecting instructor to courses page');
           navigate('/instructor/courses');
         } else {
-          // Default for students
+          // Default para estudiantes
+          console.log('Redirecting student to my-courses page');
           navigate('/my-courses');
         }
       }

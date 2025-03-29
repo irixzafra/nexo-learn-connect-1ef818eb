@@ -52,20 +52,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
+        console.log('Auth state changed:', _event, session?.user?.id);
         setUser(session?.user ?? null);
         
         // If we have a user, try to determine their role and fetch profile
         if (session?.user) {
           const metadata = session.user.user_metadata;
+          console.log('User metadata:', metadata);
+          
           if (metadata && metadata.role) {
+            console.log('Setting user role from metadata:', metadata.role);
             setUserRole(metadata.role as UserRole);
           } else {
             // Default to student if no role is specified
+            console.log('No role in metadata, defaulting to student');
             setUserRole('student');
           }
           
           // Fetch user profile
           const profileData = await fetchUserProfile(session.user.id);
+          console.log('Fetched profile data:', profileData);
           setProfile(profileData);
         } else {
           setUserRole(null);
@@ -78,18 +84,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Then check for existing session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.id);
       setUser(session?.user ?? null);
       
       if (session?.user) {
         const metadata = session.user.user_metadata;
+        console.log('Initial user metadata:', metadata);
+        
         if (metadata && metadata.role) {
+          console.log('Setting initial user role from metadata:', metadata.role);
           setUserRole(metadata.role as UserRole);
         } else {
+          console.log('No initial role in metadata, defaulting to student');
           setUserRole('student');
         }
         
         // Fetch user profile
         const profileData = await fetchUserProfile(session.user.id);
+        console.log('Initial profile data:', profileData);
         setProfile(profileData);
       }
       
