@@ -18,10 +18,24 @@ export const useCoursesCatalog = () => {
     try {
       console.log("Fetching courses catalog...");
       
-      // Obtener cursos publicados con datos del instructor en una sola consulta
+      // Simple query that only uses the courses table without joins
       const { data: coursesData, error: coursesError } = await supabase
         .from('courses')
-        .select('*, instructor:profiles(id, full_name)')
+        .select(`
+          id, 
+          title, 
+          description, 
+          price, 
+          currency, 
+          instructor_id,
+          created_at, 
+          updated_at, 
+          is_published, 
+          cover_image_url, 
+          level, 
+          duration_text,
+          featured_instructor
+        `)
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
@@ -32,12 +46,11 @@ export const useCoursesCatalog = () => {
       
       console.log("Cursos obtenidos:", coursesData?.length || 0);
       
-      // Transformar y validar los datos
+      // Transform and validate the data
       const typedCourses: Course[] = coursesData?.map((course: any) => {
-        // Validación estricta del campo currency
-        let validCurrency: 'eur' | 'usd' = 'eur'; // valor por defecto
+        // Strict validation for currency field
+        let validCurrency: 'eur' | 'usd' = 'eur'; // default value
         
-        // Verificar que currency sea un valor válido y convertirlo a minúsculas
         if (typeof course.currency === 'string') {
           const normalizedCurrency = course.currency.toLowerCase();
           if (normalizedCurrency === 'eur' || normalizedCurrency === 'usd') {
@@ -45,11 +58,11 @@ export const useCoursesCatalog = () => {
           }
         }
         
-        // Extraer la información del instructor del objeto anidado
-        const instructor = course.instructor 
+        // Create a properly structured instructor object from featured_instructor
+        const instructor = course.featured_instructor 
           ? {
-              id: course.instructor.id,
-              full_name: course.instructor.full_name
+              id: course.instructor_id,
+              full_name: course.featured_instructor
             } 
           : undefined;
 
@@ -65,11 +78,9 @@ export const useCoursesCatalog = () => {
       console.error('Error al cargar los cursos:', error);
       let errorMessage = 'No se pudieron cargar los cursos. Por favor, inténtelo de nuevo más tarde.';
       
-      // Mensaje de error más específico para depuración
       if (error.message) {
         console.error('Mensaje de error específico:', error.message);
         
-        // Solo en desarrollo o para administradores podríamos mostrar el mensaje específico
         if (process.env.NODE_ENV === 'development') {
           errorMessage += ` (${error.message})`;
         }

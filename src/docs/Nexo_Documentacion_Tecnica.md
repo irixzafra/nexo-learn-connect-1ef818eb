@@ -10,9 +10,15 @@ El catálogo de cursos (/courses) presentaba un error al cargar debido a dos pro
 
 2. Inconsistencia de tipos en el campo 'currency' entre la definición de tipo y los datos recibidos.
 
+3. Error de relación entre tablas:
+   ```
+   "Could not find a relationship between 'courses' and 'profiles' in the schema cache"
+   ```
+
 ### Causa Raíz
 - Las políticas de Row Level Security (RLS) estaban configuradas de manera que creaban una referencia circular. Específicamente, una política intentaba consultar su propia tabla para determinar los permisos.
 - El campo 'currency' podía recibir valores que no coincidían con la definición de tipo ('eur' | 'usd').
+- La consulta al catálogo intentaba hacer un JOIN con la tabla 'profiles' para obtener datos del instructor, pero esta relación no estaba correctamente configurada en el contexto de PostgREST o estaba restringida por las políticas RLS.
 
 ### Solución Implementada
 
@@ -25,51 +31,12 @@ El catálogo de cursos (/courses) presentaba un error al cargar debido a dos pro
   $$ LANGUAGE SQL SECURITY DEFINER STABLE;
   ```
 
-- Se implementaron políticas RLS seguras para la tabla courses:
-  ```sql
-  -- Política para instructores (ver sus propios cursos)
-  CREATE POLICY "Instructors can view their own courses" 
-  ON public.courses FOR SELECT 
-  USING (
-    instructor_id = auth.uid() OR
-    public.get_current_user_role() = 'admin'
-  );
+- Se implementaron políticas RLS seguras para la tabla courses.
 
-  -- Política para acceso público (ver cursos publicados)
-  CREATE POLICY "Public can view published courses" 
-  ON public.courses FOR SELECT 
-  USING (is_published = true);
-
-  -- Política para estudiantes inscritos (ver cursos en los que están inscritos)
-  CREATE POLICY "Students can view enrolled courses" 
-  ON public.courses FOR SELECT 
-  USING (
-    EXISTS (
-      SELECT 1 FROM enrollments 
-      WHERE course_id = courses.id AND user_id = auth.uid()
-    )
-  );
-
-  -- Política para instructores (modificar sus propios cursos)
-  CREATE POLICY "Instructors can modify their own courses" 
-  ON public.courses FOR UPDATE 
-  USING (
-    instructor_id = auth.uid() OR 
-    public.get_current_user_role() = 'admin'
-  );
-
-  -- Política para instructores (insertar cursos)
-  CREATE POLICY "Instructors can insert courses" 
-  ON public.courses FOR INSERT 
-  WITH CHECK (
-    instructor_id = auth.uid() OR 
-    public.get_current_user_role() = 'admin'
-  );
-  ```
-
-#### 2. Optimización de consulta de datos
-- Se simplificó la consulta a la base de datos utilizando la función de selección anidada de Supabase para obtener en una sola petición tanto los cursos como los datos de sus instructores.
-- Se eliminó la consulta separada a la tabla de perfiles, evitando así posibles problemas de RLS en consultas múltiples.
+#### 2. Simplificación de consulta a la base de datos
+- Se eliminó completamente el JOIN con la tabla 'profiles' que causaba el error de relación.
+- Se modificó la consulta para seleccionar únicamente los campos necesarios de la tabla 'courses', incluyendo 'featured_instructor'.
+- Se reemplazó la referencia al instructor por un objeto construido a partir del campo 'featured_instructor'.
 
 #### 3. Validación y transformación robusta de datos
 - Se implementó una validación estricta del campo 'currency':
@@ -89,36 +56,43 @@ El catálogo de cursos (/courses) presentaba un error al cargar debido a dos pro
 - Se normalizan los valores a minúsculas para evitar problemas de case-sensitivity
 - Se proporciona un valor predeterminado ('eur') cuando el valor no es válido
 
-#### 4. Mejora en gestión de errores
+#### 4. Utilización del campo 'featured_instructor'
+- En lugar de intentar obtener el nombre del instructor mediante un JOIN complejo, se utiliza directamente el campo 'featured_instructor' de la tabla 'courses'.
+- Se crea un objeto instructor compatible con la interfaz Course a partir de este campo:
+  ```typescript
+  const instructor = course.featured_instructor 
+    ? {
+        id: course.instructor_id,
+        full_name: course.featured_instructor
+      } 
+    : undefined;
+  ```
+
+#### 5. Mejora en gestión de errores
 - Implementación de captura y visualización detallada de errores para facilitar la depuración
 - Mensajes de error personalizados según entorno (desarrollo/producción)
 - Logging detallado de errores específicos para ayudar en el diagnóstico
 
 ### Verificación
-- Se comprobó que la página `/courses` carga correctamente los cursos publicados sin errores
-- El catálogo muestra correctamente la información de los instructores
+- Se comprobó que la página `/courses` carga correctamente los cursos publicados sin errores de relación entre tablas
+- El catálogo muestra correctamente la información de los instructores usando 'featured_instructor'
 - Los filtros de búsqueda y nivel funcionan correctamente
 - La función de limpieza de filtros ahora restablece tanto el nivel como el término de búsqueda
-
-### Mejoras Adicionales 
-- Se añadió la opción de limpiar el término de búsqueda al usar la función `clearFilters`
-- Se optimizó la transformación de datos para reducir la carga del cliente
-- Se mejoró la interfaz de usuario para mostrar mensajes de error más claros
 
 ### Recomendaciones Técnicas
 Para evitar problemas similares en el futuro:
 
-1. **Evitar recursión en políticas RLS:**
-   - Usar funciones `SECURITY DEFINER` para consultas que puedan causar recursión
-   - Separar lógica compleja de permisos en funciones dedicadas
+1. **Minimizar dependencias entre tablas en consultas públicas:**
+   - Evitar JOINs complejos en consultas que deban ser accesibles públicamente
+   - Considerar duplicar información no sensible cuando sea necesario para simplificar consultas (como el nombre del instructor)
 
-2. **Validar y transformar datos:**
-   - Siempre validar y transformar datos recibidos de la API para asegurar consistencia con los tipos definidos
+2. **Usar campos de referencia sencillos:**
+   - Para información que requiera ser mostrada pero no manipulada directamente, considerar campos de texto simples como 'featured_instructor'
+   - Reservar las relaciones complejas para funcionalidades que realmente las necesiten
+
+3. **Monitoreo y validación de datos:**
+   - Validar siempre los datos recibidos de la API para garantizar consistencia con los tipos definidos
    - Implementar valores por defecto para manejar casos de datos inconsistentes
-
-3. **Monitoreo y logging:**
-   - Mantener un sistema de logging detallado para identificar rápidamente problemas similares
-   - Implementar mejor manejo de errores a nivel de aplicación
 
 ## FIX-ROUTING-404-ERRORS-01: Corrección de Errores 404 en Rutas Principales
 
