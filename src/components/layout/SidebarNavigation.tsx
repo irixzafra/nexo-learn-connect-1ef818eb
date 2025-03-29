@@ -19,131 +19,114 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
   const { userRole } = useAuth();
   const { expanded, toggleGroup } = useSidebarState();
   
-  // Determinar el rol efectivo para la navegación
+  // Determine the effective role for navigation
   const effectiveRole = viewAsRole && viewAsRole !== 'current' ? viewAsRole : userRole;
 
-  // Contenido del menú según el rol
-  let menuContent;
-  
-  switch (effectiveRole) {
-    case 'admin':
-      menuContent = (
-        <>
-          <GeneralSection 
-            expanded={expanded.general} 
-            onToggle={() => toggleGroup('general')} 
-          />
-          <LearningSection 
-            expanded={expanded.learning} 
-            onToggle={() => toggleGroup('learning')} 
-          />
-          <CommunitySection 
-            expanded={expanded.community} 
-            onToggle={() => toggleGroup('community')} 
-          />
-          <InstructorSection 
-            expanded={expanded.instructor} 
-            onToggle={() => toggleGroup('instructor')} 
-          />
-          <AdminSection 
-            expanded={expanded.administration} 
-            onToggle={() => toggleGroup('administration')} 
-          />
-          <AccountSection 
-            expanded={expanded.account} 
-            onToggle={() => toggleGroup('account')} 
-          />
-        </>
-      );
-      break;
-    case 'sistemas':
-      menuContent = (
-        <>
-          <GeneralSection 
-            expanded={expanded.general} 
-            onToggle={() => toggleGroup('general')} 
-          />
-          <SistemasSection 
-            expanded={expanded.sistemas} 
-            onToggle={() => toggleGroup('sistemas')} 
-          />
-          <AdminSection 
-            expanded={expanded.administration} 
-            onToggle={() => toggleGroup('administration')} 
-          />
-          <AccountSection 
-            expanded={expanded.account} 
-            onToggle={() => toggleGroup('account')} 
-          />
-        </>
-      );
-      break;
-    case 'instructor':
-      menuContent = (
-        <>
-          <GeneralSection 
-            expanded={expanded.general} 
-            onToggle={() => toggleGroup('general')} 
-          />
-          <LearningSection 
-            expanded={expanded.learning} 
-            onToggle={() => toggleGroup('learning')} 
-          />
-          <CommunitySection 
-            expanded={expanded.community} 
-            onToggle={() => toggleGroup('community')} 
-          />
-          <InstructorSection 
-            expanded={expanded.instructor} 
-            onToggle={() => toggleGroup('instructor')} 
-          />
-          <AccountSection 
-            expanded={expanded.account} 
-            onToggle={() => toggleGroup('account')} 
-          />
-        </>
-      );
-      break;
-    case 'anonimo':
-      menuContent = (
-        <>
-          <GeneralSection 
-            expanded={expanded.general} 
-            onToggle={() => toggleGroup('general')} 
-          />
-          <LearningSection 
-            expanded={expanded.learning} 
-            onToggle={() => toggleGroup('learning')} 
-          />
-        </>
-      );
-      break;
-    default: // 'student' u otro rol
-      menuContent = (
-        <>
-          <GeneralSection 
-            expanded={expanded.general} 
-            onToggle={() => toggleGroup('general')} 
-          />
-          <LearningSection 
-            expanded={expanded.learning} 
-            onToggle={() => toggleGroup('learning')} 
-          />
-          <CommunitySection 
-            expanded={expanded.community} 
-            onToggle={() => toggleGroup('community')} 
-          />
-          <AccountSection 
-            expanded={expanded.account} 
-            onToggle={() => toggleGroup('account')} 
-          />
-        </>
-      );
-  }
+  // Generate content based on role - using a more modern approach with role-based configuration
+  const renderSections = () => {
+    // Common sections for all authenticated users
+    const commonSections = (
+      <>
+        <GeneralSection 
+          expanded={expanded.general} 
+          onToggle={() => toggleGroup('general')} 
+        />
+        <AccountSection 
+          expanded={expanded.account} 
+          onToggle={() => toggleGroup('account')} 
+        />
+      </>
+    );
+
+    // Role-specific sections
+    switch (effectiveRole) {
+      case 'admin':
+        return (
+          <>
+            {commonSections}
+            <LearningSection 
+              expanded={expanded.learning} 
+              onToggle={() => toggleGroup('learning')} 
+            />
+            <CommunitySection 
+              expanded={expanded.community} 
+              onToggle={() => toggleGroup('community')} 
+            />
+            <InstructorSection 
+              expanded={expanded.instructor} 
+              onToggle={() => toggleGroup('instructor')} 
+            />
+            <AdminSection 
+              expanded={expanded.administration} 
+              onToggle={() => toggleGroup('administration')} 
+            />
+          </>
+        );
+      case 'sistemas':
+        return (
+          <>
+            {commonSections}
+            <SistemasSection 
+              expanded={expanded.infrastructure} 
+              onToggle={() => toggleGroup('infrastructure')} 
+            />
+            <AdminSection 
+              expanded={expanded.administration} 
+              onToggle={() => toggleGroup('administration')} 
+            />
+          </>
+        );
+      case 'instructor':
+        return (
+          <>
+            {commonSections}
+            <LearningSection 
+              expanded={expanded.learning} 
+              onToggle={() => toggleGroup('learning')} 
+            />
+            <CommunitySection 
+              expanded={expanded.community} 
+              onToggle={() => toggleGroup('community')} 
+            />
+            <InstructorSection 
+              expanded={expanded.instructor} 
+              onToggle={() => toggleGroup('instructor')} 
+            />
+          </>
+        );
+      case 'anonimo':
+        return (
+          <>
+            <GeneralSection 
+              expanded={expanded.general} 
+              onToggle={() => toggleGroup('general')} 
+            />
+            <LearningSection 
+              expanded={expanded.learning} 
+              onToggle={() => toggleGroup('learning')} 
+            />
+          </>
+        );
+      default: // 'student' or other roles
+        return (
+          <>
+            {commonSections}
+            <LearningSection 
+              expanded={expanded.learning} 
+              onToggle={() => toggleGroup('learning')} 
+            />
+            <CommunitySection 
+              expanded={expanded.community} 
+              onToggle={() => toggleGroup('community')} 
+            />
+          </>
+        );
+    }
+  };
 
   return (
     <div className="flex flex-col gap-1 py-2">
-      {menuContent}
+      {renderSections()}
     </div>
   );
 };

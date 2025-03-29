@@ -8,7 +8,7 @@ export type SidebarGroups = {
   administration: boolean;
   instructor: boolean;
   account: boolean;
-  sistemas: boolean;
+  infrastructure: boolean; // Renamed from sistemas to be more descriptive
 };
 
 export const useSidebarState = () => {
@@ -22,7 +22,7 @@ export const useSidebarState = () => {
       administration: true,
       instructor: true,
       account: true,
-      sistemas: true
+      infrastructure: true
     };
   };
   
