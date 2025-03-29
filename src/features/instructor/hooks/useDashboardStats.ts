@@ -126,7 +126,17 @@ export const useDashboardStats = () => {
 
         if (error) throw error;
 
-        return data || [];
+        // Transform the data to match our expected format
+        return data.map(enrollment => ({
+          id: enrollment.id,
+          enrolled_at: enrollment.enrolled_at,
+          profiles: {
+            full_name: enrollment.profiles?.full_name || 'Unknown User'
+          },
+          courses: {
+            title: enrollment.courses?.title || 'Unknown Course'
+          }
+        }));
       } catch (error: any) {
         console.error("Error fetching recent enrollments:", error);
         return [];
