@@ -28,9 +28,9 @@ export const useLogin = () => {
       if (authData.user) {
         toast.success('Inicio de sesión exitoso');
         
-        // Redirect based on user role
+        // Redirect admin users to landing page instead of admin dashboard
         if (userRole === 'admin') {
-          navigate('/admin/dashboard');
+          navigate('/');
         } else if (userRole === 'instructor') {
           navigate('/instructor/courses');
         } else {
