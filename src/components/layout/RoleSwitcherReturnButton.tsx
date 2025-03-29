@@ -15,14 +15,20 @@ const RoleSwitcherReturnButton: React.FC<RoleSwitcherReturnButtonProps> = ({
   onRoleChange,
   userRole
 }) => {
-  if (!isViewingAsOtherRole) return null;
+  if (!isViewingAsOtherRole || !userRole) return null;
+  
+  const handleReturn = () => {
+    onRoleChange(userRole);
+    // Also clear localStorage
+    localStorage.setItem('viewAsRole', 'current');
+  };
   
   return (
     <Button
       variant="outline"
       size="sm"
       className="mt-2 w-full flex items-center justify-center gap-1.5 text-xs bg-primary/5 text-primary border-primary/20 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
-      onClick={() => onRoleChange(userRole as UserRole)}
+      onClick={handleReturn}
     >
       <ArrowLeftRight className="h-3 w-3" />
       <span className="truncate">Volver a mi rol</span>

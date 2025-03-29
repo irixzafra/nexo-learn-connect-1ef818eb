@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
@@ -17,8 +16,19 @@ type ViewAsRole = 'current' | UserRole;
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { userRole } = useAuth();
-  const [viewAsRole, setViewAsRole] = useState<ViewAsRole>('current');
   const location = useLocation();
+
+  // Get saved view role from localStorage
+  const getSavedViewRole = (): ViewAsRole => {
+    try {
+      const savedRole = localStorage.getItem('viewAsRole');
+      return savedRole ? (savedRole as ViewAsRole) : 'current';
+    } catch (e) {
+      return 'current';
+    }
+  };
+
+  const [viewAsRole, setViewAsRole] = useState<ViewAsRole>(getSavedViewRole());
 
   // Get default sidebar open state from localStorage if available
   const getDefaultSidebarState = () => {
@@ -34,6 +44,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  // Save viewAsRole to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('viewAsRole', viewAsRole);
+  }, [viewAsRole]);
 
   const getEffectiveRole = () => {
     if (viewAsRole === 'current') return userRole;

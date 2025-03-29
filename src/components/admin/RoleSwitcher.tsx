@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Check, ChevronRight, Shield, ArrowLeftRight, UserCog, User } from 'lucide-react';
+import { Check, ChevronRight, Shield, ArrowLeftRight, UserCog, User, Terminal, Ghost } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from "@/components/ui/separator";
 import { Command, CommandList, CommandInput, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
@@ -25,7 +25,7 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   const { userRole, profile } = useAuth();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredRoles, setFilteredRoles] = useState<string[]>(['admin', 'instructor', 'student']);
+  const [filteredRoles, setFilteredRoles] = useState<string[]>(['admin', 'instructor', 'student', 'sistemas']);
   
   // Solo los administradores pueden cambiar roles
   if (userRole !== 'admin') {
@@ -52,10 +52,13 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
         return <Shield className="h-4 w-4" />;
       case 'instructor':
         return <UserCog className="h-4 w-4 text-amber-500" />;
+      case 'sistemas':
+        return <Terminal className="h-4 w-4 text-blue-500" />;
+      case 'anonimo':
+        return <Ghost className="h-4 w-4" />;
       case 'student':
-        return <User className="h-4 w-4 text-emerald-500" />;
       default:
-        return <User className="h-4 w-4" />;
+        return <User className="h-4 w-4 text-emerald-500" />;
     }
   };
 
@@ -67,6 +70,10 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
         return 'Instructor';
       case 'student':
         return 'Estudiante';
+      case 'sistemas':
+        return 'Sistemas';
+      case 'anonimo':
+        return 'Anónimo';
       default:
         return role;
     }
@@ -74,7 +81,7 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
 
   // Manejar filtrado de roles en tiempo real
   useEffect(() => {
-    const filtered = ['admin', 'instructor', 'student'].filter(role => 
+    const filtered = ['admin', 'instructor', 'student', 'sistemas'].filter(role => 
       role.toLowerCase().includes(searchTerm.toLowerCase()) ||
       getRoleLabel(role as UserRole).toLowerCase().includes(searchTerm.toLowerCase())
     );

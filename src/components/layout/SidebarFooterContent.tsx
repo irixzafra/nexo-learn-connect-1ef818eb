@@ -27,6 +27,9 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
       trackRoleSwitch(userRole, role);
     }
     
+    // Save to localStorage
+    localStorage.setItem('viewAsRole', role);
+    
     onRoleChange(role);
   };
 
