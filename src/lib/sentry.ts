@@ -61,6 +61,7 @@ export const trackRoleSwitch = (
   originalRole: string,
   newViewRole: string
 ) => {
+  // Registramos el evento como breadcrumb para tener un historial de navegación
   Sentry.addBreadcrumb({
     category: 'role-switch',
     message: `Cambio de vista de rol: ${originalRole} → ${newViewRole}`,
@@ -69,6 +70,16 @@ export const trackRoleSwitch = (
       originalRole,
       newViewRole,
       timestamp: new Date().toISOString()
+    }
+  });
+  
+  // También capturamos como evento específico para análisis
+  Sentry.captureMessage(`Role Switch: ${originalRole} → ${newViewRole}`, {
+    level: 'info',
+    tags: {
+      action_type: 'role_switch',
+      from_role: originalRole,
+      to_role: newViewRole
     }
   });
 };
