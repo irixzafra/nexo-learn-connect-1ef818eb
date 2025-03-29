@@ -27,26 +27,6 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
             </motion.div>
           </Link>
           
-          <motion.nav
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="hidden md:flex items-center gap-6"
-          >
-            <Link to="/courses" className="text-muted-foreground hover:text-foreground transition-colors">
-              Programas
-            </Link>
-            <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">
-              Sobre Nexo
-            </Link>
-            <Link to="/blog" className="text-muted-foreground hover:text-foreground transition-colors">
-              Recursos
-            </Link>
-            <Link to="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
-              Contacto
-            </Link>
-          </motion.nav>
-          
           {!isAuthPage && (
             <motion.div 
               className="flex items-center gap-4"

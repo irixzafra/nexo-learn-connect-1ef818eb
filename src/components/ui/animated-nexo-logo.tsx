@@ -1,7 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { NexoLogo } from './nexo-logo';
+import { Atom, BookOpen, Rocket, Lightbulb, Code, Sparkles, PenTool, Palette } from 'lucide-react';
 
 interface AnimatedNexoLogoProps {
   className?: string;
@@ -18,6 +19,18 @@ export const AnimatedNexoLogo: React.FC<AnimatedNexoLogoProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [particles, setParticles] = useState<{ x: number; y: number; size: number; color: string; speed: number }[]>([]);
+  const [currentIconIndex, setCurrentIconIndex] = useState(0);
+  
+  const creativeIcons = [
+    { icon: Rocket, color: "text-blue-400" },
+    { icon: BookOpen, color: "text-blue-500" },
+    { icon: Lightbulb, color: "text-amber-400" },
+    { icon: Code, color: "text-indigo-500" },
+    { icon: PenTool, color: "text-teal-500" },
+    { icon: Palette, color: "text-pink-500" },
+    { icon: Atom, color: "text-blue-600" },
+    { icon: Sparkles, color: "text-amber-500" }
+  ];
 
   // Generate random particles
   useEffect(() => {
@@ -26,22 +39,30 @@ export const AnimatedNexoLogo: React.FC<AnimatedNexoLogoProps> = ({
         x: Math.random() * 100,
         y: Math.random() * 100,
         size: Math.random() * 3 + 1,
-        color: ['#E11D48', '#6366F1', '#8B5CF6', '#3B82F6'][Math.floor(Math.random() * 4)],
+        color: ['#0EA5E9', '#3B82F6', '#6366F1', '#8B5CF6'][Math.floor(Math.random() * 4)],
         speed: Math.random() * 2 + 1
       }));
       setParticles(newParticles);
     }
   }, [showParticles]);
 
+  // Cycle through creative icons
+  useEffect(() => {
+    if (animate) {
+      const iconInterval = setInterval(() => {
+        setCurrentIconIndex((prevIndex) => 
+          prevIndex === creativeIcons.length - 1 ? 0 : prevIndex + 1
+        );
+      }, 3000);
+      
+      return () => clearInterval(iconInterval);
+    }
+  }, [animate]);
+
   const logoVariants = {
     initial: { scale: 1 },
     hover: { scale: 1.05, transition: { duration: 0.3 } },
     click: { scale: 0.95, transition: { duration: 0.2 } }
-  };
-
-  const orbitVariants = {
-    initial: { opacity: 0.6, rotate: 0 },
-    animate: { opacity: 0.8, rotate: 360, transition: { duration: 30, repeat: Infinity, ease: "linear" } }
   };
 
   const particleVariants = {
@@ -62,20 +83,10 @@ export const AnimatedNexoLogo: React.FC<AnimatedNexoLogoProps> = ({
     })
   };
 
-  const rocketVariants = {
-    initial: { x: '-120%', y: '120%', opacity: 0 },
-    animate: { 
-      x: '120%', 
-      y: '-120%', 
-      opacity: [0, 1, 1, 0], 
-      transition: { 
-        duration: 4, 
-        times: [0, 0.1, 0.9, 1],
-        repeat: Infinity, 
-        repeatDelay: 15, 
-        ease: "easeOut" 
-      } 
-    }
+  const iconVariants = {
+    initial: { opacity: 0, scale: 0.8 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 0.8 }
   };
 
   return (
@@ -88,12 +99,7 @@ export const AnimatedNexoLogo: React.FC<AnimatedNexoLogoProps> = ({
       variants={logoVariants}
     >
       {showOrbit && (
-        <motion.div 
-          className="absolute inset-0 rounded-full border-2 border-primary/20 -z-10"
-          initial="initial"
-          animate={animate ? "animate" : "initial"}
-          variants={orbitVariants}
-        />
+        <div className="absolute inset-0 rounded-full border-2 border-primary/20 -z-10" />
       )}
       
       {showParticles && particles.map((particle, index) => (
@@ -112,19 +118,26 @@ export const AnimatedNexoLogo: React.FC<AnimatedNexoLogoProps> = ({
         />
       ))}
 
-      <motion.div
-        className="absolute -z-10 text-primary/70"
-        style={{ 
-          fontSize: '10px', 
-          width: '15px', 
-          height: '15px' 
-        }}
-        initial="initial"
-        animate={animate ? "animate" : "initial"}
-        variants={rocketVariants}
-      >
-        🚀
-      </motion.div>
+      {animate && (
+        <div className="absolute inset-0 flex items-center justify-center -z-10">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIconIndex}
+              variants={iconVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.5 }}
+              className={`${creativeIcons[currentIconIndex].color}`}
+            >
+              {React.createElement(creativeIcons[currentIconIndex].icon, { 
+                size: 20,
+                className: "opacity-70" 
+              })}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
 
       <NexoLogo className="relative z-20" />
     </motion.div>
