@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import AppLayout from '@/layouts/AppLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -43,7 +43,7 @@ const CoursesCatalog: React.FC = () => {
     try {
       console.log("Fetching courses...");
       
-      // Simplified query to avoid RLS issues
+      // Evitamos usar la conexión del src/lib/supabase.ts y usamos la de integrations directamente
       const { data, error: supabaseError } = await supabase
         .from('courses')
         .select('*')
