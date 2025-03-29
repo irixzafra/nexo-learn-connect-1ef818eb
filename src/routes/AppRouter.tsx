@@ -57,7 +57,9 @@ const AppRouter: React.FC = () => {
       <Route path="/courses" element={
         <ProtectedRoute>
           <AppLayout>
-            <CoursesCatalog />
+            <div className="container mx-auto px-4">
+              <CoursesCatalog />
+            </div>
           </AppLayout>
         </ProtectedRoute>
       } />
@@ -65,7 +67,9 @@ const AppRouter: React.FC = () => {
       <Route path="/courses/:id" element={
         <ProtectedRoute>
           <AppLayout>
-            <CourseDetail />
+            <div className="container mx-auto px-4 py-6">
+              <CourseDetail />
+            </div>
           </AppLayout>
         </ProtectedRoute>
       } />
@@ -81,7 +85,9 @@ const AppRouter: React.FC = () => {
       <Route path="/profile" element={
         <ProtectedRoute>
           <AppLayout>
-            <Profile />
+            <div className="container mx-auto px-4 py-6">
+              <Profile />
+            </div>
           </AppLayout>
         </ProtectedRoute>
       } />
