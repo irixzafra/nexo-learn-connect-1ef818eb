@@ -2,75 +2,88 @@
 import React, { useState } from 'react';
 import { useTestData, TestDataType } from '@/contexts/TestDataContext';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import { PlusCircle } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-// Map of data types to their labels
+// Data types with their display names
 export const dataTypeLabels: Record<TestDataType, string> = {
   course: 'Cursos',
   user: 'Usuarios',
   lesson: 'Lecciones',
-  message: 'Mensajes'
+  message: 'Mensajes',
+  module: 'Módulos',
+  profile: 'Perfiles',
+  assignment: 'Tareas',
+  category: 'Categorías',
+  enrollment: 'Inscripciones',
+  quiz: 'Evaluaciones',
+  certificate: 'Certificados',
+  payment: 'Pagos'
 };
 
 export const DataTypeSelector: React.FC = () => {
   const { generateTestData, isGenerating } = useTestData();
   const [selectedType, setSelectedType] = useState<TestDataType>('course');
-  const [count, setCount] = useState<number>(5);
+  const [count, setCount] = useState(1);
+
+  const handleCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    setCount(isNaN(value) ? 1 : Math.max(1, Math.min(100, value)));
+  };
 
   const handleGenerate = () => {
-    if (count > 0 && count <= 100) {
-      generateTestData(selectedType, count);
-    }
+    generateTestData(selectedType, count);
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
-      <div className="flex-1 space-y-2">
-        <Label htmlFor="dataType">Tipo de datos</Label>
-        <Select 
-          value={selectedType} 
-          onValueChange={(value) => setSelectedType(value as TestDataType)}
-        >
-          <SelectTrigger id="dataType">
-            <SelectValue placeholder="Selecciona un tipo de datos" />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(dataTypeLabels).map(([type, label]) => (
-              <SelectItem key={type} value={type}>{label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="flex-1 space-y-2">
-        <Label htmlFor="count">Cantidad</Label>
-        <div className="flex items-center gap-2">
-          <Input
-            id="count"
-            type="number"
-            min={1}
-            max={100}
-            value={count}
-            onChange={(e) => setCount(parseInt(e.target.value) || 0)}
-          />
-          <Button 
-            onClick={handleGenerate} 
-            disabled={isGenerating || count <= 0 || count > 100}
-            className="flex items-center gap-1"
-          >
-            <PlusCircle className="h-4 w-4" />
-            <span>Generar</span>
-          </Button>
+    <Card>
+      <CardContent className="p-4">
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="data-type">Tipo de datos</Label>
+            <Tabs 
+              defaultValue="course" 
+              value={selectedType}
+              onValueChange={(value) => setSelectedType(value as TestDataType)}
+              className="mt-2"
+            >
+              <TabsList className="grid grid-cols-4 md:grid-cols-6">
+                {Object.entries(dataTypeLabels).map(([type, label]) => (
+                  <TabsTrigger key={type} value={type}>
+                    {label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
+
+          <div>
+            <Label htmlFor="count">Cantidad</Label>
+            <div className="flex items-center mt-2">
+              <Input
+                id="count"
+                type="number"
+                min={1}
+                max={100}
+                value={count}
+                onChange={handleCountChange}
+                className="w-24"
+              />
+              <Button
+                onClick={handleGenerate}
+                disabled={isGenerating}
+                className="ml-2"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Generar
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };

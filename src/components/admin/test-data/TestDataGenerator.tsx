@@ -19,6 +19,12 @@ const TestDataGenerator: React.FC = () => {
   
   // Check if there's any test data
   const hasAnyData = Object.values(testData).some(items => items.length > 0);
+  
+  // Calculate the total count of all test data items
+  const totalItems = Object.values(testData).reduce(
+    (acc, items) => acc + items.length, 
+    0
+  );
 
   return (
     <Card className="w-full">
@@ -28,7 +34,12 @@ const TestDataGenerator: React.FC = () => {
           Generador de Datos de Prueba
         </CardTitle>
         <CardDescription>
-          Genera datos de prueba para la aplicación o elimina los existentes
+          Genera datos de prueba para la aplicación o elimina los existentes.
+          {hasAnyData && (
+            <span className="block mt-1">
+              Total de datos generados: <strong>{totalItems}</strong> elementos
+            </span>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent>
