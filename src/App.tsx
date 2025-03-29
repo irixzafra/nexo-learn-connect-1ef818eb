@@ -26,13 +26,6 @@ import AboutUs from "./pages/AboutUs";
 import Courses from "./pages/Courses";
 import Scholarships from "./pages/Scholarships";
 
-const Courses = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Cursos</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
-
 const Users = () => (
   <div className="container mx-auto p-6">
     <h1 className="text-3xl font-bold mb-6">Usuarios</h1>
