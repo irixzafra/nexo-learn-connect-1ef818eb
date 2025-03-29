@@ -14,9 +14,9 @@ import AboutUs from "@/pages/AboutUs";
 import Courses from "@/pages/Courses";
 import Scholarships from "@/pages/Scholarships";
 
-const PublicRoutes: React.FC = () => {
+const PublicRoutes = () => {
   return (
-    <>
+    <React.Fragment>
       <Route path="/" element={<LandingPage />} />
       <Route path="/auth/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
@@ -26,7 +26,7 @@ const PublicRoutes: React.FC = () => {
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/scholarships" element={<Scholarships />} />
       <Route path="*" element={<NotFound />} />
-    </>
+    </React.Fragment>
   );
 };
 

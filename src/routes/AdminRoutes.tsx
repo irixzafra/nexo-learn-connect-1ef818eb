@@ -7,9 +7,9 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Home from "@/pages/Home";
 import TestDataManagement from '@/pages/admin/TestDataManagement';
 
-const AdminRoutes: React.FC = () => {
+const AdminRoutes = () => {
   return (
-    <>
+    <React.Fragment>
       <Route path="/admin/dashboard" element={
         <ProtectedRoute requiredRole="admin">
           <Home />
@@ -25,7 +25,7 @@ const AdminRoutes: React.FC = () => {
           <TestDataManagement />
         </ProtectedRoute>
       } />
-    </>
+    </React.Fragment>
   );
 };
 

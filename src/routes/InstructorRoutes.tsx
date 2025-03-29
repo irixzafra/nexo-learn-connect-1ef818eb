@@ -12,9 +12,9 @@ import EditCourseDetails from "@/pages/instructor/EditCourseDetails";
 import EditCourseStructure from "@/pages/instructor/EditCourseStructure";
 import EditLesson from "@/pages/instructor/EditLesson";
 
-const InstructorRoutes: React.FC = () => {
+const InstructorRoutes = () => {
   return (
-    <>
+    <React.Fragment>
       <Route path="/instructor/dashboard" element={
         <ProtectedRoute requiredRole="instructor">
           <InstructorDashboard />
@@ -50,7 +50,7 @@ const InstructorRoutes: React.FC = () => {
           <EditLesson />
         </ProtectedRoute>
       } />
-    </>
+    </React.Fragment>
   );
 };
 

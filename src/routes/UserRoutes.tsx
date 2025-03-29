@@ -18,9 +18,9 @@ import CourseLearn from "@/pages/student/CourseLearn";
 import LessonView from "@/pages/student/LessonView";
 import Checkout from "@/pages/student/Checkout";
 
-const UserRoutes: React.FC = () => {
+const UserRoutes = () => {
   return (
-    <>
+    <React.Fragment>
       <Route path="/home" element={
         <ProtectedRoute>
           <Home />
@@ -76,7 +76,7 @@ const UserRoutes: React.FC = () => {
           <Settings />
         </ProtectedRoute>
       } />
-    </>
+    </React.Fragment>
   );
 };
 
