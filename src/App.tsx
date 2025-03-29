@@ -8,8 +8,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { EditModeProvider } from "@/contexts/EditModeContext";
 import { TestDataProvider } from "@/contexts/TestDataContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import * as Sentry from "@sentry/react";
-import ErrorBoundaryFallback from "@/components/ErrorBoundaryFallback";
 
 // Landing and public pages
 import LandingPage from "./pages/LandingPage";
@@ -53,12 +51,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      retry: 1,
-      onSettled: (data, error) => {
-        if (error) {
-          Sentry.captureException(error);
-        }
-      }
+      retry: 1
     },
   },
 });
@@ -70,115 +63,113 @@ const App = () => (
         <EditModeProvider>
           <TestDataProvider>
             <TooltipProvider>
-              <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
-                <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/auth/login" element={<Login />} />
-                  <Route path="/auth/register" element={<Register />} />
-                  <Route path="/unauthorized" element={<Unauthorized />} />
-                  <Route path="/courses" element={<CoursesCatalog />} />
-                  <Route path="/courses/:id" element={<CourseDetail />} />
-                  <Route path="/about-us" element={<AboutUs />} />
-                  <Route path="/scholarships" element={<Scholarships />} />
-                
-                  <Route path="/home" element={
-                    <ProtectedRoute>
-                      <Home />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/profile" element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/my-courses" element={
-                    <ProtectedRoute>
-                      <StudentCourses />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/users" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Users />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/courses/:courseId/learn" element={
-                    <ProtectedRoute>
-                      <CourseLearn />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/courses/:courseId/learn/:lessonId" element={
-                    <ProtectedRoute>
-                      <LessonView />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/checkout/:courseId" element={
-                    <ProtectedRoute>
-                      <Checkout />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/messages" element={
-                    <ProtectedRoute>
-                      <Messages />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/calendar" element={
-                    <ProtectedRoute>
-                      <Calendar />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/billing" element={
-                    <ProtectedRoute>
-                      <Billing />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/settings" element={
-                    <ProtectedRoute>
-                      <Settings />
-                    </ProtectedRoute>
-                  } />
-                
-                  <Route path="/instructor/students" element={
-                    <ProtectedRoute requiredRole="instructor">
-                      <InstructorStudents />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/instructor/courses" element={
-                    <ProtectedRoute requiredRole="instructor">
-                      <CoursesList />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/instructor/courses/new" element={
-                    <ProtectedRoute requiredRole="instructor">
-                      <CreateCourse />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/instructor/courses/:id/edit" element={
-                    <ProtectedRoute requiredRole="instructor">
-                      <EditCourseDetails />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/instructor/courses/:id/structure" element={
-                    <ProtectedRoute requiredRole="instructor">
-                      <EditCourseStructure />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/instructor/courses/:courseId/lessons/:lessonId/edit" element={
-                    <ProtectedRoute requiredRole="instructor">
-                      <EditLesson />
-                    </ProtectedRoute>
-                  } />
-                
-                  <Route path="/admin/test-data" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <TestDataManagement />
-                    </ProtectedRoute>
-                  } />
-                
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-                <Toaster />
-                <Sonner />
-              </Sentry.ErrorBoundary>
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/auth/login" element={<Login />} />
+                <Route path="/auth/register" element={<Register />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
+                <Route path="/courses" element={<CoursesCatalog />} />
+                <Route path="/courses/:id" element={<CourseDetail />} />
+                <Route path="/about-us" element={<AboutUs />} />
+                <Route path="/scholarships" element={<Scholarships />} />
+              
+                <Route path="/home" element={
+                  <ProtectedRoute>
+                    <Home />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/my-courses" element={
+                  <ProtectedRoute>
+                    <StudentCourses />
+                  </ProtectedRoute>
+                } />
+                <Route path="/users" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <Users />
+                  </ProtectedRoute>
+                } />
+                <Route path="/courses/:courseId/learn" element={
+                  <ProtectedRoute>
+                    <CourseLearn />
+                  </ProtectedRoute>
+                } />
+                <Route path="/courses/:courseId/learn/:lessonId" element={
+                  <ProtectedRoute>
+                    <LessonView />
+                  </ProtectedRoute>
+                } />
+                <Route path="/checkout/:courseId" element={
+                  <ProtectedRoute>
+                    <Checkout />
+                  </ProtectedRoute>
+                } />
+                <Route path="/messages" element={
+                  <ProtectedRoute>
+                    <Messages />
+                  </ProtectedRoute>
+                } />
+                <Route path="/calendar" element={
+                  <ProtectedRoute>
+                    <Calendar />
+                  </ProtectedRoute>
+                } />
+                <Route path="/billing" element={
+                  <ProtectedRoute>
+                    <Billing />
+                  </ProtectedRoute>
+                } />
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } />
+              
+                <Route path="/instructor/students" element={
+                  <ProtectedRoute requiredRole="instructor">
+                    <InstructorStudents />
+                  </ProtectedRoute>
+                } />
+                <Route path="/instructor/courses" element={
+                  <ProtectedRoute requiredRole="instructor">
+                    <CoursesList />
+                  </ProtectedRoute>
+                } />
+                <Route path="/instructor/courses/new" element={
+                  <ProtectedRoute requiredRole="instructor">
+                    <CreateCourse />
+                  </ProtectedRoute>
+                } />
+                <Route path="/instructor/courses/:id/edit" element={
+                  <ProtectedRoute requiredRole="instructor">
+                    <EditCourseDetails />
+                  </ProtectedRoute>
+                } />
+                <Route path="/instructor/courses/:id/structure" element={
+                  <ProtectedRoute requiredRole="instructor">
+                    <EditCourseStructure />
+                  </ProtectedRoute>
+                } />
+                <Route path="/instructor/courses/:courseId/lessons/:lessonId/edit" element={
+                  <ProtectedRoute requiredRole="instructor">
+                    <EditLesson />
+                  </ProtectedRoute>
+                } />
+              
+                <Route path="/admin/test-data" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <TestDataManagement />
+                  </ProtectedRoute>
+                } />
+              
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Toaster />
+              <Sonner />
             </TooltipProvider>
           </TestDataProvider>
         </EditModeProvider>
@@ -187,4 +178,4 @@ const App = () => (
   </QueryClientProvider>
 );
 
-export default Sentry.withProfiler(App);
+export default App;
