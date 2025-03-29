@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Sidebar,
   SidebarContent,
@@ -58,45 +59,47 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const effectiveRole = getEffectiveRole();
 
+  // Esta función obtiene las iniciales del rol para mostrar en el avatar
+  const getRoleInitials = (role: string | null) => {
+    if (!role) return 'U';
+    return role.charAt(0).toUpperCase();
+  };
+
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <Sidebar>
-          <SidebarHeader className="border-b">
-            <div className="flex items-center p-4">
-              <NexoLogo className="w-9 h-9 mr-3 text-primary" />
-              <div className="flex flex-col">
-                <span className="font-semibold text-lg text-primary">Nexo</span>
-                <span className="text-xs text-muted-foreground">Learning Platform</span>
-              </div>
+      <div className="flex min-h-screen w-full bg-muted/10">
+        <Sidebar className="border-r bg-background">
+          <SidebarHeader className="border-b px-6 py-5">
+            <div className="flex items-center">
+              <NexoLogo className="h-9 w-auto" />
             </div>
           </SidebarHeader>
           
-          <SidebarContent>
+          <SidebarContent className="px-4 py-4">
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Panel Principal" asChild>
-                  <Link to="/home">
-                    <Home className="mr-2" />
-                    <span>Panel Principal</span>
+                  <Link to="/home" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted">
+                    <Home className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Panel Principal</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Perfil" asChild>
-                  <Link to="/profile">
-                    <User className="mr-2" />
-                    <span>Perfil</span>
+                  <Link to="/profile" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted">
+                    <User className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Perfil</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Cursos" asChild>
-                  <Link to="/courses">
-                    <BookOpen className="mr-2" />
-                    <span>Cursos</span>
+                  <Link to="/courses" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted">
+                    <BookOpen className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Cursos</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -104,9 +107,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               {effectiveRole === 'instructor' && (
                 <SidebarMenuItem>
                   <SidebarMenuButton tooltip="Estudiantes" asChild>
-                    <Link to="/instructor/students">
-                      <Users className="mr-2" />
-                      <span>Estudiantes</span>
+                    <Link to="/instructor/students" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted">
+                      <Users className="h-5 w-5 text-primary" />
+                      <span className="font-medium">Estudiantes</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -115,9 +118,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               {(effectiveRole === 'admin' || effectiveRole === 'instructor') && (
                 <SidebarMenuItem>
                   <SidebarMenuButton tooltip="Usuarios" asChild>
-                    <Link to="/users">
-                      <Users className="mr-2" />
-                      <span>Usuarios</span>
+                    <Link to="/users" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted">
+                      <Users className="h-5 w-5 text-primary" />
+                      <span className="font-medium">Usuarios</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -125,51 +128,51 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Mensajes" asChild>
-                  <Link to="/messages">
-                    <MessageSquare className="mr-2" />
-                    <span>Mensajes</span>
+                  <Link to="/messages" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted">
+                    <MessageSquare className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Mensajes</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Calendario" asChild>
-                  <Link to="/calendar">
-                    <Calendar className="mr-2" />
-                    <span>Calendario</span>
+                  <Link to="/calendar" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Calendario</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Facturación" asChild>
-                  <Link to="/billing">
-                    <Wallet className="mr-2" />
-                    <span>Facturación</span>
+                  <Link to="/billing" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted">
+                    <Wallet className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Facturación</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Configuración" asChild>
-                  <Link to="/settings">
-                    <Settings className="mr-2" />
-                    <span>Configuración</span>
+                  <Link to="/settings" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted">
+                    <Settings className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Configuración</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
           
-          <SidebarFooter className="border-t flex flex-col gap-3 p-4">
+          <SidebarFooter className="border-t p-4">
             {/* Role selector - solo visible para admin */}
             {userRole === 'admin' && (
-              <div className="mb-2">
+              <div className="mb-4 px-2">
                 <Select 
                   value={viewAsRole} 
                   onValueChange={(value) => setViewAsRole(value as ViewAsRole)}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full bg-muted/50">
                     <SelectValue placeholder="Ver como" />
                   </SelectTrigger>
                   <SelectContent>
@@ -184,23 +187,27 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </div>
             )}
 
-            {/* User role badge */}
-            <div className="flex items-center space-x-2 py-2 px-3 rounded-md bg-secondary/50">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary">
-                {effectiveRole ? effectiveRole.charAt(0).toUpperCase() : 'U'}
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm capitalize">
+            {/* User profile and logout */}
+            <div className="flex items-center space-x-3 px-2 py-2 rounded-md">
+              <Avatar className="h-10 w-10 border-2 border-primary/20">
+                <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                  {getRoleInitials(effectiveRole)}
+                </AvatarFallback>
+              </Avatar>
+              
+              <div className="flex flex-col flex-1">
+                <span className="text-sm font-medium capitalize">
                   {effectiveRole || 'Usuario'}
                 </span>
                 {viewAsRole !== 'current' && (
-                  <span className="text-[10px] text-muted-foreground">Modo vista</span>
+                  <span className="text-xs text-muted-foreground">Modo vista</span>
                 )}
               </div>
+              
               <Button 
                 variant="ghost"
                 size="icon"
-                className="ml-auto h-8 w-8"
+                className="h-9 w-9 rounded-full"
                 onClick={handleLogout}
                 title="Cerrar Sesión"
               >
@@ -211,7 +218,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </Sidebar>
         
         <div className="flex-1 min-w-0 overflow-auto">
-          <header className="border-b">
+          <header className="border-b bg-background">
             <div className="container mx-auto py-3 px-6 flex justify-between items-center">
               <SidebarTrigger />
               <div className="text-sm text-muted-foreground">

@@ -11,7 +11,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
-import TestUsersPage from "./pages/TestUsersPage";
 import Unauthorized from "./pages/Unauthorized";
 
 // Placeholder pages
@@ -90,7 +89,6 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
-            <Route path="/create-test-users" element={<TestUsersPage />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             
             {/* Rutas Protegidas */}
