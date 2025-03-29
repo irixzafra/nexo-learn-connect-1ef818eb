@@ -67,7 +67,7 @@ const StudentCourses: React.FC = () => {
         
         // Transform the data to match Course type
         const formattedCourses = coursesData.map(course => {
-          // Extraer los datos del instructor del objeto profiles
+          // Extract instructor data correctly, checking if profiles exists
           const instructorData = course.profiles ? {
             id: course.profiles.id,
             full_name: course.profiles.full_name
