@@ -29,7 +29,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
 
   return (
     <EditModeProvider>
-      <SidebarProvider defaultCollapsed={false}>
+      <SidebarProvider>
         <div className="min-h-screen flex dark:bg-gray-950">
           <SidebarNavigation />
           <main className="flex flex-col flex-1 min-h-screen">
