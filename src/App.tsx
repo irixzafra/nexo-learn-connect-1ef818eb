@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
+import TestUsersPage from "./pages/TestUsersPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
+          <Route path="/create-test-users" element={<TestUsersPage />} />
           
           {/* Rutas Protegidas (Temporalmente sin protección) */}
           <Route path="/home" element={<Home />} />
