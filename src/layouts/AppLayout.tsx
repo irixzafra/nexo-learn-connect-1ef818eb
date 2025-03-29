@@ -54,20 +54,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   // Effect para limpiar el rol de vista si no es admin
   useEffect(() => {
     if (userRole !== 'admin' && viewAsRole !== 'current') {
-      console.log('Usuario no es admin, reseteando vista a rol actual');
       setViewAsRole('current');
       toast.info('Vista de rol restablecida', {
         description: 'Solo los administradores pueden ver como otros roles'
       });
     }
   }, [userRole, viewAsRole]);
-
-  const getEffectiveRole = () => {
-    if (viewAsRole === 'current') return userRole;
-    return viewAsRole;
-  };
-
-  const effectiveRole = getEffectiveRole();
 
   const handleRoleChange = (role: UserRole) => {
     if (userRole === 'admin') {
@@ -84,19 +76,20 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   return (
     <SidebarProvider defaultOpen={getDefaultSidebarState()}>
-      <div className="flex min-h-screen w-full bg-muted/10">
+      <div className="flex min-h-screen w-full bg-background">
         <AppSidebar 
           viewAsRole={viewAsRole}
           onRoleChange={handleRoleChange}
         />
-        
-        <div className="flex-1 min-w-0 overflow-auto transition-all duration-300">
-          <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b">
-            <HeaderContent userRole={userRole} viewingAs={viewAsRole !== 'current' ? viewAsRole : null} />
-          </header>
-          
-          <main className="container mx-auto px-4 py-6">
-            {children}
+        <div className="flex-1 flex flex-col min-w-0">
+          <HeaderContent 
+            userRole={userRole} 
+            viewingAs={viewAsRole !== 'current' ? viewAsRole : null} 
+          />
+          <main className="flex-1 px-4 py-6 overflow-auto">
+            <div className="container mx-auto">
+              {children}
+            </div>
           </main>
         </div>
       </div>
