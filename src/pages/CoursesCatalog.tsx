@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Search, BookOpen, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { ErrorBoundary } from 'react-error-boundary';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 
 type Course = {
