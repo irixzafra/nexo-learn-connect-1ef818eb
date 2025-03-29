@@ -1,4 +1,3 @@
-
 # Funcionalidades de Interfaz de Usuario
 
 Esta sección documenta las mejoras y características relacionadas con la interfaz de usuario y experiencia de usuario en la plataforma.

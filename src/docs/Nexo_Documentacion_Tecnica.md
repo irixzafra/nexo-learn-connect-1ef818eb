@@ -20,3 +20,4 @@ Esta refactorización permite:
 - Mejora la navegación y búsqueda de información específica
 
 Por favor, actualice sus referencias para apuntar a la nueva estructura.
+

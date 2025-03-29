@@ -22,3 +22,4 @@ Cada archivo contiene la documentación técnica de un área específica del sis
 ## Cómo Contribuir
 
 Al implementar nuevas funcionalidades o solucionar problemas, sigue la plantilla estándar definida en [Nexo_Guia_y_Workflow.md](./Nexo_Guia_y_Workflow.md) y añade la documentación en el archivo correspondiente según la categoría.
+

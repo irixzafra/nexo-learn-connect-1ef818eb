@@ -1,4 +1,3 @@
-
 # Correcciones y Soluciones Implementadas
 
 Esta sección documenta las correcciones de errores y soluciones a problemas técnicos implementados en la plataforma.

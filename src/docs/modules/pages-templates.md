@@ -1,4 +1,3 @@
-
 # Páginas y Plantillas
 
 Esta sección documenta la implementación de páginas específicas y plantillas de la plataforma.

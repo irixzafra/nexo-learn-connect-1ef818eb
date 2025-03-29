@@ -1,4 +1,3 @@
-
 # Funcionalidades Core del Sistema
 
 Esta sección documenta las características principales que conforman el núcleo funcional de la plataforma.

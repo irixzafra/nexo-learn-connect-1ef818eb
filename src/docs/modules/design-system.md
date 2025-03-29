@@ -1,4 +1,3 @@
-
 # Sistema de Diseño Nexo - Estilo Minimalista Futurista
 
 Este documento describe los principios, componentes y patrones que conforman el sistema de diseño de Nexo, con un enfoque minimalista y futurista inspirado en la estética de empresas como Tesla y X.
