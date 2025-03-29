@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,94 +8,44 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { EditModeProvider } from "@/contexts/EditModeContext";
 import { TestDataProvider } from "@/contexts/TestDataContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+
+// Landing and public pages
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Home from "./pages/Home";
-import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Unauthorized from "./pages/Unauthorized";
-import CreateCourse from "./pages/instructor/CreateCourse";
-import CoursesList from "./pages/instructor/CoursesList";
-import EditCourseDetails from "./pages/instructor/EditCourseDetails";
-import EditCourseStructure from "./pages/instructor/EditCourseStructure";
-import EditLesson from "./pages/instructor/EditLesson";
 import CoursesCatalog from "./pages/CoursesCatalog";
 import CourseDetail from "./pages/CourseDetail";
-import TestDataManagement from "./pages/admin/TestDataManagement";
 import AboutUs from "./pages/AboutUs";
 import Courses from "./pages/Courses";
 import Scholarships from "./pages/Scholarships";
 
-const Users = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Usuarios</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
+// Dashboard and shared pages
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import Users from "./pages/placeholder/Users";
+import Messages from "./pages/placeholder/Messages";
+import Calendar from "./pages/placeholder/Calendar";
+import Billing from "./pages/placeholder/Billing";
+import Settings from "./pages/placeholder/Settings";
 
-const Messages = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Mensajes</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
+// Instructor pages
+import InstructorStudents from "./pages/instructor/Students";
+import CoursesList from "./pages/instructor/CoursesList";
+import CreateCourse from "./pages/instructor/CreateCourse";
+import EditCourseDetails from "./pages/instructor/EditCourseDetails";
+import EditCourseStructure from "./pages/instructor/EditCourseStructure";
+import EditLesson from "./pages/instructor/EditLesson";
 
-const Calendar = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Calendario</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
+// Student pages
+import StudentCourses from "./pages/student/Courses";
+import CourseLearn from "./pages/student/CourseLearn";
+import LessonView from "./pages/student/LessonView";
+import Checkout from "./pages/student/Checkout";
 
-const Billing = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Facturación</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
-
-const Settings = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Configuración</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
-
-const InstructorStudents = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Estudiantes</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
-
-const StudentCourses = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Mis Cursos</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
-
-const CourseLearn = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Aprendizaje</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
-
-const LessonView = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Lección</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
-
-const Checkout = () => (
-  <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Checkout</h1>
-    <p>Página en desarrollo</p>
-  </div>
-);
+// Admin pages
+import TestDataManagement from "./pages/admin/TestDataManagement";
 
 const queryClient = new QueryClient({
   defaultOptions: {
