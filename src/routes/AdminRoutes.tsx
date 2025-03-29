@@ -8,7 +8,7 @@ import AppLayout from "@/layouts/AppLayout";
 // Admin pages
 import AdminDashboard from "@/pages/admin/dashboard";
 import TestDataManagement from "@/pages/admin/TestDataManagement";
-import Users from "@/pages/placeholder/Users";
+import UserManagement from "@/pages/admin/UserManagement"; // Updated import
 import Billing from "@/pages/placeholder/Billing";
 import RoleManagement from "@/pages/admin/RoleManagement";
 
@@ -32,7 +32,7 @@ const AdminRoutes = () => {
       <Route path="/users" element={
         <ProtectedRoute requiredRole="admin">
           <AppLayout>
-            <Users />
+            <UserManagement />
           </AppLayout>
         </ProtectedRoute>
       } />
