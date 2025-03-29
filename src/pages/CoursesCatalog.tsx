@@ -12,11 +12,14 @@ import { toast } from 'sonner';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 import { Course } from '@/types/course';
+import { CourseFilters } from '@/features/courses/components/CourseFilters';
+import { CourseCard } from '@/features/courses/components/CourseCard';
 
 const CoursesCatalog: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -81,17 +84,19 @@ const CoursesCatalog: React.FC = () => {
     }
   };
 
-  const formatCurrency = (price: number, currency: 'eur' | 'usd') => {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: currency.toUpperCase(),
-    }).format(price);
+  const clearFilters = () => {
+    setSelectedLevel(null);
   };
 
-  const filteredCourses = courses.filter((course) => 
-    course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (course.description && course.description.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch = 
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (course.description && course.description.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesLevel = selectedLevel === null || course.level === selectedLevel;
+    
+    return matchesSearch && matchesLevel;
+  });
 
   return (
     <AppLayout>
@@ -115,6 +120,12 @@ const CoursesCatalog: React.FC = () => {
           </div>
         </div>
 
+        <CourseFilters 
+          selectedLevel={selectedLevel}
+          setSelectedLevel={setSelectedLevel}
+          onClearFilters={clearFilters}
+        />
+
         <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
           {error && (
             <Card className="mb-6 border-destructive bg-destructive/5">
@@ -137,13 +148,13 @@ const CoursesCatalog: React.FC = () => {
           ) : !error && filteredCourses.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-10">
-                {searchTerm ? (
+                {searchTerm || selectedLevel ? (
                   <>
                     <p className="text-muted-foreground mb-4">
-                      No se encontraron cursos que coincidan con "{searchTerm}"
+                      No se encontraron cursos con los filtros seleccionados
                     </p>
-                    <Button variant="outline" onClick={() => setSearchTerm('')}>
-                      Mostrar todos los cursos
+                    <Button variant="outline" onClick={clearFilters}>
+                      Limpiar filtros
                     </Button>
                   </>
                 ) : (
@@ -156,44 +167,13 @@ const CoursesCatalog: React.FC = () => {
           ) : !error && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCourses.map((course) => (
-                <Card key={course.id} className="flex flex-col h-full transition-all hover:shadow-md">
-                  <CardHeader>
-                    <CardTitle className="line-clamp-2">{course.title}</CardTitle>
-                    <CardDescription>
-                      Por {course.instructor?.full_name || 'Instructor'}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <p className="text-muted-foreground line-clamp-3 mb-4">
-                      {course.description || 'Sin descripción disponible'}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <Badge variant="outline" className="text-base font-semibold">
-                        {course.price > 0 
-                          ? formatCurrency(course.price, course.currency) 
-                          : 'Gratis'}
-                      </Badge>
-                      {course.level && (
-                        <Badge variant="secondary" className="text-xs">
-                          {course.level}
-                        </Badge>
-                      )}
-                      {course.duration_text && (
-                        <Badge variant="secondary" className="text-xs">
-                          {course.duration_text}
-                        </Badge>
-                      )}
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button asChild className="w-full">
-                      <Link to={`/courses/${course.id}`}>
-                        <BookOpen className="mr-2 h-4 w-4" />
-                        Ver Curso
-                      </Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
+                <Link 
+                  key={course.id} 
+                  to={`/courses/${course.id}`}
+                  className="transition-all hover:scale-[1.01]"
+                >
+                  <CourseCard course={course} showContinueButton={false} />
+                </Link>
               ))}
             </div>
           )}
