@@ -9,7 +9,134 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      courses: {
+        Row: {
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          instructor_id: string
+          is_published: boolean
+          price: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          instructor_id: string
+          is_published?: boolean
+          price?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          instructor_id?: string
+          is_published?: boolean
+          price?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lessons: {
+        Row: {
+          content_text: Json | null
+          content_type: string
+          content_video_url: string | null
+          course_id: string
+          created_at: string
+          id: string
+          is_previewable: boolean
+          lesson_order: number
+          module_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content_text?: Json | null
+          content_type?: string
+          content_video_url?: string | null
+          course_id: string
+          created_at?: string
+          id?: string
+          is_previewable?: boolean
+          lesson_order?: number
+          module_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content_text?: Json | null
+          content_type?: string
+          content_video_url?: string | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          is_previewable?: boolean
+          lesson_order?: number
+          module_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      modules: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          module_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          module_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          module_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "modules_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
