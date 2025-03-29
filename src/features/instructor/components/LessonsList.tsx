@@ -86,8 +86,20 @@ export const LessonsList: React.FC<LessonsListProps> = ({
         lessonId: lesson.id, 
         isPreviewable: !lesson.is_previewable 
       });
+      
+      toast.success(
+        lesson.is_previewable 
+          ? "Vista previa desactivada" 
+          : "Vista previa activada",
+        {
+          description: lesson.is_previewable 
+            ? "Los usuarios ya no podrán ver esta lección sin inscribirse" 
+            : "Los usuarios podrán ver esta lección sin inscribirse"
+        }
+      );
     } catch (error) {
       console.error("Error toggling lesson preview:", error);
+      toast.error("Error al cambiar el estado de vista previa");
     }
   };
 
@@ -170,7 +182,7 @@ export const LessonsList: React.FC<LessonsListProps> = ({
                   title={lesson.is_previewable ? "Deshabilitar vista previa" : "Habilitar vista previa"}
                 >
                   {lesson.is_previewable ? (
-                    <Eye className="h-4 w-4" />
+                    <Eye className="h-4 w-4 text-primary" />
                   ) : (
                     <EyeOff className="h-4 w-4" />
                   )}

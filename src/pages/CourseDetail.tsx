@@ -62,14 +62,23 @@ const CourseDetail: React.FC = () => {
   };
 
   const navigateToLesson = (lessonId: string) => {
+    // Obtener la lección correspondiente
+    const lesson = lessons?.find(l => l.id === lessonId);
+    
     if (isEnrolled) {
+      // Si está inscrito, puede ver todas las lecciones
+      navigate(`/courses/${id}/learn/${lessonId}`);
+    } else if (lesson && lesson.is_previewable) {
+      // Si la lección es previsible, redirigir directamente
       navigate(`/courses/${id}/learn/${lessonId}`);
     } else if (user) {
+      // Si está autenticado pero no inscrito y no es una lección previsible
       toast({
         title: 'Acceso restringido',
         description: 'Debes inscribirte en el curso para acceder a esta lección',
       });
     } else {
+      // Si no está autenticado
       navigate('/auth/login', { state: { from: `/courses/${id}` } });
     }
   };
