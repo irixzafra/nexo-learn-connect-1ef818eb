@@ -103,7 +103,7 @@ CREATE POLICY "Profiles: Allow own read" ON public.profiles FOR SELECT USING (au
 **ID Asignado por Lovable**: CORE-SETUP-01  
 **Funcionalidad**: Configuración Inicial del Proyecto y Layouts Base  
 **Fase**: 1  
-**Estado**: [🧪] Para Validación (Equipo)  
+**Estado**: [✔️] Validado
 
 Resumen Técnico: Implementación inicial del proyecto con configuración base, layouts principales y componentes fundamentales.
 
@@ -138,6 +138,50 @@ Decisiones Técnicas:
 - Estructura de archivos organizada para escalabilidad
 - Separación clara entre layouts públicos y de aplicación autenticada
 
+**ID Asignado por Lovable**: AUTH-REGISTER-01  
+**Funcionalidad**: Registro de Usuarios (Email/Contraseña)  
+**Fase**: 1  
+**Estado**: [🧪] Para Validación (Equipo)  
+
+Resumen Técnico: Implementación del sistema de registro de usuarios mediante correo electrónico y contraseña, utilizando React Hook Form con validación Zod y Supabase Auth.
+
+Cambios BD:
+
+SQL DDL: 
+```sql
+-- No requiere cambios adicionales, se utilizan las tablas auth.users (interna de Supabase) y profiles ya definidas
+-- El trigger handle_new_user ya está configurado para crear el perfil al registrarse
+```
+
+Lógica Backend: Se utiliza la funcionalidad integrada de Supabase Auth para el registro. Cuando un usuario se registra, se envía su nombre completo como metadata, y el trigger handle_new_user lo guarda en la tabla profiles.
+
+Políticas RLS: Se mantienen las políticas RLS existentes que permiten a los usuarios leer su propio perfil.
+
+Acceso y UI por Rol:
+- Páginas creadas/modificadas: /auth/register (formulario de registro)
+- Acceso: Ruta pública, cualquier usuario no autenticado
+- Funcionalidades Visibles: Formulario de registro con validación en tiempo real
+
+Cambios Clave Frontend:
+- Implementación de esquema de validación con Zod (registerSchema)
+- Creación de hook personalizado useRegister para manejar la lógica de autenticación
+- Implementación de formulario con React Hook Form y shadcn/ui
+- Feedback visual durante el proceso de registro con indicadores de carga
+- Notificaciones de éxito/error con toast
+
+APIs Externas: Integración con Supabase Auth para el proceso de registro
+
+Seguridad:
+- Validación de contraseñas con requisitos mínimos (longitud, mayúsculas, minúsculas, números)
+- Confirmación de contraseña para prevenir errores
+- Manejo adecuado de errores de autenticación
+
+Decisiones Técnicas:
+- Separación de lógica de validación (schema) y lógica de negocio (hook)
+- Uso de React Hook Form para manejo eficiente de formularios con validación
+- Implementación de feedback en tiempo real para mejorar UX
+- Redirección automática a /home tras registro exitoso
+
 ## (Parte III) ROADMAP DE DESARROLLO
 
 **Objetivo:** Definir qué construir a continuación (Briefs para ti).
@@ -165,13 +209,13 @@ Decisiones Técnicas:
 
 Brief: Crear proyecto React/TS/Vite; Instalar/configurar dependencias (Supabase, shadcn, Tailwind, Router, React Query, RHF/Zod, Tiptap, Framer Motion, i18next); Definir PublicLayout y AppLayout (con TopBar, SideBar placeholders); Configurar routing y cliente Supabase base.
 
-Estado: [🧪] Para Validación
+Estado: [✔️] Completado
 
 **Funcionalidad: Registro de Usuarios (Email/Contraseña)**
 
 Brief: Crear UI (/auth/register) para Nombre, Email, Contraseña; Usar supabase.auth.signUp (pasar full_name); Trigger debe crear profiles con nombre; Validar (RHF/Zod); Sin confirmación email MVP; Redirigir a /home.
 
-Estado: [ ] Pendiente
+Estado: [🧪] Para Validación
 
 **Funcionalidad: Inicio de Sesión (Email/Contraseña)**
 

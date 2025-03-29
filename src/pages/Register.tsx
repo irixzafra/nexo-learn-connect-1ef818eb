@@ -1,19 +1,32 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { registerSchema, type RegisterFormValues } from '@/lib/validations/auth';
+import { useRegister } from '@/hooks/use-register';
 import PublicLayout from '@/layouts/PublicLayout';
+import { Loader2 } from 'lucide-react';
 
 const Register: React.FC = () => {
-  // Esta es una implementación básica sin validación real
-  // La implementación completa con AuthContext y RHF/Zod se hará en funcionalidades futuras
+  const { register: registerUser, isLoading } = useRegister();
   
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Register form submitted');
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      fullName: '',
+      email: '',
+      password: '',
+      passwordConfirm: '',
+    },
+  });
+  
+  const onSubmit = (data: RegisterFormValues) => {
+    registerUser(data);
   };
   
   return (
@@ -27,27 +40,76 @@ const Register: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Nombre Completo</Label>
-                <Input id="fullName" placeholder="Juan Pérez" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Correo Electrónico</Label>
-                <Input id="email" type="email" placeholder="usuario@ejemplo.com" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
-                <Input id="password" type="password" placeholder="••••••••" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="passwordConfirm">Confirmar Contraseña</Label>
-                <Input id="passwordConfirm" type="password" placeholder="••••••••" required />
-              </div>
-              <Button type="submit" className="w-full">
-                Registrarse
-              </Button>
-            </form>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nombre Completo</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Juan Pérez" autoComplete="name" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Correo Electrónico</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="email" placeholder="usuario@ejemplo.com" autoComplete="email" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contraseña</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="password" placeholder="••••••••" autoComplete="new-password" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="passwordConfirm"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirmar Contraseña</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="password" placeholder="••••••••" autoComplete="new-password" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Registrando...
+                    </>
+                  ) : (
+                    'Registrarse'
+                  )}
+                </Button>
+              </form>
+            </Form>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <div className="text-sm text-center text-muted-foreground">
