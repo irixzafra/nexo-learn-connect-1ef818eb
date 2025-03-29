@@ -1,7 +1,5 @@
 
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { UserRoleSearch } from '@/components/admin/UserRoleSearch';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import RoleSwitcher from '@/components/admin/RoleSwitcher';
@@ -22,7 +20,6 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
   onRoleChange 
 }) => {
   const { user, userRole } = useAuth();
-  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
 
   const handleRoleChange = (role: UserRole) => {
     // Track role switch for analytics
@@ -39,7 +36,7 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
     <div className="flex flex-col gap-3">
       {/* Role switcher for admins */}
       {userRole === 'admin' && (
-        <div className="px-2 mb-2">
+        <div className="px-2">
           <RoleSwitcher 
             currentViewRole={viewAsRole} 
             onChange={handleRoleChange}
@@ -57,15 +54,6 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
         viewAsRole={viewAsRole}
         onRoleChange={handleRoleChange}
       />
-
-      <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Buscar usuarios</DialogTitle>
-          </DialogHeader>
-          <UserRoleSearch onClose={() => setIsSearchDialogOpen(false)} />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

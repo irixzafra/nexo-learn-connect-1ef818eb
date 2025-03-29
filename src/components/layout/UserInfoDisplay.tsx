@@ -89,10 +89,6 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
                   <span className="capitalize">{userRole || 'Usuario'}</span>
                 </div>
               </Badge>
-              
-              {isViewingAsOtherRole && (
-                <Badge variant="outline" className="h-5 text-xs ml-1">Previsualización</Badge>
-              )}
             </div>
           </div>
         </Button>
