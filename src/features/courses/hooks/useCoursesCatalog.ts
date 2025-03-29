@@ -10,10 +10,12 @@ export const useCoursesCatalog = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   const fetchCourses = async () => {
     setIsLoading(true);
     setError(null);
+    setDebugInfo(null);
     
     try {
       console.log("Iniciando obtención de catálogo de cursos...");
@@ -36,16 +38,30 @@ export const useCoursesCatalog = () => {
           duration_text,
           featured_instructor
         `)
-        .eq('is_published', true)
-        .order('created_at', { ascending: false });
+        .eq('is_published', true);
 
       if (coursesError) {
         console.error("Error al obtener cursos:", coursesError);
+        // Guardar información de depuración
+        setDebugInfo({
+          errorType: 'database_query',
+          errorMessage: coursesError.message,
+          errorDetails: coursesError
+        });
         throw coursesError;
       }
       
       console.log("Cursos obtenidos:", coursesData?.length || 0);
-      console.log("Datos de cursos:", JSON.stringify(coursesData, null, 2));
+      
+      if (!coursesData || coursesData.length === 0) {
+        console.log("No se encontraron cursos publicados");
+        setDebugInfo({
+          type: 'empty_data',
+          message: 'No se encontraron cursos publicados'
+        });
+      } else {
+        console.log("Primer curso encontrado:", coursesData[0]);
+      }
       
       // Transformar y validar los datos
       const typedCourses: Course[] = coursesData?.map((course: any) => {
@@ -83,7 +99,15 @@ export const useCoursesCatalog = () => {
       if (error.message) {
         console.error('Mensaje de error específico:', error.message);
         
-        if (process.env.NODE_ENV === 'development') {
+        if (error.message.includes('recursion detected')) {
+          errorMessage = 'Error de recursión en políticas RLS. Por favor, contacte al administrador.';
+          // Información de depuración específica para error de recursión
+          setDebugInfo({
+            errorType: 'rls_recursion',
+            errorMessage: error.message,
+            suggestion: 'Revisar las políticas RLS de la tabla courses y la función get_user_role'
+          });
+        } else if (process.env.NODE_ENV === 'development') {
           errorMessage += ` (${error.message})`;
         }
       }
@@ -119,6 +143,7 @@ export const useCoursesCatalog = () => {
     filteredCourses,
     isLoading,
     error,
+    debugInfo,
     searchTerm,
     setSearchTerm,
     selectedLevel,

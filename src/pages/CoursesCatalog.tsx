@@ -19,6 +19,7 @@ const CoursesCatalog: React.FC = () => {
     courses,
     isLoading,
     error,
+    debugInfo,
     searchTerm,
     setSearchTerm,
     selectedLevel,
@@ -45,7 +46,11 @@ const CoursesCatalog: React.FC = () => {
 
         <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
           {error && (
-            <CourseCatalogError error={error} onRetry={fetchCourses} />
+            <CourseCatalogError 
+              error={error} 
+              debugInfo={debugInfo} 
+              onRetry={fetchCourses} 
+            />
           )}
 
           {isLoading ? (
@@ -75,6 +80,14 @@ const CoursesCatalog: React.FC = () => {
                     <p>Filtros activos: {hasFilters ? 'Sí' : 'No'}</p>
                     {searchTerm && <p>Término de búsqueda: "{searchTerm}"</p>}
                     {selectedLevel && <p>Nivel seleccionado: {selectedLevel}</p>}
+                    
+                    {debugInfo && (
+                      <div className="mt-3 p-2 bg-slate-100 rounded border border-slate-200 overflow-auto max-h-40">
+                        <pre className="text-xs">
+                          {JSON.stringify(debugInfo, null, 2)}
+                        </pre>
+                      </div>
+                    )}
                     
                     <div className="mt-2">
                       <Button 
