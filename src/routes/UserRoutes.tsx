@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Dashboard and shared pages
@@ -20,8 +20,8 @@ import Checkout from "@/pages/student/Checkout";
 
 const UserRoutes = () => {
   return (
-    <>
-      <Route path="/home" element={
+    <Routes>
+      <Route path="/" element={
         <ProtectedRoute>
           <Home />
         </ProtectedRoute>
@@ -76,7 +76,7 @@ const UserRoutes = () => {
           <Settings />
         </ProtectedRoute>
       } />
-    </>
+    </Routes>
   );
 };
 

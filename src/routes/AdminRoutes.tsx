@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Admin pages
@@ -9,23 +9,23 @@ import TestDataManagement from '@/pages/admin/TestDataManagement';
 
 const AdminRoutes = () => {
   return (
-    <>
-      <Route path="/admin/dashboard" element={
+    <Routes>
+      <Route path="/dashboard" element={
         <ProtectedRoute requiredRole="admin">
           <Home />
         </ProtectedRoute>
       } />
-      <Route path="/admin/content" element={
+      <Route path="/content" element={
         <ProtectedRoute requiredRole="admin">
           <Home />
         </ProtectedRoute>
       } />
-      <Route path="/admin/test-data" element={
+      <Route path="/test-data" element={
         <ProtectedRoute requiredRole="admin">
           <TestDataManagement />
         </ProtectedRoute>
       } />
-    </>
+    </Routes>
   );
 };
 
