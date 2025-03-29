@@ -58,8 +58,12 @@ export const useCoursesCatalog = () => {
       const typedCourses: Course[] = coursesData?.map((course: any) => {
         // Validar y transformar el campo currency
         let validCurrency: 'eur' | 'usd' = 'eur'; // valor por defecto
-        if (course.currency === 'eur' || course.currency === 'usd') {
-          validCurrency = course.currency;
+        
+        // Check if currency is a valid value - fix for the currency type issue
+        if (typeof course.currency === 'string' && 
+            (course.currency.toLowerCase() === 'eur' || 
+             course.currency.toLowerCase() === 'usd')) {
+          validCurrency = course.currency.toLowerCase() as 'eur' | 'usd';
         }
         
         // Añadir información del instructor si existe
