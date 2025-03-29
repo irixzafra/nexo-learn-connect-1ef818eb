@@ -53,21 +53,21 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* Course catalog and detail routes with proper layout */}
+      {/* Course catalog and detail routes directly in AppLayout */}
       <Route path="/courses" element={
-        <AppLayout>
-          <div className="container mx-auto px-4 py-6">
+        <ProtectedRoute>
+          <AppLayout>
             <CoursesCatalog />
-          </div>
-        </AppLayout>
+          </AppLayout>
+        </ProtectedRoute>
       } />
       
       <Route path="/courses/:id" element={
-        <AppLayout>
-          <div className="container mx-auto px-4 py-6">
+        <ProtectedRoute>
+          <AppLayout>
             <CourseDetail />
-          </div>
-        </AppLayout>
+          </AppLayout>
+        </ProtectedRoute>
       } />
       
       {/* My courses route with redirection to user routes */}
@@ -81,9 +81,7 @@ const AppRouter: React.FC = () => {
       <Route path="/profile" element={
         <ProtectedRoute>
           <AppLayout>
-            <div className="container mx-auto px-4 py-6">
-              <Profile />
-            </div>
+            <Profile />
           </AppLayout>
         </ProtectedRoute>
       } />
