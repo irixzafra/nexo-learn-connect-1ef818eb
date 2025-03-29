@@ -1,3 +1,4 @@
+
 import {
   Home,
   Book,
@@ -17,6 +18,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { UserRole } from '@/types/auth';
 
 interface SidebarMenuProps {
   children: React.ReactNode;
@@ -70,9 +72,13 @@ const SidebarGroupContent: React.FC<SidebarGroupContentProps> = ({ children }) =
   <div className="mb-4">{children}</div>
 );
 
-export const SidebarNavigation = () => {
+interface SidebarNavigationProps {
+  viewAsRole?: string;
+}
+
+export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => {
   const { userRole } = useAuth();
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-2">
@@ -80,7 +86,7 @@ export const SidebarNavigation = () => {
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton>
                 <NavLink to="/home">
                   <Home className="h-4 w-4" />
                   <span>Inicio</span>
@@ -88,7 +94,7 @@ export const SidebarNavigation = () => {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton>
                 <NavLink to="/courses">
                   <Book className="h-4 w-4" />
                   <span>Cursos</span>
@@ -96,7 +102,7 @@ export const SidebarNavigation = () => {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton>
                 <NavLink to="/my-learning">
                   <GraduationCap className="h-4 w-4" />
                   <span>Mi aprendizaje</span>
@@ -104,7 +110,7 @@ export const SidebarNavigation = () => {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton>
                 <NavLink to="/calendar">
                   <Calendar className="h-4 w-4" />
                   <span>Calendario</span>
@@ -112,7 +118,7 @@ export const SidebarNavigation = () => {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton>
                 <NavLink to="/messages">
                   <MessageSquare className="h-4 w-4" />
                   <span>Mensajes</span>
@@ -137,7 +143,7 @@ export const SidebarNavigation = () => {
                   <SidebarGroupContent>
                     <SidebarMenu>
                       <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
+                        <SidebarMenuButton>
                           <NavLink to="/users">
                             <Settings className="h-4 w-4" />
                             <span>Usuarios</span>
@@ -146,7 +152,7 @@ export const SidebarNavigation = () => {
                       </SidebarMenuItem>
                       
                       <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
+                        <SidebarMenuButton>
                           <NavLink to="/admin/test-data">
                             <TestTube className="h-4 w-4" />
                             <span>Datos de Prueba</span>

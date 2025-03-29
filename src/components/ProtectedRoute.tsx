@@ -1,15 +1,18 @@
 
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserRole } from '@/types/auth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: 'student' | 'instructor' | 'admin';
+  requiredRole?: UserRole;
+  requiredRoles?: UserRole[];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
-  requiredRole 
+  requiredRole,
+  requiredRoles
 }) => {
   const { isAuthenticated, userRole, isLoading } = useAuth();
   const location = useLocation();
@@ -28,8 +31,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
-  // If a role is required, check if the user has that role
-  if (requiredRole && userRole !== requiredRole && userRole !== 'admin') {
+  // If requiredRoles array is provided, check if the user has any of the required roles
+  if (requiredRoles && requiredRoles.length > 0) {
+    const hasRequiredRole = userRole === 'admin' || requiredRoles.includes(userRole);
+    if (!hasRequiredRole) {
+      return <Navigate to="/unauthorized" replace />;
+    }
+  }
+  // If a single role is required, check if the user has that role
+  else if (requiredRole && userRole !== requiredRole && userRole !== 'admin') {
     // Admin can access everything, otherwise must have the required role
     return <Navigate to="/unauthorized" replace />;
   }

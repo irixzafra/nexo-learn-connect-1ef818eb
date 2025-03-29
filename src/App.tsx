@@ -184,7 +184,7 @@ function App() {
                       </ProtectedRoute>
                     } />
                     <Route path="/admin/test-data" element={
-                      <ProtectedRoute requiredRoles={['admin']}>
+                      <ProtectedRoute requiredRole="admin">
                         <TestDataManagement />
                       </ProtectedRoute>
                     } />
