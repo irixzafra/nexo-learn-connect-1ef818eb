@@ -7,6 +7,15 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { EditModeProvider } from '@/contexts/EditModeContext';
 import EditModeToggle from '@/components/admin/EditModeToggle';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { User, LogIn } from 'lucide-react';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -15,11 +24,23 @@ interface PublicLayoutProps {
 const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   const location = useLocation();
   const isAuthPage = location.pathname.startsWith('/auth/');
-  const { isAuthenticated, userRole } = useAuth();
+  const { isAuthenticated, userRole, profile, logout } = useAuth();
   
   useEffect(() => {
     console.log('PublicLayout rendering, userRole:', userRole);
   }, [userRole]);
+
+  // Get user initials for avatar fallback
+  const getUserInitials = () => {
+    if (profile?.full_name) {
+      const nameParts = profile.full_name.split(' ');
+      if (nameParts.length >= 2) {
+        return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+      }
+      return profile.full_name.substring(0, 2).toUpperCase();
+    }
+    return 'UN'; // Unknown
+  };
   
   return (
     <EditModeProvider>
@@ -37,7 +58,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
             </Link>
             
             <div className="flex items-center gap-4">
-              {!isAuthenticated && !isAuthPage && (
+              {!isAuthenticated && !isAuthPage ? (
                 <motion.div 
                   className="flex items-center gap-4"
                   initial={{ opacity: 0, x: 20 }}
@@ -45,19 +66,58 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
                   transition={{ duration: 0.3, delay: 0.2 }}
                 >
                   <Link to="/auth/login">
-                    <Button variant="ghost">Iniciar Sesión</Button>
+                    <Button variant="ghost">
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Iniciar Sesión
+                    </Button>
                   </Link>
                   <Link to="/auth/register">
                     <Button>Registrarse</Button>
                   </Link>
                 </motion.div>
-              )}
-              
-              {isAuthenticated && (
-                <Link to="/home">
-                  <Button variant="outline">Panel de Control</Button>
-                </Link>
-              )}
+              ) : isAuthenticated ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                      <Avatar className="h-10 w-10 border border-border">
+                        <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "Usuario"} />
+                        <AvatarFallback>{getUserInitials()}</AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        {profile?.full_name && (
+                          <p className="font-medium">{profile.full_name}</p>
+                        )}
+                        <p className="text-sm text-muted-foreground capitalize">
+                          {userRole || 'Usuario'}
+                        </p>
+                      </div>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/home">Panel de Control</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile">Mi Perfil</Link>
+                    </DropdownMenuItem>
+                    {userRole === 'instructor' && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/instructor/courses">Mis Cursos</Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      className="text-red-600 cursor-pointer"
+                      onClick={() => logout()}
+                    >
+                      Cerrar Sesión
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : null}
             </div>
           </div>
         </header>

@@ -8,6 +8,7 @@ interface Profile {
   id: string;
   full_name: string | null;
   role: UserRole | null;
+  avatar_url?: string | null;
 }
 
 interface AuthContextType {
