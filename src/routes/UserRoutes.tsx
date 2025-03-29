@@ -7,6 +7,7 @@ import AppLayout from "@/layouts/AppLayout";
 
 // Student pages
 import Home from "@/pages/Home";
+import StudentDashboard from "@/pages/student/Dashboard";
 import StudentCourses from "@/pages/student/Courses";
 import CourseLearn from "@/pages/student/CourseLearn";
 import LessonView from "@/pages/student/LessonView";
@@ -21,7 +22,14 @@ const UserRoutes = () => {
       <Route path="/" element={
         <ProtectedRoute>
           <AppLayout>
-            <Home />
+            <StudentDashboard />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <StudentDashboard />
           </AppLayout>
         </ProtectedRoute>
       } />

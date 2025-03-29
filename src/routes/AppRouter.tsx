@@ -11,6 +11,9 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import CoursesCatalog from '@/pages/CoursesCatalog';
 import CourseDetail from '@/pages/CourseDetail';
+import CourseLanding from '@/pages/CourseLanding';
+import CourseLearn from '@/pages/student/CourseLearn';
+import LessonView from '@/pages/student/LessonView';
 import AppLayout from '@/layouts/AppLayout';
 
 const AppRouter: React.FC = () => {
@@ -21,10 +24,26 @@ const AppRouter: React.FC = () => {
       {/* Public routes are accessible without authentication */}
       <Route path="/*" element={<PublicRoutes />} />
       
+      {/* Course public landing page */}
+      <Route path="/courses/:id" element={<CourseLanding />} />
+      
       {/* User routes for standard authenticated users */}
       <Route path="/home/*" element={
         <ProtectedRoute>
           <UserRoutes />
+        </ProtectedRoute>
+      } />
+      
+      {/* Course learning routes (authenticated) */}
+      <Route path="/courses/:courseId/learn" element={
+        <ProtectedRoute>
+          <CourseLearn />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/courses/:courseId/learn/:lessonId" element={
+        <ProtectedRoute>
+          <LessonView />
         </ProtectedRoute>
       } />
       
@@ -53,25 +72,11 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* Course catalog and detail routes directly in AppLayout */}
+      {/* Course catalog */}
       <Route path="/courses" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <div className="container mx-auto px-4">
-              <CoursesCatalog />
-            </div>
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="/courses/:id" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <div className="container mx-auto px-4 py-6">
-              <CourseDetail />
-            </div>
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <CoursesCatalog />
+        </AppLayout>
       } />
       
       {/* My courses route with redirection to user routes */}
