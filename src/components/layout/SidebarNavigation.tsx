@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import { Link, useLocation } from 'react-router-dom';
@@ -12,7 +11,7 @@ import {
   Settings, 
   Layers, 
   Database, 
-  Graduation, 
+  GraduationCap, 
   PanelTop, 
   FileText,
   Plus,
@@ -51,7 +50,6 @@ export const SidebarNavigation = ({ viewAsRole = 'current' }: SidebarNavigationP
   const effectiveRole = viewAsRole === 'current' ? userRole : viewAsRole;
   const { pathname } = useLocation();
 
-  // Navegación para estudiantes
   const studentSections: NavSection[] = [
     {
       items: [
@@ -75,7 +73,6 @@ export const SidebarNavigation = ({ viewAsRole = 'current' }: SidebarNavigationP
     }
   ];
 
-  // Navegación para instructores
   const instructorSections: NavSection[] = [
     {
       items: [
@@ -88,7 +85,7 @@ export const SidebarNavigation = ({ viewAsRole = 'current' }: SidebarNavigationP
       items: [
         { label: 'Mis Cursos', href: '/instructor/courses', icon: Book },
         { label: 'Crear Curso', href: '/instructor/courses/new', icon: Plus, highlight: true },
-        { label: 'Estudiantes', href: '/instructor/students', icon: Graduation },
+        { label: 'Estudiantes', href: '/instructor/students', icon: GraduationCap },
       ]
     },
     {
@@ -107,7 +104,6 @@ export const SidebarNavigation = ({ viewAsRole = 'current' }: SidebarNavigationP
     }
   ];
 
-  // Navegación para administradores
   const adminSections: NavSection[] = [
     {
       items: [

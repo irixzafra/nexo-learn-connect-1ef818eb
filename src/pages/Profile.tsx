@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AppLayout from '@/layouts/AppLayout';
@@ -7,16 +6,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Edit, X, UserCircle, BookOpen, Bell, Shield } from 'lucide-react';
+import { Edit, X, UserCircle, BookOpen, Bell, Shield, Users, Database } from 'lucide-react';
 import ProfileEditForm from '@/components/profile/ProfileEditForm';
 import UserRoleEditor from '@/components/admin/UserRoleEditor';
 import { captureError, trackUserAction } from '@/lib/sentry';
+import { Link } from 'react-router-dom';
 
 const Profile: React.FC = () => {
   const { user, profile, userRole } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
 
-  // Format date for better readability
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('es-ES', {
@@ -28,7 +27,6 @@ const Profile: React.FC = () => {
     }).format(date);
   };
 
-  // Get user initials for avatar fallback
   const getUserInitials = () => {
     if (profile?.full_name) {
       return profile.full_name
@@ -44,12 +42,10 @@ const Profile: React.FC = () => {
 
   const handleEditSuccess = () => {
     setIsEditing(false);
-    // Track successful profile update
     trackUserAction('profile_updated', { 
       userId: user?.id,
       role: userRole
     });
-    // Refresh the page to get the updated profile data
     window.location.reload();
   };
 
@@ -117,7 +113,6 @@ const Profile: React.FC = () => {
           
           <TabsContent value="personal">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Tarjeta de información personal */}
               <Card className="lg:col-span-2">
                 <CardHeader>
                   <CardTitle>Información Personal</CardTitle>
@@ -189,7 +184,6 @@ const Profile: React.FC = () => {
                 </CardContent>
               </Card>
               
-              {/* Tarjeta de estadísticas y funcionalidades admin */}
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
@@ -219,7 +213,6 @@ const Profile: React.FC = () => {
                   </CardContent>
                 </Card>
 
-                {/* Componente para cambiar rol (solo para administradores) */}
                 {isAdmin && user && profile && (
                   <UserRoleEditor 
                     userId={user.id}
