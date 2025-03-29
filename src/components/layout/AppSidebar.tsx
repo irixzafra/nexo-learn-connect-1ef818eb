@@ -1,5 +1,4 @@
 
-
 import React, { useEffect } from 'react';
 import { 
   Sidebar, 
@@ -23,7 +22,6 @@ interface AppSidebarProps {
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = ({ viewAsRole, onRoleChange }) => {
-  const { user } = useAuth();
   const { open, setOpen } = useSidebar();
   
   // Save sidebar state to localStorage when it changes
@@ -33,16 +31,14 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ viewAsRole, onRoleChange }) => 
   
   return (
     <Sidebar className="border-r bg-sidebar">
-      <SidebarHeader className="border-b px-6 py-4">
-        <div className="flex items-center justify-between">
-          <NexoLogo className="h-9 w-auto" />
-          <div className="md:hidden">
-            <SidebarTrigger />
-          </div>
+      <SidebarHeader className="flex items-center justify-between border-b px-6 py-3">
+        <NexoLogo className="h-9 w-auto" />
+        <div className="md:hidden">
+          <SidebarTrigger />
         </div>
       </SidebarHeader>
       
-      <SidebarContent className="px-3 py-2 overflow-y-auto">
+      <SidebarContent className="px-2 py-2 overflow-y-auto">
         <SidebarNavigation viewAsRole={viewAsRole} />
       </SidebarContent>
       

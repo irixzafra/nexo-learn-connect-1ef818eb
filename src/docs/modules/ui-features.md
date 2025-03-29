@@ -11,60 +11,97 @@ Refinamiento completo de la estructura de navegación y del diseño base de la a
 ### Componentes Mejorados
 
 #### 1. Barra Lateral (SidebarNavigation)
-- **Estructura Lógica:** Reorganización de los elementos de navegación en secciones semánticamente agrupadas y colapsables:
-  - Principal: Acceso rápido a inicio, exploración de cursos y calendario
-  - Aprendizaje: Funcionalidades relacionadas con el aprendizaje personal (becas, perfil, configuración)
-  - Comunidad: Funcionalidades sociales (mensajería, red de contactos)
-  - Enseñanza: Funcionalidades para instructores (panel, cursos, estudiantes)
-  - Administración: Funcionalidades administrativas (panel, usuarios, datos de prueba, facturación)
-  - Cuenta: Información y ayuda general (acerca de, ayuda)
+- **Estructura Organizada por Bloques Funcionales:**
+  - **Bloque 1: Principal / Acceso Rápido (Siempre Visible)**
+    - Inicio: Acceso a la página principal según rol del usuario
+    - Explorar Cursos: Acceso al catálogo de cursos
+    - Mis Cursos: Acceso rápido a cursos propios (estudiante) o creados (instructor)
 
-- **Estado Colapsable Persistente:** Implementación de almacenamiento en localStorage para recordar qué secciones el usuario prefiere mantener expandidas/colapsadas entre sesiones.
+  - **Bloque 2: Aprendizaje (Colapsable)**
+    - Mi Perfil: Gestión de información personal
+    - Calendario: Visualización de eventos y programación
+    - Becas: Información sobre becas disponibles
+    - Certificados: Gestión de certificados (próximamente)
 
-- **Indicador Visual Activo:** Mejora del resaltado visual del ítem activo mediante cambios de color de fondo y texto.
+  - **Bloque 3: Comunidad (Colapsable)**
+    - Feed: Actualizaciones y noticias (próximamente)
+    - Mensajes: Centro de comunicaciones con notificación visual
+    - Red de Contactos: Networking entre usuarios (próximamente)
 
-- **Visibilidad Dinámica por Rol:** Filtrado de secciones visibles según el rol efectivo del usuario, considerando tanto el rol real como el rol seleccionado en el modo "ver como".
+  - **Bloque 4: Enseñanza (Colapsable, solo para Instructor/Admin)**
+    - Panel Instructor: Vista general de actividad como instructor
+    - Gestionar Mis Cursos: Administración de cursos creados
+    - Estudiantes: Gestión de participantes en cursos
+    - Quizzes: Creación y administración de evaluaciones (próximamente)
+    - Tareas: Asignación y calificación de actividades (próximamente)
 
-- **Interactividad Mejorada:** Adición de indicaciones visuales al interactuar con elementos de navegación (hover, focus) y consistencia en espaciado y alineación.
+  - **Bloque 5: Administración (Colapsable, solo para Admin)**
+    - Panel Admin: Vista general de la plataforma
+    - Gestionar Usuarios: Administración global de usuarios
+    - Gestionar Cursos (Global): Supervisión de todo el contenido
+    - Facturación: Gestión financiera
+    - Datos de Prueba: Herramientas de desarrollo
+    - Configuración Plataforma: Ajustes generales
+    - Roles y Permisos: Gestión de accesos (próximamente)
+    - Auditoría: Registro de actividades críticas (próximamente)
 
-#### 2. Barra Superior (HeaderContent)
-- **Estructura Mejorada:** Reorganización en secciones lógicas (navegación, título de página, acciones de usuario).
+  - **Bloque 6: Cuenta (Colapsable)**
+    - Configuración: Preferencias del usuario
+    - Ayuda / Soporte: Asistencia al usuario
+    - Acerca de Nosotros: Información institucional
 
-- **Breadcrumb Contextual:** Implementación de indicador de ubicación actual con enlace de regreso al inicio.
+- **Diseño Optimizado:**
+  - **Minimalismo Elegante:** Interfaz limpia con uso estratégico de espacio en blanco en lugar de separadores visuales excesivos.
+  - **Jerarquía Visual Clara:** Títulos de sección en semibold con iconos distintivos, elementos internos con padding izquierdo para mostrar relación jerárquica.
+  - **Sistema de Iconos Coherente:** Uso consistente de iconos de Lucide React (h-4 w-4) con paleta cromática coordinada.
+  - **Indicadores de Estado Refinados:** 
+    - Estado activo: Fondo suave con texto en color de acento
+    - Estado hover: Transición suave de opacidad y color
+    - Elementos próximamente: Indicador visual con opacidad reducida y etiqueta informativa
+  - **Animaciones Sutiles:** Transiciones fluidas para colapso/expansión (300ms) que mejoran la percepción de respuesta sin distracción.
 
-- **Indicador de Rol:** Visualización clara cuando se está usando la función "ver como" con un rol diferente.
+- **Persistencia Mejorada:** 
+  - Almacenamiento en localStorage del estado de cada sección (expandida/colapsada)
+  - Conservación de preferencias entre sesiones
+  - Manejo de errores para garantizar experiencia consistente
 
-- **Menú de Usuario Refinado:** Mejora del menú desplegable del avatar con información de perfil y acceso a funciones clave (perfil, configuración, cierre de sesión).
+- **Adaptabilidad Contextual:**
+  - Visibilidad condicional de secciones basada en rol efectivo
+  - Comportamiento responsivo optimizado para dispositivos móviles
+  - Transformación a panel deslizante en viewport reducido
 
-#### 3. Comportamiento Responsive (Móvil)
-- **Sidebar como Panel Deslizante:** En dispositivos móviles, la barra lateral se convierte en un panel deslizante accesible mediante un botón de menú.
-
-- **Adaptación del Header:** Simplificación de elementos en pantallas pequeñas, ocultando textos descriptivos y mostrando solo iconos cuando es necesario.
-
-- **Persistencia de Preferencias:** Las preferencias de usuario (estado de sidebar, secciones expandidas) se mantienen incluso en la versión móvil.
-
-#### 4. Layout General (AppLayout)
-- **Container Coherente:** Aplicación de márgenes y paddings consistentes para el contenido principal en todas las páginas.
-
-- **Scroll Reset:** Implementación de reset de scroll automático al cambiar de página.
-
-- **Transiciones Suaves:** Transiciones animadas al expandir/colapsar la barra lateral.
+#### 2. Integración de Elementos Auxiliares
+- **Switcher de Roles (Exclusivo para Administradores):**
+  - Rediseño con mejor integración visual en el pie de la barra lateral
+  - Indicador claro de rol actual vs. rol emulado
+  - Acceso rápido para retornar al rol original
 
 ### Implementación Técnica
-- **Gestión de Estado:** Uso de useState y localStorage para persistir preferencias de usuario.
-- **Componentes Modularizados:** Separación clara de responsabilidades entre componentes.
-- **Estilos Consistentes:** Aplicación coherente de clases de Tailwind para mantener la identidad visual.
-- **Adaptación por Breakpoints:** Uso de media queries y clases condicionales para diferentes tamaños de pantalla.
+- **Arquitectura Modular:**
+  - Componentes específicos para cada bloque de navegación
+  - Sistema de props tipados para garantizar seguridad
+  - Centralizlización de lógica de estado en componentes controladores
+
+- **Optimización de Rendimiento:**
+  - Renderizado condicional para evitar carga innecesaria
+  - Memoización selectiva de componentes frecuentemente utilizados
+  - Gestión eficiente de eventos de interacción
+
+- **Extensibilidad:**
+  - Estructura preparada para incorporar nuevas secciones
+  - Sistema de configuration-driven UI para facilitar modificaciones
+  - Comentarios descriptivos para facilitar mantenimiento
 
 ### Mejoras de UX
-- **Feedback Visual:** Indicaciones claras de estado activo y posibles interacciones.
-- **Reducción de Fricción:** Eliminación de pasos innecesarios y mejor organización de elementos frecuentes.
-- **Consistencia:** Mantenimiento de patrones de UI coherentes en toda la aplicación.
-- **Accesibilidad:** Mejora en contraste, tamaños de fuente y etiquetas semánticas.
+- **Coherencia Visual Total:** Mantenimiento de patrones visuales consistentes que refuerzan la identidad de marca.
+- **Reducción de Fricción:** Organización lógica que minimiza esfuerzo cognitivo y clics para tareas frecuentes.
+- **Feedback Contextual:** Indicadores claros de estado, disponibilidad y ubicación actual.
+- **Accesibilidad Mejorada:** Contraste optimizado, etiquetas semánticas y compatibilidad con tecnologías asistivas.
 
 ### Integración con Otras Características
-- Compatible con el sistema de gestión de roles y "vista como" del administrador.
-- Preparado para ampliación con nuevas secciones y funcionalidades en el roadmap.
+- Compatibilidad total con el sistema de gestión de roles y "vista como" del administrador.
+- Preparación para nuevas funcionalidades establecidas en el roadmap.
+- Alineación con la documentación técnica y guías de usuario.
 
 ## UI-GLOBAL-REFINEMENT-01: Refinamiento Estético Global
 

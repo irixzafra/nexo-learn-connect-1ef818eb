@@ -1,11 +1,14 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { User, Settings } from 'lucide-react';
+import { CircleUser, Settings, HelpCircle, Info } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
+import { 
+  SidebarMenu, 
+  SidebarMenuItem, 
+  SidebarMenuButton 
+} from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import { PlusCircle } from 'lucide-react';
 
 interface CuentaNavigationProps {
   isOpen: boolean;
@@ -14,51 +17,73 @@ interface CuentaNavigationProps {
 
 const CuentaNavigation: React.FC<CuentaNavigationProps> = ({ isOpen, onToggle }) => {
   return (
-    <div className="px-3">
+    <div className="px-3 py-1">
       <Collapsible 
         open={isOpen} 
         onOpenChange={onToggle}
-        className="space-y-2"
+        className="space-y-1"
       >
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-sm font-medium hover:text-primary transition-colors">
-          <span>Cuenta</span>
+        <CollapsibleTrigger className="flex w-full items-center justify-between px-2 py-2 text-sm font-medium rounded-md hover:bg-accent/50 transition-colors">
+          <div className="flex items-center gap-3">
+            <CircleUser className="h-4 w-4 text-primary" />
+            <span>Cuenta</span>
+          </div>
           <div className={cn(
-            "h-5 w-5 rounded-md flex items-center justify-center transition-colors",
-            isOpen ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            "h-5 w-5 rounded-md flex items-center justify-center transition-transform",
+            isOpen ? "rotate-180" : ""
           )}>
-            <PlusCircle className={cn(
-              "h-3.5 w-3.5 transition-transform", 
-              isOpen && "rotate-45"
-            )} />
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
         </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-1 pl-1">
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>
-                    <NavLink to="/profile" className={({ isActive }) => 
-                      isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
-                    }>
-                      <User className="h-4 w-4 mr-3 flex-shrink-0" />
-                      <span>Perfil</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>
-                    <NavLink to="/home/settings" className={({ isActive }) => 
-                      isActive ? "text-primary opacity-50 flex items-center w-full" : "opacity-50 flex items-center w-full"
-                    }>
-                      <Settings className="h-4 w-4 mr-3 flex-shrink-0" />
-                      <span>Configuración (Próximamente)</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+        <CollapsibleContent className="space-y-1 animate-accordion">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <NavLink to="/settings" className={({ isActive }) => 
+                  cn("flex items-center gap-3 w-full px-2 py-2 rounded-md ml-7",
+                    isActive 
+                      ? "bg-accent text-accent-foreground font-medium" 
+                      : "text-foreground hover:bg-accent/50 hover:text-accent-foreground"
+                  )
+                }>
+                  <Settings className="h-4 w-4 flex-shrink-0" />
+                  <span>Configuración</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <NavLink to="/help" className={({ isActive }) => 
+                  cn("flex items-center gap-3 w-full px-2 py-2 rounded-md ml-7",
+                    isActive 
+                      ? "bg-accent text-accent-foreground font-medium" 
+                      : "text-foreground hover:bg-accent/50 hover:text-accent-foreground"
+                  )
+                }>
+                  <HelpCircle className="h-4 w-4 flex-shrink-0" />
+                  <span>Ayuda / Soporte</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <NavLink to="/about-us" className={({ isActive }) => 
+                  cn("flex items-center gap-3 w-full px-2 py-2 rounded-md ml-7",
+                    isActive 
+                      ? "bg-accent text-accent-foreground font-medium" 
+                      : "text-foreground hover:bg-accent/50 hover:text-accent-foreground"
+                  )
+                }>
+                  <Info className="h-4 w-4 flex-shrink-0" />
+                  <span>Acerca de Nosotros</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </CollapsibleContent>
       </Collapsible>
     </div>
