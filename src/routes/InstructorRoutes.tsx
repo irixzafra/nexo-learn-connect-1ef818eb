@@ -2,6 +2,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from "@/components/ProtectedRoute";
+import NotFound from "@/pages/NotFound";
 
 // Instructor pages
 import InstructorDashboard from "@/pages/instructor/Dashboard";
@@ -50,6 +51,7 @@ const InstructorRoutes = () => {
           <EditLesson />
         </ProtectedRoute>
       } />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

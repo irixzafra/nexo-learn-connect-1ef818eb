@@ -2,6 +2,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from "@/components/ProtectedRoute";
+import NotFound from "@/pages/NotFound";
 
 // Admin pages
 import Home from "@/pages/Home";
@@ -25,6 +26,7 @@ const AdminRoutes = () => {
           <TestDataManagement />
         </ProtectedRoute>
       } />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

@@ -13,11 +13,13 @@ import CourseDetail from "@/pages/CourseDetail";
 import AboutUs from "@/pages/AboutUs";
 import Courses from "@/pages/Courses";
 import Scholarships from "@/pages/Scholarships";
+import Index from "@/pages/Index";
 
 const PublicRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/index" element={<Index />} />
       <Route path="/auth/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
       <Route path="/unauthorized" element={<Unauthorized />} />

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from "@/components/ProtectedRoute";
+import NotFound from "@/pages/NotFound";
 
 // Dashboard and shared pages
 import Home from "@/pages/Home";
@@ -76,6 +77,7 @@ const UserRoutes = () => {
           <Settings />
         </ProtectedRoute>
       } />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

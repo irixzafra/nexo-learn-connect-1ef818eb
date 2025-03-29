@@ -1,4 +1,3 @@
-
 import {
   Home,
   Book,
@@ -103,7 +102,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton>
-                <NavLink to="/my-learning">
+                <NavLink to="/home/my-courses">
                   <GraduationCap className="h-4 w-4" />
                   <span>Mi aprendizaje</span>
                 </NavLink>
@@ -111,7 +110,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton>
-                <NavLink to="/calendar">
+                <NavLink to="/home/calendar">
                   <Calendar className="h-4 w-4" />
                   <span>Calendario</span>
                 </NavLink>
@@ -119,7 +118,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton>
-                <NavLink to="/messages">
+                <NavLink to="/home/messages">
                   <MessageSquare className="h-4 w-4" />
                   <span>Mensajes</span>
                 </NavLink>
@@ -144,7 +143,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
                     <SidebarMenu>
                       <SidebarMenuItem>
                         <SidebarMenuButton>
-                          <NavLink to="/users">
+                          <NavLink to="/home/users">
                             <Settings className="h-4 w-4" />
                             <span>Usuarios</span>
                           </NavLink>
