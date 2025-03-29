@@ -7,6 +7,7 @@ import { Course } from "@/types/course";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { BookOpen, Clock, BarChart } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const StudentCourses: React.FC = () => {
   const { user } = useAuth();
@@ -28,6 +29,12 @@ const StudentCourses: React.FC = () => {
         
         if (enrollmentsError) {
           console.error('Error fetching enrollments:', enrollmentsError);
+          toast({
+            title: "Error",
+            description: "No se pudieron cargar tus cursos. Por favor, inténtalo de nuevo.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
           return;
         }
         
@@ -62,13 +69,19 @@ const StudentCourses: React.FC = () => {
         
         if (coursesError) {
           console.error('Error fetching courses:', coursesError);
+          toast({
+            title: "Error",
+            description: "No se pudieron cargar los detalles de tus cursos.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
           return;
         }
         
         // Transform the data to match Course type
         const formattedCourses = coursesData.map(course => {
-          // Fix: Correctly access the instructor data
-          // The profiles property is an object, not an array
+          // Fix: Correctly handle the instructor data based on the query result structure
+          // The 'profiles' field is an object, not an array, containing instructor data
           const instructorData = course.profiles ? {
             id: course.profiles.id,
             full_name: course.profiles.full_name
@@ -83,6 +96,11 @@ const StudentCourses: React.FC = () => {
         setEnrolledCourses(formattedCourses);
       } catch (error) {
         console.error('Error in fetchEnrolledCourses:', error);
+        toast({
+          title: "Error",
+          description: "Ocurrió un error al cargar tus cursos.",
+          variant: "destructive"
+        });
       } finally {
         setIsLoading(false);
       }
