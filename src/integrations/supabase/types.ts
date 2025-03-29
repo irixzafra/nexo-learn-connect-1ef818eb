@@ -78,6 +78,57 @@ export type Database = {
         }
         Relationships: []
       }
+      lesson_progress: {
+        Row: {
+          completion_date: string | null
+          course_id: string
+          created_at: string
+          id: string
+          is_completed: boolean
+          last_position: number | null
+          lesson_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completion_date?: string | null
+          course_id: string
+          created_at?: string
+          id?: string
+          is_completed?: boolean
+          last_position?: number | null
+          lesson_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completion_date?: string | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          is_completed?: boolean
+          last_position?: number | null
+          lesson_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_progress_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lessons: {
         Row: {
           content_text: Json | null
@@ -199,7 +250,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_course_progress: {
+        Args: {
+          course_id_param: string
+          user_id_param: string
+        }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

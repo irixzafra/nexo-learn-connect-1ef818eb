@@ -1,8 +1,11 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { CourseCard } from "./CourseCard";
+import { CourseProgressBar } from "./CourseProgressBar";
+import { useUserCoursesProgress } from "../hooks/useUserCoursesProgress";
 import { Course } from "@/types/course";
 
 interface EnrolledCoursesListProps {
@@ -14,7 +17,15 @@ export const EnrolledCoursesList: React.FC<EnrolledCoursesListProps> = ({
   courses, 
   isLoading 
 }) => {
-  if (isLoading) {
+  const { user } = useAuth();
+  const courseIds = useMemo(() => courses.map(course => course.id), [courses]);
+  
+  const { coursesProgress, isLoading: isLoadingProgress } = useUserCoursesProgress(
+    user?.id,
+    courseIds
+  );
+  
+  if (isLoading || isLoadingProgress) {
     return (
       <div className="flex justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
@@ -37,7 +48,15 @@ export const EnrolledCoursesList: React.FC<EnrolledCoursesListProps> = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {courses.map((course) => (
-        <CourseCard key={course.id} course={course} />
+        <div key={course.id} className="flex flex-col">
+          <CourseCard course={course} />
+          <div className="mt-2">
+            <CourseProgressBar 
+              progress={coursesProgress[course.id] || 0} 
+              size="sm" 
+            />
+          </div>
+        </div>
       ))}
     </div>
   );

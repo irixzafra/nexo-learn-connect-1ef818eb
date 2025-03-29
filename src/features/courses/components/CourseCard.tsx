@@ -1,62 +1,86 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Clock, BarChart } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, Clock, User } from "lucide-react";
 import { Course } from "@/types/course";
 
 interface CourseCardProps {
   course: Course;
-  actionText?: string;
-  actionPath?: string;
+  showContinueButton?: boolean;
 }
 
 export const CourseCard: React.FC<CourseCardProps> = ({ 
-  course, 
-  actionText = "Continuar Aprendiendo",
-  actionPath = `/courses/${course.id}/learn`
+  course,
+  showContinueButton = true,
 }) => {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "long",
+    });
+  };
+
+  const formatCurrency = (price: number, currency: "eur" | "usd") => {
+    return new Intl.NumberFormat("es-ES", {
+      style: "currency",
+      currency: currency.toUpperCase(),
+    }).format(price);
+  };
+
   return (
-    <Card key={course.id} className="overflow-hidden h-full flex flex-col">
-      {course.cover_image_url && (
-        <div className="aspect-video w-full overflow-hidden">
-          <img 
-            src={course.cover_image_url} 
-            alt={course.title} 
-            className="w-full h-full object-cover transition-transform hover:scale-105"
-          />
-        </div>
+    <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+      <Link to={`/courses/${course.id}`} className="flex-grow">
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-start">
+            <CardTitle className="text-lg font-bold line-clamp-2">
+              {course.title}
+            </CardTitle>
+            {course.price === 0 ? (
+              <Badge variant="secondary">Gratis</Badge>
+            ) : (
+              <Badge variant="secondary">
+                {formatCurrency(course.price, course.currency as "eur" | "usd")}
+              </Badge>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+            {course.description || "Sin descripción disponible."}
+          </p>
+          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+            {course.instructor && (
+              <div className="flex items-center gap-1">
+                <User className="h-3.5 w-3.5" />
+                <span>{course.instructor.full_name}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-1">
+              <Calendar className="h-3.5 w-3.5" />
+              <span>{formatDate(course.created_at)}</span>
+            </div>
+            {course.duration_text && (
+              <div className="flex items-center gap-1">
+                <Clock className="h-3.5 w-3.5" />
+                <span>{course.duration_text}</span>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Link>
+      
+      {showContinueButton && (
+        <CardFooter className="pt-2">
+          <Button asChild variant="default" className="w-full">
+            <Link to={`/courses/${course.id}/learn`}>
+              Continuar aprendizaje
+            </Link>
+          </Button>
+        </CardFooter>
       )}
-      <CardHeader>
-        <CardTitle className="line-clamp-2">{course.title}</CardTitle>
-        <CardDescription>
-          {course.instructor?.full_name ? `Instructor: ${course.instructor.full_name}` : ''}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4 flex-grow">
-        <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-          {course.level && (
-            <div className="flex items-center gap-1">
-              <BarChart className="h-4 w-4" />
-              <span className="capitalize">{course.level}</span>
-            </div>
-          )}
-          {course.duration_text && (
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              <span>{course.duration_text}</span>
-            </div>
-          )}
-        </div>
-        
-        <Button asChild className="w-full mt-4">
-          <Link to={actionPath}>
-            <BookOpen className="mr-2 h-4 w-4" />
-            {actionText}
-          </Link>
-        </Button>
-      </CardContent>
     </Card>
   );
 };
