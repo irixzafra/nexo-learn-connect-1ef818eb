@@ -1,4 +1,3 @@
-
 # Nexo Learning Project - Source of Truth
 
 ## Parte I: Visión del Producto
@@ -262,6 +261,30 @@ El proyecto utiliza Row Level Security (RLS) de PostgreSQL para controlar el acc
     - Se implementaron estados de carga para proporcionar feedback al usuario durante operaciones.
     - El sistema mantiene la autoría y marcas de tiempo en todos los comentarios.
 
+#### CORE-UI-ROLES-01: Sistema de Gestión de Roles
+
+- **Resumen Técnico**: Implementación avanzada para la gestión y visualización de roles de usuarios, incluyendo cambio de contexto para administradores, visualización diferenciada según rol, y búsqueda integrada de usuarios.
+
+- **Componentes UI clave**:
+  - **RoleSwitcher**: Permite a los administradores cambiar su vista al contexto de otros roles para previsualizar la experiencia de usuario.
+  - **UserRoleSearch**: Integra funcionalidad de búsqueda avanzada directamente en el menú desplegable.
+  - **SidebarFooterContent**: Muestra información contextual del rol actual y opciones relacionadas con el perfil de usuario.
+
+- **Lógica de permisos**:
+  - **Administradores**:
+    - Pueden visualizar la plataforma desde cualquier perspectiva de rol.
+    - Tienen acceso a funciones de búsqueda de usuarios integradas.
+    - Pueden volver a su rol original desde cualquier vista previsualizada.
+  - **Instructores y Estudiantes**:
+    - Visualizan solamente las funcionalidades relevantes a su rol.
+    - La interfaz adapta automáticamente las opciones disponibles.
+
+- **Mejoras de UX implementadas**:
+  - Indicadores visuales claros del rol actual y modo de previsualización.
+  - Búsqueda de usuarios integrada directamente en el menú contextual.
+  - Navegación intuitiva entre diferentes contextos de rol.
+  - Sistema de badges y separadores visuales para mejorar la comprensión.
+
 ### Integración con Servicios Externos
 
 - **Supabase**: Para base de datos, autenticación, almacenamiento y Row Level Security.
@@ -289,4 +312,3 @@ El proyecto utiliza Row Level Security (RLS) de PostgreSQL para controlar el acc
 5. Soporte para contenido interactivo en lecciones
 6. Funcionalidades de gamificación
 7. Sistema de mensajería directa entre usuarios
-

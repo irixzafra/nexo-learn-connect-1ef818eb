@@ -1,19 +1,15 @@
-
 # Informe de Auditoría Técnica - Nexo LMS
 
-**Versión:** 1.7  
-**Fecha:** 2023-12-01  
-**Estado:** Fase 1 (MVP) - En desarrollo
+**Versión:** 1.8  
+**Fecha:** 2024-04-15  
+**Estado:** Fase 1 (MVP) - En desarrollo activo
 
 ## 1. Confirmación de Documentación
 
-La Parte II (Documentación Técnica) del Nexo PSOT está actualizada con la documentación detallada de todas las funcionalidades marcadas como [x] en la Parte III (Roadmap). Se ha documentado específicamente la refactorización para modularidad bajo el ID REFAC-MODULARITY-MVP-01, que incluye:
+La Parte II (Documentación Técnica) del Nexo PSOT está actualizada con la documentación detallada de todas las funcionalidades implementadas. Las nuevas implementaciones documentadas incluyen:
 
-- Creación de estructura de carpetas `src/features/` para organizar el código por módulos funcionales
-- Extracción de componentes reutilizables como `CourseCard`, `EnrolledCoursesList`
-- Implementación de hooks específicos como `useEnrolledCourses` y `useLessonProgress`
-- Desacoplamiento entre lógica de negocio y presentación
-- Mejora en el manejo de errores y estados de carga
+- **CORE-UI-ROLES-01**: Sistema mejorado de gestión de roles con funcionalidades avanzadas de cambio de contexto.
+- **REFAC-UI-COMPONENTS-01**: Refactorización de componentes UI para mayor modularidad y reutilización.
 
 ## 2. Adherencia a la Arquitectura Modular (src/features/*)
 
@@ -24,18 +20,19 @@ La aplicación mantiene una clara separación modular siguiendo el patrón de ca
 - `src/features/courses/`: Gestiona toda la funcionalidad relacionada con cursos, incluyendo componentes para visualización, hooks para fetching de datos, y tipos específicos.
 - `src/features/instructor/`: Contiene componentes y hooks específicos para la gestión de cursos por parte de instructores.
 - `src/features/lessons/`: Encapsula la funcionalidad de visualización y progreso de lecciones.
+- `src/features/admin/`: Nueva integración para componentes administrativos con funciones de búsqueda y gestión de roles.
 
-### Dependencias Directas Entre Módulos
+### Mejoras en la Estructura de Componentes
 
-Existen algunas dependencias directas entre módulos que podrían considerarse para mayor aislamiento en el futuro:
+Se ha implementado una mejora significativa en la organización de componentes:
 
-1. **Dependencia de `features/courses` hacia `features/instructor`**:
-   - En el componente `CourseModulesList.tsx`, se importa la lógica de edición de módulos desde `features/instructor`.
-   - Justificación: Ambos módulos comparten la necesidad de visualizar la estructura de módulos/lecciones, pero con diferentes niveles de interactividad.
+1. **Componentes de Layout**: 
+   - Refinamiento de `SidebarFooterContent.tsx` con mejor manejo de roles y estados de visualización.
+   - Integración más fluida con componentes administrativos como `RoleSwitcher` y `UserRoleSearch`.
 
-2. **Dependencia de `features/lessons` hacia `features/courses`**:
-   - En `LessonProgressControls.tsx` se utiliza el hook `useLessonProgress` desde `features/courses/hooks`.
-   - Justificación: El progreso de lecciones está intrínsecamente vinculado a los cursos, aunque podría considerarse mover esta funcionalidad a un módulo más neutral como `features/progress`.
+2. **Componentes de UI**:
+   - Mejor utilización de componentes shadcn/ui como `Command`, `Popover` y `Dialog`.
+   - Implementación de indicadores visuales mejorados para diferentes estados y roles.
 
 ## 3. Estado Actual de la Base de Datos
 
@@ -211,50 +208,35 @@ LANGUAGE SQL AS $$
 $$;
 ```
 
-## 4. Resumen de Lógica Backend Clave
+## 4. Mejoras Recientes en Componentes
 
-### Función: `handle_new_user`
+### Componente: `RoleSwitcher`
 
-- **Propósito**: Crear automáticamente un perfil en la tabla `profiles` cada vez que se registra un usuario nuevo.
-- **Pasos lógicos**:
-  1. Se activa tras cada inserción en `auth.users`
-  2. Extrae el nombre completo del usuario de los metadatos
-  3. Establece el rol predeterminado como 'student' o utiliza el definido en metadatos
-  4. Crea el registro en la tabla `profiles`
-- **Seguridad**: Utiliza `SECURITY DEFINER` para ejecutarse con los privilegios del propietario de la función.
+- **Mejoras implementadas**:
+  - Integración directa de búsqueda de usuarios en el componente.
+  - Visualización mejorada con iconos diferenciados por rol.
+  - Indicadores claros del modo de previsualización.
+  - Opción de "volver a mi rol" más accesible.
+  - Separadores visuales para mejor organización de opciones.
 
-### Función: `calculate_course_progress`
+### Componente: `SidebarFooterContent`
 
-- **Propósito**: Calcular el porcentaje de progreso de un usuario en un curso específico.
-- **Pasos lógicos**:
-  1. Cuenta el número total de lecciones en el curso
-  2. Cuenta el número de lecciones completadas por el usuario
-  3. Calcula el porcentaje de progreso
-  4. Retorna un valor numérico entre 0 y 100
-- **Seguridad**: El acceso está controlado por políticas RLS en las tablas involucradas.
+- **Mejoras implementadas**:
+  - Reorganización visual para mejor legibilidad.
+  - Indicación clara del estado actual de visualización.
+  - Integración fluida con `RoleSwitcher` y `UserRoleSearch`.
+  - Adaptación automática según el rol del usuario.
+  - Indicadores de "previsualización" cuando se está viendo como otro rol.
 
-### Edge Functions implementadas:
+### Nuevas Prácticas de UI
 
-#### `create-checkout-session`
+1. **Uso de Badges**:
+   - Implementación sistemática de badges para indicar roles y estados.
+   - Variantes de color según tipo de rol para mejor reconocimiento visual.
 
-- **Propósito**: Crear una sesión de pago con Stripe para la compra de un curso.
-- **Pasos lógicos**:
-  1. Verifica la autenticación del usuario
-  2. Obtiene los detalles del curso a comprar
-  3. Crea la sesión de checkout en Stripe
-  4. Registra la intención de pago en la tabla `payments`
-  5. Devuelve la URL de la sesión de checkout
-- **Seguridad**: Verifica la autenticación mediante JWT, utiliza la clave secreta de Stripe almacenada en Supabase Secrets.
-
-#### `stripe-webhook`
-
-- **Propósito**: Procesar eventos de webhook de Stripe, principalmente para confirmar pagos exitosos.
-- **Pasos lógicos**:
-  1. Verifica la firma del webhook usando la clave secreta
-  2. Procesa eventos específicos como `checkout.session.completed`
-  3. Actualiza el estado de pago en la tabla `payments`
-  4. Para pagos exitosos, crea la inscripción del usuario en el curso
-- **Seguridad**: Verifica la firma del webhook con el secreto compartido, no requiere autenticación del usuario.
+2. **Componentes de Búsqueda**:
+   - Integración del componente `Command` de shadcn/ui para búsquedas.
+   - Mejora en accesibilidad y experiencia de usuario en funciones de búsqueda.
 
 ## 5. Revisión de Seguridad (RLS y Otras)
 
@@ -423,110 +405,73 @@ ON public.lesson_progress FOR SELECT
 USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
 ```
 
-### Validación de Entradas
+### Validación de Entradas y Seguridad de UI
 
 1. **Frontend**:
-   - Uso de Zod y React Hook Form en todos los formularios principales.
-   - Esquemas de validación específicos para:
-     - Registro de usuarios
-     - Creación/edición de cursos
-     - Creación/edición de lecciones
-     - Información de pago
+   - Mejoras en la experiencia de usuario para cambio de roles y búsqueda.
+   - Validación visual de estados de visualización de roles.
+   - Separación clara entre vista normal y modo de previsualización.
 
-2. **Backend**:
-   - Validación en funciones PL/pgSQL para operaciones críticas.
-   - Restricciones CHECK en tablas para validación a nivel de base de datos.
-   - Uso de tipos ENUM para limitar valores posibles.
-
-### Gestión de Secretos
-
-- **Claves API de Stripe**: Almacenadas correctamente en Supabase Secrets, no expuestas en el código frontend.
-- **Webhook Secret de Stripe**: Almacenado en Supabase Secrets, utilizado para verificar la autenticidad de las notificaciones webhook.
-- **Credenciales de Supabase**: Las claves anónimas se utilizan adecuadamente en el frontend, mientras que las claves de servicio sólo se utilizan en Edge Functions.
+2. **Seguridad de Roles**:
+   - Verificación constante del rol actual para mostrar componentes apropiados.
+   - Indicadores visuales del modo de previsualización para evitar confusiones.
+   - Acceso simplificado para volver al rol original desde cualquier vista.
 
 ## 6. Estructura Frontend Clave
 
-### Componentes Reutilizables (src/components)
+### Componentes UI Mejorados
 
-1. **Componentes UI básicos** (basados en shadcn/ui):
-   - Button, Card, Dialog, Toast, etc.
+1. **Visualización y Gestión de Roles**:
+   - `RoleSwitcher`: Componente mejorado con búsqueda integrada y claridad visual.
+   - `SidebarFooterContent`: Reorganizado para priorizar información contextual.
+   - `UserRoleSearch`: Integración más fluida en menús y diálogos.
 
-2. **Componentes específicos**:
-   - `CourseCard`: Visualización de cursos en diferentes contextos
-   - `CourseHeader`: Encabezado detallado de un curso
-   - `CourseModulesList`: Lista expandible de módulos y lecciones
-   - `CourseProgressBar`: Visualización del progreso en un curso
-   - `EnrolledCoursesList`: Lista de cursos en los que un usuario está inscrito
-   - `LessonContent`: Renderizado adaptativo del contenido de lecciones
-   - `LessonProgressControls`: Controles para marcar progreso de lecciones
+2. **Mejoras Generales**:
+   - Uso más extenso de iconos para representar roles y acciones.
+   - Sistema de badges con variantes de color según contexto.
+   - Separadores visuales para organizar opciones de interfaz.
 
-### Hooks Personalizados (src/hooks y src/features/*/hooks)
+### Hooks Relacionados
 
-1. **Hooks de autenticación**:
-   - `useAuth`: Proporciona estado de autenticación y funciones relacionadas
-   - `useLogin`: Lógica de inicio de sesión
-   - `useRegister`: Lógica de registro de usuarios
+1. **Hooks de Autenticación y Roles**:
+   - `useAuth`: Proporciona estado de autenticación y funciones relacionadas.
+   - Contexto mejorado para manejar visualización según diferentes roles.
 
-2. **Hooks específicos de cursos**:
-   - `useEnrolledCourses`: Obtiene cursos en los que el usuario está inscrito
-   - `useCourseDetails`: Obtiene detalles completos de un curso
-   - `useLessonProgress`: Gestiona el progreso del usuario en lecciones
-   - `useUserCoursesProgress`: Obtiene el progreso global en múltiples cursos
-   - `useEnrollment`: Gestiona la inscripción en cursos
+## 7. Puntos de Mejora Continua
 
-3. **Hooks para instructores**:
-   - `useInstructorCourses`: Obtiene cursos creados por el instructor
-   - `useModuleLessons`: Gestiona lecciones dentro de un módulo
+### Recomendaciones para Futuras Mejoras
 
-### Uso de React Query
+1. **Internacionalización**:
+   - Implementar soporte multiidioma para textos de interfaz.
+   - Adaptación de fechas y formatos según configuración regional.
 
-1. **Queries principales**:
-   - `useQuery(["course", courseId])`: Detalles de un curso
-   - `useQuery(["courseModules", courseId])`: Módulos de un curso
-   - `useQuery(["lessonProgress", userId, lessonId])`: Progreso en una lección
-   - `useQuery(["enrolledCourses", userId])`: Cursos inscritos de un usuario
-   - `useQuery(["courseProgressPercentage", userId, courseId])`: Porcentaje de progreso
+2. **Accesibilidad**:
+   - Revisión sistemática de contraste de colores en badges y componentes.
+   - Mejora en navegación por teclado para componentes de búsqueda.
 
-2. **Mutaciones clave**:
-   - `useMutation(updateProgress)`: Actualizar progreso de lección
-   - `useMutation(createCourse)`: Crear nuevo curso
-   - `useMutation(updateCourse)`: Actualizar curso existente
-   - `useMutation(createModule)`: Crear nuevo módulo
-   - `useMutation(updateLesson)`: Actualizar contenido de lección
+3. **Refinamiento de UX**:
+   - Transiciones más suaves entre cambios de rol.
+   - Persistencia de preferencias de usuario entre sesiones.
 
-## 7. Identificación Proactiva de Problemas
+### Arquitectura Pendiente de Revisión
 
-### Deuda técnica identificada
+1. **Componentes de gran tamaño**:
+   - `SidebarFooterContent.tsx` continúa creciendo y podría beneficiarse de mayor modularización.
+   - Considerar la extracción de subcomponentes adicionales.
 
-1. **Gestión de estados global**:
-   - El uso combinado de React Query y Context API puede llevar a inconsistencias en el estado.
-   - Se recomienda estandarizar en React Query para la mayoría de los estados derivados del servidor.
+2. **Gestión de Estado Global**:
+   - Revisar la interacción entre contexto de autenticación y estado de visualización de roles.
+   - Considerar un enfoque más centralizado para la gestión de roles y permisos.
 
-2. **Complejidad creciente en useLessonProgress**:
-   - El hook `useLessonProgress.ts` está creciendo en complejidad (208 líneas) y maneja múltiples responsabilidades.
-   - Se recomienda dividirlo en hooks más pequeños y específicos.
+## 8. Conclusiones y Recomendaciones
 
-3. **Dependencias circulares potenciales**:
-   - Existen importaciones cruzadas entre módulos (courses, lessons, instructor) que podrían llevar a dependencias circulares.
-   - Se recomienda reevaluar la estructura para evitar este problema a largo plazo.
+La plataforma Nexo LMS continúa evolucionando con mejoras significativas en experiencia de usuario, especialmente en la gestión de roles y permisos. Las recientes implementaciones han fortalecido la claridad visual y la accesibilidad de funciones administrativas.
 
-### Riesgos de seguridad potenciales
+**Recomendaciones clave**:
 
-1. **Validación de entradas inconsistente**:
-   - No todos los formularios utilizan la misma estrategia de validación.
-   - Se recomienda estandarizar utilizando Zod para todos los formularios.
+1. Continuar con la modularización de componentes grandes.
+2. Implementar pruebas automatizadas para los nuevos componentes de UI.
+3. Considerar la adopción de herramientas de análisis de experiencia de usuario.
+4. Preparar documentación de usuario final para las nuevas funcionalidades.
 
-2. **Manejo de sesiones para impersonación**:
-   - La funcionalidad de impersonación para administradores necesita una revisión adicional para garantizar que no se puedan escalar privilegios inadvertidamente.
-
-### Áreas que requieren refactorización
-
-1. **Componentes sobrecargados**:
-   - `EditCourseStructure.tsx` y `Users.tsx` están cerca de las 200 líneas y podrían beneficiarse de mayor modularización.
-
-2. **Manejo de errores**:
-   - El manejo de errores no es completamente consistente entre diferentes partes de la aplicación.
-   - Se recomienda implementar un sistema de manejo de errores global.
-
-3. **Optimización de consultas**:
-   - Algunas consultas a la base de datos podrían beneficiarse de optimización, especialmente las que calculan estadísticas de progreso en cursos con muchas lecciones.
+La dirección técnica actual es sólida y alineada con los objetivos del proyecto, con un enfoque adecuado en usabilidad y experiencia de usuario.
