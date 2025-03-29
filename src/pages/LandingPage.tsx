@@ -6,6 +6,10 @@ import PublicLayout from '@/layouts/PublicLayout';
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, GraduationCap, Users, Zap } from 'lucide-react';
 import { Helmet } from 'react-helmet';
+import InlineEdit from '@/components/admin/InlineEdit';
+import CourseOrderEditor from '@/components/admin/CourseOrderEditor';
+import { useAuth } from '@/contexts/AuthContext';
+import EditModeToggle from '@/components/admin/EditModeToggle';
 
 // Animaciones
 const fadeIn = {
@@ -65,6 +69,9 @@ const testimonials = [
 ];
 
 const LandingPage: React.FC = () => {
+  const { userRole } = useAuth();
+  const isAdmin = userRole === 'admin';
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -81,6 +88,16 @@ const LandingPage: React.FC = () => {
         <meta property="og:image" content="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=630&fit=crop" />
       </Helmet>
 
+      {/* Admin controls */}
+      {isAdmin && (
+        <div className="fixed top-4 right-4 z-50 flex gap-2">
+          <EditModeToggle />
+        </div>
+      )}
+
+      {/* Course Order Editor (only for admins in edit mode) */}
+      {isAdmin && <CourseOrderEditor />}
+
       {/* Hero Section with Animation */}
       <section className="relative overflow-hidden">
         {/* Background gradient */}
@@ -94,7 +111,13 @@ const LandingPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              Aprende. Crece. <span className="text-foreground">Conéctate.</span>
+              <InlineEdit 
+                table="landing_content" 
+                id="hero_title" 
+                field="content" 
+                value="Aprende. Crece. Conéctate." 
+                as="span"
+              />
             </motion.h1>
             
             <motion.p 
@@ -103,8 +126,13 @@ const LandingPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              Nexo unifica aprendizaje de alto nivel, gestión y comunidad profesional en una sola plataforma. 
-              Másters y programas diseñados para impulsar tu carrera en tecnología y negocios digitales.
+              <InlineEdit 
+                table="landing_content" 
+                id="hero_subtitle" 
+                field="content" 
+                value="Nexo unifica aprendizaje de alto nivel, gestión y comunidad profesional en una sola plataforma. Másters y programas diseñados para impulsar tu carrera en tecnología y negocios digitales." 
+                as="span"
+              />
             </motion.p>
             
             <motion.div 
@@ -115,13 +143,25 @@ const LandingPage: React.FC = () => {
             >
               <Link to="/courses">
                 <Button size="lg" className="w-full sm:w-auto font-medium text-base px-6 py-6">
-                  Descubre tu Camino
+                  <InlineEdit 
+                    table="landing_content" 
+                    id="hero_cta_primary" 
+                    field="content" 
+                    value="Descubre tu Camino" 
+                    as="span"
+                  />
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link to="/auth/register">
                 <Button variant="outline" size="lg" className="w-full sm:w-auto font-medium text-base px-6 py-6">
-                  Únete a Nexo
+                  <InlineEdit 
+                    table="landing_content" 
+                    id="hero_cta_secondary" 
+                    field="content" 
+                    value="Únete a Nexo" 
+                    as="span"
+                  />
                 </Button>
               </Link>
             </motion.div>
@@ -139,9 +179,23 @@ const LandingPage: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl font-bold mb-3">La Plataforma para el Aprendizaje Profesional</h2>
+            <h2 className="text-3xl font-bold mb-3">
+              <InlineEdit 
+                table="landing_content" 
+                id="benefits_title" 
+                field="content" 
+                value="La Plataforma para el Aprendizaje Profesional" 
+                as="span"
+              />
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Diseñada para profesionales que buscan llevar sus habilidades al siguiente nivel con un ecosistema completo de aprendizaje y crecimiento.
+              <InlineEdit 
+                table="landing_content" 
+                id="benefits_subtitle" 
+                field="content" 
+                value="Diseñada para profesionales que buscan llevar sus habilidades al siguiente nivel con un ecosistema completo de aprendizaje y crecimiento." 
+                as="span"
+              />
             </p>
           </motion.div>
           
@@ -157,22 +211,60 @@ const LandingPage: React.FC = () => {
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <GraduationCap className="text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Formación de Elite</h3>
+              <h3 className="text-xl font-semibold mb-3">
+                <InlineEdit 
+                  table="landing_content" 
+                  id="benefit1_title" 
+                  field="content" 
+                  value="Formación de Elite" 
+                  as="span"
+                />
+              </h3>
               <p className="text-muted-foreground">
-                Másters y programas diseñados por expertos en la industria, con contenido actualizado constantemente para seguir el ritmo de las tecnologías emergentes.
+                <InlineEdit 
+                  table="landing_content" 
+                  id="benefit1_desc" 
+                  field="content" 
+                  value="Másters y programas diseñados por expertos en la industria, con contenido actualizado constantemente para seguir el ritmo de las tecnologías emergentes." 
+                  as="span"
+                />
               </p>
               <ul className="mt-4 space-y-2">
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                  <span className="text-sm">Certificaciones reconocidas</span>
+                  <span className="text-sm">
+                    <InlineEdit 
+                      table="landing_content" 
+                      id="benefit1_point1" 
+                      field="content" 
+                      value="Certificaciones reconocidas" 
+                      as="span"
+                    />
+                  </span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                  <span className="text-sm">Proyectos prácticos reales</span>
+                  <span className="text-sm">
+                    <InlineEdit 
+                      table="landing_content" 
+                      id="benefit1_point2" 
+                      field="content" 
+                      value="Proyectos prácticos reales" 
+                      as="span"
+                    />
+                  </span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                  <span className="text-sm">Mentorías personalizadas</span>
+                  <span className="text-sm">
+                    <InlineEdit 
+                      table="landing_content" 
+                      id="benefit1_point3" 
+                      field="content" 
+                      value="Mentorías personalizadas" 
+                      as="span"
+                    />
+                  </span>
                 </li>
               </ul>
             </motion.div>
@@ -188,22 +280,60 @@ const LandingPage: React.FC = () => {
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Zap className="text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Metodología Efectiva</h3>
+              <h3 className="text-xl font-semibold mb-3">
+                <InlineEdit 
+                  table="landing_content" 
+                  id="benefit2_title" 
+                  field="content" 
+                  value="Metodología Efectiva" 
+                  as="span"
+                />
+              </h3>
               <p className="text-muted-foreground">
-                Aprendizaje adaptado a profesionales con poco tiempo, con un equilibrio perfecto entre teoría y práctica para maximizar resultados.
+                <InlineEdit 
+                  table="landing_content" 
+                  id="benefit2_desc" 
+                  field="content" 
+                  value="Aprendizaje adaptado a profesionales con poco tiempo, con un equilibrio perfecto entre teoría y práctica para maximizar resultados." 
+                  as="span"
+                />
               </p>
               <ul className="mt-4 space-y-2">
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                  <span className="text-sm">Formato flexible 100% online</span>
+                  <span className="text-sm">
+                    <InlineEdit 
+                      table="landing_content" 
+                      id="benefit2_point1" 
+                      field="content" 
+                      value="Formato flexible 100% online" 
+                      as="span"
+                    />
+                  </span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                  <span className="text-sm">Sesiones en vivo con expertos</span>
+                  <span className="text-sm">
+                    <InlineEdit 
+                      table="landing_content" 
+                      id="benefit2_point2" 
+                      field="content" 
+                      value="Sesiones en vivo con expertos" 
+                      as="span"
+                    />
+                  </span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                  <span className="text-sm">Contenido microlearning</span>
+                  <span className="text-sm">
+                    <InlineEdit 
+                      table="landing_content" 
+                      id="benefit2_point3" 
+                      field="content" 
+                      value="Contenido microlearning" 
+                      as="span"
+                    />
+                  </span>
                 </li>
               </ul>
             </motion.div>
@@ -219,22 +349,60 @@ const LandingPage: React.FC = () => {
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Users className="text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Ecosistema Profesional</h3>
+              <h3 className="text-xl font-semibold mb-3">
+                <InlineEdit 
+                  table="landing_content" 
+                  id="benefit3_title" 
+                  field="content" 
+                  value="Ecosistema Profesional" 
+                  as="span"
+                />
+              </h3>
               <p className="text-muted-foreground">
-                Más que cursos: una comunidad activa de profesionales donde networking y oportunidades laborales se combinan naturalmente.
+                <InlineEdit 
+                  table="landing_content" 
+                  id="benefit3_desc" 
+                  field="content" 
+                  value="Más que cursos: una comunidad activa de profesionales donde networking y oportunidades laborales se combinan naturalmente." 
+                  as="span"
+                />
               </p>
               <ul className="mt-4 space-y-2">
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                  <span className="text-sm">Red de contactos cualificada</span>
+                  <span className="text-sm">
+                    <InlineEdit 
+                      table="landing_content" 
+                      id="benefit3_point1" 
+                      field="content" 
+                      value="Red de contactos cualificada" 
+                      as="span"
+                    />
+                  </span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                  <span className="text-sm">Eventos exclusivos del sector</span>
+                  <span className="text-sm">
+                    <InlineEdit 
+                      table="landing_content" 
+                      id="benefit3_point2" 
+                      field="content" 
+                      value="Eventos exclusivos del sector" 
+                      as="span"
+                    />
+                  </span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-primary mr-2" />
-                  <span className="text-sm">Bolsa de empleo premium</span>
+                  <span className="text-sm">
+                    <InlineEdit 
+                      table="landing_content" 
+                      id="benefit3_point3" 
+                      field="content" 
+                      value="Bolsa de empleo premium" 
+                      as="span"
+                    />
+                  </span>
                 </li>
               </ul>
             </motion.div>
@@ -252,9 +420,23 @@ const LandingPage: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl font-bold mb-3">Carreras Destacadas</h2>
+            <h2 className="text-3xl font-bold mb-3">
+              <InlineEdit 
+                table="landing_content" 
+                id="courses_section_title" 
+                field="content" 
+                value="Carreras Destacadas" 
+                as="span"
+              />
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Descubre nuestros programas más demandados, diseñados para las profesiones con mayor proyección.
+              <InlineEdit 
+                table="landing_content" 
+                id="courses_section_subtitle" 
+                field="content" 
+                value="Descubre nuestros programas más demandados, diseñados para las profesiones con mayor proyección." 
+                as="span"
+              />
             </p>
           </motion.div>
           
@@ -277,8 +459,24 @@ const LandingPage: React.FC = () => {
                   />
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{course.title}</h3>
-                  <p className="text-muted-foreground text-sm mb-4">{course.description}</p>
+                  <h3 className="text-xl font-semibold mb-2">
+                    <InlineEdit 
+                      table="courses" 
+                      id={course.id} 
+                      field="title" 
+                      value={course.title} 
+                      as="span"
+                    />
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    <InlineEdit 
+                      table="courses" 
+                      id={course.id} 
+                      field="description" 
+                      value={course.description} 
+                      as="span"
+                    />
+                  </p>
                   <div className="flex items-center text-sm text-muted-foreground mb-4">
                     <span>Por {course.instructor}</span>
                   </div>
@@ -286,7 +484,13 @@ const LandingPage: React.FC = () => {
                     <span className="font-semibold text-lg">{course.price}€</span>
                     <Link to={`/courses/${course.id}`}>
                       <Button variant="outline" size="sm">
-                        Ver detalles
+                        <InlineEdit 
+                          table="landing_content" 
+                          id="course_cta" 
+                          field="content" 
+                          value="Ver detalles" 
+                          as="span"
+                        />
                       </Button>
                     </Link>
                   </div>
@@ -298,7 +502,13 @@ const LandingPage: React.FC = () => {
           <div className="text-center mt-12">
             <Link to="/courses">
               <Button variant="outline" size="lg">
-                Ver Todos los Programas
+                <InlineEdit 
+                  table="landing_content" 
+                  id="all_courses_cta" 
+                  field="content" 
+                  value="Ver Todos los Programas" 
+                  as="span"
+                />
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -316,9 +526,23 @@ const LandingPage: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl font-bold mb-3">Lo Que Dicen Nuestros Alumnos</h2>
+            <h2 className="text-3xl font-bold mb-3">
+              <InlineEdit 
+                table="landing_content" 
+                id="testimonials_title" 
+                field="content" 
+                value="Lo Que Dicen Nuestros Alumnos" 
+                as="span"
+              />
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Historias reales de profesionales que transformaron su carrera con Nexo.
+              <InlineEdit 
+                table="landing_content" 
+                id="testimonials_subtitle" 
+                field="content" 
+                value="Historias reales de profesionales que transformaron su carrera con Nexo." 
+                as="span"
+              />
             </p>
           </motion.div>
           
@@ -339,11 +563,35 @@ const LandingPage: React.FC = () => {
                     className="w-12 h-12 rounded-full mr-4"
                   />
                   <div>
-                    <h4 className="font-semibold">{testimonial.name}</h4>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    <h4 className="font-semibold">
+                      <InlineEdit 
+                        table="testimonials" 
+                        id={`testimonial_${index + 1}`} 
+                        field="name" 
+                        value={testimonial.name} 
+                        as="span"
+                      />
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      <InlineEdit 
+                        table="testimonials" 
+                        id={`testimonial_${index + 1}`} 
+                        field="role" 
+                        value={testimonial.role} 
+                        as="span"
+                      />
+                    </p>
                   </div>
                 </div>
-                <p className="italic text-muted-foreground">"{testimonial.content}"</p>
+                <p className="italic text-muted-foreground">
+                  "<InlineEdit 
+                    table="testimonials" 
+                    id={`testimonial_${index + 1}`} 
+                    field="content" 
+                    value={testimonial.content} 
+                    as="span"
+                  />"
+                </p>
               </motion.div>
             ))}
           </div>
@@ -359,9 +607,23 @@ const LandingPage: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">¿Listo para impulsar tu carrera?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              <InlineEdit 
+                table="landing_content" 
+                id="cta_title" 
+                field="content" 
+                value="¿Listo para impulsar tu carrera?" 
+                as="span"
+              />
+            </h2>
             <p className="mb-8 max-w-2xl mx-auto text-primary-foreground/90">
-              Únete a miles de profesionales que ya están transformando su futuro con programas formativos de alto impacto.
+              <InlineEdit 
+                table="landing_content" 
+                id="cta_text" 
+                field="content" 
+                value="Únete a miles de profesionales que ya están transformando su futuro con programas formativos de alto impacto." 
+                as="span"
+              />
             </p>
             <Link to="/auth/register">
               <Button 
@@ -369,7 +631,13 @@ const LandingPage: React.FC = () => {
                 size="lg"
                 className="font-medium text-base px-8 py-6"
               >
-                Comienza Hoy
+                <InlineEdit 
+                  table="landing_content" 
+                  id="cta_button" 
+                  field="content" 
+                  value="Comienza Hoy" 
+                  as="span"
+                />
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
