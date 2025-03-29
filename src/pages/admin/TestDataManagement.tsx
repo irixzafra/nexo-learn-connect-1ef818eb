@@ -4,7 +4,7 @@ import AppLayout from '@/layouts/AppLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import TestDataGenerator from '@/components/admin/TestDataGenerator';
+import { TestDataGenerator } from '@/components/admin/test-data';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
