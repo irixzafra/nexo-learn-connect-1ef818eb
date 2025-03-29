@@ -23,7 +23,6 @@ const EditModeToggle: React.FC = () => {
 
   const handleToggle = () => {
     toggleEditMode();
-    toast.success(isEditMode ? 'Modo edición desactivado' : 'Modo edición activado');
   };
 
   return (
