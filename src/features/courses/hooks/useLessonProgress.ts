@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
 
 type LessonProgress = {
@@ -125,7 +125,7 @@ export const useLessonProgress = (
 
       if (existingProgress) {
         // Update existing record
-        const updateData: Record<string, any> = { ...updates };
+        const updateData = { ...updates };
         
         // If marking as completed, add completion date
         if (updates.is_completed) {
@@ -140,21 +140,18 @@ export const useLessonProgress = (
           .single();
       } else {
         // Create new record
-        const insertData: Record<string, any> = {
-          user_id: userId,
-          lesson_id: lessonId,
-          course_id: courseId,
-          ...updates,
-        };
-        
-        // If marking as completed, add completion date
-        if (updates.is_completed) {
-          insertData.completion_date = new Date().toISOString();
-        }
-
         result = await supabase
           .from("lesson_progress")
-          .insert(insertData)
+          .insert({
+            user_id: userId,
+            lesson_id: lessonId,
+            course_id: courseId,
+            ...(updates.is_completed ? { 
+              is_completed: true,
+              completion_date: new Date().toISOString() 
+            } : { is_completed: false }),
+            ...(updates.last_position !== undefined ? { last_position: updates.last_position } : {})
+          })
           .select()
           .single();
       }
