@@ -3,6 +3,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from "@/components/ProtectedRoute";
 import NotFound from "@/pages/NotFound";
+import AppLayout from "@/layouts/AppLayout";
 
 // Instructor pages
 import InstructorDashboard from "@/pages/instructor/Dashboard";
@@ -18,42 +19,58 @@ const InstructorRoutes = () => {
     <Routes>
       <Route path="/dashboard" element={
         <ProtectedRoute requiredRole="instructor">
-          <InstructorDashboard />
+          <AppLayout>
+            <InstructorDashboard />
+          </AppLayout>
         </ProtectedRoute>
       } />
       <Route path="/students" element={
         <ProtectedRoute requiredRole="instructor">
-          <InstructorStudents />
+          <AppLayout>
+            <InstructorStudents />
+          </AppLayout>
         </ProtectedRoute>
       } />
       <Route path="/courses" element={
         <ProtectedRoute requiredRole="instructor">
-          <CoursesList />
+          <AppLayout>
+            <CoursesList />
+          </AppLayout>
         </ProtectedRoute>
       } />
       <Route path="/courses/new" element={
         <ProtectedRoute requiredRole="instructor">
-          <CreateCourse />
+          <AppLayout>
+            <CreateCourse />
+          </AppLayout>
         </ProtectedRoute>
       } />
       <Route path="/courses/:id/edit" element={
         <ProtectedRoute requiredRole="instructor">
-          <EditCourseDetails />
+          <AppLayout>
+            <EditCourseDetails />
+          </AppLayout>
         </ProtectedRoute>
       } />
       <Route path="/courses/:id/structure" element={
         <ProtectedRoute requiredRole="instructor">
-          <EditCourseStructure />
+          <AppLayout>
+            <EditCourseStructure />
+          </AppLayout>
         </ProtectedRoute>
       } />
       <Route path="/courses/:courseId/lessons/:lessonId/edit" element={
         <ProtectedRoute requiredRole="instructor">
-          <EditLesson />
+          <AppLayout>
+            <EditLesson />
+          </AppLayout>
         </ProtectedRoute>
       } />
       <Route path="*" element={
         <ProtectedRoute requiredRole="instructor">
-          <NotFound />
+          <AppLayout>
+            <NotFound />
+          </AppLayout>
         </ProtectedRoute>
       } />
     </Routes>

@@ -1,61 +1,54 @@
 
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import { useAuth } from '@/contexts/AuthContext';
-import NotFound from '@/pages/NotFound';
+import { Route, Routes } from 'react-router-dom';
+import ProtectedRoute from "@/components/ProtectedRoute";
+import NotFound from "@/pages/NotFound";
+import AppLayout from "@/layouts/AppLayout";
 
-// Admin Pages
-import AdminDashboard from '@/pages/admin/dashboard';
-import TestDataManagement from '@/pages/admin/TestDataManagement';
-import Users from '@/pages/placeholder/Users';
-import Billing from '@/pages/placeholder/Billing';
+// Admin pages
+import AdminDashboard from "@/pages/admin/dashboard";
+import TestDataManagement from "@/pages/admin/TestDataManagement";
+import Users from "@/pages/placeholder/Users";
+import Billing from "@/pages/placeholder/Billing";
 
-const AdminRoutes: React.FC = () => {
-  const { userRole } = useAuth();
-
+const AdminRoutes = () => {
   return (
     <Routes>
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute requiredRole="admin" fallbackPath="/unauthorized">
+      <Route path="/dashboard" element={
+        <ProtectedRoute requiredRole="admin">
+          <AppLayout>
             <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/test-data"
-        element={
-          <ProtectedRoute requiredRole="admin" fallbackPath="/unauthorized">
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/test-data" element={
+        <ProtectedRoute requiredRole="admin">
+          <AppLayout>
             <TestDataManagement />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/users"
-        element={
-          <ProtectedRoute requiredRole="admin" fallbackPath="/unauthorized">
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/users" element={
+        <ProtectedRoute requiredRole="admin">
+          <AppLayout>
             <Users />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/billing"
-        element={
-          <ProtectedRoute requiredRole="admin" fallbackPath="/unauthorized">
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/billing" element={
+        <ProtectedRoute requiredRole="admin">
+          <AppLayout>
             <Billing />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="*"
-        element={
-          <ProtectedRoute requiredRole="admin" fallbackPath="/unauthorized">
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="*" element={
+        <ProtectedRoute requiredRole="admin">
+          <AppLayout>
             <NotFound />
-          </ProtectedRoute>
-        }
-      />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 };

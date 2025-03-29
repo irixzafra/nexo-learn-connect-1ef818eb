@@ -1,35 +1,87 @@
 
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Home from '@/pages/Home';
-import Courses from '@/pages/CoursesCatalog';
-import CourseDetail from '@/pages/CourseDetail';
-import StudentCourses from '@/pages/student/Courses';
-import CourseLearn from '@/pages/student/CourseLearn';
-import LessonView from '@/pages/student/LessonView';
-import Checkout from '@/pages/student/Checkout';
-import Profile from '@/pages/Profile';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import Settings from '@/pages/placeholder/Settings';
-import Messages from '@/pages/placeholder/Messages';
-import Calendar from '@/pages/placeholder/Calendar';
-import AppLayout from '@/layouts/AppLayout';
+import ProtectedRoute from "@/components/ProtectedRoute";
+import NotFound from "@/pages/NotFound";
+import AppLayout from "@/layouts/AppLayout";
 
-const UserRoutes: React.FC = () => {
+// Student pages
+import Home from "@/pages/Home";
+import StudentCourses from "@/pages/student/Courses";
+import CourseLearn from "@/pages/student/CourseLearn";
+import LessonView from "@/pages/student/LessonView";
+import Checkout from "@/pages/student/Checkout";
+import Calendar from "@/pages/placeholder/Calendar";
+import Messages from "@/pages/placeholder/Messages";
+import Settings from "@/pages/placeholder/Settings";
+
+const UserRoutes = () => {
   return (
-    <AppLayout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/messages" element={<Messages />} />
-        <Route path="/calendar" element={<Calendar />} />
-        <Route path="/my-courses" element={<StudentCourses />} />
-        <Route path="/courses/:courseId/learn" element={<CourseLearn />} />
-        <Route path="/courses/:courseId/learn/:lessonId" element={<LessonView />} />
-        <Route path="/checkout/:courseId" element={<Checkout />} />
-      </Routes>
-    </AppLayout>
+    <Routes>
+      <Route path="/" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <Home />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/my-courses" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <StudentCourses />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/learn/:courseId" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <CourseLearn />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/learn/:courseId/lesson/:lessonId" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <LessonView />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/checkout/:courseId" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <Checkout />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/calendar" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <Calendar />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/messages" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <Messages />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/settings" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <Settings />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="*" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <NotFound />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+    </Routes>
   );
 };
 
