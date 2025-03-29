@@ -22,6 +22,13 @@ const Courses = () => (
   </div>
 );
 
+const Profile = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Perfil</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
 const Users = () => (
   <div className="container mx-auto p-6">
     <h1 className="text-3xl font-bold mb-6">Usuarios</h1>
@@ -29,9 +36,37 @@ const Users = () => (
   </div>
 );
 
+const Messages = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Mensajes</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
+const Calendar = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Calendario</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
+const Billing = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Facturación</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
 const Settings = () => (
   <div className="container mx-auto p-6">
     <h1 className="text-3xl font-bold mb-6">Configuración</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
+const InstructorStudents = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Estudiantes</h1>
     <p>Página en desarrollo</p>
   </div>
 );
@@ -64,6 +99,11 @@ const App = () => (
                 <Home />
               </ProtectedRoute>
             } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
             <Route path="/courses" element={
               <ProtectedRoute>
                 <Courses />
@@ -74,9 +114,29 @@ const App = () => (
                 <Users />
               </ProtectedRoute>
             } />
+            <Route path="/messages" element={
+              <ProtectedRoute>
+                <Messages />
+              </ProtectedRoute>
+            } />
+            <Route path="/calendar" element={
+              <ProtectedRoute>
+                <Calendar />
+              </ProtectedRoute>
+            } />
+            <Route path="/billing" element={
+              <ProtectedRoute>
+                <Billing />
+              </ProtectedRoute>
+            } />
             <Route path="/settings" element={
               <ProtectedRoute>
                 <Settings />
+              </ProtectedRoute>
+            } />
+            <Route path="/instructor/students" element={
+              <ProtectedRoute requiredRole="instructor">
+                <InstructorStudents />
               </ProtectedRoute>
             } />
             

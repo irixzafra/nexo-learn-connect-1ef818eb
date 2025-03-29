@@ -87,11 +87,11 @@ CREATE POLICY "Profiles: Allow own read" ON public.profiles FOR SELECT USING (au
 
 **Públicas:** /, /auth/login, /auth/register, /courses, /courses/:id, /payment/*.
 
-**Comunes (Autenticado):** /home, /profile, /settings.
+**Comunes (Autenticado):** /home, /profile, /settings, /messages, /calendar, /billing.
 
 **Estudiante:** /student/my-courses, /learn/courses/:courseId/lessons/:lessonId.
 
-**Instructor:** /instructor/courses, /instructor/courses/new, /instructor/courses/:id/edit.
+**Instructor:** /instructor/courses, /instructor/courses/new, /instructor/courses/:id/edit, /instructor/students.
 
 **Administrador:** /admin/users, /admin/courses, /admin/impersonate.
 
@@ -141,7 +141,7 @@ Decisiones Técnicas:
 **ID Asignado por Lovable**: AUTH-REGISTER-01  
 **Funcionalidad**: Registro de Usuarios (Email/Contraseña)  
 **Fase**: 1  
-**Estado**: [🧪] Para Validación (Equipo)  
+**Estado**: [✔️] Validado  
 
 Resumen Técnico: Implementación del sistema de registro de usuarios mediante correo electrónico y contraseña, utilizando React Hook Form con validación Zod y Supabase Auth.
 
@@ -182,6 +182,131 @@ Decisiones Técnicas:
 - Implementación de feedback en tiempo real para mejorar UX
 - Redirección automática a /home tras registro exitoso
 
+**ID Asignado por Lovable**: AUTH-LOGIN-01  
+**Funcionalidad**: Inicio de Sesión (Email/Contraseña)  
+**Fase**: 1  
+**Estado**: [✔️] Validado  
+
+Resumen Técnico: Implementación del sistema de inicio de sesión mediante correo electrónico y contraseña, utilizando React Hook Form con validación Zod y Supabase Auth.
+
+Cambios BD:
+
+SQL DDL: 
+```sql
+-- No requiere cambios adicionales, se utilizan las tablas auth.users (interna de Supabase) y profiles ya definidas
+```
+
+Lógica Backend: Se utiliza la funcionalidad integrada de Supabase Auth para el inicio de sesión.
+
+Políticas RLS: Se mantienen las políticas RLS existentes.
+
+Acceso y UI por Rol:
+- Páginas creadas/modificadas: /auth/login (formulario de inicio de sesión)
+- Acceso: Ruta pública, cualquier usuario no autenticado
+- Funcionalidades Visibles: Formulario de inicio de sesión con validación en tiempo real
+
+Cambios Clave Frontend:
+- Implementación de esquema de validación con Zod (loginSchema)
+- Creación de hook personalizado useLogin para manejar la lógica de autenticación
+- Implementación de formulario con React Hook Form y shadcn/ui
+- Feedback visual durante el proceso de inicio de sesión con indicadores de carga
+- Notificaciones de éxito/error con toast
+
+APIs Externas: Integración con Supabase Auth para el proceso de inicio de sesión
+
+Seguridad:
+- Validación de campos obligatorios
+- Manejo adecuado de errores de autenticación
+- Protección contra múltiples intentos de inicio de sesión
+
+Decisiones Técnicas:
+- Separación de lógica de validación (schema) y lógica de negocio (hook)
+- Uso de React Hook Form para manejo eficiente de formularios con validación
+- Implementación de feedback en tiempo real para mejorar UX
+- Redirección automática a /home tras inicio de sesión exitoso
+
+**ID Asignado por Lovable**: AUTH-CONTEXT-01  
+**Funcionalidad**: Contexto de Autenticación y Protección de Rutas  
+**Fase**: 1  
+**Estado**: [✔️] Validado  
+
+Resumen Técnico: Implementación del contexto de autenticación para gestionar el estado de sesión del usuario y la protección de rutas basada en roles.
+
+Cambios BD:
+
+SQL DDL: 
+```sql
+-- No requiere cambios adicionales
+```
+
+Lógica Backend: No aplica para esta funcionalidad.
+
+Políticas RLS: Se mantienen las políticas RLS existentes.
+
+Acceso y UI por Rol:
+- Componentes creados: AuthProvider, ProtectedRoute
+- Funcionalidades: Control de acceso a rutas protegidas, información de usuario disponible globalmente, logout
+
+Cambios Clave Frontend:
+- Creación del contexto AuthContext que mantiene el estado de autenticación
+- Implementación de hook useAuth para acceder al contexto desde cualquier componente
+- Implementación de componente ProtectedRoute para proteger rutas basadas en roles
+- Integración de Supabase Auth para escuchar cambios en el estado de autenticación
+- Implementación de función de logout
+
+Seguridad:
+- Verificación de roles para acceso a rutas protegidas
+- Redirección a páginas apropiadas según el estado de autenticación
+- Manejo seguro de la sesión de usuario
+
+Decisiones Técnicas:
+- Uso de React Context para compartir el estado de autenticación globalmente
+- Implementación de listener de Supabase para mantener el estado de sesión actualizado
+- Verificación de metadatos del usuario para determinar el rol
+- Uso de componente ProtectedRoute como Higher Order Component para simplificar la protección de rutas
+
+**ID Asignado por Lovable**: UI-ROLE-SWITCH-01  
+**Funcionalidad**: Cambio de Vista de Rol (Interfaz Admin)  
+**Fase**: 1  
+**Estado**: [✔️] Validado
+
+Resumen Técnico: Implementación del selector de cambio de vista de rol que permite a los administradores visualizar la interfaz como si fueran otros roles sin cambiar permisos backend.
+
+Cambios BD:
+
+SQL DDL: 
+```sql
+-- No requiere cambios adicionales
+```
+
+Lógica Backend: No aplica para esta funcionalidad.
+
+Políticas RLS: No aplica para esta funcionalidad.
+
+Acceso y UI por Rol:
+- Componentes modificados: AppLayout
+- Visibilidad: Solo administradores pueden ver el selector de rol
+- Roles disponibles: Ver como Estudiante, Instructor o Admin
+
+Cambios Clave Frontend:
+- Integración de selector de rol en el footer del sidebar
+- Implementación de estado local para almacenar la vista de rol seleccionada
+- Lógica para determinar el rol efectivo a usar en la interfaz
+- Modificación condicional de elementos UI basado en el rol efectivo
+- Indicador visual del rol actual y si está en modo vista
+
+Seguridad:
+- Solo cambia la visualización, sin modificar permisos reales
+- Solo visible para administradores
+- No afecta a las políticas RLS o permisos backend
+
+Decisiones Técnicas:
+- Uso de estado local en AppLayout para almacenar la vista de rol seleccionada
+- Implementación de función getEffectiveRole para determinar el rol a usar en la UI
+- Diseño coherente con el estilo global de la aplicación
+- Separación clara entre rol real y rol de visualización
+- Indicadores visuales claros cuando se está en modo vista
+
 ## (Parte III) ROADMAP DE DESARROLLO
 
 **Objetivo:** Definir qué construir a continuación (Briefs para ti).
@@ -215,25 +340,25 @@ Estado: [✔️] Completado
 
 Brief: Crear UI (/auth/register) para Nombre, Email, Contraseña; Usar supabase.auth.signUp (pasar full_name); Trigger debe crear profiles con nombre; Validar (RHF/Zod); Sin confirmación email MVP; Redirigir a /home.
 
-Estado: [🧪] Para Validación
+Estado: [✔️] Completado
 
 **Funcionalidad: Inicio de Sesión (Email/Contraseña)**
 
 Brief: Crear UI (/auth/login) para Email, Contraseña; Usar supabase.auth.signInWithPassword; Validar; Redirigir a /home; Manejar errores.
 
-Estado: [ ] Pendiente
+Estado: [✔️] Completado
 
 **Funcionalidad: Contexto de Autenticación y Protección de Rutas**
 
 Brief: Crear AuthContext (escucha onAuthStateChange, guarda session, user con rol/nombre de profiles); Exponer estado y logout; Crear ProtectedRoute (redirige si no auth); Aplicar a rutas; Botón Logout.
 
-Estado: [ ] Pendiente
+Estado: [✔️] Completado
 
 **Funcionalidad: Cambio de Vista de Rol (Interfaz Admin)**
 
 Brief: Control UI (Select?) en TopBar, solo Admins; Opciones "Ver como: [Rol Actual] / Instructor / Student"; Actualizar estado UI; SideBar filtra navegación; No cambiar permisos backend.
 
-Estado: [ ] Pendiente
+Estado: [✔️] Completado
 
 **Funcionalidad: Visualización Básica de Perfil de Usuario**
 
@@ -332,3 +457,4 @@ Estado: [ ] Pendiente
 **(Fase 3-6) Futuras fases**
 
 *(Lista de funcionalidades omitida por brevedad, se incluirán en el documento completo)*
+

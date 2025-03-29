@@ -1,9 +1,16 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { NexoLogo } from '@/components/ui/nexo-logo';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Sidebar,
   SidebarContent,
@@ -15,14 +22,27 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { Home, BookOpen, Users, Settings, LogOut } from 'lucide-react';
+import { 
+  BookOpen, 
+  Calendar, 
+  Home, 
+  LogOut, 
+  MessageSquare, 
+  Settings, 
+  User, 
+  Users, 
+  Wallet 
+} from 'lucide-react';
 
 interface AppLayoutProps {
   children: React.ReactNode;
 }
 
+type ViewAsRole = 'current' | 'student' | 'instructor' | 'admin';
+
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { logout, userRole } = useAuth();
+  const [viewAsRole, setViewAsRole] = useState<ViewAsRole>('current');
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -30,26 +50,48 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     navigate('/auth/login');
   };
 
+  // Esta función determina el rol que se usará para la UI
+  const getEffectiveRole = () => {
+    if (viewAsRole === 'current') return userRole;
+    return viewAsRole;
+  };
+
+  const effectiveRole = getEffectiveRole();
+
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen w-full">
         <Sidebar>
           <SidebarHeader className="border-b">
-            <div className="flex items-center p-2">
-              <NexoLogo className="w-6 h-6 mr-2" />
-              <span className="font-semibold text-lg">Nexo</span>
+            <div className="flex items-center p-4">
+              <NexoLogo className="w-9 h-9 mr-3 text-primary" />
+              <div className="flex flex-col">
+                <span className="font-semibold text-lg text-primary">Nexo</span>
+                <span className="text-xs text-muted-foreground">Learning Platform</span>
+              </div>
             </div>
           </SidebarHeader>
+          
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Inicio" asChild>
+                <SidebarMenuButton tooltip="Panel Principal" asChild>
                   <Link to="/home">
                     <Home className="mr-2" />
-                    <span>Inicio</span>
+                    <span>Panel Principal</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Perfil" asChild>
+                  <Link to="/profile">
+                    <User className="mr-2" />
+                    <span>Perfil</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Cursos" asChild>
                   <Link to="/courses">
@@ -59,7 +101,18 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               
-              {(userRole === 'admin' || userRole === 'instructor') && (
+              {effectiveRole === 'instructor' && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton tooltip="Estudiantes" asChild>
+                    <Link to="/instructor/students">
+                      <Users className="mr-2" />
+                      <span>Estudiantes</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+              
+              {(effectiveRole === 'admin' || effectiveRole === 'instructor') && (
                 <SidebarMenuItem>
                   <SidebarMenuButton tooltip="Usuarios" asChild>
                     <Link to="/users">
@@ -69,6 +122,33 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
+
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Mensajes" asChild>
+                  <Link to="/messages">
+                    <MessageSquare className="mr-2" />
+                    <span>Mensajes</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Calendario" asChild>
+                  <Link to="/calendar">
+                    <Calendar className="mr-2" />
+                    <span>Calendario</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Facturación" asChild>
+                  <Link to="/billing">
+                    <Wallet className="mr-2" />
+                    <span>Facturación</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Configuración" asChild>
@@ -80,15 +160,53 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
-          <SidebarFooter className="border-t">
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Cerrar Sesión" onClick={handleLogout}>
-                  <LogOut className="mr-2" />
-                  <span>Cerrar Sesión</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
+          
+          <SidebarFooter className="border-t flex flex-col gap-3 p-4">
+            {/* Role selector - solo visible para admin */}
+            {userRole === 'admin' && (
+              <div className="mb-2">
+                <Select 
+                  value={viewAsRole} 
+                  onValueChange={(value) => setViewAsRole(value as ViewAsRole)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Ver como" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="current">
+                      Ver como: {userRole && userRole.charAt(0).toUpperCase() + userRole.slice(1)}
+                    </SelectItem>
+                    <SelectItem value="student">Ver como: Estudiante</SelectItem>
+                    <SelectItem value="instructor">Ver como: Instructor</SelectItem>
+                    <SelectItem value="admin">Ver como: Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* User role badge */}
+            <div className="flex items-center space-x-2 py-2 px-3 rounded-md bg-secondary/50">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary">
+                {effectiveRole ? effectiveRole.charAt(0).toUpperCase() : 'U'}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm capitalize">
+                  {effectiveRole || 'Usuario'}
+                </span>
+                {viewAsRole !== 'current' && (
+                  <span className="text-[10px] text-muted-foreground">Modo vista</span>
+                )}
+              </div>
+              <Button 
+                variant="ghost"
+                size="icon"
+                className="ml-auto h-8 w-8"
+                onClick={handleLogout}
+                title="Cerrar Sesión"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </SidebarFooter>
         </Sidebar>
         
