@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Search, User } from 'lucide-react';
 import { UserRole } from '@/types/auth';
-import { UserRoleEditor } from '@/components/admin/UserRoleEditor';
+import UserRoleEditor from '@/components/admin/UserRoleEditor';
 
 interface UserResult {
   id: string;
@@ -49,7 +49,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
       if (emailError) throw emailError;
 
       // Búsqueda por nombre (coincidencia parcial)
-      const { data: users, error: usersError } = await supabase.auth.admin.listUsers();
+      const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers();
       
       if (usersError) throw usersError;
 
@@ -59,7 +59,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
       if (emailResults && emailResults.length > 0) {
         for (const profile of emailResults) {
           // Buscar el usuario correspondiente para obtener el email
-          const user = users?.users.find(u => u.id === profile.id);
+          const user = usersData?.users?.find(u => u.id === profile.id);
           if (user) {
             combinedResults.push({
               id: profile.id,
