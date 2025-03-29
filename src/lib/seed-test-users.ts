@@ -12,6 +12,13 @@ export type TestUser = {
 
 export async function createTestUser(user: TestUser) {
   try {
+    // Check if Supabase is properly configured
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      toast.error('Supabase no está configurado. Por favor conecta tu proyecto en la interfaz de Lovable.');
+      console.error('Supabase environment variables are missing');
+      return null;
+    }
+
     // 1. Registrar el usuario en la autenticación
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
       email: user.email,
@@ -57,6 +64,13 @@ export async function createTestUser(user: TestUser) {
 }
 
 export async function createAllTestUsers() {
+  // Check if Supabase is properly configured
+  if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+    toast.error('Supabase no está configurado. Por favor conecta tu proyecto en la interfaz de Lovable.');
+    console.error('Supabase environment variables are missing');
+    return [];
+  }
+
   const testUsers: TestUser[] = [
     {
       email: 'admin@nexo.com',

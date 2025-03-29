@@ -4,12 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import PublicLayout from '@/layouts/PublicLayout';
 import { createAllTestUsers, createTestUser, TestUser } from '@/lib/seed-test-users';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertTriangle } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const TestUsersPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [createdUsers, setCreatedUsers] = useState<any[]>([]);
+  
+  const isSupabaseConfigured = !!import.meta.env.VITE_SUPABASE_URL && !!import.meta.env.VITE_SUPABASE_ANON_KEY;
   
   const handleCreateUsers = async () => {
     setIsLoading(true);
@@ -32,6 +35,17 @@ const TestUsersPage: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {!isSupabaseConfigured && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Supabase no está configurado</AlertTitle>
+                <AlertDescription>
+                  Para crear usuarios de prueba, necesitas conectar tu proyecto de Supabase.
+                  Por favor, haz clic en el ícono de Supabase en el menú superior de Lovable y sigue las instrucciones.
+                </AlertDescription>
+              </Alert>
+            )}
+            
             <div className="mb-6">
               <p className="text-muted-foreground">
                 Esta herramienta creará los siguientes usuarios de prueba:
@@ -85,7 +99,7 @@ const TestUsersPage: React.FC = () => {
           <CardFooter className="flex justify-center">
             <Button 
               onClick={handleCreateUsers} 
-              disabled={isLoading}
+              disabled={isLoading || !isSupabaseConfigured}
               size="lg"
             >
               {isLoading ? (

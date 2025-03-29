@@ -2,16 +2,19 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../types/supabase';
 
-// Valores predeterminados para entorno de desarrollo
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://tu-url-de-supabase.supabase.co';
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'tu-clave-anonima-de-supabase';
+// We need proper environment variables for Supabase to work correctly
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-  console.error('Missing Supabase environment variables. Using placeholder values for development only.');
-  console.log('Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your Supabase project settings.');
+// Check for missing environment variables
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Error: Missing Supabase environment variables');
+  console.log('Please connect your Supabase project in the Lovable interface');
+  console.log('Click on the Supabase icon in the top menu and follow the instructions');
 }
 
+// Always create a client, but it will only work with proper credentials
 export const supabase = createClient<Database>(
-  supabaseUrl,
-  supabaseKey
+  supabaseUrl || 'https://placeholder-url.supabase.co',
+  supabaseKey || 'placeholder-key'
 );
