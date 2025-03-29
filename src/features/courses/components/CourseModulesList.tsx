@@ -4,7 +4,7 @@ import { Module, Lesson } from "@/types/course";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { FileText, Lock, PlayCircle } from "lucide-react";
+import { FileText, Lock, PlayCircle, Eye } from "lucide-react";
 
 interface CourseModulesListProps {
   modules: Module[];
@@ -72,7 +72,8 @@ export const CourseModulesList: React.FC<CourseModulesListProps> = ({
                         ) : (
                           lesson.is_previewable &&
                           !isEnrolled && (
-                            <Badge variant="outline" className="ml-2">
+                            <Badge variant="outline" className="ml-2 flex items-center gap-1 bg-primary/10 text-primary">
+                              <Eye className="h-3 w-3" />
                               Vista previa
                             </Badge>
                           )

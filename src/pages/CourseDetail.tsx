@@ -7,7 +7,7 @@ import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/AppLayout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, ChevronLeft } from 'lucide-react';
+import { Loader2, ChevronLeft, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCourseDetails } from '@/features/courses/hooks/useCourseDetails';
 import { useEnrollment } from '@/features/courses/hooks/useEnrollment';
@@ -108,6 +108,9 @@ const CourseDetail: React.FC = () => {
     );
   }
 
+  // Count the number of previewable lessons
+  const previewableLessonsCount = lessons?.filter(lesson => lesson.is_previewable).length || 0;
+
   return (
     <AppLayout>
       <div className="container mx-auto p-6">
@@ -121,6 +124,14 @@ const CourseDetail: React.FC = () => {
             />
 
             <CourseDescription description={course.description || ''} />
+
+            {previewableLessonsCount > 0 && !isEnrolled && (
+              <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+                <h3 className="text-lg font-medium mb-2">Prueba este curso</h3>
+                <p className="mb-2">Este curso tiene {previewableLessonsCount} {previewableLessonsCount === 1 ? 'lección' : 'lecciones'} de vista previa que puedes explorar antes de inscribirte.</p>
+                <p className="text-sm text-muted-foreground">Busca el icono <span className="inline-flex items-center ml-1"><Eye className="h-3 w-3 mr-1" /> Vista previa</span> en las lecciones que puedes acceder.</p>
+              </div>
+            )}
 
             <CourseModulesList 
               modules={modulesWithLessons} 

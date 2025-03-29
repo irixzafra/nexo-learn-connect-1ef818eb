@@ -18,7 +18,8 @@ import {
   Loader2, 
   Lock, 
   PlayCircle,
-  ChevronRight
+  ChevronRight,
+  Eye
 } from "lucide-react";
 import { LessonProgressControls } from "@/features/lessons/components/LessonProgressControls";
 import { LessonComments } from "@/features/lessons/components/LessonComments";
@@ -238,7 +239,8 @@ const LessonView: React.FC = () => {
           
           {!isEnrolled && lesson.is_previewable && (
             <div className="mt-2">
-              <Badge variant="outline" className="bg-primary/10 text-primary">
+              <Badge variant="outline" className="bg-primary/10 text-primary flex items-center w-fit">
+                <Eye className="h-3 w-3 mr-1" />
                 Vista previa
               </Badge>
               <p className="text-sm text-muted-foreground mt-1">

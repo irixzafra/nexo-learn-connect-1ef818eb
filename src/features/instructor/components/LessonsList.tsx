@@ -170,7 +170,15 @@ export const LessonsList: React.FC<LessonsListProps> = ({
                     </Button>
                   </div>
                 ) : (
-                  <span className="text-sm">{lesson.title}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">{lesson.title}</span>
+                    {lesson.is_previewable && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+                        <Eye className="h-3 w-3 mr-1" />
+                        Preview
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
               <div className="flex items-center gap-1">

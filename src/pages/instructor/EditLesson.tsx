@@ -16,14 +16,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Eye, EyeOff } from 'lucide-react';
 import AppLayout from '@/layouts/AppLayout';
 import { toast } from 'sonner';
 import { Lesson } from '@/types/course';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
-
-// Esta es una implementación básica. Para una edición más rica, se debería integrar
-// Tiptap o algún otro editor WYSIWYG como se menciona en el documento.
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 const EditLesson: React.FC = () => {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
@@ -34,6 +33,7 @@ const EditLesson: React.FC = () => {
   const [textContent, setTextContent] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [showVideoPreview, setShowVideoPreview] = useState(false);
+  const [isPreviewable, setIsPreviewable] = useState(false);
 
   // Fetch lesson details
   const { data: lesson, isLoading: isLoadingLesson } = useQuery({
@@ -61,6 +61,7 @@ const EditLesson: React.FC = () => {
       setContentType(lesson.content_type);
       setTextContent(lesson.content_text?.content || '');
       setVideoUrl(lesson.content_video_url || '');
+      setIsPreviewable(lesson.is_previewable);
     }
   }, [lesson]);
 
@@ -69,6 +70,7 @@ const EditLesson: React.FC = () => {
     mutationFn: async () => {
       const updates: any = {
         content_type: contentType,
+        is_previewable: isPreviewable
       };
 
       if (contentType === 'text') {
@@ -96,6 +98,8 @@ const EditLesson: React.FC = () => {
     onSuccess: () => {
       toast.success('Contenido de la lección actualizado correctamente');
       queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
+      queryClient.invalidateQueries({ queryKey: ['courseLessons', courseId] });
+      queryClient.invalidateQueries({ queryKey: ['moduleModules', moduleId] });
     },
     onError: (error) => {
       console.error('Error al actualizar el contenido de la lección:', error);
@@ -105,6 +109,10 @@ const EditLesson: React.FC = () => {
 
   const handleContentTypeChange = (value: string) => {
     setContentType(value as 'text' | 'video');
+  };
+
+  const handleTogglePreviewable = () => {
+    setIsPreviewable(!isPreviewable);
   };
 
   const handleSave = async () => {
@@ -204,20 +212,40 @@ const EditLesson: React.FC = () => {
             <CardTitle>Contenido de la Lección</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-1">Tipo de Contenido</label>
-              <Select 
-                value={contentType} 
-                onValueChange={handleContentTypeChange}
-              >
-                <SelectTrigger className="w-full sm:w-[200px]">
-                  <SelectValue placeholder="Seleccionar tipo de contenido" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="text">Texto</SelectItem>
-                  <SelectItem value="video">Video</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="block text-sm font-medium mb-1">Tipo de Contenido</label>
+                <Select 
+                  value={contentType} 
+                  onValueChange={handleContentTypeChange}
+                >
+                  <SelectTrigger className="w-full sm:w-[200px]">
+                    <SelectValue placeholder="Seleccionar tipo de contenido" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="text">Texto</SelectItem>
+                    <SelectItem value="video">Video</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="preview-mode" 
+                  checked={isPreviewable}
+                  onCheckedChange={handleTogglePreviewable}
+                />
+                <Label htmlFor="preview-mode" className="flex items-center cursor-pointer">
+                  {isPreviewable ? (
+                    <Eye className="h-4 w-4 text-primary mr-1" />
+                  ) : (
+                    <EyeOff className="h-4 w-4 mr-1" />
+                  )}
+                  <span className="ml-1">
+                    {isPreviewable ? 'Vista previa habilitada' : 'Vista previa deshabilitada'}
+                  </span>
+                </Label>
+              </div>
             </div>
 
             <Separator />
