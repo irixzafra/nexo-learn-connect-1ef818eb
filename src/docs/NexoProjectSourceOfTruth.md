@@ -318,3 +318,141 @@ El proyecto utiliza Row Level Security (RLS) de PostgreSQL para controlar el acc
 5. Soporte para contenido interactivo en lecciones
 6. Funcionalidades de gamificación
 7. Sistema de mensajería directa entre usuarios
+
+## Parte III: Roadmap Funcional (Briefs para Lovable.dev)
+
+**Objetivo:** Definir **qué construir** a continuación, mediante *Briefs* de alto nivel. Implementa en orden. Asigna ID único y documenta en Parte II al finalizar.
+
+---
+
+**Sección: Resumen de Fases del Roadmap**
+
+-   **(Fase 1) Fundación (MVP):** Completada.
+-   **(Fase 2) Enriquecimiento LMS e Interacción Inicial - ACTUAL:** Mejorar aprendizaje (Progreso, Comentarios), Gestión (Edición Perfil), Dashboards básicos, Notificaciones.
+-   **(Fase 3) Gestión (ERP-Lite), Interactividad y Mejoras Instructor:** Reportes, LMS Interactivo (Quizzes, Tareas), Categorías.
+-   **(Fase 4) Comunidad y Networking (Base):** Perfiles Ampliados, Feed, Conexiones/Seguimiento, Mensajería.
+-   **(Fase 5) Funcionalidades Avanzadas e IA:** Grupos, Empleo, Certificados, Rutas, IA, Realtime.
+-   **(Fase 6+) Escala, Optimización y SAAS:** Rendimiento, API, Integraciones, Tematización.
+
+---
+
+**Sección: Funcionalidades Planificadas por Fase**
+
+---
+**Fase: Fundación (MVP) - COMPLETADA**
+---
+*(Lista de funcionalidades completadas - Solo títulos y estado)*
+- Funcionalidad: Configuración Inicial del Proyecto y Layouts Base - Estado: [x]
+- Funcionalidad: Registro de Usuarios (Email/Contraseña) - Estado: [x]
+- Funcionalidad: Inicio de Sesión (Email/Contraseña) - Estado: [x]
+- Funcionalidad: Contexto de Autenticación y Protección de Rutas - Estado: [x]
+- Funcionalidad: Cambio de Vista de Rol (Interfaz Admin) - Estado: [x] (`CORE-UI-ROLES-01` incluye esto)
+- Funcionalidad: Visualización Básica de Perfil de Usuario - Estado: [x]
+- Funcionalidad: Landing Page Moderna y Atractiva - Estado: [x]
+- Funcionalidad: Creación de Cursos (Metadatos y SEO) - Estado: [x]
+- Funcionalidad: Edición de Estructura del Curso (Módulos y Lecciones) - Estado: [x]
+- Funcionalidad: Edición de Contenido de Lección (Texto/Video) - Estado: [x]
+- Funcionalidad: Publicar / Despublicar Curso - Estado: [x]
+- Funcionalidad: Catálogo Público de Cursos - Estado: [x]
+- Funcionalidad: Página de Detalle del Curso - Estado: [x]
+- Funcionalidad: Acceso Estudiante (Mis Cursos y Vista de Lección) - Estado: [x]
+- Funcionalidad: Integración de Pago Stripe (Frontend) - Estado: [x]
+- Funcionalidad: Procesamiento de Pago Stripe (Backend - Webhook) - Estado: [x]
+- Funcionalidad: Vista de Administración de Usuarios (Básica) - Estado: [x] (Incluye cambio de rol)
+- Funcionalidad: Vista de Administración de Cursos (Básica) - Estado: [x] (Incluye D&D)
+- Funcionalidad: Impersonación de Usuarios (Admin) - Estado: [x] (`CORE-UI-ROLES-01` puede cubrir parte)
+- Funcionalidad: Datos de Prueba Iniciales (Seed) - Estado: [x]
+- Funcionalidad: Página de Acceso No Autorizado - Estado: [x]
+- Funcionalidad: Notificaciones en UI (Toast) - Estado: [x]
+- Funcionalidad General: Ordenamiento Drag & Drop en Vistas de Gestión - Estado: [x]
+
+---
+**Fase: Enriquecimiento LMS e Interacción Inicial - ACTUAL**
+---
+- **Funcionalidad:** **Seguimiento de Progreso en Cursos**
+  - **Objetivo:** Permitir rastrear avance en cursos.
+  - **Acciones Clave:** Estudiante marca/desmarca lección completada; Ver indicador progreso.
+  - **Flujo Principal:** Estudiante en lección -> Clic "Completado" -> Estado guardado BD (`lesson_progress`) -> UI actualizada (checkbox, icono, barra progreso).
+  - **Interacciones:** CRUD `lesson_progress`; Lectura estado; UI (`Checkbox`, `Progress`).
+  - **Pistas UI/UX:** Control claro; Progreso visible.
+  - **Estado:** [🧪] *(Pendiente de nuestra validación)*
+
+- **Funcionalidad:** **Comentarios en Lecciones**
+  - **Objetivo:** Fomentar discusión sobre contenido.
+  - **Acciones Clave:** Ver/Escribir comentario/respuesta; (Usuario) Borrar propio; (Instructor/Admin) Borrar cualquiera.
+  - **Flujo Principal:** Usuario ve sección -> Lee / Escribe -> Envía -> Comentario/respuesta aparece anidado. Admin/Instructor ve opción borrar.
+  - **Interacciones:** CRUD `comments` tabla; Lectura `profiles`.
+  - **Pistas UI/UX:** Sección/Formulario claros; Anidación visual; Indicación moderación.
+  - **Estado:** [🧪] *(Pendiente de nuestra validación)*
+
+- **Funcionalidad:** **Edición Básica de Perfil**
+  - **Objetivo:** Permitir actualizar nombre.
+  - **Acciones Clave:** Ir a `/profile`; Editar Nombre Completo; Guardar.
+  - **Flujo Principal:** Edita -> Guarda -> Actualiza `profiles.full_name` -> Feedback Toast.
+  - **Interacciones:** Update `profiles`; React Query `useMutation`.
+  - **Pistas UI/UX:** Campo editable claro; Botón guardar.
+  - **Estado:** `[ ] Pendiente` <- **PRÓXIMA TAREA**
+
+- **Funcionalidad:** **Panel de Control Instructor (Dashboard)**
+  - **Objetivo:** Vista rápida para instructor (cursos/estudiantes).
+  - **Acciones Clave:** Navegar a `/instructor/dashboard`; Ver stats.
+  - **Flujo Principal:** Accede -> Carga datos agregados (inscritos, etc.) -> Muestra en `Card`s.
+  - **Interacciones:** Lectura agregada `courses`, `enrollments`.
+  - **Pistas UI/UX:** `Card`s `shadcn/ui`; Info relevante.
+  - **Estado:** `[ ] Pendiente`
+
+- **Funcionalidad:** **Calificaciones y Retroalimentación (v1 - Tareas)**
+  - **Objetivo:** Permitir a instructores evaluar tareas.
+  - **Acciones Clave:** Instructor ve entrega; Asigna nota; Escribe feedback; Guarda. Estudiante ve resultado.
+  - **Flujo Principal:** Instructor navega a entregas -> Califica -> Guarda (ej: en `assignment_submissions`). Estudiante ve nota/feedback.
+  - **Interacciones:** Update `assignment_submissions` (tabla de Fase 3); Lectura estudiante.
+  - **Pistas UI/UX:** UI calificación clara; Vista estudiante clara. *(Depende de Tareas)*
+  - **Estado:** `[ ] Pendiente`
+
+- **Funcionalidad:** **Previsualización de Lecciones**
+  - **Objetivo:** Permitir ver lecciones seleccionadas sin inscripción.
+  - **Acciones Clave:** (Instructor) Marcar `is_previewable`; (Usuario) Ver contenido previewable en detalle curso.
+  - **Flujo Principal:** Instructor marca -> Usuario (no inscrito) visita detalle -> Ve contenido marcado.
+  - **Interacciones:** Update `lessons.is_previewable`; Ajustar RLS/query lectura `lessons`.
+  * **Pistas UI/UX:** Control claro instructor; Indicación visual detalle curso.
+  * **Estado:** `[ ] Pendiente`
+
+- **Funcionalidad:** **Admin - Edición de Rol de Usuario** *(Puede estar parcialmente cubierto por CORE-UI-ROLES-01, verificar)*
+  - **Objetivo:** Permitir a Admins gestionar roles.
+  - **Acciones Clave:** Ir a `/admin/users`; Editar usuario; Cambiar `role` (`Select`); Guardar.
+  * **Flujo Principal:** Admin edita -> Cambia rol -> Guarda -> Actualiza `profiles.role`.
+  * **Interacciones:** Update `profiles`; RLS admin update.
+  * **Pistas UI/UX:** Modal/Form edición; `Select` roles.
+  * **Estado:** `[ ] Pendiente`
+
+- **Funcionalidad:** **Admin - Publicar/Despublicar Curso desde Tabla** *(Puede estar parcialmente cubierto por Vista Admin Cursos, verificar)*
+  - **Objetivo:** Agilizar gestión publicación por Admin.
+  - **Acciones Clave:** Ir a `/admin/courses`; Usar `Switch` en tabla para cambiar `is_published`.
+  * **Flujo Principal:** Admin cambia switch -> Actualiza `courses.is_published`.
+  * **Interacciones:** Update `courses`.
+  * **Pistas UI/UX:** `Switch` integrado en tabla.
+  * **Estado:** `[ ] Pendiente`
+
+- **Funcionalidad:** **Autenticación Social (OAuth)**
+  - **Objetivo:** Ofrecer alternativas login/registro.
+  - **Acciones Clave:** Usar botones "Continuar con Google/GitHub" en auth.
+  * **Flujo Principal:** Clic -> Flujo OAuth Supabase -> Login/Registro -> Redirigido a `/home`.
+  * **Interacciones:** `signInWithOAuth`; Configuración proveedores Supabase.
+  * **Pistas UI/UX:** Botones claros formularios Auth.
+  * **Estado:** `[ ] Pendiente`
+
+- **Funcionalidad:** **Internacionalización (i18n - Base)**
+  - **Objetivo:** Preparar app para multi-idioma.
+  - **Acciones Clave:** Configurar `i18next`; Crear archivos EN/ES; Crear `LanguageSwitcher` UI.
+  - **Flujo Principal:** App carga idioma -> Usuario cambia -> UI actualiza.
+  - **Interacciones:** `i18next`.
+  - **Pistas UI/UX:** `LanguageSwitcher` simple. *(Prioridad más baja en Fase 2)*.
+  - **Estado:** `[ ] Pendiente`
+
+---
+**(Fases 3, 4, 5, 6+ - Placeholder - Títulos de funcionalidades futuras)**
+---
+- Fase Gestión (ERP-Lite), Interactividad y Mejoras Instructor: Dashboard Admin, Gestión Billing, Quizzes v1, Tareas v1, Calificaciones v1 (consolidar), Categorías, Reportes Financieros v1.
+- Fase Comunidad y Networking (Base): Perfiles Ampliados/Públicos, Feed Actividad v1, Conexiones, Seguimiento, Mensajería v1, Notificaciones v1.
+- Fase Funcionalidades Avanzadas e IA: Posts Usuarios, Interacción Feed, Grupos, Empleo, Certificados, Rutas Aprendizaje, Realtime, Búsqueda Global, Gamificación, IA (Asistencia Curso, Corrección Tareas, Recomendaciones, Sugerencias Eventos).
+- Fase Escala, Optimización y SAAS: Suscripciones, Cupones, Móvil (PWA/Nativa), API Pública, LTI, SSO, Optimización BD/FE, Accesibilidad, Tematización SAAS.
