@@ -25,6 +25,7 @@ const CourseDetail = lazy(() => import('@/pages/CourseDetail'));
 const CourseLanding = lazy(() => import('@/pages/CourseLanding'));
 const CourseLearn = lazy(() => import('@/pages/student/CourseLearn'));
 const LessonView = lazy(() => import('@/pages/student/LessonView'));
+const Notifications = lazy(() => import('@/pages/Notifications'));
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -61,6 +62,17 @@ const AppRouter: React.FC = () => {
             <Suspense fallback={<LoadingFallback />}>
               <LessonView />
             </Suspense>
+          </ProtectedRoute>
+        } />
+        
+        {/* Página de notificaciones */}
+        <Route path="/notifications" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Suspense fallback={<LoadingFallback />}>
+                <Notifications />
+              </Suspense>
+            </AppLayout>
           </ProtectedRoute>
         } />
         

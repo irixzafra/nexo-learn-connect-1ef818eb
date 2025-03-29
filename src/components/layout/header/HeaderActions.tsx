@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { RoleIndicator } from './RoleIndicator';
 import { ConnectionStatus } from '@/components/ConnectionStatus';
 import { useAuth } from '@/contexts/AuthContext';
+import { NotificationIndicator } from '@/components/notifications/NotificationIndicator';
 
 export const HeaderActions: React.FC = () => {
   const navigate = useNavigate();
@@ -13,6 +14,9 @@ export const HeaderActions: React.FC = () => {
 
   return (
     <div className="ml-auto flex items-center space-x-4">
+      {/* Notification indicator */}
+      <NotificationIndicator />
+      
       <ConnectionStatus />
       <Separator orientation="vertical" className="h-6" />
       <RoleIndicator viewingAs={userRole} />
