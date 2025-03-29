@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { NexoLogo } from './nexo-logo';
+import { NexoLogo } from './logo';
 import { Atom, BookOpen, Rocket, Lightbulb, Code, Sparkles, PenTool, Palette } from 'lucide-react';
 
 interface AnimatedNexoLogoProps {
