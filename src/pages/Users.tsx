@@ -24,6 +24,7 @@ import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import AppLayout from "@/layouts/AppLayout";
+import EditModeToggle from "@/components/admin/EditModeToggle";
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -221,6 +222,9 @@ const Users: React.FC = () => {
     <AppLayout>
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">Usuarios</h1>
+        
+        {/* Edit Mode Toggle */}
+        <EditModeToggle />
 
         <Card>
           <CardHeader>
