@@ -73,11 +73,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         />
         
         <div className="flex-1 min-w-0 overflow-auto transition-all duration-300">
-          <header className="sticky top-0 z-30">
+          <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b">
             <HeaderContent userRole={userRole} viewingAs={viewAsRole !== 'current' ? viewAsRole : null} />
           </header>
           
-          <main className="container mx-auto py-6">
+          <main className="container mx-auto px-4 py-6">
             {children}
           </main>
         </div>

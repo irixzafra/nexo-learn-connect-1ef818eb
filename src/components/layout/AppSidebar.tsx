@@ -31,8 +31,8 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ viewAsRole, onRoleChange }) => 
   
   return (
     <Sidebar className="border-r bg-sidebar">
-      <SidebarHeader className="flex items-center justify-between border-b px-6 py-3">
-        <NexoLogo className="h-9 w-auto" />
+      <SidebarHeader className="flex items-center justify-between border-b px-4 py-3">
+        <NexoLogo className="h-8 w-auto" />
         <div className="md:hidden">
           <SidebarTrigger />
         </div>
@@ -42,7 +42,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ viewAsRole, onRoleChange }) => 
         <SidebarNavigation viewAsRole={viewAsRole} />
       </SidebarContent>
       
-      <SidebarFooter className="border-t p-4">
+      <SidebarFooter className="border-t p-3">
         <SidebarFooterContent 
           viewAsRole={viewAsRole} 
           onRoleChange={onRoleChange} 

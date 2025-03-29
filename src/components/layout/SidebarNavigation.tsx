@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import { 
@@ -16,12 +16,12 @@ interface SidebarNavigationProps {
   viewAsRole?: string;
 }
 
-export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => {
+const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => {
   const { userRole } = useAuth();
   
-  // Determine the effective role for navigation
+  // Determine the effective role
   const effectiveRole = viewAsRole && viewAsRole !== 'current' ? viewAsRole as UserRole : userRole;
-
+  
   // Retrieve previous state from localStorage or use defaults
   const getSavedState = () => {
     try {
@@ -50,7 +50,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole
   const [openGroups, setOpenGroups] = React.useState(getSavedState());
 
   // Save state to localStorage when it changes
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('sidebarGroups', JSON.stringify(openGroups));
   }, [openGroups]);
 
