@@ -17,9 +17,10 @@ type Course = {
   currency: 'eur' | 'usd';
   instructor_id: string;
   created_at: string;
-  instructor: {
-    full_name: string;
-  };
+  featured_instructor: string;
+  cover_image_url?: string;
+  level?: string;
+  duration_text?: string;
 };
 
 const CoursesCatalog: React.FC = () => {
@@ -36,10 +37,7 @@ const CoursesCatalog: React.FC = () => {
     try {
       const { data, error } = await supabase
         .from('courses')
-        .select(`
-          *,
-          instructor:profiles(full_name)
-        `)
+        .select('*')
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
@@ -116,19 +114,29 @@ const CoursesCatalog: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="line-clamp-2">{course.title}</CardTitle>
                   <CardDescription>
-                    Por {course.instructor?.full_name || 'Instructor'}
+                    Por {course.featured_instructor || 'Instructor'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
                   <p className="text-muted-foreground line-clamp-3 mb-4">
                     {course.description || 'Sin descripción disponible'}
                   </p>
-                  <div className="mt-2">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     <Badge variant="outline" className="text-base font-semibold">
                       {course.price > 0 
                         ? formatCurrency(course.price, course.currency) 
                         : 'Gratis'}
                     </Badge>
+                    {course.level && (
+                      <Badge variant="secondary" className="text-xs">
+                        {course.level}
+                      </Badge>
+                    )}
+                    {course.duration_text && (
+                      <Badge variant="secondary" className="text-xs">
+                        {course.duration_text}
+                      </Badge>
+                    )}
                   </div>
                 </CardContent>
                 <CardFooter>
