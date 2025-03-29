@@ -15,6 +15,11 @@ import NotFound from "./pages/NotFound";
 import Unauthorized from "./pages/Unauthorized";
 import CreateCourse from "./pages/instructor/CreateCourse";
 import CoursesList from "./pages/instructor/CoursesList";
+import EditCourseDetails from "./pages/instructor/EditCourseDetails";
+import EditCourseStructure from "./pages/instructor/EditCourseStructure";
+import EditLesson from "./pages/instructor/EditLesson";
+import CoursesCatalog from "./pages/CoursesCatalog";
+import CourseDetail from "./pages/CourseDetail";
 
 // Placeholder pages
 const Courses = () => (
@@ -66,9 +71,30 @@ const InstructorStudents = () => (
   </div>
 );
 
-const EditCourse = () => (
+const StudentCourses = () => (
   <div className="container mx-auto p-6">
-    <h1 className="text-3xl font-bold mb-6">Editar Curso</h1>
+    <h1 className="text-3xl font-bold mb-6">Mis Cursos</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
+const CourseLearn = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Aprendizaje</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
+const LessonView = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Lección</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
+const Checkout = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Checkout</h1>
     <p>Página en desarrollo</p>
   </div>
 );
@@ -93,6 +119,8 @@ const App = () => (
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="/courses" element={<CoursesCatalog />} />
+            <Route path="/courses/:id" element={<CourseDetail />} />
             
             {/* Rutas Protegidas */}
             <Route path="/home" element={
@@ -105,14 +133,24 @@ const App = () => (
                 <Profile />
               </ProtectedRoute>
             } />
-            <Route path="/courses" element={
+            <Route path="/my-courses" element={
               <ProtectedRoute>
-                <Courses />
+                <StudentCourses />
               </ProtectedRoute>
             } />
-            <Route path="/users" element={
-              <ProtectedRoute requiredRole="instructor">
-                <Users />
+            <Route path="/courses/:courseId/learn" element={
+              <ProtectedRoute>
+                <CourseLearn />
+              </ProtectedRoute>
+            } />
+            <Route path="/courses/:courseId/learn/:lessonId" element={
+              <ProtectedRoute>
+                <LessonView />
+              </ProtectedRoute>
+            } />
+            <Route path="/checkout/:courseId" element={
+              <ProtectedRoute>
+                <Checkout />
               </ProtectedRoute>
             } />
             <Route path="/messages" element={
@@ -154,7 +192,17 @@ const App = () => (
             } />
             <Route path="/instructor/courses/:id/edit" element={
               <ProtectedRoute requiredRole="instructor">
-                <EditCourse />
+                <EditCourseDetails />
+              </ProtectedRoute>
+            } />
+            <Route path="/instructor/courses/:id/structure" element={
+              <ProtectedRoute requiredRole="instructor">
+                <EditCourseStructure />
+              </ProtectedRoute>
+            } />
+            <Route path="/instructor/courses/:courseId/lessons/:lessonId/edit" element={
+              <ProtectedRoute requiredRole="instructor">
+                <EditLesson />
               </ProtectedRoute>
             } />
             
