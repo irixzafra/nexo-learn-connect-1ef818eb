@@ -18,6 +18,7 @@ interface AppLayoutProps {
 const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
   const isMobile = useIsMobile();
   const [isOnline, setIsOnline] = useState(connectionService.isCurrentlyOnline());
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
 
   useEffect(() => {
     const unsubscribe = connectionService.addListener(online => {
@@ -26,6 +27,16 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     
     return unsubscribe;
   }, []);
+
+  // Simular la detección de transición entre páginas
+  useEffect(() => {
+    setIsPageTransitioning(true);
+    const timer = setTimeout(() => {
+      setIsPageTransitioning(false);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [children]);
 
   return (
     <EditModeProvider>
@@ -37,6 +48,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
             <div
               className={cn(
                 "flex-1 transition-all duration-200 ease-in-out",
+                isPageTransitioning ? "opacity-70" : "opacity-100",
                 className
               )}
             >
