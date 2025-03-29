@@ -18,11 +18,12 @@ export const useCoursesCatalog = () => {
     try {
       console.log("Fetching courses...");
       
+      // Modificamos la consulta para evitar el problema de la relación entre courses y profiles
       const { data, error: supabaseError } = await supabase
         .from('courses')
         .select(`
           *,
-          instructor:profiles(id, full_name)
+          instructor_id
         `)
         .eq('is_published', true)
         .order('created_at', { ascending: false });
@@ -34,25 +35,39 @@ export const useCoursesCatalog = () => {
       
       console.log("Cursos obtenidos:", data);
       
+      // Ahora obtenemos los datos de los instructores por separado
+      const instructorIds = data?.map(course => course.instructor_id) || [];
+      let instructors = {};
+      
+      if (instructorIds.length > 0) {
+        const { data: instructorsData, error: instructorsError } = await supabase
+          .from('profiles')
+          .select('id, full_name')
+          .in('id', instructorIds);
+          
+        if (instructorsError) {
+          console.error("Error al obtener datos de instructores:", instructorsError);
+        } else {
+          // Crear un mapa para acceso rápido a los datos de los instructores
+          instructors = instructorsData?.reduce((acc, instructor) => {
+            acc[instructor.id] = instructor;
+            return acc;
+          }, {}) || {};
+        }
+      }
+      
       // Transform the data to ensure it matches the Course type
       const typedCourses: Course[] = data?.map((course: any) => {
-        // Extract instructor from the joined data
-        let instructor = undefined;
-        if (course.instructor) {
-          // Handle the case where instructor might be an array with a single object
-          if (Array.isArray(course.instructor) && course.instructor.length > 0) {
-            instructor = {
-              id: course.instructor[0].id,
-              full_name: course.instructor[0].full_name
-            };
-          } else if (typeof course.instructor === 'object') {
-            instructor = course.instructor;
-          }
-        }
+        // Add instructor information from our separate fetch
+        let instructor = instructors[course.instructor_id] ? {
+          id: instructors[course.instructor_id].id,
+          full_name: instructors[course.instructor_id].full_name
+        } : undefined;
 
         return {
           ...course,
           instructor,
+          // Ensure currency is correctly typed
           currency: (course.currency === 'eur' || course.currency === 'usd') 
             ? course.currency 
             : 'eur' // Default to 'eur' if not a valid value

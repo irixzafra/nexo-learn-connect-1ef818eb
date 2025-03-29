@@ -26,12 +26,21 @@ interface GroupedNavigationProps {
 }
 
 const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => {
-  const [openGroups, setOpenGroups] = React.useState({
+  // Retrieve previous state from localStorage or use defaults
+  const savedState = localStorage.getItem('sidebarGroups');
+  const initialState = savedState ? JSON.parse(savedState) : {
     aprendizaje: true,
     comunidad: false,
     gestion: true,
     cuenta: false
-  });
+  };
+
+  const [openGroups, setOpenGroups] = React.useState(initialState);
+
+  // Save state to localStorage when it changes
+  React.useEffect(() => {
+    localStorage.setItem('sidebarGroups', JSON.stringify(openGroups));
+  }, [openGroups]);
 
   const toggleGroup = (group: keyof typeof openGroups) => {
     setOpenGroups(prev => ({
