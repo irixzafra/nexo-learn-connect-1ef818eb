@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -140,7 +141,7 @@ const CoursesCatalog: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="line-clamp-2">{course.title}</CardTitle>
                     <CardDescription>
-                      Por {course.featured_instructor || 'Instructor'}
+                      Por {course.instructor?.full_name || 'Instructor'}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow">
