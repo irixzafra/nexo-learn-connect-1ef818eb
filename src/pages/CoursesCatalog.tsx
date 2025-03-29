@@ -36,6 +36,7 @@ const CoursesCatalog: React.FC = () => {
   const fetchCourses = async () => {
     setIsLoading(true);
     try {
+      console.log("Fetching courses...");
       const { data, error } = await supabase
         .from('courses')
         .select('*')
@@ -43,6 +44,7 @@ const CoursesCatalog: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
       
