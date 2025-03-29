@@ -1,41 +1,29 @@
 
 import React from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import LandingPage from '@/pages/LandingPage';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import AboutUs from '@/pages/AboutUs';
+import NotFound from '@/pages/NotFound';
+import Scholarships from '@/pages/Scholarships';
+import Unauthorized from '@/pages/Unauthorized';
+import Index from '@/pages/Index';
+import PaymentSuccess from '@/pages/payment/PaymentSuccess';
+import PaymentCancel from '@/pages/payment/PaymentCancel';
 
-// Landing and public pages
-import LandingPage from "@/pages/LandingPage";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import NotFound from "@/pages/NotFound";
-import Unauthorized from "@/pages/Unauthorized";
-import CoursesCatalog from "@/pages/CoursesCatalog";
-import CourseDetail from "@/pages/CourseDetail";
-import AboutUs from "@/pages/AboutUs";
-import Scholarships from "@/pages/Scholarships";
-
-const PublicRoutes = () => {
+const PublicRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Main landing page */}
-      <Route path="/" element={<LandingPage />} />
-      
-      {/* Authentication */}
+      <Route path="/" element={<Index />} />
+      <Route path="/landing" element={<LandingPage />} />
       <Route path="/auth/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
-      <Route path="/unauthorized" element={<Unauthorized />} />
-      
-      {/* Course discovery */}
-      <Route path="/courses" element={<CoursesCatalog />} />
-      <Route path="/courses/:id" element={<CourseDetail />} />
-      
-      {/* Informational pages */}
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/scholarships" element={<Scholarships />} />
-      
-      {/* Redirect from index to root */}
-      <Route path="/index" element={<Navigate to="/" replace />} />
-      
-      {/* Catch-all route */}
+      <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="/payment/success" element={<PaymentSuccess />} />
+      <Route path="/payment/cancel" element={<PaymentCancel />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

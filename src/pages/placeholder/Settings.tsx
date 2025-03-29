@@ -1,25 +1,57 @@
-
-import React from "react";
+import React, { useState } from "react";
 import AppLayout from "@/layouts/AppLayout";
 import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import { 
   BellRing, 
   Globe, 
   LockKeyhole, 
   Monitor, 
   Shield, 
-  UserCog 
+  UserCog,
+  Save,
+  Moon,
+  Sun,
+  Zap,
+  Mail,
+  Phone,
+  Bell,
+  Info,
+  Users
 } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 
 const Settings: React.FC = () => {
   const { userRole } = useAuth();
   const isAdmin = userRole === 'admin';
+
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [language, setLanguage] = useState('en');
+
+  const handleThemeChange = (newTheme: 'light' | 'dark') => {
+    setTheme(newTheme);
+    toast.success(`Tema cambiado a ${newTheme === 'dark' ? 'oscuro' : 'claro'}`);
+  };
+
+  const handleNotificationsChange = (enabled: boolean) => {
+    setNotificationsEnabled(enabled);
+    toast.info(`Notificaciones ${enabled ? 'activadas' : 'desactivadas'}`);
+  };
+
+  const handleLanguageChange = (newLanguage: string) => {
+    setLanguage(newLanguage);
+    toast.message(`Idioma cambiado a ${newLanguage}`);
+  };
 
   return (
     <AppLayout>
@@ -73,12 +105,26 @@ const Settings: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
-                          <Label htmlFor="theme">Tema Oscuro</Label>
+                          <Label htmlFor="theme">Tema</Label>
                           <p className="text-sm text-muted-foreground">
-                            Activar modo oscuro para la interfaz
+                            Selecciona el tema de la interfaz
                           </p>
                         </div>
-                        <Switch id="theme" />
+                        <Select value={theme} onValueChange={handleThemeChange}>
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Selecciona un tema" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="light">
+                              <Sun className="mr-2 h-4 w-4" />
+                              Claro
+                            </SelectItem>
+                            <SelectItem value="dark">
+                              <Moon className="mr-2 h-4 w-4" />
+                              Oscuro
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <Separator />
                       <div className="flex items-center justify-between">
@@ -135,7 +181,11 @@ const Settings: React.FC = () => {
                         Recibir notificaciones importantes por correo electrónico
                       </p>
                     </div>
-                    <Switch id="email_notifications" defaultChecked />
+                    <Switch 
+                      id="email_notifications" 
+                      checked={notificationsEnabled}
+                      onCheckedChange={handleNotificationsChange}
+                    />
                   </div>
                   <Separator />
                   <div className="flex items-center justify-between">
@@ -160,10 +210,25 @@ const Settings: React.FC = () => {
                   Gestiona la información de tu cuenta
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-center text-muted-foreground py-8">
-                  Esta sección estará disponible próximamente
-                </p>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="name">Nombre</Label>
+                    <Input type="text" id="name" defaultValue="Nombre del Usuario" />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input type="email" id="email" defaultValue="usuario@example.com" disabled />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Biografía</Label>
+                  <Input id="bio" placeholder="Cuéntanos algo sobre ti..." />
+                </div>
+                <Button>
+                  <Save className="mr-2 h-4 w-4" />
+                  Guardar Cambios
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -176,10 +241,21 @@ const Settings: React.FC = () => {
                   Administra las opciones de seguridad de tu cuenta
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-center text-muted-foreground py-8">
-                  Esta sección estará disponible próximamente
-                </p>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="password">Cambiar Contraseña</Label>
+                    <Input type="password" id="password" placeholder="Nueva contraseña" />
+                  </div>
+                  <div>
+                    <Label htmlFor="confirm_password">Confirmar Contraseña</Label>
+                    <Input type="password" id="confirm_password" placeholder="Confirmar nueva contraseña" />
+                  </div>
+                  <Button>
+                    <LockKeyhole className="mr-2 h-4 w-4" />
+                    Cambiar Contraseña
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -193,9 +269,19 @@ const Settings: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-center text-muted-foreground py-8">
-                  Esta sección estará disponible próximamente
-                </p>
+                <div className="flex items-center space-x-4">
+                  <Label htmlFor="language">Idioma</Label>
+                  <Select value={language} onValueChange={handleLanguageChange}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Selecciona un idioma" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="en">Inglés</SelectItem>
+                      <SelectItem value="es">Español</SelectItem>
+                      <SelectItem value="fr">Francés</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

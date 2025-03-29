@@ -1,37 +1,60 @@
 
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import ProtectedRoute from "@/components/ProtectedRoute";
-import NotFound from "@/pages/NotFound";
-
-// Admin pages
-import Home from "@/pages/Home";
+import { Routes, Route } from 'react-router-dom';
 import TestDataManagement from '@/pages/admin/TestDataManagement';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { useAuth } from '@/contexts/AuthContext';
+import Users from '@/pages/placeholder/Users';
+import Billing from '@/pages/placeholder/Billing';
 
-const AdminRoutes = () => {
+const AdminRoutes: React.FC = () => {
+  const { userRole } = useAuth();
+
+  // Función para verificar si el usuario es administrador
+  const isAdmin = () => userRole === 'admin';
+
   return (
     <Routes>
-      <Route path="/" element={
-        <ProtectedRoute requiredRole="admin">
-          <Home />
-        </ProtectedRoute>
-      } />
-      <Route path="/dashboard" element={
-        <ProtectedRoute requiredRole="admin">
-          <Home />
-        </ProtectedRoute>
-      } />
-      <Route path="/content" element={
-        <ProtectedRoute requiredRole="admin">
-          <Home />
-        </ProtectedRoute>
-      } />
-      <Route path="/test-data" element={
-        <ProtectedRoute requiredRole="admin">
-          <TestDataManagement />
-        </ProtectedRoute>
-      } />
-      <Route path="*" element={<NotFound />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
+            <h1>Panel de Administración (en desarrollo)</h1>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/test-data"
+        element={
+          <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
+            <TestDataManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/users"
+        element={
+          <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
+            <Users />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/billing"
+        element={
+          <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
+            <Billing />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <ProtectedRoute checkFn={isAdmin} fallbackPath="/unauthorized">
+            <div>Página no encontrada en administración</div>
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };
