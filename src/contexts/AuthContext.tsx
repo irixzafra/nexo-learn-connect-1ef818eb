@@ -12,7 +12,7 @@ interface AuthContextType {
   isLoading: boolean;
   logout: () => Promise<void>;
   isInitialized: boolean;
-  isAuthenticated: boolean; // Added the missing property
+  isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -67,19 +67,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       async (event, newSession) => {
         console.info('Auth state changed:', event, newSession?.user?.id);
         
-        setSession(newSession);
-        setUser(newSession?.user || null);
+        if (event === 'SIGNED_OUT') {
+          // Clear all auth state when signed out
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+          setUserRole(null);
+          return;
+        }
         
         if (newSession?.user) {
+          setSession(newSession);
+          setUser(newSession.user);
+          
           // Use setTimeout to prevent potential deadlock with Supabase client
           setTimeout(async () => {
             const userProfile = await fetchUserProfile(newSession.user.id);
-            setProfile(userProfile);
-            setUserRole(userProfile?.role || null);
+            if (userProfile) {
+              setProfile(userProfile);
+              setUserRole(userProfile.role || null);
+            }
           }, 0);
-        } else {
-          setProfile(null);
-          setUserRole(null);
         }
       }
     );
@@ -90,13 +98,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         
-        setSession(currentSession);
-        setUser(currentSession?.user || null);
-        
         if (currentSession?.user) {
+          console.info('Found existing session for user:', currentSession.user.id);
+          setSession(currentSession);
+          setUser(currentSession.user);
+          
           const userProfile = await fetchUserProfile(currentSession.user.id);
-          setProfile(userProfile);
-          setUserRole(userProfile?.role || null);
+          if (userProfile) {
+            console.info('Found profile with role:', userProfile.role);
+            setProfile(userProfile);
+            setUserRole(userProfile.role || null);
+          } else {
+            console.warn('No profile found for user:', currentSession.user.id);
+          }
+        } else {
+          console.info('No active session found');
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
@@ -117,11 +133,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Log out function
   const logout = async (): Promise<void> => {
     try {
+      console.info('Logging out user');
       await supabase.auth.signOut();
-      setUser(null);
-      setSession(null);
-      setProfile(null);
-      setUserRole(null);
+      // Auth state change listener will handle state clearing
     } catch (error) {
       console.error('Error during logout:', error);
       throw error;
@@ -139,7 +153,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isLoading,
     logout,
     isInitialized,
-    isAuthenticated // Add the new property to the context value
+    isAuthenticated
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

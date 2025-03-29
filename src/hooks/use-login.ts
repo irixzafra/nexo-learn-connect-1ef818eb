@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { LoginFormValues } from '@/lib/validations/auth';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,7 +9,6 @@ import { useAuth } from '@/contexts/AuthContext';
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { userRole } = useAuth();
 
   const login = async (data: LoginFormValues) => {
     setIsLoading(true);
@@ -28,9 +27,19 @@ export const useLogin = () => {
       if (authData.user) {
         toast.success('Inicio de sesión exitoso');
         
-        // Simple redirection based on role from Auth context
+        // Get user profile from Supabase to determine role
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', authData.user.id)
+          .single();
+        
+        const userRole = profileData?.role;
+        console.log('User logged in with role:', userRole);
+        
+        // Redirect based on role
         if (userRole === 'admin') {
-          navigate('/');
+          navigate('/home');
         } else if (userRole === 'instructor') {
           navigate('/instructor/courses');
         } else {
