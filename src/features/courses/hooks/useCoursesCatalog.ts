@@ -18,7 +18,7 @@ export const useCoursesCatalog = () => {
     try {
       console.log("Fetching courses catalog...");
       
-      // 1. Obtener cursos publicados
+      // Obtener cursos publicados con datos del instructor en una sola consulta
       const { data: coursesData, error: coursesError } = await supabase
         .from('courses')
         .select('*, instructor:profiles(id, full_name)')
@@ -32,16 +32,17 @@ export const useCoursesCatalog = () => {
       
       console.log("Cursos obtenidos:", coursesData?.length || 0);
       
-      // 3. Transformar y validar los datos
+      // Transformar y validar los datos
       const typedCourses: Course[] = coursesData?.map((course: any) => {
-        // Validar y transformar el campo currency
+        // Validación estricta del campo currency
         let validCurrency: 'eur' | 'usd' = 'eur'; // valor por defecto
         
-        // Check if currency is a valid value - fix for the currency type issue
-        if (typeof course.currency === 'string' && 
-            (course.currency.toLowerCase() === 'eur' || 
-             course.currency.toLowerCase() === 'usd')) {
-          validCurrency = course.currency.toLowerCase() as 'eur' | 'usd';
+        // Verificar que currency sea un valor válido y convertirlo a minúsculas
+        if (typeof course.currency === 'string') {
+          const normalizedCurrency = course.currency.toLowerCase();
+          if (normalizedCurrency === 'eur' || normalizedCurrency === 'usd') {
+            validCurrency = normalizedCurrency as 'eur' | 'usd';
+          }
         }
         
         // Extraer la información del instructor del objeto anidado

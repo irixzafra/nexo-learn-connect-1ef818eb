@@ -9,33 +9,102 @@ El catálogo de cursos (/courses) presentaba un error al cargar debido a dos pro
    "infinite recursion detected in policy for relation 'courses'"
    ```
 
-2. Posible inconsistencia de tipos en el campo 'currency' entre la definición de tipo y los datos recibidos.
+2. Inconsistencia de tipos en el campo 'currency' entre la definición de tipo y los datos recibidos.
 
 ### Causa Raíz
 - Las políticas de Row Level Security (RLS) estaban configuradas de manera que creaban una referencia circular. Específicamente, una política intentaba consultar su propia tabla para determinar los permisos.
 - El campo 'currency' podía recibir valores que no coincidían con la definición de tipo ('eur' | 'usd').
 
 ### Solución Implementada
-1. **Reestructuración de políticas RLS:**
-   - Se creó una función de seguridad `get_current_user_role()` con `SECURITY DEFINER` para evitar la recursión
-   - Se reemplazaron las políticas recursivas con políticas simples y directas
-   - Se implementó un enfoque de dos capas para determinar permisos: una política para acceso público y otra para acceso de instructores
 
-2. **Mejora en la consulta de datos:**
-   - Separamos la consulta en dos partes: primero obtenemos los cursos y luego los datos de los instructores
-   - Implementamos una búsqueda en dos pasos para evitar la necesidad de un join directo
-   - Mapeamos manualmente los datos del instructor a cada curso
+#### 1. Reestructuración de políticas RLS
+- Se creó una función de seguridad `get_current_user_role()` con `SECURITY DEFINER` para evitar la recursión:
+  ```sql
+  CREATE OR REPLACE FUNCTION public.get_current_user_role()
+  RETURNS TEXT AS $$
+    SELECT role FROM public.profiles WHERE id = auth.uid();
+  $$ LANGUAGE SQL SECURITY DEFINER STABLE;
+  ```
 
-3. **Validación y transformación de datos:**
-   - Añadimos validación explícita del campo 'currency' para asegurar que coincida con los tipos esperados
-   - Implementamos un valor por defecto ('eur') cuando el valor no es válido
+- Se implementaron políticas RLS seguras para la tabla courses:
+  ```sql
+  -- Política para instructores (ver sus propios cursos)
+  CREATE POLICY "Instructors can view their own courses" 
+  ON public.courses FOR SELECT 
+  USING (
+    instructor_id = auth.uid() OR
+    public.get_current_user_role() = 'admin'
+  );
 
-4. **Optimización de la gestión de errores:**
-   - Mejora en el manejo y visualización de errores para facilitar la depuración futura
+  -- Política para acceso público (ver cursos publicados)
+  CREATE POLICY "Public can view published courses" 
+  ON public.courses FOR SELECT 
+  USING (is_published = true);
 
-### Mejoras Adicionales
-- **Sidebar Mejorada:** Implementación de secciones colapsables con persistencia de estado usando localStorage
-- **UX Mejorada:** Mejor agrupación lógica de elementos de navegación y comportamiento adaptable a preferencias del usuario
+  -- Política para estudiantes inscritos (ver cursos en los que están inscritos)
+  CREATE POLICY "Students can view enrolled courses" 
+  ON public.courses FOR SELECT 
+  USING (
+    EXISTS (
+      SELECT 1 FROM enrollments 
+      WHERE course_id = courses.id AND user_id = auth.uid()
+    )
+  );
+
+  -- Política para instructores (modificar sus propios cursos)
+  CREATE POLICY "Instructors can modify their own courses" 
+  ON public.courses FOR UPDATE 
+  USING (
+    instructor_id = auth.uid() OR 
+    public.get_current_user_role() = 'admin'
+  );
+
+  -- Política para instructores (insertar cursos)
+  CREATE POLICY "Instructors can insert courses" 
+  ON public.courses FOR INSERT 
+  WITH CHECK (
+    instructor_id = auth.uid() OR 
+    public.get_current_user_role() = 'admin'
+  );
+  ```
+
+#### 2. Optimización de consulta de datos
+- Se simplificó la consulta a la base de datos utilizando la función de selección anidada de Supabase para obtener en una sola petición tanto los cursos como los datos de sus instructores.
+- Se eliminó la consulta separada a la tabla de perfiles, evitando así posibles problemas de RLS en consultas múltiples.
+
+#### 3. Validación y transformación robusta de datos
+- Se implementó una validación estricta del campo 'currency':
+  ```typescript
+  // Validación estricta del campo currency
+  let validCurrency: 'eur' | 'usd' = 'eur'; // valor por defecto
+  
+  // Verificar que currency sea un valor válido y convertirlo a minúsculas
+  if (typeof course.currency === 'string') {
+    const normalizedCurrency = course.currency.toLowerCase();
+    if (normalizedCurrency === 'eur' || normalizedCurrency === 'usd') {
+      validCurrency = normalizedCurrency as 'eur' | 'usd';
+    }
+  }
+  ```
+- Se asegura que el valor siempre sea uno de los tipos permitidos ('eur' | 'usd')
+- Se normalizan los valores a minúsculas para evitar problemas de case-sensitivity
+- Se proporciona un valor predeterminado ('eur') cuando el valor no es válido
+
+#### 4. Mejora en gestión de errores
+- Implementación de captura y visualización detallada de errores para facilitar la depuración
+- Mensajes de error personalizados según entorno (desarrollo/producción)
+- Logging detallado de errores específicos para ayudar en el diagnóstico
+
+### Verificación
+- Se comprobó que la página `/courses` carga correctamente los cursos publicados sin errores
+- El catálogo muestra correctamente la información de los instructores
+- Los filtros de búsqueda y nivel funcionan correctamente
+- La función de limpieza de filtros ahora restablece tanto el nivel como el término de búsqueda
+
+### Mejoras Adicionales 
+- Se añadió la opción de limpiar el término de búsqueda al usar la función `clearFilters`
+- Se optimizó la transformación de datos para reducir la carga del cliente
+- Se mejoró la interfaz de usuario para mostrar mensajes de error más claros
 
 ### Recomendaciones Técnicas
 Para evitar problemas similares en el futuro:
@@ -50,7 +119,7 @@ Para evitar problemas similares en el futuro:
 
 3. **Monitoreo y logging:**
    - Mantener un sistema de logging detallado para identificar rápidamente problemas similares
-   - Considerar implementar mejor manejo de errores a nivel de aplicación
+   - Implementar mejor manejo de errores a nivel de aplicación
 
 ## FEAT-SETTINGS-PAGE-V1: Página de Configuración de Usuario
 
