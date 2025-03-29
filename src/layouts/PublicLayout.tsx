@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,6 @@ import { AnimatedNexoLogo } from '@/components/ui/animated-nexo-logo';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { EditModeProvider } from '@/contexts/EditModeContext';
-import EditModeToggle from '@/components/admin/EditModeToggle';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   DropdownMenu, 
@@ -123,8 +121,6 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
         </header>
         
         <main className="flex-grow">
-          {/* Siempre mostramos el botón de edición aquí y dejamos que el componente decida su visibilidad */}
-          <EditModeToggle />
           {children}
         </main>
         

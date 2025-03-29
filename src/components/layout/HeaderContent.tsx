@@ -13,6 +13,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { Bell, Settings, User, LogOut } from 'lucide-react';
+import EditModeToggle from '@/components/admin/EditModeToggle';
 
 interface HeaderContentProps {
   userRole: string | null;
@@ -47,6 +48,9 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
       </div>
       
       <div className="flex items-center gap-4">
+        {/* Edit Mode Toggle en el header - solo visible para admins */}
+        {userRole === 'admin' && <EditModeToggle />}
+        
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center text-[10px] text-white">

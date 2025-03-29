@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { UserProfile, UserRole } from "@/types/auth";
@@ -24,7 +23,6 @@ import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import AppLayout from "@/layouts/AppLayout";
-import EditModeToggle from "@/components/admin/EditModeToggle";
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -68,13 +66,11 @@ const Users: React.FC = () => {
     fetchUsers();
   }, [toast]);
 
-  // Function to grant admin role to a specific email
   const grantAdminRole = async () => {
     try {
       setIsLoading(true);
       const adminEmail = "admin@nexo.com";
       
-      // Get the user ID by email
       const { data: userData, error: userError } = await supabase
         .from('auth')
         .select('id')
@@ -83,10 +79,6 @@ const Users: React.FC = () => {
         
       if (userError) {
         console.error('Error finding user by email:', userError);
-        // If we can't find the user by email directly (because we can't query auth.users), 
-        // let's update based on known patterns or look for users with matching display names
-        
-        // Update all profiles with the specific email if present in the name or other fields
         const { error: updateError } = await supabase
           .from('profiles')
           .update({ role: 'admin' })
@@ -107,7 +99,6 @@ const Users: React.FC = () => {
           description: "Se ha intentado actualizar el rol de admin@nexo.com a administrador.",
         });
       } else {
-        // Update the user's role if we found them
         const { error: updateError } = await supabase
           .from('profiles')
           .update({ role: 'admin' })
@@ -128,7 +119,6 @@ const Users: React.FC = () => {
         });
       }
       
-      // Refresh user list
       const { data: updatedUsers, error } = await supabase
         .from('profiles')
         .select('*')
@@ -152,7 +142,6 @@ const Users: React.FC = () => {
 
   const handleRoleChange = async (userId: string, newRole: UserRole) => {
     try {
-      // Don't allow users to change their own role
       if (userId === user?.id) {
         toast({
           variant: "destructive",
@@ -177,7 +166,6 @@ const Users: React.FC = () => {
         return;
       }
 
-      // Update the local state
       setUsers(prevUsers => 
         prevUsers.map(u => 
           u.id === userId ? { ...u, role: newRole } : u
@@ -212,7 +200,6 @@ const Users: React.FC = () => {
   };
 
   useEffect(() => {
-    // Automatically try to grant admin role once when the component mounts
     if (userRole === 'admin') {
       grantAdminRole();
     }
@@ -223,9 +210,6 @@ const Users: React.FC = () => {
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">Usuarios</h1>
         
-        {/* Edit Mode Toggle */}
-        <EditModeToggle />
-
         <Card>
           <CardHeader>
             <CardTitle>Lista de Usuarios</CardTitle>

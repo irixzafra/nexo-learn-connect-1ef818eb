@@ -31,7 +31,7 @@ const EditModeToggle: React.FC = () => {
       variant={isEditMode ? "default" : "outline"}
       size="sm"
       onClick={handleToggle}
-      className={`gap-2 ${isEditMode ? 'bg-primary text-primary-foreground' : ''} fixed top-20 right-4 z-50 shadow-md`}
+      className={`gap-2 ${isEditMode ? 'bg-primary text-primary-foreground' : ''}`}
     >
       {isEditMode ? (
         <>
