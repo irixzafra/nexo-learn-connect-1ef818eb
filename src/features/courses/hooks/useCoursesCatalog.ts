@@ -21,7 +21,7 @@ export const useCoursesCatalog = () => {
       // 1. Obtener cursos publicados
       const { data: coursesData, error: coursesError } = await supabase
         .from('courses')
-        .select('*, instructor_id')
+        .select('*, instructor:profiles(id, full_name)')
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
@@ -31,28 +31,6 @@ export const useCoursesCatalog = () => {
       }
       
       console.log("Cursos obtenidos:", coursesData?.length || 0);
-      
-      // 2. Obtener información de instructores por separado para evitar problemas de RLS
-      const instructorIds = coursesData?.map(course => course.instructor_id) || [];
-      let instructorsMap = {};
-      
-      if (instructorIds.length > 0) {
-        const { data: instructorsData, error: instructorsError } = await supabase
-          .from('profiles')
-          .select('id, full_name')
-          .in('id', instructorIds);
-          
-        if (instructorsError) {
-          console.error("Error al obtener datos de instructores:", instructorsError);
-        } else if (instructorsData) {
-          // Convertir array de instructores a un mapa para búsqueda rápida
-          instructorsMap = instructorsData.reduce((acc, instructor) => {
-            acc[instructor.id] = instructor;
-            return acc;
-          }, {});
-          console.log("Datos de instructores obtenidos:", Object.keys(instructorsMap).length);
-        }
-      }
       
       // 3. Transformar y validar los datos
       const typedCourses: Course[] = coursesData?.map((course: any) => {
@@ -66,11 +44,11 @@ export const useCoursesCatalog = () => {
           validCurrency = course.currency.toLowerCase() as 'eur' | 'usd';
         }
         
-        // Añadir información del instructor si existe
-        const instructor = instructorsMap[course.instructor_id] 
+        // Extraer la información del instructor del objeto anidado
+        const instructor = course.instructor 
           ? {
-              id: instructorsMap[course.instructor_id].id,
-              full_name: instructorsMap[course.instructor_id].full_name
+              id: course.instructor.id,
+              full_name: course.instructor.full_name
             } 
           : undefined;
 
@@ -109,6 +87,7 @@ export const useCoursesCatalog = () => {
 
   const clearFilters = () => {
     setSelectedLevel(null);
+    setSearchTerm('');
   };
 
   const filteredCourses = courses.filter((course) => {
