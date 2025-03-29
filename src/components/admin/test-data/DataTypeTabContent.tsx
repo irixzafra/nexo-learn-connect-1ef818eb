@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { DataTable } from '@/components/ui/data-table';
 import { DeleteTypeDataDialog } from './DeleteTypeDataDialog';
 
 interface DataTypeTabContentProps {
@@ -22,34 +21,21 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
   type, 
   label 
 }) => {
-  const { testData, deleteAllOfType, deleteSelected, setSelectedItems } = useTestData();
+  const { testData, clearTestData, deleteSelectedItems, selectedItems, selectItem, selectAllItems } = useTestData();
   const items = testData[type];
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  // Using the selected items directly from context
+  const selectedIds = selectedItems[type];
 
   // Select/deselect all items
   const handleSelectAll = () => {
-    if (selectedIds.length === items.length) {
-      setSelectedIds([]);
-      setSelectedItems(type, []);
-    } else {
-      const allIds = items.map(item => item.id);
-      setSelectedIds(allIds);
-      setSelectedItems(type, allIds);
-    }
+    selectAllItems(type, selectedIds.length !== items.length);
   };
 
   // Handle individual item selection
   const handleSelectItem = (id: string) => {
-    setSelectedIds(prev => {
-      const newSelection = prev.includes(id)
-        ? prev.filter(itemId => itemId !== id)
-        : [...prev, id];
-      
-      // Update the context with the new selection
-      setSelectedItems(type, newSelection);
-      return newSelection;
-    });
+    selectItem(type, id, !selectedIds.includes(id));
   };
 
   // Calculate if the header checkbox should be in an indeterminate state
@@ -66,7 +52,7 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
           <div className="flex items-center space-x-2">
             <Checkbox 
               checked={isAllSelected}
-              // Using ref to set indeterminate state
+              // Manually set indeterminate using ref
               ref={(checkbox) => {
                 if (checkbox) {
                   checkbox.indeterminate = isIndeterminate;
@@ -93,7 +79,7 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
                 />
                 <div className="flex-1 truncate">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">{item.title || item.name || item.id}</span>
+                    <span className="font-medium text-sm">{item.name || item.id}</span>
                     {item.createdAt && (
                       <span className="text-xs text-muted-foreground">
                         {new Date(item.createdAt).toLocaleDateString()}
@@ -125,22 +111,17 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
           variant="outline" 
           size="sm"
           disabled={selectedIds.length === 0}
-          onClick={() => deleteSelected(type, selectedIds)}
+          onClick={() => deleteSelectedItems(type)}
         >
           Eliminar seleccionados ({selectedIds.length})
         </Button>
       </CardFooter>
       
       <DeleteTypeDataDialog 
-        open={showDeleteDialog}
+        type={type}
+        label={label}
         onOpenChange={setShowDeleteDialog}
-        onConfirm={() => {
-          deleteAllOfType(type);
-          setShowDeleteDialog(false);
-          setSelectedIds([]);
-        }}
-        dataType={label}
-        count={items.length}
+        open={showDeleteDialog}
       />
     </Card>
   );

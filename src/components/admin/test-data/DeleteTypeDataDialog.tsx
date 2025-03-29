@@ -11,34 +11,31 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from 'lucide-react';
 
 interface DeleteTypeDataDialogProps {
   type: TestDataType;
   label: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export const DeleteTypeDataDialog: React.FC<DeleteTypeDataDialogProps> = ({ type, label }) => {
+export const DeleteTypeDataDialog: React.FC<DeleteTypeDataDialogProps> = ({ 
+  type, 
+  label,
+  open,
+  onOpenChange
+}) => {
   const { clearTestData } = useTestData();
 
   const handleDeleteAll = () => {
     clearTestData(type);
+    onOpenChange(false);
   };
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant="destructive"
-          size="sm"
-          className="flex items-center gap-1"
-        >
-          <Trash2 className="h-4 w-4" />
-          <span>Eliminar todos</span>
-        </Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>

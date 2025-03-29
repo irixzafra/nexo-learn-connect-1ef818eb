@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
@@ -5,7 +6,7 @@ import { toast } from 'sonner';
 // Types
 export type TestDataType = 'course' | 'user' | 'lesson' | 'message' | 'module' | 'profile' | 'assignment' | 'category' | 'enrollment' | 'quiz' | 'certificate' | 'payment';
 
-interface TestDataItem {
+export interface TestDataItem {
   id: string;
   name: string;
   createdAt: string;
@@ -27,7 +28,7 @@ interface TestDataState {
   payment: TestDataItem[];
 }
 
-interface TestDataContextType {
+export interface TestDataContextType {
   testData: TestDataState;
   isGenerating: boolean;
   selectedItems: Record<TestDataType, string[]>;
