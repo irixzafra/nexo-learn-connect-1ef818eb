@@ -1,13 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AppLayout from '@/layouts/AppLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { Edit, X } from 'lucide-react';
+import ProfileEditForm from '@/components/profile/ProfileEditForm';
 
 const Profile: React.FC = () => {
   const { user, profile, userRole } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
 
   // Format date for better readability
   const formatDate = (dateString: string) => {
@@ -35,6 +39,12 @@ const Profile: React.FC = () => {
     return user?.email?.substring(0, 2).toUpperCase() || 'U';
   };
 
+  const handleEditSuccess = () => {
+    setIsEditing(false);
+    // Refresh the page to get the updated profile data
+    window.location.reload();
+  };
+
   return (
     <AppLayout>
       <div className="container mx-auto p-6">
@@ -43,54 +53,71 @@ const Profile: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Tarjeta de información personal */}
           <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Información Personal</CardTitle>
-              <CardDescription>
-                Detalles de tu cuenta en Nexo Learning
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Información Personal</CardTitle>
+                <CardDescription>
+                  Detalles de tu cuenta en Nexo Learning
+                </CardDescription>
+              </div>
+              {!isEditing ? (
+                <Button variant="outline" size="icon" onClick={() => setIsEditing(true)}>
+                  <Edit className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button variant="outline" size="icon" onClick={() => setIsEditing(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage src={user?.user_metadata?.avatar_url} />
-                  <AvatarFallback className="text-lg">{getUserInitials()}</AvatarFallback>
-                </Avatar>
-                
-                <div>
-                  <h3 className="text-xl font-medium">
-                    {profile?.full_name || user?.email?.split('@')[0]}
-                  </h3>
-                  <p className="text-muted-foreground">{user?.email}</p>
-                </div>
-              </div>
-              
-              <Separator />
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-muted-foreground text-sm">Rol</p>
-                  <p className="font-medium capitalize">{userRole || 'No asignado'}</p>
-                </div>
-                
-                <div>
-                  <p className="text-muted-foreground text-sm">Fecha de Registro</p>
-                  <p className="font-medium">
-                    {user?.created_at ? formatDate(user.created_at) : 'No disponible'}
-                  </p>
-                </div>
-                
-                <div>
-                  <p className="text-muted-foreground text-sm">ID de Usuario</p>
-                  <p className="font-medium text-sm truncate">{user?.id || 'No disponible'}</p>
-                </div>
-                
-                <div>
-                  <p className="text-muted-foreground text-sm">Último Acceso</p>
-                  <p className="font-medium">
-                    {user?.last_sign_in_at ? formatDate(user.last_sign_in_at) : 'No disponible'}
-                  </p>
-                </div>
-              </div>
+              {isEditing ? (
+                <ProfileEditForm profile={profile} onSuccess={handleEditSuccess} />
+              ) : (
+                <>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    <Avatar className="h-16 w-16">
+                      <AvatarImage src={user?.user_metadata?.avatar_url} />
+                      <AvatarFallback className="text-lg">{getUserInitials()}</AvatarFallback>
+                    </Avatar>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium">
+                        {profile?.full_name || user?.email?.split('@')[0]}
+                      </h3>
+                      <p className="text-muted-foreground">{user?.email}</p>
+                    </div>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-muted-foreground text-sm">Rol</p>
+                      <p className="font-medium capitalize">{userRole || 'No asignado'}</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-muted-foreground text-sm">Fecha de Registro</p>
+                      <p className="font-medium">
+                        {user?.created_at ? formatDate(user.created_at) : 'No disponible'}
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-muted-foreground text-sm">ID de Usuario</p>
+                      <p className="font-medium text-sm truncate">{user?.id || 'No disponible'}</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-muted-foreground text-sm">Último Acceso</p>
+                      <p className="font-medium">
+                        {user?.last_sign_in_at ? formatDate(user.last_sign_in_at) : 'No disponible'}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
           
