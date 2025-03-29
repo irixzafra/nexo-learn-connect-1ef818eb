@@ -2,26 +2,44 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { Loader } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, userRole } = useAuth();
   
   useEffect(() => {
     if (!isLoading) {
       if (isAuthenticated) {
-        navigate('/home');
+        // Redirigir según el rol del usuario
+        switch (userRole) {
+          case 'admin':
+            navigate('/admin/dashboard');
+            break;
+          case 'instructor':
+            navigate('/instructor/dashboard');
+            break;
+          case 'student':
+            navigate('/home');
+            break;
+          default:
+            navigate('/home');
+        }
       } else {
-        navigate('/');
+        // Si no está autenticado, redirigir a la página de landing
+        navigate('/landing');
       }
     }
-  }, [navigate, isAuthenticated, isLoading]);
+  }, [navigate, isAuthenticated, isLoading, userRole]);
   
-  // Show loading state while determining auth status
+  // Mostrar un estado de carga mejorado mientras se determina el estado de autenticación
   if (isLoading) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+      <div className="flex h-screen w-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-muted-foreground">Cargando aplicación...</p>
+        </div>
       </div>
     );
   }
