@@ -43,6 +43,9 @@ export interface Course {
   level?: string;
   prerequisites_text?: string;
   display_order?: number;
+  // Adding the missing properties
+  category?: string;
+  featured_instructor?: string;
   // Relationships
   instructor?: {
     id: string;
