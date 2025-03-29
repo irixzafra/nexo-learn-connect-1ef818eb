@@ -6,6 +6,7 @@ import { EditModeProvider } from '@/contexts/EditModeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
 import { TestDataProvider } from '@/contexts/TestDataContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -21,14 +22,16 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AuthProvider>
-          <EditModeProvider>
-            <TestDataProvider>
-              {children}
-              <Toaster position="top-right" />
-            </TestDataProvider>
-          </EditModeProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <EditModeProvider>
+              <TestDataProvider>
+                {children}
+                <Toaster position="top-right" />
+              </TestDataProvider>
+            </EditModeProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );

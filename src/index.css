@@ -83,6 +83,48 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 210 100% 50%;
   }
+
+  /* Tema futurista con colores neón */
+  .futuristic {
+    --background: 220 40% 2%;
+    --foreground: 180 100% 85%;
+
+    --card: 220 25% 5%;
+    --card-foreground: 180 100% 85%;
+
+    --popover: 220 25% 5%;
+    --popover-foreground: 180 100% 85%;
+
+    --primary: 180 100% 60%;
+    --primary-foreground: 220 40% 2%;
+
+    --secondary: 270 100% 60%;
+    --secondary-foreground: 220 40% 2%;
+
+    --muted: 220 25% 10%;
+    --muted-foreground: 180 20% 65%;
+
+    --accent: 300 100% 60%;
+    --accent-foreground: 220 40% 2%;
+
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 220 40% 2%;
+
+    --border: 180 50% 20%;
+    --input: 220 25% 10%;
+    --ring: 180 100% 60%;
+
+    --radius: 0.25rem;
+
+    --sidebar-background: 220 40% 5%;
+    --sidebar-foreground: 180 100% 85%;
+    --sidebar-primary: 180 100% 60%;
+    --sidebar-primary-foreground: 220 40% 2%;
+    --sidebar-accent: 270 100% 60%;
+    --sidebar-accent-foreground: 220 40% 2%;
+    --sidebar-border: 180 50% 20%;
+    --sidebar-ring: 180 100% 60%;
+  }
 }
 
 @layer base {
@@ -92,6 +134,7 @@
 
   body {
     @apply bg-background text-foreground font-sans;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   
   /* Establecer nueva tipografía */
@@ -109,6 +152,13 @@
   
   h3 {
     @apply text-xl md:text-2xl;
+  }
+
+  /* Añadir transiciones suaves para cambios de tema */
+  *, ::before, ::after {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
   }
 }
 
@@ -155,6 +205,19 @@
   
   .animate-scale-in {
     @apply animate-[scale-in_0.2s_ease-out];
+  }
+
+  /* Utilidades específicas para el tema futurista */
+  .futuristic .neon-glow {
+    @apply shadow-[0_0_8px_rgba(64,224,208,0.6)] transition-shadow duration-300;
+  }
+  
+  .futuristic .neon-border {
+    @apply border border-primary/70 shadow-[0_0_5px_rgba(64,224,208,0.6)] transition-all duration-300;
+  }
+  
+  .futuristic .neon-text {
+    @apply text-primary drop-shadow-[0_0_2px_rgba(64,224,208,0.8)] transition-all duration-300;
   }
 }
 
