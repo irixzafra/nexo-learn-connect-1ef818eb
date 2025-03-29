@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import { 
@@ -12,20 +12,20 @@ import { Check, ChevronRight, Shield, ArrowLeftRight, UserCog, User, Terminal, G
 import { Badge } from '@/components/ui/badge';
 import { Separator } from "@/components/ui/separator";
 import { Command, CommandList, CommandInput, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
+import { toast } from 'sonner';
 
 interface RoleSwitcherProps {
   onChange?: (role: UserRole) => void;
   currentViewRole: UserRole | 'current';
 }
 
-const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ 
+export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ 
   onChange,
   currentViewRole
 }) => {
-  const { userRole, profile } = useAuth();
+  const { userRole } = useAuth();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredRoles, setFilteredRoles] = useState<string[]>(['admin', 'instructor', 'student', 'sistemas']);
   
   // Solo los administradores pueden cambiar roles
   if (userRole !== 'admin') {
@@ -41,7 +41,13 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   
   const handleRoleChange = (role: UserRole | 'current') => {
     if (onChange) {
-      onChange(role === 'current' ? userRole! : role);
+      if (role === 'current') {
+        onChange(userRole as UserRole);
+        toast.success(`Volviendo a tu rol original: ${getRoleLabel(userRole as UserRole)}`);
+      } else {
+        onChange(role);
+        toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);
+      }
     }
     setOpen(false);
   };
@@ -79,14 +85,14 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     }
   };
 
-  // Manejar filtrado de roles en tiempo real
-  useEffect(() => {
-    const filtered = ['admin', 'instructor', 'student', 'sistemas'].filter(role => 
-      role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      getRoleLabel(role as UserRole).toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredRoles(filtered);
-  }, [searchTerm]);
+  // Roles disponibles para vista previa
+  const availableRoles: UserRole[] = ['admin', 'instructor', 'student', 'sistemas', 'anonimo'];
+  
+  // Filtrar roles basados en búsqueda
+  const filteredRoles = availableRoles.filter(role => 
+    role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    getRoleLabel(role).toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== userRole;
 
@@ -135,13 +141,13 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
                 {filteredRoles.map((role) => (
                   <CommandItem 
                     key={role}
-                    onSelect={() => handleRoleChange(role as UserRole)}
+                    onSelect={() => handleRoleChange(role)}
                     className="flex items-center gap-2 cursor-pointer"
                   >
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center gap-2">
-                        {getRoleIcon(role as UserRole)}
-                        <span>{getRoleLabel(role as UserRole)}</span>
+                        {getRoleIcon(role)}
+                        <span>{getRoleLabel(role)}</span>
                       </div>
                       {currentViewRole === role && <Check className="h-4 w-4" />}
                     </div>
@@ -170,5 +176,3 @@ const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     </div>
   );
 };
-
-export default RoleSwitcher;

@@ -19,8 +19,15 @@ interface SidebarNavigationProps {
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => {
   const { userRole } = useAuth();
   
-  // Determine the effective role
-  const effectiveRole = viewAsRole && viewAsRole !== 'current' ? viewAsRole as UserRole : userRole;
+  // Determine the effective role - refactorado para mayor claridad
+  const getEffectiveRole = (): UserRole => {
+    if (!viewAsRole || viewAsRole === 'current') {
+      return userRole as UserRole;
+    }
+    return viewAsRole as UserRole;
+  };
+  
+  const effectiveRole = getEffectiveRole();
   
   // Retrieve previous state from localStorage or use defaults
   const getSavedState = () => {
@@ -61,7 +68,13 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
     }));
   };
 
+  // Log the current role for debugging
+  useEffect(() => {
+    console.log('SidebarNavigation - Effective Role:', effectiveRole);
+  }, [effectiveRole]);
+
   // Check if a role should see specific sections
+  // Usando efectiveRole consistentemente en lugar de mezclar userRole y effectiveRole
   const canSeeEnsenanza = effectiveRole === 'instructor' || effectiveRole === 'admin';
   const canSeeAdmin = effectiveRole === 'admin';
   const canSeeSistemas = effectiveRole === 'sistemas' || effectiveRole === 'admin';

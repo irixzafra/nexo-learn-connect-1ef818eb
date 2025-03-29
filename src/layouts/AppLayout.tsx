@@ -7,6 +7,7 @@ import AppSidebar from '@/components/layout/AppSidebar';
 import HeaderContent from '@/components/layout/HeaderContent';
 import { trackRoleSwitch } from '@/lib/sentry';
 import { useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -50,6 +51,17 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     localStorage.setItem('viewAsRole', viewAsRole);
   }, [viewAsRole]);
 
+  // Effect para limpiar el rol de vista si no es admin
+  useEffect(() => {
+    if (userRole !== 'admin' && viewAsRole !== 'current') {
+      console.log('Usuario no es admin, reseteando vista a rol actual');
+      setViewAsRole('current');
+      toast.info('Vista de rol restablecida', {
+        description: 'Solo los administradores pueden ver como otros roles'
+      });
+    }
+  }, [userRole, viewAsRole]);
+
   const getEffectiveRole = () => {
     if (viewAsRole === 'current') return userRole;
     return viewAsRole;
@@ -58,10 +70,16 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const effectiveRole = getEffectiveRole();
 
   const handleRoleChange = (role: UserRole) => {
-    if (userRole) {
-      trackRoleSwitch(userRole, role);
+    if (userRole === 'admin') {
+      if (userRole) {
+        trackRoleSwitch(userRole, role);
+      }
+      setViewAsRole(role as ViewAsRole);
+    } else {
+      toast.error('Permiso denegado', {
+        description: 'Solo los administradores pueden cambiar vistas de roles'
+      });
     }
-    setViewAsRole(role as ViewAsRole);
   };
 
   return (

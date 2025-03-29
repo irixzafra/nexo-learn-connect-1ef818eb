@@ -1,5 +1,8 @@
 
 import React from 'react';
+import { UserRole } from '@/types/auth';
+import { Badge } from '@/components/ui/badge';
+import { Eye, AlertTriangle } from 'lucide-react';
 
 interface RoleIndicatorProps {
   viewingAs: string | null;
@@ -8,9 +11,32 @@ interface RoleIndicatorProps {
 export const RoleIndicator: React.FC<RoleIndicatorProps> = ({ viewingAs }) => {
   if (!viewingAs) return null;
   
+  const getRoleLabel = (role: string): string => {
+    switch (role) {
+      case 'admin':
+        return 'Administrador';
+      case 'instructor':
+        return 'Instructor';
+      case 'sistemas':
+        return 'Sistemas';
+      case 'anonimo':
+        return 'Anónimo';
+      case 'student':
+        return 'Estudiante';
+      default:
+        return role;
+    }
+  };
+  
   return (
-    <div className="ml-4 px-3 py-1 bg-amber-50 text-amber-800 dark:bg-amber-800/30 dark:text-amber-500 text-xs font-medium rounded-full">
-      Viendo como: <span className="capitalize font-semibold">{viewingAs}</span>
-    </div>
+    <Badge 
+      variant="outline" 
+      className="ml-2 bg-amber-50 text-amber-800 border-amber-200 flex items-center gap-1.5"
+    >
+      <Eye className="h-3 w-3" />
+      <span>
+        Viendo como: {getRoleLabel(viewingAs)}
+      </span>
+    </Badge>
   );
 };
