@@ -4,9 +4,10 @@ import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { Search, User } from 'lucide-react';
+import { Search, User, Shield, UserCog } from 'lucide-react';
 import { UserRole } from '@/types/auth';
 import UserRoleEditor from '@/components/admin/UserRoleEditor';
+import { Badge } from '@/components/ui/badge';
 
 interface UserResult {
   id: string;
@@ -51,7 +52,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
     setSearchResults([]);
 
     try {
-      // Búsqueda por email (coincidencia exacta o parcial)
+      // Búsqueda por email o nombre
       const { data: emailResults, error: emailError } = await supabase
         .from('profiles')
         .select('id, full_name, role')
@@ -60,7 +61,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
 
       if (emailError) throw emailError;
 
-      // Búsqueda por nombre (coincidencia parcial)
+      // Obtener datos de usuario desde auth.users
       const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers() as unknown as {
         data: SupabaseUsersResponse | null;
         error: any;
@@ -115,16 +116,44 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
     });
   };
 
+  const getRoleIcon = (role: UserRole) => {
+    switch (role) {
+      case 'admin':
+        return <Shield className="h-4 w-4" />;
+      case 'instructor':
+        return <UserCog className="h-4 w-4" />;
+      case 'student':
+        return <User className="h-4 w-4" />;
+      default:
+        return null;
+    }
+  };
+
+  const getRoleBadgeVariant = (role: UserRole) => {
+    switch (role) {
+      case 'admin':
+        return 'default';
+      case 'instructor':
+        return 'secondary';
+      case 'student':
+        return 'outline';
+      default:
+        return 'outline';
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
-        <div className="flex-1">
+        <div className="flex-1 relative">
           <Input
             placeholder="Buscar por nombre o email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            className="pl-9"
           />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         </div>
         <Button 
           onClick={handleSearch} 
@@ -133,9 +162,9 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
           {isSearching ? (
             <span className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></span>
           ) : (
-            <Search className="h-4 w-4" />
+            <Search className="h-4 w-4 mr-2" />
           )}
-          <span className="ml-2">Buscar</span>
+          <span>Buscar</span>
         </Button>
       </div>
 
@@ -144,13 +173,23 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
           <div className="space-y-4">
             {searchResults.map((user) => (
               <div key={user.id} className="border rounded-lg p-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="bg-muted rounded-full h-10 w-10 flex items-center justify-center">
-                    <User className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <div className="font-medium">{user.full_name}</div>
-                    <div className="text-sm text-muted-foreground">{user.email}</div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-muted rounded-full h-10 w-10 flex items-center justify-center">
+                      <User className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <div className="font-medium flex items-center gap-2">
+                        {user.full_name}
+                        <Badge variant={getRoleBadgeVariant(user.role)} className="h-5 text-xs capitalize">
+                          <div className="flex items-center gap-1">
+                            {getRoleIcon(user.role)}
+                            <span>{user.role}</span>
+                          </div>
+                        </Badge>
+                      </div>
+                      <div className="text-sm text-muted-foreground">{user.email}</div>
+                    </div>
                   </div>
                 </div>
                 

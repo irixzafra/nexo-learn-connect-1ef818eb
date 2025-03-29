@@ -11,12 +11,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Settings, BookOpen, Shield, Search } from 'lucide-react';
+import { LogOut, User, Settings, BookOpen, Search } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
-import { UserRoleSwitcher } from '@/components/admin/UserRoleSwitcher';
+import RoleSwitcher from '@/components/admin/RoleSwitcher';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { UserRoleSearch } from '@/components/admin/UserRoleSearch';
+import { Badge } from '@/components/ui/badge';
 
 // This component is used in the AppSidebar
 type ViewAsRole = UserRole | 'current';
@@ -48,29 +49,30 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
     navigate('/');
   };
 
+  const getRoleBadgeVariant = (role?: UserRole) => {
+    switch (role) {
+      case 'admin':
+        return 'default';
+      case 'instructor':
+        return 'secondary';
+      case 'student':
+        return 'outline';
+      default:
+        return 'outline';
+    }
+  };
+
+  const isViewingAsOtherRole = viewAsRole !== 'current' && viewAsRole !== userRole;
+
   return (
     <div className="flex flex-col gap-3">
       {/* Role switcher for admins */}
       {userRole === 'admin' && (
         <div className="px-2 mb-2">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-muted-foreground">Vista previa como:</span>
-            <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <Search className="h-4 w-4" />
-                  <span className="sr-only">Buscar usuarios</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Cambiar rol de usuario</DialogTitle>
-                </DialogHeader>
-                <UserRoleSearch onClose={() => setIsSearchDialogOpen(false)} />
-              </DialogContent>
-            </Dialog>
-          </div>
-          <UserRoleSwitcher />
+          <RoleSwitcher 
+            currentViewRole={viewAsRole} 
+            onChange={onRoleChange}
+          />
         </div>
       )}
       
@@ -83,12 +85,19 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
                 <AvatarFallback>{getUserInitials()}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start text-left">
-                <span className="text-sm font-medium truncate max-w-[120px]">
-                  {profile?.full_name || 'Usuario'}
-                </span>
-                <span className="text-xs text-muted-foreground capitalize">
-                  {userRole || 'Usuario'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium truncate max-w-[120px]">
+                    {profile?.full_name || 'Usuario'}
+                  </span>
+                  {isViewingAsOtherRole && (
+                    <Badge variant="outline" className="h-5 text-xs">Vista previa</Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Badge variant={getRoleBadgeVariant(userRole || undefined)} className="h-5 text-xs capitalize">
+                    {userRole || 'Usuario'}
+                  </Badge>
+                </div>
               </div>
             </Button>
           </DropdownMenuTrigger>
@@ -111,6 +120,13 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
               <Settings className="mr-2 h-4 w-4" />
               <span>Configuración</span>
             </DropdownMenuItem>
+            
+            {userRole === 'admin' && (
+              <DropdownMenuItem onClick={() => setIsSearchDialogOpen(true)}>
+                <Search className="mr-2 h-4 w-4" />
+                <span>Buscar usuarios</span>
+              </DropdownMenuItem>
+            )}
             
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
@@ -139,6 +155,15 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
           </Button>
         </div>
       )}
+
+      <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Buscar usuarios</DialogTitle>
+          </DialogHeader>
+          <UserRoleSearch onClose={() => setIsSearchDialogOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
