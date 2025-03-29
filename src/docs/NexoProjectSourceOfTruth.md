@@ -1,8 +1,8 @@
 
 # Nexo Project - Guía de Desarrollo
 
-**Versión:** 1.6
-**Última Actualización:** 2023-11-24
+**Versión:** 1.7
+**Última Actualización:** 2023-12-01
 **Estado:** Fase 1 (MVP) - En desarrollo
 
 ## 1. VISIÓN GENERAL
@@ -164,6 +164,7 @@ COMMENT ON TABLE public.audit_log IS 'Records critical administrative actions fo
 - `/community`: Feed de Comunidad (Futuro).
 - `/network`: Red de contactos (Futuro).
 - `/messages`: Mensajería directa (Futuro).
+- `/unauthorized`: Página de acceso no autorizado.
 
 **Estudiante:**
 - `/my-courses`: Mis Másters/Carreras inscritos.
@@ -195,379 +196,124 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Establecer estructura frontend
     * Integrar librerías base
     * Crear contenedores visuales principales
-  * **Acciones Clave:**
-    * (Setup técnico) Instalar dependencias (React, TS, Vite, Supabase, shadcn, etc.)
-    * Configurar Tailwind, cliente Supabase, Router, i18n base
-  * **Flujo Principal:**
-    * (Setup técnico) Inicializar proyecto -> Instalar -> Configurar -> Crear Layouts (PublicLayout, AppLayout con TopBar/SideBar placeholders)
-  * **Interacciones:**
-    * Base para todo el frontend
-    * Conexión inicial Supabase
-  * **Pistas UI/UX:**
-    * Layouts claros
-    * SideBar con animación retráctil básica (Framer Motion)
   * **Estado:** [x]
 
 * **Funcionalidad: Registro de Usuarios (Email/Contraseña)**
   * **Objetivo:**
     * Permitir a nuevos usuarios crear una cuenta
-  * **Acciones Clave:**
-    * Ir a /auth/register
-    * Rellenar Nombre, Email, Contraseña
-    * Enviar formulario
-  * **Flujo Principal:**
-    * Navegar a registro -> Completar datos válidos (RHF/Zod) -> Submit -> Cuenta creada en Supabase Auth y profiles (vía trigger) -> Redirigido a /home
-  * **Interacciones:**
-    * supabase.auth.signUp
-    * Trigger handle_new_user
-    * Tabla profiles
-  * **Pistas UI/UX:**
-    * Formulario claro (Card, Input, Button shadcn/ui)
-    * Sin confirmación email MVP
   * **Estado:** [x]
 
 * **Funcionalidad: Inicio de Sesión (Email/Contraseña)**
   * **Objetivo:**
     * Permitir a usuarios registrados acceder a la plataforma
-  * **Acciones Clave:**
-    * Ir a /auth/login
-    * Rellenar Email, Contraseña
-    * Enviar formulario
-  * **Flujo Principal:**
-    * Navegar a login -> Completar credenciales -> Submit -> Sesión iniciada (Supabase Auth) -> Redirigido a /home
-  * **Interacciones:**
-    * supabase.auth.signInWithPassword
-  * **Pistas UI/UX:**
-    * Formulario claro
-    * Manejo de errores (credenciales inválidas)
   * **Estado:** [x]
 
 * **Funcionalidad: Contexto de Autenticación y Protección de Rutas**
   * **Objetivo:**
     * Gestionar estado de sesión globalmente
     * Proteger rutas privadas
-  * **Acciones Clave:**
-    * (Interno) Escuchar cambios auth
-    * Obtener datos usuario (rol)
-    * (Usuario) Usar botón Logout
-  * **Flujo Principal:**
-    * App carga -> Contexto inicializa -> Escucha Supabase Auth -> Si logueado, obtiene datos perfil -> Estado isAuthenticated=true -> Rutas protegidas accesibles. Si no logueado -> isAuthenticated=false -> Redirigido a login al intentar acceder a ruta protegida. Logout limpia sesión.
-  * **Interacciones:**
-    * supabase.auth.onAuthStateChange, supabase.auth.signOut
-    * Lectura profiles
-    * Componente ProtectedRoute
-  * **Pistas UI/UX:**
-    * Botón Logout accesible (en TopBar)
-    * Loader mientras carga estado inicial
   * **Estado:** [x]
 
 * **Funcionalidad: Cambio de Vista de Rol (Interfaz Admin)**
   * **Objetivo:**
     * Permitir a Admins previsualizar la interfaz como otros roles para pruebas/navegación
-  * **Acciones Clave:**
-    * Admin selecciona rol ('Instructor'/'Student') desde control UI (Select?) en TopBar
-  * **Flujo Principal:**
-    * Admin logueado -> Selecciona rol en switcher -> Estado UI se actualiza -> SideBar y otras UIs condicionales muestran la vista del rol seleccionado
-  * **Interacciones:**
-    * Lee rol real del AuthContext
-    * Actualiza estado UI (local/contexto UI)
-    * SideBar re-renderiza basado en rol seleccionado. No afecta permisos backend.
-  * **Pistas UI/UX:**
-    * Control solo visible para role='admin'
-    * Feedback claro del rol que se está visualizando
   * **Estado:** [x]
 
 * **Funcionalidad: Visualización Básica de Perfil de Usuario**
   * **Objetivo:**
     * Que el usuario pueda ver su información básica registrada
-  * **Acciones Clave:**
-    * Navegar a /profile (desde menú usuario)
-  * **Flujo Principal:**
-    * Usuario va a /profile -> Página carga datos del AuthContext -> Muestra Email, Nombre Completo, Rol
-  * **Interacciones:**
-    * Lee datos del AuthContext
-  * **Pistas UI/UX:**
-    * Página simple, solo lectura (Card?)
   * **Estado:** [x]
 
 * **Funcionalidad: Landing Page Moderna y Atractiva**
   * **Objetivo:**
     * Crear una página de inicio (/) visualmente impactante, profesional y optimizada para SEO que presente Nexo y sus ofertas (Másters/Carreras).
-  * **Acciones Clave del Usuario:**
-    * Ver propuesta de valor
-    * Explorar secciones (ej: Carreras Destacadas)
-    * Hacer clic en CTAs (Call to Action) como "Descubre tu Camino" o "Registrarse"
-  * **Flujo Principal:**
-    * Usuario llega a / -> Ve contenido atractivo -> Navega por secciones -> Interactúa con CTAs
-  * **Interacciones / Relaciones Clave:**
-    * Enlaza a /courses, /auth/register, /auth/login
-    * Debe obtener y mostrar específicamente los cursos (courses) que tengan is_published = true Y is_featured_on_landing = true en la sección "Carreras Destacadas"
-  * **Pistas UI/UX:**
-    * Usar paleta de colores y estilo de las imágenes de referencia (tonos azules/morados/negros, gradientes sutiles, tipografía moderna)
-    * Incorporar animaciones fluidas (Framer Motion) en scroll, hover, carga de elementos (efecto "wow" pero optimizado)
-    * Diseño profesional y serio, adecuado a educación superior tecnológica
-    * Secciones Sugeridas: Hero principal con titular potente, sección "Acerca de Nexo", sección "Carreras Destacadas" (usar Cards como en referencia), sección de Testimonios (placeholder), Footer con enlaces
-    * Botón flotante de Chat/Ayuda (como en referencias)
-    * SEO: Implementar metatags (title, description, keywords, OpenGraph) dinámicas o configurables. URLs limpias. Buen performance (optimizar imágenes/animaciones)
-    * Logo: Diseñar/Implementar un logo moderno para "Nexo Learning Platform" o "Nexo Ecosistema Creativo" visible en el header
   * **Estado:** [x]
 
 * **Funcionalidad: Creación de Cursos (Metadatos y SEO)**
   * **Objetivo:**
     * Permitir a Instructores/Admins iniciar creación de Máster/Carrera con datos básicos y SEO
-  * **Acciones Clave:**
-    * Acceder UI creación
-    * Definir Título, Descripción, Precio, Moneda
-    * Definir Características del Curso (ej: Duración estimada en meses/horas, Nivel [Principiante/Intermedio/Avanzado], Prerrequisitos - inicialmente campos de texto simples)
-    * Marcar/Desmarcar una casilla "Destacar en Landing Page"
-    * Añadir: Imagen de Portada (subida a Storage), Slug URL, Título SEO, Descripción SEO
-    * Guardar borrador
-  * **Flujo Principal:**
-    * Acceder UI -> Rellenar formulario (validado) -> Subir imagen -> Guardar -> Nuevo courses (no publicado, instructor_id, campos SEO/imagen) -> Redirigido a edición estructura
-  * **Interacciones:**
-    * Escritura courses
-    * Subida a Supabase Storage
-    * Nuevos campos necesarios en la tabla courses para almacenar características (ej: duration_text, level, prerequisites_text) y el flag is_featured_on_landing (BOOLEAN)
-  * **Pistas UI/UX:**
-    * Formulario incluye campos SEO y carga de imagen
-  * **Instrucción Adicional:**
-    * Crea la tabla courses si no existe y añade 1-2 cursos de prueba (ej: "Máster en IA Generativa", "Carrera Desarrollo Full-Stack") con datos ficticios (incluyendo imagen placeholder URL, slug, SEO, y ahora también características de ejemplo y uno marcado como destacado)
   * **Estado:** [x]
 
 * **Funcionalidad: Edición de Estructura del Curso (Módulos y Lecciones)**
   * **Objetivo:**
     * Permitir organizar el contenido del Máster/Carrera
-  * **Acciones Clave:**
-    * CRUD + Reordenar Módulos y Lecciones (títulos/orden)
-  * **Flujo Principal:**
-    * Edita curso -> Manipula estructura -> Cambios guardados en modules, lessons
-  * **Interacciones:**
-    * CRUD + Update modules, lessons
-  * **Pistas UI/UX:**
-    * Lista anidada clara
-    * Controles intuitivos
-  * **Instrucción Adicional:**
-    * Crea las tablas modules y lessons si no existen. Añade 2-3 módulos y 2-3 lecciones de prueba para uno de los cursos creados anteriormente
   * **Estado:** [x]
 
 * **Funcionalidad: Edición de Contenido de Lección (Texto/Video)**
   * **Objetivo:**
     * Permitir añadir el material didáctico a cada lección
-  * **Acciones Clave:**
-    * (En edición lección) Seleccionar tipo (Texto/Video)
-    * Escribir/editar en Tiptap (formato básico)
-    * Pegar URL video
-    * Guardar contenido
-  * **Flujo Principal:**
-    * Navega a editar lección -> Elige tipo -> Edita contenido -> Guarda -> Contenido actualizado en lessons (content_text o content_video_url)
-  * **Interacciones:**
-    * Update lessons
-    * Editor Tiptap
-  * **Pistas UI/UX:**
-    * Editor Tiptap integrado
-    * Input URL claro
-  * **Instrucción Adicional:**
-    * Añade contenido de prueba (texto lorem ipsum o URL video público) a algunas de las lecciones creadas
   * **Estado:** [x]
 
 * **Funcionalidad: Publicar / Despublicar Curso**
   * **Objetivo:**
     * Controlar la visibilidad pública de un curso
-  * **Acciones Clave:**
-    * (En edición curso) Activar/desactivar control de publicación
-  * **Flujo Principal:**
-    * Edita curso -> Cambia estado switch/botón -> Campo is_published en courses se actualiza
-  * **Interacciones:**
-    * Update courses
-  * **Pistas UI/UX:**
-    * Control claro (Switch?)
   * **Estado:** [x]
 
 * **Funcionalidad: Catálogo Público de Cursos**
   * **Objetivo:**
     * Permitir a cualquiera descubrir los cursos disponibles
-  * **Acciones Clave:**
-    * Navegar a /courses
-    * Ver lista de cursos
-    * Hacer clic en un curso
-  * **Flujo Principal:**
-    * Usuario visita /courses -> Se cargan todos los cursos is_published=true -> Se muestran tarjetas (Título, Instructor, Precio, Imagen Portada) -> Clic lleva a detalle curso
-  * **Interacciones:**
-    * Lectura courses (con cover_image_url), profiles
-  * **Pistas UI/UX:**
-    * Diseño atractivo (Cards como referencia)
-    * Carga eficiente
-    * Usar imagen portada
   * **Estado:** [x]
 
 * **Funcionalidad: Página de Detalle del Curso**
   * **Objetivo:**
     * Mostrar información completa de un curso y permitir compra o acceso
-  * **Acciones Clave:**
-    * Ver detalles (Desc, Instructor, Precio, Estructura)
-    * Clic "Comprar"/"Ir al Curso"
-  * **Flujo Principal:**
-    * Usuario llega a /courses/[slug] -> Se carga info curso + estado inscripción -> UI muestra detalles -> Botón acción correspondiente visible
-  * **Interacciones:**
-    * Lectura BD
-    * Llama a Stripe / navega a /learn
-    * Usa slug en URL
-  * **Pistas UI/UX:**
-    * Info bien estructurada
-    * CTA claro
-    * Usar imagen portada
-    * SEO (usar seo_title, seo_description)
   * **Estado:** [x]
 
 * **Funcionalidad: Acceso Estudiante (Mis Cursos y Vista de Lección)**
   * **Objetivo:**
     * Permitir a estudiantes acceder y consumir el contenido de sus cursos
-  * **Acciones Clave:**
-    * Ir a /my-courses
-    * Ver lista cursos inscritos
-    * Clic para ir a curso
-    * Navegar entre lecciones
-    * Ver contenido lección
-  * **Flujo Principal:**
-    * Va a "Mis Cursos" -> Carga enrollments+courses -> Ve lista -> Clic -> Va a /learn/... -> Carga lección (valida inscripción) -> Muestra contenido -> Usa navegación (sidebar/botones) para cambiar lección
-  * **Interacciones:**
-    * Lectura enrollments, courses, modules, lessons
-    * Render Tiptap/Video player
-  * **Pistas UI/UX:**
-    * Navegación curso clara en /learn
-    * Contenido legible/visible
-    * Usar slugs en URL si aplica
   * **Estado:** [x]
 
 * **Funcionalidad: Integración de Pago Stripe (Frontend)**
   * **Objetivo:**
     * Iniciar el proceso de pago seguro a través de Stripe
-  * **Acciones Clave:**
-    * Usuario hace clic en "Comprar Ahora"
-  * **Flujo Principal:**
-    * Clic -> Llama a Edge Function (create-checkout-session) -> Recibe sessionId -> Redirige a Stripe (stripe.redirectToCheckout)
-  * **Interacciones:**
-    * Llamada a Edge Function
-    * Uso stripe-js
-  * **Pistas UI/UX:**
-    * Feedback de carga en botón
   * **Estado:** [x]
 
 * **Funcionalidad: Procesamiento de Pago Stripe (Backend - Webhook)**
   * **Objetivo:**
     * Confirmar pagos y otorgar acceso automáticamente
-  * **Acciones Clave:**
-    * (Sistema) Recibir evento Stripe
-    * Validar firma
-    * Procesar datos
-    * Actualizar BD
-  * **Flujo Principal:**
-    * Stripe envía checkout.session.completed -> Edge Function recibe -> Verifica firma -> Extrae metadata -> Inserta en payments y enrollments
-  * **Interacciones:**
-    * Recibe webhook Stripe
-    * Escritura payments, enrollments
-  * **Pistas UI/UX:**
-    * (Ninguna directa) Fiabilidad y seguridad backend. Idempotencia.
-  * **Instrucción Adicional:**
-    * Crea las tablas payments y enrollments si no existen. Añade 1 inscripción de prueba para el estudiante y curso de prueba
   * **Estado:** [x]
 
 * **Funcionalidad: Vista de Administración de Usuarios (Básica)**
   * **Objetivo:**
     * Permitir a Admins ver quién está registrado
-  * **Acciones Clave:**
-    * Navegar a /admin/users
-    * Ver tabla usuarios
-  * **Flujo Principal:**
-    * Admin va a /admin/users -> Carga datos profiles (+email de auth.users) -> Muestra tabla
-  * **Interacciones:**
-    * Lectura profiles, auth.users
-  * **Pistas UI/UX:**
-    * Tabla clara (shadcn/ui)
-    * Paginación/Búsqueda básica opcional. Solo vista.
-  * **Instrucción Adicional:**
-    * Crea la tabla profiles (si no existe, y el trigger handle_new_user). Asegúrate de tener 1 Admin, 1 Instructor, 1 Estudiante de prueba
+    * Cambiar roles de usuarios (admin, instructor, student)
   * **Estado:** [x]
 
 * **Funcionalidad: Vista de Administración de Cursos (Básica)**
   * **Objetivo:**
     * Permitir a Admins ver todos los cursos creados
-  * **Acciones Clave:**
-    * Navegar a /admin/courses
-    * Ver tabla cursos
-    * Clic en enlace para editar
-    * (Admin) Reordenar la lista de cursos mediante Drag & Drop
-  * **Flujo Principal:**
-    * Admin va a /admin/courses -> Carga datos courses (+instructor) -> Muestra tabla -> Enlace lleva a edición
-  * **Interacciones:**
-    * Lectura courses, profiles
-    * Se necesita un campo display_order (INTEGER) en la tabla courses para almacenar el orden personalizado
-    * La acción de Drag & Drop debe actualizar este campo en la base de datos para los cursos afectados
-  * **Pistas UI/UX:**
-    * Tabla clara
-    * Enlace a edición visible. Solo vista/enlace. Paginación/Búsqueda opcional.
-    * La tabla (shadcn/ui) debe soportar Drag & Drop para reordenar filas (investigar librerías como dnd-kit o similares compatibles con tanstack/table si se usa)
+    * Reordenar cursos mediante Drag & Drop
   * **Estado:** [x]
 
 * **Funcionalidad: Impersonación de Usuarios (Admin)**
   * **Objetivo:**
     * Permitir a Admins experimentar la plataforma como otro usuario para soporte/pruebas
-  * **Acciones Clave:**
-    * Admin busca usuario
-    * Selecciona usuario
-    * Inicia impersonación
-    * Navega como otro usuario
-    * Detiene impersonación
-  * **Flujo Principal:**
-    * Admin usa UI búsqueda -> Selecciona usuario -> Llama a RPC start_impersonation -> Backend genera JWT temporal -> Frontend actualiza sesión -> UI muestra banner "Viendo como..." -> Admin navega -> Clic "Detener" -> Llama a RPC stop_impersonation -> Sesión admin restaurada
-  * **Interacciones:**
-    * Búsqueda profiles
-    * RPCs seguras (start/stop_impersonation)
-    * Gestión JWTs
-    * Escritura audit_log (tabla a crear)
-  * **Pistas UI/UX:**
-    * Buscador con sugerencias (Combobox?)
-    * Banner impersonación MUY visible
-    * Botón detener claro. Alta precaución seguridad.
-  * **Instrucción Adicional:**
-    * Crea la tabla audit_log según esquema en Sección 4
   * **Estado:** [x]
 
 * **Funcionalidad: Datos de Prueba Iniciales (Seed)**
   * **Objetivo:**
     * Facilitar el desarrollo y pruebas iniciales con datos relevantes
-  * **Acciones Clave:**
-    * (Desarrollador) Ejecutar script SQL
-  * **Flujo Principal:**
-    * Ejecutar seed.sql -> BD poblada (usuarios, cursos, etc.)
-  * **Interacciones:**
-    * Escritura BD
-  * **Pistas UI/UX:**
-    * Script SQL claro. (Nota: Varias tareas anteriores ya piden crear datos de prueba, este script puede consolidar o complementar)
   * **Estado:** [x]
 
 * **Funcionalidad: Internacionalización (i18n - Base)**
   * **Objetivo:**
     * Preparar la app para soportar múltiples idiomas
-  * **Acciones Clave:**
-    * (Dev) Configurar i18next
-    * Crear archivos EN/ES
-    * (Usuario) Usar LanguageSwitcher UI
-  * **Flujo Principal:**
-    * App carga con idioma por defecto -> Usuario cambia idioma -> UI se actualiza con traducciones
-  * **Interacciones:**
-    * Librería i18next
-  * **Pistas UI/UX:**
-    * LanguageSwitcher simple (botones/select). (Prioridad baja Fase 1).
   * **Estado:** [ ]
+
+* **Funcionalidad: Página de Acceso No Autorizado**
+  * **Objetivo:**
+    * Mostrar una página informativa cuando un usuario intenta acceder a una ruta para la cual no tiene permisos
+  * **Estado:** [x]
+
+* **Funcionalidad: Notificaciones en UI (Toast)**
+  * **Objetivo:**
+    * Proveer feedback inmediato y no intrusivo de las acciones del usuario
+  * **Estado:** [x]
 
 * **Funcionalidad General: Ordenamiento Drag & Drop en Vistas de Gestión (Admin/Instructor)**
   * **Objetivo:**
     * Permitir a usuarios con permisos (Admin/Instructor) definir un orden visual personalizado para listas de elementos (Cursos, Módulos, Lecciones, Usuarios, etc.) en las tablas de gestión.
-  * **Implementación:**
-    * Cuando se implemente una tabla de gestión para Admins o Instructores donde el orden sea relevante, incluir la funcionalidad de reordenamiento mediante Drag & Drop.
-    * Esto requerirá añadir un campo display_order (o similar) a la tabla correspondiente y actualizarlo en la BD tras la acción de D&D.
-    * Este orden personalizado podría usarse opcionalmente para filtrar o mostrar elementos en otras partes de la aplicación.
   * **Estado:** [x]
 
 ### Fase: Enriquecimiento LMS e Interacción Inicial
@@ -575,99 +321,24 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
 * **Funcionalidad: Seguimiento de Progreso en Cursos**
   * **Objetivo:**
     * Permitir a estudiantes y a la plataforma rastrear el avance en los cursos
-  * **Acciones Clave:**
-    * Estudiante marca/desmarca lección completada
-    * Ver indicador progreso en curso/lección
-  * **Flujo Principal:**
-    * Estudiante en lección -> Clic en checkbox "Completado" -> Estado se guarda en BD (ej: enrollments.completed_lessons) -> UI se actualiza (checkbox, icono en sidebar, barra progreso en "Mis Cursos")
-  * **Interacciones:**
-    * Update enrollments
-    * Lectura estado progreso
-    * Componentes UI (Checkbox, Progress bar)
-  * **Pistas UI/UX:**
-    * Control de completitud claro en vista lección
-    * Progreso visible en puntos clave
   * **Estado:** [ ]
 
 * **Funcionalidad: Comentarios en Lecciones**
   * **Objetivo:**
     * Fomentar la discusión y resolución de dudas sobre el contenido
-  * **Acciones Clave:**
-    * Ver comentarios existentes
-    * Escribir nuevo comentario
-    * (Instructor/Admin) Eliminar comentario
-  * **Flujo Principal:**
-    * Usuario ve lección -> Baja a sección comentarios -> Lee / Escribe en formulario -> Envía -> Comentario aparece en lista. Admin/Instructor ve opción eliminar.
-  * **Interacciones:**
-    * CRUD comments tabla
-    * Lectura profiles (autor comentario)
-  * **Pistas UI/UX:**
-    * Sección comentarios clara
-    * Formulario simple
-    * Indicación visual de quién puede eliminar
   * **Estado:** [ ]
 
 * **Funcionalidad: Edición Básica de Perfil**
   * **Objetivo:**
     * Permitir a usuarios mantener su nombre actualizado
-  * **Acciones Clave:**
-    * Ir a /profile
-    * Editar campo Nombre Completo
-    * Guardar cambios
-  * **Flujo Principal:**
-    * Usuario edita nombre -> Guarda -> Petición actualiza profiles.full_name -> Feedback éxito (Toast)
-  * **Interacciones:**
-    * Update profiles
-    * React Query useMutation
-  * **Pistas UI/UX:**
-    * Campo editable claro
-    * Botón guardar
   * **Estado:** [ ]
 
 * **Funcionalidad: Panel de Control Instructor (Dashboard)**
   * **Objetivo:**
     * Dar al instructor una vista rápida del estado de sus cursos y estudiantes
-  * **Acciones Clave:**
-    * Navegar a /instructor/dashboard
-    * Ver estadísticas clave
-  * **Flujo Principal:**
-    * Instructor accede a dashboard -> Se cargan datos agregados (inscritos, cursos activos, etc.) -> Se muestran en tarjetas/widgets
-  * **Interacciones:**
-    * Lectura agregada courses, enrollments
-  * **Pistas UI/UX:**
-    * Cards shadcn/ui para mostrar stats
-    * Información relevante y accionable
   * **Estado:** [ ]
-
-* **Funcionalidad: Notificaciones en UI (Toast)**
-  * **Objetivo:**
-    * Proveer feedback inmediato y no intrusivo de las acciones del usuario
-  * **Acciones Clave:**
-    * Realizar acción (guardar, error) -> Ver notificación toast
-  * **Flujo Principal:**
-    * Código llama a hook/función toast() -> Toaster (shadcn/ui) muestra mensaje flotante (éxito, error, info)
-  * **Interacciones:**
-    * Integrar llamadas a toast() en puntos clave (mutaciones React Query, manejo errores)
-  * **Pistas UI/UX:**
-    * Toasts claros, con icono/color apropiado
-    * Posición consistente
-  * **Estado:** [x]
 
 * **Funcionalidad: Calificaciones y Retroalimentación (v1 - Tareas)**
   * **Objetivo:**
     * Permitir a instructores evaluar las tareas enviadas
-  * **Acciones Clave:**
-    * Instructor ve entrega tarea
-    * Asigna nota numérica
-    * Escribe feedback textual
-    * Guarda evaluación
-    * Estudiante ve nota/feedback
-  * **Flujo Principal:**
-    * Instructor navega a entregas -> Selecciona una -> Usa UI para ingresar nota/feedback -> Guarda -> Datos se almacenan (ej: en assignment_submissions). Estudiante accede a su entrega/calificaciones y ve resultado.
-  * **Interacciones:**
-    * Update assignment_submissions (o tabla grades?)
-    * Lectura por estudiante
-  * **Pistas UI/UX:**
-    * Interfaz clara para calificar
-    * Vista clara para estudiante
   * **Estado:** [ ]

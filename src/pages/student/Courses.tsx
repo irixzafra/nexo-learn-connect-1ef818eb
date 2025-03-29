@@ -68,7 +68,7 @@ const StudentCourses: React.FC = () => {
         // Transform the data to match Course type
         const formattedCourses = coursesData.map(course => {
           // Fix: Correctly access the instructor data
-          // The profiles property might be an object or null, not an array
+          // The profiles property is an object, not an array
           const instructorData = course.profiles ? {
             id: course.profiles.id,
             full_name: course.profiles.full_name
