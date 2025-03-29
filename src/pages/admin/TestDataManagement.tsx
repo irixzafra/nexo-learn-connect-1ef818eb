@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { TestDataGenerator } from '@/components/admin/test-data';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Database } from 'lucide-react';
+import { ArrowLeft, Database, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const TestDataManagement: React.FC = () => {
   const { userRole } = useAuth();
@@ -22,7 +23,12 @@ const TestDataManagement: React.FC = () => {
   return (
     <AppLayout>
       <div className="container mx-auto p-6">
-        <div className="mb-8">
+        <motion.div 
+          className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
           <div className="flex items-center gap-3 mb-2">
             <Button 
               variant="ghost" 
@@ -37,15 +43,21 @@ const TestDataManagement: React.FC = () => {
               Gestión de Datos de Prueba
             </h1>
           </div>
-          <p className="text-muted-foreground ml-12">
+          <p className="text-muted-foreground ml-12 flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary/70" />
             Esta herramienta te permite generar y gestionar datos de prueba para la aplicación. 
             Solo los administradores tienen acceso a esta funcionalidad.
           </p>
-        </div>
+        </motion.div>
         
-        <div className="mt-6">
+        <motion.div 
+          className="mt-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
           <TestDataGenerator />
-        </div>
+        </motion.div>
       </div>
     </AppLayout>
   );
