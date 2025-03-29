@@ -131,10 +131,14 @@ export const useDashboardStats = () => {
           id: enrollment.id,
           enrolled_at: enrollment.enrolled_at,
           profiles: {
-            full_name: enrollment.profiles ? enrollment.profiles.full_name : 'Unknown User'
+            full_name: enrollment.profiles && Array.isArray(enrollment.profiles) && enrollment.profiles[0] 
+              ? enrollment.profiles[0].full_name 
+              : 'Unknown User'
           },
           courses: {
-            title: enrollment.courses ? enrollment.courses.title : 'Unknown Course'
+            title: enrollment.courses && Array.isArray(enrollment.courses) && enrollment.courses[0] 
+              ? enrollment.courses[0].title 
+              : 'Unknown Course'
           }
         }));
       } catch (error: any) {
