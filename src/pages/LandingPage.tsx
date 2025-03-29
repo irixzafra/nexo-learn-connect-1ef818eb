@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -78,22 +77,7 @@ const LandingPage: React.FC = () => {
 
   return (
     <PublicLayout>
-      <Helmet>
-        <title>Nexo Learning | Aprende. Crece. Conéctate.</title>
-        <meta name="description" content="Nexo unifica aprendizaje, gestión y comunidad en una sola plataforma. Másters y cursos de alta calidad en tecnología, marketing y creación de contenidos." />
-        <meta name="keywords" content="aprendizaje online, másters, cursos profesionales, tecnología, desarrollo, marketing digital" />
-        <meta property="og:title" content="Nexo Learning | Plataforma Educativa Profesional" />
-        <meta property="og:description" content="Descubre cursos de calidad y conecta con profesionales de tu sector. Formación superior en tecnología y negocios digitales." />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=630&fit=crop" />
-      </Helmet>
-
-      {/* Admin controls */}
-      {isAdmin && (
-        <div className="fixed top-4 right-4 z-50 flex gap-2">
-          <EditModeToggle />
-        </div>
-      )}
+      <EditModeToggle />
 
       {/* Course Order Editor (only for admins in edit mode) */}
       {isAdmin && <CourseOrderEditor />}

@@ -9,6 +9,7 @@ const EditModeToggle: React.FC = () => {
   const { isEditMode, toggleEditMode } = useEditMode();
   const { userRole } = useAuth();
   
+  // Si no eres administrador, no muestra el botón
   if (userRole !== 'admin') {
     return null;
   }
@@ -18,7 +19,7 @@ const EditModeToggle: React.FC = () => {
       variant={isEditMode ? "default" : "outline"}
       size="sm"
       onClick={toggleEditMode}
-      className={`gap-2 ${isEditMode ? 'bg-primary text-primary-foreground' : ''}`}
+      className={`gap-2 ${isEditMode ? 'bg-primary text-primary-foreground' : ''} fixed top-20 right-4 z-50 shadow-md`}
     >
       {isEditMode ? (
         <>
