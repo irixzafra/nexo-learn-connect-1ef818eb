@@ -43,22 +43,34 @@ const CoursesCatalog: React.FC = () => {
     try {
       console.log("Fetching courses...");
       
-      // Use an optimized query to avoid the RLS recursion issue
+      // Mejoramos la consulta para evitar problemas de RLS y type mismatch
       const { data, error: supabaseError } = await supabase
         .from('courses')
-        .select('id, title, description, price, currency, instructor_id, created_at, featured_instructor, cover_image_url, level, duration_text')
+        .select(`
+          id, 
+          title, 
+          description, 
+          price, 
+          currency, 
+          instructor_id, 
+          created_at, 
+          featured_instructor, 
+          cover_image_url, 
+          level, 
+          duration_text
+        `)
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
       if (supabaseError) {
-        console.error("Supabase error:", supabaseError);
+        console.error("Error en la consulta a Supabase:", supabaseError);
         throw supabaseError;
       }
       
-      console.log("Courses fetched:", data);
+      console.log("Cursos obtenidos:", data);
       setCourses(data || []);
     } catch (error: any) {
-      console.error('Error fetching courses:', error);
+      console.error('Error al cargar los cursos:', error);
       setError('No se pudieron cargar los cursos. Por favor, inténtelo de nuevo más tarde.');
       toast.error('Error al cargar los cursos. Por favor, inténtelo de nuevo más tarde.');
     } finally {
