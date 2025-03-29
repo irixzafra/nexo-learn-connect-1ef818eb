@@ -1,4 +1,5 @@
 
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
@@ -9,9 +10,7 @@ if (import.meta.env.PROD) {
   Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_DSN || "",
     integrations: [
-      Sentry.reactRouterV6BrowserTracingIntegration({
-        useEffect: React.useEffect,
-      }),
+      Sentry.reactRouterV6BrowserTracingIntegration(),
       Sentry.replayIntegration(),
     ],
     // Configura el muestreo de rendimiento
