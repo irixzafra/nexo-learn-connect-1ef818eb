@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,20 +10,7 @@ import { Loader2, Search, BookOpen, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
-
-type Course = {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  currency: 'eur' | 'usd';
-  instructor_id: string;
-  created_at: string;
-  featured_instructor: string;
-  cover_image_url?: string;
-  level?: string;
-  duration_text?: string;
-};
+import { Course } from '@/types/course';
 
 const CoursesCatalog: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -56,7 +42,16 @@ const CoursesCatalog: React.FC = () => {
       }
       
       console.log("Cursos obtenidos:", data);
-      setCourses(data || []);
+      
+      // Transform the data to ensure it matches the Course type
+      const typedCourses: Course[] = data?.map((course: any) => ({
+        ...course,
+        currency: (course.currency === 'eur' || course.currency === 'usd') 
+          ? course.currency 
+          : 'eur' // Default to 'eur' if not a valid value
+      })) || [];
+      
+      setCourses(typedCourses);
     } catch (error: any) {
       console.error('Error al cargar los cursos:', error);
       setError('No se pudieron cargar los cursos. Por favor, inténtelo de nuevo más tarde.');
