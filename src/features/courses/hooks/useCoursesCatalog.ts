@@ -16,9 +16,9 @@ export const useCoursesCatalog = () => {
     setError(null);
     
     try {
-      console.log("Fetching courses catalog...");
+      console.log("Iniciando obtención de catálogo de cursos...");
       
-      // Simple query that only uses the courses table without joins
+      // Consulta simplificada que solo usa la tabla courses sin joins
       const { data: coursesData, error: coursesError } = await supabase
         .from('courses')
         .select(`
@@ -45,11 +45,12 @@ export const useCoursesCatalog = () => {
       }
       
       console.log("Cursos obtenidos:", coursesData?.length || 0);
+      console.log("Datos de cursos:", JSON.stringify(coursesData, null, 2));
       
-      // Transform and validate the data
+      // Transformar y validar los datos
       const typedCourses: Course[] = coursesData?.map((course: any) => {
-        // Strict validation for currency field
-        let validCurrency: 'eur' | 'usd' = 'eur'; // default value
+        // Validación estricta para campo currency
+        let validCurrency: 'eur' | 'usd' = 'eur'; // valor predeterminado
         
         if (typeof course.currency === 'string') {
           const normalizedCurrency = course.currency.toLowerCase();
@@ -58,7 +59,7 @@ export const useCoursesCatalog = () => {
           }
         }
         
-        // Create a properly structured instructor object from featured_instructor
+        // Crear un objeto instructor estructurado a partir de featured_instructor
         const instructor = course.featured_instructor 
           ? {
               id: course.instructor_id,
@@ -73,6 +74,7 @@ export const useCoursesCatalog = () => {
         } as Course;
       }) || [];
       
+      console.log("Cursos procesados:", typedCourses.length);
       setCourses(typedCourses);
     } catch (error: any) {
       console.error('Error al cargar los cursos:', error);
