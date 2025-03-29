@@ -5,15 +5,17 @@ import { Separator } from '@/components/ui/separator';
 import { useNavigate } from 'react-router-dom';
 import { RoleIndicator } from './RoleIndicator';
 import { ConnectionStatus } from '@/components/ConnectionStatus';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const HeaderActions: React.FC = () => {
   const navigate = useNavigate();
+  const { userRole } = useAuth();
 
   return (
     <div className="ml-auto flex items-center space-x-4">
       <ConnectionStatus />
       <Separator orientation="vertical" className="h-6" />
-      <RoleIndicator />
+      <RoleIndicator viewingAs={userRole} />
       <Separator orientation="vertical" className="h-6" />
       <Button 
         variant="outline" 

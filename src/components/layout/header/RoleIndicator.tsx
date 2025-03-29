@@ -4,7 +4,7 @@ import { UserRole } from '@/types/auth';
 import { Badge } from '@/components/ui/badge';
 import { Eye, AlertTriangle } from 'lucide-react';
 
-interface RoleIndicatorProps {
+export interface RoleIndicatorProps {
   viewingAs: string | null;
 }
 

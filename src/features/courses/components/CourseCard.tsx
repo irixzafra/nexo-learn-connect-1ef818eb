@@ -7,9 +7,10 @@ import { StarIcon, Users, Clock } from 'lucide-react';
 
 export interface CourseCardProps {
   course: Course;
+  showContinueButton?: boolean;
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButton = false }) => {
   // Default placeholder values for any missing properties
   const {
     title = 'Título del curso',
@@ -17,8 +18,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
     instructor = 'Instructor',
     rating = 0,
     student_count = 0,
-    duration_hours = 0,
-    thumbnail = '/placeholder.svg',
+    duration_text = '0h',
+    cover_image_url = '/placeholder.svg',
     tags = []
   } = course;
 
@@ -26,7 +27,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
     <Card className="overflow-hidden hover:shadow-md transition-all cursor-pointer h-full">
       <div className="aspect-video relative overflow-hidden bg-gray-100 dark:bg-gray-800">
         <img 
-          src={thumbnail} 
+          src={cover_image_url} 
           alt={title}
           className="w-full h-full object-cover"
           onError={(e) => {
@@ -38,7 +39,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         <div className="flex flex-col space-y-2">
           <div className="space-y-1">
             <h3 className="font-medium line-clamp-2">{title}</h3>
-            <p className="text-sm text-muted-foreground">{instructor}</p>
+            <p className="text-sm text-muted-foreground">
+              {typeof instructor === 'string' ? instructor : instructor?.full_name}
+            </p>
           </div>
           
           <div className="flex items-center text-sm">
@@ -56,10 +59,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               </div>
             )}
             
-            {duration_hours > 0 && (
+            {duration_text && (
               <div className="flex items-center">
                 <Clock className="h-4 w-4 text-muted-foreground mr-1" />
-                <span>{duration_hours}h</span>
+                <span>{duration_text}</span>
               </div>
             )}
           </div>

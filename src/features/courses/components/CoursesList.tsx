@@ -17,7 +17,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ courses }) => {
           to={`/courses/${course.id}`}
           className="transition-all hover:scale-[1.01]"
         >
-          <CourseCard course={course} showContinueButton={false} />
+          <CourseCard course={course} />
         </Link>
       ))}
     </div>

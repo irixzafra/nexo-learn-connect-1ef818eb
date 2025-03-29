@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { SidebarProvider } from "@/components/ui/sidebar/sidebar-provider";
@@ -8,7 +8,7 @@ import HeaderContent from "@/components/layout/HeaderContent";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { EditModeProvider } from "@/contexts/EditModeContext";
 import { connectionService } from "@/lib/offline/connectionService";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 interface AppLayoutProps {
   children: React.ReactNode;
