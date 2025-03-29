@@ -1,124 +1,38 @@
 
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import React from 'react';
 import AppLayout from '@/layouts/AppLayout';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, Search, BookOpen, AlertCircle } from 'lucide-react';
-import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
-import { Course } from '@/types/course';
+import { useCoursesCatalog } from '@/features/courses/hooks/useCoursesCatalog';
 import { CourseFilters } from '@/features/courses/components/CourseFilters';
-import { CourseCard } from '@/features/courses/components/CourseCard';
+import { CatalogHeader } from '@/features/courses/components/CatalogHeader';
+import { CourseCatalogError } from '@/features/courses/components/CourseCatalogError';
+import { EmptyCourseState } from '@/features/courses/components/EmptyCourseState';
+import { CoursesList } from '@/features/courses/components/CoursesList';
 
 const CoursesCatalog: React.FC = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    filteredCourses,
+    isLoading,
+    error,
+    searchTerm,
+    setSearchTerm,
+    selectedLevel,
+    setSelectedLevel,
+    clearFilters,
+    fetchCourses
+  } = useCoursesCatalog();
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
-
-  const fetchCourses = async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      console.log("Fetching courses...");
-      
-      const { data, error: supabaseError } = await supabase
-        .from('courses')
-        .select(`
-          *,
-          instructor:profiles(id, full_name)
-        `)
-        .eq('is_published', true)
-        .order('created_at', { ascending: false });
-
-      if (supabaseError) {
-        console.error("Error en la consulta a Supabase:", supabaseError);
-        throw supabaseError;
-      }
-      
-      console.log("Cursos obtenidos:", data);
-      
-      // Transform the data to ensure it matches the Course type
-      const typedCourses: Course[] = data?.map((course: any) => {
-        // Extract instructor from the joined data
-        let instructor = undefined;
-        if (course.instructor) {
-          // Handle the case where instructor might be an array with a single object
-          if (Array.isArray(course.instructor) && course.instructor.length > 0) {
-            instructor = {
-              id: course.instructor[0].id,
-              full_name: course.instructor[0].full_name
-            };
-          } else if (typeof course.instructor === 'object') {
-            instructor = course.instructor;
-          }
-        }
-
-        return {
-          ...course,
-          instructor,
-          currency: (course.currency === 'eur' || course.currency === 'usd') 
-            ? course.currency 
-            : 'eur' // Default to 'eur' if not a valid value
-        } as Course;
-      }) || [];
-      
-      setCourses(typedCourses);
-    } catch (error: any) {
-      console.error('Error al cargar los cursos:', error);
-      setError('No se pudieron cargar los cursos. Por favor, inténtelo de nuevo más tarde.');
-      toast.error('Error al cargar los cursos. Por favor, inténtelo de nuevo más tarde.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const clearFilters = () => {
-    setSelectedLevel(null);
-  };
-
-  const filteredCourses = courses.filter((course) => {
-    const matchesSearch = 
-      course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (course.description && course.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesLevel = selectedLevel === null || course.level === selectedLevel;
-    
-    return matchesSearch && matchesLevel;
-  });
+  const hasFilters = searchTerm !== '' || selectedLevel !== null;
 
   return (
     <AppLayout>
       <div className="container mx-auto p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Catálogo de Cursos</h1>
-            <p className="text-muted-foreground">
-              Explora nuestros cursos y comienza a aprender hoy mismo
-            </p>
-          </div>
-          <div className="relative mt-4 md:mt-0 md:w-[300px]">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Buscar cursos..."
-              className="pl-8"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
+        <CatalogHeader 
+          searchTerm={searchTerm} 
+          setSearchTerm={setSearchTerm} 
+        />
 
         <CourseFilters 
           selectedLevel={selectedLevel}
@@ -128,17 +42,7 @@ const CoursesCatalog: React.FC = () => {
 
         <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
           {error && (
-            <Card className="mb-6 border-destructive bg-destructive/5">
-              <CardContent className="flex items-center gap-3 py-4">
-                <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0" />
-                <p className="text-destructive">{error}</p>
-              </CardContent>
-              <CardFooter className="border-t pt-4 bg-background/50">
-                <Button variant="outline" onClick={() => fetchCourses()}>
-                  Intentar de nuevo
-                </Button>
-              </CardFooter>
-            </Card>
+            <CourseCatalogError error={error} onRetry={fetchCourses} />
           )}
 
           {isLoading ? (
@@ -146,36 +50,12 @@ const CoursesCatalog: React.FC = () => {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : !error && filteredCourses.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-10">
-                {searchTerm || selectedLevel ? (
-                  <>
-                    <p className="text-muted-foreground mb-4">
-                      No se encontraron cursos con los filtros seleccionados
-                    </p>
-                    <Button variant="outline" onClick={clearFilters}>
-                      Limpiar filtros
-                    </Button>
-                  </>
-                ) : (
-                  <p className="text-muted-foreground">
-                    No hay cursos disponibles en este momento
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+            <EmptyCourseState 
+              hasFilters={hasFilters} 
+              onClearFilters={clearFilters} 
+            />
           ) : !error && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCourses.map((course) => (
-                <Link 
-                  key={course.id} 
-                  to={`/courses/${course.id}`}
-                  className="transition-all hover:scale-[1.01]"
-                >
-                  <CourseCard course={course} showContinueButton={false} />
-                </Link>
-              ))}
-            </div>
+            <CoursesList courses={filteredCourses} />
           )}
         </ErrorBoundary>
       </div>
