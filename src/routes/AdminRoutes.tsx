@@ -9,7 +9,7 @@ import TestDataManagement from '@/pages/admin/TestDataManagement';
 
 const AdminRoutes = () => {
   return (
-    <React.Fragment>
+    <>
       <Route path="/admin/dashboard" element={
         <ProtectedRoute requiredRole="admin">
           <Home />
@@ -25,7 +25,7 @@ const AdminRoutes = () => {
           <TestDataManagement />
         </ProtectedRoute>
       } />
-    </React.Fragment>
+    </>
   );
 };
 

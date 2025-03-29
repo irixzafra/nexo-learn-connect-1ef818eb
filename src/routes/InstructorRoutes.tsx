@@ -14,7 +14,7 @@ import EditLesson from "@/pages/instructor/EditLesson";
 
 const InstructorRoutes = () => {
   return (
-    <React.Fragment>
+    <>
       <Route path="/instructor/dashboard" element={
         <ProtectedRoute requiredRole="instructor">
           <InstructorDashboard />
@@ -50,7 +50,7 @@ const InstructorRoutes = () => {
           <EditLesson />
         </ProtectedRoute>
       } />
-    </React.Fragment>
+    </>
   );
 };
 

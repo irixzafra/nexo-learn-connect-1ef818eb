@@ -20,7 +20,7 @@ import Checkout from "@/pages/student/Checkout";
 
 const UserRoutes = () => {
   return (
-    <React.Fragment>
+    <>
       <Route path="/home" element={
         <ProtectedRoute>
           <Home />
@@ -76,7 +76,7 @@ const UserRoutes = () => {
           <Settings />
         </ProtectedRoute>
       } />
-    </React.Fragment>
+    </>
   );
 };
 

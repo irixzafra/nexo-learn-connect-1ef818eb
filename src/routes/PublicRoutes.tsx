@@ -16,7 +16,7 @@ import Scholarships from "@/pages/Scholarships";
 
 const PublicRoutes = () => {
   return (
-    <React.Fragment>
+    <>
       <Route path="/" element={<LandingPage />} />
       <Route path="/auth/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
@@ -26,7 +26,7 @@ const PublicRoutes = () => {
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/scholarships" element={<Scholarships />} />
       <Route path="*" element={<NotFound />} />
-    </React.Fragment>
+    </>
   );
 };
 
