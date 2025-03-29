@@ -57,20 +57,20 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ userRole, viewingAs }) =>
             size="sm"
             onClick={toggleEditMode}
             className={cn(
-              "gap-2",
+              "gap-1",
               isEditMode ? 'bg-primary text-primary-foreground' : '',
-              "sm:flex sm:items-center" // Para móvil
             )}
+            title="Modo de edición"
           >
             {isEditMode ? (
               <>
                 <CheckSquare className="h-4 w-4" />
-                <span className="hidden sm:inline">Editando</span>
+                <span className="hidden md:inline">Editando</span>
               </>
             ) : (
               <>
                 <Edit className="h-4 w-4" />
-                <span className="hidden sm:inline">Editar</span>
+                <span className="hidden md:inline">Editar</span>
               </>
             )}
           </Button>

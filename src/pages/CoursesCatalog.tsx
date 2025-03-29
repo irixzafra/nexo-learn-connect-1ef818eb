@@ -43,22 +43,10 @@ const CoursesCatalog: React.FC = () => {
     try {
       console.log("Fetching courses...");
       
-      // Mejoramos la consulta para evitar problemas de RLS y type mismatch
+      // Simplified query to avoid RLS issues
       const { data, error: supabaseError } = await supabase
         .from('courses')
-        .select(`
-          id, 
-          title, 
-          description, 
-          price, 
-          currency, 
-          instructor_id, 
-          created_at, 
-          featured_instructor, 
-          cover_image_url, 
-          level, 
-          duration_text
-        `)
+        .select('*')
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
