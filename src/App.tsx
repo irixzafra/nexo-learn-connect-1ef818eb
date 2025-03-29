@@ -14,6 +14,28 @@ import NotFound from "./pages/NotFound";
 import TestUsersPage from "./pages/TestUsersPage";
 import Unauthorized from "./pages/Unauthorized";
 
+// Placeholder pages
+const Courses = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Cursos</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
+const Users = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Usuarios</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
+const Settings = () => (
+  <div className="container mx-auto p-6">
+    <h1 className="text-3xl font-bold mb-6">Configuración</h1>
+    <p>Página en desarrollo</p>
+  </div>
+);
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -40,6 +62,21 @@ const App = () => (
             <Route path="/home" element={
               <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            } />
+            <Route path="/courses" element={
+              <ProtectedRoute>
+                <Courses />
+              </ProtectedRoute>
+            } />
+            <Route path="/users" element={
+              <ProtectedRoute requiredRole="instructor">
+                <Users />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             } />
             
