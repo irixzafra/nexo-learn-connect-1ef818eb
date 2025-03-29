@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { Lesson } from "@/types/course";
 import { toast } from "@/hooks/use-toast";
 import { useLessonProgress } from "@/features/courses/hooks/useLessonProgress";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { LessonProgressControls } from "@/features/lessons/components/LessonProgressControls";
+import { LessonComments } from "@/features/lessons/components/LessonComments";
 
 const LessonView: React.FC = () => {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
@@ -192,6 +193,11 @@ const LessonView: React.FC = () => {
               isUpdating={isUpdating}
               onMarkCompleted={handleMarkCompleted}
             />
+          </div>
+          
+          {/* Comments Section */}
+          <div className="mt-6">
+            {lessonId && <LessonComments lessonId={lessonId} />}
           </div>
         </div>
       </div>
