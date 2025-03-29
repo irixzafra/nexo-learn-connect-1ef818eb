@@ -77,7 +77,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             <HeaderContent userRole={userRole} viewingAs={viewAsRole !== 'current' ? viewAsRole : null} />
           </header>
           
-          <main className="container mx-auto px-4 py-6 min-h-[calc(100vh-60px)]">
+          <main className="container mx-auto py-6">
             {children}
           </main>
         </div>

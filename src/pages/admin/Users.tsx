@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { UserProfile } from "@/types/auth";
@@ -27,6 +28,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
 import AppLayout from "@/layouts/AppLayout";
+import { UserRoleType } from "@/features/users/UserRoleType";
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -127,26 +129,11 @@ const Users: React.FC = () => {
     : users.filter(user => 
         user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const getRoleBadgeVariant = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'default';
-      case 'instructor':
-        return 'secondary';
-      case 'student':
-        return 'outline';
-      case 'sistemas':
-        return 'destructive';
-      default:
-        return 'outline';
-    }
-  };
-
   const isAdmin = userRole === 'admin';
 
   return (
     <AppLayout>
-      <div className="container mx-auto p-6">
+      <div className="px-0 sm:px-4">
         <h1 className="text-3xl font-bold mb-6">Gestión de Usuarios</h1>
         
         <UserStats 
@@ -216,9 +203,7 @@ const Users: React.FC = () => {
                             {user.full_name || 'Usuario sin nombre'}
                           </TableCell>
                           <TableCell>
-                            <Badge variant={getRoleBadgeVariant(user.role)} className="capitalize">
-                              {user.role}
-                            </Badge>
+                            <UserRoleType role={user.role} showIcon={true} />
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
                             {new Date(user.created_at || '').toLocaleDateString()}

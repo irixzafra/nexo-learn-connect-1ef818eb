@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { UserProfile, UserRole } from "@/types/auth";
@@ -16,7 +17,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -25,6 +25,7 @@ import { Search, RefreshCw, UserPlus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRoleSearch } from "@/components/admin/UserRoleSearch";
 import AppLayout from "@/layouts/AppLayout";
+import { UserRoleType } from "@/features/users/UserRoleType";
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -109,24 +110,9 @@ const UserManagement: React.FC = () => {
     : users.filter(user => 
         user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const getRoleBadgeVariant = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'default';
-      case 'instructor':
-        return 'secondary';
-      case 'student':
-        return 'outline';
-      case 'sistemas':
-        return 'destructive';
-      default:
-        return 'outline';
-    }
-  };
-
   return (
     <AppLayout>
-      <div className="container mx-auto p-6">
+      <div className="px-0 sm:px-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <h1 className="text-3xl font-bold">Gestión de Usuarios</h1>
           <div className="flex items-center mt-4 md:mt-0">
@@ -199,9 +185,7 @@ const UserManagement: React.FC = () => {
                                 {user.full_name || 'Usuario sin nombre'}
                               </TableCell>
                               <TableCell>
-                                <Badge variant={getRoleBadgeVariant(user.role)} className="capitalize">
-                                  {user.role}
-                                </Badge>
+                                <UserRoleType role={user.role} showIcon={true} />
                               </TableCell>
                               <TableCell className="hidden md:table-cell">
                                 {new Date(user.created_at || '').toLocaleDateString()}

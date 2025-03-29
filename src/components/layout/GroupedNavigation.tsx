@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
@@ -64,7 +63,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
   // Check if a role should see specific sections
   const canSeeEnsenanza = effectiveRole === 'instructor' || effectiveRole === 'admin';
   const canSeeAdmin = effectiveRole === 'admin';
-  const canSeeSistemas = effectiveRole === 'admin';
+  const canSeeSistemas = effectiveRole === 'sistemas' || effectiveRole === 'admin';
 
   return (
     <div className="flex flex-col py-2">
@@ -108,7 +107,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
         onToggle={() => toggleGroup('cuenta')} 
       />
       
-      {/* Bloque 7: Sistemas - Solo visible para admin */}
+      {/* Bloque 7: Sistemas - Solo visible para admin o sistemas */}
       {canSeeSistemas && (
         <SistemasNavigation 
           isOpen={openGroups.sistemas} 
