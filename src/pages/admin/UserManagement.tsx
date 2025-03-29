@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { UserProfile } from "@/types/auth";
+import { UserProfile, UserRole } from "@/types/auth";
 import {
   Table,
   TableBody,
@@ -68,7 +67,7 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: string) => {
+  const handleRoleChange = async (userId: string, newRole: UserRole) => {
     try {
       const { error } = await supabase
         .from('profiles')

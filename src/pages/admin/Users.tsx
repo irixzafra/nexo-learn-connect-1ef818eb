@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { UserProfile } from "@/types/auth";
@@ -37,7 +36,6 @@ const Users: React.FC = () => {
   const { userRole, user } = useAuth();
   const { toast } = useToast();
   
-  // Calculated statistics
   const totalUsers = users.length;
   const activeUsers = Math.round(totalUsers * 0.7); // Placeholder data
   const newUsers = Math.round(totalUsers * 0.15); // Placeholder data
@@ -78,7 +76,7 @@ const Users: React.FC = () => {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: UserRole) => {
+  const handleRoleChange = async (userId: string, newRole: string) => {
     try {
       if (userId === user?.id) {
         toast({
@@ -106,7 +104,7 @@ const Users: React.FC = () => {
 
       setUsers(prevUsers => 
         prevUsers.map(u => 
-          u.id === userId ? { ...u, role: newRole } : u
+          u.id === userId ? { ...u, role: newRole as any } : u
         )
       );
 
@@ -151,7 +149,6 @@ const Users: React.FC = () => {
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">Gestión de Usuarios</h1>
         
-        {/* User Statistics */}
         <UserStats 
           totalUsers={totalUsers}
           activeUsers={activeUsers}
@@ -160,7 +157,6 @@ const Users: React.FC = () => {
           loading={isLoading}
         />
         
-        {/* Tabs Navigation */}
         <UserManagementTabs isAdmin={isAdmin} />
         
         <Card className="mt-6">
