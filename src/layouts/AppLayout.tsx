@@ -19,6 +19,16 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [viewAsRole, setViewAsRole] = useState<ViewAsRole>('current');
   const location = useLocation();
 
+  // Get default sidebar open state from localStorage if available
+  const getDefaultSidebarState = () => {
+    try {
+      const storedState = localStorage.getItem('sidebarOpen');
+      return storedState !== null ? JSON.parse(storedState) : window.innerWidth >= 768;
+    } catch (e) {
+      return window.innerWidth >= 768;
+    }
+  };
+
   // Reset scroll position on route change
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -39,7 +49,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   };
 
   return (
-    <SidebarProvider defaultOpen={window.innerWidth >= 768}>
+    <SidebarProvider defaultOpen={getDefaultSidebarState()}>
       <div className="flex min-h-screen w-full bg-muted/10">
         <AppSidebar 
           viewAsRole={viewAsRole}
@@ -47,11 +57,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         />
         
         <div className="flex-1 min-w-0 overflow-auto transition-all duration-300">
-          <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-sm">
+          <header className="sticky top-0 z-30">
             <HeaderContent userRole={userRole} viewingAs={viewAsRole !== 'current' ? viewAsRole : null} />
           </header>
           
-          <main className="min-h-[calc(100vh-60px)]">
+          <main className="container mx-auto px-4 py-6 min-h-[calc(100vh-60px)]">
             {children}
           </main>
         </div>

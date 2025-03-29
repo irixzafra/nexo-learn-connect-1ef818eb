@@ -14,9 +14,6 @@ import Billing from '@/pages/placeholder/Billing';
 const AdminRoutes: React.FC = () => {
   const { userRole } = useAuth();
 
-  // Función para verificar si el usuario es administrador
-  const isAdmin = () => userRole === 'admin';
-
   return (
     <Routes>
       <Route
