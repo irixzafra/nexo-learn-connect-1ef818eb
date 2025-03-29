@@ -1,77 +1,9 @@
 
-import {
-  Home,
-  Book,
-  GraduationCap,
-  Calendar,
-  MessageSquare,
-  Settings,
-  ChevronDown,
-  TestTube,
-  Users
-} from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useState } from 'react';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { UserRole } from '@/types/auth';
-
-interface SidebarMenuProps {
-  children: React.ReactNode;
-}
-
-const SidebarMenu: React.FC<SidebarMenuProps> = ({ children }) => (
-  <nav className="grid gap-1">{children}</nav>
-);
-
-interface SidebarMenuItemProps {
-  children: React.ReactNode;
-}
-
-const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ children }) => (
-  <div className="rounded-md hover:bg-secondary">
-    {children}
-  </div>
-);
-
-interface SidebarMenuButtonProps {
-  children: React.ReactNode;
-}
-
-const SidebarMenuButton: React.FC<SidebarMenuButtonProps> = ({ children }) => (
-  <div className="px-3 py-2 text-sm font-medium transition-colors hover:text-foreground">
-    {children}
-  </div>
-);
-
-interface SidebarGroupProps {
-  children: React.ReactNode;
-}
-
-const SidebarGroup: React.FC<SidebarGroupProps> = ({ children }) => (
-  <div>{children}</div>
-);
-
-interface SidebarGroupLabelProps {
-  children: React.ReactNode;
-}
-
-const SidebarGroupLabel: React.FC<SidebarGroupLabelProps> = ({ children }) => (
-  <div className="mb-2 px-4 text-sm font-semibold opacity-75">{children}</div>
-);
-
-interface SidebarGroupContentProps {
-  children: React.ReactNode;
-}
-
-const SidebarGroupContent: React.FC<SidebarGroupContentProps> = ({ children }) => (
-  <div className="mb-4">{children}</div>
-);
+import CommonNavigation from './sidebar/CommonNavigation';
+import AdminNavigation from './sidebar/AdminNavigation';
+import InstructorNavigation from './sidebar/InstructorNavigation';
 
 interface SidebarNavigationProps {
   viewAsRole?: string;
@@ -79,145 +11,17 @@ interface SidebarNavigationProps {
 
 export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => {
   const { userRole } = useAuth();
-  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-2">
-      <SidebarGroup>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <NavLink to="/home" end>
-                  <Home className="h-4 w-4" />
-                  <span>Inicio</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <NavLink to="/courses">
-                  <Book className="h-4 w-4" />
-                  <span>Cursos</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <NavLink to="/home/my-courses">
-                  <GraduationCap className="h-4 w-4" />
-                  <span>Mi aprendizaje</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            {/* Solo mostramos enlaces a funcionalidades implementadas */}
-            {/*
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <NavLink to="/home/calendar">
-                  <Calendar className="h-4 w-4" />
-                  <span>Calendario</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <NavLink to="/home/messages">
-                  <MessageSquare className="h-4 w-4" />
-                  <span>Mensajes</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            */}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
+      {/* Common navigation links for all users */}
+      <CommonNavigation />
       
-      {/* Admin Links */}
-      {userRole === 'admin' && (
-        <>
-          <Accordion type="single" collapsible>
-            <AccordionItem value="admin">
-              <AccordionTrigger className='hover:no-underline'>
-                Administración
-                <ChevronDown className="h-4 w-4" />
-              </AccordionTrigger>
-              <AccordionContent>
-                <SidebarGroup>
-                  <SidebarGroupContent>
-                    <SidebarMenu>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton>
-                          <NavLink to="/home/users">
-                            <Users className="h-4 w-4" />
-                            <span>Usuarios</span>
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                      
-                      <SidebarMenuItem>
-                        <SidebarMenuButton>
-                          <NavLink to="/admin/test-data">
-                            <TestTube className="h-4 w-4" />
-                            <span>Datos de Prueba</span>
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </>
-      )}
+      {/* Admin-specific links */}
+      {userRole === 'admin' && <AdminNavigation />}
       
-      {/* Instructor Links */}
-      {userRole === 'instructor' && (
-        <>
-          <Accordion type="single" collapsible>
-            <AccordionItem value="instructor">
-              <AccordionTrigger className='hover:no-underline'>
-                Instructor
-                <ChevronDown className="h-4 w-4" />
-              </AccordionTrigger>
-              <AccordionContent>
-                <SidebarGroup>
-                  <SidebarGroupContent>
-                    <SidebarMenu>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton>
-                          <NavLink to="/instructor/dashboard">
-                            <Home className="h-4 w-4" />
-                            <span>Dashboard</span>
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton>
-                          <NavLink to="/instructor/courses">
-                            <Book className="h-4 w-4" />
-                            <span>Mis Cursos</span>
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton>
-                          <NavLink to="/instructor/students">
-                            <Users className="h-4 w-4" />
-                            <span>Estudiantes</span>
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </>
-      )}
-      
+      {/* Instructor-specific links */}
+      {userRole === 'instructor' && <InstructorNavigation />}
     </div>
   );
 };
