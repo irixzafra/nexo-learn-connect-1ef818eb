@@ -67,12 +67,14 @@ const StudentCourses: React.FC = () => {
         
         // Transform the data to match Course type
         const formattedCourses = coursesData.map(course => {
-          // Extract instructor data correctly from the profiles object
-          // The profiles property is returned as a record, not an array
-          const instructorData = course.profiles && typeof course.profiles === 'object' ? {
-            id: course.profiles.id,
-            full_name: course.profiles.full_name
-          } : undefined;
+          // First check if profiles exists and is an object
+          const profileData = course.profiles;
+          
+          // Then extract instructor data only if profileData exists
+          const instructorData = profileData && {
+            id: profileData.id,
+            full_name: profileData.full_name
+          };
           
           return {
             ...course,

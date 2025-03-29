@@ -1,8 +1,8 @@
 
 # Nexo Project - Guía de Desarrollo
 
-**Versión:** 1.5
-**Última Actualización:** 2023-11-16
+**Versión:** 1.6
+**Última Actualización:** 2023-11-24
 **Estado:** Fase 1 (MVP) - En desarrollo
 
 ## 1. VISIÓN GENERAL
@@ -80,7 +80,15 @@ CREATE TABLE public.courses (
   slug TEXT UNIQUE,
   seo_title TEXT,
   seo_description TEXT,
-  cover_image_url TEXT
+  cover_image_url TEXT,
+  -- Campos de características del curso
+  duration_text TEXT,
+  level TEXT,
+  prerequisites_text TEXT,
+  -- Campo para destacar en landing
+  is_featured_on_landing BOOLEAN NOT NULL DEFAULT false,
+  -- Campo para ordenación personalizada
+  display_order INTEGER DEFAULT 0
 );
 
 CREATE TABLE public.modules (
@@ -158,7 +166,7 @@ COMMENT ON TABLE public.audit_log IS 'Records critical administrative actions fo
 - `/messages`: Mensajería directa (Futuro).
 
 **Estudiante:**
-- `/student/my-courses`: Mis Másters/Carreras inscritos.
+- `/my-courses`: Mis Másters/Carreras inscritos.
 - `/learn/courses/[course_slug]/lessons/[lesson_slug]`: Vista de aprendizaje.
 
 **Instructor:**
@@ -302,7 +310,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Botón flotante de Chat/Ayuda (como en referencias)
     * SEO: Implementar metatags (title, description, keywords, OpenGraph) dinámicas o configurables. URLs limpias. Buen performance (optimizar imágenes/animaciones)
     * Logo: Diseñar/Implementar un logo moderno para "Nexo Learning Platform" o "Nexo Ecosistema Creativo" visible en el header
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Creación de Cursos (Metadatos y SEO)**
   * **Objetivo:**
@@ -324,7 +332,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Formulario incluye campos SEO y carga de imagen
   * **Instrucción Adicional:**
     * Crea la tabla courses si no existe y añade 1-2 cursos de prueba (ej: "Máster en IA Generativa", "Carrera Desarrollo Full-Stack") con datos ficticios (incluyendo imagen placeholder URL, slug, SEO, y ahora también características de ejemplo y uno marcado como destacado)
-  * **Estado:** [ ] Pendiente (Estado del doc anterior [x] pero se añaden requisitos)
+  * **Estado:** [x]
 
 * **Funcionalidad: Edición de Estructura del Curso (Módulos y Lecciones)**
   * **Objetivo:**
@@ -340,7 +348,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Controles intuitivos
   * **Instrucción Adicional:**
     * Crea las tablas modules y lessons si no existen. Añade 2-3 módulos y 2-3 lecciones de prueba para uno de los cursos creados anteriormente
-  * **Estado:** [ ] Pendiente (Estado del doc anterior [x] pero se añade requisito de datos)
+  * **Estado:** [x]
 
 * **Funcionalidad: Edición de Contenido de Lección (Texto/Video)**
   * **Objetivo:**
@@ -373,7 +381,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Update courses
   * **Pistas UI/UX:**
     * Control claro (Switch?)
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Catálogo Público de Cursos**
   * **Objetivo:**
@@ -390,7 +398,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Diseño atractivo (Cards como referencia)
     * Carga eficiente
     * Usar imagen portada
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Página de Detalle del Curso**
   * **Objetivo:**
@@ -409,13 +417,13 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * CTA claro
     * Usar imagen portada
     * SEO (usar seo_title, seo_description)
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Acceso Estudiante (Mis Cursos y Vista de Lección)**
   * **Objetivo:**
     * Permitir a estudiantes acceder y consumir el contenido de sus cursos
   * **Acciones Clave:**
-    * Ir a /student/my-courses
+    * Ir a /my-courses
     * Ver lista cursos inscritos
     * Clic para ir a curso
     * Navegar entre lecciones
@@ -429,7 +437,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Navegación curso clara en /learn
     * Contenido legible/visible
     * Usar slugs en URL si aplica
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Integración de Pago Stripe (Frontend)**
   * **Objetivo:**
@@ -443,7 +451,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Uso stripe-js
   * **Pistas UI/UX:**
     * Feedback de carga en botón
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Procesamiento de Pago Stripe (Backend - Webhook)**
   * **Objetivo:**
@@ -462,7 +470,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * (Ninguna directa) Fiabilidad y seguridad backend. Idempotencia.
   * **Instrucción Adicional:**
     * Crea las tablas payments y enrollments si no existen. Añade 1 inscripción de prueba para el estudiante y curso de prueba
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Vista de Administración de Usuarios (Básica)**
   * **Objetivo:**
@@ -479,7 +487,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Paginación/Búsqueda básica opcional. Solo vista.
   * **Instrucción Adicional:**
     * Crea la tabla profiles (si no existe, y el trigger handle_new_user). Asegúrate de tener 1 Admin, 1 Instructor, 1 Estudiante de prueba
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Vista de Administración de Cursos (Básica)**
   * **Objetivo:**
@@ -499,7 +507,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Tabla clara
     * Enlace a edición visible. Solo vista/enlace. Paginación/Búsqueda opcional.
     * La tabla (shadcn/ui) debe soportar Drag & Drop para reordenar filas (investigar librerías como dnd-kit o similares compatibles con tanstack/table si se usa)
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Impersonación de Usuarios (Admin)**
   * **Objetivo:**
@@ -523,7 +531,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Botón detener claro. Alta precaución seguridad.
   * **Instrucción Adicional:**
     * Crea la tabla audit_log según esquema en Sección 4
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Datos de Prueba Iniciales (Seed)**
   * **Objetivo:**
@@ -536,7 +544,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Escritura BD
   * **Pistas UI/UX:**
     * Script SQL claro. (Nota: Varias tareas anteriores ya piden crear datos de prueba, este script puede consolidar o complementar)
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [x]
 
 * **Funcionalidad: Internacionalización (i18n - Base)**
   * **Objetivo:**
@@ -551,7 +559,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Librería i18next
   * **Pistas UI/UX:**
     * LanguageSwitcher simple (botones/select). (Prioridad baja Fase 1).
-  * **Estado:** [ ] Pendiente
+  * **Estado:** [ ]
 
 * **Funcionalidad General: Ordenamiento Drag & Drop en Vistas de Gestión (Admin/Instructor)**
   * **Objetivo:**
@@ -560,6 +568,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Cuando se implemente una tabla de gestión para Admins o Instructores donde el orden sea relevante, incluir la funcionalidad de reordenamiento mediante Drag & Drop.
     * Esto requerirá añadir un campo display_order (o similar) a la tabla correspondiente y actualizarlo en la BD tras la acción de D&D.
     * Este orden personalizado podría usarse opcionalmente para filtrar o mostrar elementos en otras partes de la aplicación.
+  * **Estado:** [x]
 
 ### Fase: Enriquecimiento LMS e Interacción Inicial
 
@@ -642,7 +651,7 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
   * **Pistas UI/UX:**
     * Toasts claros, con icono/color apropiado
     * Posición consistente
-  * **Estado:** [ ]
+  * **Estado:** [x]
 
 * **Funcionalidad: Calificaciones y Retroalimentación (v1 - Tareas)**
   * **Objetivo:**
@@ -662,4 +671,3 @@ Esta sección detalla las funcionalidades planeadas para Nexo, agrupadas por fas
     * Interfaz clara para calificar
     * Vista clara para estudiante
   * **Estado:** [ ]
-
