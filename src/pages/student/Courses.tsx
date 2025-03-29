@@ -54,7 +54,7 @@ const StudentCourses: React.FC = () => {
             is_published,
             created_at,
             updated_at,
-            instructor:profiles!instructor_id (
+            profiles:instructor_id (
               id, full_name
             )
           `)
@@ -67,10 +67,10 @@ const StudentCourses: React.FC = () => {
         
         // Transform the data to match Course type
         const formattedCourses = coursesData.map(course => {
-          // Ensure we convert the instructor data structure to match our type
-          const instructorData = course.instructor ? {
-            id: course.instructor.id,
-            full_name: course.instructor.full_name
+          // Extraer los datos del instructor del objeto profiles
+          const instructorData = course.profiles ? {
+            id: course.profiles.id,
+            full_name: course.profiles.full_name
           } : undefined;
           
           return {
