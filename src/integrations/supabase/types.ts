@@ -11,35 +11,62 @@ export type Database = {
     Tables: {
       courses: {
         Row: {
+          cover_image_url: string | null
           created_at: string
           currency: string
           description: string | null
+          display_order: number | null
+          duration_text: string | null
           id: string
           instructor_id: string
+          is_featured_on_landing: boolean | null
           is_published: boolean
+          level: string | null
+          prerequisites_text: string | null
           price: number
+          seo_description: string | null
+          seo_title: string | null
+          slug: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          cover_image_url?: string | null
           created_at?: string
           currency?: string
           description?: string | null
+          display_order?: number | null
+          duration_text?: string | null
           id?: string
           instructor_id: string
+          is_featured_on_landing?: boolean | null
           is_published?: boolean
+          level?: string | null
+          prerequisites_text?: string | null
           price?: number
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          cover_image_url?: string | null
           created_at?: string
           currency?: string
           description?: string | null
+          display_order?: number | null
+          duration_text?: string | null
           id?: string
           instructor_id?: string
+          is_featured_on_landing?: boolean | null
           is_published?: boolean
+          level?: string | null
+          prerequisites_text?: string | null
           price?: number
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string | null
           title?: string
           updated_at?: string
         }
@@ -136,6 +163,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          role: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {

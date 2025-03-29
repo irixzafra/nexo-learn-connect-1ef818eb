@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { NexoLogo } from '@/components/ui/nexo-logo';
+import { AnimatedNexoLogo } from '@/components/ui/animated-nexo-logo';
 import { motion } from 'framer-motion';
 
 interface PublicLayoutProps {
@@ -23,7 +23,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <NexoLogo className="text-xl" />
+              <AnimatedNexoLogo className="text-xl" />
             </motion.div>
           </Link>
           
@@ -73,7 +73,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <NexoLogo className="text-xl mb-4" />
+              <AnimatedNexoLogo className="text-xl mb-4" />
               <p className="text-muted-foreground text-sm mb-4">
                 La plataforma líder de formación superior en tecnología, negocios digitales y creatividad.
               </p>

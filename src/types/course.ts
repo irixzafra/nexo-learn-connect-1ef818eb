@@ -33,7 +33,7 @@ export interface Course {
   is_published: boolean;
   created_at: string;
   updated_at: string;
-  // Nuevos campos SEO y características
+  // New SEO and features fields
   cover_image_url?: string;
   slug?: string;
   seo_title?: string;
@@ -43,7 +43,7 @@ export interface Course {
   level?: string;
   prerequisites_text?: string;
   display_order?: number;
-  // Relaciones
+  // Relationships
   instructor?: {
     id: string;
     full_name: string;
