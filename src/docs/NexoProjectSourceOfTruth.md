@@ -1,3 +1,4 @@
+
 # Nexo Learning Project - Source of Truth
 
 ## Parte I: Visión del Producto
@@ -267,21 +268,25 @@ El proyecto utiliza Row Level Security (RLS) de PostgreSQL para controlar el acc
 
 - **Componentes UI clave**:
   - **RoleSwitcher**: Permite a los administradores cambiar su vista al contexto de otros roles para previsualizar la experiencia de usuario.
-  - **UserRoleSearch**: Integra funcionalidad de búsqueda avanzada directamente en el menú desplegable.
+    - Búsqueda integrada directamente en el menú desplegable con actualización dinámica en tiempo real.
+    - Interfaz intuitiva con iconos específicos para cada rol y badges informativos.
+    - Opción clara para volver al rol original desde la interfaz de previsualización.
   - **SidebarFooterContent**: Muestra información contextual del rol actual y opciones relacionadas con el perfil de usuario.
+    - Indicadores visuales del modo de previsualización.
+    - Integración de menús contextuales para acciones rápidas.
 
 - **Lógica de permisos**:
   - **Administradores**:
     - Pueden visualizar la plataforma desde cualquier perspectiva de rol.
-    - Tienen acceso a funciones de búsqueda de usuarios integradas.
+    - Tienen acceso a funciones de búsqueda de usuarios en tiempo real integradas.
     - Pueden volver a su rol original desde cualquier vista previsualizada.
   - **Instructores y Estudiantes**:
     - Visualizan solamente las funcionalidades relevantes a su rol.
     - La interfaz adapta automáticamente las opciones disponibles.
 
 - **Mejoras de UX implementadas**:
+  - Búsqueda dinámica de usuarios que actualiza resultados mientras se escribe.
   - Indicadores visuales claros del rol actual y modo de previsualización.
-  - Búsqueda de usuarios integrada directamente en el menú contextual.
   - Navegación intuitiva entre diferentes contextos de rol.
   - Sistema de badges y separadores visuales para mejorar la comprensión.
 
@@ -290,6 +295,7 @@ El proyecto utiliza Row Level Security (RLS) de PostgreSQL para controlar el acc
 - **Supabase**: Para base de datos, autenticación, almacenamiento y Row Level Security.
 - **Stripe**: Integración planificada para el procesamiento de pagos.
 - **AWS S3**: Almacenamiento a través de Supabase Storage para archivos de contenido.
+- **Sentry**: Monitoreo de errores y rendimiento de la aplicación.
 
 ### Prácticas Técnicas Implementadas
 

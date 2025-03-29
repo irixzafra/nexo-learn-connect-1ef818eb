@@ -39,15 +39,36 @@ export const trackUserAction = (
  * Establece el contexto del usuario para los errores
  */
 export const setUserContext = (
-  user: { id: string; email?: string; role?: string } | null
+  user: { id: string; email?: string; role?: string; viewingAs?: string } | null
 ) => {
   if (user) {
     Sentry.setUser({
       id: user.id,
       email: user.email,
       role: user.role,
+      // Añadimos el contexto de visualización para ayudar en la depuración
+      ...(user.viewingAs && { viewingAs: user.viewingAs }),
     });
   } else {
     Sentry.setUser(null);
   }
+};
+
+/**
+ * Registra eventos de cambio de rol para análisis
+ */
+export const trackRoleSwitch = (
+  originalRole: string,
+  newViewRole: string
+) => {
+  Sentry.addBreadcrumb({
+    category: 'role-switch',
+    message: `Cambio de vista de rol: ${originalRole} → ${newViewRole}`,
+    level: 'info',
+    data: {
+      originalRole,
+      newViewRole,
+      timestamp: new Date().toISOString()
+    }
+  });
 };
