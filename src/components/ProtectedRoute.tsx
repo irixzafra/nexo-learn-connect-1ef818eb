@@ -7,12 +7,16 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
   requiredRole?: UserRole;
   requiredRoles?: UserRole[];
+  checkFn?: () => boolean;
+  fallbackPath?: string;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
   requiredRole,
-  requiredRoles
+  requiredRoles,
+  checkFn,
+  fallbackPath = "/unauthorized"
 }) => {
   const { isAuthenticated, userRole, isLoading } = useAuth();
   const location = useLocation();
@@ -31,17 +35,22 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
+  // If a custom check function is provided, use it
+  if (checkFn && !checkFn()) {
+    return <Navigate to={fallbackPath} replace />;
+  }
+
   // If requiredRoles array is provided, check if the user has any of the required roles
   if (requiredRoles && requiredRoles.length > 0) {
     const hasRequiredRole = userRole === 'admin' || requiredRoles.includes(userRole as UserRole);
     if (!hasRequiredRole) {
-      return <Navigate to="/unauthorized" replace />;
+      return <Navigate to={fallbackPath} replace />;
     }
   }
   // If a single role is required, check if the user has that role
   else if (requiredRole && userRole !== requiredRole && userRole !== 'admin') {
     // Admin can access everything, otherwise must have the required role
-    return <Navigate to="/unauthorized" replace />;
+    return <Navigate to={fallbackPath} replace />;
   }
 
   return <>{children}</>;
