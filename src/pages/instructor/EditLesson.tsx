@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -51,12 +51,16 @@ const EditLesson: React.FC = () => {
       return data as Lesson;
     },
     enabled: !!lessonId,
-    onSuccess: (data) => {
-      setContentType(data.content_type);
-      setTextContent(data.content_text?.content || '');
-      setVideoUrl(data.content_video_url || '');
-    },
   });
+
+  // Set initial form values when lesson data is loaded
+  useEffect(() => {
+    if (lesson) {
+      setContentType(lesson.content_type);
+      setTextContent(lesson.content_text?.content || '');
+      setVideoUrl(lesson.content_video_url || '');
+    }
+  }, [lesson]);
 
   // Update lesson content
   const updateLessonMutation = useMutation({

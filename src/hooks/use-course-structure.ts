@@ -300,8 +300,11 @@ export const useUpdateModulesOrder = () => {
 
   return useMutation({
     mutationFn: async ({ modules, courseId }: { modules: Module[]; courseId: string }) => {
+      // Here's the fix - we need to include all required fields for each module
       const updates = modules.map((module, index) => ({
         id: module.id,
+        course_id: module.course_id,
+        title: module.title,
         module_order: index,
       }));
 
@@ -330,8 +333,14 @@ export const useUpdateLessonsOrder = () => {
 
   return useMutation({
     mutationFn: async ({ lessons, moduleId }: { lessons: Lesson[]; moduleId: string }) => {
+      // Here's the fix - we need to include all required fields for each lesson
       const updates = lessons.map((lesson, index) => ({
         id: lesson.id,
+        module_id: lesson.module_id,
+        course_id: lesson.course_id,
+        title: lesson.title,
+        content_type: lesson.content_type,
+        is_previewable: lesson.is_previewable,
         lesson_order: index,
       }));
 
