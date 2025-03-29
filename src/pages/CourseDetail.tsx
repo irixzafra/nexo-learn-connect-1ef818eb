@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import AppLayout from '@/layouts/AppLayout';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Loader2, ChevronLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCourseDetails } from '@/features/courses/hooks/useCourseDetails';

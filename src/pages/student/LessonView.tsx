@@ -10,13 +10,15 @@ import AppLayout from "@/layouts/AppLayout";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { 
   ArrowLeft, 
   CheckCircle2, 
   FileText, 
   Loader2, 
   Lock, 
-  PlayCircle 
+  PlayCircle,
+  ChevronRight
 } from "lucide-react";
 import { LessonProgressControls } from "@/features/lessons/components/LessonProgressControls";
 import { LessonComments } from "@/features/lessons/components/LessonComments";

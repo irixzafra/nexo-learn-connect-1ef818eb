@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { GripVertical, ArrowsHorizontal } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
 import { toast } from 'sonner';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
