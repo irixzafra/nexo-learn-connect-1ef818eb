@@ -9,7 +9,7 @@ import {
   useSidebar
 } from '@/components/ui/sidebar';
 import { NexoLogo } from '@/components/ui/nexo-logo';
-import { SidebarNavigation } from './SidebarNavigation';
+import SidebarNavigation from './SidebarNavigation';
 import SidebarFooterContent from './SidebarFooterContent';
 import { UserRole } from '@/types/auth';
 import { useAuth } from '@/contexts/AuthContext';
