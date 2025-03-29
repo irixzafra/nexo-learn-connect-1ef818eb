@@ -11,6 +11,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DeleteTypeDataDialog } from './DeleteTypeDataDialog';
+import { Trash2, Check, Calendar, FileText } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface DataTypeTabContentProps {
   type: TestDataType;
@@ -55,10 +57,11 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
   }, [isIndeterminate]);
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
+    <Card className="shadow-sm border-muted">
+      <CardHeader className="pb-2 bg-muted/10">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-medium">
+          <CardTitle className="text-lg font-medium flex items-center gap-2">
+            <FileText className="h-4 w-4 text-muted-foreground" />
             {label} ({items.length})
           </CardTitle>
           <div className="flex items-center space-x-2">
@@ -67,6 +70,7 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
               ref={checkboxRef}
               onCheckedChange={handleSelectAll}
               aria-label="Seleccionar todos"
+              className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
             />
             <span className="text-sm text-muted-foreground">
               {selectedIds.length} seleccionados
@@ -75,20 +79,28 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="p-0">
         {items.length > 0 ? (
-          <div className="space-y-2 max-h-96 overflow-y-auto">
+          <div className="max-h-96 overflow-y-auto divide-y divide-muted">
             {items.map((item) => (
-              <div key={item.id} className="flex items-center space-x-3 py-1 border-b last:border-0">
+              <div 
+                key={item.id} 
+                className={cn(
+                  "flex items-center space-x-3 p-3 hover:bg-muted/30 transition-colors",
+                  selectedIds.includes(item.id) && "bg-muted/20"
+                )}
+              >
                 <Checkbox 
                   checked={selectedIds.includes(item.id)}
                   onCheckedChange={() => handleSelectItem(item.id)}
+                  className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                 />
                 <div className="flex-1 truncate">
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-sm">{item.name || item.id}</span>
                     {item.createdAt && (
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
                         {new Date(item.createdAt).toLocaleDateString()}
                       </span>
                     )}
@@ -98,19 +110,22 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
             ))}
           </div>
         ) : (
-          <div className="py-6 text-center text-muted-foreground">
-            No hay datos de {label.toLowerCase()} disponibles
+          <div className="py-10 text-center text-muted-foreground flex flex-col items-center gap-2">
+            <FileText className="h-8 w-8 text-muted-foreground/50" />
+            <p>No hay datos de {label.toLowerCase()} disponibles</p>
           </div>
         )}
       </CardContent>
       
-      <CardFooter className="flex justify-between pt-2 border-t">
+      <CardFooter className="flex justify-between pt-3 pb-3 border-t bg-muted/10 gap-2">
         <Button 
           variant="destructive" 
           size="sm"
           disabled={items.length === 0}
           onClick={() => setShowDeleteDialog(true)}
+          className="gap-1"
         >
+          <Trash2 className="h-4 w-4" />
           Eliminar todos
         </Button>
         
@@ -119,7 +134,9 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
           size="sm"
           disabled={selectedIds.length === 0}
           onClick={() => deleteSelectedItems(type)}
+          className="gap-1"
         >
+          <Check className="h-4 w-4" />
           Eliminar seleccionados ({selectedIds.length})
         </Button>
       </CardFooter>

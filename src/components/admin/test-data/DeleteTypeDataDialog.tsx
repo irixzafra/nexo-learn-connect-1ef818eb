@@ -12,7 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Trash2 } from 'lucide-react';
+import { Trash2, AlertTriangle } from 'lucide-react';
 
 interface DeleteTypeDataDialogProps {
   type: TestDataType;
@@ -36,20 +36,24 @@ export const DeleteTypeDataDialog: React.FC<DeleteTypeDataDialogProps> = ({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="max-w-md">
         <AlertDialogHeader>
-          <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Esta acción eliminará todos los datos de prueba de tipo "{label.toLowerCase()}". 
-            Esta acción no se puede deshacer.
+          <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+            <AlertTriangle className="h-5 w-5" />
+            ¿Eliminar todos los datos?
+          </AlertDialogTitle>
+          <AlertDialogDescription className="pt-2">
+            Esta acción eliminará todos los datos de prueba de tipo <strong>"{label.toLowerCase()}"</strong>. 
+            <p className="mt-2 font-medium">Esta acción no se puede deshacer.</p>
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+        <AlertDialogFooter className="gap-2">
+          <AlertDialogCancel className="mt-0">Cancelar</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDeleteAll}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2"
           >
+            <Trash2 className="h-4 w-4" />
             Eliminar todos
           </AlertDialogAction>
         </AlertDialogFooter>
