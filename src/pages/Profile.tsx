@@ -72,7 +72,11 @@ const Profile: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               {isEditing ? (
-                <ProfileEditForm profile={profile} onSuccess={handleEditSuccess} />
+                <ProfileEditForm 
+                  profile={profile} 
+                  user_id={user?.id}
+                  onSuccess={handleEditSuccess} 
+                />
               ) : (
                 <>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
