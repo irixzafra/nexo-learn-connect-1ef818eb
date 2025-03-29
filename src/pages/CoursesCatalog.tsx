@@ -1,5 +1,5 @@
 
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { useCoursesCatalog } from '@/features/courses/hooks/useCoursesCatalog';
 import { LoadingPage } from '@/components/ui/loading-page';
 import { CourseCardSkeleton } from '@/features/courses/components/CourseCardSkeleton';
@@ -17,8 +17,16 @@ const CoursesCatalog: React.FC = () => {
     error, 
     searchTerm, 
     setSearchTerm, 
-    clearFilters 
+    clearFilters,
+    fetchCourses 
   } = useCoursesCatalog();
+  
+  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+
+  // Handle retrying when there's an error
+  const handleRetry = () => {
+    fetchCourses();
+  };
 
   return (
     <div className="container mx-auto py-6 px-4 md:px-6">
@@ -26,21 +34,24 @@ const CoursesCatalog: React.FC = () => {
         <CatalogHeader 
           searchTerm={searchTerm} 
           setSearchTerm={setSearchTerm}
-          onClearFilters={clearFilters} 
         />
       </Suspense>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
         <aside className="lg:col-span-3">
           <Suspense fallback={<div className="h-60 w-full bg-muted animate-pulse rounded-md" />}>
-            <CourseFilters />
+            <CourseFilters
+              selectedLevel={selectedLevel}
+              setSelectedLevel={setSelectedLevel}
+              onClearFilters={clearFilters}
+            />
           </Suspense>
         </aside>
         
         <main className="lg:col-span-9">
           {error ? (
             <Suspense fallback={<div className="h-20 w-full bg-destructive/10 animate-pulse rounded-md" />}>
-              <CourseCatalogError error={error} />
+              <CourseCatalogError error={error} onRetry={handleRetry} />
             </Suspense>
           ) : isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
