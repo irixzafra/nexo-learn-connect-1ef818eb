@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ExclamationTriangleIcon, BookOpenIcon, FilterIcon } from 'lucide-react';
+import { AlertTriangle, BookOpen, FilterIcon } from 'lucide-react';
 import { featuredCourses } from '@/features/courses/utils/featuredCoursesData';
 
 const CoursesCatalog = () => {
@@ -54,7 +54,7 @@ const CoursesCatalog = () => {
         
         {hasError ? (
           <Alert variant="destructive" className="mb-8">
-            <ExclamationTriangleIcon className="h-4 w-4" />
+            <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Error al cargar los cursos</AlertTitle>
             <AlertDescription>
               Error de recursión en políticas RLS. Por favor, contacte al administrador.
@@ -64,7 +64,7 @@ const CoursesCatalog = () => {
               <h3 className="font-medium mb-2">Información de depuración:</h3>
               <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 my-2">
                 <div className="flex items-start gap-2">
-                  <ExclamationTriangleIcon className="h-5 w-5 text-yellow-700 mt-0.5" />
+                  <AlertTriangle className="h-5 w-5 text-yellow-700 mt-0.5" />
                   <div>
                     <p className="font-medium text-yellow-800">Detectado error de recursión RLS</p>
                     <p className="text-yellow-800">Revisar las políticas RLS de la tabla courses y la función get_user_role</p>
@@ -92,7 +92,7 @@ const CoursesCatalog = () => {
               <Card key={course.id} className="overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video w-full bg-gray-100 relative">
                   <img
-                    src={course.imageUrl}
+                    src={course.image}
                     alt={course.title}
                     className="w-full h-full object-cover"
                   />
@@ -112,9 +112,9 @@ const CoursesCatalog = () => {
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
-                      <BookOpenIcon className="h-4 w-4 text-muted-foreground" />
+                      <BookOpen className="h-4 w-4 text-muted-foreground" />
                       <span className="text-xs text-muted-foreground">
-                        {course.lessons} lecciones
+                        {course.hours} horas
                       </span>
                     </div>
                     <Button size="sm">Ver curso</Button>

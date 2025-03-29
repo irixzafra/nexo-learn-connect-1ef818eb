@@ -18,7 +18,7 @@ export interface FeaturedCourse {
   hours: number;
   level: string;
   category: string;
-  image: string;
+  image: string;  // Changed from imageUrl to image
 }
 
 interface FeaturedCourseCardProps {

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { ProfileEditForm } from '@/components/profile/ProfileEditForm';
+import ProfileEditForm from '@/components/profile/ProfileEditForm';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -20,7 +20,7 @@ const Profile = () => {
       }
       return profile.full_name.substring(0, 2).toUpperCase();
     }
-    return profile?.email?.substring(0, 1).toUpperCase() || 'U';
+    return 'U';  // Default fallback if no full_name or other properties are available
   };
 
   return (
@@ -78,10 +78,10 @@ const Profile = () => {
                       
                       <div>
                         <h3 className="text-xl font-semibold">{profile?.full_name || 'Usuario'}</h3>
-                        <p className="text-muted-foreground">{profile?.email}</p>
+                        <p className="text-muted-foreground">{profile?.id}</p>
                         <div className="mt-2">
                           <span className="bg-primary/10 text-primary text-xs font-medium px-2.5 py-0.5 rounded">
-                            {profile?.user_role || 'Usuario'}
+                            {profile?.role || 'Usuario'}
                           </span>
                         </div>
                       </div>
