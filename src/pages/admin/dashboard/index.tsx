@@ -28,9 +28,9 @@ const AdminDashboard: React.FC = () => {
           </div>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" asChild>
-              <Link to="/admin/test-data">
-                <DatabaseIcon className="h-4 w-4 mr-2" />
-                Datos de Prueba
+              <Link to="/admin/settings">
+                <Settings className="h-4 w-4 mr-2" />
+                Configuración del Sistema
               </Link>
             </Button>
             <Button asChild>
@@ -107,6 +107,15 @@ const AdminDashboard: React.FC = () => {
                 </Link>
               </Button>
               <Button variant="outline" className="w-full justify-between" asChild>
+                <Link to="/admin/settings">
+                  <div className="flex items-center">
+                    <Settings className="h-4 w-4 mr-2" />
+                    <span>Configuración del Sistema</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="outline" className="w-full justify-between" asChild>
                 <Link to="/admin/billing">
                   <div className="flex items-center">
                     <CreditCard className="h-4 w-4 mr-2" />
@@ -120,15 +129,6 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex items-center">
                     <DatabaseIcon className="h-4 w-4 mr-2" />
                     <span>Datos de Prueba</span>
-                  </div>
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full justify-between" asChild>
-                <Link to="/settings">
-                  <div className="flex items-center">
-                    <Settings className="h-4 w-4 mr-2" />
-                    <span>Configuración</span>
                   </div>
                   <ChevronRight className="h-4 w-4" />
                 </Link>

@@ -11,10 +11,10 @@ interface OnboardingTriggerProps {
 export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({ 
   autoStart = false 
 }) => {
-  const { startOnboarding, isOnboardingActive } = useOnboarding();
+  const { startOnboarding, isOnboardingActive, featuresConfig } = useOnboarding();
 
   useEffect(() => {
-    if (autoStart && !isOnboardingActive) {
+    if (autoStart && featuresConfig.autoStartOnboarding && !isOnboardingActive) {
       // Start with a small delay to ensure everything is loaded
       const timer = setTimeout(() => {
         startOnboarding();
@@ -22,7 +22,12 @@ export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({
       
       return () => clearTimeout(timer);
     }
-  }, [autoStart, startOnboarding, isOnboardingActive]);
+  }, [autoStart, startOnboarding, isOnboardingActive, featuresConfig.autoStartOnboarding]);
+
+  // Si la funcionalidad está desactivada, no renderizamos el botón
+  if (!featuresConfig.showOnboardingTrigger) {
+    return <OnboardingModal />;
+  }
 
   return (
     <>

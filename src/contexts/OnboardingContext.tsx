@@ -10,6 +10,14 @@ export type OnboardingStep =
   | 'platform-tour'
   | 'completed';
 
+// Añadimos la configuración para activar/desactivar funcionalidades
+export interface SystemFeaturesConfig {
+  autoStartOnboarding: boolean;
+  showOnboardingTrigger: boolean;
+  enableNotifications: boolean;
+  // Podemos agregar más funcionalidades configurables aquí
+}
+
 interface OnboardingContextType {
   currentStep: OnboardingStep;
   setCurrentStep: (step: OnboardingStep) => void;
@@ -19,7 +27,16 @@ interface OnboardingContextType {
   skipOnboarding: () => void;
   nextStep: () => void;
   previousStep: () => void;
+  featuresConfig: SystemFeaturesConfig;
+  updateFeaturesConfig: (config: Partial<SystemFeaturesConfig>) => void;
 }
+
+// Configuración por defecto
+const defaultFeaturesConfig: SystemFeaturesConfig = {
+  autoStartOnboarding: false, // Desactivado por defecto
+  showOnboardingTrigger: true,
+  enableNotifications: true,
+};
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
@@ -27,10 +44,24 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
   const [isOnboardingActive, setIsOnboardingActive] = useState<boolean>(false);
+  const [featuresConfig, setFeaturesConfig] = useState<SystemFeaturesConfig>(() => {
+    // Intentar cargar la configuración desde localStorage
+    try {
+      const savedConfig = localStorage.getItem('systemFeaturesConfig');
+      return savedConfig ? JSON.parse(savedConfig) : defaultFeaturesConfig;
+    } catch (e) {
+      return defaultFeaturesConfig;
+    }
+  });
+
+  // Guardar la configuración en localStorage cuando cambia
+  useEffect(() => {
+    localStorage.setItem('systemFeaturesConfig', JSON.stringify(featuresConfig));
+  }, [featuresConfig]);
 
   // Check if onboarding should be displayed for this user
   useEffect(() => {
-    if (user) {
+    if (user && featuresConfig.autoStartOnboarding) {
       // Check localStorage first for onboarding status
       const onboardingCompleted = localStorage.getItem('onboardingCompleted');
       if (!onboardingCompleted) {
@@ -45,7 +76,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         }
       }
     }
-  }, [user]);
+  }, [user, featuresConfig.autoStartOnboarding]);
 
   const startOnboarding = () => {
     setCurrentStep('welcome');
@@ -100,6 +131,14 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
+  // Función para actualizar la configuración de características
+  const updateFeaturesConfig = (config: Partial<SystemFeaturesConfig>) => {
+    setFeaturesConfig(prevConfig => ({
+      ...prevConfig,
+      ...config
+    }));
+  };
+
   return (
     <OnboardingContext.Provider 
       value={{
@@ -111,6 +150,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         skipOnboarding,
         nextStep,
         previousStep,
+        featuresConfig,
+        updateFeaturesConfig,
       }}
     >
       {children}

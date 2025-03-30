@@ -9,15 +9,17 @@ import { useAuth } from '@/contexts/AuthContext';
 import { NotificationIndicator } from '@/components/notifications/NotificationIndicator';
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { OnboardingTrigger } from '@/components/onboarding/OnboardingTrigger';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 
 export const HeaderActions: React.FC = () => {
   const navigate = useNavigate();
   const { userRole } = useAuth();
+  const { featuresConfig } = useOnboarding();
 
   return (
     <div className="ml-auto flex items-center space-x-4">
-      {/* Notification indicator */}
-      <NotificationIndicator />
+      {/* Notification indicator - solo si está habilitado */}
+      {featuresConfig.enableNotifications && <NotificationIndicator />}
       
       {/* Theme Selector */}
       <ThemeSelector />
@@ -27,10 +29,12 @@ export const HeaderActions: React.FC = () => {
       <RoleIndicator viewingAs={userRole} />
       <Separator orientation="vertical" className="h-6" />
       
-      {/* Onboarding Trigger */}
-      <div className="hidden md:block">
-        <OnboardingTrigger />
-      </div>
+      {/* Onboarding Trigger - solo si está habilitado */}
+      {featuresConfig.showOnboardingTrigger && (
+        <div className="hidden md:block">
+          <OnboardingTrigger />
+        </div>
+      )}
       
       <Button 
         variant="outline" 

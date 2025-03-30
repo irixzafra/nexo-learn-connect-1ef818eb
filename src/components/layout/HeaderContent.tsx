@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { NexoLogoBase } from '@/components/ui/logo/nexo-logo-base';
 
 const HeaderContent: React.FC = () => {
   const location = useLocation();
@@ -40,13 +41,14 @@ const HeaderContent: React.FC = () => {
         {/* Left side */}
         <div className="flex items-center gap-4">
           <SidebarTrigger className="h-8 w-8" />
+          <NexoLogoBase className="hidden sm:flex" />
           <span className="text-lg font-medium">{getPageTitle()}</span>
           
           {/* Horizontal Navigation Menu */}
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
               <NavigationMenuItem>
-                <Link to="/home" legacyBehavior passHref>
+                <Link to="/home">
                   <NavigationMenuLink 
                     className={cn(
                       navigationMenuTriggerStyle(),
@@ -58,7 +60,7 @@ const HeaderContent: React.FC = () => {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link to="/courses" legacyBehavior passHref>
+                <Link to="/courses">
                   <NavigationMenuLink 
                     className={cn(
                       navigationMenuTriggerStyle(),
@@ -70,7 +72,7 @@ const HeaderContent: React.FC = () => {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link to="/messages" legacyBehavior passHref>
+                <Link to="/messages">
                   <NavigationMenuLink 
                     className={cn(
                       navigationMenuTriggerStyle(),
