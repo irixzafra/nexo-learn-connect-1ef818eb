@@ -1,24 +1,43 @@
 
-export type UserRoleType = 'student' | 'instructor' | 'admin' | 'sistemas' | 'anonimo' | 'moderator' | 'content_creator' | 'guest' | 'beta_tester';
-
-export const asUserRoleType = (value: any): UserRoleType => {
-  const validRoles: UserRoleType[] = ['student', 'instructor', 'admin', 'sistemas', 'anonimo', 'moderator', 'content_creator', 'guest', 'beta_tester'];
-  return validRoles.includes(value) ? value as UserRoleType : 'student';
-};
-
-export const toUserRoleType = (value: string | null | undefined): UserRoleType => {
-  if (!value) return 'student';
-  return asUserRoleType(value);
-};
+// Define all user role types in a consistent format
+export type UserRoleType = 
+  | 'admin' 
+  | 'instructor' 
+  | 'student' 
+  | 'sistemas' 
+  | 'anonimo' 
+  | 'moderator' 
+  | 'content_creator' 
+  | 'guest' 
+  | 'beta_tester';
 
 export interface UserProfile {
   id: string;
-  full_name: string;
   email?: string;
+  full_name?: string;
   avatar_url?: string;
+  username?: string;
+  role?: string;
+  bio?: string;
   created_at?: string;
-  role: UserRoleType;
+  updated_at?: string;
 }
 
-// Alias UserRole to UserRoleType for backward compatibility
-export type UserRole = UserRoleType;
+// Helper function to safely convert a string to a UserRoleType
+export function toUserRoleType(role?: string): UserRoleType {
+  if (!role) return 'student';
+  
+  const validRoles: UserRoleType[] = [
+    'admin', 'instructor', 'student', 'moderator', 
+    'content_creator', 'guest', 'beta_tester', 'sistemas', 'anonimo'
+  ];
+  
+  return validRoles.includes(role as UserRoleType) 
+    ? (role as UserRoleType) 
+    : 'student';
+}
+
+// Helper function to ensure string is a valid UserRoleType
+export function asUserRoleType(role: string): UserRoleType {
+  return toUserRoleType(role);
+}

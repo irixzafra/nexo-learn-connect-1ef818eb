@@ -39,6 +39,8 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   const effectiveRole = getEffectiveRole();
   
   const handleRoleChange = (role: UserRoleType | 'current') => {
+    console.log("RoleSwitcher: handleRoleChange called with role:", role);
+    
     if (onChange) {
       if (role === 'current') {
         onChange(toUserRoleType(userRole as string));
@@ -47,6 +49,8 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
         onChange(role);
         toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);
       }
+    } else {
+      console.warn("RoleSwitcher: onChange handler not provided");
     }
   };
 
@@ -110,7 +114,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
             {availableRoles.map((role) => (
               <DropdownMenuItem 
                 key={role}
-                onSelect={() => handleRoleChange(role)}
+                onClick={() => handleRoleChange(role)}
                 className="flex items-center gap-2 cursor-pointer"
               >
                 <div className="flex items-center justify-between w-full">
@@ -118,7 +122,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
                     {getRoleIcon(role)}
                     <span>{getRoleLabel(role)}</span>
                   </div>
-                  {currentViewRole === role && <Check className="h-4 w-4" />}
+                  {effectiveRole === role && <Check className="h-4 w-4" />}
                 </div>
               </DropdownMenuItem>
             ))}
@@ -127,7 +131,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
-                  onSelect={() => handleRoleChange('current')}
+                  onClick={() => handleRoleChange('current')}
                   className="flex items-center gap-2 cursor-pointer"
                 >
                   <ArrowLeftRight className="h-4 w-4 mr-2" />

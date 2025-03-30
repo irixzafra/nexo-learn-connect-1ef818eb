@@ -40,13 +40,18 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
     }
   };
   
+  const handleRoleChange = (newRole: UserRoleType) => {
+    console.log("SidebarFooterContent: handleRoleChange called with role:", newRole);
+    onRoleChange(newRole);
+  };
+  
   return (
     <div className="flex flex-col gap-4">
       {/* Componente Role Switcher - Solo visible para admins */}
       {user && profile?.role === 'admin' && (
         <RoleSwitcher 
           currentViewRole={viewAsRole} 
-          onChange={onRoleChange} 
+          onChange={handleRoleChange} 
         />
       )}
       
