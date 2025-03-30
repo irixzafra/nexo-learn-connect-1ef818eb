@@ -53,7 +53,7 @@ export const UserRoleDisplay: React.FC<UserRoleDisplayProps> = ({
   return (
     <Badge variant={getRoleBadgeVariant(role)} className="capitalize">
       {showIcon && getRoleIcon(role)}
-      {role}
+      {role.toString()}
     </Badge>
   );
 };

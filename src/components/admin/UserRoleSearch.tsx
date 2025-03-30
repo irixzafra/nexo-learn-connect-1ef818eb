@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { UserProfile, UserRole } from '@/types/auth';
+import { UserProfile, UserRoleType, asUserRoleType } from '@/types/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, X } from 'lucide-react';
@@ -52,7 +52,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: UserRole) => {
+  const handleRoleChange = async (userId: string, newRole: UserRoleType) => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -77,7 +77,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
     }
   };
 
-  const getRoleBadgeVariant = (role: UserRole) => {
+  const getRoleBadgeVariant = (role: UserRoleType) => {
     switch (role) {
       case 'admin': return "bg-yellow-100 text-yellow-800";
       case 'instructor': return "bg-blue-100 text-blue-800";
@@ -138,8 +138,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
                     <TableCell>
                       <Badge 
                         variant="outline"
-
-                        className={getRoleBadgeVariant(user.role as UserRole)}
+                        className={getRoleBadgeVariant(user.role)}
                       >
                         {user.role}
                       </Badge>
@@ -147,7 +146,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
                     <TableCell>
                       <UserRoleSwitcher
                         userId={user.id}
-                        currentRole={user.role as UserRole}
+                        currentRole={user.role}
                         onRoleChange={handleRoleChange}
                       />
                     </TableCell>

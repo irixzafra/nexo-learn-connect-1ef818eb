@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { UserRoleType } from '@/types/auth';
+import { UserRoleType, asUserRoleType } from '@/types/auth';
 import { 
   Select,
   SelectContent,
@@ -86,7 +86,7 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
     <div className="flex items-center gap-2">
       <Select
         value={selectedRole}
-        onValueChange={(value) => setSelectedRole(value as UserRoleType)}
+        onValueChange={(value) => setSelectedRole(asUserRoleType(value))}
       >
         <SelectTrigger className="w-[150px]">
           <div className="flex items-center gap-2">

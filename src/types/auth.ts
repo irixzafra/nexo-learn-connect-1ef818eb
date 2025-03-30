@@ -69,5 +69,10 @@ export const asUserRoleType = (value: string): UserRoleType => {
     : 'guest';
 };
 
-// For backward compatibility
-export type UserRole = UserRoleType;
+// String-to-UserRoleType conversion helper
+export const toUserRoleType = (value: string | UserRoleType): UserRoleType => {
+  return asUserRoleType(value as string);
+};
+
+// For backward compatibility, export a type alias, but don't declare a duplicate
+export type { UserRoleType as UserRole };

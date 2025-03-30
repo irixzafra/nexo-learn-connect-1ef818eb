@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { UserRole } from '@/types/auth';
+import { UserRoleType, asUserRoleType } from '@/types/auth';
 import { supabase } from '@/lib/supabase';
 import { 
   Select,
@@ -17,7 +17,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 interface UserRoleEditorProps {
   userId: string;
   userName: string;
-  currentRole: UserRole;
+  currentRole: UserRoleType;
   onRoleChanged?: () => void;
 }
 
@@ -27,7 +27,7 @@ const UserRoleEditor: React.FC<UserRoleEditorProps> = ({
   currentRole,
   onRoleChanged
 }) => {
-  const [selectedRole, setSelectedRole] = useState<UserRole>(currentRole);
+  const [selectedRole, setSelectedRole] = useState<UserRoleType>(currentRole);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
@@ -81,7 +81,7 @@ const UserRoleEditor: React.FC<UserRoleEditorProps> = ({
     }
   };
 
-  const getRoleIcon = (role: UserRole) => {
+  const getRoleIcon = (role: UserRoleType) => {
     switch (role) {
       case 'admin':
         return <Shield className="h-4 w-4" />;
@@ -102,7 +102,7 @@ const UserRoleEditor: React.FC<UserRoleEditorProps> = ({
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <Select
             value={selectedRole}
-            onValueChange={(value) => setSelectedRole(value as UserRole)}
+            onValueChange={(value) => setSelectedRole(asUserRoleType(value))}
           >
             <SelectTrigger className="w-full sm:w-[150px]">
               <div className="flex items-center gap-2">
