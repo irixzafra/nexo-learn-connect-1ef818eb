@@ -23,7 +23,7 @@ export const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices, downloadIn
   const getBadgeVariant = (status: string) => {
     switch (status) {
       case 'paid':
-        return 'default'; // Changed from 'success' to 'default'
+        return 'default';
       case 'open':
         return 'outline';
       case 'void':
