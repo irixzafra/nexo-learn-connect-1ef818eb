@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { UserProfile, UserRole } from "@/types/auth";
 import {
@@ -21,16 +22,27 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
-import { Search, RefreshCw, UserPlus } from "lucide-react";
+import { Search, RefreshCw, UserPlus, ChevronLeft, UserCog, PencilLine, Trash2, ArrowLeft } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRoleSearch } from "@/components/admin/UserRoleSearch";
 import SectionPageLayout, { PageSection } from "@/layouts/SectionPageLayout";
 import { UserRoleType } from "@/features/users/UserRoleType";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -91,6 +103,11 @@ const UserManagement: React.FC = () => {
         )
       );
 
+      // Update selected user if dialog is open
+      if (selectedUser && selectedUser.id === userId) {
+        setSelectedUser({...selectedUser, role: newRole});
+      }
+
       toast({
         title: "Rol actualizado",
         description: `El rol del usuario ha sido actualizado a ${newRole}.`,
@@ -102,6 +119,27 @@ const UserManagement: React.FC = () => {
         title: "Error",
         description: "Ocurrió un error al cambiar el rol.",
       });
+    }
+  };
+
+  const handleSelectUser = (user: UserProfile) => {
+    setSelectedUser(user);
+    setIsUserDialogOpen(true);
+  };
+
+  const handleSelectAllUsers = (checked: boolean) => {
+    if (checked) {
+      setSelectedUsers(filteredUsers.map(user => user.id));
+    } else {
+      setSelectedUsers([]);
+    }
+  };
+
+  const handleToggleSelectUser = (userId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedUsers(prev => [...prev, userId]);
+    } else {
+      setSelectedUsers(prev => prev.filter(id => id !== userId));
     }
   };
 
@@ -121,9 +159,22 @@ const UserManagement: React.FC = () => {
             icon: <UserPlus className="h-4 w-4" />,
             onClick: () => console.log("Añadir usuario clicked"),
           }
+        ],
+        breadcrumbs: [
+          { title: "Dashboard", href: "/admin/dashboard" },
+          { title: "Gestión de Usuarios" }
         ]
       }}
     >
+      <div className="flex mb-4">
+        <Button variant="ghost" size="sm" asChild className="mb-4">
+          <Link to="/admin/dashboard">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Volver al Dashboard
+          </Link>
+        </Button>
+      </div>
+
       <Tabs defaultValue="all-users" className="space-y-6">
         <TabsList>
           <TabsTrigger value="all-users">Todos los Usuarios</TabsTrigger>
@@ -162,6 +213,13 @@ const UserManagement: React.FC = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
+                        <TableHead className="w-[50px]">
+                          <Checkbox 
+                            checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                            onCheckedChange={handleSelectAllUsers}
+                            aria-label="Seleccionar todos"
+                          />
+                        </TableHead>
                         <TableHead className="w-[250px]">Usuario</TableHead>
                         <TableHead>Rol</TableHead>
                         <TableHead className="hidden md:table-cell">Fecha de registro</TableHead>
@@ -171,7 +229,18 @@ const UserManagement: React.FC = () => {
                     <TableBody>
                       {filteredUsers.length > 0 ? (
                         filteredUsers.map((user) => (
-                          <TableRow key={user.id}>
+                          <TableRow 
+                            key={user.id} 
+                            className="cursor-pointer hover:bg-accent"
+                            onClick={() => handleSelectUser(user)}
+                          >
+                            <TableCell onClick={(e) => e.stopPropagation()}>
+                              <Checkbox 
+                                checked={selectedUsers.includes(user.id)}
+                                onCheckedChange={(checked) => handleToggleSelectUser(user.id, !!checked)}
+                                aria-label={`Seleccionar ${user.full_name || 'Usuario sin nombre'}`}
+                              />
+                            </TableCell>
                             <TableCell className="font-medium">
                               {user.full_name || 'Usuario sin nombre'}
                             </TableCell>
@@ -181,18 +250,30 @@ const UserManagement: React.FC = () => {
                             <TableCell className="hidden md:table-cell">
                               {new Date(user.created_at || '').toLocaleDateString()}
                             </TableCell>
-                            <TableCell>
-                              <UserRoleSwitcher 
-                                userId={user.id}
-                                currentRole={user.role}
-                                onRoleChange={handleRoleChange}
-                              />
+                            <TableCell onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost" 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleSelectUser(user);
+                                  }}
+                                >
+                                  <PencilLine className="h-4 w-4" />
+                                </Button>
+                                <UserRoleSwitcher 
+                                  userId={user.id}
+                                  currentRole={user.role}
+                                  onRoleChange={handleRoleChange}
+                                />
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={4} className="text-center h-24">
+                          <TableCell colSpan={5} className="text-center h-24">
                             {searchTerm.trim() !== "" 
                               ? "No se encontraron usuarios que coincidan con la búsqueda." 
                               : "No hay usuarios para mostrar."}
@@ -221,6 +302,48 @@ const UserManagement: React.FC = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* User Details Dialog */}
+      <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Detalles del Usuario</DialogTitle>
+            <DialogDescription>
+              Información completa del usuario seleccionado
+            </DialogDescription>
+          </DialogHeader>
+          {selectedUser && (
+            <div className="space-y-4 py-4">
+              <div className="flex flex-col space-y-1">
+                <span className="text-sm font-medium">Nombre:</span>
+                <span>{selectedUser.full_name || 'Usuario sin nombre'}</span>
+              </div>
+              <div className="flex flex-col space-y-1">
+                <span className="text-sm font-medium">Rol:</span>
+                <UserRoleType role={selectedUser.role} showIcon={true} />
+              </div>
+              <div className="flex flex-col space-y-1">
+                <span className="text-sm font-medium">Fecha de registro:</span>
+                <span>{new Date(selectedUser.created_at || '').toLocaleDateString()}</span>
+              </div>
+              <div className="flex flex-col space-y-1">
+                <span className="text-sm font-medium">ID de usuario:</span>
+                <span className="text-xs text-muted-foreground break-all">{selectedUser.id}</span>
+              </div>
+              <div className="pt-4">
+                <span className="text-sm font-medium">Cambiar rol:</span>
+                <div className="mt-2">
+                  <UserRoleSwitcher 
+                    userId={selectedUser.id}
+                    currentRole={selectedUser.role}
+                    onRoleChange={handleRoleChange}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </SectionPageLayout>
   );
 };
