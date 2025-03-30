@@ -41,7 +41,7 @@ export const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   };
   
   return (
-    <div className="min-h-screen bg-muted/20 p-6">
+    <div className="min-h-screen bg-muted/20 p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col gap-6">
           {/* Header */}
