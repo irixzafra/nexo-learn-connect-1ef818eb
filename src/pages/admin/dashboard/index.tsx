@@ -7,10 +7,9 @@ import {
   Users, 
   BookOpen, 
   CreditCard, 
-  Settings, 
   AlertCircle, 
-  ShieldCheck,
-  UserPlus
+  Link2,
+  ExternalLink
 } from 'lucide-react';
 import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
 import { 
@@ -18,7 +17,6 @@ import {
   adminAlertMenuItems 
 } from '@/components/ui/admin-menu/AdminMenuPresets';
 import { useAdminDashboardStats } from '@/features/admin/hooks/useAdminDashboardStats';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const AdminDashboard: React.FC = () => {
   const { stats, isLoading } = useAdminDashboardStats();
@@ -28,19 +26,7 @@ const AdminDashboard: React.FC = () => {
       header={{
         title: "Panel de Administración",
         description: "Bienvenido al panel de control de administración",
-        actions: [
-          {
-            label: "Configuración del Sistema",
-            icon: <Settings className="h-4 w-4" />,
-            href: "/admin/settings",
-            variant: "outline"
-          },
-          {
-            label: "Gestionar Usuarios",
-            icon: <Users className="h-4 w-4" />,
-            href: "/admin/users"
-          }
-        ]
+        // Removed action buttons as requested
       }}
       stats={{
         stats: [
@@ -96,6 +82,7 @@ const AdminDashboard: React.FC = () => {
         {/* Accesos rápidos - Páginas "hijo" */}
         <PageSection
           title="Accesos Rápidos"
+          description="Enlaces directos a las secciones principales"
           variant="card"
         >
           <AdminMenu 
@@ -104,7 +91,7 @@ const AdminDashboard: React.FC = () => {
           />
         </PageSection>
 
-        {/* Alertas del sistema */}
+        {/* Alertas del Sistema */}
         <PageSection
           title="Alertas del Sistema"
           description="Notificaciones recientes que requieren atención"
