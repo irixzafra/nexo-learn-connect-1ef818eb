@@ -598,6 +598,63 @@ export type Database = {
           },
         ]
       }
+      features_config: {
+        Row: {
+          auto_start_onboarding: boolean | null
+          created_at: string | null
+          enable_category_management: boolean | null
+          enable_content_reordering: boolean | null
+          enable_leaderboard: boolean | null
+          enable_multi_language: boolean | null
+          enable_notifications: boolean | null
+          enable_onboarding_system: boolean | null
+          enable_role_management: boolean | null
+          enable_role_switcher: boolean | null
+          enable_test_data_generator: boolean | null
+          enable_theme_switcher: boolean | null
+          id: string
+          show_onboarding_trigger: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          auto_start_onboarding?: boolean | null
+          created_at?: string | null
+          enable_category_management?: boolean | null
+          enable_content_reordering?: boolean | null
+          enable_leaderboard?: boolean | null
+          enable_multi_language?: boolean | null
+          enable_notifications?: boolean | null
+          enable_onboarding_system?: boolean | null
+          enable_role_management?: boolean | null
+          enable_role_switcher?: boolean | null
+          enable_test_data_generator?: boolean | null
+          enable_theme_switcher?: boolean | null
+          id?: string
+          show_onboarding_trigger?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          auto_start_onboarding?: boolean | null
+          created_at?: string | null
+          enable_category_management?: boolean | null
+          enable_content_reordering?: boolean | null
+          enable_leaderboard?: boolean | null
+          enable_multi_language?: boolean | null
+          enable_notifications?: boolean | null
+          enable_onboarding_system?: boolean | null
+          enable_role_management?: boolean | null
+          enable_role_switcher?: boolean | null
+          enable_test_data_generator?: boolean | null
+          enable_theme_switcher?: boolean | null
+          id?: string
+          show_onboarding_trigger?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       follows: {
         Row: {
           created_at: string
