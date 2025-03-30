@@ -15,6 +15,7 @@ interface MenuItemProps {
   label: string;
   badge?: string | number;
   disabled?: boolean;
+  isCollapsed?: boolean;
 }
 
 export const MenuItem: React.FC<MenuItemProps> = ({ 
@@ -22,7 +23,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({
   icon: Icon, 
   label, 
   badge, 
-  disabled = false 
+  disabled = false,
+  isCollapsed = false
 }) => {
   const location = useLocation();
   
@@ -71,14 +73,14 @@ export const MenuItem: React.FC<MenuItemProps> = ({
               )} 
               aria-hidden="true" 
             />
-            <span>{label}</span>
+            {!isCollapsed && <span>{label}</span>}
           </span>
-          {badge && (
+          {!isCollapsed && badge && (
             <Badge variant={typeof badge === 'number' && badge > 0 ? "default" : "secondary"} className="ml-auto text-xs">
               {badge}
             </Badge>
           )}
-          {disabled && (
+          {!isCollapsed && disabled && (
             <span className="ml-auto text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">
               Próximamente
             </span>

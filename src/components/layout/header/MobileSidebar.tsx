@@ -16,7 +16,7 @@ interface MobileSidebarProps {
 export const MobileSidebar: React.FC<MobileSidebarProps> = ({ viewAsRole, trigger }) => {
   const isMobile = useIsMobile();
   
-  // If not on mobile, don't render anything
+  // Si no estamos en mobile, no renderizamos nada
   if (!isMobile) return null;
   
   return (

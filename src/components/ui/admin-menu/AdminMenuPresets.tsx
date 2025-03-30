@@ -14,7 +14,8 @@ import {
   School, 
   LineChart,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  History
 } from 'lucide-react';
 
 export const adminMainMenuItems: AdminMenuItem[] = [
@@ -35,6 +36,12 @@ export const adminMainMenuItems: AdminMenuItem[] = [
     label: 'Gestionar Cursos',
     href: '/admin/courses',
     description: 'Administrar catálogo de cursos'
+  },
+  {
+    icon: School,
+    label: 'Gestionar Instructores',
+    href: '/admin/instructors',
+    description: 'Administrar instructores'
   },
   {
     icon: CreditCard,
@@ -59,8 +66,8 @@ export const adminMainMenuItems: AdminMenuItem[] = [
 export const adminSecurityMenuItems: AdminMenuItem[] = [
   {
     icon: Shield,
-    label: 'Seguridad',
-    href: '/admin/security',
+    label: 'Control de Acceso',
+    href: '/admin/access',
     description: 'Políticas de seguridad'
   },
   {
@@ -70,7 +77,7 @@ export const adminSecurityMenuItems: AdminMenuItem[] = [
     description: 'Gestión de roles de usuario'
   },
   {
-    icon: Clock,
+    icon: History,
     label: 'Auditoría',
     href: '/admin/audit-log',
     description: 'Registros de actividad'
@@ -131,9 +138,24 @@ export const adminMobileMenuItems: AdminMenuItem[] = [
     href: '/admin/courses'
   },
   {
+    icon: School,
+    label: 'Instructores',
+    href: '/admin/instructors'
+  },
+  {
     icon: CreditCard,
     label: 'Pagos',
     href: '/admin/billing'
+  },
+  {
+    icon: Shield,
+    label: 'Acceso',
+    href: '/admin/access'
+  },
+  {
+    icon: History,
+    label: 'Auditoría',
+    href: '/admin/audit-log'
   },
   {
     icon: Settings,

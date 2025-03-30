@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { Settings, LayoutDashboard, Users, Library, CreditCard, Database, Settings2, KeyRound, History } from 'lucide-react';
+import { Settings, LayoutDashboard, Users, Library, CreditCard, Database, Settings2, KeyRound, History, Shield } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
-import { MenuItem } from './common/MenuItem';
+import { MenuItem } from '../MenuItems';
 
 interface AdministracionNavigationProps {
   isOpen: boolean;
@@ -47,6 +47,13 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
         />
         
         <MenuItem
+          to="/admin/instructors"
+          icon={Users}
+          label="Gestionar Instructores"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
           to="/admin/billing"
           icon={CreditCard}
           label="Facturación"
@@ -61,9 +68,9 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
         />
         
         <MenuItem
-          to="/admin/settings"
-          icon={Settings2}
-          label="Configuración Plataforma"
+          to="/admin/access"
+          icon={Shield}
+          label="Control de Acceso"
           isCollapsed={isCollapsed}
         />
         
@@ -78,6 +85,13 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           to="/admin/audit-log"
           icon={History}
           label="Auditoría"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/admin/settings"
+          icon={Settings2}
+          label="Configuración"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>

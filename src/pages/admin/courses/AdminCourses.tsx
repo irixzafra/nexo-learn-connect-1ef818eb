@@ -1,14 +1,24 @@
 
 import React, { useState, useEffect } from 'react';
-import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
+import { useNavigate, Link } from 'react-router-dom';
+import SectionPageLayout from '@/layouts/SectionPageLayout';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Plus, RefreshCw, Pencil, Eye, BookOpen, School, Filter, ChevronDown, Search, ArrowUpDown, Trash2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/components/ui/use-toast';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, RefreshCw, Pencil, Eye, BookOpen, School } from 'lucide-react';
 
 const AdminCourses: React.FC = () => {
   const [courses, setCourses] = useState<any[]>([]);
@@ -61,10 +71,31 @@ const AdminCourses: React.FC = () => {
   const filteredCourses = searchTerm.trim() === ''
     ? courses
     : courses.filter(course => 
-        course.title.toLowerCase().includes(searchTerm.toLowerCase()));
+        course.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        course.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()));
         
   const handleCourseClick = (courseId: string) => {
     navigate(`/admin/courses/${courseId}`);
+  };
+  
+  // Este es un componente de estado de curso reutilizable
+  const CourseStatusBadge = ({ status }: { status: string | boolean }) => {
+    if (typeof status === 'boolean') {
+      return status ? 
+        <Badge className="bg-green-500">Publicado</Badge> : 
+        <Badge variant="outline">Borrador</Badge>;
+    }
+    
+    switch (status) {
+      case 'published':
+        return <Badge className="bg-green-500">Publicado</Badge>;
+      case 'draft':
+        return <Badge variant="outline">Borrador</Badge>;
+      case 'review':
+        return <Badge variant="secondary">En Revisión</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
   };
   
   return (
@@ -90,140 +121,321 @@ const AdminCourses: React.FC = () => {
           }
         ]
       }}
-      filters={{
-        searchPlaceholder: "Buscar cursos...",
-        searchValue: searchTerm,
-        onSearchChange: setSearchTerm,
-        filterOptions: []
-      }}
-      help={{
-        title: "Gestión de Cursos",
-        description: "Herramientas para administrar el contenido educativo",
-        links: [
+      stats={{
+        stats: [
           {
-            title: "Documentación de cursos",
-            description: "Aprende a gestionar cursos",
-            href: "/docs/admin/courses"
+            label: "Cursos Totales",
+            value: courses.length.toString(),
+            icon: <BookOpen className="h-5 w-5" />,
+            color: "primary",
+            loading: isLoading
           },
           {
-            title: "Centro de ayuda",
-            description: "Contacta con soporte para ayuda",
-            href: "/help",
-            external: true
+            label: "Cursos Publicados",
+            value: courses.filter(c => c.is_published).length.toString(),
+            icon: <Eye className="h-5 w-5" />,
+            color: "success",
+            loading: isLoading
+          },
+          {
+            label: "Instructores",
+            value: new Set(courses.map(c => c.instructor_id).filter(Boolean)).size.toString(),
+            icon: <School className="h-5 w-5" />,
+            color: "warning",
+            loading: isLoading
           }
         ]
       }}
     >
       <Tabs defaultValue="all-courses" className="space-y-6">
-        <TabsList className="grid grid-cols-3 w-full sm:w-auto">
-          <TabsTrigger value="all-courses" className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
-            <span className="hidden sm:inline">Todos los Cursos</span>
-          </TabsTrigger>
-          <TabsTrigger value="published" className="flex items-center gap-2">
-            <Eye className="h-4 w-4" />
-            <span className="hidden sm:inline">Publicados</span>
-          </TabsTrigger>
-          <TabsTrigger value="instructors" className="flex items-center gap-2">
-            <School className="h-4 w-4" />
-            <span className="hidden sm:inline">Por Instructor</span>
-          </TabsTrigger>
+        <TabsList>
+          <TabsTrigger value="all-courses">Todos los Cursos</TabsTrigger>
+          <TabsTrigger value="published">Publicados</TabsTrigger>
+          <TabsTrigger value="drafts">Borradores</TabsTrigger>
+          <TabsTrigger value="categories">Categorías</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="all-courses">
-          <PageSection variant="card" contentClassName="p-0">
-            {isLoading ? (
-              <div className="flex justify-center py-8">
-                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+        <TabsContent value="all-courses" className="space-y-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex flex-col md:flex-row justify-between md:items-center">
+                <div>
+                  <CardTitle>Lista de Cursos</CardTitle>
+                  <CardDescription>
+                    Visualiza y gestiona todos los cursos de la plataforma
+                  </CardDescription>
+                </div>
+                <div className="flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
+                  <div className="relative w-full md:w-64">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder="Buscar cursos..."
+                      className="pl-8"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="gap-1">
+                        <Filter className="h-4 w-4" />
+                        Filtrar
+                        <ChevronDown className="h-3 w-3 ml-1" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-[200px]">
+                      <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        <input type="checkbox" className="mr-2" /> Programación
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <input type="checkbox" className="mr-2" /> Diseño
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <input type="checkbox" className="mr-2" /> Marketing
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        <input type="checkbox" className="mr-2" /> Publicados
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <input type="checkbox" className="mr-2" /> Borradores
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        <Button variant="outline" size="sm" className="w-full">Aplicar</Button>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
-            ) : (
-              <div className="rounded-md">
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="flex justify-center py-8">
+                  <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[200px]">
+                          <div className="flex items-center space-x-1">
+                            <span>Título</span>
+                            <ArrowUpDown className="h-3 w-3" />
+                          </div>
+                        </TableHead>
+                        <TableHead>Instructor</TableHead>
+                        <TableHead>Categoría</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead className="text-right">Precio</TableHead>
+                        <TableHead className="text-right">Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredCourses.length > 0 ? (
+                        filteredCourses.map((course) => (
+                          <TableRow key={course.id}>
+                            <TableCell className="font-medium">{course.title}</TableCell>
+                            <TableCell>{course.profiles?.full_name || 'Sin instructor'}</TableCell>
+                            <TableCell>{course.category || '-'}</TableCell>
+                            <TableCell>
+                              <CourseStatusBadge status={course.is_published} />
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {course.price ? `${course.price} ${course.currency?.toUpperCase() || 'EUR'}` : 'Gratis'}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  onClick={() => handleCourseClick(course.id)}
+                                  title="Editar curso"
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  onClick={() => window.open(`/courses/${course.id}`, '_blank')}
+                                  title="Ver curso"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  title="Eliminar curso"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center h-24">
+                            {searchTerm.trim() !== "" 
+                              ? "No se encontraron cursos que coincidan con la búsqueda." 
+                              : "No hay cursos para mostrar."}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="published" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Cursos Publicados</CardTitle>
+              <CardDescription>Todos los cursos disponibles para los estudiantes</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="flex justify-center py-8">
+                  <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+                </div>
+              ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="min-w-[150px]">Título</TableHead>
+                      <TableHead>Título</TableHead>
                       <TableHead>Instructor</TableHead>
                       <TableHead>Categoría</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Precio</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
+                      <TableHead>Precio</TableHead>
+                      <TableHead>Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredCourses.length > 0 ? (
-                      filteredCourses.map((course) => (
+                    {courses
+                      .filter(course => course.is_published)
+                      .map(course => (
                         <TableRow key={course.id}>
                           <TableCell className="font-medium">{course.title}</TableCell>
                           <TableCell>{course.profiles?.full_name || 'Sin instructor'}</TableCell>
                           <TableCell>{course.category || '-'}</TableCell>
                           <TableCell>
-                            <Badge variant={course.is_published ? "default" : "secondary"}>
-                              {course.is_published ? 'Publicado' : 'Borrador'}
-                            </Badge>
+                            {course.price ? `${course.price} ${course.currency?.toUpperCase() || 'EUR'}` : 'Gratis'}
                           </TableCell>
-                          <TableCell className="text-right">
-                            {course.price ? `${course.price} ${course.currency.toUpperCase()}` : 'Gratis'}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              onClick={() => handleCourseClick(course.id)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon">
-                              <Eye className="h-4 w-4" />
-                            </Button>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Button variant="outline" size="sm" onClick={() => handleCourseClick(course.id)}>Editar</Button>
+                              <Button variant="ghost" size="sm" onClick={() => window.open(`/courses/${course.id}`, '_blank')}>Ver</Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center h-24">
-                          {searchTerm.trim() !== "" 
-                            ? "No se encontraron cursos que coincidan con la búsqueda." 
-                            : "No hay cursos para mostrar."}
-                        </TableCell>
-                      </TableRow>
-                    )}
+                    }
                   </TableBody>
                 </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="drafts" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Borradores</CardTitle>
+              <CardDescription>Cursos en etapa de creación o revisión</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="flex justify-center py-8">
+                  <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Título</TableHead>
+                      <TableHead>Instructor</TableHead>
+                      <TableHead>Última Actualización</TableHead>
+                      <TableHead>Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {courses
+                      .filter(course => !course.is_published)
+                      .map(course => (
+                        <TableRow key={course.id}>
+                          <TableCell className="font-medium">{course.title}</TableCell>
+                          <TableCell>{course.profiles?.full_name || 'Sin instructor'}</TableCell>
+                          <TableCell>
+                            {new Date(course.updated_at || course.created_at).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Button variant="outline" size="sm" onClick={() => handleCourseClick(course.id)}>Editar</Button>
+                              <Button variant="ghost" size="sm">Publicar</Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    }
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="categories" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Categorías de Cursos</CardTitle>
+              <CardDescription>Gestiona las categorías para organizar los cursos</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4">
+                <Button>Nueva Categoría</Button>
               </div>
-            )}
-          </PageSection>
-        </TabsContent>
-        
-        <TabsContent value="published">
-          <PageSection variant="card">
-            <div className="text-center py-10">
-              <BookOpen className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">Vista de Cursos Publicados</h3>
-              <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                Esta vista filtrada mostrará únicamente los cursos que están publicados y disponibles para los estudiantes.
-              </p>
-              <Button variant="outline">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Cargar Cursos Publicados
-              </Button>
-            </div>
-          </PageSection>
-        </TabsContent>
-        
-        <TabsContent value="instructors">
-          <PageSection variant="card">
-            <div className="text-center py-10">
-              <School className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">Vista por Instructores</h3>
-              <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                Aquí podrás ver los cursos agrupados por instructor para facilitar la gestión por creador de contenido.
-              </p>
-              <Button variant="outline">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Ver Agrupación por Instructores
-              </Button>
-            </div>
-          </PageSection>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nombre</TableHead>
+                    <TableHead>Cursos</TableHead>
+                    <TableHead>Orden de Visualización</TableHead>
+                    <TableHead>Acciones</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-medium">Programación</TableCell>
+                    <TableCell>{courses.filter(c => c.category === 'Programación').length}</TableCell>
+                    <TableCell>1</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm">Editar</Button>
+                        <Button variant="ghost" size="sm">Eliminar</Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Diseño</TableCell>
+                    <TableCell>{courses.filter(c => c.category === 'Diseño').length}</TableCell>
+                    <TableCell>2</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm">Editar</Button>
+                        <Button variant="ghost" size="sm">Eliminar</Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </SectionPageLayout>
