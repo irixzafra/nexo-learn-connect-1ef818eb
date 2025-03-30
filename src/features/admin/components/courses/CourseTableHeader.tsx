@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowDown, ArrowUp, ChevronUpDown } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
 import { SortField, SortDirection } from '../../hooks/useCoursesTable';
 
 interface CourseTableHeaderProps {
@@ -16,7 +16,7 @@ const CourseTableHeader: React.FC<CourseTableHeaderProps> = ({
   onSort
 }) => {
   const SortIcon = ({ field }: { field: SortField }) => {
-    if (field !== sortField) return <ChevronUpDown className="h-4 w-4 ml-1" />;
+    if (field !== sortField) return <ChevronsUpDown className="h-4 w-4 ml-1" />;
     return sortDirection === 'asc' ? (
       <ArrowUp className="h-4 w-4 ml-1" />
     ) : (
@@ -63,8 +63,14 @@ const CourseTableHeader: React.FC<CourseTableHeaderProps> = ({
             <SortIcon field="status" />
           </div>
         </TableHead>
-        <TableHead>
-          Estudiantes
+        <TableHead 
+          className="cursor-pointer hover:bg-muted/20"
+          onClick={() => onSort('students_count')}
+        >
+          <div className="flex items-center">
+            Estudiantes
+            <SortIcon field="students_count" />
+          </div>
         </TableHead>
         <TableHead 
           className="cursor-pointer hover:bg-muted/20"
