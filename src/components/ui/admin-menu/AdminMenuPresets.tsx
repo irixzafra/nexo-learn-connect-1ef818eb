@@ -16,7 +16,8 @@ import {
   AlertCircle,
   CheckCircle,
   History,
-  FileText
+  FileText,
+  Folder
 } from 'lucide-react';
 
 export const adminMainMenuItems: AdminMenuItem[] = [
@@ -51,6 +52,12 @@ export const adminMainMenuItems: AdminMenuItem[] = [
     description: 'Gestión de pagos e ingresos'
   },
   {
+    icon: Folder,
+    label: 'Gestión de Contenido',
+    href: '/admin/content',
+    description: 'Gestión de categorías y contenido'
+  },
+  {
     icon: Database,
     label: 'Datos de Prueba',
     href: '/admin/test-data',
@@ -61,12 +68,6 @@ export const adminMainMenuItems: AdminMenuItem[] = [
     label: 'Configuración del Sistema',
     href: '/admin/settings',
     description: 'Opciones y parámetros del sistema'
-  },
-  {
-    icon: FileText,
-    label: 'Categorías',
-    href: '/admin/categories',
-    description: 'Gestión de categorías'
   }
 ];
 
@@ -112,6 +113,21 @@ export const adminEducationMenuItems: AdminMenuItem[] = [
   }
 ];
 
+export const adminContentMenuItems: AdminMenuItem[] = [
+  {
+    icon: Folder,
+    label: 'Gestión de Contenido',
+    href: '/admin/content',
+    description: 'Centro de gestión de contenido'
+  },
+  {
+    icon: FileText,
+    label: 'Categorías',
+    href: '/admin/content/categories',
+    description: 'Gestión de categorías'
+  }
+];
+
 export const adminAlertMenuItems: AdminMenuItem[] = [
   {
     icon: AlertCircle,
@@ -153,6 +169,11 @@ export const adminMobileMenuItems: AdminMenuItem[] = [
     icon: CreditCard,
     label: 'Pagos',
     href: '/admin/billing'
+  },
+  {
+    icon: Folder,
+    label: 'Contenido',
+    href: '/admin/content'
   },
   {
     icon: Shield,

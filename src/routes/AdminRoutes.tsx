@@ -15,6 +15,7 @@ import AuditLog from '@/pages/admin/audit/AuditLog';
 import AccessControl from '@/pages/admin/access/AccessControl';
 import { Navigate } from 'react-router-dom';
 import AdminNavigation from '@/components/admin/AdminNavigation';
+import ContentManagement from '@/pages/admin/content/ContentManagement';
 
 // Create a wrapper component for Admin content that includes the navigation
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -52,7 +53,13 @@ const AdminRoutes: React.FC = () => {
         </AdminLayout>
       } />
       <Route path="system-settings" element={<Navigate to="/admin/settings" replace />} />
-      <Route path="categories" element={
+      <Route path="categories" element={<Navigate to="/admin/content/categories" replace />} />
+      <Route path="content" element={
+        <AdminLayout>
+          <ContentManagement />
+        </AdminLayout>
+      } />
+      <Route path="content/categories" element={
         <AdminLayout>
           <CategoryManagement />
         </AdminLayout>

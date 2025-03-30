@@ -11,7 +11,8 @@ import {
   Database,
   History,
   Settings,
-  Shield
+  Shield,
+  Folder
 } from 'lucide-react';
 
 const AdminNavigation = () => {
@@ -33,7 +34,7 @@ const AdminNavigation = () => {
             className={cn(
               "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
               "hover:bg-accent text-sm font-medium",
-              isActive('/admin/dashboard') ? "bg-secondary" : ""
+              isActive('/admin/dashboard') && !isActive('/admin/dashboard/') ? "bg-secondary" : ""
             )}
           >
             <LayoutDashboard className="h-4 w-4 md:mr-1" />
@@ -81,15 +82,15 @@ const AdminNavigation = () => {
           
           {/* Categorías */}
           <Link 
-            to="/admin/categories"
+            to="/admin/content"
             className={cn(
               "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
               "hover:bg-accent text-sm font-medium",
-              isActive('/admin/categories') ? "bg-secondary" : ""
+              isActive('/admin/content') || isActive('/admin/categories') ? "bg-secondary" : ""
             )}
           >
-            <FileText className="h-4 w-4 md:mr-1" />
-            <span className="hidden sm:inline">Categorías</span>
+            <Folder className="h-4 w-4 md:mr-1" />
+            <span className="hidden sm:inline">Contenido</span>
           </Link>
           
           {/* Datos de Prueba */}

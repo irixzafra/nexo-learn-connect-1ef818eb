@@ -19,6 +19,7 @@ import {
   Shield, 
   History,
   FileText,
+  Folder,
 } from 'lucide-react';
 
 interface MobileNavMenuProps {
@@ -43,7 +44,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) =>
     { icon: Users, label: 'Usuarios', href: '/admin/users' },
     { icon: BookOpen, label: 'Educación', href: '/admin/courses' },
     { icon: CreditCard, label: 'Facturación', href: '/admin/billing' },
-    { icon: FileText, label: 'Categorías', href: '/admin/categories' },
+    { icon: Folder, label: 'Contenido', href: '/admin/content' },
     { icon: Database, label: 'Datos', href: '/admin/test-data' },
     { icon: History, label: 'Auditoría', href: '/admin/audit-log' },
     { icon: Shield, label: 'Roles', href: '/admin/roles' },
