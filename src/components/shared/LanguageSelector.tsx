@@ -21,7 +21,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   languages,
   onChange
 }) => {
-  // Get language flag emoji based on language code
+  // Get language flag emoji based on language code (mantenemos para usar dentro del menú)
   const getLanguageFlag = (code: string): string => {
     switch (code) {
       case 'es': return '🇪🇸';

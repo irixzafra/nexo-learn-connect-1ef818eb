@@ -60,7 +60,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                <span className="text-sm">{getLanguageFlag(currentLanguage)}</span>
+                <Globe className="h-4 w-4" />
                 <span className="sr-only">Cambiar idioma</span>
               </Button>
             </DropdownMenuTrigger>

@@ -79,22 +79,19 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
               <span>Configuración</span>
             </DropdownMenuItem>
             
-            {/* Opción para volver al rol original - solo cuando se está viendo como otro rol */}
-            {isViewingAsOtherRole && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => onRoleChange(effectiveUserRole)}>
-                  <ArrowLeftRight className="mr-2 h-4 w-4" />
-                  <span>Volver a mi rol</span>
-                </DropdownMenuItem>
-              </>
-            )}
-            
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Cerrar sesión</span>
             </DropdownMenuItem>
+            
+            {/* Opción para volver al rol original - visible para todos cuando se está viendo como otro rol */}
+            {isViewingAsOtherRole && (
+              <DropdownMenuItem onClick={() => onRoleChange(effectiveUserRole)}>
+                <ArrowLeftRight className="mr-2 h-4 w-4" />
+                <span>Volver a mi rol</span>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </TooltipTrigger>
