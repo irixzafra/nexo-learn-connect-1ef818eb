@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import { UserMenu } from "@/components/layout/header/UserMenu";
 import { RoleIndicator } from "@/components/layout/header/RoleIndicator";
+import { NexoLogo } from "@/components/ui/logo";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -64,9 +65,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
           {/* Main Content */}
           <div className="flex-1 flex flex-col min-h-screen">
             {/* Minimal top bar with user menu and role indicator */}
-            <div className="h-14 border-b flex items-center justify-end px-4">
-              <div className="flex items-center gap-2">
-                {isMobile && <SidebarTrigger className="md:hidden" />}
+            <div className="h-14 border-b flex items-center justify-between px-4">
+              <div className="md:hidden">
+                {isMobile && (
+                  <SidebarTrigger className="hover:bg-transparent p-0 h-auto w-auto">
+                    <NexoLogo variant="icon" className="h-8 w-auto cursor-pointer" />
+                  </SidebarTrigger>
+                )}
+              </div>
+              <div className="flex items-center gap-2 ml-auto">
                 {userRole && <RoleIndicator viewingAs={userRole} onRoleChange={handleRoleChange} />}
                 <UserMenu />
               </div>

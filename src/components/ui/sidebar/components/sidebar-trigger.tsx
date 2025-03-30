@@ -8,7 +8,7 @@ import { useSidebar } from "../use-sidebar"
 export const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
->(({ className, onClick, ...props }, ref) => {
+>(({ className, onClick, children, ...props }, ref) => {
   const { toggleSidebar, state, openMobile, setOpenMobile } = useSidebar()
   const isCollapsed = state === "collapsed"
   const isMobile = React.useMemo(() => window.innerWidth < 768, [])
@@ -21,7 +21,7 @@ export const SidebarTrigger = React.forwardRef<
       size="icon"
       className={cn(
         "h-8 w-8 focus-visible:ring-2 focus-visible:ring-primary transition-all duration-200",
-        isMobile && "absolute top-4 left-4 z-50",
+        isMobile && "z-50",
         className
       )}
       onClick={(event) => {
@@ -33,7 +33,7 @@ export const SidebarTrigger = React.forwardRef<
       aria-controls="sidebar"
       {...props}
     >
-      {isMobile ? (
+      {children || (isMobile ? (
         openMobile ? (
           <X className="h-5 w-5" aria-hidden="true" />
         ) : (
@@ -41,7 +41,7 @@ export const SidebarTrigger = React.forwardRef<
         )
       ) : (
         <PanelLeft className="h-5 w-5" aria-hidden="true" />
-      )}
+      ))}
       <span className="sr-only">{isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}</span>
     </Button>
   )
