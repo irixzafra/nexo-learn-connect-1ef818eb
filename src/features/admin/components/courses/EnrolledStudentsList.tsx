@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCourseEnrollments, EnrolledStudent } from '@/features/admin/hooks/useCourseEnrollments';
-import { Loader2 } from 'lucide-react';
+import { useEnrolledStudentsTable } from '@/features/admin/hooks/useEnrolledStudentsTable';
+import { Loader2, Search, ArrowUp, ArrowDown } from 'lucide-react';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import {
@@ -13,6 +15,14 @@ import {
   DeleteStudentDialog,
   ContactInfoDialog
 } from './students';
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell
+} from '@/components/ui/table';
 
 interface EnrolledStudentsListProps {
   courseId: string;
@@ -20,12 +30,21 @@ interface EnrolledStudentsListProps {
 
 const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId }) => {
   const { enrolledStudents, isLoading, error, refetch } = useCourseEnrollments(courseId);
-  const [searchTerm, setSearchTerm] = useState('');
   const [studentToDelete, setStudentToDelete] = useState<EnrolledStudent | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showContactInfoDialog, setShowContactInfoDialog] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<EnrolledStudent | null>(null);
   const navigate = useNavigate();
+
+  // Usar el nuevo hook para ordenación y filtrado
+  const {
+    searchTerm,
+    setSearchTerm,
+    sortField,
+    sortDirection,
+    handleSort,
+    sortedStudents
+  } = useEnrolledStudentsTable(enrolledStudents);
 
   const handleSendEmail = (student: EnrolledStudent) => {
     if (student.email) {
@@ -98,19 +117,131 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
   return (
     <TooltipProvider>
       <div className="space-y-4">
-        <StudentsSearchBar 
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          totalStudents={enrolledStudents.length}
-        />
+        {/* Barra de búsqueda mejorada con icono */}
+        <div className="flex items-center justify-between">
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por nombre o email..."
+              className="pl-8"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="text-sm text-muted-foreground">
+            Total: <span className="font-semibold">{sortedStudents.length} / {enrolledStudents.length} estudiantes</span>
+          </div>
+        </div>
 
-        <StudentsTable 
-          students={enrolledStudents}
-          searchTerm={searchTerm}
-          onEmailClick={handleSendEmail}
-          onPhoneClick={handleCallPhone}
-          onDeleteClick={handleDeleteClick}
-        />
+        {/* Tabla con cabeceras ordenables */}
+        <div className="border rounded-lg">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>
+                  <Button 
+                    variant="ghost" 
+                    className="p-0 h-auto font-medium hover:bg-transparent"
+                    onClick={() => handleSort('full_name')}
+                  >
+                    Nombre
+                    {sortField === 'full_name' && (
+                      sortDirection === 'asc' 
+                        ? <ArrowUp className="ml-1 h-4 w-4 inline" />
+                        : <ArrowDown className="ml-1 h-4 w-4 inline" />
+                    )}
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button 
+                    variant="ghost" 
+                    className="p-0 h-auto font-medium hover:bg-transparent"
+                    onClick={() => handleSort('email')}
+                  >
+                    Email
+                    {sortField === 'email' && (
+                      sortDirection === 'asc' 
+                        ? <ArrowUp className="ml-1 h-4 w-4 inline" />
+                        : <ArrowDown className="ml-1 h-4 w-4 inline" />
+                    )}
+                  </Button>
+                </TableHead>
+                <TableHead>ID de Usuario</TableHead>
+                <TableHead>
+                  <Button 
+                    variant="ghost" 
+                    className="p-0 h-auto font-medium hover:bg-transparent"
+                    onClick={() => handleSort('enrolled_at')}
+                  >
+                    Fecha de Inscripción
+                    {sortField === 'enrolled_at' && (
+                      sortDirection === 'asc' 
+                        ? <ArrowUp className="ml-1 h-4 w-4 inline" />
+                        : <ArrowDown className="ml-1 h-4 w-4 inline" />
+                    )}
+                  </Button>
+                </TableHead>
+                <TableHead>Contacto</TableHead>
+                <TableHead>Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedStudents.length > 0 ? (
+                sortedStudents.map((student) => (
+                  <TableRow key={student.id}>
+                    <TableCell className="font-medium">
+                      {student.full_name || `Usuario ${student.user_id.substring(0, 8)}`}
+                    </TableCell>
+                    <TableCell>{student.email || 'No disponible'}</TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {student.user_id.substring(0, 12)}...
+                    </TableCell>
+                    <TableCell>
+                      {new Date(student.enrolled_at).toLocaleDateString('es-ES')}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleSendEmail(student)}
+                          disabled={!student.email}
+                        >
+                          Email
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleCallPhone(student)}
+                          disabled={!student.phone}
+                        >
+                          Teléfono
+                        </Button>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        onClick={() => handleDeleteClick(student)}
+                      >
+                        Eliminar
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    {searchTerm 
+                      ? `No se encontraron estudiantes que coincidan con "${searchTerm}"`
+                      : "No hay estudiantes inscritos en este curso"}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
         
         <DeleteStudentDialog 
           open={showDeleteDialog}
