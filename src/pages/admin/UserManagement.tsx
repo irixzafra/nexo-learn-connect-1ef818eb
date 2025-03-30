@@ -35,6 +35,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { UserAdminStats } from "@/features/users/UserAdminStats";
+import UserActivityChart from "@/features/users/charts/UserActivityChart";
+import UserRoleDistribution from "@/features/users/charts/UserRoleDistribution";
+import { useUserStatistics } from "@/features/users/hooks/useUserStatistics";
+import { UserManagementTabs } from "@/features/users/UserManagementTabs";
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -43,7 +48,9 @@ const UserManagement: React.FC = () => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
+  const { stats, isLoading: isStatsLoading } = useUserStatistics();
   
   useEffect(() => {
     fetchUsers();
@@ -175,13 +182,130 @@ const UserManagement: React.FC = () => {
         </Button>
       </div>
 
-      <Tabs defaultValue="all-users" className="space-y-6">
+      <Tabs 
+        defaultValue="overview" 
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList>
-          <TabsTrigger value="all-users">Todos los Usuarios</TabsTrigger>
-          <TabsTrigger value="search-users">Buscar y Editar</TabsTrigger>
+          <TabsTrigger value="overview">Vista General</TabsTrigger>
+          <TabsTrigger value="user-management">Gestión de Usuarios</TabsTrigger>
+          <TabsTrigger value="analytics">Analíticas</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="all-users" className="space-y-6">
+        {/* Vista General / Dashboard */}
+        <TabsContent value="overview" className="space-y-6">
+          {/* Stats Cards */}
+          <UserAdminStats 
+            totalUsers={stats.totalUsers} 
+            activeUsers={stats.activeUsers}
+            newUsers={stats.newUsers}
+            inactiveUsers={stats.inactiveUsers}
+            loading={isStatsLoading}
+          />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* User Activity Chart */}
+            <UserActivityChart 
+              data={stats.activityData}
+              loading={isStatsLoading}
+            />
+            
+            {/* User Role Distribution */}
+            <UserRoleDistribution 
+              data={stats.roleDistribution}
+              loading={isStatsLoading}
+            />
+          </div>
+          
+          {/* Recent Users Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Usuarios Recientes</CardTitle>
+              <CardDescription>
+                Últimos usuarios registrados en la plataforma
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[250px]">Usuario</TableHead>
+                      <TableHead>Rol</TableHead>
+                      <TableHead>Fecha de registro</TableHead>
+                      <TableHead>Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {isLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center h-24">
+                          <div className="flex justify-center">
+                            <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-primary"></div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      users.slice(0, 5).map((user) => (
+                        <TableRow 
+                          key={user.id} 
+                          className="cursor-pointer hover:bg-accent"
+                          onClick={() => handleSelectUser(user)}
+                        >
+                          <TableCell className="font-medium">
+                            {user.full_name || 'Usuario sin nombre'}
+                          </TableCell>
+                          <TableCell>
+                            <UserRoleType role={user.role} showIcon={true} />
+                          </TableCell>
+                          <TableCell>
+                            {new Date(user.created_at || '').toLocaleDateString()}
+                          </TableCell>
+                          <TableCell onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleSelectUser(user);
+                                }}
+                              >
+                                <PencilLine className="h-4 w-4" />
+                              </Button>
+                              <UserRoleSwitcher 
+                                userId={user.id}
+                                currentRole={user.role}
+                                onRoleChange={handleRoleChange}
+                              />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              {!isLoading && users.length > 5 && (
+                <div className="flex justify-center mt-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setActiveTab("user-management")}
+                  >
+                    Ver todos los usuarios
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* User Management Tab */}
+        <TabsContent value="user-management" className="space-y-6">
+          <UserManagementTabs isAdmin={true} />
+          
           <Card>
             <CardHeader className="pb-3">
               <div className="flex flex-col md:flex-row justify-between md:items-center">
@@ -288,18 +412,69 @@ const UserManagement: React.FC = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="search-users">
+        {/* Analytics Tab */}
+        <TabsContent value="analytics" className="space-y-6">
+          <UserAdminStats 
+            totalUsers={stats.totalUsers} 
+            activeUsers={stats.activeUsers}
+            newUsers={stats.newUsers}
+            inactiveUsers={stats.inactiveUsers}
+            loading={isStatsLoading}
+          />
+          
           <Card>
             <CardHeader>
-              <CardTitle>Búsqueda avanzada</CardTitle>
+              <CardTitle>Tendencias de Crecimiento</CardTitle>
               <CardDescription>
-                Busca usuarios específicos y edita sus roles
+                Análisis detallado del crecimiento de usuarios en la plataforma
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <UserRoleSearch />
+            <CardContent className="h-96">
+              <UserActivityChart 
+                data={stats.activityData}
+                loading={isStatsLoading}
+                className="h-full border-0 shadow-none"
+              />
             </CardContent>
           </Card>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Distribución por Roles</CardTitle>
+                <CardDescription>
+                  Distribución de usuarios según su rol
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="h-72">
+                <UserRoleDistribution 
+                  data={stats.roleDistribution}
+                  loading={isStatsLoading}
+                  className="h-full border-0 shadow-none"
+                />
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Retención de Usuarios</CardTitle>
+                <CardDescription>
+                  Tasa de retención de usuarios por mes
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="h-72">
+                {isStatsLoading ? (
+                  <div className="h-full flex items-center justify-center">
+                    <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+                  </div>
+                ) : (
+                  <div className="h-full flex items-center justify-center text-muted-foreground">
+                    Gráfico de retención en desarrollo
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 
