@@ -2,54 +2,49 @@
 import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { MoreVertical, MessageSquare, ThumbsUp, Flag, Reply, Send } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  Heart,
+  MessageSquare,
+  Send,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
-// Mock data for comments
-const MOCK_COMMENTS = [
+// Dummy data for comments
+// In a real implementation, this would come from a database
+const DUMMY_COMMENTS = [
   {
     id: '1',
-    author: 'Juan Pérez',
-    avatar: null,
-    content: 'Me ha parecido una lección muy interesante. ¿Alguien sabe dónde puedo encontrar más información sobre este tema?',
-    timestamp: '2023-08-15T10:30:00',
-    likes: 5,
+    author: 'Ana García',
+    avatar: '/lovable-uploads/69a3f68a-63d6-4fa4-a8aa-9cd3023f201a.png',
+    content: 'Gran explicación. Me ayudó mucho a entender este concepto que me estaba costando.',
+    timestamp: '2 horas atrás',
+    likes: 3,
+    isInstructor: true,
     replies: [
       {
-        id: '1-1',
-        author: 'Ana García',
-        avatar: null,
-        content: 'Puedes encontrar más información en el recurso adicional que compartió el instructor en la descripción del curso.',
-        timestamp: '2023-08-15T11:15:00',
-        likes: 2,
-      },
-      {
-        id: '1-2',
-        author: 'Profesor Martínez',
-        avatar: null,
-        isInstructor: true,
-        content: 'Hola Juan, te recomiendo que consultes la bibliografía que compartí en los recursos adicionales. También puedes preguntarme cualquier duda en las sesiones en vivo.',
-        timestamp: '2023-08-15T14:20:00',
-        likes: 3,
+        id: '101',
+        author: 'Miguel Torres',
+        avatar: '/lovable-uploads/76db81f1-1b84-4977-963b-69a243d7f86a.png',
+        content: '¡A mí también me resultó muy útil!',
+        timestamp: '1 hora atrás',
+        likes: 1,
       },
     ],
   },
   {
     id: '2',
-    author: 'María López',
-    avatar: null,
-    content: 'Estoy teniendo problemas para entender la parte sobre la configuración del micrófono. ¿Alguien me podría explicar mejor ese punto?',
-    timestamp: '2023-08-14T18:45:00',
-    likes: 2,
+    author: 'Roberto López',
+    avatar: '/lovable-uploads/ab16dc8b-143e-45bb-8cd6-b634344e8e1f.png',
+    content: 'Tengo una duda sobre la parte donde hablas del proceso XYZ. ¿Podrías aclarar un poco más?',
+    timestamp: '1 día atrás',
+    likes: 0,
     replies: [],
   },
 ];
@@ -59,269 +54,261 @@ interface LessonCommentsProps {
 }
 
 export function LessonComments({ lessonId }: LessonCommentsProps) {
-  const { toast } = useToast();
-  const { user } = useAuth();
-  const [comments, setComments] = useState(MOCK_COMMENTS);
+  const [comments, setComments] = useState(DUMMY_COMMENTS);
   const [newComment, setNewComment] = useState('');
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [replyContent, setReplyContent] = useState('');
+  const [expandedComments, setExpandedComments] = useState<string[]>([]);
+  const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
+  const { user } = useAuth();
+  const { toast } = useToast();
 
-  const handlePostComment = () => {
-    if (!newComment.trim()) return;
-
-    // In a real implementation, you would post to an API
+  const handleSubmitComment = () => {
+    if (!newComment.trim() || !user) return;
+    
     const newCommentObj = {
       id: Date.now().toString(),
-      author: user?.displayName || 'Usuario',
-      avatar: user?.photoURL || null,
+      author: user.email || 'Anonymous User',
+      avatar: '/placeholder.svg',
       content: newComment,
-      timestamp: new Date().toISOString(),
+      timestamp: 'Ahora mismo',
       likes: 0,
       replies: [],
     };
-
+    
     setComments([newCommentObj, ...comments]);
     setNewComment('');
-
+    
     toast({
-      title: "Comentario publicado",
+      title: "Comentario enviado",
       description: "Tu comentario ha sido publicado con éxito.",
     });
   };
 
-  const handlePostReply = (commentId: string) => {
-    if (!replyContent.trim()) return;
-
-    // In a real implementation, you would post to an API
-    const reply = {
-      id: `${commentId}-${Date.now()}`,
-      author: user?.displayName || 'Usuario',
-      avatar: user?.photoURL || null,
-      content: replyContent,
-      timestamp: new Date().toISOString(),
+  const handleSubmitReply = (commentId: string) => {
+    if (!replyTexts[commentId]?.trim() || !user) return;
+    
+    const newReply = {
+      id: Date.now().toString(),
+      author: user.email || 'Anonymous User',
+      avatar: '/placeholder.svg',
+      content: replyTexts[commentId],
+      timestamp: 'Ahora mismo',
       likes: 0,
     };
-
+    
     const updatedComments = comments.map(comment => {
       if (comment.id === commentId) {
         return {
           ...comment,
-          replies: [...comment.replies, reply],
+          replies: [...comment.replies, newReply],
         };
       }
       return comment;
     });
-
+    
     setComments(updatedComments);
-    setReplyContent('');
-    setReplyingTo(null);
-
+    setReplyTexts({ ...replyTexts, [commentId]: '' });
+    
     toast({
-      title: "Respuesta publicada",
+      title: "Respuesta enviada",
       description: "Tu respuesta ha sido publicada con éxito.",
     });
   };
 
-  const handleLikeComment = (commentId: string, isReply = false, parentId?: string) => {
-    // In a real implementation, you would post to an API
-    if (isReply && parentId) {
-      const updatedComments = comments.map(comment => {
-        if (comment.id === parentId) {
-          return {
-            ...comment,
-            replies: comment.replies.map(reply => {
-              if (reply.id === commentId) {
-                return {
-                  ...reply,
-                  likes: reply.likes + 1,
-                };
-              }
-              return reply;
-            }),
-          };
-        }
-        return comment;
-      });
-      setComments(updatedComments);
-    } else {
-      const updatedComments = comments.map(comment => {
-        if (comment.id === commentId) {
-          return {
-            ...comment,
-            likes: comment.likes + 1,
-          };
-        }
-        return comment;
-      });
-      setComments(updatedComments);
-    }
+  const toggleReplies = (commentId: string) => {
+    setExpandedComments(prev => 
+      prev.includes(commentId)
+        ? prev.filter(id => id !== commentId)
+        : [...prev, commentId]
+    );
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+  const handleLike = (commentId: string) => {
+    const updatedComments = comments.map(comment => {
+      if (comment.id === commentId) {
+        return { ...comment, likes: comment.likes + 1 };
+      }
+      return comment;
+    });
+    
+    setComments(updatedComments);
+    
+    toast({
+      title: "Me gusta",
+      description: "Has indicado que te gusta este comentario.",
     });
   };
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MessageSquare className="h-5 w-5" />
-          Comentarios y Preguntas
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-6">
-          <Textarea
-            placeholder="Escribe un comentario o pregunta..."
-            value={newComment}
-            onChange={e => setNewComment(e.target.value)}
-            className="mb-2"
-          />
-          <div className="flex justify-end">
-            <Button onClick={handlePostComment} className="flex items-center gap-2">
-              <Send className="h-4 w-4" />
-              Publicar
-            </Button>
-          </div>
-        </div>
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
-        <div className="space-y-6">
-          {comments.map(comment => (
-            <div key={comment.id} className="space-y-4">
-              <div className="flex gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={comment.avatar || ''} alt={comment.author} />
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {comment.author.split(' ').map(n => n[0]).join('').toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold">{comment.author}</span>
-                      {comment.isInstructor && (
-                        <span className="px-2 py-0.5 rounded text-xs bg-primary/10 text-primary">
-                          Instructor
-                        </span>
-                      )}
-                    </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Flag className="h-4 w-4 mr-2" />
-                          Reportar comentario
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {formatTimestamp(comment.timestamp)}
-                  </p>
-                  <p className="mt-1">{comment.content}</p>
-                  <div className="flex items-center gap-4 mt-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-muted-foreground text-xs h-7 gap-1 px-2"
-                      onClick={() => handleLikeComment(comment.id)}
-                    >
-                      <ThumbsUp className="h-3.5 w-3.5" />
-                      {comment.likes > 0 && <span>{comment.likes}</span>}
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-muted-foreground text-xs h-7 gap-1 px-2"
-                      onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                    >
-                      <Reply className="h-3.5 w-3.5" />
-                      Responder
-                    </Button>
-                  </div>
-                  
-                  {replyingTo === comment.id && (
-                    <div className="mt-3">
-                      <Textarea
-                        placeholder="Escribe tu respuesta..."
-                        value={replyContent}
-                        onChange={e => setReplyContent(e.target.value)}
-                        className="mb-2 text-sm"
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => setReplyingTo(null)}
-                        >
-                          Cancelar
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          onClick={() => handlePostReply(comment.id)}
-                        >
-                          Responder
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {comment.replies.length > 0 && (
-                    <div className="mt-4 pl-6 border-l space-y-4">
-                      {comment.replies.map(reply => (
-                        <div key={reply.id} className="flex gap-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={reply.avatar || ''} alt={reply.author} />
-                            <AvatarFallback className="text-xs">
-                              {reply.author.split(' ').map(n => n[0]).join('').toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-sm">{reply.author}</span>
-                              {reply.isInstructor && (
-                                <span className="px-2 py-0.5 rounded text-xs bg-primary/10 text-primary">
-                                  Instructor
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                              {formatTimestamp(reply.timestamp)}
-                            </p>
-                            <p className="mt-1 text-sm">{reply.content}</p>
-                            <div className="flex items-center gap-4 mt-1">
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                className="text-muted-foreground text-xs h-6 gap-1 px-2"
-                                onClick={() => handleLikeComment(reply.id, true, comment.id)}
-                              >
-                                <ThumbsUp className="h-3 w-3" />
-                                {reply.likes > 0 && <span>{reply.likes}</span>}
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+  return (
+    <Card className="w-full">
+      <CardHeader className="pb-3">
+        <h3 className="text-lg font-semibold">Comentarios y preguntas</h3>
+      </CardHeader>
+      
+      <CardContent className="space-y-4">
+        {/* Comment Input */}
+        {user && (
+          <div className="flex gap-3">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src="/placeholder.svg" alt="User Avatar" />
+              <AvatarFallback>
+                {user.email ? getInitials(user.email) : 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 space-y-2">
+              <Textarea
+                placeholder="Comparte tu opinión o pregunta..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="resize-none"
+              />
+              <div className="flex justify-end">
+                <Button 
+                  size="sm" 
+                  onClick={handleSubmitComment}
+                  disabled={!newComment.trim()}
+                >
+                  <Send className="h-4 w-4 mr-1" />
+                  Enviar
+                </Button>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
+
+        <Separator className="my-4" />
+        
+        {/* Comments List */}
+        {comments.length === 0 ? (
+          <div className="text-center py-6 text-muted-foreground">
+            No hay comentarios todavía. ¡Sé el primero en comentar!
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {comments.map(comment => (
+              <div key={comment.id} className="space-y-3">
+                <div className="flex gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={comment.avatar} alt={comment.author} />
+                    <AvatarFallback>{getInitials(comment.author)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center">
+                      <h4 className="font-medium">{comment.author}</h4>
+                      {comment.isInstructor && (
+                        <Badge variant="outline" className="ml-2 bg-primary/10 text-primary text-xs">
+                          Instructor
+                        </Badge>
+                      )}
+                      <span className="ml-auto text-xs text-muted-foreground">
+                        {comment.timestamp}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-sm">{comment.content}</p>
+                    <div className="mt-2 flex gap-4">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 px-2 text-muted-foreground hover:text-foreground"
+                        onClick={() => handleLike(comment.id)}
+                      >
+                        <Heart className="h-4 w-4 mr-1" />
+                        <span className="text-xs">{comment.likes}</span>
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 px-2 text-muted-foreground hover:text-foreground"
+                        onClick={() => toggleReplies(comment.id)}
+                      >
+                        <MessageSquare className="h-4 w-4 mr-1" />
+                        <span className="text-xs">
+                          {comment.replies.length > 0 ? comment.replies.length : "Responder"}
+                        </span>
+                        {comment.replies.length > 0 && (
+                          expandedComments.includes(comment.id) ? 
+                          <ChevronUp className="h-4 w-4 ml-1" /> : 
+                          <ChevronDown className="h-4 w-4 ml-1" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Replies */}
+                {expandedComments.includes(comment.id) && (
+                  <div className="ml-12 space-y-3 mt-2">
+                    {comment.replies.map(reply => (
+                      <div key={reply.id} className="flex gap-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={reply.avatar} alt={reply.author} />
+                          <AvatarFallback>{getInitials(reply.author)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center">
+                            <h5 className="text-sm font-medium">{reply.author}</h5>
+                            <span className="ml-auto text-xs text-muted-foreground">
+                              {reply.timestamp}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-xs">{reply.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {/* Reply input */}
+                    {user && (
+                      <div className="flex gap-2 mt-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src="/placeholder.svg" alt="User Avatar" />
+                          <AvatarFallback>
+                            {user.email ? getInitials(user.email) : 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <Textarea
+                            placeholder="Escribe una respuesta..."
+                            value={replyTexts[comment.id] || ''}
+                            onChange={(e) => setReplyTexts({
+                              ...replyTexts,
+                              [comment.id]: e.target.value
+                            })}
+                            className="resize-none text-sm min-h-[60px]"
+                          />
+                          <div className="flex justify-end mt-1">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="h-7 text-xs"
+                              onClick={() => handleSubmitReply(comment.id)}
+                              disabled={!replyTexts[comment.id]?.trim()}
+                            >
+                              <Send className="h-3 w-3 mr-1" />
+                              Responder
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </CardContent>
+      
+      <CardFooter className="text-xs text-muted-foreground border-t pt-4">
+        <p>Los comentarios están sujetos a moderación. Por favor, sé respetuoso y sigue las normas de la comunidad.</p>
+      </CardFooter>
     </Card>
   );
 }

@@ -1,4 +1,3 @@
-
 export interface Module {
   id: string;
   course_id: string;
@@ -64,4 +63,17 @@ export interface Course {
     full_name: string;
   };
   modules?: Module[];
+}
+
+export interface LearningPath {
+  id: string;
+  title: string;
+  description?: string;
+  cover_image_url?: string;
+  created_by: string;
+  level?: 'beginner' | 'intermediate' | 'advanced' | 'all_levels';
+  estimated_hours?: number;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
 }

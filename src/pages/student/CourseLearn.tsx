@@ -41,15 +41,15 @@ const CourseLearn: React.FC = () => {
     if (modulesWithLessons.length > 0 && courseProgress) {
       // Find incomplete lessons
       for (const module of modulesWithLessons) {
-        const incompleteLesson = module.lessons.find(lesson => 
+        const incompleteLesson = module.lessons?.find(lesson => 
           !courseProgress.some(progress => 
             progress.lesson_id === lesson.id && progress.is_completed
           )
         );
 
         if (incompleteLesson) {
-          setNextIncompleteLesson(incompleteLesson);
-          setModuleWithNextIncompleteLesson(module);
+          setNextIncompleteLesson(incompleteLesson as any);
+          setModuleWithNextIncompleteLesson(module as any);
           break;
         }
       }
@@ -69,7 +69,7 @@ const CourseLearn: React.FC = () => {
 
   const getTotalLessons = () => {
     return modulesWithLessons.reduce(
-      (total, module) => total + module.lessons.length,
+      (total, module) => total + (module.lessons?.length || 0),
       0
     );
   };
@@ -185,16 +185,16 @@ const CourseLearn: React.FC = () => {
                           <div className="w-full flex justify-between items-center pr-4">
                             <span className="font-medium">{module.title}</span>
                             <span className="text-xs text-muted-foreground">
-                              {module.lessons.filter(lesson => 
+                              {(module.lessons || []).filter(lesson => 
                                 isLessonCompleted(lesson.id)
                               ).length}{" "}
-                              / {module.lessons.length}
+                              / {module.lessons?.length || 0}
                             </span>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent>
                           <ul className="space-y-2 mt-2">
-                            {module.lessons.map((lesson) => {
+                            {(module.lessons || []).map((lesson) => {
                               const completed = isLessonCompleted(lesson.id);
                               return (
                                 <li
