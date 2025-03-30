@@ -45,7 +45,8 @@ export function useUserManagement() {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: UserRoleType) => {
+  // Modified to return a Promise<void> instead of void
+  const handleRoleChange = async (userId: string, newRole: UserRoleType): Promise<void> => {
     try {
       const { error } = await supabase
         .from('profiles')
