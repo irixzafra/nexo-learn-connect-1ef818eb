@@ -9,7 +9,11 @@ import {
   BookOpen,
   School,
   Shield,
-  KeyRound
+  KeyRound,
+  CreditCard,
+  Database,
+  History,
+  FileText
 } from 'lucide-react';
 
 interface AdminSectionProps {
@@ -34,6 +38,14 @@ export const AdminSection: React.FC<AdminSectionProps> = ({ expanded, onToggle }
       {/* Gestión educativa */}
       <MenuItem to="/admin/courses" icon={BookOpen} label="Cursos" />
       <MenuItem to="/admin/instructors" icon={School} label="Instructores" />
+      
+      {/* Gestión de pagos */}
+      <MenuItem to="/admin/billing" icon={CreditCard} label="Facturación" />
+      
+      {/* Datos y configuración */}
+      <MenuItem to="/admin/test-data" icon={Database} label="Datos de Prueba" />
+      <MenuItem to="/admin/categories" icon={FileText} label="Categorías" />
+      <MenuItem to="/admin/audit-log" icon={History} label="Auditoría" />
       
       {/* Configuración */}
       <MenuItem to="/admin/settings" icon={Settings} label="Configuración" />

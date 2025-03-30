@@ -1,3 +1,4 @@
+
 import React from 'react';
 import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
 import { 
@@ -9,7 +10,13 @@ import {
   CheckCircle,
   Link2,
   ExternalLink,
-  School
+  School,
+  Settings,
+  Database,
+  Shield,
+  KeyRound,
+  FileText,
+  History
 } from 'lucide-react';
 import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -18,8 +25,14 @@ import { useAdminDashboardStats } from '@/features/admin/hooks/useAdminDashboard
 const AdminDashboard: React.FC = () => {
   const { stats, isLoading } = useAdminDashboardStats();
 
-  // Create a simplified array of admin menu items for direct access to main sections
+  // Accesos rápidos ampliados con todas las páginas administrativas disponibles
   const adminQuickMenuItems = [
+    {
+      label: "Dashboard",
+      icon: BarChart3,
+      description: "Vista general del sistema",
+      href: "/admin/dashboard"
+    },
     {
       label: "Gestionar Usuarios",
       icon: Users,
@@ -40,9 +53,45 @@ const AdminDashboard: React.FC = () => {
     },
     {
       label: "Roles y Permisos",
-      icon: Users,
+      icon: KeyRound,
       description: "Configurar roles de usuarios",
       href: "/admin/roles"
+    },
+    {
+      label: "Facturación",
+      icon: CreditCard,
+      description: "Gestión de pagos e ingresos",
+      href: "/admin/billing"
+    },
+    {
+      label: "Datos de Prueba",
+      icon: Database,
+      description: "Herramientas para desarrollo",
+      href: "/admin/test-data"
+    },
+    {
+      label: "Configuración del Sistema",
+      icon: Settings,
+      description: "Opciones y parámetros del sistema",
+      href: "/admin/settings"
+    },
+    {
+      label: "Control de Acceso",
+      icon: Shield,
+      description: "Políticas de seguridad",
+      href: "/admin/access"
+    },
+    {
+      label: "Auditoría",
+      icon: History,
+      description: "Registros de actividad",
+      href: "/admin/audit-log"
+    },
+    {
+      label: "Categorías",
+      icon: FileText,
+      description: "Gestión de categorías",
+      href: "/admin/categories"
     }
   ];
 

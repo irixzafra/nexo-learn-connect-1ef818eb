@@ -10,6 +10,9 @@ import UserManagement from '@/pages/admin/UserManagement';
 import RoleManagement from '@/pages/admin/RoleManagement';
 import TestDataManagement from '@/pages/admin/TestDataManagement';
 import AdminInstructors from '@/pages/admin/instructors/AdminInstructors';
+import AuditLog from '@/pages/admin/audit/AuditLog';
+import AccessControl from '@/pages/admin/access/AccessControl';
+import { Navigate } from 'react-router-dom';
 
 const AdminRoutes: React.FC = () => {
   return (
@@ -17,13 +20,17 @@ const AdminRoutes: React.FC = () => {
       <Route path="dashboard" element={<AdminDashboard />} />
       <Route path="courses" element={<AdminCourses />} />
       <Route path="courses/:courseId" element={<AdminCourseDetail />} />
-      <Route path="system-settings" element={<SystemSettings />} />
-      <Route path="settings" element={<SystemSettings />} /> {/* Nueva ruta añadida */}
+      <Route path="settings" element={<SystemSettings />} />
+      <Route path="system-settings" element={<Navigate to="/admin/settings" replace />} />
       <Route path="categories" element={<CategoryManagement />} />
       <Route path="users" element={<UserManagement />} />
       <Route path="roles" element={<RoleManagement />} />
       <Route path="test-data" element={<TestDataManagement />} />
       <Route path="instructors" element={<AdminInstructors />} />
+      <Route path="audit-log" element={<AuditLog />} />
+      <Route path="access" element={<AccessControl />} />
+      <Route path="billing" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
     </Routes>
   );
 };

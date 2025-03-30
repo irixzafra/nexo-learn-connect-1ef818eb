@@ -15,7 +15,8 @@ import {
   LineChart,
   AlertCircle,
   CheckCircle,
-  History
+  History,
+  FileText
 } from 'lucide-react';
 
 export const adminMainMenuItems: AdminMenuItem[] = [
@@ -60,6 +61,12 @@ export const adminMainMenuItems: AdminMenuItem[] = [
     label: 'Configuración del Sistema',
     href: '/admin/settings',
     description: 'Opciones y parámetros del sistema'
+  },
+  {
+    icon: FileText,
+    label: 'Categorías',
+    href: '/admin/categories',
+    description: 'Gestión de categorías'
   }
 ];
 
