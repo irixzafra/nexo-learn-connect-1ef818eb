@@ -18,58 +18,42 @@ const AdminRoutes = () => {
     <Routes>
       <Route path="/" element={
         <ProtectedRoute requiredRole="admin">
-          <AppLayout>
-            <AdminDashboard />
-          </AppLayout>
+          <AdminDashboard />
         </ProtectedRoute>
       } />
       <Route path="/dashboard" element={
         <ProtectedRoute requiredRole="admin">
-          <AppLayout>
-            <AdminDashboard />
-          </AppLayout>
+          <AdminDashboard />
         </ProtectedRoute>
       } />
       <Route path="/test-data" element={
         <ProtectedRoute requiredRole="admin">
-          <AppLayout>
-            <TestDataManagement />
-          </AppLayout>
+          <TestDataManagement />
         </ProtectedRoute>
       } />
       <Route path="/users" element={
         <ProtectedRoute requiredRole="admin">
-          <AppLayout>
-            <UserManagement />
-          </AppLayout>
+          <UserManagement />
         </ProtectedRoute>
       } />
       <Route path="/billing" element={
         <ProtectedRoute requiredRole="admin">
-          <AppLayout>
-            <Billing />
-          </AppLayout>
+          <Billing />
         </ProtectedRoute>
       } />
       <Route path="/roles" element={
         <ProtectedRoute requiredRole="admin">
-          <AppLayout>
-            <SystemSettings />
-          </AppLayout>
+          <RoleManagement />
         </ProtectedRoute>
       } />
       <Route path="/settings" element={
         <ProtectedRoute requiredRole="admin">
-          <AppLayout>
-            <SystemSettings />
-          </AppLayout>
+          <SystemSettings />
         </ProtectedRoute>
       } />
       <Route path="*" element={
         <ProtectedRoute requiredRole="admin">
-          <AppLayout>
-            <NotFound />
-          </AppLayout>
+          <NotFound />
         </ProtectedRoute>
       } />
     </Routes>
