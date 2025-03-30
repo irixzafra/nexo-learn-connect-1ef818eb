@@ -90,6 +90,9 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({
         // Get progress for all students
         const studentsWithProgress = await Promise.all(
           data.map(async (enrollment) => {
+            // Fixed: Access the nested profile data correctly
+            const profileData = enrollment.profiles || {};
+            
             // Calculate progress for each student
             const { data: progressData } = await supabase.rpc(
               "calculate_course_progress",
@@ -108,12 +111,15 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({
               .order('updated_at', { ascending: false })
               .limit(1);
               
+            // Fixed: Parse email from the nested structure properly
+            const emailValue = profileData.email && profileData.email[0] ? profileData.email[0].email : null;
+              
             return {
               id: enrollment.id,
               user_id: enrollment.user_id,
-              full_name: enrollment.profiles?.full_name,
-              email: enrollment.profiles?.email?.email,
-              role: enrollment.profiles?.role,
+              full_name: profileData.full_name,
+              email: emailValue,
+              role: profileData.role,
               enrolled_at: enrollment.enrolled_at,
               progress: progressData || 0,
               last_active: lastActivity && lastActivity.length > 0 ? lastActivity[0].updated_at : null,
