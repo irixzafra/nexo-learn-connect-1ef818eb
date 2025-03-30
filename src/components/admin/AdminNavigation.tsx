@@ -1,30 +1,18 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle
-} from "@/components/ui/navigation-menu";
 import { cn } from '@/lib/utils';
 import { 
   LayoutDashboard, 
   Users, 
   BookOpen, 
-  School, 
-  Shield, 
-  Settings, 
-  CreditCard,
+  CreditCard, 
+  FileText,
   Database,
   History,
-  FileText,
-  KeyRound
+  Settings,
+  Shield
 } from 'lucide-react';
-import { Button } from '../ui/button';
 
 const AdminNavigation = () => {
   const location = useLocation();
@@ -34,138 +22,128 @@ const AdminNavigation = () => {
     return path.includes(route);
   };
   
+  // Menú admin que se adapta bien en responsive
   return (
     <div className="w-full border-b mb-6">
       <div className="container mx-auto py-2">
-        <NavigationMenu className="max-w-none w-full justify-start">
-          <NavigationMenuList className="flex flex-wrap gap-1">
-            <NavigationMenuItem>
-              <Link to="/admin/dashboard">
-                <NavigationMenuLink className={cn(
-                  navigationMenuTriggerStyle(),
-                  isActive('/admin/dashboard') ? "bg-secondary" : ""
-                )}>
-                  <LayoutDashboard className="h-4 w-4 mr-2" />
-                  Dashboard
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className={cn(
-                isActive('/admin/users') || isActive('/admin/roles') ? "bg-secondary" : ""
-              )}>
-                <Users className="h-4 w-4 mr-2" />
-                Usuarios
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-1 p-2 w-[220px]">
-                  <Link to="/admin/users" className={cn(
-                    "flex items-center gap-2 p-2 rounded-md hover:bg-accent",
-                    isActive('/admin/users') && !isActive('/admin/roles') ? "bg-accent" : ""
-                  )}>
-                    <Users className="h-4 w-4" />
-                    <span>Gestionar Usuarios</span>
-                  </Link>
-                  <Link to="/admin/roles" className={cn(
-                    "flex items-center gap-2 p-2 rounded-md hover:bg-accent",
-                    isActive('/admin/roles') ? "bg-accent" : ""
-                  )}>
-                    <KeyRound className="h-4 w-4" />
-                    <span>Roles y Permisos</span>
-                  </Link>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className={cn(
-                isActive('/admin/courses') || isActive('/admin/instructors') ? "bg-secondary" : ""
-              )}>
-                <BookOpen className="h-4 w-4 mr-2" />
-                Educación
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-1 p-2 w-[220px]">
-                  <Link to="/admin/courses" className={cn(
-                    "flex items-center gap-2 p-2 rounded-md hover:bg-accent",
-                    isActive('/admin/courses') ? "bg-accent" : ""
-                  )}>
-                    <BookOpen className="h-4 w-4" />
-                    <span>Cursos</span>
-                  </Link>
-                  <Link to="/admin/instructors" className={cn(
-                    "flex items-center gap-2 p-2 rounded-md hover:bg-accent",
-                    isActive('/admin/instructors') ? "bg-accent" : ""
-                  )}>
-                    <School className="h-4 w-4" />
-                    <span>Instructores</span>
-                  </Link>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            <NavigationMenuItem>
-              <Link to="/admin/billing">
-                <NavigationMenuLink className={cn(
-                  navigationMenuTriggerStyle(),
-                  isActive('/admin/billing') ? "bg-secondary" : ""
-                )}>
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  Facturación
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            
-            <NavigationMenuItem>
-              <Link to="/admin/categories">
-                <NavigationMenuLink className={cn(
-                  navigationMenuTriggerStyle(),
-                  isActive('/admin/categories') ? "bg-secondary" : ""
-                )}>
-                  <FileText className="h-4 w-4 mr-2" />
-                  Categorías
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            
-            <NavigationMenuItem>
-              <Link to="/admin/test-data">
-                <NavigationMenuLink className={cn(
-                  navigationMenuTriggerStyle(),
-                  isActive('/admin/test-data') ? "bg-secondary" : ""
-                )}>
-                  <Database className="h-4 w-4 mr-2" />
-                  Datos de Prueba
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            
-            <NavigationMenuItem>
-              <Link to="/admin/audit-log">
-                <NavigationMenuLink className={cn(
-                  navigationMenuTriggerStyle(),
-                  isActive('/admin/audit-log') ? "bg-secondary" : ""
-                )}>
-                  <History className="h-4 w-4 mr-2" />
-                  Auditoría
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            
-            <NavigationMenuItem>
-              <Link to="/admin/settings">
-                <NavigationMenuLink className={cn(
-                  navigationMenuTriggerStyle(),
-                  isActive('/admin/settings') ? "bg-secondary" : ""
-                )}>
-                  <Settings className="h-4 w-4 mr-2" />
-                  Configuración
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+        <div className="flex flex-wrap gap-1 justify-center md:justify-start">
+          {/* Dashboard */}
+          <Link 
+            to="/admin/dashboard"
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
+              "hover:bg-accent text-sm font-medium",
+              isActive('/admin/dashboard') ? "bg-secondary" : ""
+            )}
+          >
+            <LayoutDashboard className="h-4 w-4 md:mr-1" />
+            <span className="hidden sm:inline">Dashboard</span>
+          </Link>
+          
+          {/* Usuarios */}
+          <Link 
+            to="/admin/users"
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
+              "hover:bg-accent text-sm font-medium",
+              isActive('/admin/users') ? "bg-secondary" : ""
+            )}
+          >
+            <Users className="h-4 w-4 md:mr-1" />
+            <span className="hidden sm:inline">Usuarios</span>
+          </Link>
+          
+          {/* Educación */}
+          <Link 
+            to="/admin/courses"
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
+              "hover:bg-accent text-sm font-medium",
+              isActive('/admin/courses') ? "bg-secondary" : ""
+            )}
+          >
+            <BookOpen className="h-4 w-4 md:mr-1" />
+            <span className="hidden sm:inline">Educación</span>
+          </Link>
+          
+          {/* Facturación */}
+          <Link 
+            to="/admin/billing"
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
+              "hover:bg-accent text-sm font-medium",
+              isActive('/admin/billing') ? "bg-secondary" : ""
+            )}
+          >
+            <CreditCard className="h-4 w-4 md:mr-1" />
+            <span className="hidden sm:inline">Facturación</span>
+          </Link>
+          
+          {/* Categorías */}
+          <Link 
+            to="/admin/categories"
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
+              "hover:bg-accent text-sm font-medium",
+              isActive('/admin/categories') ? "bg-secondary" : ""
+            )}
+          >
+            <FileText className="h-4 w-4 md:mr-1" />
+            <span className="hidden sm:inline">Categorías</span>
+          </Link>
+          
+          {/* Datos de Prueba */}
+          <Link 
+            to="/admin/test-data"
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
+              "hover:bg-accent text-sm font-medium",
+              isActive('/admin/test-data') ? "bg-secondary" : ""
+            )}
+          >
+            <Database className="h-4 w-4 md:mr-1" />
+            <span className="hidden sm:inline">Datos</span>
+          </Link>
+          
+          {/* Auditoría */}
+          <Link 
+            to="/admin/audit-log"
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
+              "hover:bg-accent text-sm font-medium",
+              isActive('/admin/audit-log') ? "bg-secondary" : ""
+            )}
+          >
+            <History className="h-4 w-4 md:mr-1" />
+            <span className="hidden sm:inline">Auditoría</span>
+          </Link>
+          
+          {/* Roles */}
+          <Link 
+            to="/admin/roles"
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
+              "hover:bg-accent text-sm font-medium",
+              isActive('/admin/roles') ? "bg-secondary" : ""
+            )}
+          >
+            <Shield className="h-4 w-4 md:mr-1" />
+            <span className="hidden sm:inline">Roles</span>
+          </Link>
+          
+          {/* Configuración */}
+          <Link 
+            to="/admin/settings"
+            className={cn(
+              "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
+              "hover:bg-accent text-sm font-medium",
+              isActive('/admin/settings') ? "bg-secondary" : ""
+            )}
+          >
+            <Settings className="h-4 w-4 md:mr-1" />
+            <span className="hidden sm:inline">Config</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

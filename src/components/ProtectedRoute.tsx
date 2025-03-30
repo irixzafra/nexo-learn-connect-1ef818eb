@@ -1,12 +1,12 @@
 
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types/auth';
+import { UserRole, UserRoleType } from '@/types/auth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: UserRole;
-  requiredRoles?: UserRole[];
+  requiredRole?: UserRoleType;
+  requiredRoles?: UserRoleType[];
   checkFn?: () => boolean;
   fallbackPath?: string;
 }
@@ -42,7 +42,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // If requiredRoles array is provided, check if the user has any of the required roles
   if (requiredRoles && requiredRoles.length > 0) {
-    const hasRequiredRole = userRole === 'admin' || requiredRoles.includes(userRole as UserRole);
+    const hasRequiredRole = userRole === 'admin' || requiredRoles.includes(userRole as UserRoleType);
     if (!hasRequiredRole) {
       return <Navigate to={fallbackPath} replace />;
     }

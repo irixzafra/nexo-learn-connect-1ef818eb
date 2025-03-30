@@ -12,7 +12,7 @@ export interface UserProfile {
   email?: string;
   full_name: string;  // Cambiado a requerido para coincidir con la definición usada
   avatar_url?: string;
-  role?: string;
+  role?: UserRoleType;
   created_at?: string;
   roles?: UserRole[];
   username?: string;
