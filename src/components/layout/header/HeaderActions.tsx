@@ -10,7 +10,7 @@ import { NotificationIndicator } from '@/components/notifications/NotificationIn
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { OnboardingTrigger } from '@/components/onboarding/OnboardingTrigger';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Bell, User, Settings } from 'lucide-react';
 
 export const HeaderActions: React.FC = () => {
   const navigate = useNavigate();
@@ -18,17 +18,25 @@ export const HeaderActions: React.FC = () => {
   const { featuresConfig } = useOnboarding();
 
   return (
-    <div className="ml-auto flex items-center space-x-4">
+    <div className="ml-auto flex items-center space-x-2">
       {/* Notification indicator - solo si está habilitado */}
-      {featuresConfig.enableNotifications && <NotificationIndicator />}
+      {featuresConfig.enableNotifications && (
+        <Button 
+          variant="ghost" 
+          size="icon"
+          className="h-9 w-9"
+          title="Notificaciones"
+        >
+          <Bell className="h-5 w-5" />
+        </Button>
+      )}
       
       {/* Theme Selector */}
       <ThemeSelector />
       
       <ConnectionStatus />
-      <Separator orientation="vertical" className="h-6" />
+      
       <RoleIndicator viewingAs={userRole} />
-      <Separator orientation="vertical" className="h-6" />
       
       {/* Onboarding Trigger - solo si está habilitado */}
       {featuresConfig.showOnboardingTrigger && (
@@ -41,10 +49,20 @@ export const HeaderActions: React.FC = () => {
         variant="outline" 
         size="icon"
         onClick={() => navigate('/courses')}
-        className="hidden md:flex"
+        className="h-9 w-9 hidden md:flex"
         title="Explorar cursos"
       >
-        <BookOpen className="h-4 w-4" />
+        <BookOpen className="h-5 w-5" />
+      </Button>
+      
+      <Button 
+        variant="outline" 
+        size="icon"
+        onClick={() => navigate('/profile')}
+        className="h-9 w-9 hidden md:flex"
+        title="Mi perfil"
+      >
+        <User className="h-5 w-5" />
       </Button>
     </div>
   );

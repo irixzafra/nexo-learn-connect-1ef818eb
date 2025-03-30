@@ -33,13 +33,13 @@ export const SidebarGroup: React.FC<SidebarGroupProps> = ({
   const isCollapsed = state === "collapsed";
 
   return (
-    <UISidebarGroup>
+    <UISidebarGroup className="mb-1">
       {isCollapsed ? (
         <Tooltip>
           <TooltipTrigger asChild>
             <SidebarGroupLabel 
               onClick={onToggle}
-              className="cursor-pointer flex h-10 w-10 items-center justify-center rounded-md transition-colors hover:bg-[#F3F4F6] dark:hover:bg-gray-800 mx-auto"
+              className="cursor-pointer flex h-10 w-10 items-center justify-center rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 mx-auto"
             >
               <Icon size={20} className="text-gray-500 dark:text-gray-400" />
             </SidebarGroupLabel>
@@ -82,7 +82,7 @@ const GroupLabel: React.FC<GroupLabelProps> = ({ label, icon: Icon, isExpanded, 
   >
     <span className="flex items-center gap-2">
       <Icon size={20} className="text-gray-500 dark:text-gray-400" />
-      <span className="font-inter">{label}</span>
+      <span className="font-medium">{label}</span>
     </span>
     <span className={cn("transform transition-transform duration-300", isExpanded ? 'rotate-180' : 'rotate-0')}>
       <svg width="14" height="14" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">

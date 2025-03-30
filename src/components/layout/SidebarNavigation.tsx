@@ -23,7 +23,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   
-  // Determine the effective role - refactorado para mayor claridad
+  // Determine the effective role
   const getEffectiveRole = (): UserRole => {
     if (!viewAsRole || viewAsRole === 'current') {
       return userRole as UserRole;
@@ -79,12 +79,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
       "flex flex-col py-2 h-full",
       isCollapsed ? "px-2" : "px-4"
     )}>
-      <div className="flex items-center justify-between mb-6 mt-2">
-        {!isCollapsed && <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Nexo Academia</h1>}
-        <SidebarTrigger className={cn(
-          "ml-auto", 
-          isCollapsed && "mx-auto"
-        )} />
+      <div className="mb-6 mt-2">
+        {!isCollapsed && <h1 className="text-lg font-semibold text-gray-900 dark:text-white sr-only">Nexo Academia</h1>}
       </div>
       
       {/* Bloque 1: Principal / Acceso Rápido - Siempre visible */}

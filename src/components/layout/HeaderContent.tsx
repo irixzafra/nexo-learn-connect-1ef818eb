@@ -8,19 +8,18 @@ import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuL
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { NexoLogoBase } from '@/components/ui/logo/nexo-logo-base';
-import { Home, BookOpen, MessageSquare } from 'lucide-react';
+import { Home, BookOpen, MessageSquare, Search, Calendar, User, Bell } from 'lucide-react';
 
 const HeaderContent: React.FC = () => {
   const location = useLocation();
   
-  // Extraer el nombre de la página actual del path
+  // Extract page title from path
   const getPageTitle = () => {
     const path = location.pathname.split('/').filter(p => p);
     if (path.length === 0) return 'Inicio';
     
     const lastSegment = path[path.length - 1];
     
-    // Mapeo específico para traducir algunos términos en inglés o darles mejor formato
     const titleMap: { [key: string]: string } = {
       'profile': 'Mi Perfil',
       'courses': 'Cursos',
@@ -44,55 +43,88 @@ const HeaderContent: React.FC = () => {
           <SidebarTrigger className="h-8 w-8" />
           <NexoLogoBase className="hidden sm:flex" />
           <span className="text-lg font-medium">{getPageTitle()}</span>
-          
-          {/* Horizontal Navigation Menu with Icons */}
-          <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <Link to="/home">
-                  <NavigationMenuLink 
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      location.pathname.includes('/home') ? "text-primary" : ""
-                    )}
-                    title="Inicio"
-                  >
-                    <Home className="h-4 w-4 mr-2" />
-                    <span className="sm:hidden md:inline">Inicio</span>
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link to="/courses">
-                  <NavigationMenuLink 
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      location.pathname.includes('/courses') ? "text-primary" : ""
-                    )}
-                    title="Cursos"
-                  >
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    <span className="sm:hidden md:inline">Cursos</span>
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link to="/messages">
-                  <NavigationMenuLink 
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      location.pathname.includes('/messages') ? "text-primary" : ""
-                    )}
-                    title="Mensajes"
-                  >
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    <span className="sm:hidden md:inline">Mensajes</span>
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
         </div>
+        
+        {/* Center - Horizontal Navigation Menu with Icons Only */}
+        <NavigationMenu className="hidden md:flex">
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <Link to="/home">
+                <NavigationMenuLink 
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    location.pathname.includes('/home') ? "text-primary" : "",
+                    "flex justify-center items-center w-10 h-10 p-0"
+                  )}
+                  title="Inicio"
+                >
+                  <Home className="h-5 w-5" />
+                  <span className="sr-only">Inicio</span>
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link to="/courses">
+                <NavigationMenuLink 
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    location.pathname.includes('/courses') ? "text-primary" : "",
+                    "flex justify-center items-center w-10 h-10 p-0"
+                  )}
+                  title="Cursos"
+                >
+                  <BookOpen className="h-5 w-5" />
+                  <span className="sr-only">Cursos</span>
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link to="/search">
+                <NavigationMenuLink 
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    location.pathname.includes('/search') ? "text-primary" : "",
+                    "flex justify-center items-center w-10 h-10 p-0"
+                  )}
+                  title="Buscar"
+                >
+                  <Search className="h-5 w-5" />
+                  <span className="sr-only">Buscar</span>
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link to="/messages">
+                <NavigationMenuLink 
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    location.pathname.includes('/messages') ? "text-primary" : "",
+                    "flex justify-center items-center w-10 h-10 p-0"
+                  )}
+                  title="Mensajes"
+                >
+                  <MessageSquare className="h-5 w-5" />
+                  <span className="sr-only">Mensajes</span>
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link to="/calendar">
+                <NavigationMenuLink 
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    location.pathname.includes('/calendar') ? "text-primary" : "",
+                    "flex justify-center items-center w-10 h-10 p-0"
+                  )}
+                  title="Calendario"
+                >
+                  <Calendar className="h-5 w-5" />
+                  <span className="sr-only">Calendario</span>
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
         
         {/* Right side */}
         <div className="flex items-center gap-2">

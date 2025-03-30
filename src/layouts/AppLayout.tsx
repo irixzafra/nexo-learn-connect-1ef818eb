@@ -9,6 +9,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { EditModeProvider } from "@/contexts/EditModeContext";
 import { connectionService } from "@/lib/offline/connectionService";
 import { useEffect } from "react";
+import AppSidebar from "@/components/layout/AppSidebar";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -19,6 +21,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
   const isMobile = useIsMobile();
   const [isOnline, setIsOnline] = useState(connectionService.isCurrentlyOnline());
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  const { userRole } = useAuth();
+  const [viewAsRole, setViewAsRole] = useState<'current' | string>('current');
 
   useEffect(() => {
     const unsubscribe = connectionService.addListener(online => {
@@ -28,7 +32,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     return unsubscribe;
   }, []);
 
-  // Simular la detección de transición entre páginas
+  // Simulate page transition detection
   useEffect(() => {
     setIsPageTransitioning(true);
     const timer = setTimeout(() => {
@@ -38,12 +42,20 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     return () => clearTimeout(timer);
   }, [children]);
 
+  // Handle role switching for emulation by admins
+  const handleRoleChange = (role: string) => {
+    setViewAsRole(role);
+  };
+
   return (
     <EditModeProvider>
       <SidebarProvider>
         <div className="min-h-screen flex dark:bg-gray-950">
-          <SidebarNavigation />
-          <main className="flex flex-col flex-1 min-h-screen">
+          <AppSidebar 
+            viewAsRole={viewAsRole as any} 
+            onRoleChange={handleRoleChange} 
+          />
+          <div className="flex-1 flex flex-col min-h-screen">
             <HeaderContent />
             <div
               className={cn(
@@ -57,9 +69,19 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
                   Modo offline activado. Algunas funciones pueden estar limitadas hasta que se restablezca la conexión.
                 </div>
               )}
-              {children}
+              <div className="flex min-h-screen">
+                {/* Sidebar Navigation on the left */}
+                <div className="hidden md:block">
+                  <SidebarNavigation viewAsRole={viewAsRole} />
+                </div>
+                
+                {/* Main content */}
+                <div className="flex-1 overflow-auto">
+                  {children}
+                </div>
+              </div>
             </div>
-          </main>
+          </div>
           <Toaster />
         </div>
       </SidebarProvider>
