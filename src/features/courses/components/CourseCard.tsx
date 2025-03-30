@@ -44,9 +44,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
       <CardContent className="p-4">
         <div className="flex flex-col space-y-2">
           <div className="space-y-1">
-            <Link to={courseUrl} className="hover:text-primary hover:underline transition-colors">
-              <h3 className="font-medium line-clamp-2">{title}</h3>
-            </Link>
+            <h3 className="font-medium line-clamp-2">{title}</h3>
             <p className="text-sm text-muted-foreground">
               {typeof instructor === 'string' ? instructor : instructor?.full_name}
             </p>

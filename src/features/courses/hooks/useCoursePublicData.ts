@@ -5,7 +5,7 @@ import { Course } from '@/types/course';
 
 /**
  * Hook to fetch public course data by ID
- * @param courseId - The UUID of the course to fetch
+ * @param courseId - The ID of the course to fetch (UUID or numeric)
  * @returns Object containing course data, loading state, and error
  */
 export const useCoursePublicData = (courseId: string | undefined) => {
@@ -16,12 +16,24 @@ export const useCoursePublicData = (courseId: string | undefined) => {
         throw new Error('Course ID is required');
       }
 
-      const { data, error } = await supabase
+      // Check if we're dealing with a numeric ID or UUID
+      const isNumeric = /^\d+$/.test(courseId);
+      
+      let query = supabase
         .from('courses')
         .select('*, profiles(full_name)')
-        .eq('id', courseId)
-        .eq('is_published', true)
-        .single();
+        .eq('is_published', true);
+      
+      // Use the appropriate column based on ID type
+      if (isNumeric) {
+        // If it's a numeric ID, convert it to number for comparison
+        query = query.eq('id', parseInt(courseId, 10));
+      } else {
+        // If it's a UUID, use it directly
+        query = query.eq('id', courseId);
+      }
+      
+      const { data, error } = await query.single();
 
       if (error) {
         console.error('Error fetching course data:', error);
