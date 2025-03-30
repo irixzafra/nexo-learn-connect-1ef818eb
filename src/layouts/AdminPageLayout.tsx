@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AdminTabItem } from '@/components/admin/AdminTabs';
+import AdminNavigation from '@/components/admin/AdminNavigation';
 
 interface AdminPageLayoutProps {
   children?: React.ReactNode;
@@ -41,8 +42,11 @@ export const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   };
   
   return (
-    <div className="min-h-screen bg-muted/20 p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-muted/20">
+      {/* Admin Navigation Bar */}
+      <AdminNavigation />
+      
+      <div className="max-w-7xl mx-auto p-8">
         <div className="flex flex-col gap-6">
           {/* Header */}
           <div className="flex items-center justify-between">

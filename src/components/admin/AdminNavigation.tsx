@@ -9,6 +9,8 @@ import {
   CreditCard, 
   Database,
   Settings,
+  Bell,
+  Route
 } from 'lucide-react';
 
 // Main navigation categories
@@ -38,6 +40,18 @@ const adminCategories = [
     path: "/admin/billing",
   },
   { 
+    id: 'learning',
+    icon: Route, 
+    label: "Rutas", 
+    path: "/admin/learning-paths",
+  },
+  { 
+    id: 'notifications',
+    icon: Bell, 
+    label: "Notificaciones", 
+    path: "/admin/notifications",
+  },
+  { 
     id: 'data',
     icon: Database, 
     label: "Datos", 
@@ -51,7 +65,7 @@ const adminCategories = [
   }
 ];
 
-const AdminNavigation = () => {
+const AdminNavigation: React.FC = () => {
   const location = useLocation();
   const path = location.pathname;
   
@@ -60,7 +74,7 @@ const AdminNavigation = () => {
   };
   
   return (
-    <div className="w-full border-b mb-6 sticky top-0 bg-background z-10">
+    <div className="w-full border-b mb-0 sticky top-0 bg-background z-10 shadow-sm">
       <div className="container mx-auto py-2">
         {/* Main Categories Navigation */}
         <div className="flex flex-wrap gap-1 justify-center md:justify-start">

@@ -45,15 +45,13 @@ const AppRouter = () => {
       <Route path="/instructor/*" element={<ProtectedRoute><InstructorRoutes /></ProtectedRoute>} />
 
       {/* User Routes */}
-      <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/payment/success" element={<PaymentSuccess />} />
-        <Route path="/payment/cancel" element={<PaymentCancel />} />
-        <Route path="/messages" element={<Messages />} />
-        <Route path="/network" element={<Network />} />
-        <Route path="/notifications" element={<NotificationCenter />} />
-      </Route>
+      <Route path="/profile" element={<ProtectedRoute><AppLayout><Profile /></AppLayout></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><AppLayout><Settings /></AppLayout></ProtectedRoute>} />
+      <Route path="/payment/success" element={<ProtectedRoute><AppLayout><PaymentSuccess /></AppLayout></ProtectedRoute>} />
+      <Route path="/payment/cancel" element={<ProtectedRoute><AppLayout><PaymentCancel /></AppLayout></ProtectedRoute>} />
+      <Route path="/messages" element={<ProtectedRoute><AppLayout><Messages /></AppLayout></ProtectedRoute>} />
+      <Route path="/network" element={<ProtectedRoute><AppLayout><Network /></AppLayout></ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute><AppLayout><NotificationCenter /></AppLayout></ProtectedRoute>} />
 
       {/* Catch-all route for 404 */}
       <Route path="*" element={<div>404 Not Found</div>} />
