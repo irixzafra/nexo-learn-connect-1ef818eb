@@ -10,7 +10,7 @@ import {
   TableBody, 
   TableCell 
 } from '@/components/ui/table';
-import { Mail, Phone, Trash2, ExternalLink } from 'lucide-react';
+import { Mail, Phone, Trash2, ExternalLink, Edit, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCourseEnrollments, EnrolledStudent } from '@/features/admin/hooks/useCourseEnrollments';
@@ -32,7 +32,25 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 
 interface EnrolledStudentsListProps {
   courseId: string;
@@ -43,6 +61,8 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
   const [searchTerm, setSearchTerm] = useState('');
   const [studentToDelete, setStudentToDelete] = useState<EnrolledStudent | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showContactInfoDialog, setShowContactInfoDialog] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<EnrolledStudent | null>(null);
 
   const filteredStudents = enrolledStudents?.filter(student => 
     student.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -60,7 +80,8 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
     if (student.email) {
       window.location.href = `mailto:${student.email}`;
     } else {
-      toast.error("El estudiante no tiene correo electrónico registrado");
+      setSelectedStudent(student);
+      setShowContactInfoDialog(true);
     }
   };
 
@@ -68,7 +89,8 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
     if (student.phone) {
       window.location.href = `tel:${student.phone}`;
     } else {
-      toast.error("El estudiante no tiene número de teléfono registrado");
+      setSelectedStudent(student);
+      setShowContactInfoDialog(true);
     }
   };
 
@@ -163,15 +185,17 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
                               variant="ghost" 
                               size="icon" 
                               onClick={() => handleSendEmail(student)}
-                              disabled={!student.email}
                             >
-                              <Mail className={`h-4 w-4 ${student.email ? 'text-blue-500' : 'text-gray-400'}`} />
+                              <Mail className={`h-4 w-4 ${student.email ? 'text-blue-500' : 'text-orange-400'}`} />
+                              {!student.email && (
+                                <AlertTriangle className="h-2 w-2 text-orange-500 absolute top-0 right-0" />
+                              )}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
                             {student.email 
                               ? `Enviar email a ${student.email}` 
-                              : "No tiene email registrado"}
+                              : "Falta email. Haz clic para añadir"}
                           </TooltipContent>
                         </Tooltip>
                         
@@ -181,15 +205,17 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
                               variant="ghost" 
                               size="icon"
                               onClick={() => handleCallPhone(student)}
-                              disabled={!student.phone}
                             >
-                              <Phone className={`h-4 w-4 ${student.phone ? 'text-green-500' : 'text-gray-400'}`} />
+                              <Phone className={`h-4 w-4 ${student.phone ? 'text-green-500' : 'text-orange-400'}`} />
+                              {!student.phone && (
+                                <AlertTriangle className="h-2 w-2 text-orange-500 absolute top-0 right-0" />
+                              )}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
                             {student.phone 
                               ? `Llamar al ${student.phone}` 
-                              : "No tiene teléfono registrado"}
+                              : "Falta teléfono. Haz clic para añadir"}
                           </TooltipContent>
                         </Tooltip>
                       </div>
@@ -245,6 +271,55 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        <Dialog open={showContactInfoDialog} onOpenChange={setShowContactInfoDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-orange-500" /> 
+                Información de contacto faltante
+              </DialogTitle>
+              <DialogDescription>
+                No se encontró información de contacto para {selectedStudent?.full_name || 'este estudiante'}.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <Card className="border-orange-200 bg-orange-50 dark:bg-orange-950/20">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">¿Qué deseas hacer?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p className="text-sm">
+                    Para contactar a este estudiante, primero debe añadir su información de contacto al perfil.
+                  </p>
+                  {selectedStudent && (
+                    <div className="text-sm mt-2 p-2 rounded-md bg-background border">
+                      <div><strong>Nombre:</strong> {selectedStudent.full_name || 'No disponible'}</div>
+                      <div><strong>Email:</strong> {selectedStudent.email || 'No disponible'}</div>
+                      <div><strong>Teléfono:</strong> {selectedStudent.phone || 'No disponible'}</div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col sm:flex-row gap-2">
+                <Button asChild variant="default" className="w-full sm:w-auto">
+                  <Link to={`/admin/users?edit=${selectedStudent?.user_id}`} className="w-full">
+                    <Edit className="mr-2 h-4 w-4" />
+                    Editar información
+                  </Link>
+                </Button>
+                <Button 
+                  variant="secondary" 
+                  onClick={() => setShowContactInfoDialog(false)}
+                  className="w-full sm:w-auto"
+                >
+                  Cerrar
+                </Button>
+              </CardFooter>
+            </Card>
+          </DialogContent>
+        </Dialog>
       </div>
     </TooltipProvider>
   );
