@@ -10,14 +10,14 @@ import {
   Database, 
   Shield, 
   KeyRound, 
-  Clock, 
   School, 
   LineChart,
   AlertCircle,
   CheckCircle,
   History,
   FileText,
-  Folder
+  Folder,
+  Route
 } from 'lucide-react';
 
 export const adminMainMenuItems: AdminMenuItem[] = [
@@ -106,6 +106,12 @@ export const adminEducationMenuItems: AdminMenuItem[] = [
     description: 'Gestión de instructores'
   },
   {
+    icon: Route,
+    label: 'Rutas de Aprendizaje',
+    href: '/admin/learning-paths',
+    description: 'Configuración de rutas'
+  },
+  {
     icon: LineChart,
     label: 'Análisis de Aprendizaje',
     href: '/admin/learning-analytics',
@@ -125,6 +131,81 @@ export const adminContentMenuItems: AdminMenuItem[] = [
     label: 'Categorías',
     href: '/admin/content/categories',
     description: 'Gestión de categorías'
+  }
+];
+
+export const adminFinanceMenuItems: AdminMenuItem[] = [
+  {
+    icon: CreditCard,
+    label: 'Cobros',
+    href: '/admin/billing/payments',
+    description: 'Gestión de pagos'
+  },
+  {
+    icon: CreditCard,
+    label: 'Suscripciones',
+    href: '/admin/billing/subscriptions',
+    description: 'Gestión de suscripciones'
+  },
+  {
+    icon: LineChart,
+    label: 'Analíticas Financieras',
+    href: '/admin/billing/analytics',
+    description: 'Estadísticas financieras'
+  }
+];
+
+export const adminDataMenuItems: AdminMenuItem[] = [
+  {
+    icon: Database,
+    label: 'Datos de Prueba',
+    href: '/admin/test-data',
+    description: 'Herramientas para desarrollo'
+  },
+  {
+    icon: History,
+    label: 'Auditoría',
+    href: '/admin/audit-log',
+    description: 'Registros de actividad'
+  },
+  {
+    icon: LineChart,
+    label: 'Analíticas',
+    href: '/admin/data-analytics',
+    description: 'Análisis de datos'
+  }
+];
+
+export const adminConfigMenuItems: AdminMenuItem[] = [
+  {
+    icon: Settings,
+    label: 'Funcionalidades',
+    href: '/admin/settings',
+    description: 'Configuración de funciones'
+  },
+  {
+    icon: Shield,
+    label: 'Seguridad',
+    href: '/admin/settings/security',
+    description: 'Configuración de seguridad'
+  },
+  {
+    icon: Settings,
+    label: 'Apariencia',
+    href: '/admin/settings/appearance',
+    description: 'Configuración visual'
+  },
+  {
+    icon: FileText,
+    label: 'Contenido',
+    href: '/admin/settings/content',
+    description: 'Configuración de contenido'
+  },
+  {
+    icon: LineChart,
+    label: 'Analíticas',
+    href: '/admin/settings/analytics',
+    description: 'Configuración de métricas'
   }
 ];
 

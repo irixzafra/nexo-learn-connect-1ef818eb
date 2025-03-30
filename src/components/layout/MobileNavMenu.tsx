@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 import { NexoLogo } from '@/components/ui/logo';
 import { UserRoleType } from '@/types/auth';
 import { useLocation } from 'react-router-dom';
-import { adminMobileMenuItems } from '@/components/ui/admin-menu/AdminMenuPresets';
 import { Link } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -20,6 +19,8 @@ import {
   History,
   FileText,
   Folder,
+  Route,
+  LineChart
 } from 'lucide-react';
 
 interface MobileNavMenuProps {
@@ -48,6 +49,8 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) =>
     { icon: Database, label: 'Datos', href: '/admin/test-data' },
     { icon: History, label: 'Auditoría', href: '/admin/audit-log' },
     { icon: Shield, label: 'Roles', href: '/admin/roles' },
+    { icon: Route, label: 'Rutas', href: '/admin/learning-paths' },
+    { icon: LineChart, label: 'Analíticas', href: '/admin/analytics' },
     { icon: Settings, label: 'Config', href: '/admin/settings' }
   ];
   
@@ -67,23 +70,6 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) =>
             </div>
             
             <div className="flex-1 overflow-auto p-4 space-y-6">
-              {/* Menú principal */}
-              <div>
-                <h3 className="font-medium mb-2">Menú Principal</h3>
-                <div className="grid gap-2">
-                  {adminMobileMenuItems.map(item => (
-                    <Link 
-                      key={item.href}
-                      to={item.href}
-                      className="flex items-center gap-3 p-2 rounded-md hover:bg-accent transition-colors"
-                    >
-                      <item.icon className="h-5 w-5 text-primary" />
-                      <span>{item.label}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-              
               {/* Menú de administración si es admin */}
               {isAdmin && (
                 <div>

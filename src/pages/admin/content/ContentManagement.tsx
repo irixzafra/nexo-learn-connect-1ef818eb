@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Folder, PenSquare, Tag, Layers, FileText, BookOpen, Image } from 'lucide-react';
+import { Folder, PenSquare, Tag, Layers, FileText, BookOpen, Image, Route } from 'lucide-react';
 import CategoryManagement from '@/pages/admin/CategoryManagement';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,6 +39,13 @@ const ContentManagement: React.FC = () => {
       path: '/admin/content/categories'
     },
     {
+      id: 'learning-paths',
+      title: 'Rutas de Aprendizaje',
+      description: 'Gestiona rutas formativas para los estudiantes',
+      icon: Route,
+      path: '/admin/learning-paths'
+    },
+    {
       id: 'tags',
       title: 'Etiquetas',
       description: 'Gestiona etiquetas para clasificar el contenido',
@@ -65,13 +72,6 @@ const ContentManagement: React.FC = () => {
       description: 'Administra imágenes, videos y otros recursos',
       icon: Image,
       path: '/admin/content/assets'
-    },
-    {
-      id: 'formats',
-      title: 'Formatos',
-      description: 'Configura los formatos disponibles para el contenido',
-      icon: FileText,
-      path: '/admin/content/formats'
     }
   ];
 
@@ -86,6 +86,7 @@ const ContentManagement: React.FC = () => {
         <TabsList className="mb-4">
           <TabsTrigger value="overview">Vista General</TabsTrigger>
           <TabsTrigger value="categories">Categorías</TabsTrigger>
+          <TabsTrigger value="learning-paths">Rutas de Aprendizaje</TabsTrigger>
           <TabsTrigger value="templates">Plantillas</TabsTrigger>
           <TabsTrigger value="editor">Editor</TabsTrigger>
         </TabsList>
@@ -108,6 +109,8 @@ const ContentManagement: React.FC = () => {
                     onClick={() => {
                       if (section.id === 'categories') {
                         setActiveTab('categories');
+                      } else if (section.id === 'learning-paths') {
+                        setActiveTab('learning-paths');
                       } else {
                         navigate(section.path);
                       }
@@ -123,6 +126,24 @@ const ContentManagement: React.FC = () => {
         
         <TabsContent value="categories">
           <CategoryManagement embeddedView={true} />
+        </TabsContent>
+        
+        <TabsContent value="learning-paths">
+          <Card>
+            <CardHeader>
+              <CardTitle>Rutas de Aprendizaje</CardTitle>
+              <CardDescription>
+                Configura secuencias de cursos para guiar a los estudiantes en su proceso de formación.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4">Las rutas de aprendizaje permiten ordenar cursos en una secuencia lógica para formar competencias completas.</p>
+              <div className="flex justify-center p-6 bg-muted/50 rounded-lg">
+                <Route className="h-12 w-12 text-primary opacity-50" />
+                <p className="ml-4">Funcionalidad en desarrollo</p>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
         
         <TabsContent value="templates">

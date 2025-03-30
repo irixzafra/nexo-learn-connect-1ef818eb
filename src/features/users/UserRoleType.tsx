@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { UserRole } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 import { Shield, UserCog, User, Terminal, Ghost } from 'lucide-react';
 
 interface UserRoleTypeProps {
-  role: UserRole;
+  role: UserRoleType;
   showIcon?: boolean;
   size?: 'sm' | 'md' | 'lg';
 }
@@ -15,7 +15,7 @@ export const UserRoleType: React.FC<UserRoleTypeProps> = ({
   showIcon = true,
   size = 'md'
 }) => {
-  const getRoleBadgeVariant = (role: UserRole) => {
+  const getRoleBadgeVariant = (role: UserRoleType) => {
     switch (role) {
       case 'admin':
         return 'default';
@@ -32,7 +32,7 @@ export const UserRoleType: React.FC<UserRoleTypeProps> = ({
     }
   };
 
-  const getRoleIcon = (role: UserRole) => {
+  const getRoleIcon = (role: UserRoleType) => {
     switch (role) {
       case 'admin':
         return <Shield className="h-4 w-4 mr-1" />;

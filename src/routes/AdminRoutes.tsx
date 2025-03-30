@@ -37,33 +37,8 @@ const AdminRoutes: React.FC = () => {
           <AdminDashboard />
         </AdminLayout>
       } />
-      <Route path="courses" element={
-        <AdminLayout>
-          <AdminCourses />
-        </AdminLayout>
-      } />
-      <Route path="courses/:courseId" element={
-        <AdminLayout>
-          <AdminCourseDetail />
-        </AdminLayout>
-      } />
-      <Route path="settings" element={
-        <AdminLayout>
-          <SystemSettings />
-        </AdminLayout>
-      } />
-      <Route path="system-settings" element={<Navigate to="/admin/settings" replace />} />
-      <Route path="categories" element={<Navigate to="/admin/content/categories" replace />} />
-      <Route path="content" element={
-        <AdminLayout>
-          <ContentManagement />
-        </AdminLayout>
-      } />
-      <Route path="content/categories" element={
-        <AdminLayout>
-          <CategoryManagement />
-        </AdminLayout>
-      } />
+      
+      {/* Rutas de Usuarios */}
       <Route path="users" element={
         <AdminLayout>
           <UserManagement />
@@ -74,9 +49,16 @@ const AdminRoutes: React.FC = () => {
           <RoleManagement />
         </AdminLayout>
       } />
-      <Route path="test-data" element={
+      
+      {/* Rutas de Educación */}
+      <Route path="courses" element={
         <AdminLayout>
-          <TestDataManagement />
+          <AdminCourses />
+        </AdminLayout>
+      } />
+      <Route path="courses/:courseId" element={
+        <AdminLayout>
+          <AdminCourseDetail />
         </AdminLayout>
       } />
       <Route path="instructors" element={
@@ -84,19 +66,94 @@ const AdminRoutes: React.FC = () => {
           <AdminInstructors />
         </AdminLayout>
       } />
+      <Route path="learning-paths" element={
+        <AdminLayout>
+          <Navigate to="/admin/courses" replace />
+        </AdminLayout>
+      } />
+      
+      {/* Rutas de Contenido */}
+      <Route path="content" element={
+        <AdminLayout>
+          <ContentManagement />
+        </AdminLayout>
+      } />
+      <Route path="content/categories" element={
+        <AdminLayout>
+          <CategoryManagement />
+        </AdminLayout>
+      } />
+      
+      {/* Rutas de Facturación */}
+      <Route path="billing" element={
+        <AdminLayout>
+          <Navigate to="/admin/dashboard" replace />
+        </AdminLayout>
+      } />
+      <Route path="billing/payments" element={
+        <AdminLayout>
+          <Navigate to="/admin/dashboard" replace />
+        </AdminLayout>
+      } />
+      <Route path="billing/subscriptions" element={
+        <AdminLayout>
+          <Navigate to="/admin/dashboard" replace />
+        </AdminLayout>
+      } />
+      <Route path="billing/analytics" element={
+        <AdminLayout>
+          <Navigate to="/admin/dashboard" replace />
+        </AdminLayout>
+      } />
+      
+      {/* Rutas de Datos */}
+      <Route path="test-data" element={
+        <AdminLayout>
+          <TestDataManagement />
+        </AdminLayout>
+      } />
       <Route path="audit-log" element={
         <AdminLayout>
           <AuditLog />
         </AdminLayout>
       } />
+      <Route path="data-analytics" element={
+        <AdminLayout>
+          <Navigate to="/admin/dashboard" replace />
+        </AdminLayout>
+      } />
+      
+      {/* Rutas de Configuración */}
+      <Route path="settings" element={
+        <AdminLayout>
+          <SystemSettings />
+        </AdminLayout>
+      } />
+      <Route path="settings/security" element={
+        <AdminLayout>
+          <Navigate to="/admin/settings" replace />
+        </AdminLayout>
+      } />
+      <Route path="settings/appearance" element={
+        <AdminLayout>
+          <Navigate to="/admin/settings" replace />
+        </AdminLayout>
+      } />
+      <Route path="settings/content" element={
+        <AdminLayout>
+          <Navigate to="/admin/settings" replace />
+        </AdminLayout>
+      } />
+      <Route path="settings/analytics" element={
+        <AdminLayout>
+          <Navigate to="/admin/settings" replace />
+        </AdminLayout>
+      } />
+      
+      {/* Otras rutas */}
       <Route path="access" element={
         <AdminLayout>
           <AccessControl />
-        </AdminLayout>
-      } />
-      <Route path="billing" element={
-        <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
         </AdminLayout>
       } />
       <Route path="*" element={

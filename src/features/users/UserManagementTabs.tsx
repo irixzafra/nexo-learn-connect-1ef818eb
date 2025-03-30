@@ -11,10 +11,11 @@ import {
   UserPlus, 
   FileSpreadsheet,
   Download,
-  LayoutDashboard,
-  BarChart
+  BarChart,
+  LineChart
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { UserStats } from "./UserStats";
 
 interface UserManagementTabsProps {
   isAdmin: boolean;
@@ -34,6 +35,14 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
     );
   }
 
+  // Datos simulados para las estadísticas
+  const stats = {
+    totalUsers: 1250,
+    activeUsers: 892,
+    newUsers: 47,
+    inactiveUsers: 125,
+  };
+
   return (
     <Tabs 
       value={activeTab} 
@@ -50,13 +59,13 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
             <ShieldCheck className="h-4 w-4" />
             <span className="hidden md:inline">Roles</span>
           </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <BarChart className="h-4 w-4" />
+            <span className="hidden md:inline">Analíticas</span>
+          </TabsTrigger>
           <TabsTrigger value="add-user" className="flex items-center gap-2">
             <UserPlus className="h-4 w-4" />
             <span className="hidden md:inline">Añadir</span>
-          </TabsTrigger>
-          <TabsTrigger value="reports" className="flex items-center gap-2">
-            <FileSpreadsheet className="h-4 w-4" />
-            <span className="hidden md:inline">Reportes</span>
           </TabsTrigger>
         </TabsList>
 
@@ -89,6 +98,40 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
           </div>
         </Card>
       </TabsContent>
+      
+      <TabsContent value="analytics" className="mt-0">
+        <Card className="p-6">
+          <h3 className="text-lg font-medium mb-4">Analíticas de Usuarios</h3>
+          <p className="text-muted-foreground mb-6">
+            Estadísticas y tendencias sobre los usuarios en la plataforma.
+          </p>
+          
+          <UserStats 
+            totalUsers={stats.totalUsers}
+            activeUsers={stats.activeUsers}
+            newUsers={stats.newUsers}
+            inactiveUsers={stats.inactiveUsers}
+          />
+          
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="p-4">
+              <h4 className="font-medium mb-3">Distribución de Roles</h4>
+              <div className="h-64 flex items-center justify-center bg-muted/50 rounded">
+                <LineChart className="h-12 w-12 text-muted-foreground" />
+                <p className="ml-2">Gráfico en desarrollo</p>
+              </div>
+            </Card>
+            
+            <Card className="p-4">
+              <h4 className="font-medium mb-3">Actividad de Usuarios</h4>
+              <div className="h-64 flex items-center justify-center bg-muted/50 rounded">
+                <BarChart className="h-12 w-12 text-muted-foreground" />
+                <p className="ml-2">Gráfico en desarrollo</p>
+              </div>
+            </Card>
+          </div>
+        </Card>
+      </TabsContent>
 
       <TabsContent value="add-user" className="mt-0">
         <Card className="p-6">
@@ -100,20 +143,6 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
           <div className="bg-muted/50 p-4 rounded-lg text-center">
             <UserPlus className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
             <p>Formulario de creación en desarrollo</p>
-          </div>
-        </Card>
-      </TabsContent>
-
-      <TabsContent value="reports" className="mt-0">
-        <Card className="p-6">
-          <h3 className="text-lg font-medium mb-4">Reportes de Usuarios</h3>
-          <p className="text-muted-foreground mb-6">
-            Genera informes sobre actividad y registro de usuarios.
-          </p>
-          
-          <div className="bg-muted/50 p-4 rounded-lg text-center">
-            <FileSpreadsheet className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-            <p>Sistema de reportes en desarrollo</p>
           </div>
         </Card>
       </TabsContent>

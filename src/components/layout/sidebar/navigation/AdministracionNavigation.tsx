@@ -1,9 +1,21 @@
 
 import React from 'react';
-import { LayoutDashboard, Users, Library, Settings2, KeyRound, Shield, School, CreditCard, Database, History, FileText } from 'lucide-react';
 import { 
-  SidebarMenu
-} from '@/components/ui/sidebar';
+  LayoutDashboard, 
+  Users, 
+  Library, 
+  Settings2, 
+  KeyRound, 
+  Shield, 
+  School, 
+  CreditCard, 
+  Database, 
+  History, 
+  FileText,
+  Route,
+  LineChart
+} from 'lucide-react';
+import { SidebarMenu } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import { MenuItem } from '../MenuItems';
@@ -32,10 +44,11 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           isCollapsed={isCollapsed}
         />
         
+        {/* Usuarios */}
         <MenuItem
           to="/admin/users"
           icon={Users}
-          label="Gestionar Usuarios"
+          label="Usuarios"
           isCollapsed={isCollapsed}
         />
         
@@ -46,20 +59,29 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           isCollapsed={isCollapsed}
         />
         
+        {/* Educación */}
         <MenuItem
           to="/admin/courses"
           icon={Library}
-          label="Gestionar Cursos"
+          label="Cursos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
           to="/admin/instructors"
           icon={School}
-          label="Gestionar Instructores"
+          label="Instructores"
           isCollapsed={isCollapsed}
         />
         
+        <MenuItem
+          to="/admin/learning-paths"
+          icon={Route}
+          label="Rutas de Aprendizaje"
+          isCollapsed={isCollapsed}
+        />
+        
+        {/* Finanzas */}
         <MenuItem
           to="/admin/billing"
           icon={CreditCard}
@@ -67,17 +89,11 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           isCollapsed={isCollapsed}
         />
         
+        {/* Datos */}
         <MenuItem
           to="/admin/test-data"
           icon={Database}
           label="Datos de Prueba"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/categories"
-          icon={FileText}
-          label="Categorías"
           isCollapsed={isCollapsed}
         />
         
@@ -88,6 +104,23 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           isCollapsed={isCollapsed}
         />
         
+        {/* Analíticas */}
+        <MenuItem
+          to="/admin/analytics"
+          icon={LineChart}
+          label="Analíticas"
+          isCollapsed={isCollapsed}
+        />
+        
+        {/* Contenido */}
+        <MenuItem
+          to="/admin/content/categories"
+          icon={FileText}
+          label="Categorías"
+          isCollapsed={isCollapsed}
+        />
+        
+        {/* Configuración */}
         <MenuItem
           to="/admin/settings"
           icon={Settings2}
