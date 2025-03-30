@@ -3,13 +3,22 @@ import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { SidebarProvider } from "@/components/ui/sidebar/sidebar-provider";
-import HeaderContent from "@/components/layout/HeaderContent";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { EditModeProvider } from "@/contexts/EditModeContext";
 import { connectionService } from "@/lib/offline/connectionService";
 import { useAuth } from "@/contexts/AuthContext";
 import SidebarNavigation from "@/components/layout/SidebarNavigation";
 import { UserRole } from "@/types/auth";
+import { 
+  Sidebar, 
+  SidebarTrigger, 
+  SidebarContent,
+  SidebarHeader,
+  SidebarFooter
+} from "@/components/ui/sidebar";
+import { UserMenu } from "@/components/layout/header/UserMenu";
+import { RoleIndicator } from "@/components/layout/header/RoleIndicator";
+import { NexoLogo } from "@/components/ui/logo";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -48,18 +57,24 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     <EditModeProvider>
       <SidebarProvider>
         <div className="min-h-screen flex dark:bg-gray-950 w-full">
-          {/* Sidebar - Only visible on desktop */}
-          <div className="hidden md:block">
-            <div className="h-full border-r bg-sidebar">
-              <div className="flex h-full w-full flex-col">
-                <SidebarNavigation viewAsRole={viewAsRole} />
-              </div>
-            </div>
-          </div>
+          {/* Left Sidebar */}
+          <Sidebar className="border-r bg-sidebar">
+            <SidebarContent className="p-0">
+              <SidebarNavigation viewAsRole={viewAsRole} />
+            </SidebarContent>
+          </Sidebar>
 
           {/* Main Content */}
           <div className="flex-1 flex flex-col min-h-screen">
-            <HeaderContent onRoleChange={handleRoleChange} />
+            {/* Minimal top bar with user menu and role indicator */}
+            <div className="h-14 border-b flex items-center justify-end px-4">
+              <div className="flex items-center gap-2">
+                {isMobile && <SidebarTrigger className="md:hidden" />}
+                {userRole && <RoleIndicator viewingAs={userRole} onRoleChange={handleRoleChange} />}
+                <UserMenu />
+              </div>
+            </div>
+            
             <div
               className={cn(
                 "flex-1 transition-all duration-200 ease-in-out",

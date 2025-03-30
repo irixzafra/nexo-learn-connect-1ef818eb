@@ -14,6 +14,7 @@ import {
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { cn } from '@/lib/utils';
 import { useNotifications } from '@/hooks/useNotifications';
+import { NexoLogo } from '@/components/ui/logo';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRole;
@@ -24,7 +25,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { unreadCount: notificationsCount } = useNotifications();
-  const messagesCount = 0; // Placeholder - should be replaced with actual unread message count from a hook
+  const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
   
   // Determine the effective role
   const getEffectiveRole = (): UserRole => {
@@ -83,7 +84,10 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
 
   return (
     <div className="h-full flex flex-col py-4">
-      {/* Logo at the top will be handled by the header in mobile view */}
+      {/* Logo at the top */}
+      <div className="flex items-center justify-center py-4">
+        <NexoLogo variant="icon" className="h-8 w-auto" />
+      </div>
       
       <div className={cn(
         "flex-1 overflow-auto",
