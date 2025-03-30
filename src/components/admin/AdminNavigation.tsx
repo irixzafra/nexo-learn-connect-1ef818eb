@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -43,7 +44,7 @@ const adminCategories = [
     id: 'finances',
     icon: CreditCard, 
     label: "Finanzas", 
-    path: "/admin/billing",
+    path: "/admin/finanzas",
   },
   { 
     id: 'learning',

@@ -44,7 +44,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) =>
     { icon: LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard' },
     { icon: Users, label: 'Usuarios', href: '/admin/users' },
     { icon: BookOpen, label: 'Educación', href: '/admin/courses' },
-    { icon: CreditCard, label: 'Facturación', href: '/admin/billing' },
+    { icon: CreditCard, label: 'Facturación', href: '/admin/finanzas' },
     { icon: Folder, label: 'Contenido', href: '/admin/content' },
     { icon: Database, label: 'Datos', href: '/admin/test-data' },
     { icon: History, label: 'Auditoría', href: '/admin/audit-log' },

@@ -43,7 +43,7 @@ const MainNavigationMenu: React.FC<MainNavigationMenuProps> = ({
     <NavigationMenu className="hidden md:flex">
       <NavigationMenuList className="gap-1">
         <NavigationMenuItem>
-          <Link to="/" className={navigationMenuTriggerStyle()}>
+          <Link to="/home" className={navigationMenuTriggerStyle()}>
             <Home className="h-4 w-4 mr-2" />
             <span>Inicio</span>
           </Link>
