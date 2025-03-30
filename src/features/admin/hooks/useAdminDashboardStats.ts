@@ -3,53 +3,27 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
 
+// Interfaz para tipar los datos de estadísticas
+interface DashboardStats {
+  total_users: number;
+  active_courses: number;
+  total_enrollments: number;
+  new_users_last_7_days: number;
+}
+
 export const useAdminDashboardStats = () => {
   const { data: statsData, isLoading } = useQuery({
     queryKey: ["adminDashboardStats"],
     queryFn: async () => {
       try {
-        // Get total users count
-        const { count: usersCount, error: usersError } = await supabase
-          .from("profiles")
-          .select("*", { count: "exact", head: true });
-
-        if (usersError) throw usersError;
-
-        // Get total courses count
-        const { count: coursesCount, error: coursesError } = await supabase
-          .from("courses")
-          .select("*", { count: "exact", head: true });
-
-        if (coursesError) throw coursesError;
-
-        // Get total enrollments count
-        const { count: enrollmentsCount, error: enrollmentsError } = await supabase
-          .from("enrollments")
-          .select("*", { count: "exact", head: true });
-
-        if (enrollmentsError) throw enrollmentsError;
-
-        // Get published courses count and calculate completion rate
-        const { count: publishedCoursesCount, error: publishedError } = await supabase
-          .from("courses")
-          .select("*", { count: "exact", head: true })
-          .eq("is_published", true);
-
-        if (publishedError) throw publishedError;
-
-        // Calculate course completion rate
-        const completionRate = coursesCount > 0 
-          ? Math.round((publishedCoursesCount / coursesCount) * 100) 
-          : 0;
-
-        return {
-          usersCount: usersCount || 0,
-          coursesCount: coursesCount || 0,
-          enrollmentsCount: enrollmentsCount || 0,
-          publishedCoursesCount: publishedCoursesCount || 0,
-          completionRate
-        };
-      } catch (error) {
+        const { data, error } = await supabase.rpc('get_dashboard_stats');
+        
+        if (error) {
+          throw error;
+        }
+        
+        return data as DashboardStats;
+      } catch (error: any) {
         console.error("Error fetching admin dashboard stats:", error);
         toast({
           title: "Error al cargar estadísticas",
@@ -57,11 +31,10 @@ export const useAdminDashboardStats = () => {
           variant: "destructive"
         });
         return {
-          usersCount: 0,
-          coursesCount: 0,
-          enrollmentsCount: 0,
-          publishedCoursesCount: 0,
-          completionRate: 0
+          total_users: 0,
+          active_courses: 0,
+          total_enrollments: 0,
+          new_users_last_7_days: 0
         };
       }
     },
@@ -70,11 +43,10 @@ export const useAdminDashboardStats = () => {
 
   return {
     stats: statsData || {
-      usersCount: 0,
-      coursesCount: 0,
-      enrollmentsCount: 0,
-      publishedCoursesCount: 0,
-      completionRate: 0
+      total_users: 0,
+      active_courses: 0,
+      total_enrollments: 0,
+      new_users_last_7_days: 0
     },
     isLoading
   };

@@ -123,28 +123,28 @@ const AdminDashboard: React.FC = () => {
         stats: [
           {
             label: "Usuarios Totales",
-            value: isLoading ? "-" : stats.usersCount.toLocaleString(),
+            value: isLoading ? "-" : stats.total_users.toLocaleString(),
             icon: <Users className="h-5 w-5" />,
             loading: isLoading,
             color: "primary"
           },
           {
             label: "Cursos Activos",
-            value: isLoading ? "-" : stats.publishedCoursesCount.toLocaleString(),
+            value: isLoading ? "-" : stats.active_courses.toLocaleString(),
             icon: <BookOpen className="h-5 w-5" />,
             loading: isLoading,
             color: "success"
           },
           {
             label: "Matriculaciones",
-            value: isLoading ? "-" : stats.enrollmentsCount.toLocaleString(),
+            value: isLoading ? "-" : stats.total_enrollments.toLocaleString(),
             icon: <CreditCard className="h-5 w-5" />,
             loading: isLoading,
             color: "primary"
           },
           {
-            label: "Tasa de Publicación",
-            value: isLoading ? "-" : `${stats.completionRate}%`,
+            label: "Nuevos Usuarios",
+            value: isLoading ? "-" : `${stats.new_users_last_7_days} esta semana`,
             icon: <BarChart3 className="h-5 w-5" />,
             loading: isLoading,
             color: "warning"

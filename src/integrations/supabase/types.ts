@@ -1932,6 +1932,10 @@ export type Database = {
           student_count: number
         }[]
       }
+      get_dashboard_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       get_table_columns: {
         Args: {
           table_name: string
