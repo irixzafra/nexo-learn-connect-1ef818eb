@@ -5,14 +5,14 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { Loader2 } from 'lucide-react';
 import AppLayout from '@/layouts/AppLayout';
 
-// Lazy loaded components
-const InstructorDashboard = lazy(() => import('@/pages/instructor/InstructorDashboard'));
-const InstructorCourses = lazy(() => import('@/pages/instructor/InstructorCourses'));
+// Lazy loaded components - updating to use existing files in the project
+const InstructorDashboard = lazy(() => import('@/pages/instructor/Dashboard'));
+const InstructorCourses = lazy(() => import('@/pages/instructor/CoursesList'));
 const CreateCourse = lazy(() => import('@/pages/instructor/CreateCourse'));
-const EditCourse = lazy(() => import('@/pages/instructor/EditCourse'));
-const InstructorSettings = lazy(() => import('@/pages/instructor/InstructorSettings'));
-const InstructorAnalytics = lazy(() => import('@/pages/instructor/InstructorAnalytics'));
-const InstructorStudents = lazy(() => import('@/pages/instructor/InstructorStudents'));
+const EditCourse = lazy(() => import('@/pages/instructor/CourseEditor'));
+const InstructorSettings = lazy(() => import('@/pages/placeholder/Settings'));
+const InstructorAnalytics = lazy(() => import('@/pages/instructor/Dashboard')); // Using Dashboard as fallback
+const InstructorStudents = lazy(() => import('@/pages/instructor/Students'));
 
 // Loading component for Suspense
 const InstructorLoading = () => (
