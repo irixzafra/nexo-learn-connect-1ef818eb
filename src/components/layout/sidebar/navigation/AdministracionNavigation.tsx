@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ShieldAlert, Users2, PieChart, CreditCard, Landmark, FileText } from 'lucide-react';
+import { Settings, LayoutDashboard, Users, Library, CreditCard, Database, Settings2, KeyRound, History } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -20,43 +20,64 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
   return (
     <SidebarGroup
       label="Administración"
-      icon={ShieldAlert}
+      icon={Settings}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
       <SidebarMenu>
         <MenuItem
           to="/admin/dashboard"
-          icon={PieChart}
-          label="Dashboard"
+          icon={LayoutDashboard}
+          label="Panel Admin"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
           to="/admin/users"
-          icon={Users2}
-          label="Usuarios"
+          icon={Users}
+          label="Gestionar Usuarios"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/payments"
-          icon={CreditCard}
-          label="Pagos"
+          to="/admin/courses"
+          icon={Library}
+          label="Gestionar Cursos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
           to="/admin/billing"
-          icon={Landmark}
+          icon={CreditCard}
           label="Facturación"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/reports"
-          icon={FileText}
-          label="Reportes"
+          to="/admin/test-data"
+          icon={Database}
+          label="Datos de Prueba"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/admin/settings"
+          icon={Settings2}
+          label="Configuración Plataforma"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/admin/roles"
+          icon={KeyRound}
+          label="Roles y Permisos"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/admin/audit-log"
+          icon={History}
+          label="Auditoría"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>

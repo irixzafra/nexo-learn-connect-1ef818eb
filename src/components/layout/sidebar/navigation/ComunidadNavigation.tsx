@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, MessageSquare, Globe, Trophy, Handshake } from 'lucide-react';
+import { Users, MessageSquare, Newspaper, UsersRound } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -17,7 +17,7 @@ interface ComunidadNavigationProps {
 const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({ 
   isOpen, 
   onToggle,
-  messagesCount = 0 
+  messagesCount = 0
 }) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -31,8 +31,8 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
     >
       <SidebarMenu>
         <MenuItem
-          to="/community/feed"
-          icon={Globe}
+          to="/community"
+          icon={Newspaper}
           label="Feed"
           isCollapsed={isCollapsed}
         />
@@ -46,16 +46,9 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
         />
         
         <MenuItem
-          to="/leaderboard"
-          icon={Trophy}
-          label="Leaderboard"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/mentors"
-          icon={Handshake}
-          label="Mentores"
+          to="/network"
+          icon={UsersRound}
+          label="Red de Contactos"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>

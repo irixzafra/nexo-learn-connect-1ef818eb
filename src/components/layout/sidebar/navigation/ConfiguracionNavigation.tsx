@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Settings, Key, CreditCard, HelpCircle, Info } from 'lucide-react';
+import { SlidersHorizontal, HelpCircle, Info } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -20,43 +20,29 @@ const ConfiguracionNavigation: React.FC<ConfiguracionNavigationProps> = ({ isOpe
   return (
     <SidebarGroup
       label="Configuración"
-      icon={Settings}
+      icon={SlidersHorizontal}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
       <SidebarMenu>
         <MenuItem
           to="/settings"
-          icon={Settings}
-          label="Preferencias"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/settings/account"
-          icon={Key}
-          label="Cuenta"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/settings/billing"
-          icon={CreditCard}
-          label="Facturación"
+          icon={SlidersHorizontal}
+          label="Configuración"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
           to="/help"
           icon={HelpCircle}
-          label="Ayuda"
+          label="Ayuda / Soporte"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
           to="/about-us"
           icon={Info}
-          label="Acerca de"
+          label="Acerca de Nosotros"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>
