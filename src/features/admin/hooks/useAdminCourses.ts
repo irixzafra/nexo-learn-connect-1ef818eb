@@ -52,7 +52,8 @@ export const useAdminCourses = () => {
       
       console.log("Iniciando consulta de cursos...");
       
-      const { data, error } = await supabase
+      // First, get all courses
+      const { data: coursesData, error: coursesError } = await supabase
         .from('courses')
         .select(`
           id, 
@@ -65,22 +66,38 @@ export const useAdminCourses = () => {
           status,
           students_count,
           created_at, 
-          updated_at,
-          profiles:instructor_id (full_name)
+          updated_at
         `)
         .order('created_at', { ascending: false });
       
-      console.log("Respuesta de Supabase:", { data, error });
+      if (coursesError) throw coursesError;
       
-      if (error) throw error;
+      console.log("Cursos encontrados:", coursesData);
       
-      const formattedCourses: Course[] = (data || []).map((course: any) => ({
-        ...course,
-        instructors: {
-          full_name: course.profiles?.full_name || 'Sin instructor asignado'
-        },
-        status: course.status || (course.is_published ? 'published' : 'draft'),
-        students_count: course.students_count || 0
+      // Then, get instructor info for each course
+      const formattedCourses: Course[] = await Promise.all((coursesData || []).map(async (course: any) => {
+        let instructorName = 'Sin instructor asignado';
+        
+        if (course.instructor_id) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', course.instructor_id)
+            .single();
+            
+          if (profileData) {
+            instructorName = profileData.full_name || 'Sin nombre';
+          }
+        }
+        
+        return {
+          ...course,
+          instructors: {
+            full_name: instructorName
+          },
+          status: course.status || (course.is_published ? 'published' : 'draft'),
+          students_count: course.students_count || 0
+        };
       }));
       
       console.log("Cursos formateados:", formattedCourses);
