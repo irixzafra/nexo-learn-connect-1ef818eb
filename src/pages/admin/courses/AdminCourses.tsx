@@ -173,7 +173,7 @@ const AdminCourses: React.FC = () => {
         ],
         breadcrumbs: [
           { title: "Dashboard", href: "/admin/dashboard" },
-          { title: "Gestión de Cursos" }
+          { title: "Gestión de Cursos" } as Array<{ title: string; href?: string }>
         ]
       }}
     >
