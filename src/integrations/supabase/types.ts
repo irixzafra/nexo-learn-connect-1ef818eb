@@ -1653,6 +1653,10 @@ export type Database = {
         }
         Returns: string
       }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       application_status: "pending" | "reviewing" | "accepted" | "rejected"

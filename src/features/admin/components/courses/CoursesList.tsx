@@ -2,14 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { TableCell, TableRow } from '@/components/ui/table';
 import { Course } from '../../hooks/useAdminCourses';
 import CourseActionsDropdown from './CourseActionsDropdown';
 
@@ -19,6 +12,8 @@ interface CoursesListProps {
   onEdit: (id: string) => void;
   onEnrollUsers: (id: string, title: string) => void;
   searchTerm?: string;
+  formatPrice?: (price: number, currency: string) => string;
+  formatDate?: (date: string) => string;
 }
 
 const CoursesList: React.FC<CoursesListProps> = ({
@@ -27,11 +22,13 @@ const CoursesList: React.FC<CoursesListProps> = ({
   onEdit,
   onEnrollUsers,
   searchTerm = '',
+  formatPrice = (price, currency) => `${currency === 'eur' ? '€' : '$'}${price.toFixed(2)}`,
+  formatDate = (date) => date.substring(0, 10),
 }) => {
   if (courses.length === 0) {
     return (
       <TableRow>
-        <TableCell colSpan={4} className="text-center h-24">
+        <TableCell colSpan={7} className="text-center h-24">
           {searchTerm.trim() !== ''
             ? 'No se encontraron cursos que coincidan con la búsqueda.'
             : 'No hay cursos para mostrar.'}
@@ -62,6 +59,9 @@ const CoursesList: React.FC<CoursesListProps> = ({
               {course.status === 'published' || course.is_published ? 'Publicado' : 'Borrador'}
             </Badge>
           </TableCell>
+          <TableCell>{formatPrice(course.price, course.currency || 'eur')}</TableCell>
+          <TableCell>{course.students_count || 0}</TableCell>
+          <TableCell>{formatDate(course.updated_at)}</TableCell>
           <TableCell className="text-right">
             <CourseActionsDropdown
               courseId={course.id}
