@@ -34,6 +34,19 @@ const PublicRoutes: React.FC = () => {
           <CoursesCatalog />
         </AppLayout>
       } />
+      <Route path="/courses/:courseId" element={
+        <AppLayout>
+          <CourseDetail />
+        </AppLayout>
+      } />
+      <Route path="/learning-paths/:pathId" element={
+        <AppLayout>
+          <div className="container mx-auto p-8">
+            <h1 className="text-3xl font-bold mb-4">Detalles de la Ruta de Aprendizaje</h1>
+            <p>Esta página está en desarrollo</p>
+          </div>
+        </AppLayout>
+      } />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

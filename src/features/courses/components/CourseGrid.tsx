@@ -1,15 +1,20 @@
 
 import React, { useState } from 'react';
-import { FeaturedCourse, FeaturedCourseCard } from './FeaturedCourseCard';
+import { FeaturedCourse } from './FeaturedCourseCard';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
+import { EnhancedCourseCard } from './EnhancedCourseCard';
 
 interface CourseGridProps {
   filteredCourses: FeaturedCourse[];
+  selectedCategory?: string;
 }
 
-export const CourseGrid: React.FC<CourseGridProps> = ({ filteredCourses }) => {
+export const CourseGrid: React.FC<CourseGridProps> = ({ 
+  filteredCourses,
+  selectedCategory = 'all'
+}) => {
   const [visibleCourses, setVisibleCourses] = useState<number>(6);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
@@ -42,6 +47,17 @@ export const CourseGrid: React.FC<CourseGridProps> = ({ filteredCourses }) => {
     show: { opacity: 1, y: 0 }
   };
 
+  if (filteredCourses.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <h3 className="text-2xl font-bold mb-2">No hay cursos disponibles</h3>
+        <p className="text-muted-foreground mb-4">
+          No se encontraron cursos para esta categoría.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <>
       <motion.div 
@@ -52,7 +68,13 @@ export const CourseGrid: React.FC<CourseGridProps> = ({ filteredCourses }) => {
       >
         {coursesToShow.map((course, index) => (
           <motion.div key={course.id} variants={item}>
-            <FeaturedCourseCard course={course} index={index} />
+            <EnhancedCourseCard 
+              course={course} 
+              index={index} 
+              isPopular={index === 0 && selectedCategory === 'all'}
+              isNew={index === 1 && selectedCategory === 'all'}
+              isUpcoming={index === 2 && course.start_date !== undefined}
+            />
           </motion.div>
         ))}
       </motion.div>
@@ -78,3 +100,5 @@ export const CourseGrid: React.FC<CourseGridProps> = ({ filteredCourses }) => {
     </>
   );
 };
+
+export default CourseGrid;
