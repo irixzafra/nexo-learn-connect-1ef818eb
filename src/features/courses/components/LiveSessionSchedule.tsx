@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
@@ -6,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
-import { VideoCameraIcon, ExternalLink, Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { Video, ExternalLink, Calendar as CalendarIcon, Clock } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format, isSameDay, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -45,19 +44,16 @@ export function LiveSessionSchedule({ courseId }: LiveSessionScheduleProps) {
       
       return data as LiveSession[];
     },
-    // In a real application, fetchLiveSessions would make an API call
-    // This is a placeholder to show how it would be implemented
-    enabled: false, // Disable this query since we don't have the table yet
+    enabled: false,
   });
   
-  // Dummy data for development
   const dummyLiveSessions: LiveSession[] = [
     {
       id: '1',
       title: 'Introducción al curso',
       description: 'Sesión inicial donde presentaremos los objetivos y metodología del curso.',
-      start_time: new Date(Date.now() + 86400000 * 2).toISOString(), // 2 days in the future
-      end_time: new Date(Date.now() + 86400000 * 2 + 3600000).toISOString(), // 1 hour later
+      start_time: new Date(Date.now() + 86400000 * 2).toISOString(),
+      end_time: new Date(Date.now() + 86400000 * 2 + 3600000).toISOString(),
       meeting_url: 'https://zoom.us/j/123456789',
       status: 'scheduled',
       course_id: courseId
@@ -66,8 +62,8 @@ export function LiveSessionSchedule({ courseId }: LiveSessionScheduleProps) {
       id: '2',
       title: 'Resolución de dudas - Módulo 1',
       description: 'Sesión para resolver dudas sobre el primer módulo del curso.',
-      start_time: new Date(Date.now() + 86400000 * 5).toISOString(), // 5 days in the future
-      end_time: new Date(Date.now() + 86400000 * 5 + 3600000).toISOString(), // 1 hour later
+      start_time: new Date(Date.now() + 86400000 * 5).toISOString(),
+      end_time: new Date(Date.now() + 86400000 * 5 + 3600000).toISOString(),
       meeting_url: 'https://zoom.us/j/987654321',
       status: 'scheduled',
       course_id: courseId
@@ -76,8 +72,8 @@ export function LiveSessionSchedule({ courseId }: LiveSessionScheduleProps) {
       id: '3',
       title: 'Workshop práctico',
       description: 'Sesión práctica donde aplicaremos los conceptos aprendidos.',
-      start_time: new Date(Date.now() + 86400000 * 10).toISOString(), // 10 days in the future
-      end_time: new Date(Date.now() + 86400000 * 10 + 7200000).toISOString(), // 2 hours later
+      start_time: new Date(Date.now() + 86400000 * 10).toISOString(),
+      end_time: new Date(Date.now() + 86400000 * 10 + 7200000).toISOString(),
       meeting_url: 'https://meet.google.com/abc-defg-hij',
       status: 'scheduled',
       course_id: courseId
@@ -86,8 +82,8 @@ export function LiveSessionSchedule({ courseId }: LiveSessionScheduleProps) {
       id: '4',
       title: 'Sesión de repaso',
       description: 'Repasaremos los conceptos clave del curso antes del proyecto final.',
-      start_time: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days in the past
-      end_time: new Date(Date.now() - 86400000 * 2 + 5400000).toISOString(), // 1.5 hours later
+      start_time: new Date(Date.now() - 86400000 * 2).toISOString(),
+      end_time: new Date(Date.now() - 86400000 * 2 + 5400000).toISOString(),
       meeting_url: 'https://teams.microsoft.com/l/meetup-join/12345',
       status: 'completed',
       course_id: courseId
@@ -96,7 +92,6 @@ export function LiveSessionSchedule({ courseId }: LiveSessionScheduleProps) {
   
   const sessions = liveSessions || dummyLiveSessions;
   
-  // Get sessions for the selected date
   const sessionsForSelectedDate = date 
     ? sessions.filter(session => {
         const sessionDate = parseISO(session.start_time);
@@ -104,7 +99,6 @@ export function LiveSessionSchedule({ courseId }: LiveSessionScheduleProps) {
       })
     : [];
   
-  // Get dates with sessions for calendar highlighting
   const datesWithSessions = sessions.map(session => parseISO(session.start_time));
   
   const getSessionStatusBadge = (status: LiveSession['status']) => {
@@ -126,7 +120,7 @@ export function LiveSessionSchedule({ courseId }: LiveSessionScheduleProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <VideoCameraIcon className="h-5 w-5 text-primary" />
+          <Video className="h-5 w-5 text-primary" />
           Clases en vivo
         </CardTitle>
         <CardDescription>
@@ -221,7 +215,7 @@ export function LiveSessionSchedule({ courseId }: LiveSessionScheduleProps) {
                 .map(session => (
                   <div key={session.id} className="flex items-start gap-3 pb-3 border-b last:border-0">
                     <div className="bg-primary/10 text-primary p-2 rounded-md flex-shrink-0">
-                      <VideoCameraIcon className="h-5 w-5" />
+                      <Video className="h-5 w-5" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate">{session.title}</p>

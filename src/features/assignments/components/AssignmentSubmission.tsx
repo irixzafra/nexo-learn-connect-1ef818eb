@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge'; // Added missing import
 import { useToast } from '@/hooks/use-toast';
 import { FileUp, FileText, Clock, Upload, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';

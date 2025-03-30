@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Loader2, Plus, Search, Pencil, Trash2, Layout, Eye } from 'lucide-react';
 import { LearningPath } from '@/types/course';
 
+// Changed from default export to named export
 export function LearningPathsTab() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');

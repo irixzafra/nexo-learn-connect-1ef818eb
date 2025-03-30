@@ -11,6 +11,8 @@ const AdminCourses = lazy(() => import('@/pages/admin/courses/AdminCourses'));
 const AdminCourseDetail = lazy(() => import('@/pages/admin/courses/AdminCourseDetail'));
 const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings'));
 const FinanceManagement = lazy(() => import('@/pages/admin/FinanceManagement'));
+// Add learning paths page if it exists
+const LearningPaths = lazy(() => import('@/pages/admin/learning-paths/LearningPaths'));
 
 // Loading component for Suspense
 const AdminLoading = () => (
@@ -31,6 +33,7 @@ const AdminRoutes = () => {
           <Route path="/courses/:courseId" element={<AdminCourseDetail />} />
           <Route path="/settings" element={<AdminSettings />} />
           <Route path="/finanzas" element={<FinanceManagement />} />
+          <Route path="/learning-paths/*" element={<LearningPaths />} />
           <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>
       </Suspense>

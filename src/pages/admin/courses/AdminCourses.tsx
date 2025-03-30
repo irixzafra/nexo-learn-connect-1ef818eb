@@ -14,7 +14,7 @@ import AdminPageLayout from "@/layouts/AdminPageLayout";
 import { AdminTabItem } from "@/components/admin/AdminTabs";
 import AllCoursesTab from "@/features/admin/components/courses/AllCoursesTab";
 import CategoriesTab from "@/features/admin/components/courses/CategoriesTab";
-import LearningPathsTab from "@/features/admin/components/courses/LearningPathsTab";
+import { LearningPathsTab } from "@/features/admin/components/courses/LearningPathsTab"; // Changed to named import
 import AllCertificatesTab from "@/features/admin/components/courses/AllCertificatesTab";
 import AnalyticsTab from "@/features/admin/components/courses/AnalyticsTab";
 import { useAdminCourses } from "@/features/admin/hooks/useAdminCourses";
