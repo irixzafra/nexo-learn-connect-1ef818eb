@@ -1,56 +1,42 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { NexoLogo } from '@/components/ui/logo';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Menu } from 'lucide-react';
-import SidebarNavigation from '../SidebarNavigation';
+import { NexoLogoIcon } from '@/components/ui/logo/nexo-logo-icon';
+import { cn } from '@/lib/utils';
+import { RoleIndicator } from './RoleIndicator';
 import { UserRoleType } from '@/types/auth';
 
 interface HeaderLogoProps {
-  pageTitle?: string;
-  viewAsRole?: UserRoleType | 'current';
+  viewAsRole: UserRoleType | 'current';
 }
 
-const HeaderLogo: React.FC<HeaderLogoProps> = ({ 
-  pageTitle,
-  viewAsRole = 'current' 
+const HeaderLogo: React.FC<HeaderLogoProps> = ({
+  viewAsRole
 }) => {
-  const isMobile = useIsMobile();
-  
-  const LogoComponent = () => (
-    <Link to="/" className="flex items-center">
-      <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
-    </Link>
-  );
-  
+  // Decide la URL de inicio según el rol
+  const getHomeUrl = () => {
+    if (viewAsRole === 'admin') return '/admin/dashboard';
+    if (viewAsRole === 'instructor') return '/instructor/dashboard';
+    return '/home';
+  };
+
   return (
-    <div className="flex items-center gap-4">
-      {isMobile ? (
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden h-10 w-10">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Abrir menú</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[80%] sm:w-[350px] p-0">
-            <div className="flex flex-col h-full">
-              <SidebarNavigation viewAsRole={viewAsRole} />
-            </div>
-          </SheetContent>
-        </Sheet>
-      ) : (
-        <>
-          <SidebarTrigger className="hidden md:flex" />
-          <LogoComponent />
-        </>
-      )}
+    <div className="flex items-center space-x-2">
+      <Link 
+        to={getHomeUrl()}
+        className="flex items-center gap-2"
+      >
+        <NexoLogoIcon className="h-8 w-8" />
+        <div className="flex flex-col">
+          <span className="font-semibold text-sm sm:text-base leading-none">nexo</span>
+          <span className="text-xs text-muted-foreground leading-none">ecosistema creativo</span>
+        </div>
+      </Link>
       
-      {!isMobile && pageTitle && <span className="text-lg font-medium">{pageTitle}</span>}
+      {/* Indicador de rol */}
+      {viewAsRole !== 'current' && (
+        <RoleIndicator role={viewAsRole} />
+      )}
     </div>
   );
 };
