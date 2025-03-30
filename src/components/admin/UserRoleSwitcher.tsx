@@ -2,15 +2,14 @@
 import React, { useState } from 'react';
 import { UserRoleType, toUserRoleType, asUserRoleType } from '@/types/auth';
 import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useToast } from '@/components/ui/use-toast';
-import { UserCog, Shield, User, Terminal, Ghost } from 'lucide-react';
+import { UserCog, Shield, User, Terminal, Ghost, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface UserRoleSwitcherProps {
@@ -32,8 +31,13 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
   const [selectedRole, setSelectedRole] = useState<UserRoleType>(currentRole);
   const [isChanging, setIsChanging] = useState(false);
   
-  const handleChange = async () => {
-    if (selectedRole === currentRole) {
+  const handleRoleSelect = (role: UserRoleType) => {
+    setSelectedRole(role);
+    handleChange(role);
+  };
+  
+  const handleChange = async (roleToSet: UserRoleType = selectedRole) => {
+    if (roleToSet === currentRole) {
       return;
     }
     
@@ -42,12 +46,12 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
     try {
       if (onRoleChange && userId) {
         // Use the provided callback if available
-        await onRoleChange(userId, selectedRole);
+        await onRoleChange(userId, roleToSet);
       } else {
         // This is for view-mode switching only (doesn't change actual role in DB)
         toast({
           title: "Modo de vista cambiado",
-          description: `Ahora estás viendo la aplicación como ${selectedRole}`,
+          description: `Ahora estás viendo la aplicación como ${roleToSet}`,
         });
         
         // You might want to update some context or state here
@@ -81,65 +85,58 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
         return null;
     }
   };
+  
+  const getRoleName = (role: UserRoleType): string => {
+    switch (role) {
+      case 'admin':
+        return 'Administrador';
+      case 'instructor':
+        return 'Instructor';
+      case 'student':
+        return 'Estudiante';
+      case 'sistemas':
+        return 'Sistemas'; 
+      case 'anonimo':
+        return 'Anónimo';
+      default:
+        return role;
+    }
+  };
 
   return (
     <div className="flex items-center gap-2">
-      <Select
-        value={selectedRole}
-        onValueChange={(value) => setSelectedRole(asUserRoleType(value))}
-      >
-        <SelectTrigger className="w-[150px]">
-          <div className="flex items-center gap-2">
-            {getRoleIcon(selectedRole)}
-            <SelectValue placeholder="Seleccionar rol" />
-          </div>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="admin">
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              <span>Administrador</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="instructor">
-            <div className="flex items-center gap-2">
-              <UserCog className="h-4 w-4" />
-              <span>Instructor</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="sistemas">
-            <div className="flex items-center gap-2">
-              <Terminal className="h-4 w-4" />
-              <span>Sistemas</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="student">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              <span>Estudiante</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="anonimo">
-            <div className="flex items-center gap-2">
-              <Ghost className="h-4 w-4" />
-              <span>Anónimo</span>
-            </div>
-          </SelectItem>
-        </SelectContent>
-      </Select>
-      
-      <Button 
-        size="sm" 
-        variant={selectedRole !== currentRole ? "default" : "outline"}
-        onClick={handleChange}
-        disabled={selectedRole === currentRole || isChanging}
-      >
-        {isChanging ? (
-          <span className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></span>
-        ) : (
-          <UserCog className="h-4 w-4" />
-        )}
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button 
+            variant={isChanging ? "outline" : "default"}
+            size="sm"
+            disabled={isChanging}
+            className="flex items-center gap-2"
+          >
+            {isChanging ? (
+              <span className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></span>
+            ) : (
+              getRoleIcon(selectedRole)
+            )}
+            <span>{getRoleName(selectedRole)}</span>
+            <ChevronDown className="h-3.5 w-3.5 ml-1" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {(['admin', 'instructor', 'student', 'sistemas', 'anonimo'] as UserRoleType[]).map((role) => (
+            <DropdownMenuItem 
+              key={role}
+              onClick={() => handleRoleSelect(role)}
+              className="cursor-pointer"
+            >
+              <div className="flex items-center gap-2">
+                {getRoleIcon(role)}
+                <span>{getRoleName(role)}</span>
+              </div>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };
