@@ -8,7 +8,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { Users, AlertCircle } from "lucide-react";
+import { Users, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate } from "@/features/admin/utils/formatters";
@@ -35,6 +35,7 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
           {error.message || "No se pudieron cargar los estudiantes inscritos en este curso."}
         </p>
         <Button variant="outline" onClick={() => refetch()}>
+          <RefreshCw className="mr-2 h-4 w-4" />
           Reintentar
         </Button>
       </div>
@@ -71,7 +72,7 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
         <TableHeader>
           <TableRow>
             <TableHead>Nombre</TableHead>
-            <TableHead>Email</TableHead>
+            <TableHead>ID de Usuario</TableHead>
             <TableHead>Fecha de Inscripción</TableHead>
           </TableRow>
         </TableHeader>
@@ -81,7 +82,9 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
               <TableCell className="font-medium">
                 {student.full_name || 'Sin nombre'}
               </TableCell>
-              <TableCell>{student.email || 'Sin email'}</TableCell>
+              <TableCell className="text-xs text-muted-foreground">
+                {student.user_id.substring(0, 8)}...
+              </TableCell>
               <TableCell>{formatDate(student.enrolled_at)}</TableCell>
             </TableRow>
           ))}
