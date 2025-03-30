@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AppLayout from '@/layouts/AppLayout';
@@ -35,7 +36,7 @@ const AppRouter = () => {
       <Route path="/posts/:postId" element={<AppLayout><PostDetail /></AppLayout>} />
 
       {/* Auth Routes */}
-      <Route path="/auth/*" element={<GuestRoute><AuthRoutes /></GuestRoute>} />
+      <Route path="/auth/*" element={<GuestRoute><GuestLayout><AuthRoutes /></GuestLayout></GuestRoute>} />
 
       {/* Admin Routes */}
       <Route path="/admin/*" element={<ProtectedRoute><AdminRoutes /></ProtectedRoute>} />
@@ -44,13 +45,13 @@ const AppRouter = () => {
       <Route path="/instructor/*" element={<ProtectedRoute><InstructorRoutes /></ProtectedRoute>} />
 
       {/* User Routes */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
-        <Route path="/settings" element={<AppLayout><Settings /></AppLayout>} />
-        <Route path="/payment/success" element={<AppLayout><PaymentSuccess /></AppLayout>} />
-        <Route path="/payment/cancel" element={<AppLayout><PaymentCancel /></AppLayout>} />
-        <Route path="/messages" element={<AppLayout><Messages /></AppLayout>} />
-        <Route path="/network" element={<AppLayout><Network /></AppLayout>} />
+      <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/payment/cancel" element={<PaymentCancel />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/network" element={<Network />} />
         <Route path="/notifications" element={<NotificationCenter />} />
       </Route>
 
