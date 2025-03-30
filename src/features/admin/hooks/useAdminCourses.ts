@@ -72,7 +72,7 @@ export const useAdminCourses = () => {
       console.log("Cursos encontrados:", coursesData);
       
       // Get enrollments count for each course
-      const enrollmentCounts: Record<string, number> = {};
+      let enrollmentCounts: Record<string, number> = {};
       
       try {
         // Corrected query - using count() as a function rather than in select
