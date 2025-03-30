@@ -1,168 +1,162 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 
-export type OnboardingStep = 
-  | 'welcome' 
-  | 'profile' 
-  | 'explore-courses' 
-  | 'platform-tour'
-  | 'completed';
-
-// Añadimos la configuración para activar/desactivar funcionalidades
-export interface SystemFeaturesConfig {
+// Configuración de características
+type FeaturesConfig = {
   autoStartOnboarding: boolean;
   showOnboardingTrigger: boolean;
   enableNotifications: boolean;
-  // Podemos agregar más funcionalidades configurables aquí
-}
-
-interface OnboardingContextType {
-  currentStep: OnboardingStep;
-  setCurrentStep: (step: OnboardingStep) => void;
-  isOnboardingActive: boolean;
-  startOnboarding: () => void;
-  completeOnboarding: () => void;
-  skipOnboarding: () => void;
-  nextStep: () => void;
-  previousStep: () => void;
-  featuresConfig: SystemFeaturesConfig;
-  updateFeaturesConfig: (config: Partial<SystemFeaturesConfig>) => void;
-}
-
-// Configuración por defecto
-const defaultFeaturesConfig: SystemFeaturesConfig = {
-  autoStartOnboarding: false, // Desactivado por defecto
-  showOnboardingTrigger: true,
-  enableNotifications: true,
+  enableTestDataGenerator: boolean; // Nueva característica añadida
 };
 
-const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
+interface OnboardingContextValue {
+  isOnboardingOpen: boolean;
+  currentStep: number;
+  featuresConfig: FeaturesConfig;
+  openOnboarding: () => void;
+  closeOnboarding: () => void;
+  nextStep: () => void;
+  prevStep: () => void;
+  goToStep: (step: number) => void;
+  updateFeaturesConfig: (updates: Partial<FeaturesConfig>) => void;
+}
 
+// Valor predeterminado para el contexto
+const defaultContextValue: OnboardingContextValue = {
+  isOnboardingOpen: false,
+  currentStep: 0,
+  featuresConfig: {
+    autoStartOnboarding: true,
+    showOnboardingTrigger: true,
+    enableNotifications: true,
+    enableTestDataGenerator: false, // Desactivado por defecto
+  },
+  openOnboarding: () => {},
+  closeOnboarding: () => {},
+  nextStep: () => {},
+  prevStep: () => {},
+  goToStep: () => {},
+  updateFeaturesConfig: () => {},
+};
+
+// Creación del contexto
+const OnboardingContext = createContext<OnboardingContextValue>(defaultContextValue);
+
+// Hook para usar el contexto
+export const useOnboarding = () => useContext(OnboardingContext);
+
+// Proveedor del contexto
 export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(defaultContextValue.featuresConfig);
   const { user } = useAuth();
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
-  const [isOnboardingActive, setIsOnboardingActive] = useState<boolean>(false);
-  const [featuresConfig, setFeaturesConfig] = useState<SystemFeaturesConfig>(() => {
-    // Intentar cargar la configuración desde localStorage
-    try {
-      const savedConfig = localStorage.getItem('systemFeaturesConfig');
-      return savedConfig ? JSON.parse(savedConfig) : defaultFeaturesConfig;
-    } catch (e) {
-      return defaultFeaturesConfig;
-    }
-  });
 
-  // Guardar la configuración en localStorage cuando cambia
+  // Cargar configuración desde Supabase (si está disponible)
   useEffect(() => {
-    localStorage.setItem('systemFeaturesConfig', JSON.stringify(featuresConfig));
-  }, [featuresConfig]);
+    const loadFeaturesConfig = async () => {
+      if (!user) return;
 
-  // Check if onboarding should be displayed for this user
-  useEffect(() => {
-    if (user && featuresConfig.autoStartOnboarding) {
-      // Check localStorage first for onboarding status
-      const onboardingCompleted = localStorage.getItem('onboardingCompleted');
-      if (!onboardingCompleted) {
-        // If no stored value and it's a new user, suggest onboarding
-        const isNewUser = user.created_at && 
-          new Date(user.created_at).getTime() > Date.now() - (7 * 24 * 60 * 60 * 1000); // 7 days
-        
-        if (isNewUser) {
-          setTimeout(() => {
-            setIsOnboardingActive(true);
-          }, 1500); // Slight delay to allow the app to load first
+      try {
+        const { data, error } = await supabase
+          .from('features_config')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+
+        if (error) {
+          console.error('Error loading features config:', error);
+          return;
         }
+
+        if (data) {
+          setFeaturesConfig({
+            autoStartOnboarding: data.auto_start_onboarding ?? true,
+            showOnboardingTrigger: data.show_onboarding_trigger ?? true,
+            enableNotifications: data.enable_notifications ?? true,
+            enableTestDataGenerator: data.enable_test_data_generator ?? false,
+          });
+        }
+      } catch (error) {
+        console.error('Error in loadFeaturesConfig:', error);
       }
+    };
+
+    loadFeaturesConfig();
+  }, [user]);
+
+  // Guardar configuración en Supabase
+  const saveFeaturesToSupabase = async (updatedConfig: FeaturesConfig) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('features_config')
+        .upsert({
+          user_id: user.id,
+          auto_start_onboarding: updatedConfig.autoStartOnboarding,
+          show_onboarding_trigger: updatedConfig.showOnboardingTrigger,
+          enable_notifications: updatedConfig.enableNotifications,
+          enable_test_data_generator: updatedConfig.enableTestDataGenerator,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'user_id' });
+
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.error('Error saving features config to Supabase:', error);
+      toast.error('Error al guardar la configuración');
     }
-  }, [user, featuresConfig.autoStartOnboarding]);
-
-  const startOnboarding = () => {
-    setCurrentStep('welcome');
-    setIsOnboardingActive(true);
   };
 
-  const completeOnboarding = () => {
-    localStorage.setItem('onboardingCompleted', 'true');
-    setIsOnboardingActive(false);
-    setCurrentStep('completed');
-    toast.success('Onboarding completado con éxito');
+  // Funciones para manipular el estado del onboarding
+  const openOnboarding = () => {
+    setIsOnboardingOpen(true);
+    setCurrentStep(0);
   };
 
-  const skipOnboarding = () => {
-    localStorage.setItem('onboardingCompleted', 'true');
-    setIsOnboardingActive(false);
-    toast.info('Puedes reiniciar el tutorial desde tu perfil en cualquier momento');
+  const closeOnboarding = () => {
+    setIsOnboardingOpen(false);
   };
 
   const nextStep = () => {
-    switch (currentStep) {
-      case 'welcome':
-        setCurrentStep('profile');
-        break;
-      case 'profile':
-        setCurrentStep('explore-courses');
-        break;
-      case 'explore-courses':
-        setCurrentStep('platform-tour');
-        break;
-      case 'platform-tour':
-        completeOnboarding();
-        break;
-      default:
-        break;
-    }
+    setCurrentStep(prev => prev + 1);
   };
 
-  const previousStep = () => {
-    switch (currentStep) {
-      case 'profile':
-        setCurrentStep('welcome');
-        break;
-      case 'explore-courses':
-        setCurrentStep('profile');
-        break;
-      case 'platform-tour':
-        setCurrentStep('explore-courses');
-        break;
-      default:
-        break;
-    }
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(0, prev - 1));
   };
 
-  // Función para actualizar la configuración de características
-  const updateFeaturesConfig = (config: Partial<SystemFeaturesConfig>) => {
-    setFeaturesConfig(prevConfig => ({
-      ...prevConfig,
-      ...config
-    }));
+  const goToStep = (step: number) => {
+    setCurrentStep(step);
+  };
+
+  // Actualizar la configuración de características
+  const updateFeaturesConfig = (updates: Partial<FeaturesConfig>) => {
+    const newConfig = { ...featuresConfig, ...updates };
+    setFeaturesConfig(newConfig);
+    saveFeaturesToSupabase(newConfig);
   };
 
   return (
-    <OnboardingContext.Provider 
+    <OnboardingContext.Provider
       value={{
+        isOnboardingOpen,
         currentStep,
-        setCurrentStep,
-        isOnboardingActive,
-        startOnboarding,
-        completeOnboarding,
-        skipOnboarding,
-        nextStep,
-        previousStep,
         featuresConfig,
-        updateFeaturesConfig,
+        openOnboarding,
+        closeOnboarding,
+        nextStep,
+        prevStep,
+        goToStep,
+        updateFeaturesConfig
       }}
     >
       {children}
     </OnboardingContext.Provider>
   );
-};
-
-export const useOnboarding = (): OnboardingContextType => {
-  const context = useContext(OnboardingContext);
-  if (context === undefined) {
-    throw new Error('useOnboarding must be used within an OnboardingProvider');
-  }
-  return context;
 };

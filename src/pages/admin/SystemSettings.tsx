@@ -8,7 +8,7 @@ import { useOnboarding } from '@/contexts/OnboardingContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { Settings, Bell, Lightbulb, Shield } from 'lucide-react';
+import { Settings, Bell, Lightbulb, Shield, Database } from 'lucide-react';
 
 const SystemSettings: React.FC = () => {
   const { featuresConfig, updateFeaturesConfig } = useOnboarding();
@@ -99,6 +99,33 @@ const SystemSettings: React.FC = () => {
                     id="enableNotifications"
                     checked={featuresConfig.enableNotifications}
                     onCheckedChange={(value) => handleToggleFeature('enableNotifications', value)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Database className="h-5 w-5 text-purple-500" />
+                  Generador de Datos de Prueba
+                </CardTitle>
+                <CardDescription>
+                  Configura la herramienta de generación de datos de prueba
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="enableTestDataGenerator">Habilitar generador de datos</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Activa la funcionalidad de generación de datos de prueba para administradores
+                    </p>
+                  </div>
+                  <Switch
+                    id="enableTestDataGenerator"
+                    checked={featuresConfig.enableTestDataGenerator}
+                    onCheckedChange={(value) => handleToggleFeature('enableTestDataGenerator', value)}
                   />
                 </div>
               </CardContent>
