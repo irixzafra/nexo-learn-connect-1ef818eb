@@ -53,7 +53,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
       {/* Logo at the top with full title and subtitle */}
       <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={null} />
 
-      {/* Main Navigation Section - ahora usando el nuevo componente */}
+      {/* Main Navigation Section */}
       <SidebarMainNavigation 
         effectiveRole={effectiveRole}
         isCollapsed={isCollapsed}

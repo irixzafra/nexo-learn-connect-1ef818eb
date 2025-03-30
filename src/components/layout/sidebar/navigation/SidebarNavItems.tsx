@@ -40,7 +40,7 @@ export const SidebarNavItems: React.FC<SidebarNavItemsProps> = ({
     </>
   );
 
-  // Elementos adicionales para instructores
+  // Elementos adicionales para instructores (ahora llamados "profesores")
   const instructorItems = () => (
     <>
       {studentItems()}
