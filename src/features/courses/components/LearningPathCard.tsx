@@ -14,7 +14,7 @@ interface LearningPathCategory {
 }
 
 interface LearningPathProps {
-  id: number;
+  id: string; // Changed from number to string
   title: string;
   description: string;
   image: string;

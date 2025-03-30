@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -24,7 +25,7 @@ export interface FeaturedCourse {
   discount?: number;
   tags?: string[];
   start_date?: string;
-  currency?: 'eur' | 'usd';
+  currency: 'eur' | 'usd'; // Making currency required
   slug?: string;
   instructor_id: string;
   is_published: boolean;

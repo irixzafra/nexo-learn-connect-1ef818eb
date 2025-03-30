@@ -45,3 +45,21 @@
 - `src/components/layout/sidebar/navigation/SidebarMainNavigation.tsx`
 
 **Estado:** ✅ Resuelto
+
+### FIX-TYPE-COMPATIBILITY-01
+
+**Problema:** Errores de tipo en componentes del catálogo de cursos debido a incompatibilidades entre interfaces.
+
+**Causa Raíz:** 
+1. La propiedad `currency` en la interfaz `FeaturedCourse` era opcional, pero requerida en el tipo `Course`.
+2. La propiedad `id` en `LearningPathProps` esperaba un `number` pero recibía un `string`.
+
+**Solución:** Se actualizaron las interfaces para asegurar compatibilidad de tipos:
+1. Se hizo que `currency` fuera requerido en la interfaz `FeaturedCourse`.
+2. Se cambió el tipo de `id` en `LearningPathProps` de `number` a `string`.
+
+**Archivos Modificados:**
+- `src/features/courses/components/CourseGrid.tsx`
+- `src/features/courses/components/LearningPathCard.tsx`
+
+**Estado:** ✅ Resuelto
