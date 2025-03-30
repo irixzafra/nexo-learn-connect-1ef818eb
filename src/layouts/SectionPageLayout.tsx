@@ -43,7 +43,7 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
   stats
 }) => {
   return (
-    <div className={cn("container py-6 space-y-6", className)}>
+    <div className={cn("container py-8 space-y-8 px-8", className)}>
       {/* Header Section */}
       {header && (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -69,7 +69,7 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
       )}
 
       {/* Main Content */}
-      <div className="space-y-6">
+      <div className="space-y-8">
         {children}
       </div>
     </div>

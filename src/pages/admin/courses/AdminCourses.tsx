@@ -13,78 +13,12 @@ import { Button } from "@/components/ui/button";
 import AdminPageLayout from "@/layouts/AdminPageLayout";
 import { AdminTabItem } from "@/components/admin/AdminTabs";
 import AllCoursesTab from "@/features/admin/components/courses/AllCoursesTab";
+import CategoriesTab from "@/features/admin/components/courses/CategoriesTab";
+import LearningPathsTab from "@/features/admin/components/courses/LearningPathsTab";
+import AllCertificatesTab from "@/features/admin/components/courses/AllCertificatesTab";
+import AnalyticsTab from "@/features/admin/components/courses/AnalyticsTab";
 import { useAdminCourses } from "@/features/admin/hooks/useAdminCourses";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-
-// Create placeholder components for the new tabs
-const CategoriesTab: React.FC = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Gestión de Categorías</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="flex flex-col items-center justify-center py-12 text-center bg-muted/40 rounded-md">
-        <FolderTree className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium mb-2">Módulo en Desarrollo</h3>
-        <p className="text-muted-foreground">
-          La gestión de categorías estará disponible próximamente.
-        </p>
-      </div>
-    </CardContent>
-  </Card>
-);
-
-const LearningPathsTab: React.FC = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Rutas de Aprendizaje</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="flex flex-col items-center justify-center py-12 text-center bg-muted/40 rounded-md">
-        <Network className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium mb-2">Módulo en Desarrollo</h3>
-        <p className="text-muted-foreground">
-          La gestión de rutas de aprendizaje estará disponible próximamente.
-        </p>
-      </div>
-    </CardContent>
-  </Card>
-);
-
-const CertificatesTab: React.FC = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Certificados</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="flex flex-col items-center justify-center py-12 text-center bg-muted/40 rounded-md">
-        <Award className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium mb-2">Módulo en Desarrollo</h3>
-        <p className="text-muted-foreground">
-          La gestión de certificados estará disponible próximamente.
-        </p>
-      </div>
-    </CardContent>
-  </Card>
-);
-
-const AnalyticsTab: React.FC = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Analíticas de Cursos</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="flex flex-col items-center justify-center py-12 text-center bg-muted/40 rounded-md">
-        <BarChart3 className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium mb-2">Módulo en Desarrollo</h3>
-        <p className="text-muted-foreground">
-          Las analíticas de cursos estarán disponibles próximamente.
-        </p>
-      </div>
-    </CardContent>
-  </Card>
-);
 
 const AdminCourses: React.FC = () => {
   const navigate = useNavigate();
@@ -149,7 +83,7 @@ const AdminCourses: React.FC = () => {
       value: 'certificates',
       label: 'Certificados',
       icon: <Award className="h-4 w-4" />,
-      content: <CertificatesTab />
+      content: <AllCertificatesTab />
     },
     {
       value: 'analytics',

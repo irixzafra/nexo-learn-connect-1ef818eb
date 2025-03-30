@@ -483,6 +483,7 @@ export type Database = {
           display_order: number | null
           duration_text: string | null
           featured_instructor: string | null
+          grants_certificate: boolean | null
           id: string
           instructor_id: string
           is_featured_on_landing: boolean | null
@@ -511,6 +512,7 @@ export type Database = {
           display_order?: number | null
           duration_text?: string | null
           featured_instructor?: string | null
+          grants_certificate?: boolean | null
           id?: string
           instructor_id: string
           is_featured_on_landing?: boolean | null
@@ -539,6 +541,7 @@ export type Database = {
           display_order?: number | null
           duration_text?: string | null
           featured_instructor?: string | null
+          grants_certificate?: boolean | null
           id?: string
           instructor_id?: string
           is_featured_on_landing?: boolean | null
@@ -2058,9 +2061,23 @@ export type Database = {
           student_count: number
         }[]
       }
+      get_courses_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       get_dashboard_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      get_popular_courses: {
+        Args: {
+          limit_count?: number
+        }
+        Returns: {
+          course_id: string
+          title: string
+          enrollment_count: number
+        }[]
       }
       get_table_columns: {
         Args: {

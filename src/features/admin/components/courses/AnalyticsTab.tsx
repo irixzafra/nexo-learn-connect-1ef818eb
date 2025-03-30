@@ -10,15 +10,37 @@ import {
 import { BarChart, LineChart, PieChart } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAdminDashboardStats } from '@/features/admin/hooks/useAdminDashboardStats';
+import { 
+  ResponsiveContainer,
+  BarChart as RechartsBarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell
+} from 'recharts';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Colors for charts
+const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE'];
 
 const AnalyticsTab: React.FC = () => {
-  const { stats, isLoading } = useAdminDashboardStats();
+  const { stats, popularCourses, isLoading } = useAdminDashboardStats();
+  
+  const publicationData = [
+    { name: 'Publicados', value: stats.publishedCoursesCount },
+    { name: 'Borradores', value: stats.draftCoursesCount }
+  ];
   
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl">Analíticas de Cursos</CardTitle>
+          <CardTitle className="text-2xl">Analíticas de Cursos</CardTitle>
           <CardDescription>Estadísticas sobre el desempeño de los cursos en la plataforma</CardDescription>
         </CardHeader>
         <CardContent>
@@ -54,31 +76,96 @@ const AnalyticsTab: React.FC = () => {
                 />
               </div>
               
-              <div className="mt-10 h-96 flex items-center justify-center border rounded-lg bg-muted/10">
-                <div className="text-center">
-                  <BarChart className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-lg font-medium mb-2">Gráficos Avanzados</h3>
-                  <p className="text-muted-foreground max-w-md mx-auto">
-                    Las visualizaciones detalladas de datos de cursos y rendimiento de estudiantes estarán disponibles próximamente.
-                  </p>
-                </div>
+              <div className="grid md:grid-cols-2 gap-6 mt-6">
+                {/* Publication Status Chart */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Estado de Publicación</CardTitle>
+                    <CardDescription>Cursos publicados vs. borradores</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-[300px]">
+                    {isLoading ? (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Skeleton className="h-full w-full rounded-md" />
+                      </div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RechartsPieChart>
+                          <Pie
+                            data={publicationData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                          >
+                            {publicationData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                          <Legend />
+                        </RechartsPieChart>
+                      </ResponsiveContainer>
+                    )}
+                  </CardContent>
+                </Card>
+                
+                {/* Popular Courses Chart */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Cursos Más Populares</CardTitle>
+                    <CardDescription>Por número de matrículas</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-[300px]">
+                    {isLoading ? (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Skeleton className="h-full w-full rounded-md" />
+                      </div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RechartsBarChart
+                          data={popularCourses}
+                          margin={{
+                            top: 5,
+                            right: 30,
+                            left: 20,
+                            bottom: 5,
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="title" tick={false} />
+                          <YAxis />
+                          <Tooltip 
+                            formatter={(value: number, name: string, props: any) => [value, 'Matrículas']}
+                            labelFormatter={(label: string) => `Curso: ${label}`}
+                          />
+                          <Legend />
+                          <Bar dataKey="enrollment_count" name="Matrículas" fill="#8884d8" />
+                        </RechartsBarChart>
+                      </ResponsiveContainer>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
             
             <TabsContent value="enrollment">
-              <div className="h-72 flex items-center justify-center border rounded-lg">
+              <div className="h-[400px] flex items-center justify-center border rounded-lg">
                 <div className="text-center">
                   <LineChart className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-muted-foreground">Análisis de matriculaciones en desarrollo</p>
+                  <p className="text-muted-foreground">Análisis detallado de matriculaciones en desarrollo</p>
                 </div>
               </div>
             </TabsContent>
             
             <TabsContent value="completion">
-              <div className="h-72 flex items-center justify-center border rounded-lg">
+              <div className="h-[400px] flex items-center justify-center border rounded-lg">
                 <div className="text-center">
                   <PieChart className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-muted-foreground">Análisis de finalización de cursos en desarrollo</p>
+                  <p className="text-muted-foreground">Análisis detallado de finalización de cursos en desarrollo</p>
                 </div>
               </div>
             </TabsContent>
