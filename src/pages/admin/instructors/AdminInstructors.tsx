@@ -27,6 +27,21 @@ const AdminInstructors: React.FC = () => {
       instructor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       instructor.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const headerActions = [
+    <Button key="new-instructor" variant="default" size="sm">
+      <PlusCircle className="h-4 w-4 mr-2" />
+      Nuevo Instructor
+    </Button>,
+    <Button key="refresh" variant="outline" size="sm">
+      <RefreshCw className="h-4 w-4 mr-2" />
+      Actualizar
+    </Button>,
+    <Button key="export" variant="outline" size="sm">
+      <Download className="h-4 w-4 mr-2" />
+      Exportar
+    </Button>
+  ];
   
   return (
     <SectionPageLayout
@@ -34,20 +49,6 @@ const AdminInstructors: React.FC = () => {
         title: "Gestión de Instructores",
         description: "Administra los instructores de la plataforma"
       }}
-      actions={[
-        <Button key="new-instructor" variant="default" size="sm">
-          <PlusCircle className="h-4 w-4 mr-2" />
-          Nuevo Instructor
-        </Button>,
-        <Button key="refresh" variant="outline" size="sm">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Actualizar
-        </Button>,
-        <Button key="export" variant="outline" size="sm">
-          <Download className="h-4 w-4 mr-2" />
-          Exportar
-        </Button>
-      ]}
     >
       <Tabs defaultValue="all" className="w-full">
         <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">

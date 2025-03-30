@@ -9,6 +9,8 @@ import { Download, Filter, RefreshCw, Search } from 'lucide-react';
 
 const AuditLog: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   
   // Mock audit log data
   const auditLogs = [
@@ -25,22 +27,25 @@ const AuditLog: React.FC = () => {
           log.details.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
+  const actionButtons = (
+    <>
+      <Button key="refresh" variant="outline" size="sm">
+        <RefreshCw className="h-4 w-4 mr-2" />
+        Actualizar
+      </Button>
+      <Button key="export" variant="outline" size="sm">
+        <Download className="h-4 w-4 mr-2" />
+        Exportar Datos
+      </Button>
+    </>
+  );
+  
   return (
     <SectionPageLayout
       header={{
         title: "Registro de Auditoría",
         description: "Registro detallado de todas las acciones realizadas en el sistema"
       }}
-      actions={[
-        <Button key="refresh" variant="outline" size="sm">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Actualizar
-        </Button>,
-        <Button key="export" variant="outline" size="sm">
-          <Download className="h-4 w-4 mr-2" />
-          Exportar Datos
-        </Button>
-      ]}
     >
       <div className="bg-card rounded-lg border p-4 mb-6">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -77,12 +82,12 @@ const AuditLog: React.FC = () => {
           
           <div>
             <p className="text-sm font-medium mb-2">Fecha Desde</p>
-            <DatePicker />
+            <DatePicker date={startDate} onDateChange={setStartDate} />
           </div>
           
           <div>
             <p className="text-sm font-medium mb-2">Fecha Hasta</p>
-            <DatePicker />
+            <DatePicker date={endDate} onDateChange={setEndDate} />
           </div>
         </div>
         

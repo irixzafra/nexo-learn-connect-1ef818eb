@@ -1,4 +1,3 @@
-
 import React from 'react';
 import SectionPageLayout from '@/layouts/SectionPageLayout';
 import { Shield, Key, UserCheck, LockIcon } from 'lucide-react';
@@ -12,11 +11,7 @@ const AccessControl: React.FC = () => {
     <SectionPageLayout
       header={{
         title: "Control de Acceso",
-        description: "Gestiona los permisos y accesos a la plataforma",
-        breadcrumbs: [
-          { title: "Dashboard", href: "/admin/dashboard" },
-          { title: "Control de Acceso" }
-        ]
+        description: "Gestiona los permisos y accesos a la plataforma"
       }}
     >
       <Tabs defaultValue="permissions" className="space-y-6">

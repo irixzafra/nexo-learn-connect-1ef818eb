@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useLearningPaths } from '@/features/admin/hooks/useLearningPaths';
 import { Course } from '@/types/courses';
-import { Trash2, Plus, ArrowUpDown, DragHandleDots2Icon, AlertCircle, PenLine, FileText, ListChecks, ListFilter, Search } from 'lucide-react';
+import { Trash2, Plus, ArrowUpDown, GripVertical, AlertCircle, PenLine, FileText, ListChecks, ListFilter, Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/features/admin/utils/formatters';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,14 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 interface LearningPathForm {
   title: string;
   description: string;
-  estimatedHours?: number;
-}
-
-interface LearningPathCourseForm {
-  pathId: string;
-  courseId: string;
-  courseOrder: number;
-  isRequired: boolean;
+  estimated_hours?: number;
 }
 
 const LearningPathsTab: React.FC = () => {
@@ -38,12 +31,9 @@ const LearningPathsTab: React.FC = () => {
     error, 
     createLearningPath, 
     deleteLearningPath,
-    addCourseToPath,
-    removeCourseFromPath,
-    reorderPathCourse,
-    isCreatingPath,
-    isUpdatingPath,
-    isDeletingPath,
+    addCourseToLearningPath,
+    removeCourseFromLearningPath,
+    updateCoursesOrder
   } = useLearningPaths();
 
   const [newPathForm, setNewPathForm] = useState<LearningPathForm>({
@@ -70,7 +60,7 @@ const LearningPathsTab: React.FC = () => {
     createLearningPath.mutate({
       title: newPathForm.title,
       description: newPathForm.description,
-      estimatedHours: newPathForm.estimatedHours
+      estimated_hours: newPathForm.estimated_hours
     }, {
       onSuccess: () => {
         setNewPathForm({ title: '', description: '' });
@@ -84,19 +74,19 @@ const LearningPathsTab: React.FC = () => {
     
     const courseOrder = selectedPath?.courses?.length || 0;
     
-    addCourseToPath.mutate({
-      pathId: selectedPathId,
+    addCourseToLearningPath.mutate({
+      learningPathId: selectedPathId,
       courseId,
-      courseOrder,
-      isRequired: true
+      order: courseOrder
     });
   };
 
-  const handleRemoveCourse = (pathCourseId: string) => {
+  const handleRemoveCourse = (courseId: string) => {
     if (!selectedPathId) return;
     
-    removeCourseFromPath.mutate({
-      pathCourseId
+    removeCourseFromLearningPath.mutate({
+      learningPathId: selectedPathId,
+      courseId
     });
   };
 
@@ -106,7 +96,7 @@ const LearningPathsTab: React.FC = () => {
 
   const availableCourses = courses?.filter(course => {
     // Don't show courses that are already in the path
-    const isAlreadyInPath = selectedPath?.courses?.some(pc => pc.course_id === course.id);
+    const isAlreadyInPath = selectedPath?.courses?.some(pc => pc.id === course.id);
     return !isAlreadyInPath;
   });
 
@@ -170,14 +160,14 @@ const LearningPathsTab: React.FC = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="estimatedHours">Horas estimadas (opcional)</Label>
+                <Label htmlFor="estimated_hours">Horas estimadas (opcional)</Label>
                 <Input 
-                  id="estimatedHours" 
+                  id="estimated_hours" 
                   type="number"
-                  value={newPathForm.estimatedHours || ''}
+                  value={newPathForm.estimated_hours || ''}
                   onChange={(e) => setNewPathForm({
                     ...newPathForm, 
-                    estimatedHours: e.target.value ? parseInt(e.target.value) : undefined
+                    estimated_hours: e.target.value ? parseInt(e.target.value) : undefined
                   })}
                   placeholder="Ej: 120"
                 />
@@ -192,9 +182,9 @@ const LearningPathsTab: React.FC = () => {
               </Button>
               <Button 
                 onClick={handleCreatePath}
-                disabled={!newPathForm.title.trim() || isCreatingPath}
+                disabled={!newPathForm.title.trim() || createLearningPath.isPending}
               >
-                {isCreatingPath ? 'Creando...' : 'Crear Ruta'}
+                {createLearningPath.isPending ? 'Creando...' : 'Crear Ruta'}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -317,12 +307,6 @@ const LearningPathsTab: React.FC = () => {
                         {selectedPath.estimated_hours}
                       </div>
                     )}
-                    <div className="bg-muted px-3 py-1 rounded-md text-sm">
-                      <span className="text-muted-foreground mr-1">Estado:</span>
-                      <Badge variant={selectedPath.is_published ? "default" : "secondary"} className="ml-1">
-                        {selectedPath.is_published ? 'Publicada' : 'Borrador'}
-                      </Badge>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -347,39 +331,33 @@ const LearningPathsTab: React.FC = () => {
                         </div>
                       ) : (
                         <div className="space-y-3">
-                          {selectedPath.courses?.map((pathCourse, index) => {
-                            const course = pathCourse.course;
-                            return (
-                              <div 
-                                key={pathCourse.id} 
-                                className="flex items-center justify-between p-3 border rounded-md"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <div className="flex-shrink-0">
-                                    <DragHandleDots2Icon className="h-5 w-5 text-muted-foreground cursor-move" />
-                                  </div>
-                                  <div>
-                                    <p className="font-medium">{course.title}</p>
-                                    <p className="text-xs text-muted-foreground line-clamp-1">
-                                      {course.description || 'Sin descripción'}
-                                    </p>
-                                  </div>
+                          {selectedPath.courses?.map((course, index) => (
+                            <div 
+                              key={course.id} 
+                              className="flex items-center justify-between p-3 border rounded-md"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="flex-shrink-0">
+                                  <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <Badge variant="outline">
-                                    {pathCourse.isRequired ? 'Obligatorio' : 'Opcional'}
-                                  </Badge>
-                                  <Button 
-                                    size="icon" 
-                                    variant="ghost"
-                                    onClick={() => handleRemoveCourse(pathCourse.id)}
-                                  >
-                                    <Trash2 className="h-4 w-4 text-muted-foreground" />
-                                  </Button>
+                                <div>
+                                  <p className="font-medium">{course.title}</p>
+                                  <p className="text-xs text-muted-foreground line-clamp-1">
+                                    {course.description || 'Sin descripción'}
+                                  </p>
                                 </div>
                               </div>
-                            );
-                          })}
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  size="icon" 
+                                  variant="ghost"
+                                  onClick={() => handleRemoveCourse(course.id)}
+                                >
+                                  <Trash2 className="h-4 w-4 text-muted-foreground" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       )}
                     </CardContent>
