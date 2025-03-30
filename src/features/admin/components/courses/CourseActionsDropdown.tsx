@@ -1,28 +1,26 @@
 
 import React from 'react';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import { Link } from 'react-router-dom';
+import { MoreHorizontal, Edit, Eye, Trash, Users, Settings } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Eye, Pencil, Users } from 'lucide-react';
+import { Course } from '@/types/course';
 
 interface CourseActionsDropdownProps {
-  courseId: string;
-  courseTitle: string;
-  onViewDetails: (id: string) => void;
-  onEdit: (id: string) => void;
-  onEnrollUsers: (id: string, title: string) => void;
+  course: Course;
+  onDelete: (courseId: string) => void;
 }
 
 const CourseActionsDropdown: React.FC<CourseActionsDropdownProps> = ({
-  courseId,
-  courseTitle,
-  onViewDetails,
-  onEdit,
-  onEnrollUsers
+  course,
+  onDelete,
 }) => {
   return (
     <DropdownMenu>
@@ -33,17 +31,39 @@ const CourseActionsDropdown: React.FC<CourseActionsDropdownProps> = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => onViewDetails(courseId)}>
-          <Eye className="mr-2 h-4 w-4" />
-          <span>Ver detalles</span>
+        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to={`/admin/courses/${course.id}`} className="cursor-pointer">
+            <Edit className="mr-2 h-4 w-4" />
+            <span>Editar</span>
+          </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onEdit(courseId)}>
-          <Pencil className="mr-2 h-4 w-4" />
-          <span>Editar</span>
+        <DropdownMenuItem asChild>
+          <Link to={`/courses/${course.id}`} className="cursor-pointer">
+            <Eye className="mr-2 h-4 w-4" />
+            <span>Vista previa</span>
+          </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onEnrollUsers(courseId, courseTitle)}>
-          <Users className="mr-2 h-4 w-4" />
-          <span>Inscribir usuarios</span>
+        <DropdownMenuItem asChild>
+          <Link to={`/admin/courses/${course.id}/students`} className="cursor-pointer">
+            <Users className="mr-2 h-4 w-4" />
+            <span>Estudiantes</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to={`/admin/courses/${course.id}/settings`} className="cursor-pointer">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Configuración</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => onDelete(course.id)}
+          className="text-destructive cursor-pointer"
+        >
+          <Trash className="mr-2 h-4 w-4" />
+          <span>Eliminar</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
