@@ -1,8 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import PageStats, { StatItem } from '@/components/layout/page/PageStats';
+import PageFilters, { FilterOption } from '@/components/layout/page/PageFilters';
+import PageHelp, { HelpLink } from '@/components/layout/page/PageHelp';
 
 interface Breadcrumb {
   title: string;
@@ -34,6 +36,24 @@ interface SectionPageLayoutProps {
     description?: string;
     breadcrumbs?: Breadcrumb[];
     actions?: Action[];
+  };
+  stats?: {
+    stats: StatItem[];
+  };
+  filters?: {
+    searchPlaceholder?: string;
+    searchValue?: string;
+    onSearchChange?: (value: string) => void;
+    filterOptions?: FilterOption[];
+    onApplyFilters?: () => void;
+    onResetFilters?: () => void;
+    filterCount?: number;
+  };
+  help?: {
+    title?: string;
+    description?: string;
+    links?: HelpLink[];
+    icon?: React.ReactNode;
   };
   children: React.ReactNode;
 }
@@ -72,7 +92,13 @@ export const PageSection: React.FC<PageSectionProps> = ({
   );
 };
 
-const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({ header, children }) => {
+const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({ 
+  header, 
+  stats, 
+  filters, 
+  help, 
+  children 
+}) => {
   const { title, description, breadcrumbs, actions } = header;
 
   return (
@@ -143,7 +169,38 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({ header, children 
         )}
       </div>
 
+      {stats && (
+        <div className="mt-6">
+          <PageStats stats={stats.stats} />
+        </div>
+      )}
+
+      {filters && (
+        <div className="mt-6">
+          <PageFilters 
+            searchPlaceholder={filters.searchPlaceholder}
+            searchValue={filters.searchValue}
+            onSearchChange={filters.onSearchChange}
+            filterOptions={filters.filterOptions}
+            onApplyFilters={filters.onApplyFilters}
+            onResetFilters={filters.onResetFilters}
+            filterCount={filters.filterCount}
+          />
+        </div>
+      )}
+
       <main>{children}</main>
+
+      {help && (
+        <div className="mt-8">
+          <PageHelp
+            title={help.title}
+            description={help.description}
+            links={help.links}
+            icon={help.icon}
+          />
+        </div>
+      )}
     </div>
   );
 };
