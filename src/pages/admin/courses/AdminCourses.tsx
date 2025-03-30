@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -14,6 +15,7 @@ import { AdminTabItem } from "@/components/admin/AdminTabs";
 import AllCoursesTab from "@/features/admin/components/courses/AllCoursesTab";
 import { useAdminCourses } from "@/features/admin/hooks/useAdminCourses";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 // Create placeholder components for the new tabs
 const CategoriesTab: React.FC = () => (
@@ -90,6 +92,7 @@ const AdminCourses: React.FC = () => {
   const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<{id: string, title: string} | null>(null);
   const { courses, isLoading, error, fetchCourses, setCourses } = useAdminCourses();
+  const { toast } = useToast();
 
   const handleViewDetails = (courseId: string) => navigate(`/admin/courses/${courseId}`);
   const handleEdit = (courseId: string) => navigate(`/instructor/course/${courseId}/edit`);
@@ -100,7 +103,10 @@ const AdminCourses: React.FC = () => {
   };
 
   const handleEnrollmentComplete = () => {
-    toast.success("Usuario matriculado exitosamente");
+    toast({
+      title: "Éxito",
+      description: "Usuario matriculado exitosamente"
+    });
     fetchCourses();
   };
 
