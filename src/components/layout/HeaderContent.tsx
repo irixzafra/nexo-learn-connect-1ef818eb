@@ -11,10 +11,17 @@ import { NexoLogoBase } from '@/components/ui/logo/nexo-logo-base';
 import { useAuth } from '@/contexts/AuthContext';
 import { RoleIndicator } from './header/RoleIndicator';
 import { Home, BookOpen, MessageSquare, Search, Calendar, User, Bell } from 'lucide-react';
+import { UserRole } from '@/types/auth';
+import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 
-const HeaderContent: React.FC = () => {
+interface HeaderContentProps {
+  onRoleChange?: (role: UserRole) => void;
+}
+
+const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
   const location = useLocation();
   const { userRole } = useAuth();
+  const { toggleSidebar } = useSidebar();
   
   // Extract page title from path
   const getPageTitle = () => {
@@ -32,7 +39,8 @@ const HeaderContent: React.FC = () => {
       'calendar': 'Calendario',
       'admin': 'Administración',
       'instructor': 'Instructor',
-      'dashboard': 'Dashboard'
+      'dashboard': 'Dashboard',
+      'search': 'Búsqueda'
     };
     
     return titleMap[lastSegment] || 
@@ -44,6 +52,7 @@ const HeaderContent: React.FC = () => {
       <div className="container mx-auto flex justify-between items-center h-14">
         {/* Left side */}
         <div className="flex items-center gap-4">
+          <SidebarTrigger className="md:flex" />
           <NexoLogoBase className="hidden sm:flex" />
           <span className="text-lg font-medium">{getPageTitle()}</span>
         </div>
@@ -131,7 +140,7 @@ const HeaderContent: React.FC = () => {
         
         {/* Right side */}
         <div className="flex items-center gap-2">
-          {userRole && <RoleIndicator viewingAs={userRole} />}
+          {userRole && <RoleIndicator viewingAs={userRole} onRoleChange={onRoleChange} />}
           <HeaderActions />
           <UserMenu />
         </div>

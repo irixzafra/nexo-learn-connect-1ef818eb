@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { SidebarProvider } from "@/components/ui/sidebar/sidebar-provider";
@@ -7,8 +7,9 @@ import HeaderContent from "@/components/layout/HeaderContent";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { EditModeProvider } from "@/contexts/EditModeContext";
 import { connectionService } from "@/lib/offline/connectionService";
-import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import SidebarNavigation from "@/components/layout/SidebarNavigation";
+import { UserRole } from "@/types/auth";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -20,7 +21,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
   const [isOnline, setIsOnline] = useState(connectionService.isCurrentlyOnline());
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const { userRole } = useAuth();
-  const [viewAsRole, setViewAsRole] = useState<'current' | string>('current');
+  const [viewAsRole, setViewAsRole] = useState<'current' | UserRole>('current');
 
   useEffect(() => {
     const unsubscribe = connectionService.addListener(online => {
@@ -39,16 +40,22 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     return () => clearTimeout(timer);
   }, [children]);
 
-  const handleRoleChange = (role: string) => {
+  const handleRoleChange = (role: UserRole) => {
     setViewAsRole(role);
   };
 
   return (
     <EditModeProvider>
       <SidebarProvider>
-        <div className="min-h-screen flex dark:bg-gray-950">
+        <div className="min-h-screen flex dark:bg-gray-950 w-full">
+          {/* Sidebar */}
+          <div className="hidden md:block sidebar-container">
+            <SidebarNavigation viewAsRole={viewAsRole} />
+          </div>
+
+          {/* Main Content */}
           <div className="flex-1 flex flex-col min-h-screen">
-            <HeaderContent />
+            <HeaderContent onRoleChange={handleRoleChange} />
             <div
               className={cn(
                 "flex-1 transition-all duration-200 ease-in-out",

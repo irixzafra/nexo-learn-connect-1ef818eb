@@ -10,13 +10,18 @@ import {
   PerfilNavigation,
   ConfiguracionNavigation
 } from './sidebar/navigation';
-import { SidebarTrigger } from '@/components/ui/sidebar/components/sidebar-trigger';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { cn } from '@/lib/utils';
 import { useNotifications } from '@/hooks/useNotifications';
+import { 
+  SidebarContent,
+  SidebarHeader,
+  SidebarFooter,
+} from '@/components/ui/sidebar';
+import { NexoLogo } from '@/components/ui/logo';
 
 interface SidebarNavigationProps {
-  viewAsRole?: string;
+  viewAsRole?: 'current' | UserRole;
 }
 
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => {
@@ -79,54 +84,64 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   const canSeeAdmin = effectiveRole === 'admin' || effectiveRole === 'instructor';
 
   return (
-    <div className={cn(
-      "flex flex-col py-2 h-full",
-      isCollapsed ? "px-2" : "px-4"
-    )}>
-      <div className="mb-4 mt-2">
-        {!isCollapsed && <h1 className="text-lg font-semibold text-gray-900 dark:text-white sr-only">Nexo Academia</h1>}
-      </div>
+    <div className="h-full flex flex-col bg-sidebar border-r">
+      <SidebarHeader className="p-4 flex items-center justify-center border-b">
+        <NexoLogo variant="icon" className="h-8 w-auto" />
+      </SidebarHeader>
       
-      {/* Inicio */}
-      <HomeNavigation 
-        isOpen={openGroups.home} 
-        onToggle={() => toggleGroup('home')}
-        userRole={effectiveRole}
-      />
+      <SidebarContent className="flex-1 overflow-auto">
+        <div className={cn(
+          "flex flex-col py-2 h-full",
+          isCollapsed ? "px-2" : "px-4"
+        )}>
+          {/* Inicio */}
+          <HomeNavigation 
+            isOpen={openGroups.home} 
+            onToggle={() => toggleGroup('home')}
+            userRole={effectiveRole}
+          />
+          
+          {/* Cursos */}
+          <CursosNavigation 
+            isOpen={openGroups.cursos} 
+            onToggle={() => toggleGroup('cursos')} 
+          />
+          
+          {/* Comunidad */}
+          <ComunidadNavigation 
+            isOpen={openGroups.comunidad} 
+            onToggle={() => toggleGroup('comunidad')} 
+            messagesCount={messagesCount}
+          />
+          
+          {/* Administración - Solo visible para admin o instructor */}
+          {canSeeAdmin && (
+            <AdministracionNavigation 
+              isOpen={openGroups.administracion} 
+              onToggle={() => toggleGroup('administracion')} 
+            />
+          )}
+          
+          {/* Perfil */}
+          <PerfilNavigation 
+            isOpen={openGroups.perfil} 
+            onToggle={() => toggleGroup('perfil')} 
+            notificationsCount={notificationsCount}
+          />
+          
+          {/* Configuración */}
+          <ConfiguracionNavigation 
+            isOpen={openGroups.configuracion} 
+            onToggle={() => toggleGroup('configuracion')} 
+          />
+        </div>
+      </SidebarContent>
       
-      {/* Cursos */}
-      <CursosNavigation 
-        isOpen={openGroups.cursos} 
-        onToggle={() => toggleGroup('cursos')} 
-      />
-      
-      {/* Comunidad */}
-      <ComunidadNavigation 
-        isOpen={openGroups.comunidad} 
-        onToggle={() => toggleGroup('comunidad')} 
-        messagesCount={messagesCount}
-      />
-      
-      {/* Administración - Solo visible para admin o instructor */}
-      {canSeeAdmin && (
-        <AdministracionNavigation 
-          isOpen={openGroups.administracion} 
-          onToggle={() => toggleGroup('administracion')} 
-        />
-      )}
-      
-      {/* Perfil */}
-      <PerfilNavigation 
-        isOpen={openGroups.perfil} 
-        onToggle={() => toggleGroup('perfil')} 
-        notificationsCount={notificationsCount}
-      />
-      
-      {/* Configuración */}
-      <ConfiguracionNavigation 
-        isOpen={openGroups.configuracion} 
-        onToggle={() => toggleGroup('configuracion')} 
-      />
+      <SidebarFooter className="p-4 border-t">
+        <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+          Nexo Academia © {new Date().getFullYear()}
+        </div>
+      </SidebarFooter>
     </div>
   );
 };
