@@ -44,7 +44,7 @@ const PublicRoutes: React.FC = () => {
       <Route path="/courses/:courseId" element={<CourseDetailPage />} />
       
       {/* Nueva ruta: Acceso a curso por slug */}
-      <Route path="/cursos/:slug" element={<CourseLanding />} />
+      <Route path="/cursos/:slug" element={<CourseDetailPage />} />
       
       <Route path="/courses/:courseId/learn/:lessonId" element={
         <AppLayout>

@@ -1,23 +1,31 @@
 
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
-import { useCoursePublicData } from '@/features/courses/hooks/useCoursePublicData';
+import { useCoursePublicData, useCoursePublicDataBySlug } from '@/features/courses/hooks/useCoursePublicData';
 import { CourseLandingPage } from '@/features/courses/components/CourseLandingPage';
 import PublicLayout from '@/layouts/PublicLayout';
 
 const CourseDetailPage: React.FC = () => {
-  // Extract courseId from URL params
-  const { courseId } = useParams<{ courseId: string }>();
+  // Extract courseId or slug from URL params
+  const { courseId, slug } = useParams<{ courseId?: string; slug?: string }>();
+  const navigate = useNavigate();
   
-  // Fetch course data
-  const { course, isLoading, error } = useCoursePublicData(courseId);
+  // Determine if we're using ID or slug
+  const usingSlug = !courseId && !!slug;
+  
+  // Fetch course data based on ID or slug
+  const idHook = useCoursePublicData(courseId);
+  const slugHook = useCoursePublicDataBySlug(slug);
+  
+  // Use the appropriate data based on what's available
+  const { course, isLoading, error } = usingSlug ? slugHook : idHook;
 
   // Temporary simplified logic for pending functionality
   const isEnrolled = false;
   const isEnrolling = false;
   const handleEnroll = () => {
-    console.log("TODO: Implement enrollment functionality", courseId);
+    console.log("TODO: Implement enrollment functionality", courseId || slug);
     return Promise.resolve();
   };
   
@@ -52,6 +60,12 @@ const CourseDetailPage: React.FC = () => {
           <p className="text-lg text-muted-foreground mb-10">
             El curso que estás buscando no está disponible o ha sido eliminado.
           </p>
+          <button 
+            className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/90 transition-colors"
+            onClick={() => navigate('/courses')}
+          >
+            Ver todos los cursos
+          </button>
         </div>
       </PublicLayout>
     );

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { EnhancedCourseCard } from './EnhancedCourseCard';
 import { Course } from '@/types/course';
+import { useNavigate } from 'react-router-dom';
 
 export interface FeaturedCourse {
   id: string;
@@ -48,6 +49,7 @@ export const CourseGrid: React.FC<CourseGridProps> = ({
 }) => {
   const [visibleCourses, setVisibleCourses] = useState<number>(6);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
   
   const handleLoadMore = () => {
     setIsLoading(true);
@@ -61,6 +63,16 @@ export const CourseGrid: React.FC<CourseGridProps> = ({
   // Get only the visible portion of courses
   const coursesToShow = filteredCourses.slice(0, visibleCourses);
   const hasMoreCourses = visibleCourses < filteredCourses.length;
+
+  const handleCourseClick = (course: FeaturedCourse) => {
+    if (onCourseClick) {
+      onCourseClick(course.id, course.title);
+    } else {
+      // Use slug for navigation if available, otherwise use ID
+      const courseUrl = course.slug ? `/cursos/${course.slug}` : `/courses/${course.id}`;
+      navigate(courseUrl);
+    }
+  };
 
   // Animation variants for the grid items
   const container = {
@@ -105,7 +117,7 @@ export const CourseGrid: React.FC<CourseGridProps> = ({
               isPopular={index === 0 && selectedCategory === 'all'}
               isNew={index === 1 && selectedCategory === 'all'}
               isUpcoming={index === 2 && course.start_date !== undefined}
-              onClick={onCourseClick ? () => onCourseClick(course.id, course.title) : undefined}
+              onClick={() => handleCourseClick(course)}
             />
           </motion.div>
         ))}
