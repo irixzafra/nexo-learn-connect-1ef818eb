@@ -88,7 +88,7 @@ export const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
           {!isCollapsed && (
             <span>{route.label}</span>
           )}
-          {route.badge && route.badge > 0 && (
+          {route.badge !== undefined && route.badge > 0 && (
             <Badge 
               variant="default" 
               className={cn(

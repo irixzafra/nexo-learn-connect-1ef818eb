@@ -43,8 +43,9 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     
     if (onChange) {
       if (role === 'current') {
-        onChange(toUserRoleType(userRole as string));
-        toast.success(`Volviendo a tu rol original: ${getRoleLabel(toUserRoleType(userRole as string))}`);
+        const actualRole = toUserRoleType(userRole as string);
+        onChange(actualRole);
+        toast.success(`Volviendo a tu rol original: ${getRoleLabel(actualRole)}`);
       } else {
         onChange(role);
         toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);

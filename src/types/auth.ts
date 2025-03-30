@@ -17,7 +17,7 @@ export interface UserProfile {
   full_name?: string;
   avatar_url?: string;
   username?: string;
-  role?: string;
+  role: UserRoleType; // Changed from optional to required
   bio?: string;
   created_at?: string;
   updated_at?: string;

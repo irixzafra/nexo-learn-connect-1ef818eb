@@ -56,6 +56,13 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
   // Admin section expand state
   const [adminExpanded, setAdminExpanded] = useState(location.pathname.startsWith('/admin'));
+  
+  // Update admin expanded state when route changes
+  useEffect(() => {
+    if (location.pathname.startsWith('/admin')) {
+      setAdminExpanded(true);
+    }
+  }, [location.pathname]);
 
   // Don't show sidebar for anonymous users on landing page
   if (effectiveRole === 'anonimo' && isLandingPage) {
@@ -69,22 +76,11 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
     { code: 'pt', name: 'Português' }
   ];
 
-  // Main navigation items based on role
-  const getNavItems = () => {
-    const commonItems = [
-      { to: getHomePath(effectiveRole), icon: Home, label: "Inicio" },
-      { to: "/courses", icon: BookOpen, label: "Cursos" },
-      { to: "/community", icon: Users, label: "Comunidad" },
-      { to: "/messages", icon: MessageSquare, label: "Mensajes", badge: messagesCount },
-      { to: "/notifications", icon: Bell, label: "Notificaciones", badge: notificationsCount },
-      { to: "/profile", icon: User, label: "Perfil" }
-    ];
-    
-    return commonItems;
-  };
-
   // Log the effectiveRole for debugging
   console.log("Current effective role:", effectiveRole);
+
+  // Check if user should see admin menu
+  const shouldShowAdminMenu = effectiveRole === 'admin';
 
   return (
     <div className="h-full flex flex-col py-2">
@@ -101,7 +97,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
       )}
 
       {/* Admin Section - Only show for admin role */}
-      {(effectiveRole === 'admin') && (
+      {shouldShowAdminMenu && (
         <AdminSection 
           expanded={adminExpanded} 
           onToggle={() => setAdminExpanded(!adminExpanded)} 
@@ -111,16 +107,24 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
       {/* Main Navigation Section - Simplified */}
       <div className={`flex-1 overflow-auto px-${isCollapsed ? '2' : '3'} mt-2`}>
         <div className="space-y-1">
-          {getNavItems().map((item) => (
-            <MenuItem 
-              key={item.to}
-              to={item.to} 
-              icon={item.icon} 
-              label={item.label} 
-              badge={item.badge} 
-              isCollapsed={isCollapsed}
-            />
-          ))}
+          <MenuItem to={getHomePath(effectiveRole)} icon={Home} label="Inicio" isCollapsed={isCollapsed} />
+          <MenuItem to="/courses" icon={BookOpen} label="Cursos" isCollapsed={isCollapsed} />
+          <MenuItem to="/community" icon={Users} label="Comunidad" isCollapsed={isCollapsed} />
+          <MenuItem 
+            to="/messages" 
+            icon={MessageSquare} 
+            label="Mensajes" 
+            badge={messagesCount} 
+            isCollapsed={isCollapsed} 
+          />
+          <MenuItem 
+            to="/notifications" 
+            icon={Bell} 
+            label="Notificaciones" 
+            badge={notificationsCount} 
+            isCollapsed={isCollapsed} 
+          />
+          <MenuItem to="/profile" icon={User} label="Perfil" isCollapsed={isCollapsed} />
         </div>
       </div>
       

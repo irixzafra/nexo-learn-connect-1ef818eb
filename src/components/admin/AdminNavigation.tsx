@@ -9,8 +9,6 @@ import {
   CreditCard, 
   Database,
   Settings,
-  Bell,
-  Route,
   Shield
 } from 'lucide-react';
 import { 
@@ -45,19 +43,7 @@ const adminCategories = [
     id: 'finances',
     icon: CreditCard, 
     label: "Finanzas", 
-    path: "/admin/finances",
-  },
-  { 
-    id: 'learning',
-    icon: Route, 
-    label: "Rutas", 
-    path: "/admin/learning-paths",
-  },
-  { 
-    id: 'notifications',
-    icon: Bell, 
-    label: "Notificaciones", 
-    path: "/admin/notifications",
+    path: "/admin/finanzas",
   },
   { 
     id: 'data',

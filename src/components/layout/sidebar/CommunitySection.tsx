@@ -2,17 +2,29 @@
 import React from 'react';
 import { SidebarGroup } from './SidebarGroup';
 import { MenuItem } from './MenuItems';
-import { MessageSquare, Users, Bell } from 'lucide-react';
-import { useNotifications } from '@/hooks/useNotifications';
+import { 
+  Users, 
+  MessageSquare,
+  Heart,
+  Megaphone,
+  Newspaper,
+  Briefcase,
+  Calendar
+} from 'lucide-react';
 
 interface CommunitySectionProps {
   expanded: boolean;
   onToggle: () => void;
+  messagesCount?: number;
+  notificationsCount?: number;
 }
 
-export const CommunitySection: React.FC<CommunitySectionProps> = ({ expanded, onToggle }) => {
-  const { unreadCount } = useNotifications();
-  
+export const CommunitySection: React.FC<CommunitySectionProps> = ({ 
+  expanded, 
+  onToggle,
+  messagesCount = 0,
+  notificationsCount = 0
+}) => {
   return (
     <SidebarGroup 
       label="Comunidad" 
@@ -20,9 +32,12 @@ export const CommunitySection: React.FC<CommunitySectionProps> = ({ expanded, on
       isExpanded={expanded} 
       onToggle={onToggle}
     >
-      <MenuItem to="/messages" icon={MessageSquare} label="Mensajes" badge={unreadCount > 0 ? unreadCount : undefined} />
-      <MenuItem to="/notifications" icon={Bell} label="Notificaciones" />
-      <MenuItem to="/network" icon={Users} label="Red de Contactos" disabled={true} />
+      <MenuItem to="/comunidad/foros" icon={Newspaper} label="Foros" />
+      <MenuItem to="/comunidad/grupos" icon={Users} label="Grupos" />
+      <MenuItem to="/comunidad/mensajes" icon={MessageSquare} label="Mensajes" badge={messagesCount} />
+      <MenuItem to="/comunidad/eventos" icon={Calendar} label="Eventos" />
+      <MenuItem to="/comunidad/empleos" icon={Briefcase} label="Empleos" />
+      <MenuItem to="/comunidad/anuncios" icon={Megaphone} label="Anuncios" badge={notificationsCount} />
     </SidebarGroup>
   );
 };

@@ -1,197 +1,192 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
-import { UserProfile, UserRoleType } from '@/types/auth';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { Auth, ThemeSupa } from '@supabase/auth-ui-react';
+import {
+  useSession,
+  useSupabaseClient,
+  useUser,
+} from '@supabase/auth-helpers-react';
+import { useRouter } from 'next/router';
+import { Session } from '@supabase/supabase-js';
+import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
 
 interface AuthContextType {
-  user: User | null;
+  isLoading: boolean;
+  isAuthReady: boolean;
+  user: any | null;
   session: Session | null;
   profile: UserProfile | null;
   userRole: UserRoleType | null;
-  isLoading: boolean;
+  theme: string;
+  supabaseClient: any;
+  showAuthModal: boolean;
+  toggleAuthModal: () => void;
   logout: () => Promise<void>;
-  isInitialized: boolean;
-  isAuthenticated: boolean;
+  updateProfile: (updates: any) => Promise<void>;
+  setTheme: (theme: string) => void;
+  setUserRole: (role: UserRoleType) => void;
+  saveUserPreferences: (preferences: { theme?: string; role?: UserRoleType }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [userRole, setUserRole] = useState<UserRoleType | null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        return null;
-      }
-
-      return data as UserProfile;
-    } catch (error) {
-      console.error('Error in fetchUserProfile:', error);
-      return null;
-    }
-  };
-
-  const ensureUserProfile = async (userId: string, email: string) => {
-    try {
-      const { data: existingProfile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-        
-      if (!existingProfile) {
-        console.log('No profile found, creating one for user:', userId);
-        const { error: createError } = await supabase
-          .from('profiles')
-          .insert({
-            id: userId,
-            full_name: email.split('@')[0],
-            role: 'student',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          });
-          
-        if (createError) {
-          console.error('Error creating user profile:', createError);
-          return null;
-        }
-        
-        return await fetchUserProfile(userId);
-      }
-      
-      return existingProfile as UserProfile;
-    } catch (error) {
-      console.error('Error in ensureUserProfile:', error);
-      return null;
-    }
-  };
+  const [isAuthReady, setIsAuthReady] = useState(false);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [role, setRole] = useState<UserRoleType | null>(null);
+  const [theme, setTheme] = useState<string>(localStorage.getItem('theme') || 'dark');
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  
+  const supabaseClient = useSupabaseClient();
+  const user = useUser();
+  const session = useSession();
+  const router = useRouter();
 
   useEffect(() => {
-    console.info('Setting up auth state listener');
-    
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
-        console.info('Auth state changed:', event, newSession?.user?.id);
-        
-        if (event === 'SIGNED_OUT') {
-          setSession(null);
-          setUser(null);
-          setProfile(null);
-          setUserRole(null);
-          return;
-        }
-        
-        if (newSession?.user) {
-          setSession(newSession);
-          setUser(newSession.user);
-          
-          setTimeout(async () => {
-            const userProfile = await ensureUserProfile(newSession.user.id, newSession.user.email || '');
-            if (userProfile) {
-              setProfile(userProfile);
-              setUserRole(userProfile.role || null);
-            }
-          }, 0);
-        }
-      }
-    );
-
-    const initializeAuth = async () => {
+    const getProfile = async () => {
       setIsLoading(true);
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        
-        if (currentSession?.user) {
-          console.info('Found existing session for user:', currentSession.user.id);
-          setSession(currentSession);
-          setUser(currentSession.user);
-          
-          const userProfile = await ensureUserProfile(currentSession.user.id, currentSession.user.email || '');
-          if (userProfile) {
-            console.info('Found/created profile with role:', userProfile.role);
-            setProfile(userProfile);
-            setUserRole(userProfile.role || null);
-          } else {
-            console.warn('No profile found for user:', currentSession.user.id);
+        if (user) {
+          const { data: profileData, error, status } = await supabaseClient
+            .from('profiles')
+            .select(`full_name, avatar_url, username, website, role, bio, created_at, updated_at`)
+            .eq('id', user.id)
+            .single();
+
+          if (error && status !== 406) {
+            throw error;
           }
-        } else {
-          console.info('No active session found');
+          
+          if (profileData) {
+            const userProfile: UserProfile = {
+              id: user.id,
+              email: user.email || undefined,
+              full_name: profileData.full_name || undefined,
+              avatar_url: profileData.avatar_url || undefined,
+              username: profileData.username || undefined,
+              role: toUserRoleType(profileData.role) || 'student',
+              bio: profileData.bio || undefined,
+              created_at: profileData.created_at || undefined,
+              updated_at: profileData.updated_at || undefined,
+            };
+            
+            setProfile(userProfile);
+            setRole(toUserRoleType(userProfile.role));
+          }
         }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
+      } catch (error: any) {
+        console.error("Error fetching profile:", error.message);
       } finally {
         setIsLoading(false);
-        setIsInitialized(true);
+        setIsAuthReady(true);
       }
     };
 
-    initializeAuth();
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    getProfile();
+  }, [user, supabaseClient]);
+  
+  useEffect(() => {
+    // Load theme from localStorage
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+      setTheme(storedTheme);
+    }
+    
+    // Load user role from localStorage
+    const storedRole = localStorage.getItem('userRole');
+    if (storedRole) {
+      setRole(toUserRoleType(storedRole));
+    }
   }, []);
 
-  const logout = async (): Promise<void> => {
+  const toggleAuthModal = () => {
+    setShowAuthModal(!showAuthModal);
+  };
+
+  const logout = async () => {
     try {
-      console.info('Logging out user');
-      await supabase.auth.signOut();
-    } catch (error) {
-      console.error('Error during logout:', error);
-      throw error;
+      await supabaseClient.auth.signOut();
+      setProfile(null);
+      setRole(null);
+      router.push('/auth/login');
+    } catch (error: any) {
+      console.error('Error during logout:', error.message);
     }
   };
 
-  const isAuthenticated = !!session && !!user;
-
-  const ensureValidRole = (role: string | null): UserRoleType => {
-    if (!role) return 'student';
-  
-    const validRoles: UserRoleType[] = [
-      'admin', 'instructor', 'student', 'moderator', 
-      'content_creator', 'guest', 'beta_tester', 'sistemas', 'anonimo'
-    ];
-  
-    return validRoles.includes(role as UserRoleType) 
-      ? (role as UserRoleType) 
-      : 'student';
+  const updateProfile = async (updates: any) => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabaseClient.from('profiles').upsert(
+        {
+          id: user?.id,
+          updated_at: new Date().toISOString(),
+          ...updates,
+        },
+        { returning: 'minimal' }
+      );
+      if (error) {
+        throw error;
+      }
+      setProfile((prevProfile: any) => ({
+        ...prevProfile,
+        ...updates,
+      }));
+    } catch (error: any) {
+      console.error('Error updating profile:', error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const value = {
+  const setTheme = (theme: string) => {
+    setTheme(theme);
+    localStorage.setItem('theme', theme);
+  };
+
+  const setUserRole = (role: UserRoleType) => {
+    setRole(role);
+  };
+
+  const saveUserPreferences = async (preferences: { theme?: string; role?: UserRoleType }) => {
+    if (preferences.theme) {
+      setTheme(preferences.theme);
+      localStorage.setItem('theme', preferences.theme);
+    }
+    
+    if (preferences.role) {
+      setRole(preferences.role);
+      localStorage.setItem('userRole', preferences.role);
+    }
+  };
+
+  const value: AuthContextType = {
+    isLoading,
+    isAuthReady,
     user,
     session,
     profile,
-    userRole,
-    isLoading,
+    userRole: role,
+    theme,
+    supabaseClient,
+    showAuthModal,
+    toggleAuthModal,
     logout,
-    isInitialized,
-    isAuthenticated
+    updateProfile,
+    setTheme,
+    setUserRole,
+    saveUserPreferences,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within a AuthProvider');
+  }
+  return context;
+}
