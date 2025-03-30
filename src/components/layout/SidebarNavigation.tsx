@@ -8,8 +8,7 @@ import {
   ComunidadNavigation,
   EnsenanzaNavigation,
   AdministracionNavigation,
-  CuentaNavigation,
-  SistemasNavigation
+  CuentaNavigation
 } from './sidebar/navigation';
 import { SidebarTrigger } from '@/components/ui/sidebar/components/sidebar-trigger';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
@@ -43,8 +42,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
         comunidad: true,
         ensenanza: true,
         administracion: true,
-        cuenta: true,
-        sistemas: true
+        cuenta: true
       };
     } catch (e) {
       // Fallback defaults if localStorage fails
@@ -53,8 +51,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
         comunidad: true,
         ensenanza: true,
         administracion: true,
-        cuenta: true,
-        sistemas: true
+        cuenta: true
       };
     }
   };
@@ -76,7 +73,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   // Check if a role should see specific sections
   const canSeeEnsenanza = effectiveRole === 'instructor' || effectiveRole === 'admin';
   const canSeeAdmin = effectiveRole === 'admin';
-  const canSeeSistemas = effectiveRole === 'sistemas' || effectiveRole === 'admin';
 
   return (
     <div className={cn(
@@ -130,14 +126,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
         isOpen={openGroups.cuenta} 
         onToggle={() => toggleGroup('cuenta')} 
       />
-      
-      {/* Bloque 7: Sistemas - Solo visible para admin o sistemas */}
-      {canSeeSistemas && (
-        <SistemasNavigation 
-          isOpen={openGroups.sistemas} 
-          onToggle={() => toggleGroup('sistemas')} 
-        />
-      )}
     </div>
   );
 };

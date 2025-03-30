@@ -1,8 +1,9 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { OnboardingModal } from './OnboardingModal';
 import { Button } from '@/components/ui/button';
+import { Info } from 'lucide-react';
 
 interface OnboardingTriggerProps {
   autoStart?: boolean;
@@ -13,17 +14,6 @@ export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({
 }) => {
   const { startOnboarding, isOnboardingActive, featuresConfig } = useOnboarding();
 
-  useEffect(() => {
-    if (autoStart && featuresConfig.autoStartOnboarding && !isOnboardingActive) {
-      // Start with a small delay to ensure everything is loaded
-      const timer = setTimeout(() => {
-        startOnboarding();
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [autoStart, startOnboarding, isOnboardingActive, featuresConfig.autoStartOnboarding]);
-
   // Si la funcionalidad está desactivada, no renderizamos el botón
   if (!featuresConfig.showOnboardingTrigger) {
     return <OnboardingModal />;
@@ -32,11 +22,12 @@ export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({
   return (
     <>
       <Button 
-        variant="outline" 
+        variant="outline"
+        size="icon"
         onClick={startOnboarding}
-        className="mr-4"
+        title="Iniciar tutorial"
       >
-        Iniciar tutorial
+        <Info className="h-4 w-4" />
       </Button>
       <OnboardingModal />
     </>

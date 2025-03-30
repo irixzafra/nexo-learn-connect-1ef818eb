@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
@@ -7,8 +8,7 @@ import {
   ComunidadNavigation,
   EnsenanzaNavigation,
   AdministracionNavigation,
-  CuentaNavigation,
-  SistemasNavigation
+  CuentaNavigation
 } from './sidebar/navigation';
 
 interface GroupedNavigationProps {
@@ -30,8 +30,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
         comunidad: true,
         ensenanza: true,
         administracion: true,
-        cuenta: true,
-        sistemas: true
+        cuenta: true
       };
     } catch (e) {
       // Fallback defaults if localStorage fails
@@ -40,8 +39,7 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
         comunidad: true,
         ensenanza: true,
         administracion: true,
-        cuenta: true,
-        sistemas: true
+        cuenta: true
       };
     }
   };
@@ -63,7 +61,6 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
   // Check if a role should see specific sections
   const canSeeEnsenanza = effectiveRole === 'instructor' || effectiveRole === 'admin';
   const canSeeAdmin = effectiveRole === 'admin';
-  const canSeeSistemas = effectiveRole === 'sistemas' || effectiveRole === 'admin';
 
   return (
     <div className="flex flex-col py-2">
@@ -106,14 +103,6 @@ const GroupedNavigation: React.FC<GroupedNavigationProps> = ({ viewAsRole }) => 
         isOpen={openGroups.cuenta} 
         onToggle={() => toggleGroup('cuenta')} 
       />
-      
-      {/* Bloque 7: Sistemas - Solo visible para admin o sistemas */}
-      {canSeeSistemas && (
-        <SistemasNavigation 
-          isOpen={openGroups.sistemas} 
-          onToggle={() => toggleGroup('sistemas')} 
-        />
-      )}
     </div>
   );
 };

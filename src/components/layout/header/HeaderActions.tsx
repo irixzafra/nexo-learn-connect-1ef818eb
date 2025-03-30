@@ -10,6 +10,7 @@ import { NotificationIndicator } from '@/components/notifications/NotificationIn
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { OnboardingTrigger } from '@/components/onboarding/OnboardingTrigger';
 import { useOnboarding } from '@/contexts/OnboardingContext';
+import { BookOpen } from 'lucide-react';
 
 export const HeaderActions: React.FC = () => {
   const navigate = useNavigate();
@@ -38,11 +39,12 @@ export const HeaderActions: React.FC = () => {
       
       <Button 
         variant="outline" 
-        size="sm"
+        size="icon"
         onClick={() => navigate('/courses')}
         className="hidden md:flex"
+        title="Explorar cursos"
       >
-        Explorar cursos
+        <BookOpen className="h-4 w-4" />
       </Button>
     </div>
   );

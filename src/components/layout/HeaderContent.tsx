@@ -8,6 +8,7 @@ import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuL
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { NexoLogoBase } from '@/components/ui/logo/nexo-logo-base';
+import { Home, BookOpen, MessageSquare } from 'lucide-react';
 
 const HeaderContent: React.FC = () => {
   const location = useLocation();
@@ -44,7 +45,7 @@ const HeaderContent: React.FC = () => {
           <NexoLogoBase className="hidden sm:flex" />
           <span className="text-lg font-medium">{getPageTitle()}</span>
           
-          {/* Horizontal Navigation Menu */}
+          {/* Horizontal Navigation Menu with Icons */}
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -54,8 +55,10 @@ const HeaderContent: React.FC = () => {
                       navigationMenuTriggerStyle(),
                       location.pathname.includes('/home') ? "text-primary" : ""
                     )}
+                    title="Inicio"
                   >
-                    Inicio
+                    <Home className="h-4 w-4 mr-2" />
+                    <span className="sm:hidden md:inline">Inicio</span>
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -66,8 +69,10 @@ const HeaderContent: React.FC = () => {
                       navigationMenuTriggerStyle(),
                       location.pathname.includes('/courses') ? "text-primary" : ""
                     )}
+                    title="Cursos"
                   >
-                    Cursos
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    <span className="sm:hidden md:inline">Cursos</span>
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -78,8 +83,10 @@ const HeaderContent: React.FC = () => {
                       navigationMenuTriggerStyle(),
                       location.pathname.includes('/messages') ? "text-primary" : ""
                     )}
+                    title="Mensajes"
                   >
-                    Mensajes
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    <span className="sm:hidden md:inline">Mensajes</span>
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
