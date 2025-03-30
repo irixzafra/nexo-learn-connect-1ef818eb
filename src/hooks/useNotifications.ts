@@ -81,6 +81,10 @@ export function useNotifications() {
     await refetch();
   };
   
+  const refreshNotifications = () => {
+    return refetch();
+  };
+  
   return {
     notifications: data || [],
     isLoading,
@@ -88,6 +92,7 @@ export function useNotifications() {
     unreadCount,
     markAsRead,
     markAllAsRead,
+    refreshNotifications,
     refetch
   };
 }

@@ -100,5 +100,6 @@ export interface LearningPath {
   is_published: boolean;
   created_at: string;
   updated_at: string;
+  level?: string;
   courses?: Course[];
 }
