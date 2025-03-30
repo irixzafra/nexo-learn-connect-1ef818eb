@@ -10,7 +10,13 @@ interface StudentsSectionProps {
 const StudentsSection: React.FC<StudentsSectionProps> = ({ courseId, courseName }) => {
   return (
     <div className="space-y-6">
-      <EnrolledStudentsList courseId={courseId} courseName={courseName} />
+      <div className="flex items-center">
+        <h2 className="text-xl font-semibold">
+          Estudiantes Inscritos en: {courseName}
+        </h2>
+      </div>
+      
+      <EnrolledStudentsList courseId={courseId} />
     </div>
   );
 };

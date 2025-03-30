@@ -10,7 +10,7 @@ interface CourseStudentsTabProps {
 
 const CourseStudentsTab: React.FC<CourseStudentsTabProps> = ({ courseId, courseName }) => {
   return (
-    <PageSection variant="card" title="Estudiantes Inscritos" description="Gestión de participantes">
+    <PageSection variant="card" title="Estudiantes Inscritos" description="Gestión de participantes del curso">
       <StudentsSection courseId={courseId} courseName={courseName} />
     </PageSection>
   );
