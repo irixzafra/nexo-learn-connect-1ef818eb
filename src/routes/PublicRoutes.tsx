@@ -18,6 +18,7 @@ import AppLayout from '@/layouts/AppLayout';
 import CoursesCatalog from '@/pages/CoursesCatalog';
 import LessonView from '@/pages/student/LessonView';
 import PublicLayout from '@/layouts/PublicLayout';
+import CourseDetailPage from '@/pages/CourseDetailPage';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -39,8 +40,8 @@ const PublicRoutes: React.FC = () => {
         </AppLayout>
       } />
       
-      {/* Acceso a curso por ID */}
-      <Route path="/courses/:courseId" element={<CourseLanding />} />
+      {/* Acceso a curso por ID - usando el nuevo componente CourseDetailPage */}
+      <Route path="/courses/:courseId" element={<CourseDetailPage />} />
       
       {/* Nueva ruta: Acceso a curso por slug */}
       <Route path="/cursos/:slug" element={<CourseLanding />} />
