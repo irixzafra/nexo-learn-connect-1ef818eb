@@ -4,13 +4,38 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserMenu } from './header/UserMenu';
 import { HeaderActions } from './header/HeaderActions';
 import { useLocation } from 'react-router-dom';
-import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
+import { 
+  NavigationMenu, 
+  NavigationMenuList, 
+  NavigationMenuItem, 
+  NavigationMenuLink, 
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  navigationMenuTriggerStyle 
+} from '@/components/ui/navigation-menu';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { NexoLogo } from '@/components/ui/logo';
 import { useAuth } from '@/contexts/AuthContext';
 import { RoleIndicator } from './header/RoleIndicator';
-import { Home, BookOpen, MessageSquare, Search, Calendar } from 'lucide-react';
+import { 
+  Home, 
+  BookOpen, 
+  MessageSquare, 
+  Search, 
+  Users, 
+  GraduationCap, 
+  Award, 
+  FileText, 
+  MapPin, 
+  Settings, 
+  Phone,
+  Headphones,
+  Bell, 
+  LayoutDashboard,
+  User,
+  MessageCircle
+} from 'lucide-react';
 import { UserRole } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -18,6 +43,7 @@ import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import SidebarNavigation from './SidebarNavigation';
+import { Badge } from '@/components/ui/badge';
 
 interface HeaderContentProps {
   onRoleChange?: (role: UserRole) => void;
@@ -53,6 +79,8 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
       (lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).toLowerCase());
   };
   
+  const hasUnreadMessages = 3; // Example counter for unread messages
+
   const LogoComponent = () => (
     <Link to="/" className="flex items-center">
       <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
@@ -68,7 +96,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden h-10 w-10">
-                  <Menu className="h-5 w-5" />
+                  <LogoComponent />
                   <span className="sr-only">Abrir menú</span>
                 </Button>
               </SheetTrigger>
@@ -84,91 +112,198 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
               </SheetContent>
             </Sheet>
           ) : (
-            <SidebarTrigger className="hidden md:flex" />
+            <>
+              <SidebarTrigger className="hidden md:flex" />
+              <LogoComponent />
+            </>
           )}
           
-          <LogoComponent />
-          
-          <span className="text-lg font-medium md:block">{getPageTitle()}</span>
+          {!isMobile && <span className="text-lg font-medium">{getPageTitle()}</span>}
         </div>
         
-        {/* Center - Horizontal Navigation Menu with Icons Only */}
+        {/* Main Navigation Menu */}
         <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList>
+          <NavigationMenuList className="gap-1">
+            {/* 1. Inicio */}
             <NavigationMenuItem>
-              <Link to="/home">
-                <NavigationMenuLink 
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    location.pathname.includes('/home') ? "text-primary" : "",
-                    "flex justify-center items-center w-10 h-10 p-0"
-                  )}
-                  title="Inicio"
-                >
-                  <Home className="h-5 w-5" />
-                  <span className="sr-only">Inicio</span>
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuTrigger className={cn(
+                location.pathname === '/home' || location.pathname === '/' ? "text-primary" : ""
+              )}>
+                <Home className="h-4 w-4 mr-2" />
+                Inicio
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="min-w-[220px]">
+                <div className="p-2 grid gap-1">
+                  <Link to="/home/my-courses" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <BookOpen className="h-4 w-4" />
+                    <span>Mis Cursos</span>
+                  </Link>
+                  <Link to="/home/certificates" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <Award className="h-4 w-4" />
+                    <span>Certificados</span>
+                  </Link>
+                  <Link to="/home/progress" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <FileText className="h-4 w-4" />
+                    <span>Mi Progreso</span>
+                  </Link>
+                </div>
+              </NavigationMenuContent>
             </NavigationMenuItem>
+            
+            {/* 2. Explorar */}
             <NavigationMenuItem>
-              <Link to="/courses">
-                <NavigationMenuLink 
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    location.pathname.includes('/courses') ? "text-primary" : "",
-                    "flex justify-center items-center w-10 h-10 p-0"
-                  )}
-                  title="Cursos"
-                >
-                  <BookOpen className="h-5 w-5" />
-                  <span className="sr-only">Cursos</span>
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuTrigger className={cn(
+                location.pathname.includes('/courses') || location.pathname.includes('/learning-paths') ? "text-primary" : ""
+              )}>
+                <Search className="h-4 w-4 mr-2" />
+                Explorar
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="min-w-[220px]">
+                <div className="p-2 grid gap-1">
+                  <Link to="/courses" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <BookOpen className="h-4 w-4" />
+                    <span>Cursos</span>
+                  </Link>
+                  <Link to="/learning-paths" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <MapPin className="h-4 w-4" />
+                    <span>Rutas de Aprendizaje</span>
+                  </Link>
+                </div>
+              </NavigationMenuContent>
             </NavigationMenuItem>
+            
+            {/* 3. Comunidad */}
             <NavigationMenuItem>
-              <Link to="/search">
-                <NavigationMenuLink 
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    location.pathname.includes('/search') ? "text-primary" : "",
-                    "flex justify-center items-center w-10 h-10 p-0"
-                  )}
-                  title="Buscar"
-                >
-                  <Search className="h-5 w-5" />
-                  <span className="sr-only">Buscar</span>
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuTrigger className={cn(
+                location.pathname.includes('/community') ? "text-primary" : ""
+              )}>
+                <Users className="h-4 w-4 mr-2" />
+                Comunidad
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="min-w-[220px]">
+                <div className="p-2 grid gap-1">
+                  <Link to="/community/feed" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <FileText className="h-4 w-4" />
+                    <span>Feed</span>
+                  </Link>
+                  <Link to="/messages" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <MessageSquare className="h-4 w-4" />
+                    <span>Mensajes</span>
+                  </Link>
+                  <Link to="/community/contacts" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <Users className="h-4 w-4" />
+                    <span>Contactos</span>
+                  </Link>
+                  <Link to="/community/groups" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <Users className="h-4 w-4" />
+                    <span>Grupos</span>
+                  </Link>
+                </div>
+              </NavigationMenuContent>
             </NavigationMenuItem>
+            
+            {/* 4. Mensajes */}
             <NavigationMenuItem>
               <Link to="/messages">
-                <NavigationMenuLink 
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    location.pathname.includes('/messages') ? "text-primary" : "",
-                    "flex justify-center items-center w-10 h-10 p-0"
+                <NavigationMenuLink className={cn(
+                  navigationMenuTriggerStyle(),
+                  location.pathname.includes('/messages') ? "text-primary" : "",
+                  "relative"
+                )}>
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Mensajes
+                  {hasUnreadMessages > 0 && (
+                    <Badge variant="destructive" className="absolute -top-2 -right-2 px-1.5 h-5 min-w-[20px] flex items-center justify-center">
+                      {hasUnreadMessages}
+                    </Badge>
                   )}
-                  title="Mensajes"
-                >
-                  <MessageSquare className="h-5 w-5" />
-                  <span className="sr-only">Mensajes</span>
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
+            
+            {/* 5. Administración (only for admin users) */}
+            {(userRole === 'admin' || userRole === 'instructor') && (
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className={cn(
+                  location.pathname.includes('/admin') ? "text-primary" : ""
+                )}>
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Administración
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="min-w-[220px]">
+                  <div className="p-2 grid gap-1">
+                    <Link to="/admin/dashboard" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                      <LayoutDashboard className="h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                    <Link to="/admin/users" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                      <Users className="h-4 w-4" />
+                      <span>Usuarios</span>
+                    </Link>
+                    <Link to="/admin/courses" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                      <BookOpen className="h-4 w-4" />
+                      <span>Cursos</span>
+                    </Link>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            )}
+            
+            {/* 6. Perfil */}
             <NavigationMenuItem>
-              <Link to="/calendar">
-                <NavigationMenuLink 
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    location.pathname.includes('/calendar') ? "text-primary" : "",
-                    "flex justify-center items-center w-10 h-10 p-0"
-                  )}
-                  title="Calendario"
-                >
-                  <Calendar className="h-5 w-5" />
-                  <span className="sr-only">Calendario</span>
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuTrigger className={cn(
+                location.pathname.includes('/profile') ? "text-primary" : ""
+              )}>
+                <User className="h-4 w-4 mr-2" />
+                Perfil
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="min-w-[220px]">
+                <div className="p-2 grid gap-1">
+                  <Link to="/profile" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <User className="h-4 w-4" />
+                    <span>Mi Perfil</span>
+                  </Link>
+                  <Link to="/settings" className="group flex items-center gap-2 p-2 rounded-md hover:bg-accent">
+                    <Settings className="h-4 w-4" />
+                    <span>Configuración</span>
+                  </Link>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            
+            {/* 7. Contacto */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>
+                <Phone className="h-4 w-4 mr-2" />
+                Contacto
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="min-w-[220px]">
+                <div className="p-2 grid gap-1">
+                  <Button 
+                    variant="ghost"
+                    className="flex justify-start hover:bg-accent"
+                    onClick={() => window.open('https://wa.me/123456789', '_blank')}
+                  >
+                    <div className="flex items-center gap-2 p-2">
+                      <MessageCircle className="h-4 w-4" />
+                      <span>WhatsApp</span>
+                    </div>
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    className="flex justify-start hover:bg-accent"
+                    onClick={() => {
+                      // Logic to activate voice bot
+                      alert('Voice bot activado');
+                    }}
+                  >
+                    <div className="flex items-center gap-2 p-2">
+                      <Headphones className="h-4 w-4" />
+                      <span>Voice Bot</span>
+                    </div>
+                  </Button>
+                </div>
+              </NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
