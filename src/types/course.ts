@@ -103,3 +103,4 @@ export interface LearningPath {
   level?: string;
   courses?: Course[];
 }
+
