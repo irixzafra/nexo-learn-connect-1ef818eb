@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Sidebar, 
@@ -18,13 +19,13 @@ interface AppSidebarProps {
 
 const AppSidebar: React.FC<AppSidebarProps> = ({ viewAsRole, onRoleChange }) => {
   return (
-    <Sidebar className="border-r bg-sidebar hidden">
+    <Sidebar className="border-r bg-sidebar">
       <SidebarHeader className="flex items-center justify-center py-4">
         <NexoLogo variant="icon" className="h-8 w-auto" />
       </SidebarHeader>
       
       <SidebarContent className="px-2 py-2">
-        {/* The sidebar navigation content goes here */}
+        {/* The sidebar navigation is rendered in AppLayout */}
       </SidebarContent>
       
       <SidebarFooter className="border-t p-3">
