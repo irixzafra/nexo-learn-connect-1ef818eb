@@ -1,13 +1,14 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { motion } from "framer-motion";
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
-  Code, Database, TrendingUp, Palette, Brain, Smartphone, 
-  HardDrive, Server, Shield, Blocks, BookOpen
-} from "lucide-react";
+  Database, Code, LineChart, BookOpen, GraduationCap, 
+  Briefcase, Gauge, Network, ShieldCheck, Wand2, 
+  PenTool, PieChart, Share2, FileCode2, Laptop
+} from 'lucide-react';
 
 interface CategorySelectorProps {
   selectedCategory: string | null;
@@ -15,90 +16,72 @@ interface CategorySelectorProps {
   categories: string[];
 }
 
-// Map para iconos de categorías
-const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-  "Desarrollo Web": <Code className="mr-2 h-4 w-4" />,
-  "Ciencia de Datos": <Database className="mr-2 h-4 w-4" />,
-  "Marketing": <TrendingUp className="mr-2 h-4 w-4" />,
-  "Diseño": <Palette className="mr-2 h-4 w-4" />,
-  "Inteligencia Artificial": <Brain className="mr-2 h-4 w-4" />,
-  "Desarrollo Móvil": <Smartphone className="mr-2 h-4 w-4" />,
-  "Big Data": <Database className="mr-2 h-4 w-4" />,
-  "Desarrollo Backend": <Server className="mr-2 h-4 w-4" />,
-  "DevOps": <HardDrive className="mr-2 h-4 w-4" />,
-  "Desarrollo de Videojuegos": <BookOpen className="mr-2 h-4 w-4" />,
-  "Ciberseguridad": <Shield className="mr-2 h-4 w-4" />,
-  "Blockchain": <Blocks className="mr-2 h-4 w-4" />,
+const categoryIcons: Record<string, React.ReactNode> = {
+  'Big Data': <Database className="w-4 h-4 mr-2" />,
+  'Blockchain': <Network className="w-4 h-4 mr-2" />,
+  'Ciberseguridad': <ShieldCheck className="w-4 h-4 mr-2" />,
+  'Ciencia de Datos': <PieChart className="w-4 h-4 mr-2" />,
+  'Desarrollo Web': <Code className="w-4 h-4 mr-2" />,
+  'DevOps': <Gauge className="w-4 h-4 mr-2" />,
+  'Frontend': <FileCode2 className="w-4 h-4 mr-2" />,
+  'Backend': <Laptop className="w-4 h-4 mr-2" />,
+  'Gestión de Proyectos': <Briefcase className="w-4 h-4 mr-2" />,
+  'IA': <Wand2 className="w-4 h-4 mr-2" />,
+  'Marketing Digital': <Share2 className="w-4 h-4 mr-2" />,
+  'Programación': <Code className="w-4 h-4 mr-2" />,
+  'UX/UI': <PenTool className="w-4 h-4 mr-2" />,
+  'Python': <Code className="w-4 h-4 mr-2" />,
+  'JavaScript': <Code className="w-4 h-4 mr-2" />,
+  'React': <Code className="w-4 h-4 mr-2" />,
+  'Node.js': <Code className="w-4 h-4 mr-2" />,
+  'Business Intelligence': <LineChart className="w-4 h-4 mr-2" />,
+  'Certificación': <GraduationCap className="w-4 h-4 mr-2" />,
 };
 
 export const CategorySelector: React.FC<CategorySelectorProps> = ({
   selectedCategory,
   setSelectedCategory,
-  categories,
+  categories = []
 }) => {
   const isMobile = useIsMobile();
-
-  // Ordenar categorías
-  const sortedCategories = [...categories].sort((a, b) => a.localeCompare(b));
+  const sortedCategories = [...categories].sort();
   
-  // Obtener el icono adecuado para cada categoría
-  const getIcon = (category: string) => {
-    return CATEGORY_ICONS[category] || <BookOpen className="mr-2 h-4 w-4" />;
-  };
-
-  // Container animation variants
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05
-      }
-    }
-  };
+  // Include "Todos" as first category
+  const allCategories = ['Todos', ...sortedCategories];
   
-  // Item animation variants
-  const item = {
-    hidden: { opacity: 0, scale: 0.9 },
-    show: { opacity: 1, scale: 1 }
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category === 'Todos' ? null : category);
   };
 
   return (
-    <div className="w-full">
-      <ScrollArea className="w-full pb-4">
-        <motion.div 
-          className="flex space-x-2"
-          variants={container}
-          initial="hidden"
-          animate="show"
-        >
-          <motion.div variants={item}>
-            <Button
-              variant={selectedCategory === null ? "default" : "outline"}
-              size="sm"
-              className="whitespace-nowrap"
-              onClick={() => setSelectedCategory(null)}
-            >
-              <BookOpen className="mr-2 h-4 w-4" />
-              Todos
-            </Button>
-          </motion.div>
+    <ScrollArea className="w-full" type="always">
+      <div className="flex space-x-2 pb-1 min-w-full">
+        {allCategories.map((category) => {
+          const isSelected = 
+            (category === 'Todos' && selectedCategory === null) || 
+            category === selectedCategory;
           
-          {sortedCategories.map((category) => (
-            <motion.div key={category} variants={item}>
-              <Button
-                variant={selectedCategory === category ? "default" : "outline"}
-                size="sm"
-                className="whitespace-nowrap"
-                onClick={() => setSelectedCategory(category)}
-              >
-                {getIcon(category)}
-                {category}
-              </Button>
-            </motion.div>
-          ))}
-        </motion.div>
-      </ScrollArea>
-    </div>
+          const icon = category === 'Todos' 
+            ? <BookOpen className="w-4 h-4 mr-2" />
+            : (categoryIcons[category] || <BookOpen className="w-4 h-4 mr-2" />);
+            
+          return (
+            <Button
+              key={category}
+              variant={isSelected ? "default" : "outline"}
+              size="sm"
+              className={cn(
+                "flex-shrink-0 h-9 px-3 text-xs sm:text-sm whitespace-nowrap",
+                isSelected ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+              )}
+              onClick={() => handleCategoryClick(category)}
+            >
+              {icon}
+              {category}
+            </Button>
+          );
+        })}
+      </div>
+    </ScrollArea>
   );
 };

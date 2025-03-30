@@ -101,7 +101,7 @@ const CoursesCatalog: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full max-w-full overflow-hidden">
+    <div className="w-full max-w-full overflow-x-hidden">
       {/* Hero section with gradient background */}
       <div className="bg-gradient-to-b from-primary/10 via-background to-background">
         <div className="container max-w-screen-2xl mx-auto px-4 pt-6 pb-12 md:pt-10 md:pb-16">
@@ -164,7 +164,7 @@ const CoursesCatalog: React.FC = () => {
             initial={{ opacity: 0, x: -20 }} 
             animate={{ opacity: 1, x: 0 }} 
             transition={{ duration: 0.5 }}
-            className="mt-4 md:mt-0 w-full overflow-auto"
+            className="mt-4 md:mt-0 w-full overflow-x-auto pb-2"
           >
             <CategorySelector 
               selectedCategory={selectedCategory}
@@ -276,8 +276,7 @@ const CoursesCatalog: React.FC = () => {
             <p className="text-muted-foreground mb-5 text-sm md:text-base">
               Explora nuestra variedad de rutas de aprendizaje diseñadas para guiarte paso a paso hasta dominar las habilidades que necesitas.
             </p>
-            {/* Fix: Remove the invalid md:size attribute and use className for responsive styling */}
-            <Button className="group text-sm md:text-base md:px-6 md:py-2" size="sm">
+            <Button className="group text-sm md:text-base px-4 py-2 md:px-6 md:py-2">
               Explorar rutas de aprendizaje
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
