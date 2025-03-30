@@ -13,6 +13,7 @@ type FeaturesConfig = {
   showOnboardingTrigger: boolean;
   enableNotifications: boolean;
   enableTestDataGenerator: boolean;
+  enableOnboardingSystem: boolean; // Nueva opción para desactivar completamente el onboarding
 };
 
 interface OnboardingContextValue {
@@ -42,6 +43,7 @@ const defaultContextValue: OnboardingContextValue = {
     showOnboardingTrigger: true,
     enableNotifications: true,
     enableTestDataGenerator: false,
+    enableOnboardingSystem: true, // Por defecto, el sistema de onboarding está activado
   },
   openOnboarding: () => {},
   closeOnboarding: () => {},
@@ -96,6 +98,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             showOnboardingTrigger: data.show_onboarding_trigger ?? true,
             enableNotifications: data.enable_notifications ?? true,
             enableTestDataGenerator: data.enable_test_data_generator ?? false,
+            enableOnboardingSystem: data.enable_onboarding_system ?? true, // Cargar valor de la base de datos
           });
         }
       } catch (error) {
@@ -119,6 +122,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           show_onboarding_trigger: updatedConfig.showOnboardingTrigger,
           enable_notifications: updatedConfig.enableNotifications,
           enable_test_data_generator: updatedConfig.enableTestDataGenerator,
+          enable_onboarding_system: updatedConfig.enableOnboardingSystem, // Guardar en la base de datos
           updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id' });
 
@@ -133,8 +137,13 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   // Funciones para manipular el estado del onboarding
   const openOnboarding = () => {
-    setIsOnboardingOpen(true);
-    setCurrentStep(0);
+    // Solo abrir si el sistema de onboarding está habilitado
+    if (featuresConfig.enableOnboardingSystem) {
+      setIsOnboardingOpen(true);
+      setCurrentStep(0);
+    } else {
+      console.log('El sistema de onboarding está desactivado');
+    }
   };
 
   // Alias for openOnboarding for compatibility

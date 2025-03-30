@@ -47,6 +47,22 @@ const SystemSettings: React.FC = () => {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
+                    <Label htmlFor="enableOnboardingSystem">Habilitar sistema de onboarding</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Activa o desactiva completamente el sistema de onboarding
+                    </p>
+                  </div>
+                  <Switch
+                    id="enableOnboardingSystem"
+                    checked={featuresConfig.enableOnboardingSystem}
+                    onCheckedChange={(value) => handleToggleFeature('enableOnboardingSystem', value)}
+                  />
+                </div>
+
+                <Separator />
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
                     <Label htmlFor="autoStartOnboarding">Iniciar automáticamente</Label>
                     <p className="text-sm text-muted-foreground">
                       Inicia automáticamente el tutorial para usuarios nuevos
@@ -56,6 +72,7 @@ const SystemSettings: React.FC = () => {
                     id="autoStartOnboarding"
                     checked={featuresConfig.autoStartOnboarding}
                     onCheckedChange={(value) => handleToggleFeature('autoStartOnboarding', value)}
+                    disabled={!featuresConfig.enableOnboardingSystem}
                   />
                 </div>
                 
@@ -72,6 +89,7 @@ const SystemSettings: React.FC = () => {
                     id="showOnboardingTrigger"
                     checked={featuresConfig.showOnboardingTrigger}
                     onCheckedChange={(value) => handleToggleFeature('showOnboardingTrigger', value)}
+                    disabled={!featuresConfig.enableOnboardingSystem}
                   />
                 </div>
               </CardContent>
