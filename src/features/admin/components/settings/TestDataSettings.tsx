@@ -3,27 +3,29 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Database } from 'lucide-react';
+import { Database, Loader2 } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 
-interface TestDataSettingsProps {
+export interface TestDataSettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  isLoading?: boolean;
 }
 
 export const TestDataSettings: React.FC<TestDataSettingsProps> = ({ 
   featuresConfig, 
-  onToggleFeature 
+  onToggleFeature,
+  isLoading = false
 }) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Database className="h-5 w-5 text-purple-500" />
-          Generador de Datos de Prueba
+          Datos de Prueba
         </CardTitle>
         <CardDescription>
-          Configura la herramienta de generación de datos de prueba
+          Configuración para los generadores de datos de prueba
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -31,14 +33,20 @@ export const TestDataSettings: React.FC<TestDataSettingsProps> = ({
           <div className="space-y-0.5">
             <Label htmlFor="enableTestDataGenerator">Habilitar generador de datos</Label>
             <p className="text-sm text-muted-foreground">
-              Activa la funcionalidad de generación de datos de prueba para administradores
+              Activa el generador de datos de prueba para entornos de desarrollo
             </p>
           </div>
-          <Switch
-            id="enableTestDataGenerator"
-            checked={featuresConfig.enableTestDataGenerator}
-            onCheckedChange={(value) => onToggleFeature('enableTestDataGenerator', value)}
-          />
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="enableTestDataGenerator"
+              checked={featuresConfig.enableTestDataGenerator}
+              onCheckedChange={(value) => onToggleFeature('enableTestDataGenerator', value)}
+              disabled={isLoading}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>

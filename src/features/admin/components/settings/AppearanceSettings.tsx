@@ -3,48 +3,74 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Paintbrush, Palette, Monitor } from 'lucide-react';
-import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Separator } from '@/components/ui/separator';
+import { Paintbrush, Globe, Loader2 } from 'lucide-react';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
 
-interface AppearanceSettingsProps {
+export interface AppearanceSettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  isLoading?: boolean;
 }
 
 export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({ 
   featuresConfig, 
-  onToggleFeature 
+  onToggleFeature,
+  isLoading = false
 }) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Paintbrush className="h-5 w-5 text-blue-500" />
-          Configuración de Apariencia
+          <Paintbrush className="h-5 w-5 text-pink-500" />
+          Apariencia
         </CardTitle>
         <CardDescription>
-          Personaliza la apariencia y las opciones visuales del sistema
+          Configura la apariencia y las opciones visuales del sistema
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <Label htmlFor="enableThemeSwitcher">Selector de tema</Label>
+            <Label htmlFor="enableThemeSwitcher">Selector de temas</Label>
             <p className="text-sm text-muted-foreground">
-              Permite a los usuarios cambiar entre temas claro, oscuro y otros
+              Permite a los usuarios cambiar entre tema claro y oscuro
             </p>
           </div>
-          <Switch
-            id="enableThemeSwitcher"
-            checked={featuresConfig.enableThemeSwitcher}
-            onCheckedChange={(value) => onToggleFeature('enableThemeSwitcher', value)}
-          />
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="enableThemeSwitcher"
+              checked={featuresConfig.enableThemeSwitcher}
+              onCheckedChange={(value) => onToggleFeature('enableThemeSwitcher', value)}
+              disabled={isLoading}
+            />
+          </div>
         </div>
         
         <Separator />
         
-        {/* Aquí podrían ir más opciones de apariencia en el futuro */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="enableMultiLanguage">Soporte multilenguaje</Label>
+            <p className="text-sm text-muted-foreground">
+              Habilita el soporte para múltiples idiomas
+            </p>
+          </div>
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="enableMultiLanguage"
+              checked={featuresConfig.enableMultiLanguage}
+              onCheckedChange={(value) => onToggleFeature('enableMultiLanguage', value)}
+              disabled={isLoading}
+            />
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

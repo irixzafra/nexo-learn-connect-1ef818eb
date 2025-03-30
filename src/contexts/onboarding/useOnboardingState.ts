@@ -14,6 +14,7 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(defaultFeaturesConfig);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
   // Alias for isOnboardingOpen
   const isOnboardingActive = isOnboardingOpen;
@@ -24,7 +25,35 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
       if (!userId) return;
 
       try {
-        // Try to fetch the user's features config
+        // First try to load from localStorage as a fallback
+        const localConfig = localStorage.getItem('features_config');
+        if (localConfig) {
+          try {
+            const parsedConfig = JSON.parse(localConfig);
+            // Only use it if it belongs to the current user
+            if (parsedConfig.user_id === userId) {
+              setFeaturesConfig({
+                autoStartOnboarding: parsedConfig.auto_start_onboarding ?? defaultFeaturesConfig.autoStartOnboarding,
+                showOnboardingTrigger: parsedConfig.show_onboarding_trigger ?? defaultFeaturesConfig.showOnboardingTrigger,
+                enableNotifications: parsedConfig.enable_notifications ?? defaultFeaturesConfig.enableNotifications,
+                enableTestDataGenerator: parsedConfig.enable_test_data_generator ?? defaultFeaturesConfig.enableTestDataGenerator,
+                enableOnboardingSystem: parsedConfig.enable_onboarding_system ?? defaultFeaturesConfig.enableOnboardingSystem,
+                enableRoleManagement: parsedConfig.enable_role_management ?? defaultFeaturesConfig.enableRoleManagement,
+                enableRoleSwitcher: parsedConfig.enable_role_switcher ?? defaultFeaturesConfig.enableRoleSwitcher,
+                enableMultiLanguage: parsedConfig.enable_multi_language ?? defaultFeaturesConfig.enableMultiLanguage,
+                enableLeaderboard: parsedConfig.enable_leaderboard ?? defaultFeaturesConfig.enableLeaderboard,
+                enableThemeSwitcher: parsedConfig.enable_theme_switcher ?? defaultFeaturesConfig.enableThemeSwitcher,
+                enableCategoryManagement: parsedConfig.enable_category_management ?? defaultFeaturesConfig.enableCategoryManagement,
+                enableContentReordering: parsedConfig.enable_content_reordering ?? defaultFeaturesConfig.enableContentReordering,
+              });
+            }
+          } catch (e) {
+            console.warn('Error parsing local config:', e);
+            // Invalid JSON, ignore it
+          }
+        }
+
+        // Try to fetch the user's features config from Supabase
         const { data, error } = await supabase
           .from('features_config')
           .select('*')
@@ -43,7 +72,8 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
             // We'll attempt to create the config when user saves
           }
           
-          // Continue with default values regardless of error
+          // Continue with default or localStorage values
+          setInitialLoadComplete(true);
           return;
         }
 
@@ -62,9 +92,14 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
             enableCategoryManagement: data.enable_category_management ?? defaultFeaturesConfig.enableCategoryManagement,
             enableContentReordering: data.enable_content_reordering ?? defaultFeaturesConfig.enableContentReordering,
           });
+          
+          // Also update localStorage as a backup
+          localStorage.setItem('features_config', JSON.stringify(data));
         }
       } catch (error) {
         console.error('Error in loadFeaturesConfig:', error);
+      } finally {
+        setInitialLoadComplete(true);
       }
     };
 
@@ -96,6 +131,9 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
         updated_at: new Date().toISOString(),
       };
 
+      // Always store in localStorage first as a fallback
+      localStorage.setItem('features_config', JSON.stringify(configData));
+
       const { error } = await supabase
         .from('features_config')
         .upsert(configData, { onConflict: 'user_id' });
@@ -103,9 +141,7 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
       if (error) {
         // If the table doesn't exist, we still want to store the config locally
         if (error.code === '42P01' || error.message.includes('does not exist')) {
-          console.warn('Features config table not available. Config will be stored locally only.');
-          // Store in localStorage as a fallback
-          localStorage.setItem('features_config', JSON.stringify(configData));
+          console.warn('Features config table not available. Config has been stored locally only.');
           toast.success('Configuración guardada localmente');
           return;
         }
@@ -180,5 +216,6 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
     prevStep,
     goToStep,
     updateFeaturesConfig,
+    initialLoadComplete,
   };
 }

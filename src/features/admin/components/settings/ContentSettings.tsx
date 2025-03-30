@@ -3,79 +3,96 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { FileText, ListTree, Folders, MoveHorizontal } from 'lucide-react';
-import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { FileText, Trophy, Loader2 } from 'lucide-react';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
 
-interface ContentSettingsProps {
+export interface ContentSettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  isLoading?: boolean;
 }
 
 export const ContentSettings: React.FC<ContentSettingsProps> = ({ 
   featuresConfig, 
-  onToggleFeature 
+  onToggleFeature,
+  isLoading = false
 }) => {
-  const navigate = useNavigate();
-  
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <FileText className="h-5 w-5 text-indigo-500" />
-          Gestión de Contenido
+          <FileText className="h-5 w-5 text-orange-500" />
+          Contenido
         </CardTitle>
         <CardDescription>
-          Configura las opciones para administrar categorías y contenido del sistema
+          Configura cómo se gestiona el contenido en la plataforma
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="enableCategoryManagement">Gestión de categorías</Label>
             <p className="text-sm text-muted-foreground">
-              Permite crear, editar y eliminar categorías para cursos y contenido
+              Habilita la gestión de categorías para cursos y contenidos
             </p>
           </div>
-          <Switch
-            id="enableCategoryManagement"
-            checked={featuresConfig.enableCategoryManagement}
-            onCheckedChange={(value) => onToggleFeature('enableCategoryManagement', value)}
-          />
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="enableCategoryManagement"
+              checked={featuresConfig.enableCategoryManagement}
+              onCheckedChange={(value) => onToggleFeature('enableCategoryManagement', value)}
+              disabled={isLoading}
+            />
+          </div>
         </div>
         
         <Separator />
         
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <Label htmlFor="enableContentReordering">Reordenación de contenido</Label>
+            <Label htmlFor="enableContentReordering">Reordenamiento de contenido</Label>
             <p className="text-sm text-muted-foreground">
-              Permite reorganizar lecciones, módulos y otros elementos mediante arrastrar y soltar
+              Permite reordenar módulos y lecciones mediante arrastrar y soltar
             </p>
           </div>
-          <Switch
-            id="enableContentReordering"
-            checked={featuresConfig.enableContentReordering}
-            onCheckedChange={(value) => onToggleFeature('enableContentReordering', value)}
-          />
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="enableContentReordering"
+              checked={featuresConfig.enableContentReordering}
+              onCheckedChange={(value) => onToggleFeature('enableContentReordering', value)}
+              disabled={isLoading}
+            />
+          </div>
         </div>
         
         <Separator />
         
-        {featuresConfig.enableCategoryManagement && (
-          <div className="pt-4">
-            <Button 
-              variant="outline" 
-              className="w-full"
-              onClick={() => navigate('/admin/categories')}
-            >
-              <Folders className="mr-2 h-4 w-4" />
-              Administrar Categorías
-            </Button>
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="enableLeaderboard">Leaderboard de gamificación</Label>
+            <p className="text-sm text-muted-foreground">
+              Activa el sistema de clasificaciones y puntos para estudiantes
+            </p>
           </div>
-        )}
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="enableLeaderboard"
+              checked={featuresConfig.enableLeaderboard}
+              onCheckedChange={(value) => onToggleFeature('enableLeaderboard', value)}
+              disabled={isLoading}
+            />
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

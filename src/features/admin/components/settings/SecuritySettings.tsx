@@ -3,91 +3,73 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Shield, Users, Globe, BarChart } from 'lucide-react';
-import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Separator } from '@/components/ui/separator';
+import { Shield, Loader2 } from 'lucide-react';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
 
-interface SecuritySettingsProps {
+export interface SecuritySettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  isLoading?: boolean;
 }
 
 export const SecuritySettings: React.FC<SecuritySettingsProps> = ({ 
   featuresConfig, 
-  onToggleFeature 
+  onToggleFeature,
+  isLoading = false
 }) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-green-500" />
-          Configuración de Seguridad
+          Seguridad y Permisos
         </CardTitle>
         <CardDescription>
-          Administra las configuraciones de seguridad y acceso del sistema
+          Configura los permisos y roles del sistema
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="enableRoleManagement">Gestión de roles</Label>
             <p className="text-sm text-muted-foreground">
-              Permite la creación y asignación de roles personalizados
+              Permite la gestión de roles para usuarios
             </p>
           </div>
-          <Switch
-            id="enableRoleManagement"
-            checked={featuresConfig.enableRoleManagement}
-            onCheckedChange={(value) => onToggleFeature('enableRoleManagement', value)}
-          />
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="enableRoleManagement"
+              checked={featuresConfig.enableRoleManagement}
+              onCheckedChange={(value) => onToggleFeature('enableRoleManagement', value)}
+              disabled={isLoading}
+            />
+          </div>
         </div>
         
         <Separator />
         
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <Label htmlFor="enableRoleSwitcher">Cambio de roles</Label>
+            <Label htmlFor="enableRoleSwitcher">Selector de roles</Label>
             <p className="text-sm text-muted-foreground">
-              Permite a los administradores cambiar temporalmente su rol para ver la plataforma como otro tipo de usuario
+              Muestra el selector de roles en la barra de navegación
             </p>
           </div>
-          <Switch
-            id="enableRoleSwitcher"
-            checked={featuresConfig.enableRoleSwitcher}
-            onCheckedChange={(value) => onToggleFeature('enableRoleSwitcher', value)}
-          />
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <Label htmlFor="enableMultiLanguage">Soporte multiidioma</Label>
-            <p className="text-sm text-muted-foreground">
-              Activa la funcionalidad de cambio de idioma en la plataforma
-            </p>
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="enableRoleSwitcher"
+              checked={featuresConfig.enableRoleSwitcher}
+              onCheckedChange={(value) => onToggleFeature('enableRoleSwitcher', value)}
+              disabled={isLoading}
+            />
           </div>
-          <Switch
-            id="enableMultiLanguage"
-            checked={featuresConfig.enableMultiLanguage}
-            onCheckedChange={(value) => onToggleFeature('enableMultiLanguage', value)}
-          />
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <Label htmlFor="enableLeaderboard">Leaderboard</Label>
-            <p className="text-sm text-muted-foreground">
-              Activa el sistema de clasificación de usuarios y gamificación
-            </p>
-          </div>
-          <Switch
-            id="enableLeaderboard"
-            checked={featuresConfig.enableLeaderboard}
-            onCheckedChange={(value) => onToggleFeature('enableLeaderboard', value)}
-          />
         </div>
       </CardContent>
     </Card>
