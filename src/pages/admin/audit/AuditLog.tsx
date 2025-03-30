@@ -46,6 +46,7 @@ const AuditLog: React.FC = () => {
         title: "Registro de Auditoría",
         description: "Registro detallado de todas las acciones realizadas en el sistema"
       }}
+      actions={actionButtons}
     >
       <div className="bg-card rounded-lg border p-4 mb-6">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

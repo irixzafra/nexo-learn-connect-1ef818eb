@@ -46,7 +46,7 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
   actions
 }) => {
   return (
-    <div className={cn("container py-8 space-y-8 px-8", className)}>
+    <div className={cn("container py-8 space-y-8", className)}>
       {/* Header Section */}
       {header && (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
