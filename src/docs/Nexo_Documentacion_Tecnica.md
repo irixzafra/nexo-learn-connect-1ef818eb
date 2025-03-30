@@ -50,6 +50,35 @@ Código estructurado para facilitar su evolución:
 - Refactorización continua de áreas problemáticas
 - Separación clara entre lógica de negocio y presentación
 
+## Sistemas Administrativos
+
+### Gestión de Cursos
+La plataforma ofrece un sistema integral para administrar cursos con las siguientes capacidades:
+
+#### Panel de Administración de Cursos
+- Visualización completa del catálogo de cursos con información detallada
+- Filtros por estado (todos, publicados, borradores)
+- Búsqueda inteligente por título e instructor
+- Métricas de desempeño y analíticas
+
+#### Operaciones Administrativas
+- Creación y edición completa de información de cursos
+- Gestión de metadatos (SEO, imágenes, slugs)
+- Control de publicación y visibilidad
+- Asignación y cambio de instructores
+- Matriculación manual de estudiantes
+
+#### Seguridad y Auditoría
+- Control de acceso basado en rol de administrador
+- RLS específicas para operaciones administrativas
+- Registro automático de cambios y acciones
+- Estadísticas en tiempo real de matriculaciones
+
+#### Componentes Principales
+- `AdminCourses`: Panel principal de gestión de cursos
+- `AdminCourseDetail`: Vista detallada y edición de un curso específico
+- `ManualEnrollmentDialog`: Interfaz para matricular usuarios manualmente
+
 ## Auditoría y Cumplimiento
 
 La plataforma mantiene registros detallados de auditoría para las siguientes categorías de acciones:
@@ -109,5 +138,27 @@ El sistema proporciona monitoreo en tiempo real de los siguientes aspectos:
 - Tasas de finalización
 - Valoraciones y feedback
 - Conversión de visitantes a estudiantes
+
+## Estructura de la Base de Datos
+
+### Principales Entidades
+
+#### Cursos (`courses`)
+Almacena la información principal de los cursos ofrecidos:
+- Metadatos básicos (título, descripción, precio)
+- Estado de publicación y visibilidad
+- Referencias al instructor
+- Configuración SEO y marketing
+- Estadísticas de matriculación
+- Campos de categorización y organización
+
+#### Políticas RLS para Cursos
+- Los administradores pueden ver, crear, editar y eliminar todos los cursos
+- Los instructores pueden gestionar sólo sus propios cursos
+- Los usuarios pueden ver únicamente cursos publicados
+- Los sistemas automatizados pueden actualizar métricas y estadísticas
+
+#### Funciones Auxiliares
+- `calculate_course_students_count`: Calcula el número de estudiantes matriculados en un curso
 
 Para obtener información más detallada sobre cada aspecto específico, consulte la documentación técnica completa o la sección correspondiente de los módulos especializados.

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   LayoutDashboard,
   Book,
@@ -30,7 +30,8 @@ import {
   Pencil,
   Eye,
   BarChart,
-  UserPlus
+  UserPlus,
+  AlertTriangle
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionPageLayout from "@/layouts/SectionPageLayout";
@@ -43,16 +44,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import ManualEnrollmentDialog from "@/components/admin/ManualEnrollmentDialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const AdminCourses: React.FC = () => {
   const [courses, setCourses] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all-courses");
-  const { toast } = useToast();
   const navigate = useNavigate();
   const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<{id: string, title: string} | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCourses();
@@ -61,23 +63,45 @@ const AdminCourses: React.FC = () => {
   const fetchCourses = async () => {
     try {
       setIsLoading(true);
+      setError(null);
+      
       const { data, error } = await supabase
         .from('courses')
-        .select('*, instructors:instructor_id(full_name)')
+        .select(`
+          id, 
+          title, 
+          description, 
+          price, 
+          currency, 
+          instructor_id, 
+          is_published,
+          status,
+          students_count,
+          created_at, 
+          updated_at,
+          profiles:instructor_id (full_name)
+        `)
         .order('created_at', { ascending: false });
       
       if (error) {
+        console.error('Error al obtener cursos:', error);
         throw error;
       }
       
-      setCourses(data || []);
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "No se pudieron cargar los cursos.",
-      });
+      // Transformar los datos para adaptarlos a la estructura esperada por la UI
+      const formattedCourses = data?.map(course => ({
+        ...course,
+        instructors: {
+          full_name: course.profiles?.full_name || 'Sin instructor asignado'
+        },
+        status: course.status || (course.is_published ? 'published' : 'draft')
+      })) || [];
+      
+      setCourses(formattedCourses);
+    } catch (error: any) {
+      console.error('Error al obtener cursos:', error);
+      setError(`No se pudieron cargar los cursos: ${error.message || 'Error desconocido'}`);
+      toast.error("Error al cargar los cursos. Consulta la consola para más detalles.");
     } finally {
       setIsLoading(false);
     }
@@ -91,17 +115,18 @@ const AdminCourses: React.FC = () => {
   const filteredCourses = searchTerm.trim() === "" 
     ? courses 
     : courses.filter(course => 
-        course.title?.toLowerCase().includes(searchTerm.toLowerCase()));
+        course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.instructors?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const publishedCourses = filteredCourses.filter(course => course.status === 'published');
-  const draftCourses = filteredCourses.filter(course => course.status === 'draft');
+  const publishedCourses = filteredCourses.filter(course => course.status === 'published' || course.is_published === true);
+  const draftCourses = filteredCourses.filter(course => course.status === 'draft' || course.is_published === false);
 
   const handleEnrollmentComplete = () => {
     toast({
       title: "Matrícula completada",
       description: "El usuario ha sido matriculado exitosamente en el curso.",
     });
-    // Opcionalmente, actualizar algún conteo o estado
+    fetchCourses(); // Refrescar la lista de cursos para actualizar los conteos
   };
 
   return (
@@ -130,6 +155,33 @@ const AdminCourses: React.FC = () => {
           </Link>
         </Button>
       </div>
+
+      {error && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            {error}
+            <div className="mt-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={fetchCourses}
+                className="mr-2"
+              >
+                Reintentar
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setError(null)}
+              >
+                Descartar
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
       <Tabs 
         defaultValue="all-courses" 
@@ -211,12 +263,12 @@ const AdminCourses: React.FC = () => {
                               <Badge 
                                 variant="outline" 
                                 className={
-                                  course.status === 'published' 
+                                  (course.status === 'published' || course.is_published)
                                     ? "bg-green-100 text-green-800" 
                                     : "bg-amber-100 text-amber-800"
                                 }
                               >
-                                {course.status === 'published' ? 'Publicado' : 'Borrador'}
+                                {(course.status === 'published' || course.is_published) ? 'Publicado' : 'Borrador'}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right">
