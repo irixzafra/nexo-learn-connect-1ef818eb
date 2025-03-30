@@ -17,8 +17,12 @@ import {
   adminMainMenuItems, 
   adminAlertMenuItems 
 } from '@/components/ui/admin-menu/AdminMenuPresets';
+import { useAdminDashboardStats } from '@/features/admin/hooks/useAdminDashboardStats';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const AdminDashboard: React.FC = () => {
+  const { stats, isLoading } = useAdminDashboardStats();
+
   return (
     <SectionPageLayout
       header={{
@@ -42,26 +46,30 @@ const AdminDashboard: React.FC = () => {
         stats: [
           {
             label: "Usuarios Totales",
-            value: "1,234",
+            value: isLoading ? "-" : stats.usersCount.toLocaleString(),
             icon: <Users className="h-5 w-5" />,
+            loading: isLoading,
             color: "primary"
           },
           {
             label: "Cursos Activos",
-            value: "42",
+            value: isLoading ? "-" : stats.publishedCoursesCount.toLocaleString(),
             icon: <BookOpen className="h-5 w-5" />,
+            loading: isLoading,
             color: "success"
           },
           {
-            label: "Ingresos del Mes",
-            value: "€4,850",
+            label: "Matriculaciones",
+            value: isLoading ? "-" : stats.enrollmentsCount.toLocaleString(),
             icon: <CreditCard className="h-5 w-5" />,
+            loading: isLoading,
             color: "primary"
           },
           {
-            label: "Tasa de Finalización",
-            value: "68%",
+            label: "Tasa de Publicación",
+            value: isLoading ? "-" : `${stats.completionRate}%`,
             icon: <BarChart3 className="h-5 w-5" />,
+            loading: isLoading,
             color: "warning"
           }
         ]
