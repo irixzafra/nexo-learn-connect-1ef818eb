@@ -1,12 +1,10 @@
 
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, BookOpen, UserCheck, Star, Award, Calendar, Check, ArrowRight, Crown } from "lucide-react";
+import { Star, Clock, Users, ArrowRight, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
-import { Course } from "@/types/course";
-import { cn } from "@/lib/utils";
+import { Course } from "@/types/courses";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CourseLandingHeroProps {
@@ -15,7 +13,7 @@ interface CourseLandingHeroProps {
   isEnrolled: boolean;
   isEnrolling: boolean;
   handleEnroll: () => Promise<void>;
-  formatCurrency: (price: number, currency: string) => string;
+  formatCurrency: (price: number) => string;
 }
 
 export const CourseLandingHero: React.FC<CourseLandingHeroProps> = ({
@@ -24,216 +22,206 @@ export const CourseLandingHero: React.FC<CourseLandingHeroProps> = ({
   isEnrolled,
   isEnrolling,
   handleEnroll,
-  formatCurrency,
+  formatCurrency
 }) => {
-  const navigate = useNavigate();
   const isMobile = useIsMobile();
+  
+  // Estilo de fondo para cuando hay imagen de portada
+  const backgroundStyle = course.cover_image_url
+    ? {
+        backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.85)), url(${course.cover_image_url})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }
+    : {
+        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%)',
+      };
+  
+  // Función para renderizar calificación con estrellas
+  const renderRating = () => {
+    const rating = 4.7; // Rating de ejemplo
+    return (
+      <div className="flex items-center">
+        <div className="flex mr-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              className={`h-4 w-4 ${
+                star <= Math.floor(rating)
+                  ? 'text-yellow-400 fill-yellow-400'
+                  : star - 0.5 <= rating
+                  ? 'text-yellow-400 fill-yellow-400'
+                  : 'text-gray-300'
+              }`}
+            />
+          ))}
+        </div>
+        <span className="text-sm font-medium">{rating.toFixed(1)}</span>
+        <span className="mx-1.5 text-sm text-gray-400">•</span>
+        <span className="text-sm text-gray-400">328 valoraciones</span>
+      </div>
+    );
+  };
+
+  // Animación para elementos
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+  
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  // Asumimos que no hay descuento si no existe en el tipo
+  const hasDiscount = false;
+  const originalPrice = course.price;
 
   return (
-    <section 
-      className={cn(
-        "relative overflow-hidden pt-16 pb-24 md:min-h-[70vh] flex items-center",
-        "bg-gradient-to-br from-primary/5 via-background to-background",
-        "after:absolute after:inset-0 after:bg-noise-pattern after:opacity-30 after:z-0"
-      )}
+    <section
+      className="relative py-12 md:py-20 overflow-hidden"
+      style={backgroundStyle}
     >
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden z-0">
-        <div className="absolute top-40 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-40 right-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
-      </div>
-
+      {/* Patrones de fondo */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+      
+      {/* Círculos decorativos */}
+      <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl"></div>
+      <div className="absolute -bottom-32 -right-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+      
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="max-w-4xl mx-auto md:text-center"
+        >
+          {/* Badges de categoría y nivel */}
+          <motion.div 
+            variants={fadeInUp}
+            className="flex flex-wrap gap-2 mb-4 md:justify-center"
           >
-            <div className="flex flex-wrap gap-2 mb-4">
-              <Badge className="bg-primary text-primary-foreground">{course.level || 'Curso completo'}</Badge>
-              {course.category && (
-                <Badge variant="outline" className="border-primary/20 bg-primary/5">{course.category}</Badge>
-              )}
-              {course.rating && course.rating >= 4.5 && (
-                <Badge className="bg-amber-500 text-white flex items-center gap-1">
-                  <Star className="h-3 w-3 fill-white" />
-                  <span>Top Rated</span>
-                </Badge>
-              )}
-            </div>
-            
-            <h1 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
-              {course.title}
-            </h1>
-            
-            <p className="text-xl text-muted-foreground mb-8">
-              {course.seo_description || course.description}
-            </p>
-            
-            {course.featured_instructor && (
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Award className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium">{course.featured_instructor}</p>
-                  <p className="text-sm text-muted-foreground">Instructor destacado</p>
-                </div>
-              </div>
+            {course.category && (
+              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                {course.category}
+              </Badge>
             )}
-            
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-primary font-medium">
-                  <Clock className="h-5 w-5" />
-                  <span>Duración</span>
-                </div>
-                <div className="text-sm">{course.duration_text || "Acceso completo"}</div>
-              </div>
-              
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-primary font-medium">
-                  <BookOpen className="h-5 w-5" />
-                  <span>Lecciones</span>
-                </div>
-                <div className="text-sm">{totalLessons} lecciones completas</div>
-              </div>
-              
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-primary font-medium">
-                  <UserCheck className="h-5 w-5" />
-                  <span>Nivel</span>
-                </div>
-                <div className="text-sm">{course.level || "Todos los niveles"}</div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg" 
-                onClick={handleEnroll}
-                disabled={isEnrolled || isEnrolling}
-                className="shadow-lg group relative overflow-hidden"
-              >
-                <span className="relative z-10 flex items-center">
-                  {isEnrolled ? (
-                    <>Ya estás inscrito</>
-                  ) : isEnrolling ? (
-                    <>Inscribiendo...</>
-                  ) : course.price > 0 ? (
-                    <>Inscribirme por {formatCurrency(course.price, course.currency)}</>
-                  ) : (
-                    <>Inscribirme gratis</>
-                  )}
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></span>
-              </Button>
-              
-              {isEnrolled && (
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  onClick={() => navigate(`/courses/${course.id}/learn`)}
-                  className="group"
-                >
-                  Continuar aprendiendo
-                  <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-              )}
-            </div>
-            
-            {/* Garantía */}
-            {course.price > 0 && (
-              <div className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
-                <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-200">
-                  <Shield className="h-3 w-3 mr-1" /> 30 días de garantía
-                </Badge>
-                <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-200">
-                  <Crown className="h-3 w-3 mr-1" /> Certificado incluido
-                </Badge>
-              </div>
+            {course.level && (
+              <Badge variant="outline" className="capitalize bg-secondary/10 text-secondary border-secondary/20">
+                {course.level}
+              </Badge>
             )}
           </motion.div>
           
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="hidden lg:block"
+          {/* Título del curso */}
+          <motion.h1 
+            variants={fadeInUp}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4 text-white"
           >
-            <div className="relative">
-              {/* Fancy border decoration */}
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 opacity-70 blur-sm"></div>
-              
-              <div className="relative rounded-xl overflow-hidden shadow-2xl">
-                {course.cover_image_url ? (
-                  <img 
-                    src={course.cover_image_url} 
-                    alt={course.title} 
-                    className="w-full h-[400px] object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-[400px] bg-muted flex items-center justify-center">
-                    <BookOpen className="h-24 w-24 text-muted-foreground/30" />
-                  </div>
-                )}
-                
-                {/* Floating stats card */}
-                <div className="absolute -bottom-6 -left-6 bg-card shadow-lg rounded-lg p-4 border border-border/50 backdrop-blur-sm bg-white/90 dark:bg-black/70 max-w-[280px]">
-                  <h3 className="font-semibold text-lg mb-2">Lo que aprenderás</h3>
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span className="text-sm">Dominarás los conceptos clave de este curso</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span className="text-sm">Aplicarás conocimientos con ejercicios prácticos</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span className="text-sm">Obtendrás un certificado al finalizar</span>
-                    </li>
-                  </ul>
-                </div>
-                
-                {/* Floating price tag */}
-                {course.price > 0 && (
-                  <div className="absolute top-4 right-4 bg-white dark:bg-black shadow-lg rounded-full py-2 px-4 font-bold text-lg border-2 border-primary/20 flex items-center gap-2">
-                    {formatCurrency(course.price, course.currency)}
-                    {course.discount && course.discount > 0 && (
-                      <span className="line-through text-sm text-muted-foreground">
-                        {formatCurrency(course.price * (1 + course.discount/100), course.currency)}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
+            {course.title}
+          </motion.h1>
+          
+          {/* Descripción del curso */}
+          <motion.p 
+            variants={fadeInUp}
+            className="text-lg md:text-xl text-gray-200 mb-6 max-w-3xl mx-auto"
+          >
+            {course.description}
+          </motion.p>
+          
+          {/* Valoraciones */}
+          <motion.div 
+            variants={fadeInUp}
+            className="flex flex-wrap items-center gap-4 mb-8 text-white md:justify-center"
+          >
+            {renderRating()}
+            <span className="text-gray-300">•</span>
+            <div className="flex items-center">
+              <Users className="h-4 w-4 mr-1 text-gray-300" />
+              <span className="text-sm">+1000 estudiantes</span>
+            </div>
+            <span className="text-gray-300">•</span>
+            <div className="flex items-center">
+              <Calendar className="h-4 w-4 mr-1 text-gray-300" />
+              <span className="text-sm">Actualizado recientemente</span>
             </div>
           </motion.div>
-        </div>
+          
+          {/* Pricing */}
+          <motion.div 
+            variants={fadeInUp}
+            className="flex items-baseline gap-2 mb-8 md:justify-center"
+          >
+            <span className="text-3xl font-bold text-white">
+              {originalPrice === 0 ? "Gratis" : formatCurrency(originalPrice)}
+            </span>
+            {hasDiscount && (
+              <span className="text-lg line-through text-gray-400">
+                {formatCurrency(originalPrice)}
+              </span>
+            )}
+          </motion.div>
+          
+          {/* Call to action */}
+          <motion.div 
+            variants={fadeInUp}
+            className="flex flex-col sm:flex-row gap-4 sm:items-center justify-center"
+          >
+            <Button 
+              size="lg" 
+              onClick={handleEnroll}
+              disabled={isEnrolled || isEnrolling}
+              className="relative group overflow-hidden bg-primary hover:bg-primary/90"
+            >
+              <span className="relative z-10 flex items-center">
+                {isEnrolling ? (
+                  "Procesando..."
+                ) : isEnrolled ? (
+                  "Continuar aprendiendo"
+                ) : (
+                  <>
+                    Inscribirme ahora
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
+              </span>
+              <span className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></span>
+            </Button>
+            
+            {/* Progress indicator */}
+            <div className="flex items-center text-white text-sm">
+              <Clock className="mr-2 h-4 w-4" />
+              <span>{course.duration_text || "Aprende a tu ritmo"}</span>
+              <span className="mx-2">•</span>
+              <span>{totalLessons} lecciones</span>
+            </div>
+          </motion.div>
+          
+          {/* Instructor */}
+          {course.featured_instructor && (
+            <motion.div 
+              variants={fadeInUp}
+              className="mt-8 flex items-center justify-center gap-2"
+            >
+              <span className="text-sm text-gray-300">Creado por </span>
+              <span className="font-medium text-white">{course.featured_instructor}</span>
+            </motion.div>
+          )}
+        </motion.div>
       </div>
     </section>
-  );
-};
-
-// Missing component used in the hero
-const Shield = ({ className }: { className?: string }) => {
-  return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      className={className}
-    >
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-      <path d="m9 12 2 2 4-4" />
-    </svg>
   );
 };

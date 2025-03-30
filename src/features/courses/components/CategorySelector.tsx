@@ -65,7 +65,7 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
 
   return (
     <div className="w-full">
-      <ScrollArea className="w-full pb-4" orientation="horizontal">
+      <ScrollArea className="w-full pb-4">
         <motion.div 
           className="flex space-x-2"
           variants={container}

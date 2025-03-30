@@ -101,22 +101,22 @@ const CoursesCatalog: React.FC = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full max-w-full overflow-hidden">
       {/* Hero section with gradient background */}
       <div className="bg-gradient-to-b from-primary/10 via-background to-background">
-        <div className="container mx-auto px-4 pt-8 pb-16 md:pt-16 md:pb-24">
+        <div className="container max-w-screen-2xl mx-auto px-4 pt-6 pb-12 md:pt-10 md:pb-16">
           <motion.div 
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.5 }}
-            className="text-center mb-8 md:mb-12"
+            className="text-center mb-6 md:mb-10"
           >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <BookOpen className="h-8 w-8 text-primary" />
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Catálogo de Cursos</h1>
-              <Sparkles className="h-6 w-6 text-amber-400" />
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <BookOpen className="h-6 w-6 text-primary" />
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Catálogo de Cursos</h1>
+              <Sparkles className="h-5 w-5 text-amber-400" />
             </div>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Explora nuestra colección premium de cursos y encuentra el perfecto para impulsar tu carrera.
             </p>
           </motion.div>
@@ -125,19 +125,19 @@ const CoursesCatalog: React.FC = () => {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-2xl mx-auto"
+            className="max-w-xl mx-auto"
           >
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Buscar cursos, instructores o temas..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full py-3 pl-10 pr-4 rounded-full border border-input bg-background shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+                className="w-full py-2 pl-9 pr-16 rounded-full border border-input bg-background shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
               />
               <Button 
-                className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full px-4 h-9"
+                className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full px-3 h-8 text-xs"
                 variant="default"
                 size="sm"
               >
@@ -145,26 +145,26 @@ const CoursesCatalog: React.FC = () => {
               </Button>
             </div>
             
-            <div className="flex flex-wrap justify-center gap-2 mt-4">
-              <Button size="sm" variant="outline" className="rounded-full">
-                <Flame className="w-4 h-4 mr-1 text-amber-500" />
-                Cursos populares
+            <div className="flex flex-wrap justify-center gap-2 mt-3">
+              <Button size="sm" variant="outline" className="rounded-full text-xs">
+                <Flame className="w-3 h-3 mr-1 text-amber-500" />
+                Populares
               </Button>
-              <Button size="sm" variant="outline" className="rounded-full">Principiantes</Button>
-              <Button size="sm" variant="outline" className="rounded-full">Certificados</Button>
-              <Button size="sm" variant="outline" className="rounded-full">Gratuitos</Button>
+              <Button size="sm" variant="outline" className="rounded-full text-xs">Principiantes</Button>
+              <Button size="sm" variant="outline" className="rounded-full text-xs">Certificados</Button>
+              <Button size="sm" variant="outline" className="rounded-full text-xs">Gratuitos</Button>
             </div>
           </motion.div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col-reverse md:flex-row md:items-center md:justify-between mb-6">
+      <div className="container max-w-screen-2xl mx-auto px-4 py-4 md:py-6">
+        <div className="flex flex-col-reverse md:flex-row md:items-center md:justify-between mb-4">
           <motion.div 
             initial={{ opacity: 0, x: -20 }} 
             animate={{ opacity: 1, x: 0 }} 
             transition={{ duration: 0.5 }}
-            className="mt-4 md:mt-0"
+            className="mt-4 md:mt-0 w-full overflow-auto"
           >
             <CategorySelector 
               selectedCategory={selectedCategory}
@@ -177,13 +177,15 @@ const CoursesCatalog: React.FC = () => {
             initial={{ opacity: 0, x: 20 }} 
             animate={{ opacity: 1, x: 0 }} 
             transition={{ duration: 0.5 }}
+            className="flex-shrink-0"
           >
             <Button 
               variant="outline"
               onClick={handleToggleFilters}
-              className="w-full md:w-auto"
+              className="w-full md:w-auto text-sm"
+              size="sm"
             >
-              <Filter className="mr-2 h-4 w-4" />
+              <Filter className="mr-1.5 h-3.5 w-3.5" />
               {showFilters ? "Ocultar filtros" : "Filtros avanzados"}
             </Button>
           </motion.div>
@@ -195,7 +197,7 @@ const CoursesCatalog: React.FC = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="mb-8"
+            className="mb-6"
           >
             <AdvancedCourseFilters
               selectedLevel={selectedLevel}
@@ -220,11 +222,11 @@ const CoursesCatalog: React.FC = () => {
           </motion.div>
         )}
 
-        <Separator className="my-6" />
+        <Separator className="my-4" />
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {[...Array(8)].map((_, index) => (
               <CourseCardSkeleton key={index} />
             ))}
           </div>
@@ -234,11 +236,11 @@ const CoursesCatalog: React.FC = () => {
             onRetry={fetchCourses} 
           />
         ) : !filteredCourses || filteredCourses.length === 0 ? (
-          <div className="bg-muted/20 rounded-lg p-10 text-center">
+          <div className="bg-muted/20 rounded-lg p-8 text-center">
             <div className="max-w-md mx-auto">
-              <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-2">No se encontraron cursos</h3>
-              <p className="text-muted-foreground mb-6">
+              <Search className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-bold mb-2">No se encontraron cursos</h3>
+              <p className="text-muted-foreground mb-4">
                 No hay cursos que coincidan con los filtros seleccionados. Prueba ajustando tus criterios de búsqueda.
               </p>
               <Button
@@ -265,16 +267,16 @@ const CoursesCatalog: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl p-8 mt-16 shadow-sm"
+          className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6 md:p-8 mt-12 shadow-sm"
         >
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
+            <h2 className="text-xl md:text-2xl font-bold mb-3">
               ¿No encuentras lo que buscas?
             </h2>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-muted-foreground mb-5 text-sm md:text-base">
               Explora nuestra variedad de rutas de aprendizaje diseñadas para guiarte paso a paso hasta dominar las habilidades que necesitas.
             </p>
-            <Button className="group" size="lg">
+            <Button className="group" size="sm" md:size="md">
               Explorar rutas de aprendizaje
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
