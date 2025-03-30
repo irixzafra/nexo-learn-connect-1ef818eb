@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { UserProfile } from "@/types/auth";
@@ -28,7 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
 import AppLayout from "@/layouts/AppLayout";
-import { UserRoleType } from "@/features/users/UserRoleType";
+import { UserRoleType } from '@/features/users/UserRoleType';
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);

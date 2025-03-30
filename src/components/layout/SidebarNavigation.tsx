@@ -16,7 +16,8 @@ import {
   Phone,
   Bell,
   Globe,
-  Shield
+  Shield,
+  Search
 } from 'lucide-react';
 import { 
   Tooltip,
@@ -33,6 +34,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { UserRoleType } from '@/features/users/UserRoleType';
+import { Input } from '@/components/ui/input';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRole;
@@ -45,6 +48,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
   const [currentLanguage, setCurrentLanguage] = useState('es'); // Default language is Spanish
+  const [showUserSearch, setShowUserSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // State for role switching
   const [currentViewRole, setCurrentViewRole] = useState<'current' | UserRole>(viewAsRole || 'current');
@@ -157,6 +162,28 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   // Available roles for switching view
   const availableRoles: UserRole[] = ['admin', 'instructor', 'student', 'sistemas', 'anonimo'];
 
+  // Toggle user search
+  const toggleUserSearch = () => {
+    setShowUserSearch(!showUserSearch);
+    if (!showUserSearch) {
+      setSearchQuery('');
+    }
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Handle search submit
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // This would typically navigate to a search results page or open a search dialog
+      window.location.href = `/admin/users?search=${encodeURIComponent(searchQuery)}`;
+    }
+  };
+
   return (
     <div className="h-full flex flex-col py-4">
       {/* Logo at the top with full title and subtitle */}
@@ -170,6 +197,45 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
           <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
         )}
       </div>
+      
+      {/* User search - only shown for admins */}
+      {userRole === 'admin' && !isCollapsed && (
+        <div className="px-4 mb-4">
+          <form onSubmit={handleSearchSubmit}>
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Buscar usuarios..."
+                className="pl-8 w-full text-sm"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Search button for collapsed sidebar - only for admins */}
+      {userRole === 'admin' && isCollapsed && (
+        <div className="px-2 mb-4 flex justify-center">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-9 w-9"
+                onClick={() => window.location.href = '/admin/users'}
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Buscar usuarios</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      )}
       
       <div className={cn(
         "flex-1 overflow-auto",
@@ -257,7 +323,9 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
                         currentViewRole === role && "font-bold bg-primary/10"
                       )}
                     >
-                      {getRoleName(role)}
+                      <div className="flex items-center gap-2">
+                        <UserRoleType role={role} />
+                      </div>
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
