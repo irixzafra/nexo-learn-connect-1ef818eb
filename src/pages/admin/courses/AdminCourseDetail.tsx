@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  BookOpen, Settings, Users, List
+  BookOpen, Settings, Users, List, BarChart
 } from 'lucide-react';
 import { AdminTabItem } from "@/components/admin/AdminTabs";
 import { useCourseDetails } from '@/features/admin/hooks/useCourseDetails';
@@ -10,6 +10,9 @@ import CourseContentTab from '@/features/admin/components/courses/CourseContentT
 import CourseStudentsTab from '@/features/admin/components/courses/CourseStudentsTab';
 import CourseNotFound from '@/features/admin/components/courses/CourseNotFound';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
+import CourseSettingsTab from '@/features/admin/components/courses/CourseSettingsTab';
+import CourseInstructorsTab from '@/features/admin/components/courses/CourseInstructorsTab';
+import CourseAnalyticsTab from '@/features/admin/components/courses/CourseAnalyticsTab';
 
 const AdminCourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -51,10 +54,14 @@ const AdminCourseDetail: React.FC = () => {
       label: 'Configuración',
       icon: <Settings className="h-4 w-4" />,
       content: (
-        <div className="p-4">
-          <h2 className="text-xl font-bold mb-4">Configuración del curso</h2>
-          <p>Contenido de configuración aquí</p>
-        </div>
+        <CourseSettingsTab 
+          course={course} 
+          isSaving={isSaving} 
+          editedCourse={editedCourse}
+          handleInputChange={handleInputChange}
+          handleSwitchChange={handleSwitchChange}
+          handleSave={handleSave}
+        />
       )
     },
     {
@@ -73,12 +80,13 @@ const AdminCourseDetail: React.FC = () => {
       value: 'instructors',
       label: 'Instructores',
       icon: <BookOpen className="h-4 w-4" />,
-      content: (
-        <div className="p-4">
-          <h2 className="text-xl font-bold mb-4">Instructores del curso</h2>
-          <p>Gestión de instructores aquí</p>
-        </div>
-      )
+      content: <CourseInstructorsTab courseId={course.id} courseName={course.title} />
+    },
+    {
+      value: 'analytics',
+      label: 'Analíticas',
+      icon: <BarChart className="h-4 w-4" />,
+      content: <CourseAnalyticsTab courseId={course.id} courseName={course.title} />
     }
   ];
 
