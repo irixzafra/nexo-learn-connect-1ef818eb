@@ -21,6 +21,7 @@ import Community from '@/pages/Community';
 import PostDetail from '@/pages/PostDetail';
 import Messages from '@/pages/placeholder/Messages';
 import NotificationCenter from "@/pages/NotificationCenter";
+import NotFound from '@/pages/NotFound';
 
 const AppRouter = () => {
   return (
@@ -51,8 +52,8 @@ const AppRouter = () => {
       <Route path="/messages" element={<ProtectedRoute><AppLayout><Messages /></AppLayout></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute><AppLayout><NotificationCenter /></AppLayout></ProtectedRoute>} />
 
-      {/* Catch-all route for 404 */}
-      <Route path="*" element={<div>404 Not Found</div>} />
+      {/* Catch-all route for 404 - unificado */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

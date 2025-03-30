@@ -1,49 +1,49 @@
 
 import React, { useState, useEffect } from 'react';
 import AppHeader from './AppHeader';
-import SidebarNavigation from './SidebarNavigation';
+import RefactoredSidebarNavigation from './sidebar/RefactoredSidebarNavigation';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { useLocation } from 'react-router-dom';
 
 interface AppLayoutProps {
   children: React.ReactNode;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { userRole } = useAuth();
-  const location = useLocation();
+  const { userRole, viewAsRole: contextViewAsRole, setViewAsRole } = useAuth();
   
-  // View as role state
-  const [viewAsRole, setViewAsRole] = useState<'current' | UserRoleType>('current');
+  // View as role state (inicializada desde el contexto)
+  const [viewAsRole, setViewAsRoleState] = useState<'current' | UserRoleType>(
+    contextViewAsRole || 'current'
+  );
   
-  // Load the viewAsRole from localStorage on component mount
+  // Sincroniza el estado local con el contexto cuando cambia
   useEffect(() => {
-    const savedViewRole = localStorage.getItem('viewAsRole');
-    if (savedViewRole) {
-      setViewAsRole(savedViewRole as UserRoleType);
+    if (contextViewAsRole && contextViewAsRole !== viewAsRole) {
+      setViewAsRoleState(contextViewAsRole);
     }
-  }, []);
+  }, [contextViewAsRole]);
   
-  // Handler for role changes
+  // Handler para cambios de rol
   const handleRoleChange = (role: UserRoleType) => {
     console.log("AppLayout: Role changed to", role);
-    setViewAsRole(role);
-    localStorage.setItem('viewAsRole', role);
+    setViewAsRoleState(role);
+    
+    // También actualiza el contexto global
+    if (setViewAsRole) {
+      setViewAsRole(role);
+    }
   };
   
   const effectiveRole = viewAsRole === 'current' 
     ? toUserRoleType(userRole as string) 
     : viewAsRole;
   
-  // Log for debugging purposes
-  console.log("AppLayout: effectiveRole =", effectiveRole, "userRole =", userRole, "viewAsRole =", viewAsRole);
-  
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
-        <SidebarNavigation 
+        <RefactoredSidebarNavigation 
           viewAsRole={viewAsRole} 
           onRoleChange={handleRoleChange} 
         />
