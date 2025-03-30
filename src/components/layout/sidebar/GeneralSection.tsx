@@ -13,6 +13,7 @@ export const GeneralSection: React.FC<GeneralSectionProps> = ({ expanded, onTogg
   return (
     <SidebarGroup 
       label="Principal" 
+      icon={Home}
       isExpanded={expanded} 
       onToggle={onToggle}
     >

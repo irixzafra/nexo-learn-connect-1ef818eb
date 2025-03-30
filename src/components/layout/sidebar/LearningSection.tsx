@@ -2,7 +2,7 @@
 import React from 'react';
 import { SidebarGroup } from './SidebarGroup';
 import { MenuItem } from './MenuItems';
-import { FileText, UserCog, Settings } from 'lucide-react';
+import { FileText, UserCog, Settings, Lightbulb } from 'lucide-react';
 
 interface LearningSectionProps {
   expanded: boolean;
@@ -13,6 +13,7 @@ export const LearningSection: React.FC<LearningSectionProps> = ({ expanded, onTo
   return (
     <SidebarGroup 
       label="Aprendizaje" 
+      icon={Lightbulb}
       isExpanded={expanded} 
       onToggle={onToggle}
     >

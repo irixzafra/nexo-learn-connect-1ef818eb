@@ -24,6 +24,7 @@ export const SistemasSection: React.FC<SistemasSectionProps> = ({ expanded, onTo
   return (
     <SidebarGroup 
       label="Sistemas" 
+      icon={Database}
       isExpanded={expanded} 
       onToggle={onToggle}
     >

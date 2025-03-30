@@ -2,7 +2,7 @@
 import React from 'react';
 import { SidebarGroup } from './SidebarGroup';
 import { MenuItem } from './MenuItems';
-import { Info, HelpCircle } from 'lucide-react';
+import { Info, HelpCircle, CircleUser } from 'lucide-react';
 
 interface AccountSectionProps {
   expanded: boolean;
@@ -13,6 +13,7 @@ export const AccountSection: React.FC<AccountSectionProps> = ({ expanded, onTogg
   return (
     <SidebarGroup 
       label="Cuenta" 
+      icon={CircleUser}
       isExpanded={expanded} 
       onToggle={onToggle}
     >

@@ -13,6 +13,7 @@ export const InstructorSection: React.FC<InstructorSectionProps> = ({ expanded, 
   return (
     <SidebarGroup 
       label="Enseñanza" 
+      icon={Presentation}
       isExpanded={expanded} 
       onToggle={onToggle}
     >

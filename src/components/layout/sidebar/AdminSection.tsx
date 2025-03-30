@@ -23,6 +23,7 @@ export const AdminSection: React.FC<AdminSectionProps> = ({ expanded, onToggle }
   return (
     <SidebarGroup 
       label="Administración" 
+      icon={Shield}
       isExpanded={expanded} 
       onToggle={onToggle}
     >

@@ -13,6 +13,7 @@ export const CommunitySection: React.FC<CommunitySectionProps> = ({ expanded, on
   return (
     <SidebarGroup 
       label="Comunidad" 
+      icon={Users}
       isExpanded={expanded} 
       onToggle={onToggle}
     >
