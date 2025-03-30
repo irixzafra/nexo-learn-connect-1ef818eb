@@ -3,7 +3,7 @@ import React from 'react';
 import { PageSection } from '@/layouts/SectionPageLayout';
 import { StudentsSection } from './students';
 
-interface CourseStudentsTabProps {
+export interface CourseStudentsTabProps {
   courseId: string;
   courseName: string;
 }

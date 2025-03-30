@@ -1,153 +1,175 @@
 
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { PageStatsProps } from '@/components/layout/page/PageStats';
-import PageStats from '@/components/layout/page/PageStats';
+import { ChevronRight, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+
+interface Breadcrumb {
+  href: string;
+  label: string;
+  current?: boolean;
+}
+
+export interface SectionPageLayoutProps {
+  pageTitle?: string;
+  title?: string; // For backward compatibility
+  subtitle?: string;
+  description?: string;
+  icon?: React.ReactNode;
+  actions?: React.ReactNode;
+  children: React.ReactNode;
+  backLink?: string;
+  backLabel?: string;
+  onBack?: () => void;
+  variant?: 'default' | 'narrow' | 'wide';
+  breadcrumbs?: Breadcrumb[];
+  contentClassName?: string;
+}
 
 export interface PageSectionProps {
   title?: string;
   description?: string;
-  children: React.ReactNode;
+  variant?: 'default' | 'card' | 'bordered' | 'transparent';
+  actions?: React.ReactNode;
   className?: string;
-  fullWidth?: boolean;
-  variant?: 'default' | 'card';
-  contentClassName?: string;
-}
-
-export const PageSection: React.FC<PageSectionProps> = ({
-  title,
-  description,
-  children,
-  className,
-  fullWidth = false,
-  variant = 'default',
-  contentClassName,
-}) => {
-  if (variant === 'card') {
-    return (
-      <div className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)}>
-        {(title || description) && (
-          <div className="flex flex-col space-y-1.5 p-6">
-            {title && <h3 className="text-lg font-semibold">{title}</h3>}
-            {description && <p className="text-sm text-muted-foreground">{description}</p>}
-          </div>
-        )}
-        <div className={cn("p-6 pt-0", contentClassName)}>{children}</div>
-      </div>
-    );
-  }
-
-  return (
-    <section className={cn("space-y-2", fullWidth ? "w-full" : "", className)}>
-      {title && (
-        <div className="space-y-1">
-          <h3 className="text-lg font-medium">{title}</h3>
-          {description && <p className="text-sm text-muted-foreground">{description}</p>}
-        </div>
-      )}
-      <div className={contentClassName}>{children}</div>
-    </section>
-  );
-};
-
-// Interfaces para soporte de ayuda y migas de pan
-export interface HelpLink {
-  title: string;
-  description: string;
-  href: string;
-  external?: boolean;
-}
-
-export interface HelpProps {
-  title: string;
-  description: string;
-  links: HelpLink[];
-}
-
-export interface BreadcrumbItem {
-  title: string;
-  href?: string;
-}
-
-export interface SectionPageLayoutProps {
-  header: {
-    title: string;
-    description?: string;
-    actions?: React.ReactNode;
-    breadcrumbs?: BreadcrumbItem[];
-  };
-  stats?: PageStatsProps;
-  help?: HelpProps;
-  children: React.ReactNode;
-  className?: string;
+  children?: React.ReactNode;
 }
 
 const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
-  header,
-  stats,
-  help,
+  pageTitle,
+  title,
+  subtitle,
+  description,
+  icon,
+  actions,
   children,
-  className,
+  backLink,
+  backLabel = 'Volver',
+  onBack,
+  variant = 'default',
+  breadcrumbs,
+  contentClassName = '',
 }) => {
+  // For backward compatibility, use title as pageTitle if pageTitle is not provided
+  const finalTitle = pageTitle || title;
+  
   return (
-    <div className={cn("container mx-auto px-4 py-6 space-y-6", className)}>
-      {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          {header.breadcrumbs && (
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-2">
-              {header.breadcrumbs.map((crumb, index) => (
-                <React.Fragment key={index}>
-                  {index > 0 && <span>/</span>}
-                  {crumb.href ? (
-                    <a href={crumb.href} className="hover:text-primary">
-                      {crumb.title}
-                    </a>
-                  ) : (
-                    <span>{crumb.title}</span>
-                  )}
-                </React.Fragment>
-              ))}
+    <div className="container mx-auto px-4 py-6 space-y-6">
+      {/* Header Section */}
+      <div className="space-y-2">
+        {/* Back button or breadcrumbs */}
+        {(backLink || onBack || breadcrumbs) && (
+          <div className="mb-4">
+            {backLink && (
+              <Link to={backLink}>
+                <Button variant="ghost" size="sm" className="gap-1 pl-0">
+                  <ArrowLeft className="h-4 w-4" />
+                  {backLabel}
+                </Button>
+              </Link>
+            )}
+            
+            {onBack && !backLink && (
+              <Button variant="ghost" size="sm" className="gap-1 pl-0" onClick={onBack}>
+                <ArrowLeft className="h-4 w-4" />
+                {backLabel}
+              </Button>
+            )}
+            
+            {breadcrumbs && (
+              <nav className="flex" aria-label="Breadcrumb">
+                <ol className="inline-flex items-center space-x-1 md:space-x-2">
+                  {breadcrumbs.map((item, index) => (
+                    <li key={index} className="inline-flex items-center">
+                      {index > 0 && (
+                        <ChevronRight className="h-4 w-4 text-muted-foreground mx-1" />
+                      )}
+                      {item.current ? (
+                        <span className="text-sm font-medium text-primary">{item.label}</span>
+                      ) : (
+                        <Link 
+                          to={item.href} 
+                          className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                        >
+                          {item.label}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )}
+          </div>
+        )}
+        
+        {/* Title and subtitle */}
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            {finalTitle && (
+              <h1 className="text-2xl font-bold tracking-tight">{finalTitle}</h1>
+            )}
+            {subtitle && (
+              <p className="text-muted-foreground mt-1">{subtitle}</p>
+            )}
+            {description && subtitle == null && (
+              <p className="text-muted-foreground mt-1">{description}</p>
+            )}
+          </div>
+          
+          {/* Actions */}
+          {actions && (
+            <div className="flex flex-wrap gap-2 justify-end">
+              {actions}
             </div>
           )}
-          <h1 className="text-3xl font-bold">{header.title}</h1>
-          {header.description && (
-            <p className="mt-1 text-muted-foreground">{header.description}</p>
+        </div>
+      </div>
+      
+      {/* Content */}
+      <div className={contentClassName}>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// PageSection component for dividing the page into multiple sections
+export const PageSection: React.FC<PageSectionProps> = ({
+  title,
+  description,
+  variant = 'default',
+  actions,
+  className = '',
+  children,
+}) => {
+  const containerClassName = {
+    default: 'space-y-4',
+    card: 'bg-card text-card-foreground rounded-lg border shadow-sm p-6 space-y-4',
+    bordered: 'border rounded-lg p-6 space-y-4',
+    transparent: 'space-y-4',
+  }[variant];
+  
+  return (
+    <section className={`${containerClassName} ${className}`}>
+      {(title || description || actions) && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+          <div>
+            {title && <h2 className="text-xl font-semibold tracking-tight">{title}</h2>}
+            {description && <p className="text-muted-foreground text-sm mt-1">{description}</p>}
+          </div>
+          
+          {actions && (
+            <div className="flex flex-wrap gap-2 sm:justify-end">
+              {actions}
+            </div>
           )}
         </div>
-        {header.actions && (
-          <div className="flex flex-wrap items-center gap-3">{header.actions}</div>
-        )}
-      </div>
-
-      {/* Stats */}
-      {stats && <PageStats {...stats} />}
-
-      {/* Help Section */}
-      {help && (
-        <div className="bg-muted/30 rounded-lg p-6 border">
-          <h3 className="text-lg font-medium mb-2">{help.title}</h3>
-          <p className="text-muted-foreground mb-4">{help.description}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {help.links.map((link, index) => (
-              <a 
-                key={index}
-                href={link.href}
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noopener noreferrer" : undefined}
-                className="flex flex-col p-4 bg-background rounded-lg border hover:bg-accent/50 transition-colors"
-              >
-                <span className="font-medium">{link.title}</span>
-                <span className="text-sm text-muted-foreground">{link.description}</span>
-              </a>
-            ))}
-          </div>
-        </div>
       )}
-
-      {/* Main Content */}
-      <div className="space-y-6">{children}</div>
-    </div>
+      
+      <div>
+        {children}
+      </div>
+    </section>
   );
 };
 

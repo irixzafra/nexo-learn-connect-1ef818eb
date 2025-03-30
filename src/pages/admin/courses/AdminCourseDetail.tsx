@@ -14,8 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import SectionPageLayout from '@/layouts/SectionPageLayout';
-import { AdminTabs } from '@/components/admin/AdminTabs';
-import { useCourseDetail } from '@/features/admin/hooks/useCourseDetail';
+import AdminTabs from '@/components/admin/AdminTabs';
+import useCourseDetail from '@/features/admin/hooks/useCourseDetail';
 
 import CourseGeneralTab from '@/features/admin/components/courses/CourseGeneralTab';
 import CourseContentTab from '@/features/admin/components/courses/CourseContentTab';
@@ -28,7 +28,7 @@ import CourseNotFound from '@/features/admin/components/courses/CourseNotFound';
 const AdminCourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const { course, isLoading, error } = useCourseDetail(courseId);
+  const { course, isLoading, error } = useCourseDetail({ courseId });
 
   // Return to course list
   const handleBack = () => {
@@ -45,7 +45,7 @@ const AdminCourseDetail: React.FC = () => {
 
   // Render loading, error or not found states
   if (isLoading) return <CourseLoadingState />;
-  if (error) return <CourseError error={error} />;
+  if (error) return <CourseError error={error} onRetry={() => {}} onDismiss={() => {}} />;
   if (!course) return <CourseNotFound />;
 
   // Define available tabs
@@ -74,7 +74,7 @@ const AdminCourseDetail: React.FC = () => {
 
   return (
     <SectionPageLayout
-      title={course.title}
+      pageTitle={course.title}
       subtitle={`ID: ${course.id} · Creado: ${new Date(course.created_at).toLocaleDateString()}`}
       actions={headerActions}
       breadcrumbs={[
@@ -88,19 +88,34 @@ const AdminCourseDetail: React.FC = () => {
         
         <Tabs defaultValue="general" className="w-full">
           <TabsContent value="general">
-            <CourseGeneralTab course={course} />
+            <CourseGeneralTab 
+              course={course} 
+              editedCourse={{
+                title: course.title || '',
+                description: course.description || '',
+                price: course.price || 0,
+                is_published: course.is_published || false,
+                category: course.category || '',
+                level: course.level || '',
+                currency: course.currency || 'eur',
+                cover_image_url: course.cover_image_url || '',
+                slug: course.slug || '',
+              }}
+              handleInputChange={() => {}}
+              handleSwitchChange={() => {}}
+            />
           </TabsContent>
           
           <TabsContent value="content">
-            <CourseContentTab course={course} />
+            <CourseContentTab />
           </TabsContent>
           
           <TabsContent value="students">
-            <CourseStudentsTab courseId={course.id} />
+            <CourseStudentsTab courseId={course.id} courseName={course.title} />
           </TabsContent>
           
           <TabsContent value="stats">
-            <CourseStatsTab courseId={course.id} />
+            <CourseStatsTab />
           </TabsContent>
         </Tabs>
       </div>
