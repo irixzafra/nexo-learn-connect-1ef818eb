@@ -1,79 +1,47 @@
 
-import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Toaster } from 'sonner';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
-import { UserRoleType, toUserRoleType } from '@/types/auth';
-import { 
-  Sidebar, 
-  SidebarContent, 
-  SidebarProvider 
-} from '@/components/ui/sidebar';
-import RefactoredSidebarNavigation from '@/components/layout/sidebar/RefactoredSidebarNavigation';
+import React from 'react';
+import { Toaster } from "@/components/ui/toaster";
+import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
 import AppHeader from '@/components/layout/AppHeader';
+import SidebarNavigation from '@/components/layout/SidebarNavigation';
+import { Sidebar, SidebarContent } from '@/components/ui/sidebar';
+import { useLocation } from 'react-router-dom';
 
 interface AppLayoutProps {
   children: React.ReactNode;
-  showSidebar?: boolean;
   showHeader?: boolean;
-  contentClassName?: string;
 }
 
-/**
- * Main layout component for the application
- */
 const AppLayout: React.FC<AppLayoutProps> = ({ 
-  children, 
-  showSidebar = true,
-  showHeader = true,
-  contentClassName = ""
+  children,
+  showHeader = true 
 }) => {
-  const { isAuthenticated } = useAuth();
-  const isMobile = useIsMobile();
+  const location = useLocation();
   
-  // Role switching state (for admin view-as functionality)
-  const [viewAsRole, setViewAsRole] = useState<'current' | UserRoleType>('current');
-  
-  // Handle role change for "view as" functionality
-  const handleRoleChange = (role: UserRoleType) => {
-    setViewAsRole(role);
-  };
-  
-  // Determine if showing the sidebar
-  const shouldShowSidebar = isAuthenticated && showSidebar;
-  
+  // Don't show header on admin pages
+  const isAdminPage = location.pathname.includes('/admin');
+  const shouldShowHeader = showHeader && !isAdminPage;
+
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background">
-        {/* Sidebar */}
-        {shouldShowSidebar && (
-          <Sidebar className="border-r bg-sidebar">
-            <SidebarContent className="p-0">
-              <RefactoredSidebarNavigation
-                viewAsRole={viewAsRole}
-                onRoleChange={handleRoleChange}
-              />
-            </SidebarContent>
-          </Sidebar>
-        )}
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex min-h-screen w-full">
+        <Sidebar>
+          <SidebarContent>
+            <SidebarNavigation viewAsRole="current" />
+          </SidebarContent>
+        </Sidebar>
         
-        {/* Main Content Area */}
-        <div className="flex flex-col flex-1 w-full">
-          {/* Header */}
-          {showHeader && <AppHeader viewAsRole={viewAsRole} onRoleChange={handleRoleChange} />}
+        <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
+          {/* Completely removing the header based on conditions */}
+          {shouldShowHeader ? null : null}
           
-          {/* Main Content */}
-          <main className={cn("flex-1", contentClassName)}>
+          <main className="flex-1">
             {children}
           </main>
-          
-          {/* Footer would go here if needed */}
         </div>
-        
-        {/* Toaster for displaying notifications */}
-        <Toaster position="top-right" />
       </div>
+      
+      <Toaster />
     </SidebarProvider>
   );
 };

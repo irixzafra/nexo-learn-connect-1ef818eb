@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -14,6 +15,7 @@ import { LogOut, User, Settings, BookOpen, ArrowLeftRight, UserCog, Shield, Term
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface UserInfoDisplayProps {
   viewAsRole: UserRoleType | 'current';
@@ -79,22 +81,21 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
   const isViewingAsOtherRole = viewAsRole !== 'current' && viewAsRole !== effectiveUserRole;
 
   return user ? (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center gap-2 w-full justify-start px-2 hover:bg-muted">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={profile?.avatar_url} alt={profile?.full_name || 'User'} />
-            <AvatarFallback>{getUserInitials()}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col items-start text-left overflow-hidden">
-            <span className="text-sm font-medium truncate max-w-[120px]">
-              {profile?.full_name || 'Usuario'}
-            </span>
-            <div className="flex items-center gap-1">
-              <Badge 
-                variant={getRoleBadgeVariant(toUserRoleType(userRole || ''))} 
-                className="h-5 text-xs px-2 py-0 truncate max-w-[120px]"
-              >
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={profile?.avatar_url} alt={profile?.full_name || 'User'} />
+                <AvatarFallback>{getUserInitials()}</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel className="flex items-center gap-2">
+              <span>{profile?.full_name || 'Usuario'}</span>
+              <Badge variant={getRoleBadgeVariant(toUserRoleType(userRole || ''))}>
                 <div className="flex items-center gap-1">
                   {getRoleIcon(toUserRoleType(userRole || ''))}
                   <span className="capitalize truncate">
@@ -102,47 +103,47 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
                   </span>
                 </div>
               </Badge>
-            </div>
-          </div>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Mi cuenta</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate('/profile')}>
-          <User className="mr-2 h-4 w-4" />
-          <span>Perfil</span>
-        </DropdownMenuItem>
-        
-        {effectiveUserRole === 'instructor' && (
-          <DropdownMenuItem onClick={() => navigate('/instructor/courses')}>
-            <BookOpen className="mr-2 h-4 w-4" />
-            <span>Mis cursos</span>
-          </DropdownMenuItem>
-        )}
-        
-        <DropdownMenuItem onClick={() => navigate('/settings')}>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Configuración</span>
-        </DropdownMenuItem>
-        
-        {isViewingAsOtherRole && effectiveUserRole === 'admin' && (
-          <>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onRoleChange(toUserRoleType(userRole as string))}>
-              <ArrowLeftRight className="mr-2 h-4 w-4" />
-              <span>Volver a mi rol</span>
+            <DropdownMenuItem onClick={() => navigate('/profile')}>
+              <User className="mr-2 h-4 w-4" />
+              <span>Perfil</span>
             </DropdownMenuItem>
-          </>
-        )}
-        
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Cerrar sesión</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+            
+            {effectiveUserRole === 'instructor' && (
+              <DropdownMenuItem onClick={() => navigate('/instructor/courses')}>
+                <BookOpen className="mr-2 h-4 w-4" />
+                <span>Mis cursos</span>
+              </DropdownMenuItem>
+            )}
+            
+            <DropdownMenuItem onClick={() => navigate('/settings')}>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Configuración</span>
+            </DropdownMenuItem>
+            
+            {isViewingAsOtherRole && effectiveUserRole === 'admin' && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => onRoleChange(toUserRoleType(userRole as string))}>
+                  <ArrowLeftRight className="mr-2 h-4 w-4" />
+                  <span>Volver a mi rol</span>
+                </DropdownMenuItem>
+              </>
+            )}
+            
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Cerrar sesión</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TooltipTrigger>
+      <TooltipContent side="left">
+        <p>Mi perfil</p>
+      </TooltipContent>
+    </Tooltip>
   ) : null;
 };
 

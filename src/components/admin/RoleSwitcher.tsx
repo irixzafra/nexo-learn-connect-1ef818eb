@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { 
@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Check, UserCog, ArrowLeftRight, Shield, User, Terminal, Ghost, Users } from 'lucide-react';
 import { RoleIndicator } from '@/components/layout/header/RoleIndicator';
 import { toast } from 'sonner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface RoleSwitcherProps {
   onChange?: (role: UserRoleType) => void;
@@ -24,7 +25,6 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   currentViewRole
 }) => {
   const { userRole } = useAuth();
-  const [open, setOpen] = useState(false);
   
   // Solo los administradores pueden cambiar roles
   if (userRole !== 'admin') {
@@ -48,7 +48,6 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
         toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);
       }
     }
-    setOpen(false);
   };
 
   const getRoleIcon = (role: UserRoleType) => {
@@ -90,51 +89,58 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== toUserRoleType(userRole as string);
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm"
-          className="flex items-center gap-1.5"
-        >
-          <Users className="h-4 w-4" />
-          <span className="sr-only md:not-sr-only text-sm">Rol</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-          Vista previa como:
-        </div>
-        
-        {availableRoles.map((role) => (
-          <DropdownMenuItem 
-            key={role}
-            onSelect={() => handleRoleChange(role)}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2">
-                {getRoleIcon(role)}
-                <span>{getRoleLabel(role)}</span>
-              </div>
-              {currentViewRole === role && <Check className="h-4 w-4" />}
-            </div>
-          </DropdownMenuItem>
-        ))}
-        
-        {isViewingAsOtherRole && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              onSelect={() => handleRoleChange('current')}
-              className="flex items-center gap-2 cursor-pointer"
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 rounded-full"
             >
-              <ArrowLeftRight className="h-4 w-4 mr-2" />
-              <span>Volver a mi rol ({getRoleLabel(toUserRoleType(userRole as string))})</span>
-            </DropdownMenuItem>
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+              <Users className="h-4 w-4" />
+              <span className="sr-only">Cambiar vista de rol</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+              Vista previa como:
+            </div>
+            
+            {availableRoles.map((role) => (
+              <DropdownMenuItem 
+                key={role}
+                onSelect={() => handleRoleChange(role)}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    {getRoleIcon(role)}
+                    <span>{getRoleLabel(role)}</span>
+                  </div>
+                  {currentViewRole === role && <Check className="h-4 w-4" />}
+                </div>
+              </DropdownMenuItem>
+            ))}
+            
+            {isViewingAsOtherRole && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onSelect={() => handleRoleChange('current')}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <ArrowLeftRight className="h-4 w-4 mr-2" />
+                  <span>Volver a mi rol ({getRoleLabel(toUserRoleType(userRole as string))})</span>
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        <p>Vista previa como otro rol</p>
+      </TooltipContent>
+    </Tooltip>
   );
 };

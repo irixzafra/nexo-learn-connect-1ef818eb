@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface LanguageSelectorProps {
   currentLanguage: string;
@@ -30,29 +31,33 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     }
   };
 
-  // Find current language object
-  const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
-
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="flex items-center gap-2 px-2">
-          <Globe className="h-4 w-4" />
-          <span className="sr-only md:not-sr-only text-sm">{currentLang.name}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40">
-        {languages.map((lang) => (
-          <DropdownMenuItem 
-            key={lang.code}
-            onClick={() => onChange(lang.code)}
-            className={`cursor-pointer flex items-center gap-2 ${lang.code === currentLanguage ? 'bg-accent' : ''}`}
-          >
-            <span>{getLanguageFlag(lang.code)}</span>
-            <span>{lang.name}</span>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+              <Globe className="h-4 w-4" />
+              <span className="sr-only">Change language</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-36">
+            {languages.map((lang) => (
+              <DropdownMenuItem 
+                key={lang.code}
+                onClick={() => onChange(lang.code)}
+                className="cursor-pointer flex items-center gap-2"
+              >
+                <span>{getLanguageFlag(lang.code)}</span>
+                <span>{lang.name}</span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        <p>Cambiar idioma</p>
+      </TooltipContent>
+    </Tooltip>
   );
 };

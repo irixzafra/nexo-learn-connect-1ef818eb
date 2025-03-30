@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from '@/components/ui/use-toast';
 import { UserCog, Shield, User, Terminal, Ghost, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface UserRoleSwitcherProps {
   userId?: string;
@@ -104,39 +105,43 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button 
-            variant={isChanging ? "outline" : "default"}
-            size="sm"
-            disabled={isChanging}
-            className="flex items-center gap-2"
-          >
-            {isChanging ? (
-              <span className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></span>
-            ) : (
-              getRoleIcon(selectedRole)
-            )}
-            <span>{getRoleName(selectedRole)}</span>
-            <ChevronDown className="h-3.5 w-3.5 ml-1" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {(['admin', 'instructor', 'student', 'sistemas', 'anonimo'] as UserRoleType[]).map((role) => (
-            <DropdownMenuItem 
-              key={role}
-              onClick={() => handleRoleSelect(role)}
-              className="cursor-pointer"
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              disabled={isChanging}
+              className="h-8 w-8 rounded-full"
             >
-              <div className="flex items-center gap-2">
-                {getRoleIcon(role)}
-                <span>{getRoleName(role)}</span>
-              </div>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+              {isChanging ? (
+                <span className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></span>
+              ) : (
+                getRoleIcon(selectedRole)
+              )}
+              <span className="sr-only">Cambiar rol</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            {(['admin', 'instructor', 'student', 'sistemas', 'anonimo'] as UserRoleType[]).map((role) => (
+              <DropdownMenuItem 
+                key={role}
+                onClick={() => handleRoleSelect(role)}
+                className="cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  {getRoleIcon(role)}
+                  <span>{getRoleName(role)}</span>
+                </div>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        <p>Cambiar rol</p>
+      </TooltipContent>
+    </Tooltip>
   );
 };
