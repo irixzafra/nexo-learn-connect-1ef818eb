@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +41,7 @@ export const CourseLandingHero: React.FC<CourseLandingHeroProps> = ({
           <div className="order-2 md:order-1">
             <motion.img
               src={course.cover_image_url || "https://via.placeholder.com/500x300"}
-              alt={course.title}
+              alt={`Portada del curso: ${course.title}`}
               className="rounded-xl shadow-lg aspect-video w-full h-auto object-cover"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
@@ -64,7 +65,7 @@ export const CourseLandingHero: React.FC<CourseLandingHeroProps> = ({
               </h1>
               
               <p className="text-lg text-muted-foreground">
-                {course.description || "Descripción no disponible"}
+                {course.description?.substring(0, 180) + "..." || "Descripción no disponible"}
               </p>
               
               {/* Price and Enrollment */}

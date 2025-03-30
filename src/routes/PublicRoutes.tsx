@@ -40,11 +40,7 @@ const PublicRoutes: React.FC = () => {
       } />
       
       {/* Acceso a curso por ID */}
-      <Route path="/courses/:courseId" element={
-        <AppLayout>
-          <CourseDetail />
-        </AppLayout>
-      } />
+      <Route path="/courses/:courseId" element={<CourseLanding />} />
       
       {/* Nueva ruta: Acceso a curso por slug */}
       <Route path="/cursos/:slug" element={<CourseLanding />} />
