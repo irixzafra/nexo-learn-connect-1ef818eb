@@ -12,6 +12,8 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(defaultFeaturesConfig);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Alias for isOnboardingOpen
   const isOnboardingActive = isOnboardingOpen;
@@ -22,6 +24,7 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
       if (!userId) return;
 
       try {
+        // Try to fetch the user's features config
         const { data, error } = await supabase
           .from('features_config')
           .select('*')
@@ -29,25 +32,33 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
           .single();
 
         if (error) {
-          console.error('Error loading features config:', error);
+          // If the error is not "no rows returned", log it
+          if (error.code !== 'PGRST116') {
+            console.error('Error loading features config:', error);
+          }
+          
+          // Check if the error is due to the table not existing
+          if (error.code === '42P01' || error.message.includes('does not exist')) {
+            console.warn('Features config table does not exist yet. Using default values.');
+            // We'll attempt to create the config when user saves
+          }
+          
+          // Continue with default values regardless of error
           return;
         }
 
         if (data) {
           setFeaturesConfig({
-            autoStartOnboarding: data.auto_start_onboarding ?? true,
-            showOnboardingTrigger: data.show_onboarding_trigger ?? true,
-            enableNotifications: data.enable_notifications ?? true,
-            enableTestDataGenerator: data.enable_test_data_generator ?? false,
-            enableOnboardingSystem: data.enable_onboarding_system ?? true,
-            // Add the missing properties with their default values from the defaultFeaturesConfig
+            autoStartOnboarding: data.auto_start_onboarding ?? defaultFeaturesConfig.autoStartOnboarding,
+            showOnboardingTrigger: data.show_onboarding_trigger ?? defaultFeaturesConfig.showOnboardingTrigger,
+            enableNotifications: data.enable_notifications ?? defaultFeaturesConfig.enableNotifications,
+            enableTestDataGenerator: data.enable_test_data_generator ?? defaultFeaturesConfig.enableTestDataGenerator,
+            enableOnboardingSystem: data.enable_onboarding_system ?? defaultFeaturesConfig.enableOnboardingSystem,
             enableRoleManagement: data.enable_role_management ?? defaultFeaturesConfig.enableRoleManagement,
             enableRoleSwitcher: data.enable_role_switcher ?? defaultFeaturesConfig.enableRoleSwitcher,
             enableMultiLanguage: data.enable_multi_language ?? defaultFeaturesConfig.enableMultiLanguage,
             enableLeaderboard: data.enable_leaderboard ?? defaultFeaturesConfig.enableLeaderboard,
-            // New appearance options
             enableThemeSwitcher: data.enable_theme_switcher ?? defaultFeaturesConfig.enableThemeSwitcher,
-            // New content management options
             enableCategoryManagement: data.enable_category_management ?? defaultFeaturesConfig.enableCategoryManagement,
             enableContentReordering: data.enable_content_reordering ?? defaultFeaturesConfig.enableContentReordering,
           });
@@ -60,39 +71,66 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
     loadFeaturesConfig();
   }, [userId]);
 
-  // Save configuration to Supabase
+  // Save configuration to Supabase with better error handling
   const saveFeaturesToSupabase = async (updatedConfig: FeaturesConfig) => {
     if (!userId) return;
+    
+    setIsSaving(true);
+    setSaveError(null);
 
     try {
+      const configData = {
+        user_id: userId,
+        auto_start_onboarding: updatedConfig.autoStartOnboarding,
+        show_onboarding_trigger: updatedConfig.showOnboardingTrigger,
+        enable_notifications: updatedConfig.enableNotifications,
+        enable_test_data_generator: updatedConfig.enableTestDataGenerator,
+        enable_onboarding_system: updatedConfig.enableOnboardingSystem,
+        enable_role_management: updatedConfig.enableRoleManagement,
+        enable_role_switcher: updatedConfig.enableRoleSwitcher,
+        enable_multi_language: updatedConfig.enableMultiLanguage,
+        enable_leaderboard: updatedConfig.enableLeaderboard,
+        enable_theme_switcher: updatedConfig.enableThemeSwitcher,
+        enable_category_management: updatedConfig.enableCategoryManagement,
+        enable_content_reordering: updatedConfig.enableContentReordering,
+        updated_at: new Date().toISOString(),
+      };
+
       const { error } = await supabase
         .from('features_config')
-        .upsert({
-          user_id: userId,
-          auto_start_onboarding: updatedConfig.autoStartOnboarding,
-          show_onboarding_trigger: updatedConfig.showOnboardingTrigger,
-          enable_notifications: updatedConfig.enableNotifications,
-          enable_test_data_generator: updatedConfig.enableTestDataGenerator,
-          enable_onboarding_system: updatedConfig.enableOnboardingSystem,
-          // Add the new properties to be saved in the database
-          enable_role_management: updatedConfig.enableRoleManagement,
-          enable_role_switcher: updatedConfig.enableRoleSwitcher,
-          enable_multi_language: updatedConfig.enableMultiLanguage,
-          enable_leaderboard: updatedConfig.enableLeaderboard,
-          // New appearance options
-          enable_theme_switcher: updatedConfig.enableThemeSwitcher,
-          // New content management options
-          enable_category_management: updatedConfig.enableCategoryManagement,
-          enable_content_reordering: updatedConfig.enableContentReordering,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'user_id' });
+        .upsert(configData, { onConflict: 'user_id' });
 
       if (error) {
+        // If the table doesn't exist, we still want to store the config locally
+        if (error.code === '42P01' || error.message.includes('does not exist')) {
+          console.warn('Features config table not available. Config will be stored locally only.');
+          // Store in localStorage as a fallback
+          localStorage.setItem('features_config', JSON.stringify(configData));
+          toast.success('Configuración guardada localmente');
+          return;
+        }
+        
         throw error;
       }
-    } catch (error) {
-      console.error('Error saving features config to Supabase:', error);
-      toast.error('Error al guardar la configuración');
+      
+      toast.success('Configuración guardada correctamente');
+    } catch (error: any) {
+      console.error('Error saving features config:', error);
+      setSaveError(error.message || 'Error al guardar la configuración');
+      
+      // Show a more specific error message to the user
+      if (error.code === '42P01') {
+        toast.error('La tabla de configuración no existe. Contacte al administrador.');
+      } else if (error.code === 'PGRST301') {
+        toast.error('No tiene permisos para esta acción.');
+      } else {
+        toast.error('Error al guardar la configuración');
+      }
+      
+      // Still update the local state so the UI shows the intended changes
+      // even if we couldn't persist them to the database
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -134,6 +172,8 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
     isOnboardingActive,
     currentStep,
     featuresConfig,
+    isSaving,
+    saveError,
     openOnboarding,
     closeOnboarding,
     nextStep,

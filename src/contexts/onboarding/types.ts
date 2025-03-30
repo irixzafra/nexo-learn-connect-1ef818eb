@@ -1,57 +1,73 @@
 
-// Define OnboardingStep type
-export type OnboardingStep = 'welcome' | 'profile' | 'explore-courses' | 'platform-tour';
-
-// Configuration of features
-export type FeaturesConfig = {
+// Define feature configuration interface
+export interface FeaturesConfig {
+  // Onboarding features
   autoStartOnboarding: boolean;
   showOnboardingTrigger: boolean;
-  enableNotifications: boolean;
-  enableTestDataGenerator: boolean;
   enableOnboardingSystem: boolean;
-  // Nuevas opciones de seguridad
+  
+  // Notifications and alerts
+  enableNotifications: boolean;
+  
+  // Development and testing
+  enableTestDataGenerator: boolean;
+  
+  // User roles and permissions
   enableRoleManagement: boolean;
   enableRoleSwitcher: boolean;
+  
+  // Internationalization
   enableMultiLanguage: boolean;
+  
+  // Gamification
   enableLeaderboard: boolean;
-  // Nuevas opciones de apariencia
+  
+  // UI Customization
   enableThemeSwitcher: boolean;
-  // Nuevas opciones de contenido
+  
+  // Content Management
   enableCategoryManagement: boolean;
   enableContentReordering: boolean;
-};
-
-export interface OnboardingContextValue {
-  isOnboardingOpen: boolean;
-  currentStep: number;
-  featuresConfig: FeaturesConfig;
-  openOnboarding: () => void;
-  closeOnboarding: () => void;
-  nextStep: () => void;
-  prevStep: () => void;
-  previousStep: () => void;
-  goToStep: (step: number) => void;
-  updateFeaturesConfig: (updates: Partial<FeaturesConfig>) => void;
-  isOnboardingActive: boolean;
-  startOnboarding: () => void;
-  skipOnboarding: () => void;
 }
 
-// Default values for the context
+// Default configuration values
 export const defaultFeaturesConfig: FeaturesConfig = {
   autoStartOnboarding: true,
   showOnboardingTrigger: true,
   enableNotifications: true,
   enableTestDataGenerator: false,
   enableOnboardingSystem: true,
-  // Valores predeterminados para las nuevas opciones
   enableRoleManagement: true,
   enableRoleSwitcher: true,
   enableMultiLanguage: false,
-  enableLeaderboard: true,
-  // Valores predeterminados para opciones de apariencia
+  enableLeaderboard: false,
   enableThemeSwitcher: true,
-  // Valores predeterminados para opciones de contenido
-  enableCategoryManagement: true,
+  enableCategoryManagement: false,
   enableContentReordering: false,
 };
+
+// Onboarding step interface
+export interface OnboardingStep {
+  title: string;
+  description: string;
+  component: React.ReactNode;
+}
+
+// Context value interface
+export interface OnboardingContextValue {
+  isOnboardingOpen: boolean;
+  isOnboardingActive: boolean;
+  currentStep: number;
+  featuresConfig: FeaturesConfig;
+  isSaving: boolean;
+  saveError: string | null;
+  openOnboarding: () => void;
+  closeOnboarding: () => void;
+  nextStep: () => void;
+  prevStep: () => void;
+  previousStep: () => void; // Alias for prevStep
+  goToStep: (step: number) => void;
+  updateFeaturesConfig: (updates: Partial<FeaturesConfig>) => void;
+  startOnboarding: () => void; // Alias for openOnboarding
+  skipOnboarding: () => void; // Alias for closeOnboarding
+}

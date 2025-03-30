@@ -4,18 +4,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Lightbulb } from 'lucide-react';
-import { toast } from 'sonner';
+import { Lightbulb, Loader2 } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 
 interface OnboardingSettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  isLoading?: boolean;
 }
 
 export const OnboardingSettings: React.FC<OnboardingSettingsProps> = ({ 
   featuresConfig, 
-  onToggleFeature 
+  onToggleFeature,
+  isLoading = false
 }) => {
   return (
     <Card>
@@ -36,11 +37,17 @@ export const OnboardingSettings: React.FC<OnboardingSettingsProps> = ({
               Activa o desactiva completamente el sistema de onboarding
             </p>
           </div>
-          <Switch
-            id="enableOnboardingSystem"
-            checked={featuresConfig.enableOnboardingSystem}
-            onCheckedChange={(value) => onToggleFeature('enableOnboardingSystem', value)}
-          />
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="enableOnboardingSystem"
+              checked={featuresConfig.enableOnboardingSystem}
+              onCheckedChange={(value) => onToggleFeature('enableOnboardingSystem', value)}
+              disabled={isLoading}
+            />
+          </div>
         </div>
 
         <Separator />
@@ -52,12 +59,17 @@ export const OnboardingSettings: React.FC<OnboardingSettingsProps> = ({
               Inicia automáticamente el tutorial para usuarios nuevos
             </p>
           </div>
-          <Switch
-            id="autoStartOnboarding"
-            checked={featuresConfig.autoStartOnboarding}
-            onCheckedChange={(value) => onToggleFeature('autoStartOnboarding', value)}
-            disabled={!featuresConfig.enableOnboardingSystem}
-          />
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="autoStartOnboarding"
+              checked={featuresConfig.autoStartOnboarding}
+              onCheckedChange={(value) => onToggleFeature('autoStartOnboarding', value)}
+              disabled={!featuresConfig.enableOnboardingSystem || isLoading}
+            />
+          </div>
         </div>
         
         <Separator />
@@ -69,12 +81,17 @@ export const OnboardingSettings: React.FC<OnboardingSettingsProps> = ({
               Muestra el botón para iniciar el tutorial en la barra de navegación
             </p>
           </div>
-          <Switch
-            id="showOnboardingTrigger"
-            checked={featuresConfig.showOnboardingTrigger}
-            onCheckedChange={(value) => onToggleFeature('showOnboardingTrigger', value)}
-            disabled={!featuresConfig.enableOnboardingSystem}
-          />
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="showOnboardingTrigger"
+              checked={featuresConfig.showOnboardingTrigger}
+              onCheckedChange={(value) => onToggleFeature('showOnboardingTrigger', value)}
+              disabled={!featuresConfig.enableOnboardingSystem || isLoading}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>

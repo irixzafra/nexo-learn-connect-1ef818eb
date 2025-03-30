@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, Paintbrush, FileText } from 'lucide-react';
 import { OnboardingSettings } from './OnboardingSettings';
 import { NotificationSettings } from './NotificationSettings';
@@ -14,11 +13,13 @@ import { FeaturesConfig } from '@/contexts/OnboardingContext';
 interface SettingsTabsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  isSaving?: boolean;
 }
 
 export const SettingsTabs: React.FC<SettingsTabsProps> = ({ 
   featuresConfig, 
-  onToggleFeature 
+  onToggleFeature,
+  isSaving = false
 }) => {
   return (
     <Tabs defaultValue="features" className="space-y-4">
@@ -32,22 +33,26 @@ export const SettingsTabs: React.FC<SettingsTabsProps> = ({
       <TabsContent value="features" className="space-y-4">
         <OnboardingSettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={onToggleFeature} 
+          onToggleFeature={onToggleFeature}
+          isLoading={isSaving}
         />
         <NotificationSettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={onToggleFeature} 
+          onToggleFeature={onToggleFeature}
+          isLoading={isSaving}
         />
         <TestDataSettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={onToggleFeature} 
+          onToggleFeature={onToggleFeature}
+          isLoading={isSaving}
         />
       </TabsContent>
 
       <TabsContent value="security">
         <SecuritySettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={onToggleFeature} 
+          onToggleFeature={onToggleFeature}
+          isLoading={isSaving}
         />
       </TabsContent>
 
@@ -55,6 +60,7 @@ export const SettingsTabs: React.FC<SettingsTabsProps> = ({
         <AppearanceSettings
           featuresConfig={featuresConfig}
           onToggleFeature={onToggleFeature}
+          isLoading={isSaving}
         />
       </TabsContent>
       
@@ -62,6 +68,7 @@ export const SettingsTabs: React.FC<SettingsTabsProps> = ({
         <ContentSettings
           featuresConfig={featuresConfig}
           onToggleFeature={onToggleFeature}
+          isLoading={isSaving}
         />
       </TabsContent>
     </Tabs>

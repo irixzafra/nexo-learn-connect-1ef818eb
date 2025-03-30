@@ -3,17 +3,19 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Bell } from 'lucide-react';
+import { Bell, Loader2 } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 
 interface NotificationSettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  isLoading?: boolean;
 }
 
 export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ 
   featuresConfig, 
-  onToggleFeature 
+  onToggleFeature,
+  isLoading = false
 }) => {
   return (
     <Card>
@@ -34,11 +36,17 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               Muestra el indicador de notificaciones en la barra de navegación
             </p>
           </div>
-          <Switch
-            id="enableNotifications"
-            checked={featuresConfig.enableNotifications}
-            onCheckedChange={(value) => onToggleFeature('enableNotifications', value)}
-          />
+          <div className="flex items-center">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+            )}
+            <Switch
+              id="enableNotifications"
+              checked={featuresConfig.enableNotifications}
+              onCheckedChange={(value) => onToggleFeature('enableNotifications', value)}
+              disabled={isLoading}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>

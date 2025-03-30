@@ -19,17 +19,17 @@ export const HeaderActions: React.FC = () => {
 
   return (
     <div className="ml-auto flex items-center space-x-2">
-      {/* Notification indicator - solo si está habilitado */}
+      {/* Notification indicator - only if enabled */}
       {featuresConfig.enableNotifications && (
         <NotificationIndicator />
       )}
       
-      {/* Theme Selector - solo si está habilitado */}
+      {/* Theme Selector - only if enabled */}
       {featuresConfig.enableThemeSwitcher && (
         <ThemeSelector />
       )}
       
-      {/* Connection Status - version más compacta */}
+      {/* Connection Status - more compact version */}
       <div className="scale-90">
         <ConnectionStatus />
       </div>
@@ -56,8 +56,8 @@ export const HeaderActions: React.FC = () => {
         <Phone className="h-5 w-5" />
       </Button>
       
-      {/* Onboarding Trigger - solo si está habilitado */}
-      {featuresConfig.showOnboardingTrigger && (
+      {/* Onboarding Trigger - only if enabled */}
+      {featuresConfig.enableOnboardingSystem && featuresConfig.showOnboardingTrigger && (
         <div className="hidden md:block">
           <OnboardingTrigger />
         </div>

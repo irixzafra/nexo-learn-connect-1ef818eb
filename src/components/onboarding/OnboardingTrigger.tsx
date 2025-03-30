@@ -14,12 +14,12 @@ export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({
 }) => {
   const { startOnboarding, isOnboardingActive, featuresConfig } = useOnboarding();
 
-  // Si el sistema de onboarding está completamente desactivado, no renderizamos nada
+  // Don't render anything if the onboarding system is completely disabled
   if (!featuresConfig.enableOnboardingSystem) {
     return null;
   }
 
-  // Si la funcionalidad del botón está desactivada, solo renderizamos el modal
+  // If the button functionality is disabled but system is enabled, only render the modal
   if (!featuresConfig.showOnboardingTrigger) {
     return <OnboardingModal />;
   }
