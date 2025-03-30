@@ -1,6 +1,6 @@
 
 import * as React from "react"
-import { Menu, X } from "lucide-react"
+import { Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useSidebar } from "../use-sidebar"
@@ -21,7 +21,7 @@ export const SidebarTrigger = React.forwardRef<
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn("h-8 w-8", className)}
+      className={cn("h-8 w-8 absolute top-4 left-4 z-[60] md:relative md:top-0 md:left-0 opacity-60 hover:opacity-100 transition-opacity", className)}
       onClick={(event) => {
         onClick?.(event)
         isMobile ? setOpenMobile(!openMobile) : toggleSidebar()
@@ -33,49 +33,25 @@ export const SidebarTrigger = React.forwardRef<
     >
       <AnimatePresence mode="wait" initial={false}>
         {isMobile ? (
-          openMobile ? (
-            <motion.div
-              key="close"
-              initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <X className="h-5 w-5" aria-hidden="true" />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="menu"
-              initial={{ opacity: 0, rotate: 90, scale: 0.5 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: -90, scale: 0.5 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <Menu className="h-5 w-5" aria-hidden="true" />
-            </motion.div>
-          )
+          <motion.div
+            key="menu-icon"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+          >
+            <Menu className="h-4 w-4" aria-hidden="true" />
+          </motion.div>
         ) : (
-          isCollapsed ? (
-            <motion.div
-              key="logo-icon"
-              initial={{ opacity: 0, rotate: 180, scale: 0.5 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: -180, scale: 0.5 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <NexoLogo variant="icon" className="h-6 w-6" />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="menu-icon"
-              initial={{ opacity: 0, rotate: -180, scale: 0.5 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: 180, scale: 0.5 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <Menu className="h-5 w-5" aria-hidden="true" />
-            </motion.div>
-          )
+          <motion.div
+            key="sidebar-icon"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+          >
+            <Menu className="h-4 w-4" aria-hidden="true" />
+          </motion.div>
         )}
       </AnimatePresence>
       <span className="sr-only">{isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}</span>

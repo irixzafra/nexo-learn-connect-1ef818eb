@@ -39,16 +39,6 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
 }) => {
   const isViewingAsOtherRole = currentViewRole !== 'current' && toUserRoleType(currentViewRole as string) !== userRole;
   
-  // Get language flag emoji based on language code
-  const getLanguageFlag = (code: string): string => {
-    switch (code) {
-      case 'es': return '🇪🇸';
-      case 'en': return '🇺🇸';
-      case 'pt': return '🇧🇷';
-      default: return '🌐';
-    }
-  };
-
   return (
     <div className={cn(
       "mt-auto flex flex-col border-t border-gray-200 dark:border-gray-800",
@@ -59,7 +49,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
         <Button
           variant="outline"
           size="sm"
-          className="mb-3 w-full flex items-center justify-center gap-1.5 text-xs bg-primary/5 text-primary border-primary/20 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+          className="mb-3 w-full flex items-center justify-center gap-1.5 text-xs bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:text-primary hover:border-primary/30"
           onClick={() => handleRoleChange(userRole)}
         >
           <ArrowLeftRight className="h-3 w-3" />
@@ -69,7 +59,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
       
       <div className={cn(
         "flex items-center",
-        isCollapsed ? "justify-center" : "justify-between"
+        isCollapsed ? "justify-center flex-col space-y-3" : "justify-between"
       )}>
         {/* Language Selector */}
         <Tooltip>
@@ -88,7 +78,6 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
                     onClick={() => changeLanguage(lang.code)}
                     className="cursor-pointer flex items-center gap-2"
                   >
-                    <span>{getLanguageFlag(lang.code)}</span>
                     <span>{lang.name}</span>
                   </DropdownMenuItem>
                 ))}
@@ -130,6 +119,26 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
             </TooltipTrigger>
             <TooltipContent side={isCollapsed ? "right" : "bottom"}>
               <p>Vista previa como otro rol</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
+        
+        {/* Return to original role button - for collapsed sidebar */}
+        {isViewingAsOtherRole && isCollapsed && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-full bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
+                onClick={() => handleRoleChange(userRole)}
+              >
+                <ArrowLeftRight className="h-4 w-4" />
+                <span className="sr-only">Volver a mi rol</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Volver a mi rol</p>
             </TooltipContent>
           </Tooltip>
         )}

@@ -29,12 +29,11 @@ export const SidebarNavItems: React.FC<SidebarNavItemsProps> = ({
   messagesCount
 }) => {
   
-  // Elementos de navegación para estudiantes (base)
-  const studentItems = () => (
+  // Base navigation items for all users
+  const baseItems = () => (
     <>
       <MenuItem to="/home" icon={Home} label="Inicio" isCollapsed={isCollapsed} />
-      <MenuItem to="/courses" icon={BookOpen} label="Mis Cursos" isCollapsed={isCollapsed} />
-      <MenuItem to="/explore" icon={Compass} label="Explorar" isCollapsed={isCollapsed} />
+      <MenuItem to="/courses" icon={Compass} label="Explorar" isCollapsed={isCollapsed} />
       <MenuItem to="/community" icon={Users} label="Comunidad" isCollapsed={isCollapsed} />
       <MenuItem to="/messages" icon={MessageSquare} label="Mensajes" badge={messagesCount} isCollapsed={isCollapsed} />
       <MenuItem to="/notifications" icon={Bell} label="Notificaciones" badge={notificationsCount} isCollapsed={isCollapsed} />
@@ -42,28 +41,38 @@ export const SidebarNavItems: React.FC<SidebarNavItemsProps> = ({
     </>
   );
 
+  // Elementos adicionales para estudiantes
+  const studentItems = () => (
+    <>
+      {baseItems()}
+      <MenuItem to="/my-courses" icon={BookOpen} label="Mis Cursos" isCollapsed={isCollapsed} />
+    </>
+  );
+
   // Elementos adicionales para instructores (ahora llamados "profesores")
   const instructorItems = () => (
     <>
-      {studentItems()}
+      {baseItems()}
       <MenuItem to="/instructor/dashboard" icon={School} label="Profesor" isCollapsed={isCollapsed} />
+      <MenuItem to="/my-courses" icon={BookOpen} label="Mis Cursos" isCollapsed={isCollapsed} />
     </>
   );
 
   // Elementos adicionales para administradores
   const adminItems = () => (
     <>
-      {instructorItems()}
+      {baseItems()}
       <MenuItem to="/admin/dashboard" icon={Shield} label="Administración" isCollapsed={isCollapsed} />
+      <MenuItem to="/my-courses" icon={BookOpen} label="Mis Cursos" isCollapsed={isCollapsed} />
     </>
   );
 
   // Elementos para sistemas (acceso técnico)
   const systemsItems = () => (
     <>
+      {baseItems()}
       <MenuItem to="/admin/systems" icon={Settings} label="Sistemas" isCollapsed={isCollapsed} />
       <MenuItem to="/admin/dashboard" icon={Shield} label="Administración" isCollapsed={isCollapsed} />
-      {studentItems()}
     </>
   );
 

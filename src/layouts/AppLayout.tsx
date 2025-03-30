@@ -45,8 +45,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           {/* Show header only if shouldShowHeader is true */}
           {shouldShowHeader && <HeaderContent />}
           
-          <main className="flex-1 px-8 py-8 max-w-[1400px] mx-auto w-full">
-            {children}
+          <main className="flex-1 w-full">
+            <div className="max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              {children}
+            </div>
           </main>
         </div>
       </div>

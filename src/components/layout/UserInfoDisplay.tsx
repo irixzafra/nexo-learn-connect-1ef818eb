@@ -52,11 +52,16 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
       <TooltipTrigger asChild>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full relative">
               <Avatar className="h-8 w-8">
                 <AvatarImage src={profile?.avatar_url} alt={profile?.full_name || 'User'} />
                 <AvatarFallback>{getUserInitials()}</AvatarFallback>
               </Avatar>
+              {isViewingAsOtherRole && (
+                <span className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  <ArrowLeftRight className="h-3 w-3" />
+                </span>
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
@@ -81,11 +86,11 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
             
             <DropdownMenuSeparator />
             
-            {/* Opción para volver al rol original - visible para todos cuando se está viendo como otro rol */}
+            {/* Opción para volver al rol original - visible cuando se está viendo como otro rol */}
             {isViewingAsOtherRole && (
               <DropdownMenuItem 
                 onClick={() => onRoleChange(effectiveUserRole)}
-                className="bg-primary/5 text-primary border-primary/20 hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary"
+                className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary font-medium"
               >
                 <ArrowLeftRight className="mr-2 h-4 w-4" />
                 <span>Volver a mi rol</span>
