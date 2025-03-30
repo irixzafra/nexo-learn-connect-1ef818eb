@@ -12,7 +12,7 @@ export interface UserProfile {
   email?: string;
   full_name: string;  // Cambiado a requerido para coincidir con la definición usada
   avatar_url?: string;
-  role?: UserRoleType;
+  role: UserRoleType;  // Changed to required and ensure it's UserRoleType
   created_at?: string;
   roles?: UserRole[];
   username?: string;
@@ -45,6 +45,7 @@ export interface AuthUser {
   };
 }
 
+// Define all roles as a string literal type
 export type UserRoleType = 
   | 'admin' 
   | 'instructor' 
@@ -52,4 +53,6 @@ export type UserRoleType =
   | 'moderator' 
   | 'content_creator'
   | 'guest'
-  | 'beta_tester';
+  | 'beta_tester'
+  | 'sistemas'  // Added missing roles
+  | 'anonimo';  // Added missing roles

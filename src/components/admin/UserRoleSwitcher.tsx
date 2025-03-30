@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { UserRole } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 import { 
   Select,
   SelectContent,
@@ -15,8 +15,8 @@ import { useAuth } from '@/contexts/AuthContext';
 
 interface UserRoleSwitcherProps {
   userId?: string;
-  currentRole?: UserRole;
-  onRoleChange?: (userId: string, newRole: UserRole) => Promise<void>;
+  currentRole?: UserRoleType;
+  onRoleChange?: (userId: string, newRole: UserRoleType) => Promise<void>;
 }
 
 export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({ 
@@ -29,7 +29,7 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
   
   // Use the role from props if provided, otherwise use the context
   const currentRole = propCurrentRole || contextUserRole || 'student';
-  const [selectedRole, setSelectedRole] = useState<UserRole>(currentRole as UserRole);
+  const [selectedRole, setSelectedRole] = useState<UserRoleType>(currentRole as UserRoleType);
   const [isChanging, setIsChanging] = useState(false);
   
   const handleChange = async () => {
@@ -65,7 +65,7 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
     }
   };
 
-  const getRoleIcon = (role: UserRole) => {
+  const getRoleIcon = (role: UserRoleType) => {
     switch (role) {
       case 'admin':
         return <Shield className="h-4 w-4" />;
@@ -86,7 +86,7 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
     <div className="flex items-center gap-2">
       <Select
         value={selectedRole}
-        onValueChange={(value) => setSelectedRole(value as UserRole)}
+        onValueChange={(value) => setSelectedRole(value as UserRoleType)}
       >
         <SelectTrigger className="w-[150px]">
           <div className="flex items-center gap-2">

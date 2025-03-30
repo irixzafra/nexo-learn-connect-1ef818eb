@@ -1,16 +1,17 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { UserRoleType } from '@/types/auth';
+import { type UserRoleType } from '@/types/auth';  // Use type-only import
 import { Shield, UserCog, User, Terminal, Ghost } from 'lucide-react';
 
-interface UserRoleTypeProps {
+interface UserRoleDisplayProps {
   role: UserRoleType;
   showIcon?: boolean;
   size?: 'sm' | 'md' | 'lg';
 }
 
-export const UserRoleType: React.FC<UserRoleTypeProps> = ({ 
+// Renamed component to avoid conflict with the type
+export const UserRoleDisplay: React.FC<UserRoleDisplayProps> = ({ 
   role, 
   showIcon = true,
   size = 'md'
@@ -56,3 +57,6 @@ export const UserRoleType: React.FC<UserRoleTypeProps> = ({
     </Badge>
   );
 };
+
+// Also export with the old name for backward compatibility to avoid breaking changes
+export const UserRoleType = UserRoleDisplay;

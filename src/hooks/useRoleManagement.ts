@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { UserProfile, UserRole } from '@/types/auth';
+import { UserProfile, UserRoleType } from '@/types/auth';
 import { useToast } from "@/components/ui/use-toast";
 
 export function useRoleManagement() {
@@ -55,13 +55,13 @@ export function useRoleManagement() {
     
     const filtered = users.filter(user => 
       user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase())
+      user.role?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     
     setFilteredUsers(filtered);
   }, [searchTerm, users]);
 
-  const handleRoleChange = async (userId: string, newRole: UserRole) => {
+  const handleRoleChange = async (userId: string, newRole: UserRoleType) => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -78,16 +78,24 @@ export function useRoleManagement() {
         return;
       }
 
+      // Update users with type safe transformation
       setUsers(prevUsers => 
-        prevUsers.map(u => 
-          u.id === userId ? { ...u, role: newRole } : u
-        )
+        prevUsers.map(u => {
+          if (u.id === userId) {
+            return { ...u, role: newRole };
+          }
+          return u;
+        })
       );
       
+      // Update filtered users with type safe transformation
       setFilteredUsers(prevUsers => 
-        prevUsers.map(u => 
-          u.id === userId ? { ...u, role: newRole } : u
-        )
+        prevUsers.map(u => {
+          if (u.id === userId) {
+            return { ...u, role: newRole };
+          }
+          return u;
+        })
       );
 
       toast({

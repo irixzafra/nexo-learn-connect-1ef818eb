@@ -1,14 +1,13 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
-import { UserProfile, UserRole } from '@/types/auth';
+import { UserProfile, UserRole, UserRoleType } from '@/types/auth';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: UserProfile | null;
-  userRole: UserRole | null;
+  userRole: UserRoleType | null;
   isLoading: boolean;
   logout: () => Promise<void>;
   isInitialized: boolean;
@@ -33,7 +32,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [userRole, setUserRole] = useState<UserRoleType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -183,6 +182,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Compute the authentication status based on session existence
   const isAuthenticated = !!session && !!user;
+
+  // Helper function to ensure role is a valid UserRoleType
+  const ensureValidRole = (role: string | null): UserRoleType => {
+    if (!role) return 'student';
+  
+    const validRoles: UserRoleType[] = [
+      'admin', 'instructor', 'student', 'moderator', 
+      'content_creator', 'guest', 'beta_tester', 'sistemas', 'anonimo'
+    ];
+  
+    return validRoles.includes(role as UserRoleType) 
+      ? (role as UserRoleType) 
+      : 'student';
+  };
 
   const value = {
     user,
