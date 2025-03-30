@@ -43,8 +43,9 @@ const AdminTabs: React.FC<AdminTabsProps> = ({
     >
       <TabsList 
         className={cn(
-          "w-full bg-muted/60 p-1 rounded-lg h-auto",
-          orientation === 'vertical' ? "flex-col" : "flex"
+          "bg-muted p-1 rounded-lg",
+          orientation === 'vertical' ? "flex-col" : "",
+          "h-auto"
         )}
       >
         <TooltipProvider delayDuration={300}>
@@ -54,14 +55,15 @@ const AdminTabs: React.FC<AdminTabsProps> = ({
                 <TabsTrigger 
                   value={tab.value}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-all", 
-                    "data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
-                    isMobile && "flex-1",
-                    isMobile && iconPosition === 'top' && "flex-col gap-1 py-3",
+                    "flex items-center gap-2",
+                    iconPosition === 'top' && "flex-col gap-1.5 py-2.5",
+                    isMobile && iconPosition === 'top' && "py-3",
+                    "data-[state=active]:bg-background data-[state=active]:shadow-sm",
+                    "text-sm font-medium transition-all"
                   )}
                 >
                   <span className={cn(
-                    "text-muted-foreground data-[state=active]:text-primary",
+                    "text-muted-foreground data-[state=active]:text-primary transition-colors",
                     iconPosition === 'top' && "text-lg"
                   )}>
                     {tab.icon}
