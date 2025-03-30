@@ -55,7 +55,7 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
 
   return (
     <ScrollArea className="w-full" type="always">
-      <div className="flex space-x-2 pb-1 min-w-full">
+      <div className="flex space-x-2 pb-2 pt-1 pr-4">
         {allCategories.map((category) => {
           const isSelected = 
             (category === 'Todos' && selectedCategory === null) || 

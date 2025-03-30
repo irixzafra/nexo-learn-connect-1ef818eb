@@ -6,18 +6,17 @@ export const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Set the initial value once we're in the browser
-    setIsMobile(window.innerWidth < 768);
+    // Function to check if window width is less than the mobile breakpoint
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    // Add event listener
-    window.addEventListener("resize", handleResize);
+    // Set the initial value
+    checkMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener("resize", checkMobile);
     
     // Cleanup
-    return () => window.removeEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   return isMobile;

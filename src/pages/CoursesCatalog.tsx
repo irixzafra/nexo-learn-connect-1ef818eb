@@ -101,10 +101,10 @@ const CoursesCatalog: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden">
+    <div className="w-full overflow-x-hidden">
       {/* Hero section with gradient background */}
       <div className="bg-gradient-to-b from-primary/10 via-background to-background">
-        <div className="container max-w-screen-2xl mx-auto px-4 pt-6 pb-12 md:pt-10 md:pb-16">
+        <div className="container max-w-screen-xl mx-auto px-4 pt-6 pb-12 md:pt-10 md:pb-16">
           <motion.div 
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
@@ -158,13 +158,13 @@ const CoursesCatalog: React.FC = () => {
         </div>
       </div>
 
-      <div className="container max-w-screen-2xl mx-auto px-4 py-4 md:py-6">
+      <div className="container max-w-screen-xl mx-auto px-4 py-4 md:py-6">
         <div className="flex flex-col-reverse md:flex-row md:items-center md:justify-between mb-4">
           <motion.div 
             initial={{ opacity: 0, x: -20 }} 
             animate={{ opacity: 1, x: 0 }} 
             transition={{ duration: 0.5 }}
-            className="mt-4 md:mt-0 w-full overflow-x-auto pb-2"
+            className="mt-4 md:mt-0 w-full md:w-auto"
           >
             <CategorySelector 
               selectedCategory={selectedCategory}

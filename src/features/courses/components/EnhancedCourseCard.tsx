@@ -171,9 +171,9 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
         </CardHeader>
         
         <CardContent className="flex-grow">
-          <p className="text-muted-foreground line-clamp-2 mb-4 text-sm">
+          <div className="text-muted-foreground line-clamp-2 mb-4 text-sm">
             {course.description}
-          </p>
+          </div>
           
           <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm mt-auto">
             {course.rating && (
