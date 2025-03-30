@@ -15,7 +15,8 @@ import {
   User, 
   Phone,
   Bell,
-  Globe
+  Globe,
+  Shield
 } from 'lucide-react';
 import { 
   Tooltip,
@@ -31,6 +32,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRole;
@@ -43,6 +45,9 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
   const [currentLanguage, setCurrentLanguage] = useState('es'); // Default language is Spanish
+  
+  // State for role switching
+  const [currentViewRole, setCurrentViewRole] = useState<'current' | UserRole>(viewAsRole || 'current');
   
   // Determine the effective role
   const getEffectiveRole = (): UserRole => {
@@ -67,6 +72,24 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
       case 'student':
       default:
         return '/home';
+    }
+  };
+
+  // Handle role change
+  const handleRoleChange = (role: UserRole) => {
+    setCurrentViewRole(role);
+    toast.success(`Vista cambiada a: ${getRoleName(role)}`);
+  };
+
+  // Get role display name
+  const getRoleName = (role: UserRole): string => {
+    switch (role) {
+      case 'admin': return 'Administrador';
+      case 'instructor': return 'Instructor';
+      case 'student': return 'Estudiante';
+      case 'sistemas': return 'Sistemas';
+      case 'anonimo': return 'Anónimo';
+      default: return 'Usuario';
     }
   };
   
@@ -130,6 +153,9 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
     // Here you would typically change the language in your app's state/context
     console.log(`Language changed to ${langCode}`);
   };
+  
+  // Available roles for switching view
+  const availableRoles: UserRole[] = ['admin', 'instructor', 'student', 'sistemas', 'anonimo'];
 
   return (
     <div className="h-full flex flex-col py-4">
@@ -199,6 +225,47 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
       </div>
       
       <div className="mt-auto pt-4 border-t px-4">
+        {/* Role Switcher - Only shown for admins */}
+        {userRole === 'admin' && (
+          <div className="mb-3">
+            {isCollapsed ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9">
+                    <Shield className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Cambiar vista de rol</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2 w-full">
+                    <Shield className="h-4 w-4" />
+                    <span>{getRoleName(effectiveRole as UserRole)}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center">
+                  {availableRoles.map(role => (
+                    <DropdownMenuItem 
+                      key={role}
+                      onClick={() => handleRoleChange(role)}
+                      className={cn(
+                        "cursor-pointer",
+                        currentViewRole === role && "font-bold bg-primary/10"
+                      )}
+                    >
+                      {getRoleName(role)}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+        )}
+        
         {/* Language Switcher */}
         <div className="mb-3 flex justify-center">
           {isCollapsed ? (

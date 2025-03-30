@@ -92,7 +92,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
                   <Phone className="h-5 w-5" />
                 </Button>
                 
-                {userRole && <RoleIndicator viewingAs={userRole} onRoleChange={handleRoleChange} />}
+                {userRole && <RoleIndicator viewingAs={viewAsRole === 'current' ? userRole : viewAsRole} onRoleChange={handleRoleChange} />}
                 <UserMenu />
               </div>
             </div>
