@@ -40,6 +40,11 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
             enableNotifications: data.enable_notifications ?? true,
             enableTestDataGenerator: data.enable_test_data_generator ?? false,
             enableOnboardingSystem: data.enable_onboarding_system ?? true,
+            // Add the missing properties with their default values from the defaultFeaturesConfig
+            enableRoleManagement: data.enable_role_management ?? defaultFeaturesConfig.enableRoleManagement,
+            enableRoleSwitcher: data.enable_role_switcher ?? defaultFeaturesConfig.enableRoleSwitcher,
+            enableMultiLanguage: data.enable_multi_language ?? defaultFeaturesConfig.enableMultiLanguage,
+            enableLeaderboard: data.enable_leaderboard ?? defaultFeaturesConfig.enableLeaderboard,
           });
         }
       } catch (error) {
@@ -64,6 +69,11 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
           enable_notifications: updatedConfig.enableNotifications,
           enable_test_data_generator: updatedConfig.enableTestDataGenerator,
           enable_onboarding_system: updatedConfig.enableOnboardingSystem,
+          // Add the new properties to be saved in the database
+          enable_role_management: updatedConfig.enableRoleManagement,
+          enable_role_switcher: updatedConfig.enableRoleSwitcher,
+          enable_multi_language: updatedConfig.enableMultiLanguage,
+          enable_leaderboard: updatedConfig.enableLeaderboard,
           updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id' });
 
