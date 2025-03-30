@@ -1648,6 +1648,13 @@ export type Database = {
           full_name: string
         }[]
       }
+      get_course_student_counts: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          course_id_result: string
+          student_count: number
+        }[]
+      }
       get_table_columns: {
         Args: {
           table_name: string

@@ -38,6 +38,11 @@ export interface Course {
   };
 }
 
+interface StudentCount {
+  course_id_result: string;
+  student_count: number;
+}
+
 export const useAdminCourses = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -71,32 +76,23 @@ export const useAdminCourses = () => {
       
       console.log("Cursos encontrados:", coursesData);
       
-      // Get enrollments count for each course
-      let enrollmentCounts: Record<string, number> = {};
+      // Get student counts using the RPC function
+      const { data: studentCountsData, error: studentCountsError } = await supabase
+        .rpc('get_course_student_counts');
       
-      try {
-        // Corrected query - using count() as a function rather than in select
-        const { data: enrollmentsData, error: enrollmentsError } = await supabase
-          .from('enrollments')
-          .select('course_id')
-          .order('course_id')
-          .is('user_id', 'not.null');
-        
-        if (!enrollmentsError && enrollmentsData) {
-          console.log("Enrollment data:", enrollmentsData);
-          
-          // Count enrollments per course manually (client-side)
-          const counts: Record<string, number> = {};
-          enrollmentsData.forEach(item => {
-            counts[item.course_id] = (counts[item.course_id] || 0) + 1;
-          });
-          
-          enrollmentCounts = counts;
-          console.log("Enrollment counts:", enrollmentCounts);
-        }
-      } catch (err) {
-        console.error('Error al obtener conteo de inscripciones:', err);
-        // Continue even if enrollment count fails
+      if (studentCountsError) {
+        console.error('Error al obtener conteo de estudiantes:', studentCountsError);
+        // Continue without student counts if there's an error
+      }
+      
+      console.log("Conteo de estudiantes:", studentCountsData);
+      
+      // Create a lookup map for student counts
+      const studentCounts: Record<string, number> = {};
+      if (studentCountsData) {
+        studentCountsData.forEach((item: StudentCount) => {
+          studentCounts[item.course_id_result] = item.student_count;
+        });
       }
       
       const formattedCourses: Course[] = coursesData.map((course: any) => {
@@ -108,7 +104,7 @@ export const useAdminCourses = () => {
             full_name: instructorName
           },
           status: course.is_published ? 'published' : 'draft',
-          students_count: enrollmentCounts[course.id] || 0
+          students_count: studentCounts[course.id] || 0
         };
       });
       
