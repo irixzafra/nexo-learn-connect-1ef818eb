@@ -1,24 +1,29 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
 import { Course, Module, Lesson } from "@/types/course";
 
-export const useCourseDetails = (courseId?: string) => {
+export const useCourseDetails = (courseId?: string, slug?: string) => {
   const { data: course, isLoading: isLoadingCourse, error: courseError } = useQuery({
-    queryKey: ["course", courseId],
+    queryKey: ["course", courseId, slug],
     queryFn: async () => {
       try {
-        if (!courseId) return null;
+        if (!courseId && !slug) return null;
 
-        const { data, error } = await supabase
+        let query = supabase
           .from("courses")
           .select(`
             *,
             instructor:profiles(id, full_name)
-          `)
-          .eq("id", courseId)
-          .single();
+          `);
+
+        if (courseId) {
+          query = query.eq("id", courseId);
+        } else if (slug) {
+          query = query.eq("slug", slug);
+        }
+
+        const { data, error } = await query.single();
 
         if (error) throw error;
 
@@ -33,21 +38,21 @@ export const useCourseDetails = (courseId?: string) => {
         return null;
       }
     },
-    enabled: !!courseId,
+    enabled: !!courseId || !!slug,
     retry: 1,
     retryDelay: 1000,
   });
 
   const { data: modules = [], isLoading: isLoadingModules, error: modulesError } = useQuery({
-    queryKey: ["courseModules", courseId],
+    queryKey: ["courseModules", course?.id],
     queryFn: async () => {
       try {
-        if (!courseId) return [];
+        if (!course?.id) return [];
 
         const { data, error } = await supabase
           .from("modules")
           .select("*")
-          .eq("course_id", courseId)
+          .eq("course_id", course.id)
           .order("module_order", { ascending: true });
 
         if (error) throw error;
@@ -58,21 +63,21 @@ export const useCourseDetails = (courseId?: string) => {
         return [];
       }
     },
-    enabled: !!courseId,
+    enabled: !!course?.id,
     retry: 1,
     retryDelay: 1000,
   });
 
   const { data: lessons = [], isLoading: isLoadingLessons, error: lessonsError } = useQuery({
-    queryKey: ["courseLessons", courseId],
+    queryKey: ["courseLessons", course?.id],
     queryFn: async () => {
       try {
-        if (!courseId) return [];
+        if (!course?.id) return [];
 
         const { data, error } = await supabase
           .from("lessons")
           .select("*")
-          .eq("course_id", courseId)
+          .eq("course_id", course.id)
           .order("lesson_order", { ascending: true });
 
         if (error) throw error;
@@ -83,7 +88,7 @@ export const useCourseDetails = (courseId?: string) => {
         return [];
       }
     },
-    enabled: !!courseId,
+    enabled: !!course?.id,
     retry: 1,
     retryDelay: 1000,
   });

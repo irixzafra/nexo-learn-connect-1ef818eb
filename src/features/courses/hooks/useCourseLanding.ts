@@ -1,38 +1,82 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 import { useCourseDetails } from "./useCourseDetails";
 import { useEnrollment } from "./useEnrollment";
+import { useAuth } from "@/contexts/AuthContext";
 
-export const useCourseLanding = (courseId: string) => {
-  const { course, modules, modulesWithLessons, isLoading } = useCourseDetails(courseId);
-  const { isEnrolled, isEnrolling, isChecking, handleEnroll } = useEnrollment(courseId);
+export const useCourseLanding = (identifier: string, isSlug: boolean = false) => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const [expandedFAQs, setExpandedFAQs] = useState<string[]>(['faq-1']);
   
-  const [expandedFAQs, setExpandedFAQs] = useState<string[]>([]);
+  // Obtener detalles del curso usando ID o slug
+  const { course, modulesWithLessons, isLoading } = useCourseDetails(
+    isSlug ? undefined : identifier,
+    isSlug ? identifier : undefined
+  );
   
-  // Helper function to format currency
-  const formatCurrency = (price: number, currency: string) => {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: currency.toUpperCase(),
-    }).format(price);
+  // Funcionalidad de inscripción
+  const { 
+    isEnrolled, 
+    isEnrolling, 
+    isChecking, 
+    enrollToCourse 
+  } = useEnrollment(course?.id);
+  
+  // Calcular estadísticas del curso
+  const totalLessons = modulesWithLessons?.reduce((acc, module) => 
+    acc + (module.lessons?.length || 0), 0) || 0;
+  
+  const previewableLessons = modulesWithLessons?.reduce((acc, module) => 
+    acc + (module.lessons?.filter(lesson => lesson.is_previewable)?.length || 0), 0) || 0;
+  
+  // Manejar inscripción
+  const handleEnroll = async () => {
+    if (!isAuthenticated) {
+      // Redirigir a login y guardar la URL actual para volver después
+      const returnUrl = window.location.pathname;
+      sessionStorage.setItem('redirectAfterLogin', returnUrl);
+      navigate('/auth/login');
+      toast({
+        title: "Inicia sesión para inscribirte",
+        description: "Necesitas tener una cuenta para inscribirte en el curso.",
+      });
+      return;
+    }
+    
+    if (!course?.id) return;
+    
+    try {
+      await enrollToCourse(course.id);
+      toast({
+        title: "¡Inscripción exitosa!",
+        description: "Te has inscrito correctamente al curso."
+      });
+    } catch (error) {
+      console.error("Error al inscribirse:", error);
+      toast({
+        variant: "destructive",
+        title: "Error de inscripción",
+        description: "No se pudo completar la inscripción. Inténtalo de nuevo más tarde."
+      });
+    }
   };
   
-  // Count total lessons
-  const totalLessons = modulesWithLessons?.reduce(
-    (total, module) => total + module.lessons.length,
-    0
-  ) || 0;
-  
-  // Count previewable lessons
-  const previewableLessons = modulesWithLessons?.reduce(
-    (total, module) => 
-      total + module.lessons.filter(lesson => lesson.is_previewable).length,
-    0
-  ) || 0;
+  // Formateador de moneda
+  const formatCurrency = (price: number, currency: string) => {
+    const formatter = new Intl.NumberFormat('es-ES', {
+      style: 'currency',
+      currency: currency.toUpperCase(),
+      minimumFractionDigits: 2
+    });
+    
+    return formatter.format(price);
+  };
   
   return {
     course,
-    modules,
     modulesWithLessons,
     isLoading,
     isEnrolled,

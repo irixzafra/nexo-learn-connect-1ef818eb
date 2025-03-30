@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCourseLanding } from "@/features/courses/hooks/useCourseLanding";
 import PublicLayout from "@/layouts/PublicLayout";
@@ -8,10 +8,16 @@ import { CourseLandingHero } from "@/features/courses/components/landing/CourseL
 import { CourseOverview } from "@/features/courses/components/landing/CourseOverview";
 import { CourseInfoSidebar } from "@/features/courses/components/landing/CourseInfoSidebar";
 import { CourseCallToAction } from "@/features/courses/components/landing/CourseCallToAction";
+import { Helmet } from "react-helmet";
 
 const CourseLanding: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  // Obtener ID o slug desde los parámetros
+  const { id, courseId, slug } = useParams<{ id?: string; courseId?: string; slug?: string }>();
   const navigate = useNavigate();
+  
+  // Usar el ID si está disponible, de lo contrario usar el slug
+  const identifier = id || courseId || slug || '';
+  const isSlug = !id && !courseId && !!slug;
   
   const {
     course,
@@ -26,7 +32,7 @@ const CourseLanding: React.FC = () => {
     formatCurrency,
     totalLessons,
     previewableLessons
-  } = useCourseLanding(id || '');
+  } = useCourseLanding(identifier, isSlug);
   
   if (isLoading || isChecking) {
     return (
@@ -52,6 +58,20 @@ const CourseLanding: React.FC = () => {
   
   return (
     <PublicLayout>
+      {/* SEO Optimization */}
+      <Helmet>
+        <title>{course.seo_title || course.title}</title>
+        <meta name="description" content={course.seo_description || course.description} />
+        {/* Open Graph tags para compartir en redes sociales */}
+        <meta property="og:title" content={course.seo_title || course.title} />
+        <meta property="og:description" content={course.seo_description || course.description} />
+        {course.cover_image_url && <meta property="og:image" content={course.cover_image_url} />}
+        <meta property="og:type" content="website" />
+        {/* Otros meta tags útiles */}
+        <meta name="keywords" content={`curso, educación, aprendizaje, ${course.title}, ${course.category}`} />
+        <meta name="author" content={course.featured_instructor || 'Nexo Learning'} />
+      </Helmet>
+      
       {/* Hero Section */}
       <CourseLandingHero 
         course={course}

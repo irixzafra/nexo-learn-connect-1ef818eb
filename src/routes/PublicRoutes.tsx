@@ -31,16 +31,24 @@ const PublicRoutes: React.FC = () => {
       <Route path="/unauthorized" element={<PublicLayout><Unauthorized /></PublicLayout>} />
       <Route path="/payment/success" element={<PublicLayout><PaymentSuccess /></PublicLayout>} />
       <Route path="/payment/cancel" element={<PublicLayout><PaymentCancel /></PublicLayout>} />
+      
+      {/* Acceso a cursos */}
       <Route path="/courses" element={
         <AppLayout>
           <CoursesCatalog />
         </AppLayout>
       } />
+      
+      {/* Acceso a curso por ID */}
       <Route path="/courses/:courseId" element={
         <AppLayout>
           <CourseDetail />
         </AppLayout>
       } />
+      
+      {/* Nueva ruta: Acceso a curso por slug */}
+      <Route path="/cursos/:slug" element={<CourseLanding />} />
+      
       <Route path="/courses/:courseId/learn/:lessonId" element={
         <AppLayout>
           <LessonView />
