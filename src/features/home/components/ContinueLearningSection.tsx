@@ -58,7 +58,7 @@ const ContinueLearningSection: React.FC = () => {
       
       <div className="mt-4 flex justify-center">
         <Button asChild>
-          <Link to="/my-courses" className="flex items-center gap-2">
+          <Link to="/my-courses" className="flex items-center justify-center gap-2">
             <BookOpen className="h-4 w-4" />
             Continuar aprendiendo
           </Link>

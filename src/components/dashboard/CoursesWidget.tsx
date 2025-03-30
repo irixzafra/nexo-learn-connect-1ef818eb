@@ -1,58 +1,38 @@
 
 import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const CoursesWidget: React.FC = () => {
-  const courses = [
-    { id: 1, title: 'Introducción a React', progress: 60, badges: ['En progreso'] },
-    { id: 2, title: 'HTML y CSS Fundamentals', progress: 100, badges: ['Completado'] },
-    { id: 3, title: 'Node.js para Principiantes', progress: 15, badges: ['Nuevo'] },
-  ];
-
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Tus Cursos</CardTitle>
+        <CardTitle className="text-lg">Mis Cursos</CardTitle>
       </CardHeader>
-      <CardContent className="pb-2">
-        <div className="space-y-4">
-          {courses.map((course) => (
-            <div key={course.id} className="border-b pb-3 last:border-0 last:pb-0">
-              <div className="flex justify-between items-start mb-1">
-                <h4 className="font-medium truncate">{course.title}</h4>
-                <div className="flex gap-1">
-                  {course.badges.map((badge, i) => (
-                    <Badge key={i} variant={badge === 'Completado' ? 'default' : 'outline'} className="whitespace-nowrap">
-                      {badge}
-                    </Badge>
-                  ))}
-                </div>
+      <CardContent>
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-md transition-colors">
+              <div className="w-12 h-12 bg-primary/10 rounded flex items-center justify-center text-primary font-medium">
+                {i + 1}
               </div>
-              <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className={`h-full ${course.progress === 100 ? 'bg-green-500' : 'bg-primary'}`}
-                  style={{ width: `${course.progress}%` }}
-                />
+              <div className="flex-1 min-w-0">
+                <p className="font-medium truncate">Curso de ejemplo {i + 1}</p>
+                <p className="text-xs text-muted-foreground">Progreso: {(i + 1) * 20}%</p>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {course.progress}% completado
-              </p>
             </div>
           ))}
+
+          <Button variant="outline" asChild className="w-full mt-2">
+            <Link to="/my-courses" className="flex items-center justify-center gap-2">
+              <span>Ver todos mis cursos</span>
+              <ExternalLink className="h-4 w-4" />
+            </Link>
+          </Button>
         </div>
       </CardContent>
-      <CardFooter>
-        <Button variant="ghost" size="sm" asChild className="w-full justify-between">
-          <Link to="/student/courses">
-            Ver todos los cursos
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

@@ -13,6 +13,9 @@ import { DashboardStatCard } from '@/features/instructor/components/DashboardSta
 import { PopularCoursesCard } from '@/features/instructor/components/PopularCoursesCard';
 import { RecentEnrollmentsCard } from '@/features/instructor/components/RecentEnrollmentsCard';
 
+// Import Lucide icons
+import { BookOpen, Medal, Users, Clock } from 'lucide-react';
+
 const Dashboard: React.FC = () => {
   const { 
     coursesCount, 
@@ -43,7 +46,7 @@ const Dashboard: React.FC = () => {
           title="Cursos Totales"
           value={coursesCount}
           description="Todos tus cursos"
-          icon={<BookOpenIcon className="h-4 w-4" />}
+          icon={<BookOpen className="h-4 w-4" />}
           trend={{
             value: "+5%",
             label: "desde el mes pasado",
@@ -54,7 +57,7 @@ const Dashboard: React.FC = () => {
           title="Cursos Publicados"
           value={publishedCoursesCount}
           description="Cursos visibles a estudiantes"
-          icon={<MedalIcon className="h-4 w-4" />}
+          icon={<Medal className="h-4 w-4" />}
           trend={{
             value: "+2%",
             label: "desde el mes pasado",
@@ -65,7 +68,7 @@ const Dashboard: React.FC = () => {
           title="Inscripciones"
           value={totalEnrollments}
           description="Total de estudiantes"
-          icon={<UsersIcon className="h-4 w-4" />}
+          icon={<Users className="h-4 w-4" />}
           trend={{
             value: "+12%",
             label: "desde el mes pasado",
@@ -139,81 +142,5 @@ const Dashboard: React.FC = () => {
     </SectionPageLayout>
   );
 };
-
-// Import the Lucide icons as React components
-const BookOpenIcon = (props: React.ComponentProps<'svg'>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-  </svg>
-);
-
-const MedalIcon = (props: React.ComponentProps<'svg'>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" />
-    <path d="M8.21 13.89 7 23l5-3 5 3-1.21-9.11" />
-    <path d="M8.21 10.11 7 1l5 3 5-3-1.21 9.11" />
-  </svg>
-);
-
-const UsersIcon = (props: React.ComponentProps<'svg'>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  </svg>
-);
-
-const Clock = (props: React.ComponentProps<'svg'>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12 6 12 12 16 14" />
-  </svg>
-);
 
 export default Dashboard;

@@ -35,12 +35,10 @@ export interface SectionPageLayoutProps {
     description: string;
     links: Array<{ text: string; href: string }>;
   };
-  title?: string;
-  subtitle?: string;
   actions?: React.ReactNode[];
 }
 
-// Add PageSection component first
+// PageSection component
 export const PageSection: React.FC<PageSectionProps> = ({
   title,
   description,
@@ -79,15 +77,13 @@ export const PageSection: React.FC<PageSectionProps> = ({
   );
 };
 
-// Then the main SectionPageLayout component
+// Main SectionPageLayout component
 const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({ 
   children,
   className,
   header,
   stats,
   help,
-  title,
-  subtitle,
   actions
 }) => {
   return (
@@ -113,18 +109,9 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
         </div>
       )}
       
-      {/* Support the direct title/subtitle/actions pattern for backwards compatibility */}
-      {title && !header && (
-        <div className="mb-6 flex justify-between items-start">
-          <div>
-            <h1 className="text-2xl font-bold">{title}</h1>
-            {subtitle && <p className="text-muted-foreground mt-1">{subtitle}</p>}
-          </div>
-          {actions && actions.length > 0 && (
-            <div className="flex gap-2">
-              {actions}
-            </div>
-          )}
+      {actions && actions.length > 0 && (
+        <div className="mb-6 flex justify-end gap-2">
+          {actions}
         </div>
       )}
       
