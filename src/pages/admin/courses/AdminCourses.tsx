@@ -46,12 +46,12 @@ import { useNavigate } from "react-router-dom";
 import ManualEnrollmentDialog from "@/components/admin/ManualEnrollmentDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-// Definición correcta de la interfaz
+// Define the Instructor interface correctly
 interface Instructor {
   full_name: string | null;
 }
 
-// Interfaz para los datos que vienen de la base de datos
+// Interface for the data received from Supabase
 interface CourseData {
   id: string;
   title: string;
@@ -67,7 +67,7 @@ interface CourseData {
   profiles?: Instructor | null;
 }
 
-// Interfaz para el modelo de curso después de formatear
+// Interface for the formatted course model used in the component
 interface Course {
   id: string;
   title: string;
@@ -128,15 +128,15 @@ const AdminCourses: React.FC = () => {
         throw error;
       }
       
-      // Formateamos los datos correctamente
-      const formattedCourses: Course[] = data?.map((course: CourseData) => ({
+      // Format the data correctly
+      const formattedCourses: Course[] = (data || []).map((course: any) => ({
         ...course,
         instructors: {
           full_name: course.profiles?.full_name || 'Sin instructor asignado'
         },
         status: course.status || (course.is_published ? 'published' : 'draft'),
         students_count: course.students_count || 0
-      })) || [];
+      }));
       
       setCourses(formattedCourses);
     } catch (error: any) {
