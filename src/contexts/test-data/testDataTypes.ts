@@ -26,6 +26,7 @@ export interface TestDataState {
 export interface TestDataContextType {
   testData: TestDataState;
   isGenerating: boolean;
+  isLoading: boolean;
   selectedItems: Record<TestDataType, string[]>;
   selectItem: (type: TestDataType, id: string, selected: boolean) => void;
   selectAllItems: (type: TestDataType, selected: boolean) => void;

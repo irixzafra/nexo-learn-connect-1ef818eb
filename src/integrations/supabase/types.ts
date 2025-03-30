@@ -1625,6 +1625,33 @@ export type Database = {
           },
         ]
       }
+      test_data_items: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          name: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          name: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          name?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_badges: {
         Row: {
           awarded_at: string

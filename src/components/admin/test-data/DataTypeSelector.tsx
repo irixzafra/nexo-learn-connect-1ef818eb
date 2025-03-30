@@ -7,6 +7,7 @@ import { DataTypeGroup } from './components/DataTypeGroup';
 import { DataCountInput } from './components/DataCountInput';
 import { DependencyAlert } from './components/DependencyAlert';
 import { dataTypeGroups, dataTypeDependencies } from './utils/dataTypeUtils';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const DataTypeSelector: React.FC = () => {
   const { generateTestData, isGenerating, testData } = useTestData();
@@ -14,6 +15,7 @@ export const DataTypeSelector: React.FC = () => {
   const [count, setCount] = useState(1);
   const [showDependencyAlert, setShowDependencyAlert] = useState(false);
   const [missingDependencies, setMissingDependencies] = useState<{type: TestDataType, dependencies: TestDataType[]}[]>([]);
+  const { isAuthenticated } = useAuth();
 
   const handleCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
@@ -36,6 +38,11 @@ export const DataTypeSelector: React.FC = () => {
 
   // Check dependencies before generation
   const checkDependencies = (): boolean => {
+    if (!isAuthenticated) {
+      toast.error('Debes iniciar sesión para generar datos de prueba');
+      return false;
+    }
+    
     const missing: {type: TestDataType, dependencies: TestDataType[]}[] = [];
     
     selectedTypes.forEach(type => {
@@ -147,6 +154,12 @@ export const DataTypeSelector: React.FC = () => {
           selectedTypes={selectedTypes}
         />
       </div>
+
+      {!isAuthenticated && (
+        <div className="bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+          <p className="text-sm font-medium">Debes iniciar sesión para guardar los datos de prueba en la base de datos</p>
+        </div>
+      )}
 
       {showDependencyAlert && (
         <DependencyAlert

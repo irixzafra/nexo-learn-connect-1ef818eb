@@ -10,6 +10,7 @@ export const TestDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const {
     testData,
     isGenerating,
+    isLoading,
     generateTestData,
     clearTestData,
     deleteTestDataItem
@@ -24,33 +25,20 @@ export const TestDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   } = useSelectionManager(testData);
 
   // Handle deleting selected items with toast feedback
-  const handleDeleteSelectedItems = (type: TestDataType) => {
+  const handleDeleteSelectedItems = async (type: TestDataType) => {
     if (selectedItems[type].length === 0) {
       toast.info('No hay elementos seleccionados para eliminar');
       return;
     }
     
-    const count = selectedItems[type].length;
-    const success = deleteSelectedItems(type, (callback) => {
-      // This is a wrapper that calls the testData setter with the provided callback
-      setTestData(callback(testData));
-    });
+    // Delete selected items
+    const promises = selectedItems[type].map(id => deleteTestDataItem(type, id));
+    await Promise.all(promises);
     
-    if (success) {
-      toast.success(`${count} elementos eliminados correctamente`);
-    }
-  };
-  
-  // This is a helper function to access the setter from the custom hook
-  const setTestData = (newState: any) => {
-    clearTestData();
-    Object.entries(newState).forEach(([type, items]) => {
-      if (Array.isArray(items) && items.length > 0) {
-        items.forEach((item: any) => {
-          testData[type as TestDataType].push(item);
-        });
-      }
-    });
+    // Clear selections for this type
+    clearSelections(type);
+    
+    toast.success(`${selectedItems[type].length} elementos eliminados correctamente`);
   };
 
   // When clearing test data, also clear selections
@@ -62,6 +50,7 @@ export const TestDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const value = {
     testData,
     isGenerating,
+    isLoading,
     selectedItems,
     selectItem,
     selectAllItems,

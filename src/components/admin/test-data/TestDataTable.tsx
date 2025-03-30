@@ -8,14 +8,15 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import { dataTypeLabels, dataTypeGroups } from './utils/dataTypeUtils';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { TestDataHeader } from './components/TestDataHeader';
 import { EmptyTestDataState } from './components/EmptyTestDataState';
 import { TestDataTabsList } from './components/TestDataTabsList';
 import { TestDataContent } from './components/TestDataContent';
+import { Loader2 } from 'lucide-react';
 
 export const TestDataTable: React.FC = () => {
-  const { testData } = useTestData();
+  const { testData, isLoading } = useTestData();
   const [activeTab, setActiveTab] = useState<TestDataType>('course');
 
   // Calculate the total count of all test data items
@@ -31,6 +32,15 @@ export const TestDataTable: React.FC = () => {
   }, {} as Record<string, boolean>);
 
   const hasAnyData = totalItems > 0;
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+        <p className="text-muted-foreground">Cargando datos de prueba...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

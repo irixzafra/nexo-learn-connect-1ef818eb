@@ -9,14 +9,14 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
-import { Database } from 'lucide-react';
+import { Database, Loader2 } from 'lucide-react';
 import { DataTypeSelector } from './DataTypeSelector';
 import { TestDataTable } from './TestDataTable';
 import { DeleteAllDataDialog } from './DeleteAllDataDialog';
 import { Separator } from '@/components/ui/separator';
 
 const TestDataGenerator: React.FC = () => {
-  const { testData } = useTestData();
+  const { testData, isLoading } = useTestData();
   
   // Check if there's any test data
   const hasAnyData = Object.values(testData).some(items => items.length > 0);
@@ -26,6 +26,23 @@ const TestDataGenerator: React.FC = () => {
     (acc, items) => acc + items.length, 
     0
   );
+
+  if (isLoading) {
+    return (
+      <Card className="w-full shadow-md border-muted">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-slate-50 dark:from-slate-900 dark:to-slate-800">
+          <CardTitle className="flex items-center gap-2 text-2xl">
+            <Database className="h-6 w-6 text-primary" />
+            Generador de Datos de Prueba
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6 flex flex-col items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+          <p className="text-muted-foreground">Cargando datos de prueba...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full shadow-md border-muted">
