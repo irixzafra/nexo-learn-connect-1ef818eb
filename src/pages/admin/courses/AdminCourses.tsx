@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -46,12 +45,10 @@ import { useNavigate } from "react-router-dom";
 import ManualEnrollmentDialog from "@/components/admin/ManualEnrollmentDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-// Define the Instructor interface correctly
 interface Instructor {
   full_name: string | null;
 }
 
-// Interface for the data received from Supabase
 interface CourseData {
   id: string;
   title: string;
@@ -67,7 +64,6 @@ interface CourseData {
   profiles?: Instructor | null;
 }
 
-// Interface for the formatted course model used in the component
 interface Course {
   id: string;
   title: string;
@@ -123,12 +119,8 @@ const AdminCourses: React.FC = () => {
         `)
         .order('created_at', { ascending: false });
       
-      if (error) {
-        console.error('Error al obtener cursos:', error);
-        throw error;
-      }
+      if (error) throw error;
       
-      // Format the data correctly
       const formattedCourses: Course[] = (data || []).map((course: any) => ({
         ...course,
         instructors: {
@@ -163,11 +155,8 @@ const AdminCourses: React.FC = () => {
   const draftCourses = filteredCourses.filter(course => course.status === 'draft' || course.is_published === false);
 
   const handleEnrollmentComplete = () => {
-    toast({
-      title: "Matrícula completada",
-      description: "El usuario ha sido matriculado exitosamente en el curso.",
-    });
-    fetchCourses(); // Refrescar la lista de cursos para actualizar los conteos
+    toast.success("Usuario matriculado exitosamente");
+    fetchCourses();
   };
 
   return (
