@@ -63,8 +63,6 @@ export const useAdminCourses = () => {
           currency, 
           instructor_id, 
           is_published,
-          status,
-          students_count,
           created_at, 
           updated_at
         `)
@@ -95,8 +93,8 @@ export const useAdminCourses = () => {
           instructors: {
             full_name: instructorName
           },
-          status: course.status || (course.is_published ? 'published' : 'draft'),
-          students_count: course.students_count || 0
+          status: course.is_published ? 'published' : 'draft',
+          students_count: 0
         };
       }));
       
