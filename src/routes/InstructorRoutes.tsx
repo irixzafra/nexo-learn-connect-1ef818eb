@@ -5,7 +5,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { Loader2 } from 'lucide-react';
 import AppLayout from '@/layouts/AppLayout';
 
-// Lazy loaded components - updating to use existing files in the project
+// Lazy loaded components - using existing files in the project
 const InstructorDashboard = lazy(() => import('@/pages/instructor/Dashboard'));
 const InstructorCourses = lazy(() => import('@/pages/instructor/CoursesList'));
 const CreateCourse = lazy(() => import('@/pages/instructor/CreateCourse'));
