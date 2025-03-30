@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
@@ -11,7 +10,7 @@ import { connectionService } from "@/lib/offline/connectionService";
 import { useEffect } from "react";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
-import { RoleIndicator } from "./header/RoleIndicator";
+import { RoleIndicator } from "@/components/layout/header/RoleIndicator";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -33,7 +32,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     return unsubscribe;
   }, []);
 
-  // Simulate page transition detection
   useEffect(() => {
     setIsPageTransitioning(true);
     const timer = setTimeout(() => {
@@ -43,7 +41,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     return () => clearTimeout(timer);
   }, [children]);
 
-  // Handle role switching for emulation by admins
   const handleRoleChange = (role: string) => {
     setViewAsRole(role);
   };
@@ -71,12 +68,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
                 </div>
               )}
               <div className="flex min-h-screen">
-                {/* Sidebar Navigation on the left */}
                 <div className="hidden md:block">
                   <SidebarNavigation viewAsRole={viewAsRole} />
                 </div>
-                
-                {/* Main content */}
                 <div className="flex-1 overflow-auto">
                   {children}
                 </div>
