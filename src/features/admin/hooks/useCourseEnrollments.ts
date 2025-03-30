@@ -25,31 +25,26 @@ export const useCourseEnrollments = (courseId: string) => {
           throw new Error("ID del curso no proporcionado");
         }
         
-        // Using a more explicit join approach instead of the foreign key relationship shorthand
+        // Consulta simplificada - solo obtenemos datos de enrollments sin join
         const { data, error } = await supabase
           .from('enrollments')
           .select(`
             id,
-            user_id,
             enrolled_at,
-            profiles!inner (
-              id, 
-              full_name,
-              email
-            )
-          `)
+            user_id
+          `) // Sin join a profiles
           .eq('course_id', courseId);
 
         if (error) throw error;
         
         if (!data || data.length === 0) return [];
 
-        // Transform the data to flatten the structure
+        // Transformamos los datos, dejando full_name y email como null temporalmente
         return data.map((enrollment: any) => ({
           id: enrollment.id,
           user_id: enrollment.user_id,
-          full_name: enrollment.profiles?.full_name || null,
-          email: enrollment.profiles?.email || null,
+          full_name: null, // Temporalmente null para diagnóstico
+          email: null, // Temporalmente null para diagnóstico
           enrolled_at: enrollment.enrolled_at
         }));
       } catch (error: any) {
