@@ -7,3 +7,7 @@ export * from './CourseCardPromoInfo';
 export * from './CourseCardSchedule';
 export * from './CourseCardFooter';
 export * from './CourseCardUtils';
+export * from './CourseCardPromoBadges';
+export * from './CourseCardPriceBadge';
+export * from './CourseCardBookmarkButton';
+export * from './CourseCardLevelBadge';
