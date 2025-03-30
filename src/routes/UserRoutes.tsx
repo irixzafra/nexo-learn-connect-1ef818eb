@@ -12,7 +12,6 @@ import StudentCourses from "@/pages/student/Courses";
 import CourseLearn from "@/pages/student/CourseLearn";
 import LessonView from "@/pages/student/LessonView";
 import Checkout from "@/pages/student/Checkout";
-import Calendar from "@/pages/placeholder/Calendar";
 import Messages from "@/pages/placeholder/Messages";
 import Settings from "@/pages/placeholder/Settings";
 
@@ -58,13 +57,6 @@ const UserRoutes = () => {
         <ProtectedRoute>
           <AppLayout>
             <Checkout />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/calendar" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Calendar />
           </AppLayout>
         </ProtectedRoute>
       } />

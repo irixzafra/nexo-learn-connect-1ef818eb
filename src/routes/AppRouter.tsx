@@ -20,7 +20,6 @@ import PaymentCancel from '@/pages/payment/PaymentCancel';
 import Community from '@/pages/Community';
 import PostDetail from '@/pages/PostDetail';
 import Messages from '@/pages/placeholder/Messages';
-import Network from '@/pages/placeholder/Network';
 import NotificationCenter from "@/pages/NotificationCenter";
 
 const AppRouter = () => {
@@ -50,7 +49,6 @@ const AppRouter = () => {
       <Route path="/payment/success" element={<ProtectedRoute><AppLayout><PaymentSuccess /></AppLayout></ProtectedRoute>} />
       <Route path="/payment/cancel" element={<ProtectedRoute><AppLayout><PaymentCancel /></AppLayout></ProtectedRoute>} />
       <Route path="/messages" element={<ProtectedRoute><AppLayout><Messages /></AppLayout></ProtectedRoute>} />
-      <Route path="/network" element={<ProtectedRoute><AppLayout><Network /></AppLayout></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute><AppLayout><NotificationCenter /></AppLayout></ProtectedRoute>} />
 
       {/* Catch-all route for 404 */}

@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useLocation } from 'react-router-dom';
 
 // Import subcomponents
 import SidebarFooterSection from './SidebarFooterSection';
@@ -24,6 +25,10 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
   const { state } = useSidebar();
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
+  const location = useLocation();
+  
+  // Check if we're on the landing page
+  const isLandingPage = location.pathname === '/landing' || location.pathname === '/';
   
   // Extract the user role from the profile
   const currentUserRole = profile?.role || 'student';
@@ -39,9 +44,9 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
     changeLanguage
   } = useSidebarNavigation(toUserRoleType(currentUserRole), viewAsRole, onRoleChange);
 
-  // Mostrar Landing Page para usuarios anónimos
-  if (effectiveRole === 'anonimo') {
-    return null; // Los usuarios anónimos solo ven la Landing Page
+  // Don't show sidebar for anonymous users on landing page
+  if (effectiveRole === 'anonimo' && isLandingPage) {
+    return null;
   }
 
   // Language options
