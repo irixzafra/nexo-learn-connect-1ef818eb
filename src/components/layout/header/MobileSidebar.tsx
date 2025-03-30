@@ -1,8 +1,8 @@
 
 import React from 'react';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { NexoLogo } from '@/components/ui/logo';
 import SidebarNavigation from '../SidebarNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
