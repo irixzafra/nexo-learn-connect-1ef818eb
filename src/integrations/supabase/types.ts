@@ -1699,6 +1699,24 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      slugify: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      unaccent: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      unaccent_init: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
     }
     Enums: {
       application_status: "pending" | "reviewing" | "accepted" | "rejected"

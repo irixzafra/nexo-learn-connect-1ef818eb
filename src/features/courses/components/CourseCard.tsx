@@ -22,8 +22,12 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
     student_count = 0,
     duration_text = '0h',
     cover_image_url = '/placeholder.svg',
-    tags = []
+    tags = [],
+    slug
   } = course;
+
+  // Use slug for the URL if available, otherwise fallback to ID
+  const courseUrl = slug ? `/cursos/${slug}` : `/courses/${id}`;
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-all cursor-pointer h-full">
@@ -40,7 +44,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
       <CardContent className="p-4">
         <div className="flex flex-col space-y-2">
           <div className="space-y-1">
-            <Link to={`/courses/${id}`} className="hover:text-primary hover:underline transition-colors">
+            <Link to={courseUrl} className="hover:text-primary hover:underline transition-colors">
               <h3 className="font-medium line-clamp-2">{title}</h3>
             </Link>
             <p className="text-sm text-muted-foreground">

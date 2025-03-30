@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -54,6 +53,9 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
   
   const randomStudents = Math.floor(Math.random() * 500) + 50;
   const displayStudents = course.student_count || randomStudents;
+
+  // Use slug for the URL if available, otherwise fallback to ID
+  const courseUrl = course.slug ? `/cursos/${course.slug}` : `/courses/${course.id}`;
 
   return (
     <motion.div
@@ -156,7 +158,7 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
           <div className="flex justify-between items-start">
             <div>
               <CardTitle className="line-clamp-2 group-hover:text-primary transition-colors text-lg">
-                <Link to={`/courses/${course.id}`} className="hover:underline">
+                <Link to={courseUrl} className="hover:underline">
                   {course.title}
                 </Link>
               </CardTitle>
@@ -249,12 +251,12 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
         </CardContent>
         
         <CardFooter className="border-t pt-4 flex justify-between items-center">
-          <Link to={`/courses/${course.id}`} className="text-sm text-primary hover:underline flex items-center">
+          <Link to={courseUrl} className="text-sm text-primary hover:underline flex items-center">
             Ver detalles
             <ChevronRight className="h-3.5 w-3.5 ml-1" />
           </Link>
           <Button size="sm" className="shadow-sm" asChild>
-            <Link to={`/courses/${course.id}`}>Inscribirme</Link>
+            <Link to={courseUrl}>Inscribirme</Link>
           </Button>
         </CardFooter>
       </Card>
