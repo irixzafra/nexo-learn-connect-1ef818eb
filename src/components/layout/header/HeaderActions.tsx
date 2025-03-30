@@ -24,8 +24,10 @@ export const HeaderActions: React.FC = () => {
         <NotificationIndicator />
       )}
       
-      {/* Theme Selector - ubicado en una posición destacada */}
-      <ThemeSelector />
+      {/* Theme Selector - solo si está habilitado */}
+      {featuresConfig.enableThemeSwitcher && (
+        <ThemeSelector />
+      )}
       
       {/* Connection Status - version más compacta */}
       <div className="scale-90">

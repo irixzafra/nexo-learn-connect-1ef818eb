@@ -45,6 +45,11 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
             enableRoleSwitcher: data.enable_role_switcher ?? defaultFeaturesConfig.enableRoleSwitcher,
             enableMultiLanguage: data.enable_multi_language ?? defaultFeaturesConfig.enableMultiLanguage,
             enableLeaderboard: data.enable_leaderboard ?? defaultFeaturesConfig.enableLeaderboard,
+            // New appearance options
+            enableThemeSwitcher: data.enable_theme_switcher ?? defaultFeaturesConfig.enableThemeSwitcher,
+            // New content management options
+            enableCategoryManagement: data.enable_category_management ?? defaultFeaturesConfig.enableCategoryManagement,
+            enableContentReordering: data.enable_content_reordering ?? defaultFeaturesConfig.enableContentReordering,
           });
         }
       } catch (error) {
@@ -74,6 +79,11 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
           enable_role_switcher: updatedConfig.enableRoleSwitcher,
           enable_multi_language: updatedConfig.enableMultiLanguage,
           enable_leaderboard: updatedConfig.enableLeaderboard,
+          // New appearance options
+          enable_theme_switcher: updatedConfig.enableThemeSwitcher,
+          // New content management options
+          enable_category_management: updatedConfig.enableCategoryManagement,
+          enable_content_reordering: updatedConfig.enableContentReordering,
           updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id' });
 

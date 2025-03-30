@@ -14,6 +14,11 @@ export type FeaturesConfig = {
   enableRoleSwitcher: boolean;
   enableMultiLanguage: boolean;
   enableLeaderboard: boolean;
+  // Nuevas opciones de apariencia
+  enableThemeSwitcher: boolean;
+  // Nuevas opciones de contenido
+  enableCategoryManagement: boolean;
+  enableContentReordering: boolean;
 };
 
 export interface OnboardingContextValue {
@@ -44,4 +49,9 @@ export const defaultFeaturesConfig: FeaturesConfig = {
   enableRoleSwitcher: true,
   enableMultiLanguage: false,
   enableLeaderboard: true,
+  // Valores predeterminados para opciones de apariencia
+  enableThemeSwitcher: true,
+  // Valores predeterminados para opciones de contenido
+  enableCategoryManagement: true,
+  enableContentReordering: false,
 };
