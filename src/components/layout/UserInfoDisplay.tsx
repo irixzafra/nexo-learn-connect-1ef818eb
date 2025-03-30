@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Settings, BookOpen, ArrowLeftRight, UserCog, Shield, Terminal, Ghost } from 'lucide-react';
+import { LogOut, User, Settings, BookOpen, ArrowLeftRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { Badge } from '@/components/ui/badge';
@@ -44,40 +44,7 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
     navigate('/');
   };
 
-  const getRoleBadgeVariant = (role?: UserRoleType) => {
-    switch (role) {
-      case 'admin':
-        return 'default';
-      case 'instructor':
-        return 'secondary';
-      case 'sistemas':
-        return 'destructive';
-      case 'anonimo':
-        return 'outline';
-      case 'student':
-        return 'outline';
-      default:
-        return 'outline';
-    }
-  };
-
-  const getRoleIcon = (role?: UserRoleType) => {
-    switch (role) {
-      case 'admin':
-        return <Shield className="h-4 w-4" />;
-      case 'instructor':
-        return <UserCog className="h-4 w-4" />;
-      case 'sistemas':
-        return <Terminal className="h-4 w-4" />;
-      case 'anonimo':
-        return <Ghost className="h-4 w-4" />;
-      case 'student':
-        return <User className="h-4 w-4" />;
-      default:
-        return <User className="h-4 w-4" />;
-    }
-  };
-
+  // Verifica si estamos viendo como otro rol
   const isViewingAsOtherRole = viewAsRole !== 'current' && viewAsRole !== effectiveUserRole;
 
   return user ? (
@@ -93,17 +60,7 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel className="flex items-center gap-2">
-              <span>{profile?.full_name || 'Usuario'}</span>
-              <Badge variant={getRoleBadgeVariant(toUserRoleType(userRole || ''))}>
-                <div className="flex items-center gap-1">
-                  {getRoleIcon(toUserRoleType(userRole || ''))}
-                  <span className="capitalize truncate">
-                    {toUserRoleType(userRole || '')}
-                  </span>
-                </div>
-              </Badge>
-            </DropdownMenuLabel>
+            <DropdownMenuLabel>{profile?.full_name || 'Usuario'}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/profile')}>
               <User className="mr-2 h-4 w-4" />
@@ -122,10 +79,11 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
               <span>Configuración</span>
             </DropdownMenuItem>
             
-            {isViewingAsOtherRole && effectiveUserRole === 'admin' && (
+            {/* Opción para volver al rol original - solo cuando se está viendo como otro rol */}
+            {isViewingAsOtherRole && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => onRoleChange(toUserRoleType(userRole as string))}>
+                <DropdownMenuItem onClick={() => onRoleChange(effectiveUserRole)}>
                   <ArrowLeftRight className="mr-2 h-4 w-4" />
                   <span>Volver a mi rol</span>
                 </DropdownMenuItem>
