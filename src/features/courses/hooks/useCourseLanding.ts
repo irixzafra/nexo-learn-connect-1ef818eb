@@ -1,88 +1,138 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "@/hooks/use-toast";
 import { useCourseDetails } from "./useCourseDetails";
-import { useEnrollment } from "./useEnrollment";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { toast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
-export const useCourseLanding = (identifier: string, isSlug: boolean = false) => {
+export const useCourseLanding = (courseIdentifier: string, isSlug: boolean = false) => {
+  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const [expandedFAQs, setExpandedFAQs] = useState<string[]>(['faq-1']);
+  const [expandedFAQs, setExpandedFAQs] = useState<string[]>([]);
   
-  // Obtener detalles del curso usando ID o slug
-  const { course, modulesWithLessons, isLoading } = useCourseDetails(
-    isSlug ? undefined : identifier,
-    isSlug ? identifier : undefined
-  );
-  
-  // Funcionalidad de inscripción
+  // Usar el hook de detalles del curso que hemos creado
   const { 
-    isEnrolled, 
-    isEnrolling, 
-    isChecking, 
-    handleEnroll 
-  } = useEnrollment(course?.id);
-  
-  // Calcular estadísticas del curso
-  const totalLessons = modulesWithLessons?.reduce((acc, module) => 
-    acc + (module.lessons?.length || 0), 0) || 0;
-  
-  const previewableLessons = modulesWithLessons?.reduce((acc, module) => 
-    acc + (module.lessons?.filter(lesson => lesson.is_previewable)?.length || 0), 0) || 0;
-  
-  // Manejar inscripción
-  const handleEnrollment = async () => {
+    course, 
+    modules, 
+    lessons, 
+    modulesWithLessons, 
+    isLoading,
+    error 
+  } = useCourseDetails(
+    isSlug ? undefined : courseIdentifier, 
+    isSlug ? courseIdentifier : undefined
+  );
+
+  // Verificar si el usuario está matriculado
+  const { 
+    data: enrollment, 
+    isLoading: isCheckingEnrollment,
+    refetch: refetchEnrollment
+  } = useQuery({
+    queryKey: ["enrollment", user?.id, course?.id],
+    queryFn: async () => {
+      if (!user?.id || !course?.id) return null;
+      
+      const { data, error } = await supabase
+        .from("enrollments")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("course_id", course.id)
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Error checking enrollment:", error);
+        return null;
+      }
+      
+      return data;
+    },
+    enabled: !!user?.id && !!course?.id,
+  });
+
+  // Estado para el proceso de inscripción
+  const [isEnrolling, setIsEnrolling] = useState(false);
+
+  // Función para inscribirse al curso
+  const handleEnroll = async () => {
     if (!isAuthenticated) {
-      // Redirigir a login y guardar la URL actual para volver después
-      const returnUrl = window.location.pathname;
-      sessionStorage.setItem('redirectAfterLogin', returnUrl);
-      navigate('/auth/login');
       toast({
-        title: "Inicia sesión para inscribirte",
-        description: "Necesitas tener una cuenta para inscribirte en el curso.",
+        title: "Inicia sesión para continuar",
+        description: "Necesitas iniciar sesión para inscribirte a este curso",
+        variant: "default",
       });
+      navigate("/auth/login");
       return;
     }
-    
-    if (!course?.id) return;
-    
+
+    if (isEnrolled || !course || !user?.id) return;
+
+    setIsEnrolling(true);
+
     try {
-      await handleEnroll();
+      // Si el curso es gratuito, inscribir directamente
+      if (course.price === 0) {
+        const { error } = await supabase
+          .from("enrollments")
+          .insert({ user_id: user.id, course_id: course.id });
+
+        if (error) throw error;
+
+        toast({
+          title: "¡Inscripción exitosa!",
+          description: "Has sido inscrito al curso correctamente",
+          variant: "default",
+        });
+
+        // Refrescar el estado de inscripción
+        await refetchEnrollment();
+        
+        // Redirigir al curso
+        navigate(`/courses/${course.id}/learn`);
+      } else {
+        // Para cursos de pago, redirigir a la página de checkout (a implementar)
+        console.log("Redirigiendo a checkout para curso de pago");
+        navigate(`/checkout/${course.id}`);
+      }
+    } catch (error: any) {
+      console.error("Error enrolling in course:", error);
       toast({
-        title: "¡Inscripción exitosa!",
-        description: "Te has inscrito correctamente al curso."
-      });
-    } catch (error) {
-      console.error("Error al inscribirse:", error);
-      toast({
+        title: "Error al inscribirse",
+        description: error.message || "Ha ocurrido un error al inscribirte en el curso",
         variant: "destructive",
-        title: "Error de inscripción",
-        description: "No se pudo completar la inscripción. Inténtalo de nuevo más tarde."
       });
+    } finally {
+      setIsEnrolling(false);
     }
   };
-  
-  // Formateador de moneda
-  const formatCurrency = (price: number, currency: string = 'eur') => {
+
+  // Contar el total de lecciones y las lecciones previsualizables
+  const totalLessons = lessons.length;
+  const previewableLessons = lessons.filter(lesson => lesson.is_previewable).length;
+
+  // Función para formatear el precio
+  const formatCurrency = (price: number, currency: 'eur' | 'usd' = 'eur') => {
     const formatter = new Intl.NumberFormat('es-ES', {
       style: 'currency',
       currency: currency.toUpperCase(),
-      minimumFractionDigits: 2
     });
     
     return formatter.format(price);
   };
-  
+
   return {
     course,
+    modules,
+    lessons,
     modulesWithLessons,
     isLoading,
-    isEnrolled,
+    error,
+    isEnrolled: !!enrollment,
     isEnrolling,
-    isChecking,
-    handleEnroll: handleEnrollment,
+    isChecking: isCheckingEnrollment,
+    handleEnroll,
     expandedFAQs,
     setExpandedFAQs,
     formatCurrency,
