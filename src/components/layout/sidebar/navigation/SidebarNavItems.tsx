@@ -10,7 +10,8 @@ import {
   MessageSquare,
   Settings,
   Shield,
-  School
+  School,
+  Bell
 } from 'lucide-react';
 import { MenuItem } from '../MenuItems';
 
@@ -32,11 +33,12 @@ export const SidebarNavItems: React.FC<SidebarNavItemsProps> = ({
   const studentItems = () => (
     <>
       <MenuItem to="/home" icon={Home} label="Inicio" isCollapsed={isCollapsed} />
-      <MenuItem to="/courses" icon={BookOpen} label="Cursos" isCollapsed={isCollapsed} />
+      <MenuItem to="/courses" icon={BookOpen} label="Mis Cursos" isCollapsed={isCollapsed} />
       <MenuItem to="/explore" icon={Compass} label="Explorar" isCollapsed={isCollapsed} />
       <MenuItem to="/community" icon={Users} label="Comunidad" isCollapsed={isCollapsed} />
       <MenuItem to="/messages" icon={MessageSquare} label="Mensajes" badge={messagesCount} isCollapsed={isCollapsed} />
-      <MenuItem to="/profile" icon={User} label="Perfil" badge={notificationsCount} isCollapsed={isCollapsed} />
+      <MenuItem to="/notifications" icon={Bell} label="Notificaciones" badge={notificationsCount} isCollapsed={isCollapsed} />
+      <MenuItem to="/profile" icon={User} label="Perfil" isCollapsed={isCollapsed} />
     </>
   );
 

@@ -10,7 +10,8 @@ import {
   Database,
   Settings,
   Bell,
-  Route
+  Route,
+  Shield
 } from 'lucide-react';
 import { 
   SidebarMenu, 
@@ -20,7 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
-// Main navigation categories
+// Main navigation categories with verified routes
 const adminCategories = [
   { 
     id: 'dashboard',
@@ -44,7 +45,7 @@ const adminCategories = [
     id: 'finances',
     icon: CreditCard, 
     label: "Finanzas", 
-    path: "/admin/finanzas",
+    path: "/admin/finances",
   },
   { 
     id: 'learning',
@@ -82,11 +83,11 @@ const AdminNavigation: React.FC = () => {
     <div className="w-full py-4">
       <div className="container mx-auto">
         {/* Logo o título al inicio */}
-        <div className="mb-6 px-2 flex justify-center">
+        <div className="mb-4 px-2 flex justify-center">
           {isCollapsed ? (
-            <LayoutDashboard className="h-6 w-6 text-primary" />
+            <Shield className="h-5 w-5 text-primary" />
           ) : (
-            <h3 className="text-lg font-semibold">Admin Panel</h3>
+            <h3 className="text-base font-medium">Panel Admin</h3>
           )}
         </div>
         
@@ -99,10 +100,10 @@ const AdminNavigation: React.FC = () => {
                   <TooltipTrigger asChild>
                     <SidebarMenuButton asChild className={cn(
                       "w-10 h-10 flex justify-center",
-                      path.includes(item.id) ? "bg-secondary" : ""
+                      path.includes(item.id) ? "bg-gray-100 text-primary dark:bg-gray-800" : ""
                     )}>
                       <Link to={item.path}>
-                        <item.icon className="h-5 w-5" />
+                        <item.icon className="h-4 w-4" />
                         <span className="sr-only">{item.label}</span>
                       </Link>
                     </SidebarMenuButton>
@@ -113,12 +114,12 @@ const AdminNavigation: React.FC = () => {
                 </Tooltip>
               ) : (
                 <SidebarMenuButton asChild className={cn(
-                  "flex items-center gap-3 px-3 py-2 w-full",
-                  "hover:bg-accent rounded-md transition-colors",
-                  path.includes(item.id) ? "bg-secondary" : ""
+                  "flex items-center gap-3 px-3 py-2 w-full text-sm",
+                  "hover:bg-gray-50 dark:hover:bg-gray-900/50 rounded-md transition-colors",
+                  path.includes(item.id) ? "bg-gray-100 text-primary dark:bg-gray-800" : ""
                 )}>
                   <Link to={item.path} className="flex items-center gap-3 w-full">
-                    <item.icon className="h-5 w-5" />
+                    <item.icon className="h-4 w-4" />
                     <span>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>

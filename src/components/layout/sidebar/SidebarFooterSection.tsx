@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Globe, Users } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 // Types for SidebarFooterSection
 interface SidebarFooterSectionProps {
@@ -49,14 +50,17 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   };
 
   return (
-    <div className="mt-auto flex items-center justify-between gap-2 px-2 py-4">
-      {/* Language Selector - Icon only */}
+    <div className={cn(
+      "mt-auto flex items-center border-t border-gray-200 dark:border-gray-800",
+      isCollapsed ? "justify-center py-3" : "justify-between px-3 py-3"
+    )}>
+      {/* Language Selector */}
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                <Globe className="h-4 w-4" />
+                <span className="text-sm">{getLanguageFlag(currentLanguage)}</span>
                 <span className="sr-only">Cambiar idioma</span>
               </Button>
             </DropdownMenuTrigger>
@@ -79,7 +83,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
         </TooltipContent>
       </Tooltip>
       
-      {/* Role Switcher - Only for admins - Icon only */}
+      {/* Role Switcher - Only for admins */}
       {userRole === 'admin' && (
         <Tooltip>
           <TooltipTrigger asChild>

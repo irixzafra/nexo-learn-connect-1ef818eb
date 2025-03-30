@@ -13,7 +13,7 @@ interface MenuItemProps {
   to: string;
   icon: React.ElementType;
   label: string;
-  badge?: string | number;
+  badge?: number;
   disabled?: boolean;
   isCollapsed?: boolean;
 }
@@ -28,7 +28,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
 }) => {
   const location = useLocation();
   
-  // Verificar si una ruta está activa (actual o sus subrutas)
+  // Check if a route is active (current or its subroutes)
   const isRouteActive = (path: string) => {
     if (path === '/') {
       return location.pathname === '/';
@@ -44,12 +44,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({
         <Link 
           to={disabled ? "#" : to} 
           className={cn(
-            "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-gray-600 dark:text-gray-300 font-medium text-[15px] font-inter transition-all duration-200",
+            "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-gray-600 dark:text-gray-300 font-medium text-sm transition-all duration-200",
             isActive ? 
-              "bg-[#E5E7EB] text-gray-900 dark:bg-gray-700 dark:text-white border-l-[3px] border-l-[#0E90F9] pl-[calc(0.75rem-3px)]" : 
-              "hover:bg-[#F3F4F6] dark:hover:bg-gray-800",
+              "bg-gray-100 text-primary dark:bg-gray-800 dark:text-primary border-l-2 border-l-primary pl-[calc(0.75rem-2px)]" : 
+              "hover:bg-gray-50 dark:hover:bg-gray-900/50",
             disabled && "opacity-60 cursor-not-allowed text-[#9CA3AF] dark:text-gray-500 hover:bg-transparent dark:hover:bg-transparent",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
           )}
           onClick={(e) => {
             if (disabled) {
@@ -65,25 +65,25 @@ export const MenuItem: React.FC<MenuItemProps> = ({
           <span className="flex items-center gap-3">
             <Icon 
               className={cn(
-                "h-5 w-5 flex-shrink-0", 
+                "h-[18px] w-[18px] flex-shrink-0", 
                 isActive ? 
-                  "text-gray-900 dark:text-white" : 
-                  "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white",
+                  "text-primary dark:text-primary" : 
+                  "text-gray-500 dark:text-gray-400",
                 disabled && "text-[#9CA3AF] dark:text-gray-500"
               )} 
               aria-hidden="true" 
             />
-            {!isCollapsed && <span>{label}</span>}
+            {!isCollapsed && <span className="text-sm">{label}</span>}
           </span>
-          {!isCollapsed && badge && (
-            <Badge variant={typeof badge === 'number' && badge > 0 ? "default" : "secondary"} className="ml-auto text-xs">
+          {!isCollapsed && badge !== undefined && badge > 0 && (
+            <Badge variant="default" className="ml-auto py-0 h-5 min-w-[20px] text-xs">
               {badge}
             </Badge>
           )}
-          {!isCollapsed && disabled && (
-            <span className="ml-auto text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">
-              Próximamente
-            </span>
+          {isCollapsed && badge !== undefined && badge > 0 && (
+            <Badge variant="default" className="absolute -top-1 -right-1 px-1 py-0 min-w-[18px] h-[18px] text-[10px]">
+              {badge}
+            </Badge>
           )}
         </Link>
       </SidebarMenuButton>

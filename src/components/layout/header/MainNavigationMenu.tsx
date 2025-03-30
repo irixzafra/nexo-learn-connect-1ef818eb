@@ -16,15 +16,11 @@ import {
   LayoutDashboard, 
   Users, 
   BookOpen, 
-  CreditCard, 
-  Database,
-  Settings,
-  Shield,
   Home,
   Compass,
   MessageCircle,
-  Award,
-  Network
+  Network,
+  Shield
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 

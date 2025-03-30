@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
@@ -11,6 +11,15 @@ import SidebarFooterSection from './SidebarFooterSection';
 import SidebarMainNavigation from './navigation/SidebarMainNavigation';
 import SidebarLogoSection from './SidebarLogoSection';
 import { useSidebarNavigation } from './hooks/useSidebarNavigation';
+import { 
+  Home, 
+  BookOpen, 
+  MessageSquare,
+  Users, 
+  User,
+  Bell
+} from 'lucide-react';
+import { MenuItem } from './MenuItems';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRoleType;
@@ -56,19 +65,40 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
     { code: 'pt', name: 'Português' }
   ];
 
+  // Main navigation items based on role
+  const getNavItems = () => {
+    const commonItems = [
+      { to: getHomePath(effectiveRole), icon: Home, label: "Inicio" },
+      { to: "/courses", icon: BookOpen, label: "Cursos" },
+      { to: "/community", icon: Users, label: "Comunidad" },
+      { to: "/messages", icon: MessageSquare, label: "Mensajes", badge: messagesCount },
+      { to: "/notifications", icon: Bell, label: "Notificaciones", badge: notificationsCount },
+      { to: "/profile", icon: User, label: "Perfil" }
+    ];
+    
+    return commonItems;
+  };
+
   return (
-    <div className="h-full flex flex-col py-4">
+    <div className="h-full flex flex-col py-2">
       {/* Logo at the top with full title and subtitle */}
       <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
 
-      {/* Main Navigation Section */}
-      <SidebarMainNavigation 
-        effectiveRole={effectiveRole}
-        isCollapsed={isCollapsed}
-        messagesCount={messagesCount}
-        notificationsCount={notificationsCount}
-        getHomePath={() => getHomePath(effectiveRole)}
-      />
+      {/* Main Navigation Section - Simplified */}
+      <div className={`flex-1 overflow-auto px-${isCollapsed ? '2' : '3'} mt-6`}>
+        <div className="space-y-1">
+          {getNavItems().map((item) => (
+            <MenuItem 
+              key={item.to}
+              to={item.to} 
+              icon={item.icon} 
+              label={item.label} 
+              badge={item.badge} 
+              isCollapsed={isCollapsed}
+            />
+          ))}
+        </div>
+      </div>
       
       {/* Footer Section with Role Switcher and Language Selector */}
       <SidebarFooterSection 
