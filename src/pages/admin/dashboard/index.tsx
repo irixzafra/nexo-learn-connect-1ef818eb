@@ -20,27 +20,28 @@ const AdminDashboard: React.FC = () => {
   const { stats, isLoading } = useAdminDashboardStats();
 
   // Create a simplified array of admin menu items for direct access to main sections
+  // Updated to match the AdminMenuItem interface which requires 'label' instead of 'title'
   const adminQuickMenuItems = [
     {
-      title: "Gestionar Usuarios",
+      label: "Gestionar Usuarios",
       icon: <Users className="h-5 w-5 text-blue-500" />,
       description: "Administrar usuarios y roles",
       href: "/admin/users"
     },
     {
-      title: "Gestionar Cursos",
+      label: "Gestionar Cursos",
       icon: <BookOpen className="h-5 w-5 text-green-500" />,
       description: "Administrar catálogo de cursos",
       href: "/admin/courses"
     },
     {
-      title: "Gestionar Instructores",
+      label: "Gestionar Instructores",
       icon: <School className="h-5 w-5 text-orange-500" />,
       description: "Administrar instructores",
       href: "/admin/instructors"
     },
     {
-      title: "Roles y Permisos",
+      label: "Roles y Permisos",
       icon: <Users className="h-5 w-5 text-purple-500" />,
       description: "Configurar roles de usuarios",
       href: "/admin/roles"
