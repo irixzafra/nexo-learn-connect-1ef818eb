@@ -4,10 +4,41 @@ import { useTestData, TestDataType } from '@/contexts/TestDataContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CheckCircle2, Plus, Loader2 } from 'lucide-react';
+import { 
+  CheckCircle2, 
+  Plus, 
+  Loader2,
+  BookOpen,
+  Users,
+  FileText,
+  MessageSquare,
+  Folders,
+  UserCircle,
+  ClipboardList,
+  Tag,
+  GraduationCap,
+  Award,
+  ScrollText,
+  CreditCard
+} from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
+
+// Mapping de tipos de datos a iconos
+const typeIcons: Record<TestDataType, React.ReactNode> = {
+  course: <BookOpen className="h-4 w-4" />,
+  user: <Users className="h-4 w-4" />,
+  lesson: <FileText className="h-4 w-4" />,
+  message: <MessageSquare className="h-4 w-4" />,
+  module: <Folders className="h-4 w-4" />,
+  profile: <UserCircle className="h-4 w-4" />,
+  assignment: <ClipboardList className="h-4 w-4" />,
+  category: <Tag className="h-4 w-4" />,
+  enrollment: <GraduationCap className="h-4 w-4" />,
+  quiz: <ScrollText className="h-4 w-4" />,
+  certificate: <Award className="h-4 w-4" />,
+  payment: <CreditCard className="h-4 w-4" />
+};
 
 // Data types with their display names
 export const dataTypeLabels: Record<TestDataType, string> = {
@@ -60,7 +91,7 @@ export const DataTypeSelector: React.FC = () => {
     <div className="space-y-4">
       <div>
         <Label htmlFor="data-type" className="text-sm font-medium mb-1.5 block">Tipo de datos</Label>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
           {Object.entries(dataTypeLabels).map(([type, label]) => {
             const isSelected = selectedTypes.includes(type as TestDataType);
             return (
@@ -69,19 +100,20 @@ export const DataTypeSelector: React.FC = () => {
                 variant={isSelected ? "default" : "outline"}
                 size="sm"
                 className={cn(
-                  "justify-between h-9 font-normal transition-all", 
-                  isSelected ? 'pr-1.5' : 'text-muted-foreground'
+                  "h-9 font-normal transition-all flex items-center gap-1.5", 
+                  isSelected ? 'pr-1.5 bg-primary/90' : 'text-muted-foreground'
                 )}
                 onClick={() => handleTypeToggle(type as TestDataType)}
               >
+                {typeIcons[type as TestDataType]}
                 <span>{label}</span>
                 {isSelected && (
                   <motion.div
                     initial={{ scale: 0.5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="flex items-center justify-center"
+                    className="flex items-center justify-center ml-auto"
                   >
-                    <CheckCircle2 className="h-4 w-4 ml-2 text-primary-foreground" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-primary-foreground" />
                   </motion.div>
                 )}
               </Button>
@@ -121,10 +153,11 @@ export const DataTypeSelector: React.FC = () => {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          Generar {count} {count === 1 ? 'elemento' : 'elementos'} de 
-          {selectedTypes.length === 1 
-            ? ` tipo "${dataTypeLabels[selectedTypes[0]]}"` 
-            : ` cada tipo seleccionado (${selectedTypes.length} tipos)`}
+          {count === 1 
+            ? `Generar 1 elemento de tipo "${selectedTypes.length === 1 ? dataTypeLabels[selectedTypes[0]] : 'seleccionado'}"` 
+            : `Generar ${count} elementos de ${selectedTypes.length === 1 
+                ? `tipo "${dataTypeLabels[selectedTypes[0]]}"` 
+                : `cada tipo seleccionado (${selectedTypes.length} tipos)`}`}
         </p>
       </div>
     </div>

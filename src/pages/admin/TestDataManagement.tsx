@@ -43,8 +43,7 @@ const TestDataManagement: React.FC = () => {
         </div>
         <p className="text-muted-foreground ml-12 flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary/70" />
-          Esta herramienta te permite generar y gestionar datos de prueba para la aplicación. 
-          Solo los administradores tienen acceso a esta funcionalidad.
+          Esta herramienta te permite generar y gestionar datos de prueba para la aplicación
         </p>
       </motion.div>
       

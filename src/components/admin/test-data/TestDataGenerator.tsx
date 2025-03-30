@@ -13,6 +13,7 @@ import { Database, Sparkles } from 'lucide-react';
 import { DataTypeSelector } from './DataTypeSelector';
 import { TestDataTable } from './TestDataTable';
 import { DeleteAllDataDialog } from './DeleteAllDataDialog';
+import { Separator } from '@/components/ui/separator';
 
 const TestDataGenerator: React.FC = () => {
   const { testData } = useTestData();
@@ -51,6 +52,8 @@ const TestDataGenerator: React.FC = () => {
             </div>
             <DataTypeSelector />
           </div>
+
+          <Separator />
 
           <div className="mt-8">
             <TestDataTable />
