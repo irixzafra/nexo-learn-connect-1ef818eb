@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Moon, Sun, Zap } from 'lucide-react';
+import { Moon, Sun, SquareCode } from 'lucide-react';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -19,7 +19,7 @@ export const ThemeSelector: React.FC = () => {
       case 'dark':
         return <Moon className="h-[1.2rem] w-[1.2rem]" />;
       case 'futuristic':
-        return <Zap className="h-[1.2rem] w-[1.2rem]" />;
+        return <SquareCode className="h-[1.2rem] w-[1.2rem]" />;
       default:
         return <Sun className="h-[1.2rem] w-[1.2rem]" />;
     }
@@ -43,8 +43,8 @@ export const ThemeSelector: React.FC = () => {
           <span>Oscuro</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('futuristic')} className="flex items-center gap-2">
-          <Zap className="h-4 w-4" />
-          <span>Futurista</span>
+          <SquareCode className="h-4 w-4" />
+          <span>Gris Futurista</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
