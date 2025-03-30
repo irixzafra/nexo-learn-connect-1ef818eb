@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -173,8 +174,8 @@ const AdminCourses: React.FC = () => {
         ],
         breadcrumbs: [
           { title: "Dashboard", href: "/admin/dashboard" },
-          { title: "Gestión de Cursos" } as Array<{ title: string; href?: string }>
-        ]
+          { title: "Gestión de Cursos" }
+        ] as Breadcrumb[] // Correct type assertion
       }}
     >
       <div className="flex mb-4">
