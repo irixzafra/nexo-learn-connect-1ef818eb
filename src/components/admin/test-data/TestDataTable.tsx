@@ -7,7 +7,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import { dataTypeLabels, dataTypeGroups, groupLabels, typeIcons } from './DataTypeSelector';
+import { dataTypeLabels, dataTypeGroups, groupLabels, typeIcons } from './utils/dataTypeUtils';
 import { DataTypeTabContent } from './DataTypeTabContent';
 import { Database, Info, HardDrive } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

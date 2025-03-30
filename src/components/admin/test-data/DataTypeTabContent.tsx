@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useTestData, TestDataType } from '@/contexts/test-data';
 import { 
   Card, 
@@ -11,23 +11,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DeleteTypeDataDialog } from './DeleteTypeDataDialog';
-import { typeIcons } from './DataTypeSelector';
-import { 
-  Trash2, 
-  Check, 
-  Calendar, 
-  Search
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { 
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table';
+import { typeIcons } from './utils/dataTypeUtils';
+import { Trash2, Check, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { TestDataItemsTable } from './components/TestDataItemsTable';
+import { EmptyDataState } from './components/EmptyDataState';
 
 interface DataTypeTabContentProps {
   type: TestDataType;
@@ -66,21 +54,6 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
     selectItem(type, id, !selectedIds.includes(id));
   };
 
-  // Calculate if the header checkbox should be in an indeterminate state
-  const isIndeterminate = selectedIds.length > 0 && selectedIds.length < filteredItems.length;
-  const isAllSelected = filteredItems.length > 0 && selectedIds.length === filteredItems.length;
-
-  // Create a ref for the checkbox
-  const checkboxRef = useRef<HTMLButtonElement>(null);
-
-  // Update indeterminate state using a side effect
-  React.useEffect(() => {
-    if (checkboxRef.current) {
-      // We need to use DOM API to set indeterminate state
-      (checkboxRef.current as any).indeterminate = isIndeterminate;
-    }
-  }, [isIndeterminate]);
-
   return (
     <Card className="shadow-sm border-muted">
       <CardHeader className="pb-2 bg-muted/10">
@@ -103,8 +76,7 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
             
             <div className="flex items-center space-x-2">
               <Checkbox 
-                checked={isAllSelected}
-                ref={checkboxRef}
+                checked={filteredItems.length > 0 && selectedIds.length === filteredItems.length}
                 onCheckedChange={handleSelectAll}
                 aria-label="Seleccionar todos"
                 className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
@@ -119,55 +91,19 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
       
       <CardContent className="p-0">
         {filteredItems.length > 0 ? (
-          <div className="max-h-[calc(100vh-400px)] overflow-y-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[40px]"></TableHead>
-                  <TableHead>Nombre</TableHead>
-                  <TableHead className="hidden md:table-cell">ID</TableHead>
-                  <TableHead className="hidden sm:table-cell">Fecha</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredItems.map((item) => (
-                  <TableRow 
-                    key={item.id}
-                    className={cn(
-                      selectedIds.includes(item.id) && "bg-muted/40"
-                    )}
-                  >
-                    <TableCell className="py-2">
-                      <Checkbox 
-                        checked={selectedIds.includes(item.id)}
-                        onCheckedChange={() => handleSelectItem(item.id)}
-                        className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                      />
-                    </TableCell>
-                    <TableCell className="py-2 font-medium">{item.name}</TableCell>
-                    <TableCell className="py-2 hidden md:table-cell text-xs text-muted-foreground truncate max-w-[150px]">
-                      {item.id}
-                    </TableCell>
-                    <TableCell className="py-2 hidden sm:table-cell text-xs text-muted-foreground whitespace-nowrap">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(item.createdAt).toLocaleDateString()}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <TestDataItemsTable
+            type={type}
+            filteredItems={filteredItems}
+            selectedIds={selectedIds}
+            onSelectItem={handleSelectItem}
+            onSelectAll={handleSelectAll}
+          />
         ) : (
-          <div className="py-8 text-center text-muted-foreground flex flex-col items-center gap-2">
-            {typeIcons[type]}
-            {searchTerm ? (
-              <p>No se encontraron datos que coincidan con "{searchTerm}"</p>
-            ) : (
-              <p>No hay datos de {label.toLowerCase()} disponibles</p>
-            )}
-          </div>
+          <EmptyDataState
+            type={type}
+            label={label}
+            searchTerm={searchTerm}
+          />
         )}
       </CardContent>
       
