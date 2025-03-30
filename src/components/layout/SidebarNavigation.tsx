@@ -57,12 +57,25 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   // Check if a role should see specific sections
   const canSeeAdmin = effectiveRole === 'admin' || effectiveRole === 'instructor';
   
+  // Determine the home path based on the user's role
+  const getHomePath = () => {
+    switch (effectiveRole) {
+      case 'admin':
+        return '/admin/dashboard';
+      case 'instructor':
+        return '/instructor/dashboard';
+      case 'student':
+      default:
+        return '/home';
+    }
+  };
+  
   // Navegación simplificada - solo categorías principales
   const navigationItems = [
     {
       name: "Inicio",
       icon: Home,
-      path: "/home",
+      path: getHomePath(),
       tooltip: "Inicio"
     },
     {

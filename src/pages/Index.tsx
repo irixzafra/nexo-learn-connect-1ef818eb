@@ -20,8 +20,6 @@ const Index = () => {
             navigate('/instructor/dashboard');
             break;
           case 'student':
-            navigate('/home');
-            break;
           default:
             navigate('/home');
         }
