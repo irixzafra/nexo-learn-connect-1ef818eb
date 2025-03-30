@@ -4,6 +4,9 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserMenu } from './header/UserMenu';
 import { HeaderActions } from './header/HeaderActions';
 import { useLocation } from 'react-router-dom';
+import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const HeaderContent: React.FC = () => {
   const location = useLocation();
@@ -35,9 +38,51 @@ const HeaderContent: React.FC = () => {
     <header className="w-full py-2 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-20 border-b">
       <div className="container mx-auto flex justify-between items-center h-14">
         {/* Left side */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <SidebarTrigger className="h-8 w-8" />
           <span className="text-lg font-medium">{getPageTitle()}</span>
+          
+          {/* Horizontal Navigation Menu */}
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <Link to="/home" legacyBehavior passHref>
+                  <NavigationMenuLink 
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      location.pathname.includes('/home') ? "text-primary" : ""
+                    )}
+                  >
+                    Inicio
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link to="/courses" legacyBehavior passHref>
+                  <NavigationMenuLink 
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      location.pathname.includes('/courses') ? "text-primary" : ""
+                    )}
+                  >
+                    Cursos
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link to="/messages" legacyBehavior passHref>
+                  <NavigationMenuLink 
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      location.pathname.includes('/messages') ? "text-primary" : ""
+                    )}
+                  >
+                    Mensajes
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
         
         {/* Right side */}
