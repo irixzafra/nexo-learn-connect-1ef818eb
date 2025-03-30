@@ -8,10 +8,13 @@ import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuL
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { NexoLogoBase } from '@/components/ui/logo/nexo-logo-base';
+import { useAuth } from '@/contexts/AuthContext';
+import { RoleIndicator } from './header/RoleIndicator';
 import { Home, BookOpen, MessageSquare, Search, Calendar, User, Bell } from 'lucide-react';
 
 const HeaderContent: React.FC = () => {
   const location = useLocation();
+  const { userRole } = useAuth();
   
   // Extract page title from path
   const getPageTitle = () => {
@@ -28,7 +31,8 @@ const HeaderContent: React.FC = () => {
       'messages': 'Mensajes',
       'calendar': 'Calendario',
       'admin': 'Administración',
-      'instructor': 'Instructor'
+      'instructor': 'Instructor',
+      'dashboard': 'Dashboard'
     };
     
     return titleMap[lastSegment] || 
@@ -128,6 +132,7 @@ const HeaderContent: React.FC = () => {
         
         {/* Right side */}
         <div className="flex items-center gap-2">
+          {userRole && <RoleIndicator viewingAs={userRole} />}
           <HeaderActions />
           <UserMenu />
         </div>

@@ -16,6 +16,13 @@ import SystemSettings from "@/pages/admin/SystemSettings";
 const AdminRoutes = () => {
   return (
     <Routes>
+      <Route path="/" element={
+        <ProtectedRoute requiredRole="admin">
+          <AppLayout>
+            <AdminDashboard />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
       <Route path="/dashboard" element={
         <ProtectedRoute requiredRole="admin">
           <AppLayout>
@@ -46,7 +53,9 @@ const AdminRoutes = () => {
       } />
       <Route path="/roles" element={
         <ProtectedRoute requiredRole="admin">
-          <RoleManagement />
+          <AppLayout>
+            <SystemSettings />
+          </AppLayout>
         </ProtectedRoute>
       } />
       <Route path="/settings" element={

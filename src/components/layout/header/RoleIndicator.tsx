@@ -2,7 +2,7 @@
 import React from 'react';
 import { UserRole } from '@/types/auth';
 import { Badge } from '@/components/ui/badge';
-import { Eye, AlertTriangle } from 'lucide-react';
+import { Eye } from 'lucide-react';
 
 export interface RoleIndicatorProps {
   viewingAs: string | null;

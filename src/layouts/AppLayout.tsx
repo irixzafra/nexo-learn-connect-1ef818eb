@@ -11,6 +11,7 @@ import { connectionService } from "@/lib/offline/connectionService";
 import { useEffect } from "react";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
+import { RoleIndicator } from "./header/RoleIndicator";
 
 interface AppLayoutProps {
   children: React.ReactNode;
