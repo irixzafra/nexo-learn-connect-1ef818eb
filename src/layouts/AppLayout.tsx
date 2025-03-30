@@ -11,7 +11,6 @@ import SidebarNavigation from "@/components/layout/SidebarNavigation";
 import { UserRole } from "@/types/auth";
 import { 
   Sidebar, 
-  SidebarTrigger, 
   SidebarContent,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,6 @@ import { ThemeSelector } from "@/components/ThemeSelector";
 import { MobileSidebar } from "@/components/layout/header/MobileSidebar";
 import { useLocation } from "react-router-dom";
 import { PanelLeft, PanelRight } from "lucide-react";
-import { useSidebar } from "@/components/ui/sidebar/use-sidebar";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -35,6 +33,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const { userRole } = useAuth();
   const location = useLocation();
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+    // Try to get the saved collapsed state from localStorage
+    const savedState = localStorage.getItem('sidebar:state');
+    return savedState === 'collapsed';
+  });
+  
   const [viewAsRole, setViewAsRole] = useState<'current' | UserRole>(() => {
     // Try to get the saved role from localStorage
     const savedRole = localStorage.getItem('viewAsRole');
@@ -70,6 +74,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     localStorage.setItem('viewAsRole', role);
   };
 
+  // Toggle sidebar collapsed state
+  const toggleSidebar = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    // Save state to localStorage
+    localStorage.setItem('sidebar:state', newState ? 'collapsed' : 'expanded');
+  };
+
   // Logo component that will be used as a trigger for both mobile and desktop
   const LogoTrigger = (
     <Button variant="ghost" className="p-0 h-auto">
@@ -77,13 +89,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     </Button>
   );
 
-  // Sidebar collapse state
-  const { state: sidebarState, toggleSidebar } = useSidebar();
-  const isCollapsed = sidebarState === "collapsed";
-
   return (
     <EditModeProvider>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={!isCollapsed}>
         <div className="min-h-screen flex flex-col dark:bg-gray-950 w-full">
           {/* Top header - Full width */}
           <header className="h-14 border-b flex items-center justify-between px-4 z-10 bg-background">
