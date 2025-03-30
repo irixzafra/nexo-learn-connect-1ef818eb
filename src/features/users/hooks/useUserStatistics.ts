@@ -1,95 +1,102 @@
 
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useToast } from "@/components/ui/use-toast";
 
-interface UserStats {
-  totalUsers: number;
-  activeUsers: number;
-  newUsers: number;
-  inactiveUsers: number;
-  roleDistribution: {
-    name: string;
-    value: number;
-    color: string;
-  }[];
-  activityData: {
-    name: string;
-    registrations: number;
-    logins: number;
-    courses: number;
-  }[];
+export interface RoleDistribution {
+  role: string;
+  count: number;
 }
 
-export const useUserStatistics = () => {
+export interface RegistrationData {
+  date: string;
+  count: number;
+}
+
+export function useUserStatistics() {
+  const [roleDistribution, setRoleDistribution] = useState<RoleDistribution[]>([]);
+  const [registrationData, setRegistrationData] = useState<RegistrationData[]>([]);
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [activeUsers, setActiveUsers] = useState<number>(0); // Placeholder for now
+  const [newUsers, setNewUsers] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["userStats"],
-    queryFn: async (): Promise<UserStats> => {
-      try {
-        // Get total users count
-        const { count: totalUsers, error: countError } = await supabase
-          .from("profiles")
-          .select("*", { count: "exact", head: true });
-
-        if (countError) throw countError;
-
-        // Para esta demo, generamos datos aleatorios
-        // En una implementación real, se harían consultas a la base de datos para obtener estos datos
-        const activeUsersCount = Math.floor((totalUsers || 0) * 0.7); // 70% activos
-        const newUsersCount = Math.floor((totalUsers || 0) * 0.1); // 10% nuevos
-        const inactiveUsersCount = Math.floor((totalUsers || 0) * 0.2); // 20% inactivos
-
-        // Distribución de roles (simulada)
-        const roleDistribution = [
-          { name: "Estudiantes", value: Math.floor((totalUsers || 0) * 0.8), color: "#8884d8" },
-          { name: "Instructores", value: Math.floor((totalUsers || 0) * 0.15), color: "#82ca9d" },
-          { name: "Administradores", value: Math.floor((totalUsers || 0) * 0.05), color: "#ffc658" }
-        ];
-
-        // Datos de actividad (simulados)
-        const activityData = [
-          { name: "Lun", registrations: 12, logins: 34, courses: 8 },
-          { name: "Mar", registrations: 15, logins: 40, courses: 10 },
-          { name: "Mié", registrations: 8, logins: 25, courses: 5 },
-          { name: "Jue", registrations: 10, logins: 32, courses: 7 },
-          { name: "Vie", registrations: 18, logins: 45, courses: 12 },
-          { name: "Sáb", registrations: 20, logins: 28, courses: 15 },
-          { name: "Dom", registrations: 14, logins: 20, courses: 9 }
-        ];
-
-        return {
-          totalUsers: totalUsers || 0,
-          activeUsers: activeUsersCount,
-          newUsers: newUsersCount,
-          inactiveUsers: inactiveUsersCount,
-          roleDistribution,
-          activityData
-        };
-      } catch (error) {
-        console.error("Error fetching user statistics:", error);
+  
+  const fetchStatistics = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Fetch role distribution
+      const { data: roleData, error: roleError } = await supabase
+        .rpc('get_user_role_distribution');
+      
+      if (roleError) {
+        console.error('Error fetching role distribution:', roleError);
         toast({
-          title: "Error al cargar estadísticas",
-          description: "No se pudieron cargar las estadísticas de usuarios",
-          variant: "destructive"
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo cargar la distribución de roles.",
         });
-        throw error;
+      } else {
+        setRoleDistribution(roleData || []);
+        
+        // Calculate total users
+        const total = roleData.reduce((sum, item) => sum + Number(item.count), 0);
+        setTotalUsers(total);
       }
-    },
-    refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
-  });
+      
+      // Fetch registration data
+      const { data: regData, error: regError } = await supabase
+        .rpc('get_user_registrations_by_day', { days_back: 30 });
+      
+      if (regError) {
+        console.error('Error fetching registration data:', regError);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo cargar los datos de registro.",
+        });
+      } else {
+        setRegistrationData(regData || []);
+        
+        // Calculate new users in last 7 days
+        const last7Days = regData
+          .filter(item => {
+            const itemDate = new Date(item.date);
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            return itemDate >= weekAgo;
+          })
+          .reduce((sum, item) => sum + Number(item.count), 0);
+        
+        setNewUsers(last7Days);
+        
+        // For this demo, set active users to 70% of total
+        setActiveUsers(Math.round(total * 0.7));
+      }
+    } catch (error) {
+      console.error('Error in fetchStatistics:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al obtener las estadísticas.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStatistics();
+  }, []);
 
   return {
-    stats: data || {
-      totalUsers: 0,
-      activeUsers: 0,
-      newUsers: 0,
-      inactiveUsers: 0,
-      roleDistribution: [],
-      activityData: []
-    },
+    roleDistribution,
+    registrationData,
+    totalUsers,
+    activeUsers,
+    newUsers,
     isLoading,
-    error
+    refreshStatistics: fetchStatistics
   };
-};
+}

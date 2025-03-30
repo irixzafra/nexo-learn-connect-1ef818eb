@@ -3,54 +3,37 @@ import React from "react";
 import { Users, Shield, Database, BarChart3 } from "lucide-react";
 import AdminPageLayout from "@/layouts/AdminPageLayout";
 import { AdminTabItem } from "@/components/admin/AdminTabs";
-import { UserManagementList } from "@/features/users/UserManagementList";
-import { RoleManagement } from "@/features/users/RoleManagement";
-import { PermissionsManagement } from "@/features/users/PermissionsManagement";
-import { UserAnalytics } from "@/features/users/UserAnalytics";
-import { useUserManagement } from "@/features/users/useUserManagement";
+import { UsersListTab } from "@/features/users/components/UsersListTab";
+import { RolesManagementTab } from "@/features/users/components/RolesManagementTab";
+import { PermissionsManagementTab } from "@/features/users/components/PermissionsManagementTab";
+import { UserAnalyticsTab } from "@/features/users/components/UserAnalyticsTab";
 
 const UserManagement: React.FC = () => {
-  const {
-    users,
-    isLoading,
-    searchTerm,
-    setSearchTerm,
-    handleRoleChange,
-  } = useUserManagement();
-
   // Create tabs array for AdminPageLayout
   const tabs: AdminTabItem[] = [
     {
       value: 'users',
       label: 'Usuarios',
       icon: <Users className="h-4 w-4" />,
-      content: (
-        <UserManagementList 
-          users={users}
-          isLoading={isLoading}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          onRoleChange={handleRoleChange}
-        />
-      )
+      content: <UsersListTab />
     },
     {
       value: 'roles',
       label: 'Roles',
       icon: <Shield className="h-4 w-4" />,
-      content: <RoleManagement />
+      content: <RolesManagementTab />
     },
     {
       value: 'permissions',
       label: 'Permisos',
       icon: <Database className="h-4 w-4" />,
-      content: <PermissionsManagement />
+      content: <PermissionsManagementTab />
     },
     {
       value: 'analytics',
       label: 'Analíticas',
       icon: <BarChart3 className="h-4 w-4" />,
-      content: <UserAnalytics />
+      content: <UserAnalyticsTab />
     }
   ];
 
