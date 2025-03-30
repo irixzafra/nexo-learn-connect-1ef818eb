@@ -50,11 +50,11 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
       {/* Content Section with optional sidebar */}
       <div className={cn(
         "mt-6 grid gap-6",
-        sidebarPosition === 'right' && help ? "grid-cols-1 lg:grid-cols-3" : "grid-cols-1"
+        sidebarPosition === 'right' && help ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1"
       )}>
         {/* Main Content */}
         <div className={cn(
-          sidebarPosition === 'right' && help ? "lg:col-span-2" : "w-full"
+          sidebarPosition === 'right' && help ? "lg:col-span-1" : "w-full"
         )}>
           <PageContent className={contentClassName}>
             {children}

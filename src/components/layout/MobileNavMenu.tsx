@@ -18,7 +18,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) =>
   const isAdmin = userRole === 'admin';
   
   return (
-    <div className={cn("md:hidden", className)}>
+    <div className={cn("lg:hidden", className)}>
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="h-9 w-9">
@@ -26,7 +26,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) =>
             <span className="sr-only">Abrir menú</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-[80%] p-0">
+        <SheetContent side="left" className="w-[85%] sm:w-[350px] p-0">
           <div className="flex flex-col h-full">
             <div className="p-4 border-b">
               <NexoLogo className="h-8 w-auto" />

@@ -84,12 +84,11 @@ const AdminDashboard: React.FC = () => {
         ]
       }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Accesos rápidos */}
         <PageSection
           title="Accesos Rápidos"
           variant="card"
-          className="md:col-span-1"
         >
           <AdminMenu 
             items={adminMainMenuItems}
@@ -102,7 +101,6 @@ const AdminDashboard: React.FC = () => {
           title="Alertas del Sistema"
           description="Notificaciones recientes que requieren atención"
           variant="card"
-          className="md:col-span-2"
         >
           <AdminMenu 
             items={adminAlertMenuItems}
@@ -111,56 +109,56 @@ const AdminDashboard: React.FC = () => {
         </PageSection>
       </div>
       
-      {/* Gráfico de actividad reciente */}
-      <PageSection
-        title="Actividad Reciente"
-        description="Estadísticas de uso de la plataforma"
-        variant="card"
-        className="mt-6"
-      >
-        <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-          <div className="text-center">
-            <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>El gráfico de actividad se cargará aquí</p>
-            <p className="text-sm">Mostrando inscripciones, finalización de cursos y usuarios activos</p>
-          </div>
-        </div>
-      </PageSection>
-      
-      {/* Últimos usuarios registrados */}
-      <PageSection
-        title="Últimos Usuarios Registrados"
-        description="Usuarios recién incorporados a la plataforma"
-        variant="card"
-        className="mt-6"
-      >
-        <div className="space-y-3">
-          {[...Array(3)].map((_, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <UserPlus className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium">Usuario Ejemplo {index + 1}</p>
-                  <p className="text-sm text-muted-foreground">Registrado hace {(index + 1) * 2} horas</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <AdminMenu 
-                  items={[{
-                    icon: Users,
-                    label: "Ver perfil",
-                    href: `/admin/users/profile-${index + 1}`
-                  }]}
-                  variant="sidebar"
-                  className="!space-y-0"
-                />
-              </div>
+      {/* Gráfico de actividad reciente - ahora en la primera columna */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <PageSection
+          title="Actividad Reciente"
+          description="Estadísticas de uso de la plataforma"
+          variant="card"
+        >
+          <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+            <div className="text-center">
+              <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>El gráfico de actividad se cargará aquí</p>
+              <p className="text-sm">Mostrando inscripciones, finalización de cursos y usuarios activos</p>
             </div>
-          ))}
-        </div>
-      </PageSection>
+          </div>
+        </PageSection>
+        
+        {/* Últimos usuarios registrados - ahora en la segunda columna */}
+        <PageSection
+          title="Últimos Usuarios Registrados"
+          description="Usuarios recién incorporados a la plataforma"
+          variant="card"
+        >
+          <div className="space-y-3">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <UserPlus className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Usuario Ejemplo {index + 1}</p>
+                    <p className="text-sm text-muted-foreground">Registrado hace {(index + 1) * 2} horas</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <AdminMenu 
+                    items={[{
+                      icon: Users,
+                      label: "Ver perfil",
+                      href: `/admin/users/profile-${index + 1}`
+                    }]}
+                    variant="sidebar"
+                    className="!space-y-0"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </PageSection>
+      </div>
     </SectionPageLayout>
   );
 };
