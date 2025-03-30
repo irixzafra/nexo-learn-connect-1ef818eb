@@ -11,8 +11,8 @@ import { toast } from 'sonner';
 import { useProfileEdit } from '@/hooks/use-profile-edit';
 
 export const ProfileStep: React.FC = () => {
-  const { user } = useAuth();
-  const initialName = user?.user_metadata?.full_name || '';
+  const { user, profile } = useAuth();
+  const initialName = user?.user_metadata?.full_name || profile?.full_name || '';
   const profileMutation = useProfileEdit(user?.id);
   
   const [name, setName] = useState(initialName);
@@ -53,7 +53,7 @@ export const ProfileStep: React.FC = () => {
           className="mx-auto"
         >
           <Avatar className="w-24 h-24 mx-auto border-4 border-primary/20">
-            <AvatarImage src={user?.avatar_url || ''} />
+            <AvatarImage src={profile?.avatar_url || ''} />
             <AvatarFallback className="text-2xl bg-primary/10 text-primary">
               {getInitials(initialName)}
             </AvatarFallback>

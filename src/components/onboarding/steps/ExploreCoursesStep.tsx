@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 
 export const ExploreCoursesStep: React.FC = () => {
-  const { data: courses, isLoading } = useCoursesCatalog({ limit: 3 });
+  const { courses, isLoading } = useCoursesCatalog();
   const navigate = useNavigate();
   const { skipOnboarding } = useOnboarding();
   
