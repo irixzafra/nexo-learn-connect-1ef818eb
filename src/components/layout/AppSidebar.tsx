@@ -26,7 +26,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ viewAsRole, onRoleChange }) => 
       </SidebarHeader>
       
       <SidebarContent className="px-2 py-2">
-        <SidebarNavigation viewAsRole={viewAsRole} />
+        {/* Removed SidebarNavigation here as it's already rendered in AppLayout */}
       </SidebarContent>
       
       <SidebarFooter className="border-t p-3">
