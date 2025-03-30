@@ -11,6 +11,9 @@ import {
   CuentaNavigation,
   SistemasNavigation
 } from './sidebar/navigation';
+import { SidebarTrigger } from '@/components/ui/sidebar/components/sidebar-trigger';
+import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { cn } from '@/lib/utils';
 
 interface SidebarNavigationProps {
   viewAsRole?: string;
@@ -18,6 +21,8 @@ interface SidebarNavigationProps {
 
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => {
   const { userRole } = useAuth();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
   
   // Determine the effective role - refactorado para mayor claridad
   const getEffectiveRole = (): UserRole => {
@@ -68,19 +73,24 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
     }));
   };
 
-  // Log the current role for debugging
-  useEffect(() => {
-    console.log('SidebarNavigation - Effective Role:', effectiveRole);
-  }, [effectiveRole]);
-
   // Check if a role should see specific sections
-  // Usando efectiveRole consistentemente en lugar de mezclar userRole y effectiveRole
   const canSeeEnsenanza = effectiveRole === 'instructor' || effectiveRole === 'admin';
   const canSeeAdmin = effectiveRole === 'admin';
   const canSeeSistemas = effectiveRole === 'sistemas' || effectiveRole === 'admin';
 
   return (
-    <div className="flex flex-col py-2">
+    <div className={cn(
+      "flex flex-col py-2 h-full",
+      isCollapsed ? "px-2" : "px-4"
+    )}>
+      <div className="flex items-center justify-between mb-6 mt-2">
+        {!isCollapsed && <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Nexo Academia</h1>}
+        <SidebarTrigger className={cn(
+          "ml-auto", 
+          isCollapsed && "mx-auto"
+        )} />
+      </div>
+      
       {/* Bloque 1: Principal / Acceso Rápido - Siempre visible */}
       <HomeNavigation userRole={effectiveRole} />
       

@@ -2,13 +2,19 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { CircleUser, Settings, HelpCircle, Info } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   SidebarMenu, 
   SidebarMenuItem, 
   SidebarMenuButton 
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
+import { SidebarGroup } from '../SidebarGroup';
+import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger 
+} from '@/components/ui/tooltip';
 
 interface CuentaNavigationProps {
   isOpen: boolean;
@@ -16,78 +22,94 @@ interface CuentaNavigationProps {
 }
 
 const CuentaNavigation: React.FC<CuentaNavigationProps> = ({ isOpen, onToggle }) => {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
   return (
-    <div className="px-3 py-1">
-      <Collapsible 
-        open={isOpen} 
-        onOpenChange={onToggle}
-        className="space-y-1"
-      >
-        <CollapsibleTrigger className="flex w-full items-center justify-between px-2 py-2 text-sm font-medium rounded-md hover:bg-accent/50 transition-colors">
-          <div className="flex items-center gap-3">
-            <CircleUser className="h-4 w-4 text-primary" />
-            <span>Cuenta</span>
-          </div>
-          <div className={cn(
-            "h-5 w-5 rounded-md flex items-center justify-center transition-transform",
-            isOpen ? "rotate-180" : ""
-          )}>
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-1 animate-accordion">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <NavLink to="/settings" className={({ isActive }) => 
-                  cn("flex items-center gap-3 w-full px-2 py-2 rounded-md ml-7",
-                    isActive 
-                      ? "bg-accent text-accent-foreground font-medium" 
-                      : "text-foreground hover:bg-accent/50 hover:text-accent-foreground"
-                  )
-                }>
-                  <Settings className="h-4 w-4 flex-shrink-0" />
-                  <span>Configuración</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <NavLink to="/help" className={({ isActive }) => 
-                  cn("flex items-center gap-3 w-full px-2 py-2 rounded-md ml-7",
-                    isActive 
-                      ? "bg-accent text-accent-foreground font-medium" 
-                      : "text-foreground hover:bg-accent/50 hover:text-accent-foreground"
-                  )
-                }>
-                  <HelpCircle className="h-4 w-4 flex-shrink-0" />
-                  <span>Ayuda / Soporte</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <NavLink to="/about-us" className={({ isActive }) => 
-                  cn("flex items-center gap-3 w-full px-2 py-2 rounded-md ml-7",
-                    isActive 
-                      ? "bg-accent text-accent-foreground font-medium" 
-                      : "text-foreground hover:bg-accent/50 hover:text-accent-foreground"
-                  )
-                }>
-                  <Info className="h-4 w-4 flex-shrink-0" />
-                  <span>Acerca de Nosotros</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </CollapsibleContent>
-      </Collapsible>
-    </div>
+    <SidebarGroup
+      label="Cuenta"
+      icon={CircleUser}
+      isExpanded={isOpen}
+      onToggle={onToggle}
+    >
+      {isCollapsed ? (
+        // Versión colapsada
+        <>
+          <CollapsedMenuItem to="/settings" icon={Settings} label="Configuración" />
+          <CollapsedMenuItem to="/help" icon={HelpCircle} label="Ayuda" />
+          <CollapsedMenuItem to="/about-us" icon={Info} label="Acerca de Nosotros" />
+        </>
+      ) : (
+        // Versión expandida
+        <>
+          <MenuItem to="/settings" icon={Settings} label="Configuración" />
+          <MenuItem to="/help" icon={HelpCircle} label="Ayuda / Soporte" />
+          <MenuItem to="/about-us" icon={Info} label="Acerca de Nosotros" />
+        </>
+      )}
+    </SidebarGroup>
   );
 };
+
+interface MenuItemProps {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+}
+
+const MenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) => (
+  <SidebarMenuItem>
+    <SidebarMenuButton asChild>
+      <NavLink 
+        to={to} 
+        className={({ isActive }) => cn(
+          "flex items-center gap-3 w-full px-3 py-2 rounded-md text-gray-600 dark:text-gray-300 font-medium text-[15px] font-inter",
+          "transition-all duration-200",
+          isActive 
+            ? "bg-[#E5E7EB] text-gray-900 dark:bg-gray-700 dark:text-white border-l-[3px] border-l-[#0E90F9] pl-[calc(0.75rem-3px)]" 
+            : "hover:bg-[#F3F4F6] dark:hover:bg-gray-800"
+        )}
+        aria-current={({ isActive }) => isActive ? "page" : undefined}
+      >
+        <Icon 
+          size={20} 
+          className={({ isActive }) => cn(
+            isActive 
+              ? "text-gray-900 dark:text-white" 
+              : "text-gray-500 dark:text-gray-400"
+          )} 
+        />
+        <span>{label}</span>
+      </NavLink>
+    </SidebarMenuButton>
+  </SidebarMenuItem>
+);
+
+const CollapsedMenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) => (
+  <SidebarMenuItem>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <SidebarMenuButton asChild>
+          <NavLink 
+            to={to} 
+            className={({ isActive }) => cn(
+              "flex h-10 w-10 items-center justify-center rounded-md",
+              "transition-colors duration-200",
+              isActive 
+                ? "bg-[#E5E7EB] text-gray-900 dark:bg-gray-700 dark:text-white border-l-[3px] border-l-[#0E90F9]" 
+                : "text-gray-500 dark:text-gray-400 hover:bg-[#F3F4F6] dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+            )}
+          >
+            <Icon size={20} />
+            <span className="sr-only">{label}</span>
+          </NavLink>
+        </SidebarMenuButton>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        <p>{label}</p>
+      </TooltipContent>
+    </Tooltip>
+  </SidebarMenuItem>
+);
 
 export default CuentaNavigation;
