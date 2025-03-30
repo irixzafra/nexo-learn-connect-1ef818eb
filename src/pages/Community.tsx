@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import AppLayout from '@/layouts/AppLayout';
 import { CommunityFeed } from '@/features/feed/components/CommunityFeed';
 import { Leaderboard } from '@/features/feed/components/Leaderboard';
@@ -16,11 +17,23 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 
 const Community: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [activeTab, setActiveTab] = useState('feed');
+  const tabFromUrl = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tabFromUrl || 'feed');
   
   // This would come from the user's data in a real app
   const userPoints = Math.floor(Math.random() * 2000) + 50;
+  
+  // Update URL when tab changes
+  useEffect(() => {
+    if (activeTab === 'feed') {
+      navigate('/community', { replace: true });
+    } else {
+      navigate(`/community?tab=${activeTab}`, { replace: true });
+    }
+  }, [activeTab, navigate]);
   
   return (
     <AppLayout>
