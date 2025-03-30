@@ -116,19 +116,20 @@ const ManualEnrollmentDialog: React.FC<ManualEnrollmentDialogProps> = ({
     try {
       setIsEnrolling(true);
       
-      // Verificar si el usuario ya está matriculado
-      const { data: existingEnrollment, error: checkError } = await supabase
+      // Verificar si el usuario ya está matriculado - CORREGIDO SIN .single()
+      const { data: existingEnrollments, error: checkError } = await supabase
         .from('enrollments')
         .select('id')
         .eq('user_id', selectedUserId)
-        .eq('course_id', courseId)
-        .single();
+        .eq('course_id', courseId);
       
-      if (checkError && !checkError.message.includes('No rows found')) {
+      // Error general en la consulta (no relacionado con registros no encontrados)
+      if (checkError) {
         throw checkError;
       }
       
-      if (existingEnrollment) {
+      // Verificar si existe alguna matrícula (data tendrá longitud > 0)
+      if (existingEnrollments && existingEnrollments.length > 0) {
         toast.info("El usuario ya está matriculado en este curso");
         onOpenChange(false);
         return;
