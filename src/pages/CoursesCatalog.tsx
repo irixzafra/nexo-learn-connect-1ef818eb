@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import AppLayout from "@/layouts/AppLayout";
+import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -13,7 +13,7 @@ import { CourseCatalogError } from "@/features/courses/components/CourseCatalogE
 import { CourseCardSkeleton } from "@/features/courses/components/CourseCardSkeleton";
 import { useCoursesCatalog } from "@/features/courses/hooks/useCoursesCatalog";
 import { CatalogHeader } from "@/features/courses/components/CatalogHeader";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, BookOpen, Filter as FilterIcon, Search as SearchIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 const CoursesCatalog: React.FC = () => {
@@ -109,64 +109,26 @@ const CoursesCatalog: React.FC = () => {
     setSortBy("relevance");
   };
 
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, index) => (
-            <CourseCardSkeleton key={index} />
-          ))}
-        </div>
-      );
-    }
-
-    if (error) {
-      return (
-        <CourseCatalogError 
-          errorMessage={error}
-          onRetry={() => fetchCourses()} 
-        />
-      );
-    }
-
-    if (!courses || courses.length === 0) {
-      return (
-        <Card className="w-full">
-          <CardContent className="flex flex-col items-center justify-center py-10">
-            <div className="text-muted-foreground text-center mb-4">
-              <p className="text-xl font-medium mb-2">No se encontraron cursos</p>
-              <p>
-                No hay cursos que coincidan con los filtros seleccionados.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              onClick={handleClearFilters}
-              className="flex items-center"
-            >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Limpiar filtros
-            </Button>
-          </CardContent>
-        </Card>
-      );
-    }
-
-    return (
-      <CourseGrid
-        courseList={courses}
-        onCourseClick={handleCourseClick}
-      />
-    );
-  };
-
   return (
-    <div className="container mx-auto py-8 px-4">
-      <CatalogHeader 
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-      />
-
+    <SectionPageLayout
+      header={{
+        title: "Catálogo de Cursos",
+        description: "Explora nuestra colección de cursos y encuentra el perfecto para ti",
+        actions: [
+          {
+            label: "Filtros Avanzados",
+            icon: <FilterIcon />,
+            onClick: handleToggleFilters,
+            variant: "outline"
+          }
+        ]
+      }}
+      filters={{
+        searchPlaceholder: "Buscar cursos...",
+        searchValue: searchTerm,
+        onSearchChange: setSearchTerm
+      }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -203,9 +165,44 @@ const CoursesCatalog: React.FC = () => {
 
         <Separator className="my-6" />
 
-        {renderContent()}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, index) => (
+              <CourseCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : error ? (
+          <CourseCatalogError 
+            message={error}
+            onRetry={fetchCourses} 
+          />
+        ) : !courses || courses.length === 0 ? (
+          <Card className="w-full">
+            <CardContent className="flex flex-col items-center justify-center py-10">
+              <div className="text-muted-foreground text-center mb-4">
+                <p className="text-xl font-medium mb-2">No se encontraron cursos</p>
+                <p>
+                  No hay cursos que coincidan con los filtros seleccionados.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={handleClearFilters}
+                className="flex items-center"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Limpiar filtros
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <CourseGrid
+            courses={courses}
+            onCourseClick={handleCourseClick}
+          />
+        )}
       </motion.div>
-    </div>
+    </SectionPageLayout>
   );
 };
 

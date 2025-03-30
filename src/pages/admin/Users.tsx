@@ -1,4 +1,6 @@
+
 import React, { useEffect, useState } from "react";
+import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
 import { supabase } from "@/lib/supabase";
 import { UserProfile } from "@/types/auth";
 import {
@@ -9,24 +11,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { UserManagementTabs } from "@/features/users/UserManagementTabs";
 import { UserStats } from "@/features/users/UserStats";
 import { useAuth } from "@/contexts/AuthContext";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Search, Filter } from "lucide-react";
-import AppLayout from "@/layouts/AppLayout";
+import { Search, Filter, RefreshCw, UserPlus } from "lucide-react";
 import { UserRoleType } from '@/features/users/UserRoleType';
 
 const Users: React.FC = () => {
@@ -131,110 +124,159 @@ const Users: React.FC = () => {
   const isAdmin = userRole === 'admin';
 
   return (
-    <AppLayout>
-      <div className="px-0 sm:px-4">
-        <h1 className="text-3xl font-bold mb-6">Gestión de Usuarios</h1>
-        
-        <UserStats 
-          totalUsers={totalUsers}
-          activeUsers={activeUsers}
-          newUsers={newUsers}
-          inactiveUsers={inactiveUsers}
-          loading={isLoading}
-        />
-        
-        <UserManagementTabs isAdmin={isAdmin} />
-        
-        <Card className="mt-6">
-          <CardHeader className="pb-3">
-            <div className="flex flex-col md:flex-row justify-between md:items-center">
-              <div>
-                <CardTitle>Lista de Usuarios</CardTitle>
-                <CardDescription>
-                  Gestiona los usuarios de la plataforma y sus roles
-                </CardDescription>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0 w-full md:w-auto">
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Buscar usuarios..."
-                    className="pl-8 w-full md:w-[250px]"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                {isAdmin && (
-                  <div className="flex items-center space-x-2">
-                    <Switch 
-                      id="adminTools" 
-                      checked={showAdminTools}
-                      onCheckedChange={setShowAdminTools}
-                    />
-                    <Label htmlFor="adminTools">Herramientas avanzadas</Label>
-                  </div>
-                )}
-              </div>
+    <SectionPageLayout
+      header={{
+        title: "Gestión de Usuarios",
+        description: "Administra los usuarios de la plataforma",
+        breadcrumbs: [
+          { title: "Admin", href: "/admin" },
+          { title: "Usuarios" }
+        ],
+        actions: [
+          {
+            label: "Actualizar",
+            icon: <RefreshCw className={isLoading ? "animate-spin" : ""} />,
+            onClick: fetchUsers,
+            variant: "outline"
+          },
+          {
+            label: "Nuevo Usuario",
+            icon: <UserPlus />,
+            onClick: () => console.log("Crear nuevo usuario")
+          }
+        ]
+      }}
+      stats={{
+        stats: [
+          {
+            label: "Usuarios Totales",
+            value: totalUsers,
+            icon: <UserPlus className="h-5 w-5" />,
+            color: "primary"
+          },
+          {
+            label: "Usuarios Activos",
+            value: activeUsers,
+            descriptor: `${Math.round((activeUsers / totalUsers) * 100)}% del total`,
+            icon: <Users className="h-5 w-5" />,
+            color: "success"
+          },
+          {
+            label: "Nuevos Usuarios",
+            value: newUsers,
+            descriptor: "Últimos 30 días",
+            icon: <UserPlus className="h-5 w-5" />,
+            color: "primary"
+          },
+          {
+            label: "Usuarios Inactivos",
+            value: inactiveUsers,
+            descriptor: `${Math.round((inactiveUsers / totalUsers) * 100)}% del total`,
+            icon: <Users className="h-5 w-5" />,
+            color: "warning"
+          }
+        ]
+      }}
+      filters={{
+        searchPlaceholder: "Buscar usuarios...",
+        searchValue: searchTerm,
+        onSearchChange: setSearchTerm,
+        filterOptions: []
+      }}
+      help={{
+        title: "Gestión de Usuarios",
+        description: "Recursos para administrar usuarios y roles",
+        links: [
+          {
+            title: "Gestión de roles",
+            description: "Aprende a configurar roles y permisos",
+            href: "/admin/roles"
+          },
+          {
+            title: "Centro de ayuda",
+            description: "Soporte para problemas con usuarios",
+            href: "/help",
+            external: true
+          }
+        ]
+      }}
+    >
+      <UserManagementTabs isAdmin={isAdmin} />
+      
+      <PageSection variant="card" className="mt-6" contentClassName="p-0">
+        <div className="p-4 border-b">
+          <div className="flex flex-col md:flex-row justify-between md:items-center">
+            <div className="mb-4 md:mb-0">
+              <h3 className="text-lg font-medium">Lista de Usuarios</h3>
+              <p className="text-sm text-muted-foreground">
+                Gestiona los usuarios de la plataforma y sus roles
+              </p>
             </div>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="flex justify-center py-8">
-                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-              </div>
-            ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[250px]">Usuario</TableHead>
-                      <TableHead>Rol</TableHead>
-                      <TableHead className="hidden md:table-cell">Fecha de registro</TableHead>
-                      {isAdmin && <TableHead>Acciones</TableHead>}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredUsers.length > 0 ? (
-                      filteredUsers.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell className="font-medium">
-                            {user.full_name || 'Usuario sin nombre'}
-                          </TableCell>
-                          <TableCell>
-                            <UserRoleType role={user.role} showIcon={true} />
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            {new Date(user.created_at || '').toLocaleDateString()}
-                          </TableCell>
-                          {isAdmin && (
-                            <TableCell>
-                              <UserRoleSwitcher 
-                                userId={user.id}
-                                currentRole={user.role}
-                                onRoleChange={handleRoleChange}
-                              />
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={isAdmin ? 4 : 3} className="text-center h-24">
-                          {searchTerm.trim() !== "" 
-                            ? "No se encontraron usuarios que coincidan con la búsqueda." 
-                            : "No hay usuarios para mostrar."}
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+            {isAdmin && (
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="adminTools" 
+                  checked={showAdminTools}
+                  onCheckedChange={setShowAdminTools}
+                />
+                <Label htmlFor="adminTools">Herramientas avanzadas</Label>
               </div>
             )}
-          </CardContent>
-        </Card>
-      </div>
-    </AppLayout>
+          </div>
+        </div>
+        
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[250px]">Usuario</TableHead>
+                <TableHead>Rol</TableHead>
+                <TableHead className="hidden md:table-cell">Fecha de registro</TableHead>
+                {isAdmin && <TableHead>Acciones</TableHead>}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell className="font-medium">
+                      {user.full_name || 'Usuario sin nombre'}
+                    </TableCell>
+                    <TableCell>
+                      <UserRoleType role={user.role} showIcon={true} />
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      {new Date(user.created_at || '').toLocaleDateString()}
+                    </TableCell>
+                    {isAdmin && (
+                      <TableCell>
+                        <UserRoleSwitcher 
+                          userId={user.id}
+                          currentRole={user.role}
+                          onRoleChange={handleRoleChange}
+                        />
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={isAdmin ? 4 : 3} className="text-center h-24">
+                    {searchTerm.trim() !== "" 
+                      ? "No se encontraron usuarios que coincidan con la búsqueda." 
+                      : "No hay usuarios para mostrar."}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
+      </PageSection>
+    </SectionPageLayout>
   );
 };
 

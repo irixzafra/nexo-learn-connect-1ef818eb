@@ -1,3 +1,4 @@
+
 # Páginas y Plantillas
 
 Esta sección documenta la implementación de páginas específicas y plantillas de la plataforma.
@@ -87,3 +88,46 @@ Implementación de una página de facturación para la gestión y visualización
 ### Datos de Prueba
 - Implementado con transacciones y suscripciones mock
 - Diseñado para integración con sistema real de pagos
+
+## UI-SECTION-LAYOUT-01: Plantilla de Página para Secciones Principales
+
+### Resumen
+Implementación de un layout reutilizable para estandarizar la estructura de las páginas principales de la plataforma, asegurando una experiencia de usuario coherente y responsive.
+
+### Componentes Principales
+- **PageHeader:** Cabecera con título, descripción, breadcrumbs y acciones contextuales
+- **PageStats:** Componente para mostrar KPIs o métricas clave
+- **PageFilters:** Barra de búsqueda y filtros en formato compacto adaptativo
+- **PageContent:** Contenedor principal con animaciones y gestión responsive
+- **PageHelp:** Panel lateral o área contextual para ayuda y recursos relacionados
+- **PageSection:** Contenedor versátil para separar secciones de contenido
+
+### Características Específicas
+- **Mobile-First Design:** Construcción optimizada para pantallas pequeñas con adaptación fluida a tamaños mayores
+- **Componentes Contextuales:** Capacidad para mostrar/ocultar elementos según las necesidades de cada página
+- **Breadcrumbs Integrados:** Sistema de navegación jerárquica contextual
+- **Flexibilidad en Acciones:** Botones principales que se transforman en menús desplegables en móvil
+- **Área Adaptativa de KPIs:** Grid responsivo para estadísticas (1 columna en móvil, 2-4 en desktop)
+- **Filtros Plegables:** Panel de filtros que se expande/contrae según necesidad
+- **Animaciones Sutiles:** Uso de Framer Motion para transiciones suaves entre estados
+- **Barra Lateral Contextual:** Opcional para mostrar ayuda o información adicional
+
+### Implementación
+- La plantilla se ha aplicado a las siguientes páginas:
+  - Dashboard principal (`/home`)
+  - Dashboard de administración (`/admin/dashboard`)
+  - Dashboard de instructor (`/instructor/dashboard`)
+  - Gestión de usuarios (`/admin/users`)
+  - Gestión de cursos (`/admin/courses`)
+  - Detalle de curso (`/admin/courses/:id`)
+  - Catálogo de cursos (`/courses`)
+
+### Capturas de Pantalla
+![SectionPageLayout - Desktop](/assets/section-page-layout-desktop.png)
+![SectionPageLayout - Mobile](/assets/section-page-layout-mobile.png)
+
+### Integración Futura
+- Preparado para añadir nuevos tipos de componentes de visualización
+- Sistema flexible para incorporar nuevos filtros específicos según necesidad
+- Posibilidad de extender con modos de visualización alternativos
+
