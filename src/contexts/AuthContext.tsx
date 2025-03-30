@@ -8,12 +8,12 @@ import { useNavigate } from 'react-router-dom';
 interface AuthContextType {
   isLoading: boolean;
   isAuthReady: boolean;
-  isAuthenticated: boolean; // Added missing property
+  isAuthenticated: boolean;
   user: any | null;
   session: Session | null;
   profile: UserProfile | null;
   userRole: UserRoleType | null;
-  viewAsRole: UserRoleType | 'current'; // Added missing property
+  viewAsRole: UserRoleType | 'current';
   theme: string;
   showAuthModal: boolean;
   toggleAuthModal: () => void;
@@ -21,7 +21,7 @@ interface AuthContextType {
   updateProfile: (updates: any) => Promise<void>;
   setTheme: (theme: string) => void;
   setUserRole: (role: UserRoleType) => void;
-  setViewAsRole: (role: UserRoleType | 'current') => void; // Added setter
+  setViewAsRole: (role: UserRoleType | 'current') => void;
   saveUserPreferences: (preferences: { theme?: string; role?: UserRoleType }) => Promise<void>;
 }
 
@@ -153,17 +153,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const updateProfile = async (updates: any) => {
     setIsLoading(true);
     try {
+      // Fix: Remove the 'returning' option as it's not supported in the current Supabase version
       const { error } = await supabase.from('profiles').upsert(
         {
           id: user?.id,
           updated_at: new Date().toISOString(),
           ...updates,
         },
-        { returning: 'minimal' }
+        { onConflict: 'id' } // Only specify supported options
       );
+      
       if (error) {
         throw error;
       }
+      
       setProfile((prevProfile: any) => ({
         ...prevProfile,
         ...updates,
@@ -203,7 +206,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const value: AuthContextType = {
     isLoading,
     isAuthReady,
-    isAuthenticated: !!session, // Compute from session
+    isAuthenticated: !!session,
     user,
     session,
     profile,
