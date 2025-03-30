@@ -7,7 +7,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import { dataTypeLabels } from './DataTypeSelector';
+import { dataTypeLabels, dataTypeGroups, groupLabels } from './DataTypeSelector';
 import { DataTypeTabContent } from './DataTypeTabContent';
 import { Database, Info, HardDrive } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,6 +22,12 @@ export const TestDataTable: React.FC = () => {
     (acc, items) => acc + items.length, 
     0
   );
+
+  // Check if there is data for each group
+  const groupHasData = Object.entries(dataTypeGroups).reduce((acc, [group, types]) => {
+    acc[group] = types.some(type => testData[type].length > 0);
+    return acc;
+  }, {} as Record<string, boolean>);
 
   const hasAnyData = totalItems > 0;
 
@@ -63,26 +69,50 @@ export const TestDataTable: React.FC = () => {
           onValueChange={(value) => setActiveTab(value as TestDataType)}
           className="mt-2"
         >
-          <TabsList className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1 bg-muted/30 p-1">
-            {Object.entries(dataTypeLabels).map(([type, label]) => {
-              const count = testData[type as TestDataType].length;
+          <div className="space-y-4">
+            {Object.entries(dataTypeGroups).map(([groupKey, types]) => {
+              // Only show groups that have data
+              if (!groupHasData[groupKey]) return null;
+              
               return (
-                <TabsTrigger 
-                  key={type} 
-                  value={type}
-                  className="relative"
-                  disabled={count === 0}
-                >
-                  <span>{label}</span>
-                  {count > 0 && (
-                    <span className="ml-1.5 text-xs bg-primary text-primary-foreground px-1.5 rounded-full">
-                      {count}
-                    </span>
-                  )}
-                </TabsTrigger>
+                <div key={groupKey} className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="h-0.5 w-4 bg-muted-foreground/20"></div>
+                    <span className="text-xs font-medium text-muted-foreground">{groupLabels[groupKey]}</span>
+                    <div className="h-0.5 flex-1 bg-muted-foreground/20"></div>
+                  </div>
+                  <TabsList className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-1 bg-muted/30 p-1">
+                    {types.map(type => {
+                      const count = testData[type].length;
+                      if (count === 0) return null;
+                      
+                      return (
+                        <TabsTrigger 
+                          key={type} 
+                          value={type}
+                          className="relative"
+                        >
+                          <span className="sr-only">{dataTypeLabels[type]}</span>
+                          <div className="flex flex-col items-center gap-1">
+                            <span title={dataTypeLabels[type]}>
+                              {React.cloneElement(
+                                // @ts-ignore - we know this is a valid icon
+                                React.Children.only(dataTypeLabels[type]), 
+                                { className: "h-4 w-4" }
+                              )}
+                            </span>
+                            <span className="text-xs bg-primary/10 text-primary px-1.5 rounded-full min-w-5 text-center">
+                              {count}
+                            </span>
+                          </div>
+                        </TabsTrigger>
+                      );
+                    })}
+                  </TabsList>
+                </div>
               );
             })}
-          </TabsList>
+          </div>
 
           <AnimatePresence mode="wait">
             {Object.entries(dataTypeLabels).map(([type, label]) => (

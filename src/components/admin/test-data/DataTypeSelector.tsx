@@ -21,7 +21,8 @@ import {
   Award,
   ScrollText,
   CreditCard,
-  AlertCircle
+  AlertCircle,
+  Separator
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -57,6 +58,26 @@ export const dataTypeLabels: Record<TestDataType, string> = {
   quiz: 'Evaluaciones',
   certificate: 'Certificados',
   payment: 'Pagos'
+};
+
+// Agrupación de los tipos de datos en categorías lógicas
+export const dataTypeGroups = {
+  content: ['course', 'module', 'lesson', 'quiz', 'assignment'] as TestDataType[],
+  users: ['user', 'profile'] as TestDataType[],
+  classification: ['category'] as TestDataType[],
+  interaction: ['message'] as TestDataType[],
+  progress: ['enrollment', 'certificate'] as TestDataType[],
+  finance: ['payment'] as TestDataType[]
+};
+
+// Group labels
+export const groupLabels: Record<string, string> = {
+  content: 'Contenido',
+  users: 'Usuarios',
+  classification: 'Clasificación',
+  interaction: 'Interacción',
+  progress: 'Progreso',
+  finance: 'Finanzas'
 };
 
 // Data type dependencies
@@ -189,34 +210,45 @@ export const DataTypeSelector: React.FC = () => {
         
         <div>
           <Label htmlFor="data-type" className="text-sm font-medium mb-1.5 block">Tipo de datos</Label>
-          <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
-            {Object.entries(dataTypeLabels).map(([type, label]) => {
-              const isSelected = selectedTypes.includes(type as TestDataType);
-              return (
-                <Button
-                  key={type}
-                  variant={isSelected ? "default" : "outline"}
-                  size="icon"
-                  className={cn(
-                    "h-10 w-10 rounded-lg transition-all",
-                    isSelected ? 'bg-primary/90' : 'text-muted-foreground bg-transparent'
-                  )}
-                  title={label}
-                  onClick={() => handleTypeToggle(type as TestDataType)}
-                >
-                  {typeIcons[type as TestDataType]}
-                  {isSelected && (
-                    <motion.div
-                      initial={{ scale: 0.5, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="absolute -top-1 -right-1 flex items-center justify-center"
-                    >
-                      <CheckCircle2 className="h-3.5 w-3.5 text-primary-foreground bg-primary rounded-full" />
-                    </motion.div>
-                  )}
-                </Button>
-              );
-            })}
+          <div className="space-y-4">
+            {Object.entries(dataTypeGroups).map(([groupKey, types]) => (
+              <div key={groupKey} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="h-0.5 w-4 bg-muted-foreground/20"></div>
+                  <span className="text-xs font-medium text-muted-foreground">{groupLabels[groupKey]}</span>
+                  <div className="h-0.5 flex-1 bg-muted-foreground/20"></div>
+                </div>
+                <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2">
+                  {types.map(type => {
+                    const isSelected = selectedTypes.includes(type);
+                    return (
+                      <Button
+                        key={type}
+                        variant={isSelected ? "default" : "outline"}
+                        size="icon"
+                        className={cn(
+                          "h-10 w-10 rounded-lg transition-all",
+                          isSelected ? 'bg-primary/90' : 'text-muted-foreground bg-transparent'
+                        )}
+                        title={dataTypeLabels[type]}
+                        onClick={() => handleTypeToggle(type)}
+                      >
+                        {typeIcons[type]}
+                        {isSelected && (
+                          <motion.div
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="absolute -top-1 -right-1 flex items-center justify-center"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5 text-primary-foreground bg-primary rounded-full" />
+                          </motion.div>
+                        )}
+                      </Button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -288,3 +320,4 @@ export const DataTypeSelector: React.FC = () => {
     </div>
   );
 };
+
