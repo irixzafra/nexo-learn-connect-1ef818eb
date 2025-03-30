@@ -9,7 +9,7 @@ import { useCourseDetails } from '@/features/admin/hooks/useCourseDetails';
 import CourseContentTab from '@/features/admin/components/courses/CourseContentTab';
 import CourseStudentsTab from '@/features/admin/components/courses/CourseStudentsTab';
 import CourseNotFound from '@/features/admin/components/courses/CourseNotFound';
-import { AdminPageLayout } from '@/layouts/AdminPageLayout';
+import AdminPageLayout from '@/layouts/AdminPageLayout';
 
 const AdminCourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();

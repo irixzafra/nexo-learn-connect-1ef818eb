@@ -1,8 +1,8 @@
 
 import React from 'react';
+import { PageSection } from '@/layouts/SectionPageLayout';
 import { Button } from "@/components/ui/button";
 import { FileText } from 'lucide-react';
-import { PageSection } from '@/layouts/SectionPageLayout';
 
 interface CourseContentTabProps {
   course?: any;

@@ -152,4 +152,5 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
   );
 };
 
+export { PageSection };
 export default SectionPageLayout;
