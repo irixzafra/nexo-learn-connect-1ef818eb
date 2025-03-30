@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { useTestData, TestDataType } from '@/contexts/TestDataContext';
+import { useTestData, TestDataType } from '@/contexts/test-data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,8 +20,7 @@ import {
   Award,
   ScrollText,
   CreditCard,
-  AlertCircle,
-  Separator
+  AlertCircle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -320,4 +318,3 @@ export const DataTypeSelector: React.FC = () => {
     </div>
   );
 };
-
