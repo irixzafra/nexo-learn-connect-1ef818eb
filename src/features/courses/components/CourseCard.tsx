@@ -22,7 +22,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
     student_count = 0,
     duration_text = '0h',
     cover_image_url = '/placeholder.svg',
-    tags = [],
+    tags = [], // Ensure tags has a default empty array
     slug
   } = course;
 
@@ -77,7 +77,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
             )}
           </div>
           
-          {(category || tags.length > 0) && (
+          {(category || (tags && tags.length > 0)) && (
             <div className="flex flex-wrap gap-1 mt-2">
               {category && (
                 <Badge variant="outline" className="text-xs">
@@ -85,13 +85,13 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
                 </Badge>
               )}
               
-              {tags.slice(0, 2).map((tag, index) => (
+              {tags && tags.length > 0 && tags.slice(0, 2).map((tag, index) => (
                 <Badge key={index} variant="secondary" className="text-xs">
                   {tag}
                 </Badge>
               ))}
               
-              {tags.length > 2 && (
+              {tags && tags.length > 2 && (
                 <Badge variant="secondary" className="text-xs">
                   +{tags.length - 2}
                 </Badge>
