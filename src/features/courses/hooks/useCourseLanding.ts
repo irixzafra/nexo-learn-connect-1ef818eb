@@ -22,7 +22,7 @@ export const useCourseLanding = (identifier: string, isSlug: boolean = false) =>
     isEnrolled, 
     isEnrolling, 
     isChecking, 
-    enrollToCourse 
+    handleEnroll 
   } = useEnrollment(course?.id);
   
   // Calcular estadísticas del curso
@@ -33,7 +33,7 @@ export const useCourseLanding = (identifier: string, isSlug: boolean = false) =>
     acc + (module.lessons?.filter(lesson => lesson.is_previewable)?.length || 0), 0) || 0;
   
   // Manejar inscripción
-  const handleEnroll = async () => {
+  const handleEnrollment = async () => {
     if (!isAuthenticated) {
       // Redirigir a login y guardar la URL actual para volver después
       const returnUrl = window.location.pathname;
@@ -49,7 +49,7 @@ export const useCourseLanding = (identifier: string, isSlug: boolean = false) =>
     if (!course?.id) return;
     
     try {
-      await enrollToCourse(course.id);
+      await handleEnroll();
       toast({
         title: "¡Inscripción exitosa!",
         description: "Te has inscrito correctamente al curso."
@@ -82,7 +82,7 @@ export const useCourseLanding = (identifier: string, isSlug: boolean = false) =>
     isEnrolled,
     isEnrolling,
     isChecking,
-    handleEnroll,
+    handleEnroll: handleEnrollment,
     expandedFAQs,
     setExpandedFAQs,
     formatCurrency,
