@@ -38,7 +38,7 @@ const CourseLanding: React.FC = () => {
   
   // Create a wrapper function that matches the expected signature
   const formatCurrency = (price: number) => {
-    return formatCurrencyFn(price);
+    return formatCurrencyFn(price, course?.currency || 'eur');
   };
 
   if (isLoading || isChecking) {

@@ -65,7 +65,7 @@ export const useCourseLanding = (identifier: string, isSlug: boolean = false) =>
   };
   
   // Formateador de moneda
-  const formatCurrency = (price: number, currency: string) => {
+  const formatCurrency = (price: number, currency: string = 'eur') => {
     const formatter = new Intl.NumberFormat('es-ES', {
       style: 'currency',
       currency: currency.toUpperCase(),

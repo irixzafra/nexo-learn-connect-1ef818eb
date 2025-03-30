@@ -27,8 +27,8 @@ export const CourseInfoSidebar: React.FC<CourseInfoSidebarProps> = ({
   handleEnroll,
   formatCurrency
 }) => {
-  // Asumimos que no hay descuento si no existe en el tipo
-  const hasDiscount = false;
+  // Check if there's a discount by comparing price and original_price
+  const hasDiscount = course.original_price !== undefined && course.price !== course.original_price;
   const originalPrice = course.price;
   
   const benefits = [
@@ -54,9 +54,9 @@ export const CourseInfoSidebar: React.FC<CourseInfoSidebarProps> = ({
             <span className="text-3xl font-bold text-primary">
               {originalPrice === 0 ? "Gratis" : formatCurrency(originalPrice)}
             </span>
-            {hasDiscount && (
+            {hasDiscount && course.original_price && (
               <span className="text-lg line-through text-muted-foreground">
-                {formatCurrency(originalPrice)}
+                {formatCurrency(course.original_price)}
               </span>
             )}
           </div>

@@ -46,6 +46,8 @@ export interface Course {
   // Adding the missing properties
   category?: string;
   featured_instructor?: string;
+  // Adding the missing original_price property
+  original_price?: number;
   // New properties for enhanced filter functionality
   start_date?: string;
   end_date?: string; 

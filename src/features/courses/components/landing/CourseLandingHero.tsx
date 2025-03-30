@@ -24,7 +24,7 @@ export const CourseLandingHero: React.FC<CourseLandingHeroProps> = ({
 }) => {
   const rating = course.rating || 4.5;
   const roundedRating = Math.floor(rating);
-  const hasDiscount = course.price !== course.original_price;
+  const hasDiscount = course.price !== course.original_price && course.original_price !== undefined;
   const originalPrice = course.price;
 
   return (
@@ -72,9 +72,9 @@ export const CourseLandingHero: React.FC<CourseLandingHeroProps> = ({
                 <span className="text-3xl font-bold">
                   {originalPrice === 0 ? "Gratis" : formatCurrency(originalPrice)}
                 </span>
-                {hasDiscount && (
+                {hasDiscount && course.original_price && (
                   <span className="text-lg line-through text-muted-foreground">
-                    {formatCurrency(course.original_price || originalPrice)}
+                    {formatCurrency(course.original_price)}
                   </span>
                 )}
               </div>
