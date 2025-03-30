@@ -332,7 +332,7 @@ export const CourseLandingPage: React.FC<CourseLandingPageProps> = ({
               {/* Tags Section */}
               {course.tags && course.tags.length > 0 && (
                 <motion.div
-                  initial={{ opacity: a0, y: 20 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
@@ -519,3 +519,4 @@ export const CourseLandingPage: React.FC<CourseLandingPageProps> = ({
     </>
   );
 };
+
