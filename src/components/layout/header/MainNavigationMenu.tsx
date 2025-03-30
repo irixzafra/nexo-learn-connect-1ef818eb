@@ -29,10 +29,10 @@ import {
   Settings
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { UserRole } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 
 interface MainNavigationMenuProps {
-  userRole: UserRole | null;
+  userRole: UserRoleType | null;
   hasUnreadMessages?: number;
 }
 

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { useNotifications } from '@/hooks/useNotifications';
 
@@ -12,8 +12,8 @@ import SidebarLogoSection from './SidebarLogoSection';
 import { useSidebarNavigation } from './hooks/useSidebarNavigation';
 
 interface SidebarNavigationProps {
-  viewAsRole?: 'current' | UserRole;
-  onRoleChange?: (role: UserRole) => void;
+  viewAsRole?: 'current' | UserRoleType;
+  onRoleChange?: (role: UserRoleType) => void;
 }
 
 const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
@@ -34,7 +34,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
     getRoleName,
     getHomePath,
     changeLanguage
-  } = useSidebarNavigation(userRole, viewAsRole, onRoleChange);
+  } = useSidebarNavigation(toUserRoleType(userRole as string), viewAsRole, onRoleChange);
 
   // Language options
   const languages = [
@@ -50,7 +50,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
       {/* Main Navigation Section */}
       <SidebarMainNavigation 
-        effectiveRole={effectiveRole}
+        effectiveRole={effectiveRole as UserRoleType}
         isCollapsed={isCollapsed}
         messagesCount={messagesCount}
         notificationsCount={notificationsCount}
@@ -59,9 +59,9 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
       
       {/* Footer Section with Role Switcher and Language Selector */}
       <SidebarFooterSection 
-        userRole={userRole}
+        userRole={toUserRoleType(userRole as string)}
         isCollapsed={isCollapsed}
-        effectiveRole={effectiveRole}
+        effectiveRole={effectiveRole as UserRoleType}
         currentViewRole={currentViewRole}
         handleRoleChange={handleRoleChange}
         getRoleName={getRoleName}

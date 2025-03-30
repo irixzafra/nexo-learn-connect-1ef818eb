@@ -1,90 +1,78 @@
 
 import { useState, useEffect } from 'react';
-import { UserRole } from '@/types/auth';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
-import { toast } from 'sonner';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 
-export interface SidebarNavigationState {
-  currentViewRole: 'current' | UserRole;
+interface SidebarNavigationHookResult {
+  isCollapsed: boolean;
+  currentViewRole: 'current' | UserRoleType;
   currentLanguage: string;
-  effectiveRole: UserRole;
+  effectiveRole: UserRoleType;
+  handleRoleChange: (role: UserRoleType) => void;
+  getRoleName: (role: UserRoleType) => string;
+  getHomePath: (role: UserRoleType) => string;
+  changeLanguage: (code: string) => void;
 }
 
 export const useSidebarNavigation = (
-  userRole: UserRole | null,
-  viewAsRole?: 'current' | UserRole,
-  onRoleChange?: (role: UserRole) => void
-) => {
-  const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
+  userRole: UserRoleType,
+  viewAsRole?: 'current' | UserRoleType,
+  onRoleChange?: (role: UserRoleType) => void
+): SidebarNavigationHookResult => {
+  // Local state
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [currentViewRole, setCurrentViewRole] = useState<'current' | UserRoleType>(viewAsRole || 'current');
+  const [currentLanguage, setCurrentLanguage] = useState('es');
   
-  // State for role switching
-  const [currentViewRole, setCurrentViewRole] = useState<'current' | UserRole>(viewAsRole || 'current');
-  const [currentLanguage, setCurrentLanguage] = useState('es'); // Default language is Spanish
+  // Calculate the effective role (the role used for rendering the UI)
+  const effectiveRole = currentViewRole === 'current' ? userRole : currentViewRole;
   
-  // Effect to update currentViewRole when viewAsRole prop changes
-  useEffect(() => {
-    if (viewAsRole !== undefined) {
-      setCurrentViewRole(viewAsRole);
-    }
-  }, [viewAsRole]);
-  
-  // Determine the effective role
-  const getEffectiveRole = (): UserRole => {
-    if (currentViewRole === 'current') {
-      return userRole as UserRole;
-    }
-    return currentViewRole as UserRole;
-  };
-  
-  const effectiveRole = getEffectiveRole();
-  
-  // Handle role change
-  const handleRoleChange = (role: UserRole) => {
+  // Handler for role changes
+  const handleRoleChange = (role: UserRoleType) => {
     setCurrentViewRole(role);
     
-    // Call the parent's onRoleChange if provided
     if (onRoleChange) {
       onRoleChange(role);
     }
-    
-    // Store selected role in localStorage for persistence
-    localStorage.setItem('viewAsRole', role);
-    
-    toast.success(`Vista cambiada a: ${getRoleName(role)}`);
   };
-
+  
   // Get role display name
-  const getRoleName = (role: UserRole): string => {
+  const getRoleName = (role: UserRoleType): string => {
     switch (role) {
-      case 'admin': return 'Administrador';
-      case 'instructor': return 'Instructor';
-      case 'student': return 'Estudiante';
-      case 'sistemas': return 'Sistemas';
-      case 'anonimo': return 'Anónimo';
-      default: return 'Usuario';
+      case 'admin':
+        return 'Administrador';
+      case 'instructor':
+        return 'Instructor';
+      case 'student':
+        return 'Estudiante';
+      case 'sistemas':
+        return 'Sistemas';
+      case 'anonimo':
+        return 'Anónimo';
+      default:
+        return role;
     }
   };
-
-  // Determine the home path based on the user's role
-  const getHomePath = () => {
-    switch (effectiveRole) {
+  
+  // Get home path based on role
+  const getHomePath = (role: UserRoleType): string => {
+    switch (role) {
       case 'admin':
         return '/admin/dashboard';
       case 'instructor':
         return '/instructor/dashboard';
-      case 'student':
+      case 'sistemas':
+        return '/admin/systems';
       default:
         return '/home';
     }
   };
-
-  const changeLanguage = (langCode: string) => {
-    setCurrentLanguage(langCode);
-    // Here you would typically change the language in your app's state/context
-    console.log(`Language changed to ${langCode}`);
+  
+  // Change language handler
+  const changeLanguage = (code: string) => {
+    setCurrentLanguage(code);
+    // Additional language change logic here
   };
-
+  
   return {
     isCollapsed,
     currentViewRole,

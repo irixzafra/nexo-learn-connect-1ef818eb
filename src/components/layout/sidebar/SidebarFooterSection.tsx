@@ -1,24 +1,12 @@
 
 import React from 'react';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
-import { cn } from '@/lib/utils';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { UserRoleDisplay } from '@/features/users/UserRoleType';
-import { Shield, Globe } from 'lucide-react';
+import { RoleIndicator } from '../../layout/header/RoleIndicator';
+import { LanguageSelector } from '../../shared/LanguageSelector';
 
+// Types for SidebarFooterSection
 interface SidebarFooterSectionProps {
-  userRole: UserRoleType | null;
+  userRole: UserRoleType;
   isCollapsed: boolean;
   effectiveRole: UserRoleType;
   currentViewRole: 'current' | UserRoleType;
@@ -26,7 +14,7 @@ interface SidebarFooterSectionProps {
   getRoleName: (role: UserRoleType) => string;
   currentLanguage: string;
   languages: { code: string; name: string }[];
-  changeLanguage: (langCode: string) => void;
+  changeLanguage: (code: string) => void;
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
@@ -40,95 +28,62 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   languages,
   changeLanguage
 }) => {
-  // Available roles for switching view
-  const availableRoles: UserRoleType[] = ['admin', 'instructor', 'student', 'sistemas', 'anonimo'];
-
+  const isViewingAsOtherRole = currentViewRole !== 'current' && toUserRoleType(currentViewRole) !== userRole;
+  
+  // If sidebar is collapsed, show only minimal UI
+  if (isCollapsed) {
+    return (
+      <div className="mt-auto flex flex-col items-center gap-2">
+        {userRole === 'admin' && (
+          <RoleIndicator 
+            viewingAs={currentViewRole} 
+            onRoleChange={handleRoleChange}
+          />
+        )}
+      </div>
+    );
+  }
+  
+  // If sidebar is expanded, show full UI
   return (
-    <div className="mt-auto pt-4 border-t px-4">
-      {/* Role Switcher - Only shown for admins */}
+    <div className="mt-auto flex flex-col gap-3">
+      
+      {/* Role Switcher - Only visible for admins */}
       {userRole === 'admin' && (
-        <div className="mb-3">
-          {isCollapsed ? (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <Shield className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Cambiar vista de rol</p>
-              </TooltipContent>
-            </Tooltip>
-          ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center gap-2 w-full">
-                  <Shield className="h-4 w-4" />
-                  <span>{getRoleName(effectiveRole)}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center">
-                {availableRoles.map(role => (
-                  <DropdownMenuItem 
-                    key={role.toString()}
-                    onClick={() => handleRoleChange(role)}
-                    className={cn(
-                      "cursor-pointer",
-                      currentViewRole === role && "font-bold bg-primary/10"
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                      <UserRoleDisplay role={role} />
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-medium text-muted-foreground">Vista previa como:</span>
+          </div>
+          
+          <div className="flex flex-col space-y-1">
+            {['admin', 'instructor', 'student', 'sistemas', 'anonimo'].map((role) => (
+              <button
+                key={role}
+                onClick={() => handleRoleChange(role as UserRoleType)}
+                className={`w-full text-left p-2 rounded-md text-sm ${
+                  effectiveRole === role 
+                    ? 'bg-primary/10 text-primary font-medium' 
+                    : 'hover:bg-accent text-foreground/80 hover:text-foreground'
+                }`}
+              >
+                {getRoleName(role as UserRoleType)}
+              </button>
+            ))}
+          </div>
         </div>
       )}
       
-      {/* Language Switcher */}
-      <div className="mb-3 flex justify-center">
-        {isCollapsed ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Globe className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Cambiar idioma</p>
-            </TooltipContent>
-          </Tooltip>
-        ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="flex items-center gap-2 w-full">
-                <Globe className="h-4 w-4" />
-                <span>{languages.find(lang => lang.code === currentLanguage)?.name || 'Idioma'}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center">
-              {languages.map(lang => (
-                <DropdownMenuItem 
-                  key={lang.code}
-                  onClick={() => changeLanguage(lang.code)}
-                  className={cn(
-                    "cursor-pointer",
-                    currentLanguage === lang.code && "font-bold bg-primary/10"
-                  )}
-                >
-                  {lang.name}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      </div>
-      
-      <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-        Nexo Academia © {new Date().getFullYear()}
+      {/* Language Selector */}
+      <div className="flex flex-col gap-2">
+        <div className="flex justify-between items-center">
+          <span className="text-xs font-medium text-muted-foreground">Idioma:</span>
+        </div>
+        
+        <LanguageSelector 
+          currentLanguage={currentLanguage} 
+          languages={languages} 
+          onChange={changeLanguage} 
+        />
       </div>
     </div>
   );

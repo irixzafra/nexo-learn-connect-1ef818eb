@@ -35,7 +35,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
         />
         
         <MainNavigationMenu 
-          userRole={userRole} 
+          userRole={toUserRoleType(userRole as string)} 
           hasUnreadMessages={hasUnreadMessages} 
         />
         

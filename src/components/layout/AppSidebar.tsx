@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Sidebar, 
@@ -5,13 +6,13 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import SidebarFooterContent from './SidebarFooterContent';
-import { UserRole } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 
-type ViewAsRole = UserRole | 'current';
+type ViewAsRole = UserRoleType | 'current';
 
 interface AppSidebarProps {
   viewAsRole: ViewAsRole;
-  onRoleChange: (role: UserRole) => void;
+  onRoleChange: (role: UserRoleType) => void;
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = ({ viewAsRole, onRoleChange }) => {

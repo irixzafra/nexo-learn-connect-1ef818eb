@@ -1,4 +1,5 @@
 
+// Define UserRole interface (for the roles table)
 export interface UserRole {
   id: string;
   name: string;
@@ -7,6 +8,7 @@ export interface UserRole {
   permissions?: string[];
 }
 
+// Define UserProfile interface
 export interface UserProfile {
   id: string;
   email?: string;
@@ -73,6 +75,3 @@ export const asUserRoleType = (value: string): UserRoleType => {
 export const toUserRoleType = (value: string | UserRoleType): UserRoleType => {
   return asUserRoleType(value as string);
 };
-
-// This type alias using 'type' keyword is NOT exported, avoiding the duplicate conflict
-type UserRoleAlias = UserRoleType;

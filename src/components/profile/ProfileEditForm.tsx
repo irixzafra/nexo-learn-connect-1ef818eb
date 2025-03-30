@@ -19,7 +19,8 @@ import { useProfileEdit } from '@/hooks/use-profile-edit';
 
 // Define allowed roles to prevent the type error with the enum
 const allowedRoles = [
-  'admin', 'instructor', 'student', 'sistemas', 'anonimo'
+  'admin', 'instructor', 'student', 'sistemas', 'anonimo', 'moderator', 
+  'content_creator', 'guest', 'beta_tester'
 ] as const;
 
 const profileFormSchema = z.object({
@@ -100,6 +101,10 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
                   <SelectItem value="admin">Administrador</SelectItem>
                   <SelectItem value="sistemas">Sistemas</SelectItem>
                   <SelectItem value="anonimo">Anónimo</SelectItem>
+                  <SelectItem value="moderator">Moderador</SelectItem>
+                  <SelectItem value="content_creator">Creador de Contenido</SelectItem>
+                  <SelectItem value="guest">Invitado</SelectItem>
+                  <SelectItem value="beta_tester">Beta Tester</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

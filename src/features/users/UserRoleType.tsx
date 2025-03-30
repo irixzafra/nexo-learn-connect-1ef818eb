@@ -59,4 +59,4 @@ export const UserRoleDisplay: React.FC<UserRoleDisplayProps> = ({
 };
 
 // Export the component with a different name to avoid conflicts with the type
-export const UserRoleTypeDisplay = UserRoleDisplay;
+export { UserRoleDisplay as UserRoleTypeDisplay };
