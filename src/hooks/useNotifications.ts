@@ -2,18 +2,22 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from './useAuth';
+import { NotificationType } from '@/types/notifications';
 
 interface Notification {
   id: string;
   title: string;
   content: string;
-  type: 'info' | 'warning' | 'success' | 'error';
+  type: NotificationType;
   is_read: boolean;
   created_at: string;
   user_id: string;
   action_url?: string;
   resource_type?: string;
   resource_id?: string;
+  sender_id?: string;
+  sender_name?: string;
+  sender_avatar?: string;
 }
 
 export function useNotifications() {

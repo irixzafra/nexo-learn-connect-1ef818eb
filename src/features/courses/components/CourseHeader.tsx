@@ -9,18 +9,20 @@ interface CourseHeaderProps {
   course: Course;
   totalLessons: number;
   formatDate: (dateString: string) => string;
+  instructorName?: string; // Add an optional prop for instructor name
 }
 
 export const CourseHeader: React.FC<CourseHeaderProps> = ({
   course,
   totalLessons,
   formatDate,
+  instructorName = "Instructor" // Default value if not provided
 }) => {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-2">{course.title}</h1>
       <p className="text-muted-foreground mb-4">
-        Por {course.instructor?.full_name || "Instructor"}
+        Por {instructorName}
       </p>
       <div className="flex flex-wrap gap-4 mt-4">
         <div className="flex items-center">

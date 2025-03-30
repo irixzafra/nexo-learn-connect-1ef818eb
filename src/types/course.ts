@@ -6,7 +6,7 @@ export interface Course {
   instructor_id: string;
   is_published: boolean;
   price: number;
-  currency: 'eur' | 'usd';
+  currency?: 'eur' | 'usd';
   created_at: string;
   updated_at: string;
   cover_image_url?: string;
@@ -27,6 +27,14 @@ export interface Course {
   badge?: string;
   display_order?: number;
   prerequisites_text?: string;
+  // Relationships
+  instructor?: {
+    id: string;
+    full_name: string;
+    avatar_url?: string;
+  };
+  modules?: Module[];
+  start_date?: string;
 }
 
 export interface Module {
@@ -36,6 +44,7 @@ export interface Module {
   module_order: number;
   created_at: string;
   updated_at: string;
+  lessons?: Lesson[];
 }
 
 export interface Lesson {
@@ -78,4 +87,18 @@ export interface CourseProgress {
   percentage: number;
   lastViewedAt?: string;
   startedAt?: string;
+}
+
+export interface LearningPath {
+  id: string;
+  title: string;
+  description: string;
+  slug: string;
+  created_by: string;
+  is_featured: boolean;
+  estimated_hours: number;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+  courses?: Course[];
 }

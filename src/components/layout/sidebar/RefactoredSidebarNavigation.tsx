@@ -20,10 +20,13 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
   viewAsRole,
   onRoleChange 
 }) => {
-  const { userRole } = useAuth();
+  const { user, session, profile } = useAuth();
   const { state } = useSidebar();
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
+  
+  // Extract the user role from the profile
+  const currentUserRole = profile?.role || 'student';
   
   const {
     isCollapsed,
@@ -34,7 +37,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
     getRoleName,
     getHomePath,
     changeLanguage
-  } = useSidebarNavigation(toUserRoleType(userRole as string), viewAsRole, onRoleChange);
+  } = useSidebarNavigation(toUserRoleType(currentUserRole), viewAsRole, onRoleChange);
 
   // Mostrar Landing Page para usuarios anónimos
   if (effectiveRole === 'anonimo') {
@@ -64,7 +67,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
       
       {/* Footer Section with Role Switcher and Language Selector */}
       <SidebarFooterSection 
-        userRole={toUserRoleType(userRole as string)}
+        userRole={toUserRoleType(currentUserRole)}
         isCollapsed={isCollapsed}
         effectiveRole={effectiveRole}
         currentViewRole={currentViewRole}

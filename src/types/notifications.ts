@@ -5,7 +5,11 @@ export type NotificationType =
   | 'announcement' 
   | 'achievement' 
   | 'system'
-  | 'community';
+  | 'community'
+  | 'error'
+  | 'info'
+  | 'warning'
+  | 'success';
 
 export interface Notification {
   id: string;
