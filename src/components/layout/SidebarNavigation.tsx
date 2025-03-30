@@ -2,17 +2,18 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
-import { 
+import {
   HomeNavigation,
-  AprendizajeNavigation,
+  CursosNavigation,
   ComunidadNavigation,
-  EnsenanzaNavigation,
   AdministracionNavigation,
-  CuentaNavigation
+  PerfilNavigation,
+  ConfiguracionNavigation
 } from './sidebar/navigation';
 import { SidebarTrigger } from '@/components/ui/sidebar/components/sidebar-trigger';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { cn } from '@/lib/utils';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface SidebarNavigationProps {
   viewAsRole?: string;
@@ -22,6 +23,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   const { userRole } = useAuth();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const { unreadCount: notificationsCount } = useNotifications();
+  const messagesCount = 0; // Placeholder - should be replaced with actual unread message count from a hook
   
   // Determine the effective role
   const getEffectiveRole = (): UserRole => {
@@ -38,20 +41,22 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
     try {
       const savedState = localStorage.getItem('sidebarGroups');
       return savedState ? JSON.parse(savedState) : {
-        aprendizaje: true,
+        home: true,
+        cursos: true,
         comunidad: true,
-        ensenanza: true,
         administracion: true,
-        cuenta: true
+        perfil: true,
+        configuracion: true
       };
     } catch (e) {
       // Fallback defaults if localStorage fails
       return {
-        aprendizaje: true,
+        home: true,
+        cursos: true,
         comunidad: true,
-        ensenanza: true,
         administracion: true,
-        cuenta: true
+        perfil: true,
+        configuracion: true
       };
     }
   };
@@ -71,45 +76,38 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   };
 
   // Check if a role should see specific sections
-  const canSeeEnsenanza = effectiveRole === 'instructor' || effectiveRole === 'admin';
-  const canSeeAdmin = effectiveRole === 'admin';
+  const canSeeAdmin = effectiveRole === 'admin' || effectiveRole === 'instructor';
 
   return (
     <div className={cn(
       "flex flex-col py-2 h-full",
       isCollapsed ? "px-2" : "px-4"
     )}>
-      <div className="mb-6 mt-2">
+      <div className="mb-4 mt-2">
         {!isCollapsed && <h1 className="text-lg font-semibold text-gray-900 dark:text-white sr-only">Nexo Academia</h1>}
       </div>
       
-      {/* Bloque 1: Principal / Acceso Rápido - Siempre visible */}
-      <HomeNavigation userRole={effectiveRole} />
-      
-      {/* Spacer */}
-      <div className="h-2" />
-      
-      {/* Bloque 2: Aprendizaje */}
-      <AprendizajeNavigation 
-        isOpen={openGroups.aprendizaje} 
-        onToggle={() => toggleGroup('aprendizaje')} 
+      {/* Inicio */}
+      <HomeNavigation 
+        isOpen={openGroups.home} 
+        onToggle={() => toggleGroup('home')}
+        userRole={effectiveRole}
       />
       
-      {/* Bloque 3: Comunidad */}
+      {/* Cursos */}
+      <CursosNavigation 
+        isOpen={openGroups.cursos} 
+        onToggle={() => toggleGroup('cursos')} 
+      />
+      
+      {/* Comunidad */}
       <ComunidadNavigation 
         isOpen={openGroups.comunidad} 
         onToggle={() => toggleGroup('comunidad')} 
+        messagesCount={messagesCount}
       />
       
-      {/* Bloque 4: Enseñanza - Solo visible para instructor o admin */}
-      {canSeeEnsenanza && (
-        <EnsenanzaNavigation 
-          isOpen={openGroups.ensenanza} 
-          onToggle={() => toggleGroup('ensenanza')} 
-        />
-      )}
-      
-      {/* Bloque 5: Administración - Solo visible para admin */}
+      {/* Administración - Solo visible para admin o instructor */}
       {canSeeAdmin && (
         <AdministracionNavigation 
           isOpen={openGroups.administracion} 
@@ -117,10 +115,17 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
         />
       )}
       
-      {/* Bloque 6: Cuenta */}
-      <CuentaNavigation 
-        isOpen={openGroups.cuenta} 
-        onToggle={() => toggleGroup('cuenta')} 
+      {/* Perfil */}
+      <PerfilNavigation 
+        isOpen={openGroups.perfil} 
+        onToggle={() => toggleGroup('perfil')} 
+        notificationsCount={notificationsCount}
+      />
+      
+      {/* Configuración */}
+      <ConfiguracionNavigation 
+        isOpen={openGroups.configuracion} 
+        onToggle={() => toggleGroup('configuracion')} 
       />
     </div>
   );

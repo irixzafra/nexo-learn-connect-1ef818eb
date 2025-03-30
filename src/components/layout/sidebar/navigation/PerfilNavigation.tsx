@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, MessageSquare, Globe, Trophy, Handshake } from 'lucide-react';
+import { User, Bell, Award, Clock } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -8,54 +8,54 @@ import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import { MenuItem } from './common/MenuItem';
 
-interface ComunidadNavigationProps {
+interface PerfilNavigationProps {
   isOpen: boolean;
   onToggle: () => void;
-  messagesCount?: number;
+  notificationsCount?: number;
 }
 
-const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({ 
+const PerfilNavigation: React.FC<PerfilNavigationProps> = ({ 
   isOpen, 
   onToggle,
-  messagesCount = 0 
+  notificationsCount = 0
 }) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   return (
     <SidebarGroup
-      label="Comunidad"
-      icon={Users}
+      label="Perfil"
+      icon={User}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
       <SidebarMenu>
         <MenuItem
-          to="/community/feed"
-          icon={Globe}
-          label="Feed"
+          to="/profile"
+          icon={User}
+          label="Mi Perfil"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/messages"
-          icon={MessageSquare}
-          label="Mensajes"
-          badge={messagesCount}
+          to="/notifications"
+          icon={Bell}
+          label="Notificaciones"
+          badge={notificationsCount}
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/leaderboard"
-          icon={Trophy}
-          label="Leaderboard"
+          to="/achievements"
+          icon={Award}
+          label="Mis Logros"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/mentors"
-          icon={Handshake}
-          label="Mentores"
+          to="/history"
+          icon={Clock}
+          label="Historial"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>
@@ -63,4 +63,4 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
   );
 };
 
-export default ComunidadNavigation;
+export default PerfilNavigation;

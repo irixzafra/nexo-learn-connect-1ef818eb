@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, MessageSquare, Globe, Trophy, Handshake } from 'lucide-react';
+import { BookOpen, Compass, GraduationCap, Award, FileText } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -8,54 +8,48 @@ import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import { MenuItem } from './common/MenuItem';
 
-interface ComunidadNavigationProps {
+interface CursosNavigationProps {
   isOpen: boolean;
   onToggle: () => void;
-  messagesCount?: number;
 }
 
-const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({ 
-  isOpen, 
-  onToggle,
-  messagesCount = 0 
-}) => {
+const CursosNavigation: React.FC<CursosNavigationProps> = ({ isOpen, onToggle }) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   return (
     <SidebarGroup
-      label="Comunidad"
-      icon={Users}
+      label="Cursos"
+      icon={BookOpen}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
       <SidebarMenu>
         <MenuItem
-          to="/community/feed"
-          icon={Globe}
-          label="Feed"
+          to="/courses"
+          icon={Compass}
+          label="Catálogo de Cursos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/messages"
-          icon={MessageSquare}
-          label="Mensajes"
-          badge={messagesCount}
+          to="/learning-paths"
+          icon={GraduationCap}
+          label="Rutas de Aprendizaje"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/leaderboard"
-          icon={Trophy}
-          label="Leaderboard"
+          to="/certificates"
+          icon={FileText}
+          label="Certificados"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/mentors"
-          icon={Handshake}
-          label="Mentores"
+          to="/achievements"
+          icon={Award}
+          label="Logros"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>
@@ -63,4 +57,4 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
   );
 };
 
-export default ComunidadNavigation;
+export default CursosNavigation;

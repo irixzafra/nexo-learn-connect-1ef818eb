@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, MessageSquare, Globe, Trophy, Handshake } from 'lucide-react';
+import { Settings, Key, CreditCard, HelpCircle, Info } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -8,54 +8,55 @@ import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import { MenuItem } from './common/MenuItem';
 
-interface ComunidadNavigationProps {
+interface ConfiguracionNavigationProps {
   isOpen: boolean;
   onToggle: () => void;
-  messagesCount?: number;
 }
 
-const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({ 
-  isOpen, 
-  onToggle,
-  messagesCount = 0 
-}) => {
+const ConfiguracionNavigation: React.FC<ConfiguracionNavigationProps> = ({ isOpen, onToggle }) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   return (
     <SidebarGroup
-      label="Comunidad"
-      icon={Users}
+      label="Configuración"
+      icon={Settings}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
       <SidebarMenu>
         <MenuItem
-          to="/community/feed"
-          icon={Globe}
-          label="Feed"
+          to="/settings"
+          icon={Settings}
+          label="Preferencias"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/messages"
-          icon={MessageSquare}
-          label="Mensajes"
-          badge={messagesCount}
+          to="/settings/account"
+          icon={Key}
+          label="Cuenta"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/leaderboard"
-          icon={Trophy}
-          label="Leaderboard"
+          to="/settings/billing"
+          icon={CreditCard}
+          label="Facturación"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/mentors"
-          icon={Handshake}
-          label="Mentores"
+          to="/help"
+          icon={HelpCircle}
+          label="Ayuda"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/about-us"
+          icon={Info}
+          label="Acerca de"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>
@@ -63,4 +64,4 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
   );
 };
 
-export default ComunidadNavigation;
+export default ConfiguracionNavigation;
