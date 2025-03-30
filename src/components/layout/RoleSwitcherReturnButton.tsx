@@ -2,12 +2,12 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeftRight } from 'lucide-react';
-import { UserRole } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 
 interface RoleSwitcherReturnButtonProps {
   isViewingAsOtherRole: boolean;
-  onRoleChange: (role: UserRole) => void;
-  userRole: UserRole | null;
+  onRoleChange: (role: UserRoleType) => void;
+  userRole: UserRoleType | null;
 }
 
 const RoleSwitcherReturnButton: React.FC<RoleSwitcherReturnButtonProps> = ({
