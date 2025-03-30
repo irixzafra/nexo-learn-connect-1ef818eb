@@ -146,18 +146,8 @@ const ManualEnrollmentDialog: React.FC<ManualEnrollmentDialogProps> = ({
       
       if (enrollmentError) throw enrollmentError;
       
-      // Actualizar el contador de estudiantes del curso
-      const { error: updateError } = await supabase
-        .from('courses')
-        .update({ 
-          students_count: supabase.rpc('calculate_course_students_count', { course_id_param: courseId }) 
-        })
-        .eq('id', courseId);
-      
-      if (updateError) {
-        console.error('Error actualizando contador de estudiantes:', updateError);
-        // No mostramos error al usuario, simplemente lo registramos
-      }
+      // Se ha eliminado la sección que intentaba actualizar la tabla courses
+      // con la función RPC 'calculate_course_students_count' que no existe
       
       toast.success("Usuario matriculado exitosamente");
       
