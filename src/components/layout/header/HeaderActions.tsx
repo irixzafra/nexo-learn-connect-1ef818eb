@@ -10,7 +10,7 @@ import { NotificationIndicator } from '@/components/notifications/NotificationIn
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { OnboardingTrigger } from '@/components/onboarding/OnboardingTrigger';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import { BookOpen, Bell, User, Settings } from 'lucide-react';
+import { BookOpen, Bell, User, Settings, Info, Phone } from 'lucide-react';
 
 export const HeaderActions: React.FC = () => {
   const navigate = useNavigate();
@@ -21,22 +21,38 @@ export const HeaderActions: React.FC = () => {
     <div className="ml-auto flex items-center space-x-2">
       {/* Notification indicator - solo si está habilitado */}
       {featuresConfig.enableNotifications && (
-        <Button 
-          variant="ghost" 
-          size="icon"
-          className="h-9 w-9"
-          title="Notificaciones"
-        >
-          <Bell className="h-5 w-5" />
-        </Button>
+        <NotificationIndicator />
       )}
       
       {/* Theme Selector */}
       <ThemeSelector />
       
-      <ConnectionStatus />
+      {/* Connection Status - version más compacta */}
+      <div className="scale-90">
+        <ConnectionStatus />
+      </div>
       
-      <RoleIndicator viewingAs={userRole} />
+      {/* Info Button */}
+      <Button 
+        variant="ghost" 
+        size="icon"
+        className="h-9 w-9"
+        title="Información"
+        onClick={() => navigate('/about-us')}
+      >
+        <Info className="h-5 w-5" />
+      </Button>
+      
+      {/* Contact Button */}
+      <Button 
+        variant="ghost" 
+        size="icon"
+        className="h-9 w-9"
+        title="Contacto"
+        onClick={() => navigate('/help')}
+      >
+        <Phone className="h-5 w-5" />
+      </Button>
       
       {/* Onboarding Trigger - solo si está habilitado */}
       {featuresConfig.showOnboardingTrigger && (

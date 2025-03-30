@@ -14,7 +14,7 @@ export const RoleIndicator: React.FC<RoleIndicatorProps> = ({ viewingAs }) => {
   const getRoleLabel = (role: string): string => {
     switch (role) {
       case 'admin':
-        return 'Administrador';
+        return 'Admin';
       case 'instructor':
         return 'Instructor';
       case 'sistemas':
@@ -31,12 +31,10 @@ export const RoleIndicator: React.FC<RoleIndicatorProps> = ({ viewingAs }) => {
   return (
     <Badge 
       variant="outline" 
-      className="ml-2 bg-amber-50 text-amber-800 border-amber-200 flex items-center gap-1.5"
+      className="bg-amber-50 text-amber-800 border-amber-200 flex items-center gap-1 py-0.5 px-2 text-xs"
     >
       <Eye className="h-3 w-3" />
-      <span>
-        Viendo como: {getRoleLabel(viewingAs)}
-      </span>
+      {getRoleLabel(viewingAs)}
     </Badge>
   );
 };
