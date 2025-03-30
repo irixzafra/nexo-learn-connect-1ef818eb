@@ -13,9 +13,9 @@ export interface FeaturedCourse {
   image_url: string;
   price: number;
   instructor: {
-    id: string; // Added to match Course type
-    full_name: string; // Added to match Course type
-    name?: string; // Keep for backward compatibility
+    id: string; 
+    full_name: string;
+    name?: string;
     avatar?: string;
   };
   category: string;
@@ -27,7 +27,7 @@ export interface FeaturedCourse {
   discount?: number;
   tags?: string[];
   start_date?: string;
-  currency: 'eur' | 'usd'; // Required as in Course type
+  currency: 'eur' | 'usd';
   slug?: string;
   instructor_id: string;
   is_published: boolean;
@@ -100,7 +100,7 @@ export const CourseGrid: React.FC<CourseGridProps> = ({
         {coursesToShow.map((course, index) => (
           <motion.div key={course.id} variants={item}>
             <EnhancedCourseCard 
-              course={course} 
+              course={course as unknown as Course} 
               index={index} 
               isPopular={index === 0 && selectedCategory === 'all'}
               isNew={index === 1 && selectedCategory === 'all'}
