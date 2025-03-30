@@ -1637,6 +1637,18 @@ export type Database = {
         }
         Returns: number
       }
+      get_course_enrollments_with_details: {
+        Args: {
+          course_id_param: string
+        }
+        Returns: {
+          enrollment_id: string
+          user_id: string
+          enrolled_at: string
+          full_name: string
+          email: string
+        }[]
+      }
       get_table_columns: {
         Args: {
           table_name: string
