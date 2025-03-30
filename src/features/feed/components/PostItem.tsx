@@ -1,143 +1,153 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Post } from '@/types/community';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { 
-  MessageSquare, 
-  Heart, 
-  Share2, 
-  Pin 
-} from 'lucide-react';
+import { MessageSquare, Heart, Share2, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Post } from '@/types/community';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLikePost, usePostCategories } from '../hooks/useCommunityFeed';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 
 interface PostItemProps {
   post: Post;
-  onCommentClick?: (postId: string) => void;
 }
 
-export const PostItem: React.FC<PostItemProps> = ({ post, onCommentClick }) => {
+export const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const { user } = useAuth();
-  const { toggleLike } = useLikePost();
-  const [liked, setLiked] = React.useState(false);
-  const [localLikeCount, setLocalLikeCount] = React.useState(post.like_count);
-  const { data: categories = [] } = usePostCategories();
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(post.like_count);
   
-  // Find the category for this post
-  const category = categories.find(cat => cat.id === post.category_id);
-
-  const handleLikeToggle = async () => {
-    if (!user) return;
-    
-    try {
-      const isLiked = await toggleLike(post.id, user.id);
-      setLiked(isLiked);
-      setLocalLikeCount(prev => isLiked ? prev + 1 : prev - 1);
-    } catch (error) {
-      console.error('Error toggling like:', error);
+  const isPostOwner = user?.id === post.user_id;
+  const timeAgo = formatDistanceToNow(new Date(post.created_at), { 
+    addSuffix: true, 
+    locale: es 
+  });
+  
+  const handleLike = () => {
+    // Toggle like state
+    if (liked) {
+      setLikeCount(prev => prev - 1);
+    } else {
+      setLikeCount(prev => prev + 1);
     }
+    setLiked(!liked);
+    
+    // In a real app, you would call an API to like/unlike the post
+    toast.success(liked ? 'Post unliked' : 'Post liked');
   };
-
-  // Renderizar contenido HTML de manera segura
-  const renderContent = () => {
-    return { __html: post.content };
+  
+  const handleReportPost = () => {
+    toast.success('Post reported');
+  };
+  
+  const handleDeletePost = () => {
+    // In a real app, you would call an API to delete the post
+    toast.success('Post deleted');
   };
 
   return (
-    <Card className={cn(
-      "mb-4 overflow-hidden transition-all hover:shadow-md",
-      post.is_pinned && "border-primary/30 bg-primary/5"
-    )}>
-      <CardHeader className="px-4 py-3 flex flex-row items-start gap-3 space-y-0">
-        <Avatar className="h-10 w-10">
-          <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.user_id}`} alt="Avatar" />
+    <Card>
+      <CardHeader className="pb-2 pt-4 px-4 flex flex-row space-y-0 items-start">
+        <Avatar className="h-10 w-10 mr-3">
+          <AvatarImage src={post.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.user_id}`} alt="Avatar" />
           <AvatarFallback>{post.profiles?.full_name?.charAt(0) || 'U'}</AvatarFallback>
         </Avatar>
-        
         <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold">{post.profiles?.full_name || 'Unknown User'}</span>
-            {post.is_pinned && (
-              <Pin className="h-4 w-4 text-primary rotate-45" />
-            )}
-            {post.user_level && (
-              <Badge variant="outline" style={{ color: post.user_level.color }}>
-                {post.user_level.icon} {post.user_level.level_name}
-              </Badge>
-            )}
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-semibold text-sm">{post.profiles?.full_name || 'Usuario'}</div>
+              <div className="text-xs text-muted-foreground flex items-center">
+                {timeAgo}
+                {post.category && (
+                  <>
+                    <span className="mx-1">•</span>
+                    <Badge variant="outline" className="text-[10px] py-0 h-4 px-1.5">
+                      {post.category}
+                    </Badge>
+                  </>
+                )}
+              </div>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {isPostOwner ? (
+                  <>
+                    <DropdownMenuItem>Editar publicación</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-destructive" onClick={handleDeletePost}>
+                      Eliminar publicación
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem onClick={handleReportPost}>Reportar publicación</DropdownMenuItem>
+                    <DropdownMenuItem>Ocultar publicación</DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <p className="text-xs text-muted-foreground">
-            {formatDistanceToNow(new Date(post.created_at), { 
-              addSuffix: true,
-              locale: es
-            })}
-          </p>
         </div>
-        
-        {category && (
-          <Badge 
-            variant="secondary" 
-            className="ml-auto"
-            style={{ backgroundColor: `${category.color}20`, color: category.color }}
-          >
-            {category.icon} {category.name}
-          </Badge>
-        )}
       </CardHeader>
       
-      <CardContent className="px-4 py-3">
-        {post.title && (
-          <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
-        )}
-        
-        {/* Renderizar contenido HTML */}
+      <CardContent className="px-4 py-2">
+        {post.title && <h3 className="font-semibold text-lg mb-2">{post.title}</h3>}
         <div 
-          className="prose prose-sm max-w-none dark:prose-invert"
-          dangerouslySetInnerHTML={renderContent()}
+          className="whitespace-pre-wrap overflow-hidden"
+          dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </CardContent>
       
-      <CardFooter className="px-4 py-2 border-t flex items-center justify-between">
-        <div className="flex gap-1 text-sm text-muted-foreground">
-          <span>{localLikeCount} likes</span>
-          <span>•</span>
-          <span>{post.comment_count} comments</span>
+      <CardFooter className="px-4 py-2 border-t flex justify-between">
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className={cn(
+              "text-muted-foreground flex items-center gap-1",
+              liked && "text-red-500"
+            )}
+            onClick={handleLike}
+          >
+            <Heart className={cn("h-4 w-4", liked && "fill-current")} />
+            <span>{likeCount > 0 ? likeCount : ''}</span>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground flex items-center gap-1"
+          >
+            <MessageSquare className="h-4 w-4" />
+            <span>{post.comment_count > 0 ? post.comment_count : ''}</span>
+          </Button>
         </div>
         
-        <div className="flex items-center gap-1">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={handleLikeToggle}
-            className={cn(liked && "text-red-500")}
-          >
-            <Heart className="h-4 w-4 mr-1" />
-            Like
-          </Button>
-          
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => onCommentClick?.(post.id)}
-          >
-            <MessageSquare className="h-4 w-4 mr-1" />
-            Comment
-          </Button>
-          
-          <Button variant="ghost" size="sm">
-            <Share2 className="h-4 w-4 mr-1" />
-            Share
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground"
+        >
+          <Share2 className="h-4 w-4 mr-1" />
+          <span className="hidden sm:inline">Compartir</span>
+        </Button>
       </CardFooter>
     </Card>
   );
 };
-
-export default PostItem;

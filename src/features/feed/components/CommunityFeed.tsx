@@ -1,24 +1,42 @@
 
 import React, { useState } from 'react';
-import { EnhancedCreatePostForm } from './EnhancedCreatePostForm';
 import { PostItem } from './PostItem';
-import { FeedFilters } from './FeedFilters';
+import { CategoryFilters } from './CategoryFilters';
 import { useCommunityFeed } from '../hooks/useCommunityFeed';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { PenSquare } from 'lucide-react';
+import { PostEditorView } from './PostEditorView';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const CommunityFeed: React.FC = () => {
   const [currentFilter, setCurrentFilter] = useState<string | null>(null);
   const { data: posts = [], isLoading, error } = useCommunityFeed(currentFilter);
+  const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const handleFilterChange = (filter: string | null) => {
     setCurrentFilter(filter);
   };
 
   return (
-    <div className="space-y-6">
-      <EnhancedCreatePostForm />
+    <div className="space-y-6 max-w-3xl mx-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Community Feed</h2>
+        
+        {isAuthenticated && (
+          <Button 
+            onClick={() => setIsPostDialogOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <PenSquare className="h-4 w-4" />
+            <span>New Post</span>
+          </Button>
+        )}
+      </div>
       
-      <FeedFilters 
+      <CategoryFilters 
         selectedCategory={currentFilter} 
         onCategoryChange={handleFilterChange} 
       />
@@ -51,7 +69,7 @@ export const CommunityFeed: React.FC = () => {
       
       {!isLoading && !error && posts.length === 0 && (
         <div className="text-center p-6 border rounded-md bg-muted/30">
-          <p className="text-lg font-medium">No hay publicaciones aún</p>
+          <p className="text-xl font-medium">No hay publicaciones aún</p>
           <p className="text-muted-foreground">¡Sé el primero en publicar algo!</p>
         </div>
       )}
@@ -61,6 +79,12 @@ export const CommunityFeed: React.FC = () => {
           <PostItem key={post.id} post={post} />
         ))}
       </div>
+
+      <Dialog open={isPostDialogOpen} onOpenChange={setIsPostDialogOpen}>
+        <DialogContent className="sm:max-w-3xl p-0">
+          <PostEditorView onClose={() => setIsPostDialogOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

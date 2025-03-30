@@ -7,7 +7,7 @@ import { Leaderboard } from '@/features/feed/components/Leaderboard';
 import { UserLevelChart } from '@/features/feed/components/UserLevelChart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  MessageSquareText, 
+  MessageSquare, 
   Trophy, 
   Users,
   Bell,
@@ -15,6 +15,7 @@ import {
   FlaskConical
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { PostEditorView } from '@/features/feed/components/PostEditorView';
 
 const Community: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -37,7 +38,7 @@ const Community: React.FC = () => {
   
   return (
     <AppLayout>
-      <div className="container py-6 max-w-6xl">
+      <div className="container py-6 max-w-7xl">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Comunidad</h1>
@@ -60,7 +61,7 @@ const Community: React.FC = () => {
                   <span className="hidden md:inline">Feed</span>
                 </TabsTrigger>
                 <TabsTrigger value="popular" className="flex items-center gap-1">
-                  <MessageSquareText className="h-4 w-4" />
+                  <MessageSquare className="h-4 w-4" />
                   <span className="hidden md:inline">Popular</span>
                 </TabsTrigger>
                 <TabsTrigger value="leaderboard" className="flex items-center gap-1">
@@ -78,6 +79,11 @@ const Community: React.FC = () => {
               </TabsList>
               
               <TabsContent value="feed">
+                {isAuthenticated && activeTab === 'feed' && (
+                  <div className="mb-6 max-w-3xl mx-auto">
+                    <PostEditorView standalone={true} />
+                  </div>
+                )}
                 <CommunityFeed />
               </TabsContent>
               

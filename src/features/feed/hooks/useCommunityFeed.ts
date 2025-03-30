@@ -1,161 +1,186 @@
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Post, PostCategory } from '@/types/community';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
-export const useCommunityFeed = (categoryId?: string | null) => {
-  const { toast } = useToast();
-
+export const useCommunityFeed = (categoryId: string | null = null) => {
   return useQuery({
     queryKey: ['communityFeed', categoryId],
-    queryFn: async (): Promise<Post[]> => {
-      try {
-        let query = supabase
-          .from('posts')
-          .select(`
-            *,
-            profiles (full_name, role)
-          `)
-          .order('is_pinned', { ascending: false })
-          .order('created_at', { ascending: false });
+    queryFn: async () => {
+      let query = supabase
+        .from('posts')
+        .select(`
+          *,
+          profiles:user_id (
+            full_name,
+            role,
+            avatar_url
+          ),
+          user_level:user_id (
+            level_number,
+            level_name,
+            icon,
+            color
+          )
+        `)
+        .order('is_pinned', { ascending: false })
+        .order('created_at', { ascending: false });
 
-        if (categoryId) {
-          query = query.eq('category_id', categoryId);
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-          console.error('Error fetching community feed:', error);
-          throw error;
-        }
-
-        return data as Post[];
-      } catch (error: any) {
-        toast({
-          title: 'Error loading feed',
-          description: error.message || 'Could not load community feed',
-          variant: 'destructive',
-        });
-        return [];
+      if (categoryId) {
+        query = query.eq('category_id', categoryId);
       }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching posts:', error);
+        throw new Error('Error fetching posts');
+      }
+
+      return data as Post[];
     },
-    refetchInterval: 30000, // Auto refresh every 30 seconds
+    refetchOnWindowFocus: false,
   });
 };
 
 export const usePostCategories = () => {
-  const { toast } = useToast();
-
   return useQuery({
     queryKey: ['postCategories'],
-    queryFn: async (): Promise<PostCategory[]> => {
-      try {
-        const { data, error } = await supabase
-          .from('post_categories')
-          .select('*')
-          .order('name');
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('post_categories')
+        .select('*')
+        .order('name');
 
-        if (error) {
-          console.error('Error fetching post categories:', error);
-          throw error;
-        }
-
-        return data as PostCategory[];
-      } catch (error: any) {
-        toast({
-          title: 'Error loading categories',
-          description: error.message || 'Could not load post categories',
-          variant: 'destructive',
-        });
-        return [];
+      if (error) {
+        console.error('Error fetching categories:', error);
+        throw new Error('Error fetching categories');
       }
+
+      // Define default categories if none exist in the database
+      if (!data || data.length === 0) {
+        const defaultCategories: PostCategory[] = [
+          { id: '1', name: 'General', icon: '💬', color: '#3b82f6', created_at: new Date().toISOString() },
+          { id: '2', name: 'Debates', icon: '🔥', color: '#ef4444', created_at: new Date().toISOString() },
+          { id: '3', name: 'Empleos', icon: '💼', color: '#10b981', created_at: new Date().toISOString() },
+          { id: '4', name: 'Eventos', icon: '📅', color: '#f59e0b', created_at: new Date().toISOString() },
+          { id: '5', name: 'Preguntas', icon: '❓', color: '#8b5cf6', created_at: new Date().toISOString() },
+          { id: '6', name: 'Proyectos', icon: '🚀', color: '#ec4899', created_at: new Date().toISOString() },
+          { id: '7', name: 'Recursos', icon: '📚', color: '#14b8a6', created_at: new Date().toISOString() },
+          { id: '8', name: 'Tutoriales', icon: '📝', color: '#6366f1', created_at: new Date().toISOString() }
+        ];
+        return defaultCategories;
+      }
+
+      return data as PostCategory[];
     },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 30, // 30 minutes
   });
 };
 
+interface CreatePostParams {
+  user_id: string;
+  content: string;
+  title?: string;
+  category_id?: string | null;
+}
+
 export const useCreatePost = () => {
-  const { toast } = useToast();
+  const createPost = async (params: CreatePostParams) => {
+    const { data, error } = await supabase
+      .from('posts')
+      .insert([{
+        user_id: params.user_id,
+        content: params.content,
+        title: params.title || null,
+        category_id: params.category_id || null,
+      }])
+      .select();
 
-  const createPost = async (post: Partial<Post>) => {
-    try {
-      const { data, error } = await supabase
-        .from('posts')
-        .insert(post)
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error creating post:', error);
-        toast({
-          title: 'Error creating post',
-          description: error.message,
-          variant: 'destructive',
-        });
-        throw error;
-      }
-
-      toast({
-        title: 'Post created',
-        description: 'Your post has been published successfully',
-      });
-
-      return data;
-    } catch (error: any) {
-      toast({
-        title: 'Error creating post',
-        description: error.message || 'There was an error creating your post',
-        variant: 'destructive',
-      });
-      throw error;
+    if (error) {
+      console.error('Error creating post:', error);
+      throw new Error('Error creating post');
     }
+
+    // Si tenemos categoria, obtener los detalles de la categoría
+    if (params.category_id) {
+      const { data: categoryData, error: categoryError } = await supabase
+        .from('post_categories')
+        .select('name')
+        .eq('id', params.category_id)
+        .single();
+      
+      if (!categoryError && categoryData) {
+        return { ...data[0], category: categoryData.name };
+      }
+    }
+
+    return data[0];
   };
 
-  return { createPost };
+  return {
+    createPost,
+  };
 };
 
-export const useLikePost = () => {
-  const toggleLike = async (postId: string, userId: string) => {
-    try {
-      // First check if the user already liked this post
+interface PostLikeParams {
+  post_id: string;
+  user_id: string;
+}
+
+export const usePostLike = () => {
+  return useMutation({
+    mutationFn: async (params: PostLikeParams) => {
       const { data: existingLike, error: checkError } = await supabase
         .from('post_likes')
-        .select('id')
-        .eq('post_id', postId)
-        .eq('user_id', userId)
+        .select('*')
+        .eq('post_id', params.post_id)
+        .eq('user_id', params.user_id)
         .maybeSingle();
 
       if (checkError) {
-        throw checkError;
+        console.error('Error checking like:', checkError);
+        throw new Error('Error checking like');
       }
 
       if (existingLike) {
-        // Unlike the post
-        const { error: unlikeError } = await supabase
+        // Unlike
+        const { error: deleteError } = await supabase
           .from('post_likes')
           .delete()
           .eq('id', existingLike.id);
 
-        if (unlikeError) throw unlikeError;
-        return false; // Return false to indicate post was unliked
+        if (deleteError) {
+          console.error('Error unliking post:', deleteError);
+          throw new Error('Error unliking post');
+        }
+
+        return { liked: false };
       } else {
-        // Like the post
-        const { error: likeError } = await supabase
+        // Like
+        const { error: insertError } = await supabase
           .from('post_likes')
-          .insert({
-            post_id: postId,
-            user_id: userId,
-          });
+          .insert([{
+            post_id: params.post_id,
+            user_id: params.user_id,
+          }]);
 
-        if (likeError) throw likeError;
-        return true; // Return true to indicate post was liked
+        if (insertError) {
+          console.error('Error liking post:', insertError);
+          throw new Error('Error liking post');
+        }
+
+        return { liked: true };
       }
-    } catch (error) {
-      console.error('Error toggling like:', error);
-      throw error;
-    }
-  };
-
-  return { toggleLike };
+    },
+    onSuccess: (data) => {
+      toast.success(data.liked ? 'Post liked' : 'Post unliked');
+    },
+    onError: () => {
+      toast.error('Error updating like');
+    },
+  });
 };
