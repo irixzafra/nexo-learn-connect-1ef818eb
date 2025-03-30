@@ -24,12 +24,12 @@ export const useCoursePublicData = (courseId: string | undefined) => {
         .select(`
           *, 
           profiles(full_name),
-          modules!inner(
+          modules(
             *,
-            lessons!inner(
+            lessons(
               *
-            ) order by lesson_order asc
-          ) order by module_order asc
+            )
+          )
         `)
         .eq('is_published', true);
       
@@ -79,12 +79,12 @@ export const useCoursePublicDataBySlug = (slug: string | undefined) => {
         .select(`
           *,
           profiles(full_name),
-          modules!inner(
+          modules(
             *,
-            lessons!inner(
+            lessons(
               *
-            ) order by lesson_order asc
-          ) order by module_order asc
+            )
+          )
         `)
         .eq('slug', slug)
         .eq('is_published', true)
