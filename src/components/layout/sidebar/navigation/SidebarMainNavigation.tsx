@@ -18,7 +18,8 @@ import {
   Settings, 
   User, 
   Phone,
-  Search
+  Search,
+  Shield
 } from 'lucide-react';
 
 interface SidebarMainNavigationProps {
@@ -68,7 +69,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
     },
     ...(canSeeAdmin ? [{
       name: "Administración",
-      icon: Settings,
+      icon: Shield,
       path: "/admin/dashboard",
       tooltip: "Administración"
     }] : []),

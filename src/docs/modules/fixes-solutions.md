@@ -32,3 +32,16 @@
 - `src/layouts/AppLayout.tsx`
 
 **Estado:** ✅ Resuelto
+
+### FIX-NAV-ADMIN-ICON-01
+
+**Problema:** El menú lateral carecía de un icono específico para acceder al dashboard de administración de roles.
+
+**Causa Raíz:** El componente `SidebarMainNavigation` no incluía un icono dedicado para la sección de administración.
+
+**Solución:** Se agregó un nuevo ítem de navegación con el icono `Shield` de Lucide React que dirige al dashboard de administración (/admin/dashboard). Este ícono solo se muestra a usuarios con roles de administrador o instructor.
+
+**Archivos Modificados:**
+- `src/components/layout/sidebar/navigation/SidebarMainNavigation.tsx`
+
+**Estado:** ✅ Resuelto
