@@ -76,9 +76,10 @@ export const useAdminCourses = () => {
       
       try {
         // Get enrollment counts for all courses at once
+        // Fixed query to properly count enrollments by course_id
         const { data: enrollmentsData, error: enrollmentsError } = await supabase
           .from('enrollments')
-          .select('course_id, count', { count: 'exact' })
+          .select('course_id, count')
           .select('course_id')
           .count()
           .group('course_id');
