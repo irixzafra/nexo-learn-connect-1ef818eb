@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { UserGroupIcon } from '@radix-ui/react-icons';
+import { Users } from 'lucide-react'; // Replacing UserGroupIcon with Users from lucide-react
 import { Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useCourseDetail } from '@/features/admin/hooks/useCourseDetail';
+import useCourseDetail from '@/features/admin/hooks/useCourseDetail'; // Fixed import syntax
 
 interface StudentsCardProps {
   courseId: string;
@@ -13,7 +13,7 @@ interface StudentsCardProps {
 }
 
 const StudentsCard: React.FC<StudentsCardProps> = ({ courseId, enrolledCount }) => {
-  const { data: course } = useCourseDetail(courseId);
+  const { course } = useCourseDetail({ courseId }); // Updated function call to match the hook's expected parameters
   
   const formatDate = (dateString: string) => {
     try {
@@ -27,7 +27,7 @@ const StudentsCard: React.FC<StudentsCardProps> = ({ courseId, enrolledCount }) 
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-lg flex items-center gap-2">
-          <UserGroupIcon className="h-5 w-5" />
+          <Users className="h-5 w-5" /> {/* Changed from UserGroupIcon to Users */}
           Resumen de estudiantes
         </CardTitle>
       </CardHeader>
