@@ -96,7 +96,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ limit = 10, className 
                         user.level_color === 'black' && "text-gray-800 dark:text-gray-300"
                       )}
                     >
-                      {user.level_icon} {user.level}
+                      {user.level_icon} {user.level_name}
                     </Badge>
                   </div>
                   <span className="text-sm text-muted-foreground">
