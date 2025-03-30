@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Loader2 } from 'lucide-react';
+import { CheckCircle2, CheckCircle, Loader2 } from 'lucide-react';
 
 interface LessonProgressControlsProps {
   isCompleted: boolean;
@@ -9,37 +9,33 @@ interface LessonProgressControlsProps {
   onMarkCompleted: () => void;
 }
 
-export function LessonProgressControls({
-  isCompleted,
-  isUpdating,
-  onMarkCompleted,
-}: LessonProgressControlsProps) {
+export const LessonProgressControls: React.FC<LessonProgressControlsProps> = ({ 
+  isCompleted, 
+  isUpdating, 
+  onMarkCompleted 
+}) => {
   return (
-    <div className="flex justify-end">
+    <div className="flex items-center gap-2">
       {isCompleted ? (
-        <div className="flex items-center gap-2 text-green-600">
-          <CheckCircle className="h-5 w-5" />
-          <span className="font-medium">Lección completada</span>
-        </div>
+        <Button variant="outline" className="text-green-600" disabled>
+          <CheckCircle2 className="mr-2 h-4 w-4" />
+          Completado
+        </Button>
       ) : (
-        <Button 
-          onClick={onMarkCompleted} 
-          disabled={isUpdating}
-          className="flex items-center gap-2"
-        >
+        <Button onClick={onMarkCompleted} disabled={isUpdating}>
           {isUpdating ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Guardando...</span>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Guardando...
             </>
           ) : (
             <>
-              <CheckCircle className="h-4 w-4" />
-              <span>Marcar como completada</span>
+              <CheckCircle className="mr-2 h-4 w-4" />
+              Marcar como completado
             </>
           )}
         </Button>
       )}
     </div>
   );
-}
+};
