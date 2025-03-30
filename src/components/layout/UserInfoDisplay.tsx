@@ -64,7 +64,7 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuContent align="end" className="w-56 bg-popover">
             <DropdownMenuLabel>{profile?.full_name || 'Usuario'}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/profile')}>
@@ -97,7 +97,7 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
               </DropdownMenuItem>
             )}
             
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Cerrar sesión</span>
             </DropdownMenuItem>
