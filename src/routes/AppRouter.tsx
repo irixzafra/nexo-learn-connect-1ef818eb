@@ -20,6 +20,7 @@ const PublicRoutes = lazy(() => import('./PublicRoutes'));
 const UserRoutes = lazy(() => import('./UserRoutes'));
 const InstructorRoutes = lazy(() => import('./InstructorRoutes'));
 const AdminRoutes = lazy(() => import('./AdminRoutes'));
+const PaymentRoutes = lazy(() => import('./PaymentRoutes'));
 const CoursesCatalog = lazy(() => import('@/pages/CoursesCatalog'));
 const CourseDetail = lazy(() => import('@/pages/CourseDetail'));
 const CourseLanding = lazy(() => import('@/pages/CourseLanding'));
@@ -29,6 +30,8 @@ const Notifications = lazy(() => import('@/pages/Notifications'));
 const Messages = lazy(() => import('@/pages/placeholder/Messages'));
 const Billing = lazy(() => import('@/pages/placeholder/Billing'));
 const Community = lazy(() => import('@/pages/Community'));
+const PaymentSuccess = lazy(() => import('@/pages/payment/PaymentSuccess'));
+const PaymentCancel = lazy(() => import('@/pages/payment/PaymentCancel'));
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -97,9 +100,29 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         } />
         
-        {/* Ruta directa a facturación para pruebas */}
-        <Route path="/admin/billing" element={
-          <ProtectedRoute requiredRole="admin">
+        {/* Payment routes */}
+        <Route path="/payment/*" element={
+          <Suspense fallback={<LoadingFallback />}>
+            <PaymentRoutes />
+          </Suspense>
+        } />
+        
+        {/* Success and cancel pages for payments */}
+        <Route path="/payment/success" element={
+          <Suspense fallback={<LoadingFallback />}>
+            <PaymentSuccess />
+          </Suspense>
+        } />
+        
+        <Route path="/payment/cancel" element={
+          <Suspense fallback={<LoadingFallback />}>
+            <PaymentCancel />
+          </Suspense>
+        } />
+        
+        {/* Billing page */}
+        <Route path="/billing" element={
+          <ProtectedRoute>
             <AppLayout>
               <Suspense fallback={<LoadingFallback />}>
                 <Billing />
