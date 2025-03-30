@@ -12,6 +12,13 @@ import {
   Bell,
   Route
 } from 'lucide-react';
+import { 
+  SidebarMenu, 
+  SidebarMenuItem, 
+  SidebarMenuButton,
+  useSidebar
+} from '@/components/ui/sidebar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Main navigation categories
 const adminCategories = [
@@ -68,31 +75,57 @@ const adminCategories = [
 const AdminNavigation: React.FC = () => {
   const location = useLocation();
   const path = location.pathname;
-  
-  const isActive = (route: string) => {
-    return path.includes(route);
-  };
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
   
   return (
-    <div className="w-full border-b mb-0 sticky top-0 bg-background z-10 shadow-sm">
-      <div className="container mx-auto py-2">
-        {/* Main Categories Navigation */}
-        <div className="flex flex-wrap gap-1 justify-center md:justify-start">
-          {adminCategories.map((item) => (
-            <Link 
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
-                "hover:bg-accent text-sm font-medium",
-                path.includes(item.id) ? "bg-secondary" : ""
-              )}
-            >
-              <item.icon className="h-4 w-4 md:mr-1" />
-              <span className="hidden sm:inline">{item.label}</span>
-            </Link>
-          ))}
+    <div className="w-full py-4">
+      <div className="container mx-auto">
+        {/* Logo o título al inicio */}
+        <div className="mb-6 px-2 flex justify-center">
+          {isCollapsed ? (
+            <LayoutDashboard className="h-6 w-6 text-primary" />
+          ) : (
+            <h3 className="text-lg font-semibold">Admin Panel</h3>
+          )}
         </div>
+        
+        {/* Menú de navegación principal */}
+        <SidebarMenu>
+          {adminCategories.map((item) => (
+            <SidebarMenuItem key={item.path}>
+              {isCollapsed ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <SidebarMenuButton asChild className={cn(
+                      "w-10 h-10 flex justify-center",
+                      path.includes(item.id) ? "bg-secondary" : ""
+                    )}>
+                      <Link to={item.path}>
+                        <item.icon className="h-5 w-5" />
+                        <span className="sr-only">{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    {item.label}
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <SidebarMenuButton asChild className={cn(
+                  "flex items-center gap-3 px-3 py-2 w-full",
+                  "hover:bg-accent rounded-md transition-colors",
+                  path.includes(item.id) ? "bg-secondary" : ""
+                )}>
+                  <Link to={item.path} className="flex items-center gap-3 w-full">
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              )}
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
       </div>
     </div>
   );
