@@ -75,17 +75,24 @@ export const useAdminCourses = () => {
       const enrollmentCounts: Record<string, number> = {};
       
       try {
-        // Fixed query to properly count enrollments by course_id
+        // Corrected query - using count() as a function rather than in select
         const { data: enrollmentsData, error: enrollmentsError } = await supabase
           .from('enrollments')
-          .select('course_id, count(*)')
-          .group('course_id');
+          .select('course_id')
+          .order('course_id')
+          .is('user_id', 'not.null');
         
         if (!enrollmentsError && enrollmentsData) {
           console.log("Enrollment data:", enrollmentsData);
-          enrollmentsData.forEach((item: any) => {
-            enrollmentCounts[item.course_id] = parseInt(item.count);
+          
+          // Count enrollments per course manually (client-side)
+          const counts: Record<string, number> = {};
+          enrollmentsData.forEach(item => {
+            counts[item.course_id] = (counts[item.course_id] || 0) + 1;
           });
+          
+          enrollmentCounts = counts;
+          console.log("Enrollment counts:", enrollmentCounts);
         }
       } catch (err) {
         console.error('Error al obtener conteo de inscripciones:', err);
