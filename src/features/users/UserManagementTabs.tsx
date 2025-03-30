@@ -51,30 +51,30 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
       className="w-full"
     >
       <div className="flex justify-between items-center mb-6">
-        <TabsList className="bg-muted/60 p-1 rounded-lg">
+        <TabsList className="w-full justify-start bg-muted/50 p-1 rounded-lg">
           <TabsTrigger value="users-list" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+            <Users className="h-5 w-5" />
             <span>Usuarios</span>
           </TabsTrigger>
           
           <TabsTrigger value="roles" className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4" />
+            <ShieldCheck className="h-5 w-5" />
             <span>Roles</span>
           </TabsTrigger>
           
           <TabsTrigger value="analytics" className="flex items-center gap-2">
-            <BarChart className="h-4 w-4" />
+            <BarChart className="h-5 w-5" />
             <span>Analíticas</span>
           </TabsTrigger>
           
           <TabsTrigger value="add-user" className="flex items-center gap-2">
-            <UserPlus className="h-4 w-4" />
+            <UserPlus className="h-5 w-5" />
             <span>Añadir</span>
           </TabsTrigger>
         </TabsList>
 
-        <div className="hidden md:flex items-center gap-2">
-          <Button variant="outline" size="sm" className="ml-auto">
+        <div className="hidden md:flex items-center gap-2 ml-4">
+          <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
             Exportar CSV
           </Button>

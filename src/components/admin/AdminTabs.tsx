@@ -116,8 +116,8 @@ const AdminTabs: React.FC<AdminTabsProps> = ({
     >
       <TabsList 
         className={cn(
-          "bg-muted p-1 rounded-lg",
-          orientation === 'vertical' ? "flex-col" : "",
+          "w-full justify-start bg-muted/50 p-1 rounded-lg overflow-x-auto",
+          orientation === 'vertical' ? "flex-col" : "flex gap-1",
           "h-auto"
         )}
       >
