@@ -14,6 +14,7 @@ import {
   SidebarTrigger, 
   SidebarContent,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import { UserMenu } from "@/components/layout/header/UserMenu";
 import { NexoLogo } from "@/components/ui/logo";
 import { NotificationIndicator } from "@/components/notifications/NotificationIndicator";
