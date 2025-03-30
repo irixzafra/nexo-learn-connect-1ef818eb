@@ -1,119 +1,125 @@
 
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { toast } from "@/hooks/use-toast";
-import { Course, Module, Lesson } from "@/types/course";
+import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import { Course } from '@/types/course';
 
-export const useCourseDetails = (courseId?: string, slug?: string) => {
-  const { data: course, isLoading: isLoadingCourse, error: courseError } = useQuery({
-    queryKey: ["course", courseId, slug],
+interface Module {
+  id: string;
+  title: string;
+  course_id: string;
+  module_order: number;
+  lessons: Lesson[];
+}
+
+interface Lesson {
+  id: string;
+  title: string;
+  module_id: string;
+  course_id: string;
+  content_type: 'text' | 'video';
+  content_text?: any;
+  content_video_url?: string;
+  lesson_order: number;
+  is_previewable: boolean;
+}
+
+export function useCourseDetails(courseId?: string) {
+  const [course, setCourse] = useState<Course | null>(null);
+  const [modulesWithLessons, setModulesWithLessons] = useState<Module[]>([]);
+
+  // Query course details
+  const { data: courseData, isLoading: isLoadingCourse } = useQuery({
+    queryKey: ['course', courseId],
     queryFn: async () => {
-      try {
-        if (!courseId && !slug) return null;
+      if (!courseId) return null;
 
-        let query = supabase
-          .from("courses")
-          .select(`
-            *,
-            instructor:profiles(id, full_name)
-          `);
+      const { data, error } = await supabase
+        .from('courses')
+        .select('*')
+        .eq('id', courseId)
+        .single();
 
-        if (courseId) {
-          query = query.eq("id", courseId);
-        } else if (slug) {
-          query = query.eq("slug", slug);
-        }
-
-        const { data, error } = await query.single();
-
-        if (error) throw error;
-
-        return data as Course;
-      } catch (error: any) {
-        console.error("Error fetching course:", error);
-        toast({
-          title: "Error",
-          description: "No se pudo cargar el curso",
-          variant: "destructive",
-        });
-        return null;
+      if (error) {
+        console.error('Error fetching course:', error);
+        throw error;
       }
+
+      return data as Course;
     },
-    enabled: !!courseId || !!slug,
-    retry: 1,
-    retryDelay: 1000,
+    enabled: !!courseId,
   });
 
-  const { data: modules = [], isLoading: isLoadingModules, error: modulesError } = useQuery({
-    queryKey: ["courseModules", course?.id],
+  // Query modules
+  const { data: modules = [], isLoading: isLoadingModules } = useQuery({
+    queryKey: ['courseModules', courseId],
     queryFn: async () => {
-      try {
-        if (!course?.id) return [];
+      if (!courseId) return [];
 
-        const { data, error } = await supabase
-          .from("modules")
-          .select("*")
-          .eq("course_id", course.id)
-          .order("module_order", { ascending: true });
+      const { data, error } = await supabase
+        .from('modules')
+        .select('*')
+        .eq('course_id', courseId)
+        .order('module_order', { ascending: true });
 
-        if (error) throw error;
-
-        return data as Module[];
-      } catch (error: any) {
-        console.error("Error fetching modules:", error);
+      if (error) {
+        console.error('Error fetching modules:', error);
         return [];
       }
+
+      return data as Module[];
     },
-    enabled: !!course?.id,
-    retry: 1,
-    retryDelay: 1000,
+    enabled: !!courseId,
   });
 
-  const { data: lessons = [], isLoading: isLoadingLessons, error: lessonsError } = useQuery({
-    queryKey: ["courseLessons", course?.id],
+  // Query lessons
+  const { data: lessons = [], isLoading: isLoadingLessons } = useQuery({
+    queryKey: ['courseLessons', courseId],
     queryFn: async () => {
-      try {
-        if (!course?.id) return [];
+      if (!courseId) return [];
 
-        const { data, error } = await supabase
-          .from("lessons")
-          .select("*")
-          .eq("course_id", course.id)
-          .order("lesson_order", { ascending: true });
+      const { data, error } = await supabase
+        .from('lessons')
+        .select('*')
+        .eq('course_id', courseId)
+        .order('lesson_order', { ascending: true });
 
-        if (error) throw error;
-
-        return data as Lesson[];
-      } catch (error: any) {
-        console.error("Error fetching lessons:", error);
+      if (error) {
+        console.error('Error fetching lessons:', error);
         return [];
       }
+
+      return data as Lesson[];
     },
-    enabled: !!course?.id,
-    retry: 1,
-    retryDelay: 1000,
+    enabled: !!courseId,
   });
 
-  const groupLessonsByModule = () => {
-    return modules.map((module) => ({
-      ...module,
-      lessons: lessons.filter((lesson) => lesson.module_id === module.id),
-    }));
-  };
+  // Combine modules and lessons
+  useEffect(() => {
+    if (modules.length && lessons.length) {
+      const modulesWithLessonsData = modules.map(module => {
+        const moduleLessons = lessons.filter(lesson => lesson.module_id === module.id);
+        return {
+          ...module,
+          lessons: moduleLessons,
+        };
+      });
 
-  const modulesWithLessons = modules.length > 0 && lessons.length > 0 
-    ? groupLessonsByModule() 
-    : [];
+      setModulesWithLessons(modulesWithLessonsData);
+    }
+  }, [modules, lessons]);
 
-  const isLoading = isLoadingCourse || isLoadingModules || isLoadingLessons;
-  const error = courseError || modulesError || lessonsError;
+  useEffect(() => {
+    if (courseData) {
+      setCourse(courseData);
+    }
+  }, [courseData]);
 
-  return { 
-    course, 
-    modules, 
-    lessons, 
+  return {
+    course,
+    modules,
+    lessons,
     modulesWithLessons,
-    isLoading,
-    error
+    isLoading: isLoadingCourse || isLoadingModules || isLoadingLessons,
   };
-};
+}

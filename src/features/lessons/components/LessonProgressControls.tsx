@@ -1,57 +1,45 @@
 
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { CheckCircle, Loader2 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { CheckCircle, Loader2 } from 'lucide-react';
 
 interface LessonProgressControlsProps {
   isCompleted: boolean;
   isUpdating: boolean;
-  onMarkCompleted: () => Promise<void>;
-  className?: string;
+  onMarkCompleted: () => void;
 }
 
-export const LessonProgressControls: React.FC<LessonProgressControlsProps> = ({
+export function LessonProgressControls({
   isCompleted,
   isUpdating,
   onMarkCompleted,
-  className,
-}) => {
-  const handleMarkCompleted = async () => {
-    try {
-      await onMarkCompleted();
-      toast({
-        title: "Lección completada",
-        description: "Tu progreso ha sido guardado",
-      });
-    } catch (error) {
-      console.error("Error marking lesson as completed:", error);
-    }
-  };
-
+}: LessonProgressControlsProps) {
   return (
-    <div className={className}>
+    <div className="flex justify-end">
       {isCompleted ? (
-        <Button variant="outline" disabled className="w-full sm:w-auto">
-          <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-          Lección completada
-        </Button>
+        <div className="flex items-center gap-2 text-green-600">
+          <CheckCircle className="h-5 w-5" />
+          <span className="font-medium">Lección completada</span>
+        </div>
       ) : (
         <Button 
-          onClick={handleMarkCompleted} 
-          disabled={isUpdating} 
-          className="w-full sm:w-auto"
+          onClick={onMarkCompleted} 
+          disabled={isUpdating}
+          className="flex items-center gap-2"
         >
           {isUpdating ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Guardando...
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Guardando...</span>
             </>
           ) : (
-            "Marcar como completada"
+            <>
+              <CheckCircle className="h-4 w-4" />
+              <span>Marcar como completada</span>
+            </>
           )}
         </Button>
       )}
     </div>
   );
-};
+}

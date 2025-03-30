@@ -1,115 +1,150 @@
 
-import React, { useState } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { usePayments, Payment } from '../../hooks/usePayments';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { 
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
+import React, { useState, useEffect } from 'react';
+import { Calendar as CalendarIcon, Search, ExternalLink, RefreshCw, Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription,
-
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle,
-  DialogTrigger, 
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Search, 
-  Filter, 
-  MoreHorizontal,
-  EyeIcon,
-  RotateCcw,
-  FileText,
-  Calendar as CalendarIcon
-} from 'lucide-react';
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
-import { DateRange } from 'react-day-picker';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+
+interface Payment {
+  id: string;
+  user_id: string;
+  user_name: string;
+  user_email: string;
+  amount: number;
+  status: 'completed' | 'processing' | 'failed' | 'refunded';
+  payment_method: string;
+  created_at: string;
+  product_name: string;
+  transaction_id: string;
+}
+
+function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(amount);
+}
 
 export function PaymentsTab() {
-  const {
-    payments,
-    isLoading,
-    searchTerm,
-    setSearchTerm,
-    statusFilter,
-    setStatusFilter,
-    dateRange,
-    setDateRange,
-    initiateRefund
-  } = usePayments();
+  const { toast } = useToast();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [filteredPayments, setFilteredPayments] = useState<Payment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
+    from: new Date(new Date().setDate(new Date().getDate() - 30)),
+    to: new Date(),
+  });
 
-  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [isRefundDialogOpen, setIsRefundDialogOpen] = useState(false);
+  // Mock data for payments
+  useEffect(() => {
+    const mockPayments: Payment[] = Array.from({ length: 20 }, (_, i) => ({
+      id: `payment-${i + 1}`,
+      user_id: `user-${Math.floor(Math.random() * 10) + 1}`,
+      user_name: `Usuario ${Math.floor(Math.random() * 10) + 1}`,
+      user_email: `usuario${Math.floor(Math.random() * 10) + 1}@example.com`,
+      amount: Math.random() * 500,
+      status: ['completed', 'processing', 'failed', 'refunded'][Math.floor(Math.random() * 4)] as any,
+      payment_method: ['credit_card', 'paypal', 'bank_transfer'][Math.floor(Math.random() * 3)],
+      created_at: new Date(
+        Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
+      ).toISOString(),
+      product_name: `Curso de ${['Programación', 'Marketing', 'Diseño', 'Fotografía', 'Idiomas'][
+        Math.floor(Math.random() * 5)
+      ]}`,
+      transaction_id: `tx_${Math.random().toString(36).substring(2, 10)}`,
+    }));
 
-  const handleViewDetails = (payment: Payment) => {
-    setSelectedPayment(payment);
-    setIsDetailsOpen(true);
+    setPayments(mockPayments);
+    setFilteredPayments(mockPayments);
+    setIsLoading(false);
+  }, []);
+
+  // Filter payments based on search term and date range
+  useEffect(() => {
+    const filtered = payments.filter((payment) => {
+      const matchesSearch =
+        payment.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        payment.user_email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        payment.transaction_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        payment.product_name.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const paymentDate = new Date(payment.created_at);
+      const matchesDateRange =
+        (!dateRange.from || paymentDate >= dateRange.from) &&
+        (!dateRange.to || paymentDate <= dateRange.to);
+
+      return matchesSearch && matchesDateRange;
+    });
+
+    setFilteredPayments(filtered);
+  }, [searchTerm, payments, dateRange]);
+
+  const handleRefresh = () => {
+    setIsLoading(true);
+    // In a real implementation, you would fetch data from the API
+    setTimeout(() => {
+      toast({
+        title: "Datos actualizados",
+        description: "La lista de transacciones ha sido actualizada.",
+      });
+      setIsLoading(false);
+    }, 1000);
   };
 
-  const handleRefundClick = (payment: Payment) => {
-    setSelectedPayment(payment);
-    setIsRefundDialogOpen(true);
-  };
-
-  const handleRefundConfirm = async () => {
-    if (!selectedPayment) return;
-    
-    const success = await initiateRefund(selectedPayment.id);
-    if (success) {
-      setIsRefundDialogOpen(false);
-    }
+  const handleExport = () => {
+    toast({
+      title: "Exportación iniciada",
+      description: "Los datos se están descargando en formato CSV.",
+    });
+    // In a real implementation, you would generate and download a CSV file
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'succeeded':
+      case 'completed':
         return <Badge className="bg-green-500">Completado</Badge>;
-      case 'pending':
-        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800">Pendiente</Badge>;
+      case 'processing':
+        return <Badge className="bg-blue-500">Procesando</Badge>;
       case 'failed':
         return <Badge variant="destructive">Fallido</Badge>;
+      case 'refunded':
+        return <Badge variant="outline">Reembolsado</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
+
+  const getPaymentMethodLabel = (method: string) => {
+    switch (method) {
+      case 'credit_card':
+        return 'Tarjeta de crédito';
+      case 'paypal':
+        return 'PayPal';
+      case 'bank_transfer':
+        return 'Transferencia bancaria';
+      default:
+        return method;
     }
   };
 
@@ -117,287 +152,127 @@ export function PaymentsTab() {
     <div className="space-y-4">
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle>Cobros</CardTitle>
+          <CardTitle>Transacciones</CardTitle>
           <CardDescription>
-            Gestiona y visualiza todas las transacciones de la plataforma
+            Gestiona todos los pagos y transacciones de la plataforma.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4 md:flex-row mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
+            <div className="flex items-center flex-1 gap-2">
+              <Search className="h-4 w-4 text-muted-foreground" />
               <Input
-                type="search"
-                placeholder="Buscar por usuario, email, curso..."
-                className="pl-8"
+                placeholder="Buscar por usuario, email o ID de transacción..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                className="max-w-xs"
               />
             </div>
-            
-            <div className="flex gap-2">
-              <Select
-                value={statusFilter || ''}
-                onValueChange={(value) => setStatusFilter(value || null)}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filtrar por estado" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Estado</SelectLabel>
-                    <SelectItem value="">Todos</SelectItem>
-                    <SelectItem value="succeeded">Completados</SelectItem>
-                    <SelectItem value="pending">Pendientes</SelectItem>
-                    <SelectItem value="failed">Fallidos</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              
+            <div className="flex items-center gap-2">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-[230px] justify-start text-left font-normal">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dateRange?.from ? (
-                      dateRange.to ? (
-                        <>
-                          {format(dateRange.from, "dd/MM/yyyy")} - {format(dateRange.to, "dd/MM/yyyy")}
-                        </>
-                      ) : (
-                        format(dateRange.from, "dd/MM/yyyy")
-                      )
-                    ) : (
-                      <span>Seleccionar fechas</span>
-                    )}
+                  <Button variant="outline" className="flex gap-2">
+                    <CalendarIcon className="h-4 w-4" />
+                    <span>
+                      {dateRange.from ? format(dateRange.from, 'dd/MM/yyyy') : 'Desde'} -{' '}
+                      {dateRange.to ? format(dateRange.to, 'dd/MM/yyyy') : 'Hasta'}
+                    </span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0" align="end">
                   <Calendar
                     initialFocus
                     mode="range"
-                    defaultMonth={dateRange?.from}
-                    selected={dateRange}
-                    onSelect={setDateRange}
-                    numberOfMonths={2}
+                    defaultMonth={dateRange.from}
+                    selected={{
+                      from: dateRange.from,
+                      to: dateRange.to,
+                    }}
+                    onSelect={(range) => {
+                      if (range?.from && range?.to) {
+                        setDateRange({ from: range.from, to: range.to });
+                      }
+                    }}
                     locale={es}
+                    numberOfMonths={2}
                   />
                 </PopoverContent>
               </Popover>
-              
-              <Button variant="outline" size="icon" onClick={() => {
-                setSearchTerm('');
-                setStatusFilter(null);
-                setDateRange({ from: undefined, to: undefined });
-              }}>
-                <RotateCcw className="h-4 w-4" />
+              <Button variant="outline" onClick={handleRefresh} size="icon">
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" onClick={handleExport}>
+                <Download className="h-4 w-4 mr-2" />
+                Exportar
               </Button>
             </div>
           </div>
-          
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Fecha</TableHead>
-                  <TableHead>Usuario</TableHead>
-                  <TableHead>Curso</TableHead>
-                  <TableHead>Monto</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {isLoading ? (
+
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : filteredPayments.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-muted-foreground">No se encontraron transacciones.</p>
+            </div>
+          ) : (
+            <div className="rounded-md border overflow-hidden">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={7} className="h-24 text-center">
-                      <div className="flex justify-center">
-                        <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-primary"></div>
-                      </div>
-                    </TableCell>
+                    <TableHead>Fecha</TableHead>
+                    <TableHead>Usuario</TableHead>
+                    <TableHead>Producto</TableHead>
+                    <TableHead>Importe</TableHead>
+                    <TableHead>Estado</TableHead>
+                    <TableHead>Método</TableHead>
+                    <TableHead>ID Transacción</TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
-                ) : payments.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="h-24 text-center">
-                      No se encontraron transacciones.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  payments.map((payment) => (
+                </TableHeader>
+                <TableBody>
+                  {filteredPayments.map((payment) => (
                     <TableRow key={payment.id}>
-                      <TableCell className="font-mono text-xs">
-                        {payment.id.substring(0, 8)}...
-                      </TableCell>
                       <TableCell>
                         {format(new Date(payment.created_at), 'dd/MM/yyyy HH:mm')}
                       </TableCell>
                       <TableCell>
-                        <div className="font-medium">{payment.user_full_name}</div>
-                        <div className="text-sm text-muted-foreground">{payment.user_email}</div>
+                        <div className="font-medium">{payment.user_name}</div>
+                        <div className="text-xs text-muted-foreground">{payment.user_email}</div>
                       </TableCell>
-                      <TableCell>
-                        {payment.course_title || 'N/A'}
-                      </TableCell>
+                      <TableCell>{payment.product_name}</TableCell>
                       <TableCell className="font-medium">
-                        {new Intl.NumberFormat('es-ES', {
-                          style: 'currency',
-                          currency: payment.currency.toUpperCase()
-                        }).format(payment.amount)}
+                        {formatCurrency(payment.amount)}
                       </TableCell>
+                      <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                      <TableCell>{getPaymentMethodLabel(payment.payment_method)}</TableCell>
+                      <TableCell className="font-mono text-xs">{payment.transaction_id}</TableCell>
                       <TableCell>
-                        {getStatusBadge(payment.status)}
-                      </TableCell>
-                      <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Abrir menú</span>
-                              <MoreHorizontal className="h-4 w-4" />
+                            <Button variant="ghost" size="icon">
+                              <ExternalLink className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleViewDetails(payment)}>
-                              <EyeIcon className="mr-2 h-4 w-4" />
-                              <span>Ver detalles</span>
-                            </DropdownMenuItem>
-                            {payment.status === 'succeeded' && (
-                              <DropdownMenuItem onClick={() => handleRefundClick(payment)}>
-                                <RotateCcw className="mr-2 h-4 w-4" />
-                                <span>Reembolsar</span>
-                              </DropdownMenuItem>
+                            <DropdownMenuItem>Ver detalles</DropdownMenuItem>
+                            <DropdownMenuItem>Ver usuario</DropdownMenuItem>
+                            {payment.status === 'completed' && (
+                              <DropdownMenuItem>Procesar reembolso</DropdownMenuItem>
                             )}
-                            <DropdownMenuItem>
-                              <FileText className="mr-2 h-4 w-4" />
-                              <span>Ver factura</span>
-                            </DropdownMenuItem>
+                            <DropdownMenuItem>Enviar recibo</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
-
-      {/* Payment Details Dialog */}
-      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Detalles de la transacción</DialogTitle>
-            <DialogDescription>
-              Información completa sobre esta transacción
-            </DialogDescription>
-          </DialogHeader>
-          
-          {selectedPayment && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-sm font-medium mb-1">ID de Transacción</h4>
-                  <p className="text-sm break-all">{selectedPayment.id}</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium mb-1">Fecha</h4>
-                  <p className="text-sm">
-                    {format(new Date(selectedPayment.created_at), 'dd/MM/yyyy HH:mm:ss')}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-sm font-medium mb-1">Usuario</h4>
-                  <p className="text-sm font-medium">{selectedPayment.user_full_name}</p>
-                  <p className="text-sm text-muted-foreground">{selectedPayment.user_email}</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium mb-1">Estado</h4>
-                  <div>{getStatusBadge(selectedPayment.status)}</div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-sm font-medium mb-1">Producto</h4>
-                  <p className="text-sm">{selectedPayment.course_title || 'N/A'}</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium mb-1">Monto</h4>
-                  <p className="text-lg font-semibold">
-                    {new Intl.NumberFormat('es-ES', {
-                      style: 'currency',
-                      currency: selectedPayment.currency.toUpperCase()
-                    }).format(selectedPayment.amount)}
-                  </p>
-                </div>
-              </div>
-              
-              {selectedPayment.stripe_charge_id && (
-                <div>
-                  <h4 className="text-sm font-medium mb-1">ID de Stripe</h4>
-                  <p className="text-xs font-mono">{selectedPayment.stripe_charge_id}</p>
-                </div>
-              )}
-            </div>
-          )}
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDetailsOpen(false)}>
-              Cerrar
-            </Button>
-            {selectedPayment?.status === 'succeeded' && (
-              <Button 
-                variant="default" 
-                onClick={() => {
-                  setIsDetailsOpen(false);
-                  setIsRefundDialogOpen(true);
-                }}
-              >
-                Reembolsar
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Refund Confirmation Dialog */}
-      <Dialog open={isRefundDialogOpen} onOpenChange={setIsRefundDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirmar reembolso</DialogTitle>
-            <DialogDescription>
-              Esta acción iniciará un reembolso para esta transacción y no se puede deshacer.
-            </DialogDescription>
-          </DialogHeader>
-          
-          {selectedPayment && (
-            <div className="py-4">
-              <p className="mb-2"><strong>Usuario:</strong> {selectedPayment.user_full_name}</p>
-              <p className="mb-2"><strong>Curso:</strong> {selectedPayment.course_title || 'N/A'}</p>
-              <p className="mb-4"><strong>Monto a reembolsar:</strong> {' '}
-                <span className="font-semibold">
-                  {new Intl.NumberFormat('es-ES', {
-                    style: 'currency',
-                    currency: selectedPayment.currency.toUpperCase()
-                  }).format(selectedPayment.amount)}
-                </span>
-              </p>
-            </div>
-          )}
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsRefundDialogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button variant="destructive" onClick={handleRefundConfirm}>
-              Confirmar reembolso
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

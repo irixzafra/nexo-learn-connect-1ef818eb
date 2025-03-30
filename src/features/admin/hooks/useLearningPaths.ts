@@ -3,278 +3,287 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
-import { Course } from '@/types/courses';
-
-export interface LearningPath {
-  id: string;
-  title: string;
-  description?: string;
-  created_at: string;
-  courses?: Course[];
-}
-
-export interface LearningPathCourse {
-  id: string;
-  learning_path_id: string;
-  course_id: string;
-  order: number;
-  course?: Course;
-}
+import { LearningPath } from '@/types/course';
 
 export function useLearningPaths() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const { toast } = useToast();
   const queryClient = useQueryClient();
-
-  const { data: learningPaths, isLoading, error } = useQuery({
+  const { toast } = useToast();
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Fetch learning paths
+  const { data: learningPaths = [], isLoading, error } = useQuery({
     queryKey: ['learningPaths'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('learning_paths')
-        .select('*')
-        .order('title');
+        .select(`
+          *,
+          courses:learning_path_courses(
+            id,
+            course_id,
+            order,
+            is_required,
+            course:courses(*)
+          )
+        `)
+        .order('created_at', { ascending: false });
       
-      if (error) throw new Error(error.message);
+      if (error) {
+        console.error('Error fetching learning paths:', error);
+        throw new Error('Failed to fetch learning paths');
+      }
+      
       return data as LearningPath[];
-    }
+    },
   });
-
-  const getLearningPathWithCourses = async (pathId: string) => {
-    // First, get the learning path
-    const { data: path, error: pathError } = await supabase
-      .from('learning_paths')
-      .select('*')
-      .eq('id', pathId)
-      .single();
-    
-    if (pathError) throw new Error(pathError.message);
-    
-    // Then, get the courses associated with this path
-    const { data: pathCourses, error: coursesError } = await supabase
-      .from('learning_path_courses')
-      .select('*, course:courses(*)')
-      .eq('learning_path_id', pathId)
-      .order('order');
-    
-    if (coursesError) throw new Error(coursesError.message);
-    
-    // Combine both data sets
-    const pathWithCourses = {
-      ...path,
-      courses: pathCourses.map(pc => pc.course)
-    };
-    
-    return pathWithCourses as LearningPath;
-  };
-
-  const { data: courses } = useQuery({
-    queryKey: ['courses'],
+  
+  // Fetch courses
+  const { data: courses = [] } = useQuery({
+    queryKey: ['allCourses'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('courses')
         .select('*')
-        .order('title');
+        .order('title', { ascending: true });
       
-      if (error) throw new Error(error.message);
-      return data as Course[];
-    }
+      if (error) {
+        console.error('Error fetching courses:', error);
+        throw new Error('Failed to fetch courses');
+      }
+      
+      return data;
+    },
   });
-
-  const createLearningPath = useMutation({
-    mutationFn: async (newLearningPath: Omit<LearningPath, 'id' | 'created_at'>) => {
+  
+  // Create learning path mutation
+  const createLearningPathMutation = useMutation({
+    mutationFn: async (path: Omit<LearningPath, 'id' | 'created_at'>) => {
       const { data, error } = await supabase
         .from('learning_paths')
-        .insert(newLearningPath)
+        .insert(path)
         .select('*')
         .single();
       
-      if (error) throw new Error(error.message);
+      if (error) {
+        console.error('Error creating learning path:', error);
+        throw new Error('Failed to create learning path');
+      }
+      
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['learningPaths'] });
-      toast({
-        title: "Ruta de aprendizaje creada",
-        description: "La ruta de aprendizaje ha sido creada exitosamente"
-      });
     },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: `Error al crear la ruta de aprendizaje: ${error.message}`,
-        variant: "destructive"
-      });
-    }
   });
-
-  const updateLearningPath = useMutation({
-    mutationFn: async (learningPath: Partial<LearningPath> & { id: string }) => {
+  
+  // Update learning path mutation
+  const updateLearningPathMutation = useMutation({
+    mutationFn: async (path: Partial<LearningPath> & { id: string }) => {
       const { data, error } = await supabase
         .from('learning_paths')
-        .update(learningPath)
-        .eq('id', learningPath.id)
+        .update({
+          title: path.title,
+          description: path.description,
+          estimated_hours: path.estimated_hours,
+          is_published: path.is_published,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', path.id)
         .select('*')
         .single();
       
-      if (error) throw new Error(error.message);
+      if (error) {
+        console.error('Error updating learning path:', error);
+        throw new Error('Failed to update learning path');
+      }
+      
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['learningPaths'] });
-      toast({
-        title: "Ruta de aprendizaje actualizada",
-        description: "La ruta de aprendizaje ha sido actualizada exitosamente"
-      });
     },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: `Error al actualizar la ruta de aprendizaje: ${error.message}`,
-        variant: "destructive"
-      });
-    }
   });
-
-  const deleteLearningPath = useMutation({
+  
+  // Delete learning path mutation
+  const deleteLearningPathMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from('learning_paths')
         .delete()
         .eq('id', id);
       
-      if (error) throw new Error(error.message);
+      if (error) {
+        console.error('Error deleting learning path:', error);
+        throw new Error('Failed to delete learning path');
+      }
+      
       return id;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['learningPaths'] });
-      toast({
-        title: "Ruta de aprendizaje eliminada",
-        description: "La ruta de aprendizaje ha sido eliminada exitosamente"
-      });
     },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: `Error al eliminar la ruta de aprendizaje: ${error.message}`,
-        variant: "destructive"
-      });
-    }
   });
-
-  const addCourseToLearningPath = useMutation({
+  
+  // Add course to learning path mutation
+  const addCourseToPathMutation = useMutation({
     mutationFn: async ({ 
-      learningPathId, 
+      pathId, 
       courseId, 
-      order 
+      isRequired 
     }: { 
-      learningPathId: string; 
+      pathId: string; 
       courseId: string; 
-      order: number 
+      isRequired: boolean 
     }) => {
+      // Get the current highest order
+      const { data: currentCourses, error: fetchError } = await supabase
+        .from('learning_path_courses')
+        .select('order')
+        .eq('learning_path_id', pathId)
+        .order('order', { ascending: false })
+        .limit(1);
+      
+      if (fetchError) {
+        console.error('Error fetching current courses:', fetchError);
+        throw new Error('Failed to fetch current courses');
+      }
+      
+      const nextOrder = currentCourses.length > 0 ? (currentCourses[0].order || 0) + 1 : 1;
+      
       const { data, error } = await supabase
         .from('learning_path_courses')
         .insert({
-          learning_path_id: learningPathId,
+          learning_path_id: pathId,
           course_id: courseId,
-          order
+          order: nextOrder,
+          is_required: isRequired,
         })
         .select('*')
         .single();
       
-      if (error) throw new Error(error.message);
+      if (error) {
+        console.error('Error adding course to path:', error);
+        throw new Error('Failed to add course to path');
+      }
+      
       return data;
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['learningPath', variables.learningPathId] });
-      toast({
-        title: "Curso añadido",
-        description: "El curso ha sido añadido a la ruta de aprendizaje"
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['learningPaths'] });
     },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: `Error al añadir el curso: ${error.message}`,
-        variant: "destructive"
-      });
-    }
   });
-
-  const removeCourseFromLearningPath = useMutation({
+  
+  // Remove course from learning path mutation
+  const removeCourseFromPathMutation = useMutation({
     mutationFn: async ({ 
-      learningPathId, 
-      courseId 
+      pathId, 
+      pathCourseId 
     }: { 
-      learningPathId: string; 
-      courseId: string; 
+      pathId: string; 
+      pathCourseId: string 
     }) => {
       const { error } = await supabase
         .from('learning_path_courses')
         .delete()
-        .eq('learning_path_id', learningPathId)
-        .eq('course_id', courseId);
+        .eq('id', pathCourseId);
       
-      if (error) throw new Error(error.message);
-      return { learningPathId, courseId };
-    },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['learningPath', variables.learningPathId] });
-      toast({
-        title: "Curso eliminado",
-        description: "El curso ha sido eliminado de la ruta de aprendizaje"
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: `Error al eliminar el curso: ${error.message}`,
-        variant: "destructive"
-      });
-    }
-  });
-
-  const updateCoursesOrder = useMutation({
-    mutationFn: async ({ 
-      learningPathId, 
-      orderedCourses 
-    }: { 
-      learningPathId: string; 
-      orderedCourses: { course_id: string; order: number }[] 
-    }) => {
-      // Update each course order sequentially
-      for (const course of orderedCourses) {
-        const { error } = await supabase
-          .from('learning_path_courses')
-          .update({ order: course.order })
-          .eq('learning_path_id', learningPathId)
-          .eq('course_id', course.course_id);
-        
-        if (error) throw new Error(error.message);
+      if (error) {
+        console.error('Error removing course from path:', error);
+        throw new Error('Failed to remove course from path');
       }
       
-      return { learningPathId, orderedCourses };
+      return { pathId, pathCourseId };
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['learningPath', variables.learningPathId] });
-      toast({
-        title: "Orden actualizado",
-        description: "El orden de los cursos ha sido actualizado"
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['learningPaths'] });
     },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: `Error al actualizar el orden: ${error.message}`,
-        variant: "destructive"
-      });
-    }
   });
-
-  const filteredLearningPaths = learningPaths?.filter(path => 
-    path.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (path.description && path.description.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
+  
+  // Reorder course in learning path mutation
+  const reorderPathCourseMutation = useMutation({
+    mutationFn: async ({ 
+      pathId, 
+      orderedCourses 
+    }: { 
+      pathId: string; 
+      orderedCourses: Array<{ id: string; order: number }> 
+    }) => {
+      // Use Promise.all to handle multiple updates
+      const promises = orderedCourses.map(course => {
+        return supabase
+          .from('learning_path_courses')
+          .update({ order: course.order })
+          .eq('id', course.id);
+      });
+      
+      const results = await Promise.all(promises);
+      
+      // Check for errors
+      const errors = results.filter(result => result.error);
+      if (errors.length > 0) {
+        console.error('Error reordering courses:', errors);
+        throw new Error('Failed to reorder courses');
+      }
+      
+      return { pathId, orderedCourses };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['learningPaths'] });
+    },
+  });
+  
+  // Filter learning paths based on search term
+  const filteredLearningPaths = learningPaths.filter(path => {
+    if (!searchTerm) return true;
+    
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      path.title.toLowerCase().includes(searchLower) ||
+      (path.description && path.description.toLowerCase().includes(searchLower))
+    );
+  });
+  
+  // Create learning path
+  const createLearningPath = async (path: Omit<LearningPath, 'id' | 'created_at'>) => {
+    return createLearningPathMutation.mutateAsync(path);
+  };
+  
+  // Update learning path
+  const updateLearningPath = async (path: Partial<LearningPath> & { id: string }) => {
+    return updateLearningPathMutation.mutateAsync(path);
+  };
+  
+  // Delete learning path
+  const deleteLearningPath = async (id: string) => {
+    return deleteLearningPathMutation.mutateAsync(id);
+  };
+  
+  // Add course to learning path
+  const addCourseToPath = async ({ 
+    pathId, 
+    courseId, 
+    isRequired 
+  }: { 
+    pathId: string; 
+    courseId: string; 
+    isRequired: boolean 
+  }) => {
+    return addCourseToPathMutation.mutateAsync({ pathId, courseId, isRequired });
+  };
+  
+  // Remove course from learning path
+  const removeCourseFromPath = async (pathId: string, pathCourseId: string) => {
+    return removeCourseFromPathMutation.mutateAsync({ pathId, pathCourseId });
+  };
+  
+  // Reorder course in learning path
+  const reorderPathCourse = async (
+    pathId: string, 
+    orderedCourses: Array<{ id: string; order: number }>
+  ) => {
+    return reorderPathCourseMutation.mutateAsync({ pathId, orderedCourses });
+  };
+  
   return {
     learningPaths,
     filteredLearningPaths,
@@ -283,12 +292,14 @@ export function useLearningPaths() {
     error,
     searchTerm,
     setSearchTerm,
-    getLearningPathWithCourses,
     createLearningPath,
     updateLearningPath,
     deleteLearningPath,
-    addCourseToLearningPath,
-    removeCourseFromLearningPath,
-    updateCoursesOrder
+    addCourseToPath,
+    removeCourseFromPath,
+    reorderPathCourse,
+    isCreatingPath: createLearningPathMutation.isPending,
+    isUpdatingPath: updateLearningPathMutation.isPending,
+    isDeletingPath: deleteLearningPathMutation.isPending,
   };
 }
