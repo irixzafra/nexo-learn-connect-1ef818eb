@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
@@ -7,8 +7,6 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { NexoLogo } from '@/components/ui/logo';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 
 // Import subcomponents
 import SidebarMainNavigation from './navigation/SidebarMainNavigation';
@@ -16,26 +14,36 @@ import SidebarFooterSection from './SidebarFooterSection';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRole;
+  onRoleChange?: (role: UserRole) => void;
 }
 
-const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => {
+const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
+  viewAsRole,
+  onRoleChange 
+}) => {
   const { userRole } = useAuth();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
-  const [searchQuery, setSearchQuery] = useState('');
   
   // State for role switching
   const [currentViewRole, setCurrentViewRole] = useState<'current' | UserRole>(viewAsRole || 'current');
   const [currentLanguage, setCurrentLanguage] = useState('es'); // Default language is Spanish
   
+  // Effect to update currentViewRole when viewAsRole prop changes
+  useEffect(() => {
+    if (viewAsRole !== undefined) {
+      setCurrentViewRole(viewAsRole);
+    }
+  }, [viewAsRole]);
+  
   // Determine the effective role
   const getEffectiveRole = (): UserRole => {
-    if (!viewAsRole || viewAsRole === 'current') {
+    if (currentViewRole === 'current') {
       return userRole as UserRole;
     }
-    return viewAsRole as UserRole;
+    return currentViewRole as UserRole;
   };
   
   const effectiveRole = getEffectiveRole();
@@ -43,6 +51,15 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsR
   // Handle role change
   const handleRoleChange = (role: UserRole) => {
     setCurrentViewRole(role);
+    
+    // Call the parent's onRoleChange if provided
+    if (onRoleChange) {
+      onRoleChange(role);
+    }
+    
+    // Store selected role in localStorage for persistence
+    localStorage.setItem('viewAsRole', role);
+    
     toast.success(`Vista cambiada a: ${getRoleName(role)}`);
   };
 
@@ -68,20 +85,6 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsR
       case 'student':
       default:
         return '/home';
-    }
-  };
-
-  // Handle search input change
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-
-  // Handle search submit
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      // This would typically navigate to a search results page or open a search dialog
-      window.location.href = `/admin/users?search=${encodeURIComponent(searchQuery)}`;
     }
   };
 
@@ -111,24 +114,6 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsR
           <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
         )}
       </div>
-      
-      {/* User search - only shown for admins */}
-      {userRole === 'admin' && !isCollapsed && (
-        <div className="px-4 mb-4">
-          <form onSubmit={handleSearchSubmit}>
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Buscar usuarios..."
-                className="pl-8 w-full text-sm"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-            </div>
-          </form>
-        </div>
-      )}
 
       {/* Main Navigation Section */}
       <SidebarMainNavigation 

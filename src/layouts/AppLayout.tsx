@@ -30,7 +30,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
   const [isOnline, setIsOnline] = useState(connectionService.isCurrentlyOnline());
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const { userRole } = useAuth();
-  const [viewAsRole, setViewAsRole] = useState<'current' | UserRole>('current');
+  const [viewAsRole, setViewAsRole] = useState<'current' | UserRole>(() => {
+    // Try to get the saved role from localStorage
+    const savedRole = localStorage.getItem('viewAsRole');
+    if (savedRole && (savedRole === 'current' || ['admin', 'instructor', 'student', 'sistemas', 'anonimo'].includes(savedRole))) {
+      return savedRole as 'current' | UserRole;
+    }
+    return 'current';
+  });
 
   useEffect(() => {
     const unsubscribe = connectionService.addListener(online => {
@@ -50,7 +57,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
   }, [children]);
 
   const handleRoleChange = (role: UserRole) => {
+    console.log("Changing role to:", role);
     setViewAsRole(role);
+    localStorage.setItem('viewAsRole', role);
   };
 
   return (
@@ -60,7 +69,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
           {/* Left Sidebar */}
           <Sidebar className="border-r bg-sidebar">
             <SidebarContent className="p-0">
-              <SidebarNavigation viewAsRole={viewAsRole} />
+              <SidebarNavigation viewAsRole={viewAsRole} onRoleChange={handleRoleChange} />
             </SidebarContent>
           </Sidebar>
 

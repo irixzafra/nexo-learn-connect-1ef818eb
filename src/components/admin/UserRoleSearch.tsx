@@ -1,33 +1,22 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { UserProfile, UserRole } from '@/types/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
-import { Search, User, Shield, UserCog } from 'lucide-react';
-import { UserRole } from '@/types/auth';
-import UserRoleEditor from '@/components/admin/UserRoleEditor';
+import { Search, X } from 'lucide-react';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-
-interface UserResult {
-  id: string;
-  email: string;
-  full_name: string;
-  role: UserRole;
-}
-
-// Define a type for the user data returned from Supabase Auth API
-interface SupabaseUser {
-  id: string;
-  email: string;
-  [key: string]: any; // For any other properties
-}
-
-interface SupabaseUsersResponse {
-  users?: SupabaseUser[];
-  [key: string]: any; // For any other properties
-}
+import { UserRoleSwitcher } from './UserRoleSwitcher';
+import { toast } from 'sonner';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface UserRoleSearchProps {
   onClose?: () => void;
@@ -35,258 +24,151 @@ interface UserRoleSearchProps {
 
 export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<UserResult[]>([]);
-  const { toast } = useToast();
-
-  // Effect to handle dynamic search as user types
-  useEffect(() => {
-    const searchUsers = async () => {
-      if (!searchTerm || searchTerm.length < 2) {
-        setSearchResults([]);
-        return;
-      }
-
-      setIsSearching(true);
-      
-      try {
-        // Búsqueda por email o nombre
-        const { data: emailResults, error: emailError } = await supabase
-          .from('profiles')
-          .select('id, full_name, role')
-          .or(`email.ilike.%${searchTerm}%,full_name.ilike.%${searchTerm}%`)
-          .limit(5);
-
-        if (emailError) throw emailError;
-
-        // Obtener datos de usuario desde auth.users
-        const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers() as unknown as {
-          data: SupabaseUsersResponse | null;
-          error: any;
-        };
-        
-        if (usersError) throw usersError;
-
-        // Combinar resultados y eliminar duplicados
-        const combinedResults: UserResult[] = [];
-        
-        if (emailResults && emailResults.length > 0) {
-          for (const profile of emailResults) {
-            // Buscar el usuario correspondiente para obtener el email
-            const user = usersData?.users?.find(u => u.id === profile.id);
-            if (user) {
-              combinedResults.push({
-                id: profile.id,
-                email: user.email || 'Sin email',
-                full_name: profile.full_name || 'Sin nombre',
-                role: profile.role
-              });
-            }
-          }
-        }
-
-        setSearchResults(combinedResults);
-      } catch (error) {
-        console.error('Error al buscar usuarios:', error);
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    // Debounce the search to avoid too many requests
-    const timerId = setTimeout(() => {
-      searchUsers();
-    }, 300);
-
-    return () => {
-      clearTimeout(timerId);
-    };
-  }, [searchTerm]);
-
-  const handleRoleChanged = () => {
-    // Re-search to update results
-    if (searchTerm.length >= 2) {
-      handleSearch();
-    }
-    toast({
-      title: "Rol actualizado",
-      description: "El rol del usuario ha sido actualizado correctamente.",
-    });
-  };
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = async () => {
-    if (!searchTerm.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Por favor ingresa un término de búsqueda.",
-      });
-      return;
-    }
-
-    setIsSearching(true);
-    setSearchResults([]);
-
+    if (!searchTerm.trim()) return;
+    
+    setIsLoading(true);
+    setHasSearched(true);
+    
     try {
-      // Búsqueda por email o nombre
-      const { data: emailResults, error: emailError } = await supabase
+      // Search for users by name or email (assuming email might be stored in profiles)
+      let { data, error } = await supabase
         .from('profiles')
-        .select('id, full_name, role')
-        .or(`email.ilike.%${searchTerm}%,full_name.ilike.%${searchTerm}%`)
-        .limit(5);
-
-      if (emailError) throw emailError;
-
-      // Obtener datos de usuario desde auth.users
-      const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers() as unknown as {
-        data: SupabaseUsersResponse | null;
-        error: any;
-      };
+        .select('*')
+        .ilike('full_name', `%${searchTerm}%`);
       
-      if (usersError) throw usersError;
-
-      // Combinar resultados y eliminar duplicados
-      const combinedResults: UserResult[] = [];
+      if (error) throw error;
       
-      if (emailResults && emailResults.length > 0) {
-        for (const profile of emailResults) {
-          // Buscar el usuario correspondiente para obtener el email
-          const user = usersData?.users?.find(u => u.id === profile.id);
-          if (user) {
-            combinedResults.push({
-              id: profile.id,
-              email: user.email || 'Sin email',
-              full_name: profile.full_name || 'Sin nombre',
-              role: profile.role
-            });
-          }
-        }
-      }
-
-      setSearchResults(combinedResults);
-      
-      if (combinedResults.length === 0) {
-        toast({
-          title: "Sin resultados",
-          description: "No se encontraron usuarios que coincidan con la búsqueda.",
-        });
-      }
+      setUsers(data || []);
     } catch (error) {
-      console.error('Error al buscar usuarios:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Ocurrió un error al buscar usuarios.",
-      });
+      console.error('Error searching for users:', error);
+      toast.error('Error al buscar usuarios');
     } finally {
-      setIsSearching(false);
+      setIsLoading(false);
     }
   };
 
-  const getRoleIcon = (role: UserRole) => {
-    switch (role) {
-      case 'admin':
-        return <Shield className="h-4 w-4" />;
-      case 'instructor':
-        return <UserCog className="h-4 w-4" />;
-      case 'student':
-        return <User className="h-4 w-4" />;
-      default:
-        return null;
+  const handleRoleChange = async (userId: string, newRole: UserRole) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role: newRole })
+        .eq('id', userId);
+
+      if (error) {
+        throw error;
+      }
+
+      // Update local state
+      setUsers(prevUsers => 
+        prevUsers.map(user => 
+          user.id === userId ? { ...user, role: newRole } : user
+        )
+      );
+
+      toast.success(`Rol de usuario actualizado a ${newRole}`);
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      toast.error('Error al actualizar el rol del usuario');
     }
   };
 
   const getRoleBadgeVariant = (role: UserRole) => {
     switch (role) {
-      case 'admin':
-        return 'default';
-      case 'instructor':
-        return 'secondary';
-      case 'student':
-        return 'outline';
-      default:
-        return 'outline';
+      case 'admin': return "bg-yellow-100 text-yellow-800";
+      case 'instructor': return "bg-blue-100 text-blue-800";
+      case 'sistemas': return "bg-purple-100 text-purple-800";
+      case 'student': return "bg-green-100 text-green-800";
+      case 'anonimo': return "bg-gray-100 text-gray-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
 
   return (
     <div className="space-y-4">
-      <Command className="rounded-lg border shadow-md">
-        <CommandInput
-          placeholder="Buscar por nombre o email..."
-          value={searchTerm}
-          onValueChange={setSearchTerm}
-          className="border-none focus:ring-0"
-          autoFocus
-        />
-        <CommandList>
-          <CommandEmpty>
-            {isSearching ? (
-              <div className="flex justify-center py-4">
-                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></div>
-              </div>
-            ) : searchTerm.length > 0 ? (
-              <p className="p-4 text-center text-sm text-muted-foreground">
-                No se encontraron resultados
-              </p>
-            ) : (
-              <p className="p-4 text-center text-sm text-muted-foreground">
-                Ingresa un nombre o email para buscar usuarios
-              </p>
-            )}
-          </CommandEmpty>
-          
-          {searchResults.length > 0 && (
-            <CommandGroup heading="Resultados">
-              {searchResults.map((user) => (
-                <CommandItem 
-                  key={user.id} 
-                  value={user.id}
-                  className="cursor-default block"
-                  onSelect={() => {}}
-                >
-                  <div className="w-full border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-muted rounded-full h-10 w-10 flex items-center justify-center">
-                          <User className="h-5 w-5 text-muted-foreground" />
-                        </div>
-                        <div>
-                          <div className="font-medium flex items-center gap-2">
-                            {user.full_name}
-                            <Badge variant={getRoleBadgeVariant(user.role)} className="h-5 text-xs capitalize">
-                              <div className="flex items-center gap-1">
-                                {getRoleIcon(user.role)}
-                                <span>{user.role}</span>
-                              </div>
-                            </Badge>
-                          </div>
-                          <div className="text-sm text-muted-foreground">{user.email}</div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <UserRoleEditor 
-                      userId={user.id}
-                      userName={user.full_name}
-                      currentRole={user.role}
-                      onRoleChanged={handleRoleChanged}
-                    />
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
-        </CommandList>
-      </Command>
-
-      {searchResults.length > 0 && (
-        <div className="flex justify-end">
-          <Button variant="outline" onClick={onClose}>
-            Cerrar
-          </Button>
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Buscar por nombre..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="pl-8"
+            autoFocus
+          />
         </div>
-      )}
+        <Button onClick={handleSearch} disabled={isLoading || !searchTerm.trim()}>
+          {isLoading ? 'Buscando...' : 'Buscar'}
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-2">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      ) : hasSearched ? (
+        users.length > 0 ? (
+          <div className="border rounded-md overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Usuario</TableHead>
+                  <TableHead>Rol actual</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {users.map(user => (
+                  <TableRow key={user.id}>
+                    <TableCell>{user.full_name || 'Sin nombre'}</TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant="outline"
+
+                        className={getRoleBadgeVariant(user.role as UserRole)}
+                      >
+                        {user.role}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <UserRoleSwitcher
+                        userId={user.id}
+                        currentRole={user.role as UserRole}
+                        onRoleChange={handleRoleChange}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="text-center py-6 text-muted-foreground">
+            No se encontraron usuarios con ese nombre
+          </div>
+        )
+      ) : null}
+
+      <div className="flex justify-end pt-2">
+        <Button variant="outline" onClick={onClose}>
+          <X className="h-4 w-4 mr-2" />
+          Cerrar
+        </Button>
+      </div>
     </div>
   );
 };
