@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { EditModeProvider } from '@/contexts/EditModeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
-import { TestDataProvider } from '@/contexts/TestDataContext';
+import { TestDataProvider } from '@/contexts/test-data';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { OnboardingProvider } from '@/contexts/OnboardingContext';
 import { KeyboardShortcuts } from '@/components/accessibility/KeyboardShortcuts';
