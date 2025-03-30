@@ -1,4 +1,3 @@
-
 import { ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -23,4 +22,16 @@ export function formatCurrency(amount: number, currency: string = 'eur'): string
   });
   
   return formatter.format(amount);
+}
+
+/**
+ * Get initials from a full name
+ */
+export function getInitials(name: string): string {
+  if (!name) return '';
+  
+  const parts = name.split(' ');
+  if (parts.length === 1) return name.charAt(0).toUpperCase();
+  
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
 }

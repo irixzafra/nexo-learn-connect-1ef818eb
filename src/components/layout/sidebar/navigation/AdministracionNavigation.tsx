@@ -40,6 +40,13 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
         />
         
         <MenuItem
+          to="/admin/roles"
+          icon={KeyRound}
+          label="Roles y Permisos"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
           to="/admin/courses"
           icon={Library}
           label="Gestionar Cursos"
@@ -50,13 +57,6 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           to="/admin/instructors"
           icon={School}
           label="Gestionar Instructores"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/roles"
-          icon={KeyRound}
-          label="Roles y Permisos"
           isCollapsed={isCollapsed}
         />
         
@@ -75,9 +75,9 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
         />
         
         <MenuItem
-          to="/admin/settings"
-          icon={Settings2}
-          label="Configuración"
+          to="/admin/categories"
+          icon={FileText}
+          label="Categorías"
           isCollapsed={isCollapsed}
         />
         
@@ -89,9 +89,9 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
         />
         
         <MenuItem
-          to="/admin/categories"
-          icon={FileText}
-          label="Categorías"
+          to="/admin/settings"
+          icon={Settings2}
+          label="Configuración"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>
