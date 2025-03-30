@@ -58,7 +58,7 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
                 <AvatarFallback>{getUserInitials()}</AvatarFallback>
               </Avatar>
               {isViewingAsOtherRole && (
-                <span className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                <span className="absolute -bottom-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
                   <ArrowLeftRight className="h-3 w-3" />
                 </span>
               )}
@@ -67,19 +67,19 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
           <DropdownMenuContent align="end" className="w-56 bg-popover">
             <DropdownMenuLabel>{profile?.full_name || 'Usuario'}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate('/profile')}>
+            <DropdownMenuItem onClick={() => navigate('/profile')} className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               <span>Perfil</span>
             </DropdownMenuItem>
             
             {effectiveUserRole === 'instructor' && (
-              <DropdownMenuItem onClick={() => navigate('/instructor/courses')}>
+              <DropdownMenuItem onClick={() => navigate('/instructor/courses')} className="cursor-pointer">
                 <BookOpen className="mr-2 h-4 w-4" />
                 <span>Mis cursos</span>
               </DropdownMenuItem>
             )}
             
-            <DropdownMenuItem onClick={() => navigate('/settings')}>
+            <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
               <span>Configuración</span>
             </DropdownMenuItem>
@@ -90,14 +90,14 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
             {isViewingAsOtherRole && (
               <DropdownMenuItem 
                 onClick={() => onRoleChange(effectiveUserRole)}
-                className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary font-medium"
+                className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary font-medium cursor-pointer"
               >
                 <ArrowLeftRight className="mr-2 h-4 w-4" />
                 <span>Volver a mi rol</span>
               </DropdownMenuItem>
             )}
             
-            <DropdownMenuItem onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30">
+            <DropdownMenuItem onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Cerrar sesión</span>
             </DropdownMenuItem>

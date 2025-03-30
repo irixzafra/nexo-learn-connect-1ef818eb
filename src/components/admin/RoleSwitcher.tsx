@@ -44,10 +44,10 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
       if (role === 'current') {
         const actualRole = toUserRoleType(userRole as string);
         onChange(actualRole);
-        toast.success(`Volviendo a tu rol actual: ${actualRole}`);
+        toast.success(`Volviendo a tu rol actual: ${getRoleName(actualRole)}`);
       } else {
         onChange(role);
-        toast.success(`Viendo como: ${role}`);
+        toast.success(`Viendo como: ${getRoleName(role)}`);
       }
     }
   };
@@ -90,6 +90,9 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     }
   };
 
+  // Determinar si estamos viendo como otro rol
+  const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== toUserRoleType(userRole as string);
+
   return (
     <div className="px-3 mb-2">
       <DropdownMenu>
@@ -97,12 +100,17 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
           <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
               <Button 
-                variant="outline" 
+                variant={isViewingAsOtherRole ? "outline" : "outline"}
                 size="sm" 
-                className="w-full justify-start text-left font-normal"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  isViewingAsOtherRole && "bg-red-100 text-red-600 border-red-200 hover:bg-red-200 hover:text-red-700"
+                )}
               >
                 <ArrowLeftRight className="h-4 w-4 mr-2" />
-                <span className="flex-1">Ver como: {getRoleName(effectiveRole)}</span>
+                <span className="flex-1 truncate">
+                  {isViewingAsOtherRole ? `Viendo como: ${getRoleName(effectiveRole)}` : `Ver como: ${getRoleName(effectiveRole)}`}
+                </span>
               </Button>
             </DropdownMenuTrigger>
           </TooltipTrigger>
@@ -172,4 +180,9 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
       </DropdownMenu>
     </div>
   );
+};
+
+// Helper function that I forgot to import
+const cn = (...classes: (string | undefined | null | false | 0)[]) => {
+  return classes.filter(Boolean).join(' ');
 };

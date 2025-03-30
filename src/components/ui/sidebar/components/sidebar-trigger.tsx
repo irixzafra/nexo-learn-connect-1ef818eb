@@ -21,7 +21,7 @@ export const SidebarTrigger = React.forwardRef<
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn("h-8 w-8 absolute top-4 left-4 z-[60] md:relative md:top-0 md:left-0 opacity-70 hover:opacity-100 transition-opacity", className)}
+      className={cn("h-8 w-8 absolute top-4 left-4 z-[60] md:relative md:top-0 md:left-0 opacity-70 hover:opacity-100 transition-opacity shadow-sm hover:shadow bg-background/80 backdrop-blur-sm", className)}
       onClick={(event) => {
         onClick?.(event)
         isMobile ? setOpenMobile(!openMobile) : toggleSidebar()

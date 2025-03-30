@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeftRight } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
+import { toast } from 'sonner';
 
 interface RoleSwitcherReturnButtonProps {
   isViewingAsOtherRole: boolean;
@@ -21,13 +22,14 @@ const RoleSwitcherReturnButton: React.FC<RoleSwitcherReturnButtonProps> = ({
     onRoleChange(userRole);
     // Also clear localStorage
     localStorage.setItem('viewAsRole', 'current');
+    toast.success(`Volviendo a tu rol original: ${userRole}`);
   };
   
   return (
     <Button
       variant="outline"
       size="sm"
-      className="w-full flex items-center justify-center gap-1.5 text-xs bg-primary/5 text-primary border-primary/20 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+      className="w-full flex items-center justify-center gap-1.5 text-xs bg-red-100 text-red-600 border-red-200 hover:bg-red-200 hover:text-red-700 hover:border-red-300"
       onClick={handleReturn}
     >
       <ArrowLeftRight className="h-3 w-3" />

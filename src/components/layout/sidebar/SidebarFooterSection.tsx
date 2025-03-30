@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Globe, Users, ArrowLeftRight } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 // Types for SidebarFooterSection
 interface SidebarFooterSectionProps {
@@ -39,6 +40,11 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
 }) => {
   const isViewingAsOtherRole = currentViewRole !== 'current' && toUserRoleType(currentViewRole as string) !== userRole;
   
+  const handleReturnToOriginalRole = () => {
+    handleRoleChange(userRole);
+    toast.success(`Volviendo a tu rol original: ${getRoleName(userRole)}`);
+  };
+  
   return (
     <div className={cn(
       "mt-auto flex flex-col border-t border-gray-200 dark:border-gray-800",
@@ -49,8 +55,8 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
         <Button
           variant="outline"
           size="sm"
-          className="mb-3 w-full flex items-center justify-center gap-1.5 text-xs bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:text-primary hover:border-primary/30"
-          onClick={() => handleRoleChange(userRole)}
+          className="mb-3 w-full flex items-center justify-center gap-1.5 text-xs bg-red-100 text-red-600 border-red-200 hover:bg-red-200 hover:text-red-700 hover:border-red-300"
+          onClick={handleReturnToOriginalRole}
         >
           <ArrowLeftRight className="h-3 w-3" />
           <span className="truncate">Volver a mi rol</span>
@@ -130,8 +136,8 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 rounded-full bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
-                onClick={() => handleRoleChange(userRole)}
+                className="h-8 w-8 rounded-full bg-red-100 text-red-600 border-red-200 hover:bg-red-200 hover:text-red-700"
+                onClick={handleReturnToOriginalRole}
               >
                 <ArrowLeftRight className="h-4 w-4" />
                 <span className="sr-only">Volver a mi rol</span>
