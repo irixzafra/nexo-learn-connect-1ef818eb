@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { PageSection } from '@/layouts/SectionPageLayout';
-import StudentsSection from './StudentsSection';
+import { StudentsSection } from './students';
 
 interface CourseStudentsTabProps {
   courseId: string;
