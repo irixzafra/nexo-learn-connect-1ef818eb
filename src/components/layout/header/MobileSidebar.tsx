@@ -3,7 +3,6 @@ import React from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import { NexoLogo } from '@/components/ui/logo';
 import SidebarNavigation from '../SidebarNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { UserRole } from '@/types/auth';
@@ -32,9 +31,6 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ viewAsRole, trigge
         </SheetTrigger>
         <SheetContent side="left" className="w-[80%] sm:w-[350px] p-0">
           <div className="flex flex-col h-full">
-            <div className="border-b px-6 py-4 flex items-center">
-              <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
-            </div>
             <div className="flex-1 overflow-auto">
               <SidebarNavigation viewAsRole={viewAsRole} />
             </div>

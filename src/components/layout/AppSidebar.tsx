@@ -1,12 +1,9 @@
-
 import React from 'react';
 import { 
   Sidebar, 
   SidebarContent, 
-  SidebarFooter, 
-  SidebarHeader,
+  SidebarFooter
 } from '@/components/ui/sidebar';
-import { NexoLogo } from '@/components/ui/logo';
 import SidebarFooterContent from './SidebarFooterContent';
 import { UserRole } from '@/types/auth';
 
@@ -20,10 +17,6 @@ interface AppSidebarProps {
 const AppSidebar: React.FC<AppSidebarProps> = ({ viewAsRole, onRoleChange }) => {
   return (
     <Sidebar className="border-r bg-sidebar">
-      <SidebarHeader className="flex items-center justify-center py-4">
-        <NexoLogo variant="icon" className="h-8 w-auto" />
-      </SidebarHeader>
-      
       <SidebarContent className="px-2 py-2">
         {/* The sidebar navigation is rendered in AppLayout */}
       </SidebarContent>
