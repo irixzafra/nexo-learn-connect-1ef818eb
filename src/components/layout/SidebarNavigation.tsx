@@ -8,17 +8,12 @@ import {
   ComunidadNavigation,
   AdministracionNavigation,
   PerfilNavigation,
-  ConfiguracionNavigation
+  ConfiguracionNavigation,
+  SistemasNavigation
 } from './sidebar/navigation';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { cn } from '@/lib/utils';
 import { useNotifications } from '@/hooks/useNotifications';
-import { 
-  SidebarContent,
-  SidebarHeader,
-  SidebarFooter,
-} from '@/components/ui/sidebar';
-import { NexoLogo } from '@/components/ui/logo';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRole;
@@ -51,7 +46,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
         comunidad: true,
         administracion: true,
         perfil: true,
-        configuracion: true
+        configuracion: true,
+        sistemas: true
       };
     } catch (e) {
       // Fallback defaults if localStorage fails
@@ -61,7 +57,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
         comunidad: true,
         administracion: true,
         perfil: true,
-        configuracion: true
+        configuracion: true,
+        sistemas: true
       };
     }
   };
@@ -82,66 +79,71 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
 
   // Check if a role should see specific sections
   const canSeeAdmin = effectiveRole === 'admin' || effectiveRole === 'instructor';
+  const canSeeSistemas = effectiveRole === 'admin' || effectiveRole === 'sistemas';
 
   return (
-    <div className="h-full flex flex-col bg-sidebar border-r">
-      <SidebarHeader className="p-4 flex items-center justify-center border-b">
-        <NexoLogo variant="icon" className="h-8 w-auto" />
-      </SidebarHeader>
+    <div className="h-full flex flex-col py-4">
+      {/* Logo at the top will be handled by the header in mobile view */}
       
-      <SidebarContent className="flex-1 overflow-auto">
-        <div className={cn(
-          "flex flex-col py-2 h-full",
-          isCollapsed ? "px-2" : "px-4"
-        )}>
-          {/* Inicio */}
-          <HomeNavigation 
-            isOpen={openGroups.home} 
-            onToggle={() => toggleGroup('home')}
-            userRole={effectiveRole}
+      <div className={cn(
+        "flex-1 overflow-auto",
+        isCollapsed ? "px-2" : "px-4"
+      )}>
+        {/* Inicio */}
+        <HomeNavigation 
+          isOpen={openGroups.home} 
+          onToggle={() => toggleGroup('home')}
+          userRole={effectiveRole}
+        />
+        
+        {/* Cursos */}
+        <CursosNavigation 
+          isOpen={openGroups.cursos} 
+          onToggle={() => toggleGroup('cursos')} 
+        />
+        
+        {/* Comunidad */}
+        <ComunidadNavigation 
+          isOpen={openGroups.comunidad} 
+          onToggle={() => toggleGroup('comunidad')} 
+          messagesCount={messagesCount}
+        />
+        
+        {/* Administración - Solo visible para admin o instructor */}
+        {canSeeAdmin && (
+          <AdministracionNavigation 
+            isOpen={openGroups.administracion} 
+            onToggle={() => toggleGroup('administracion')} 
           />
-          
-          {/* Cursos */}
-          <CursosNavigation 
-            isOpen={openGroups.cursos} 
-            onToggle={() => toggleGroup('cursos')} 
+        )}
+        
+        {/* Sistemas - Solo visible para admin o sistemas */}
+        {canSeeSistemas && (
+          <SistemasNavigation 
+            isOpen={openGroups.sistemas} 
+            onToggle={() => toggleGroup('sistemas')} 
           />
-          
-          {/* Comunidad */}
-          <ComunidadNavigation 
-            isOpen={openGroups.comunidad} 
-            onToggle={() => toggleGroup('comunidad')} 
-            messagesCount={messagesCount}
-          />
-          
-          {/* Administración - Solo visible para admin o instructor */}
-          {canSeeAdmin && (
-            <AdministracionNavigation 
-              isOpen={openGroups.administracion} 
-              onToggle={() => toggleGroup('administracion')} 
-            />
-          )}
-          
-          {/* Perfil */}
-          <PerfilNavigation 
-            isOpen={openGroups.perfil} 
-            onToggle={() => toggleGroup('perfil')} 
-            notificationsCount={notificationsCount}
-          />
-          
-          {/* Configuración */}
-          <ConfiguracionNavigation 
-            isOpen={openGroups.configuracion} 
-            onToggle={() => toggleGroup('configuracion')} 
-          />
-        </div>
-      </SidebarContent>
+        )}
+        
+        {/* Perfil */}
+        <PerfilNavigation 
+          isOpen={openGroups.perfil} 
+          onToggle={() => toggleGroup('perfil')} 
+          notificationsCount={notificationsCount}
+        />
+        
+        {/* Configuración */}
+        <ConfiguracionNavigation 
+          isOpen={openGroups.configuracion} 
+          onToggle={() => toggleGroup('configuracion')} 
+        />
+      </div>
       
-      <SidebarFooter className="p-4 border-t">
+      <div className="mt-auto pt-4 border-t px-4">
         <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
           Nexo Academia © {new Date().getFullYear()}
         </div>
-      </SidebarFooter>
+      </div>
     </div>
   );
 };

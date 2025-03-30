@@ -3,12 +3,13 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { NexoLogo } from '@/components/ui/nexo-logo';
+import { NexoLogo } from '@/components/ui/logo';
 import SidebarNavigation from '../SidebarNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { UserRole } from '@/types/auth';
 
 interface MobileSidebarProps {
-  viewAsRole: string;
+  viewAsRole: 'current' | UserRole;
 }
 
 export const MobileSidebar: React.FC<MobileSidebarProps> = ({ viewAsRole }) => {

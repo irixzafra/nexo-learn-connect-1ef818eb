@@ -48,9 +48,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     <EditModeProvider>
       <SidebarProvider>
         <div className="min-h-screen flex dark:bg-gray-950 w-full">
-          {/* Sidebar */}
-          <div className="hidden md:block sidebar-container">
-            <SidebarNavigation viewAsRole={viewAsRole} />
+          {/* Sidebar - Only visible on desktop */}
+          <div className="hidden md:block">
+            <div className="h-full border-r bg-sidebar">
+              <div className="flex h-full w-full flex-col">
+                <SidebarNavigation viewAsRole={viewAsRole} />
+              </div>
+            </div>
           </div>
 
           {/* Main Content */}
