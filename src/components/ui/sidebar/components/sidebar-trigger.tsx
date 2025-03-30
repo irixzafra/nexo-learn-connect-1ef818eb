@@ -35,12 +35,12 @@ export const SidebarTrigger = React.forwardRef<
     >
       {isMobile ? (
         openMobile ? (
-          <X size={20} aria-hidden="true" />
+          <X className="h-5 w-5" aria-hidden="true" />
         ) : (
-          <Menu size={20} aria-hidden="true" />
+          <Menu className="h-5 w-5" aria-hidden="true" />
         )
       ) : (
-        <PanelLeft size={20} aria-hidden="true" />
+        <PanelLeft className="h-5 w-5" aria-hidden="true" />
       )}
       <span className="sr-only">{isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}</span>
     </Button>

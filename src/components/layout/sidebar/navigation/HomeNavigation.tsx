@@ -91,7 +91,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label, isCollapsed 
                     : "text-gray-500 dark:text-gray-400 hover:bg-[#F3F4F6] dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                 )}
               >
-                <Icon size={20} />
+                <Icon className="h-5 w-5" />
                 <span className="sr-only">{label}</span>
               </NavLink>
             </SidebarMenuButton>
@@ -118,14 +118,12 @@ const MenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label, isCollapsed 
           )}
           aria-current={({ isActive }) => isActive ? "page" : undefined}
         >
-          <Icon 
-            size={20} 
-            className={({ isActive }) => cn(
-              isActive 
-                ? "text-gray-900 dark:text-white" 
-                : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-            )}
-          />
+          <Icon className={({ isActive }) => cn(
+            "h-5 w-5",
+            isActive 
+              ? "text-gray-900 dark:text-white" 
+              : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+          )} />
           <span>{label}</span>
         </NavLink>
       </SidebarMenuButton>

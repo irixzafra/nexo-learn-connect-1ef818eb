@@ -77,11 +77,9 @@ const MenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) => (
         aria-current={({ isActive }) => isActive ? "page" : undefined}
       >
         <Icon 
-          size={20} 
-          className={({ isActive }) => cn(
-            isActive 
-              ? "text-gray-900 dark:text-white" 
-              : "text-gray-500 dark:text-gray-400"
+          className={cn(
+            "h-5 w-5",
+            "text-gray-500 dark:text-gray-400"
           )}
         />
         <span>{label}</span>
@@ -105,7 +103,7 @@ const CollapsedMenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) =
                 : "text-gray-500 dark:text-gray-400 hover:bg-[#F3F4F6] dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
             )}
           >
-            <Icon size={20} />
+            <Icon className="h-5 w-5" />
             <span className="sr-only">{label}</span>
           </NavLink>
         </SidebarMenuButton>
@@ -128,7 +126,7 @@ const DisabledMenuItem: React.FC<DisabledMenuItemProps> = ({ icon: Icon, label, 
     <SidebarMenuButton>
       <div className="flex items-center justify-between gap-3 w-full px-3 py-2 rounded-md opacity-60 cursor-not-allowed text-[#9CA3AF] dark:text-gray-500">
         <span className="flex items-center gap-3">
-          <Icon size={20} className="text-[#9CA3AF] dark:text-gray-500" />
+          <Icon className="h-5 w-5 text-[#9CA3AF] dark:text-gray-500" />
           <span className="text-[15px] font-inter">{label}</span>
         </span>
         <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">

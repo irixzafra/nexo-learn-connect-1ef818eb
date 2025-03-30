@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Shield, Users, BookOpen, CreditCard, Database, Settings, Lock, FileText } from 'lucide-react';
+import { ShieldAlert, Users2, PieChart, Flag, FileKey } from 'lucide-react';
 import { 
   SidebarMenu, 
   SidebarMenuItem, 
@@ -28,39 +28,25 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
   return (
     <SidebarGroup
       label="Administración"
-      icon={Shield}
+      icon={ShieldAlert}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
       {isCollapsed ? (
         // Versión colapsada
         <>
-          <CollapsedMenuItem to="/admin/dashboard" icon={Shield} label="Panel Admin" />
-          <CollapsedMenuItem to="/admin/users" icon={Users} label="Gestionar Usuarios" />
-          <CollapsedMenuItem to="/admin/courses" icon={BookOpen} label="Gestionar Cursos" />
-          <CollapsedMenuItem to="/admin/billing" icon={CreditCard} label="Facturación" />
-          <CollapsedMenuItem to="/admin/test-data" icon={Database} label="Datos de Prueba" />
-          <CollapsedMenuItem to="/admin/settings" icon={Settings} label="Configuración" />
+          <CollapsedMenuItem to="/admin/users" icon={Users2} label="Usuarios" />
+          <CollapsedMenuItem to="/admin/stats" icon={PieChart} label="Estadísticas" />
+          <CollapsedMenuItem to="/admin/reports" icon={Flag} label="Reportes" />
+          <CollapsedMenuItem to="/admin/roles" icon={FileKey} label="Roles" />
         </>
       ) : (
         // Versión expandida
         <>
-          <MenuItem to="/admin/dashboard" icon={Shield} label="Panel Admin" />
-          <MenuItem to="/admin/users" icon={Users} label="Gestionar Usuarios" />
-          <MenuItem to="/admin/courses" icon={BookOpen} label="Gestionar Cursos" />
-          <MenuItem to="/admin/billing" icon={CreditCard} label="Facturación" />
-          <MenuItem to="/admin/test-data" icon={Database} label="Datos de Prueba" />
-          <MenuItem to="/admin/settings" icon={Settings} label="Configuración" />
-          <DisabledMenuItem
-            icon={Lock}
-            label="Roles y Permisos"
-            tooltipText="Próximamente"
-          />
-          <DisabledMenuItem
-            icon={FileText}
-            label="Auditoría"
-            tooltipText="Próximamente"
-          />
+          <MenuItem to="/admin/users" icon={Users2} label="Usuarios" />
+          <MenuItem to="/admin/stats" icon={PieChart} label="Estadísticas" />
+          <MenuItem to="/admin/reports" icon={Flag} label="Reportes" />
+          <MenuItem to="/admin/roles" icon={FileKey} label="Roles" />
         </>
       )}
     </SidebarGroup>
@@ -87,14 +73,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) => (
         )}
         aria-current={({ isActive }) => isActive ? "page" : undefined}
       >
-        <Icon 
-          size={20} 
-          className={({ isActive }) => cn(
-            isActive 
-              ? "text-gray-900 dark:text-white" 
-              : "text-gray-500 dark:text-gray-400"
-          )} 
-        />
+        <Icon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
         <span>{label}</span>
       </NavLink>
     </SidebarMenuButton>
@@ -116,7 +95,7 @@ const CollapsedMenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) =
                 : "text-gray-500 dark:text-gray-400 hover:bg-[#F3F4F6] dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
             )}
           >
-            <Icon size={20} />
+            <Icon className="h-5 w-5" />
             <span className="sr-only">{label}</span>
           </NavLink>
         </SidebarMenuButton>
@@ -125,28 +104,6 @@ const CollapsedMenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) =
         <p>{label}</p>
       </TooltipContent>
     </Tooltip>
-  </SidebarMenuItem>
-);
-
-interface DisabledMenuItemProps {
-  icon: React.ElementType;
-  label: string;
-  tooltipText: string;
-}
-
-const DisabledMenuItem: React.FC<DisabledMenuItemProps> = ({ icon: Icon, label, tooltipText }) => (
-  <SidebarMenuItem>
-    <SidebarMenuButton>
-      <div className="flex items-center justify-between gap-3 w-full px-3 py-2 rounded-md opacity-60 cursor-not-allowed text-[#9CA3AF] dark:text-gray-500">
-        <span className="flex items-center gap-3">
-          <Icon size={20} className="text-[#9CA3AF] dark:text-gray-500" />
-          <span className="text-[15px] font-inter">{label}</span>
-        </span>
-        <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">
-          {tooltipText}
-        </span>
-      </div>
-    </SidebarMenuButton>
   </SidebarMenuItem>
 );
 

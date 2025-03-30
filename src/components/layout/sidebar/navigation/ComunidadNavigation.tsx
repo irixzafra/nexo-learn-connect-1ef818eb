@@ -1,12 +1,13 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Users, MessageSquare } from 'lucide-react';
+import { Users, MessageSquare, Globe, Handshake } from 'lucide-react';
 import { 
   SidebarMenu, 
   SidebarMenuItem, 
   SidebarMenuButton 
 } from '@/components/ui/sidebar';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { SidebarGroup } from '../SidebarGroup';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
@@ -15,14 +16,18 @@ import {
   TooltipContent,
   TooltipTrigger 
 } from '@/components/ui/tooltip';
-import { Badge } from '@/components/ui/badge';
 
 interface ComunidadNavigationProps {
   isOpen: boolean;
   onToggle: () => void;
+  messagesCount?: number;
 }
 
-const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({ isOpen, onToggle }) => {
+const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({ 
+  isOpen, 
+  onToggle,
+  messagesCount = 0
+}) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
@@ -36,22 +41,16 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({ isOpen, onTog
       {isCollapsed ? (
         // Versión colapsada
         <>
-          <CollapsedMenuItem to="/messages" icon={MessageSquare} label="Mensajes" badge={2} />
+          <CollapsedMenuItem to="/messages" icon={MessageSquare} label="Mensajes" badge={messagesCount} />
+          <CollapsedMenuItem to="/community" icon={Globe} label="Foro" />
+          <CollapsedMenuItem to="/mentors" icon={Handshake} label="Mentores" />
         </>
       ) : (
         // Versión expandida
         <>
-          <DisabledMenuItem
-            icon={Users}
-            label="Feed"
-            tooltipText="Próximamente"
-          />
-          <MenuItem to="/messages" icon={MessageSquare} label="Mensajes" badge={2} />
-          <DisabledMenuItem
-            icon={Users}
-            label="Red de Contactos"
-            tooltipText="Próximamente"
-          />
+          <MenuItem to="/messages" icon={MessageSquare} label="Mensajes" badge={messagesCount} />
+          <MenuItem to="/community" icon={Globe} label="Foro" />
+          <MenuItem to="/mentors" icon={Handshake} label="Mentores" />
         </>
       )}
     </SidebarGroup>
@@ -80,32 +79,20 @@ const MenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label, badge }) => 
         aria-current={({ isActive }) => isActive ? "page" : undefined}
       >
         <span className="flex items-center gap-3">
-          <Icon 
-            size={20} 
-            className={({ isActive }) => cn(
-              isActive 
-                ? "text-gray-900 dark:text-white" 
-                : "text-gray-500 dark:text-gray-400"
-            )} 
-          />
+          <Icon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
           <span>{label}</span>
         </span>
-        {badge && (
-          <Badge variant="default" className="ml-auto text-xs">{badge}</Badge>
+        {badge !== undefined && badge > 0 && (
+          <Badge variant="default" className="ml-auto bg-primary text-white">
+            {badge}
+          </Badge>
         )}
       </NavLink>
     </SidebarMenuButton>
   </SidebarMenuItem>
 );
 
-interface CollapsedMenuItemProps {
-  to: string;
-  icon: React.ElementType;
-  label: string;
-  badge?: number;
-}
-
-const CollapsedMenuItem: React.FC<CollapsedMenuItemProps> = ({ to, icon: Icon, label, badge }) => (
+const CollapsedMenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label, badge }) => (
   <SidebarMenuItem>
     <Tooltip>
       <TooltipTrigger asChild>
@@ -120,10 +107,10 @@ const CollapsedMenuItem: React.FC<CollapsedMenuItemProps> = ({ to, icon: Icon, l
                 : "text-gray-500 dark:text-gray-400 hover:bg-[#F3F4F6] dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
             )}
           >
-            <Icon size={20} />
+            <Icon className="h-5 w-5" />
             <span className="sr-only">{label}</span>
-            {badge && (
-              <Badge variant="default" className="absolute -top-1 -right-1 text-xs size-4 flex items-center justify-center p-0">
+            {badge !== undefined && badge > 0 && (
+              <Badge variant="default" className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-[20px] h-5 flex items-center justify-center">
                 {badge}
               </Badge>
             )}
@@ -134,28 +121,6 @@ const CollapsedMenuItem: React.FC<CollapsedMenuItemProps> = ({ to, icon: Icon, l
         <p>{label}</p>
       </TooltipContent>
     </Tooltip>
-  </SidebarMenuItem>
-);
-
-interface DisabledMenuItemProps {
-  icon: React.ElementType;
-  label: string;
-  tooltipText: string;
-}
-
-const DisabledMenuItem: React.FC<DisabledMenuItemProps> = ({ icon: Icon, label, tooltipText }) => (
-  <SidebarMenuItem>
-    <SidebarMenuButton>
-      <div className="flex items-center justify-between gap-3 w-full px-3 py-2 rounded-md opacity-60 cursor-not-allowed text-[#9CA3AF] dark:text-gray-500">
-        <span className="flex items-center gap-3">
-          <Icon size={20} className="text-[#9CA3AF] dark:text-gray-500" />
-          <span className="text-[15px] font-inter">{label}</span>
-        </span>
-        <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">
-          {tooltipText}
-        </span>
-      </div>
-    </SidebarMenuButton>
   </SidebarMenuItem>
 );
 

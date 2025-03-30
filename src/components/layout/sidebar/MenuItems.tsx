@@ -63,7 +63,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
           <span className="flex items-center gap-3">
             <Icon 
               className={cn(
-                "size-5 flex-shrink-0", 
+                "h-5 w-5 flex-shrink-0", 
                 isActive ? 
                   "text-gray-900 dark:text-white" : 
                   "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white",
