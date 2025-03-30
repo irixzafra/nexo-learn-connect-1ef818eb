@@ -1,5 +1,6 @@
-
 # NEXO LEARNING - ROADMAP FUNCIONAL
+
+> **NOTA IMPORTANTE**: Para ver el estado actual de implementación, consultar el archivo [Nexo_Roadmap_Implementation.md](./Nexo_Roadmap_Implementation.md)
 
 ## Resumen de Fases
 

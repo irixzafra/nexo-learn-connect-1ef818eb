@@ -3,6 +3,7 @@ import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Loader2 } from 'lucide-react';
+import AppLayout from '@/layouts/AppLayout';
 
 // Lazy loaded components
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
@@ -30,17 +31,17 @@ const AdminRoutes = () => {
     <ProtectedRoute>
       <Suspense fallback={<AdminLoading />}>
         <Routes>
-          <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="/dashboard" element={<AdminDashboard />} />
-          <Route path="/users" element={<AdminUsers />} />
-          <Route path="/courses" element={<AdminCourses />} />
-          <Route path="/courses/:courseId" element={<AdminCourseDetail />} />
-          <Route path="/settings" element={<AdminSettings />} />
-          <Route path="/finanzas" element={<FinanceManagement />} />
-          <Route path="/learning-paths/*" element={<LearningPaths />} />
-          <Route path="/test-data" element={<TestDataManagement />} />
-          <Route path="/notifications" element={<NotificationManagement />} />
-          <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="/" element={<AppLayout><Navigate to="/admin/dashboard" replace /></AppLayout>} />
+          <Route path="/dashboard" element={<AppLayout><AdminDashboard /></AppLayout>} />
+          <Route path="/users" element={<AppLayout><AdminUsers /></AppLayout>} />
+          <Route path="/courses" element={<AppLayout><AdminCourses /></AppLayout>} />
+          <Route path="/courses/:courseId" element={<AppLayout><AdminCourseDetail /></AppLayout>} />
+          <Route path="/settings" element={<AppLayout><AdminSettings /></AppLayout>} />
+          <Route path="/finanzas" element={<AppLayout><FinanceManagement /></AppLayout>} />
+          <Route path="/learning-paths/*" element={<AppLayout><LearningPaths /></AppLayout>} />
+          <Route path="/test-data" element={<AppLayout><TestDataManagement /></AppLayout>} />
+          <Route path="/notifications" element={<AppLayout><NotificationManagement /></AppLayout>} />
+          <Route path="*" element={<AppLayout><Navigate to="/admin/dashboard" replace /></AppLayout>} />
         </Routes>
       </Suspense>
     </ProtectedRoute>
