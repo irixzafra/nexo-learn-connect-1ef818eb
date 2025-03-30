@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Conversation, ChatMessage } from '@/types/community';
 import { useAuth } from '@/contexts/AuthContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 export const useConversations = () => {
@@ -297,7 +297,7 @@ export function useRealtimeMessages(conversationId: string | null) {
   const { user } = useAuth();
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!conversationId || !user?.id || isSubscribed) return;
 
     // Subscribe to new messages
