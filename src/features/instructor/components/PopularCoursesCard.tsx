@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PopularCourse {
   id: string;
@@ -11,13 +12,38 @@ interface PopularCourse {
 
 interface PopularCoursesCardProps {
   courses: PopularCourse[];
-  totalEnrollments: number;
+  totalEnrollments?: number;
+  isLoading?: boolean;
 }
 
 export const PopularCoursesCard: React.FC<PopularCoursesCardProps> = ({
   courses,
-  totalEnrollments,
+  totalEnrollments = 0,
+  isLoading = false,
 }) => {
+  if (isLoading) {
+    return (
+      <Card className="col-span-2">
+        <CardHeader>
+          <CardTitle>Cursos Populares</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-4 w-[200px]" />
+                  <Skeleton className="h-4 w-[100px]" />
+                </div>
+                <Skeleton className="h-2 w-full" />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="col-span-2">
       <CardHeader>

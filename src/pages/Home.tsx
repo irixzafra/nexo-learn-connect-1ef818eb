@@ -10,10 +10,10 @@ import { HelpSection } from '@/components/dashboard/HelpSection';
 const Home: React.FC = () => {
   // These are examples of stats that might be shown to a student
   const studentStats = [
-    { label: "Cursos Inscritos", value: "4", icon: <div>📚</div>, color: "text-blue-500" },
-    { label: "Progreso Total", value: "63%", change: { value: 12, positive: true }, icon: <div>📈</div>, color: "text-emerald-500" },
-    { label: "Horas Estudiadas", value: "18", icon: <div>⏱️</div>, color: "text-amber-500" },
-    { label: "Certificados", value: "1", icon: <div>🏆</div>, color: "text-purple-500" }
+    { label: "Cursos Inscritos", value: "4", icon: <div>📚</div>, color: "blue-500" },
+    { label: "Progreso Total", value: "63%", change: { value: 12, positive: true }, icon: <div>📈</div>, color: "emerald-500" },
+    { label: "Horas Estudiadas", value: "18", icon: <div>⏱️</div>, color: "amber-500" },
+    { label: "Certificados", value: "1", icon: <div>🏆</div>, color: "purple-500" }
   ];
 
   return (

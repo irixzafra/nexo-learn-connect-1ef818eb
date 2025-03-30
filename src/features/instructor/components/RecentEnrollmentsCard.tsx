@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Enrollment {
   id: string;
@@ -19,11 +20,37 @@ interface Enrollment {
 
 interface RecentEnrollmentsCardProps {
   enrollments: Enrollment[];
+  isLoading?: boolean;
 }
 
 export const RecentEnrollmentsCard: React.FC<RecentEnrollmentsCardProps> = ({
   enrollments,
+  isLoading = false,
 }) => {
+  if (isLoading) {
+    return (
+      <Card className="col-span-2">
+        <CardHeader>
+          <CardTitle>Inscripciones Recientes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {[...Array(5)].map((_, index) => (
+              <div key={index} className="flex items-center space-x-4">
+                <Skeleton className="h-9 w-9 rounded-full" />
+                <div className="flex-1 space-y-1">
+                  <Skeleton className="h-4 w-[150px]" />
+                  <Skeleton className="h-3 w-[200px]" />
+                </div>
+                <Skeleton className="h-5 w-[60px]" />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="col-span-2">
       <CardHeader>

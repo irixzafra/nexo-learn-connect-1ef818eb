@@ -67,8 +67,10 @@ const AdminInstructors: React.FC = () => {
 
   return (
     <SectionPageLayout
-      title="Instructores"
-      subtitle="Gestiona los instructores de la plataforma"
+      header={{
+        title: "Instructores",
+        description: "Gestiona los instructores de la plataforma"
+      }}
       actions={[
         <Button key="add-instructor">
           <PlusCircle className="mr-2 h-4 w-4" />

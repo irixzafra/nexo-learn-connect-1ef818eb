@@ -23,8 +23,10 @@ const AuditLog: React.FC = () => {
 
   return (
     <SectionPageLayout
-      title="Registro de Auditoría"
-      subtitle="Monitorea todos los cambios y acciones en el sistema"
+      header={{ 
+        title: "Registro de Auditoría",
+        description: "Monitorea todos los cambios y acciones en el sistema" 
+      }}
       actions={navigationActions}
     >
       <div className="p-6 bg-card rounded-lg shadow-sm border">

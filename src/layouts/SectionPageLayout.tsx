@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -34,6 +35,9 @@ export interface SectionPageLayoutProps {
     description: string;
     links: Array<{ text: string; href: string }>;
   };
+  title?: string;
+  subtitle?: string;
+  actions?: React.ReactNode[];
 }
 
 // Add PageSection component first
@@ -81,7 +85,10 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
   className,
   header,
   stats,
-  help
+  help,
+  title,
+  subtitle,
+  actions
 }) => {
   return (
     <div className={cn("w-full", className)}>
@@ -101,6 +108,21 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
                   )}
                 </React.Fragment>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Support the direct title/subtitle/actions pattern for backwards compatibility */}
+      {title && !header && (
+        <div className="mb-6 flex justify-between items-start">
+          <div>
+            <h1 className="text-2xl font-bold">{title}</h1>
+            {subtitle && <p className="text-muted-foreground mt-1">{subtitle}</p>}
+          </div>
+          {actions && actions.length > 0 && (
+            <div className="flex gap-2">
+              {actions}
             </div>
           )}
         </div>
@@ -152,5 +174,4 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
   );
 };
 
-export { PageSection };
 export default SectionPageLayout;
