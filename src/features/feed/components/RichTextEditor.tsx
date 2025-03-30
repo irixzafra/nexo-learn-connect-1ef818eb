@@ -3,6 +3,7 @@ import React from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { cn } from '@/lib/utils';
+import '../styles/quill-custom.css';
 
 interface RichTextEditorProps {
   value: string;
@@ -68,26 +69,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         }}
         readOnly={submitting}
       />
-      <style jsx global>{`
-        .rich-text-editor .ql-editor {
-          min-height: ${minHeight};
-          font-size: 1rem;
-          padding: 0.5rem 0;
-        }
-        .rich-text-editor .ql-container {
-          border: none !important;
-          font-family: inherit;
-        }
-        .rich-text-editor .ql-toolbar {
-          border: none !important;
-          border-bottom: 1px solid hsl(var(--border)) !important;
-          padding: 0.5rem 0;
-        }
-        .rich-text-editor .ql-editor.ql-blank::before {
-          font-style: normal;
-          color: hsl(var(--muted-foreground));
-        }
-      `}</style>
+      {/* Custom inline styles - these are now in the quill-custom.css file */}
     </div>
   );
 };
