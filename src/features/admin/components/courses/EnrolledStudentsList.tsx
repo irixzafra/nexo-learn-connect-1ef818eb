@@ -10,7 +10,7 @@ import {
   TableBody, 
   TableCell 
 } from '@/components/ui/table';
-import { Mail, Phone, Trash2, ExternalLink, Edit, AlertTriangle } from 'lucide-react';
+import { Mail, Phone, Trash2, ExternalLink, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCourseEnrollments, EnrolledStudent } from '@/features/admin/hooks/useCourseEnrollments';
@@ -185,10 +185,11 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
                               variant="ghost" 
                               size="icon" 
                               onClick={() => handleSendEmail(student)}
+                              className="relative"
                             >
                               <Mail className={`h-4 w-4 ${student.email ? 'text-blue-500' : 'text-orange-400'}`} />
                               {!student.email && (
-                                <AlertTriangle className="h-2 w-2 text-orange-500 absolute top-0 right-0" />
+                                <span className="absolute -top-1 -right-1 h-2 w-2 bg-orange-500 rounded-full"></span>
                               )}
                             </Button>
                           </TooltipTrigger>
@@ -205,10 +206,11 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
                               variant="ghost" 
                               size="icon"
                               onClick={() => handleCallPhone(student)}
+                              className="relative"
                             >
                               <Phone className={`h-4 w-4 ${student.phone ? 'text-green-500' : 'text-orange-400'}`} />
                               {!student.phone && (
-                                <AlertTriangle className="h-2 w-2 text-orange-500 absolute top-0 right-0" />
+                                <span className="absolute -top-1 -right-1 h-2 w-2 bg-orange-500 rounded-full"></span>
                               )}
                             </Button>
                           </TooltipTrigger>
@@ -276,7 +278,7 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-orange-500" /> 
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-500">!</span> 
                 Información de contacto faltante
               </DialogTitle>
               <DialogDescription>
