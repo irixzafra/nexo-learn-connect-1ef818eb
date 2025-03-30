@@ -2,6 +2,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
@@ -20,6 +21,7 @@ interface AdminTabsProps {
   className?: string;
   orientation?: 'horizontal' | 'vertical';
   iconPosition?: 'left' | 'top';
+  variant?: 'tabs' | 'toggles';
 }
 
 const AdminTabs: React.FC<AdminTabsProps> = ({
@@ -29,10 +31,81 @@ const AdminTabs: React.FC<AdminTabsProps> = ({
   onValueChange,
   className = "",
   orientation = 'horizontal',
-  iconPosition = 'left'
+  iconPosition = 'left',
+  variant = 'tabs'
 }) => {
   const isMobile = useMediaQuery("(max-width: 640px)");
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
+
+  if (variant === 'toggles') {
+    return (
+      <div className={className}>
+        <ToggleGroup 
+          type="single" 
+          defaultValue={defaultValue}
+          value={value} 
+          onValueChange={onValueChange}
+          className={cn(
+            "w-full border rounded-lg p-1 justify-start bg-muted/30",
+            orientation === 'vertical' ? "flex-col" : "flex"
+          )}
+        >
+          <TooltipProvider delayDuration={300}>
+            {tabs.map((tab) => (
+              <Tooltip key={tab.value}>
+                <TooltipTrigger asChild>
+                  <ToggleGroupItem 
+                    value={tab.value}
+                    className={cn(
+                      "flex items-center gap-2 rounded-md transition-colors",
+                      iconPosition === 'top' && "flex-col py-2 gap-1.5",
+                      "data-[state=on]:bg-background data-[state=on]:shadow-sm"
+                    )}
+                    aria-label={tab.label}
+                  >
+                    <span className={cn(
+                      "text-muted-foreground data-[state=on]:text-foreground",
+                      iconPosition === 'top' && "text-lg"
+                    )}>
+                      {tab.icon}
+                    </span>
+                    {(!isSmallScreen || isMobile) && (
+                      <span className={cn(
+                        "text-sm font-medium",
+                        iconPosition === 'top' && "text-xs"
+                      )}>
+                        {tab.label}
+                      </span>
+                    )}
+                  </ToggleGroupItem>
+                </TooltipTrigger>
+                
+                {isSmallScreen && !isMobile && (
+                  <TooltipContent side="bottom" align="center">
+                    {tab.label}
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            ))}
+          </TooltipProvider>
+        </ToggleGroup>
+        
+        <div className="mt-6">
+          {tabs.map((tab) => (
+            <div 
+              key={tab.value} 
+              className={cn(
+                "animate-fade-in", 
+                tab.value === (value || defaultValue) ? "block" : "hidden"
+              )}
+            >
+              {tab.content}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Tabs 
