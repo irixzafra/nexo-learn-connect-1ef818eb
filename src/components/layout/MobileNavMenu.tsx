@@ -8,6 +8,7 @@ import { NexoLogo } from '@/components/ui/logo';
 import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
 import { adminMobileMenuItems, adminMainMenuItems } from '@/components/ui/admin-menu/AdminMenuPresets';
 import { UserRole } from '@/types/auth';
+import { useLocation } from 'react-router-dom';
 
 interface MobileNavMenuProps {
   userRole: UserRole | null;
@@ -16,6 +17,15 @@ interface MobileNavMenuProps {
 
 const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) => {
   const isAdmin = userRole === 'admin';
+  const location = useLocation();
+  
+  // Check if we're on an admin page to avoid duplicate menus
+  const isAdminPage = location.pathname.includes('/admin/');
+  
+  // If we're on an admin page, don't render the mobile menu
+  if (isAdminPage) {
+    return null;
+  }
   
   return (
     <div className={cn("lg:hidden", className)}>

@@ -19,6 +19,7 @@ import { NexoLogo } from "@/components/ui/logo";
 import { NotificationIndicator } from "@/components/notifications/NotificationIndicator";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import MobileNavMenu from "@/components/layout/MobileNavMenu";
+import { useLocation } from "react-router-dom";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -30,6 +31,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
   const [isOnline, setIsOnline] = useState(connectionService.isCurrentlyOnline());
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const { userRole } = useAuth();
+  const location = useLocation();
   const [viewAsRole, setViewAsRole] = useState<'current' | UserRole>(() => {
     // Try to get the saved role from localStorage
     const savedRole = localStorage.getItem('viewAsRole');
@@ -38,6 +40,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     }
     return 'current';
   });
+
+  // Check if we're on an admin page
+  const isAdminPage = location.pathname.includes('/admin/');
 
   useEffect(() => {
     const unsubscribe = connectionService.addListener(online => {
@@ -78,10 +83,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
             {/* Top bar with menu trigger, logo, user menu */}
             <div className="h-14 border-b flex items-center justify-between px-4">
               <div className="flex items-center gap-2">
-                {/* Trigger móvil */}
-                <div className="md:hidden">
-                  <MobileNavMenu userRole={userRole} />
-                </div>
+                {/* Mobile menu - Not shown on admin pages to avoid duplication */}
+                <MobileNavMenu userRole={userRole} />
                 
                 {/* Logo en la versión móvil */}
                 <div className="md:hidden">
