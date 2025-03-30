@@ -18,18 +18,18 @@ import {
 
 // Mapping of data types to icons
 export const typeIcons: Record<TestDataType, React.ReactNode> = {
-  course: <BookOpen className="h-5 w-5" />,
-  user: <Users className="h-5 w-5" />,
-  lesson: <FileText className="h-5 w-5" />,
-  message: <MessageSquare className="h-5 w-5" />,
-  module: <Folder className="h-5 w-5" />,
-  profile: <UserCircle className="h-5 w-5" />,
-  assignment: <ClipboardList className="h-5 w-5" />,
-  category: <Tag className="h-5 w-5" />,
-  enrollment: <GraduationCap className="h-5 w-5" />,
-  quiz: <ScrollText className="h-5 w-5" />,
-  certificate: <Award className="h-5 w-5" />,
-  payment: <CreditCard className="h-5 w-5" />
+  course: React.createElement(BookOpen, { className: "h-5 w-5" }),
+  user: React.createElement(Users, { className: "h-5 w-5" }),
+  lesson: React.createElement(FileText, { className: "h-5 w-5" }),
+  message: React.createElement(MessageSquare, { className: "h-5 w-5" }),
+  module: React.createElement(Folder, { className: "h-5 w-5" }),
+  profile: React.createElement(UserCircle, { className: "h-5 w-5" }),
+  assignment: React.createElement(ClipboardList, { className: "h-5 w-5" }),
+  category: React.createElement(Tag, { className: "h-5 w-5" }),
+  enrollment: React.createElement(GraduationCap, { className: "h-5 w-5" }),
+  quiz: React.createElement(ScrollText, { className: "h-5 w-5" }),
+  certificate: React.createElement(Award, { className: "h-5 w-5" }),
+  payment: React.createElement(CreditCard, { className: "h-5 w-5" })
 };
 
 // Data types with their display names
