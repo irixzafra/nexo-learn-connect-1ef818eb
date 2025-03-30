@@ -14,11 +14,7 @@ import {
   Settings, 
   User, 
   Phone,
-  Bell,
-  BookOpen,
-  Calendar,
-  Award,
-  HelpCircle
+  Bell
 } from 'lucide-react';
 import { 
   Tooltip,
@@ -37,7 +33,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { unreadCount: notificationsCount } = useNotifications();
-  const messagesCount = 3; // Fixed value for demonstration
+  const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
   
   // Determine the effective role
   const getEffectiveRole = (): UserRole => {
@@ -52,7 +48,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   // Check if a role should see specific sections
   const canSeeAdmin = effectiveRole === 'admin' || effectiveRole === 'instructor';
   
-  // Main navigation items
+  // Navegación simplificada - solo categorías principales
   const navigationItems = [
     {
       name: "Inicio",
@@ -67,24 +63,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
       tooltip: "Explorar cursos"
     },
     {
-      name: "Mis Cursos",
-      icon: BookOpen,
-      path: "/student/courses",
-      tooltip: "Mis cursos"
-    },
-    {
-      name: "Calendario",
-      icon: Calendar,
-      path: "/calendar",
-      tooltip: "Calendario"
-    },
-    {
-      name: "Becas",
-      icon: Award,
-      path: "/scholarships",
-      tooltip: "Becas disponibles"
-    },
-    {
       name: "Comunidad",
       icon: Users,
       path: "/community",
@@ -97,13 +75,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
       tooltip: "Mensajes",
       badge: messagesCount
     },
-    {
-      name: "Alertas",
-      icon: Bell,
-      path: "/notifications",
-      tooltip: "Notificaciones",
-      badge: notificationsCount
-    },
     ...(canSeeAdmin ? [{
       name: "Administración",
       icon: Settings,
@@ -114,13 +85,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
       name: "Perfil",
       icon: User,
       path: "/profile",
-      tooltip: "Mi perfil"
-    },
-    {
-      name: "Ayuda",
-      icon: HelpCircle,
-      path: "/help",
-      tooltip: "Ayuda y soporte"
+      tooltip: "Mi perfil",
+      badge: notificationsCount
     },
     {
       name: "Contacto",
@@ -134,10 +100,11 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
     <div className="h-full flex flex-col py-4">
       {/* Logo at the top with full title and subtitle */}
       <div className={cn(
-        "flex items-center mb-6 px-4"
+        "flex items-center justify-start",
+        isCollapsed ? "px-2 mb-4" : "px-4 mb-6"
       )}>
         {isCollapsed ? (
-          <NexoLogo variant="icon" className="h-8 w-auto" />
+          <NexoLogo variant="icon" className="h-8 w-auto mx-auto" />
         ) : (
           <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
         )}
@@ -147,7 +114,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
         "flex-1 overflow-auto",
         isCollapsed ? "px-2" : "px-4"
       )}>
-        <nav className="space-y-1 pt-2">
+        <nav className="space-y-2 pt-4">
           {navigationItems.map((item) => (
             <div key={item.name} className="mb-1">
               {isCollapsed ? (
