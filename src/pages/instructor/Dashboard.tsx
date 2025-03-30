@@ -6,6 +6,8 @@ import { PopularCoursesCard } from "@/features/instructor/components/PopularCour
 import { useDashboardStats } from "@/features/instructor/hooks/useDashboardStats";
 import { BookOpen, Users, BookPlus, TrendingUp } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/contexts/AuthContext";
+import { OnboardingTrigger } from "@/components/onboarding/OnboardingTrigger";
 
 const InstructorDashboard: React.FC = () => {
   const {
@@ -16,10 +18,25 @@ const InstructorDashboard: React.FC = () => {
     popularCourses,
     isLoading,
   } = useDashboardStats();
+  
+  const { user } = useAuth();
+  
+  // Check if the user is new (created within the last 7 days)
+  const isNewUser = user?.created_at && 
+    new Date(user.created_at).getTime() > Date.now() - (7 * 24 * 60 * 60 * 1000); // 7 days
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Panel de Instructor</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Panel de Instructor</h1>
+        
+        {/* Show onboarding trigger with autoStart for new users */}
+        {isNewUser && (
+          <div className="hidden sm:block">
+            <OnboardingTrigger autoStart={true} />
+          </div>
+        )}
+      </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

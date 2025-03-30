@@ -8,6 +8,7 @@ import { ConnectionStatus } from '@/components/ConnectionStatus';
 import { useAuth } from '@/contexts/AuthContext';
 import { NotificationIndicator } from '@/components/notifications/NotificationIndicator';
 import { ThemeSelector } from '@/components/ThemeSelector';
+import { OnboardingTrigger } from '@/components/onboarding/OnboardingTrigger';
 
 export const HeaderActions: React.FC = () => {
   const navigate = useNavigate();
@@ -25,6 +26,12 @@ export const HeaderActions: React.FC = () => {
       <Separator orientation="vertical" className="h-6" />
       <RoleIndicator viewingAs={userRole} />
       <Separator orientation="vertical" className="h-6" />
+      
+      {/* Onboarding Trigger */}
+      <div className="hidden md:block">
+        <OnboardingTrigger />
+      </div>
+      
       <Button 
         variant="outline" 
         size="sm"
