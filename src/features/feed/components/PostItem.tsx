@@ -11,7 +11,6 @@ import {
   MessageSquare, 
   Heart, 
   Share2, 
-  MoreHorizontal,
   Pin 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -43,6 +42,11 @@ export const PostItem: React.FC<PostItemProps> = ({ post, onCommentClick }) => {
     } catch (error) {
       console.error('Error toggling like:', error);
     }
+  };
+
+  // Renderizar contenido HTML de manera segura
+  const renderContent = () => {
+    return { __html: post.content };
   };
 
   return (
@@ -91,15 +95,12 @@ export const PostItem: React.FC<PostItemProps> = ({ post, onCommentClick }) => {
         {post.title && (
           <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
         )}
-        <div className="prose prose-sm max-w-none dark:prose-invert">
-          {post.content.split('\n').map((paragraph, index) => (
-            <p key={index} className={index > 0 ? 'mt-2' : undefined}>
-              {paragraph}
-            </p>
-          ))}
-        </div>
         
-        {/* Media content would go here */}
+        {/* Renderizar contenido HTML */}
+        <div 
+          className="prose prose-sm max-w-none dark:prose-invert"
+          dangerouslySetInnerHTML={renderContent()}
+        />
       </CardContent>
       
       <CardFooter className="px-4 py-2 border-t flex items-center justify-between">
@@ -138,3 +139,5 @@ export const PostItem: React.FC<PostItemProps> = ({ post, onCommentClick }) => {
     </Card>
   );
 };
+
+export default PostItem;

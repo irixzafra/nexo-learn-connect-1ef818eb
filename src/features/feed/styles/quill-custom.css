@@ -1,0 +1,99 @@
+
+/* Estilos personalizados para el editor Quill */
+
+/* Ocultar la barra de herramientas original de Quill */
+.quill-editor-container .ql-toolbar.ql-snow {
+  display: none !important;
+}
+
+/* Quitar bordes innecesarios */
+.quill-editor-container .ql-container.ql-snow {
+  border: none !important;
+}
+
+/* Estilo para el editor */
+.quill-editor-container .ql-editor {
+  padding: 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: inherit;
+  background-color: transparent;
+  min-height: 200px;
+}
+
+/* Estilo para el placeholder */
+.quill-editor-container .ql-editor.ql-blank::before {
+  color: #9ca3af;
+  font-style: normal;
+  left: 1rem;
+  right: 1rem;
+}
+
+/* Estilos para videos embebidos */
+.quill-editor-container .ql-editor iframe,
+.quill-editor-container .ql-editor video {
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+/* Estilos para imágenes */
+.quill-editor-container .ql-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+/* Estilos para blockquote */
+.quill-editor-container .ql-editor blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  color: #6b7280;
+}
+
+/* Estilos para código */
+.quill-editor-container .ql-editor pre {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+/* Estilos para el modo oscuro */
+:root.dark .quill-editor-container .ql-editor pre {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
+:root.dark .quill-editor-container .ql-editor blockquote {
+  border-left-color: #4b5563;
+  color: #9ca3af;
+}
+
+/* Estilos para encabezados */
+.quill-editor-container .ql-editor h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.quill-editor-container .ql-editor h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.quill-editor-container .ql-editor h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}

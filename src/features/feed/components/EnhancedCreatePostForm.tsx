@@ -8,13 +8,15 @@ import { RichTextEditor } from './RichTextEditor';
 import { useCreatePost, usePostCategories } from '../hooks/useCommunityFeed';
 import { useQueryClient } from '@tanstack/react-query';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Smile, Image, AtSign } from 'lucide-react';
+import { Image, Video, AtSign, Smile, Send } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const EnhancedCreatePostForm: React.FC = () => {
   const { user } = useAuth();
   const [content, setContent] = useState('');
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
   const { createPost } = useCreatePost();
   const queryClient = useQueryClient();
   const { data: categories = [] } = usePostCategories();
@@ -32,11 +34,16 @@ export const EnhancedCreatePostForm: React.FC = () => {
       
       setContent('');
       setCategoryId(null);
+      setShowEditor(false);
       
-      // Invalidate the query to refresh the feed
+      // Mostrar notificación de éxito
+      toast.success('Publicación creada con éxito');
+      
+      // Invalidar la query para refrescar el feed
       queryClient.invalidateQueries({ queryKey: ['communityFeed'] });
     } catch (error) {
       console.error('Error creating post:', error);
+      toast.error('Error al crear la publicación');
     } finally {
       setIsSubmitting(false);
     }
@@ -53,7 +60,7 @@ export const EnhancedCreatePostForm: React.FC = () => {
   }
 
   return (
-    <Card>
+    <Card className="mb-6">
       <CardHeader className="pb-3 pt-4 px-4 flex flex-row space-y-0 gap-3">
         <Avatar className="h-10 w-10">
           <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`} alt="Avatar" />
@@ -80,38 +87,76 @@ export const EnhancedCreatePostForm: React.FC = () => {
       </CardHeader>
       
       <CardContent className="pb-2 px-4">
-        <RichTextEditor
-          value={content}
-          onChange={setContent}
-          placeholder="¿Qué quieres compartir?"
-          minHeight="150px"
-        />
+        {!showEditor ? (
+          <Button 
+            variant="outline" 
+            className="w-full h-12 justify-start text-muted-foreground font-normal px-4 rounded-lg"
+            onClick={() => setShowEditor(true)}
+          >
+            ¿Qué quieres compartir?
+          </Button>
+        ) : (
+          <RichTextEditor
+            value={content}
+            onChange={setContent}
+            placeholder="¿Qué quieres compartir?"
+            minHeight="150px"
+            onSubmit={handleSubmit}
+            submitting={isSubmitting}
+          />
+        )}
       </CardContent>
       
-      <CardFooter className="flex justify-between pt-0 px-4 pb-3">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="text-muted-foreground">
-            <Image className="h-4 w-4 mr-1" />
-            Imagen
+      {!showEditor && (
+        <CardFooter className="flex justify-between pt-0 px-4 pb-3">
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-muted-foreground"
+              onClick={() => setShowEditor(true)}
+            >
+              <Image className="h-4 w-4 mr-1" />
+              Imagen
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-muted-foreground"
+              onClick={() => setShowEditor(true)}
+            >
+              <Video className="h-4 w-4 mr-1" />
+              Video
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-muted-foreground"
+              onClick={() => setShowEditor(true)}
+            >
+              <Smile className="h-4 w-4 mr-1" />
+              Emoji
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-muted-foreground hidden sm:flex"
+              onClick={() => setShowEditor(true)}
+            >
+              <AtSign className="h-4 w-4 mr-1" />
+              Mencionar
+            </Button>
+          </div>
+          
+          <Button 
+            onClick={() => setShowEditor(true)} 
+            size="sm"
+          >
+            <Send className="h-4 w-4 mr-1" />
+            Publicar
           </Button>
-          <Button variant="ghost" size="sm" className="text-muted-foreground">
-            <Smile className="h-4 w-4 mr-1" />
-            Emoji
-          </Button>
-          <Button variant="ghost" size="sm" className="text-muted-foreground">
-            <AtSign className="h-4 w-4 mr-1" />
-            Mencionar
-          </Button>
-        </div>
-        
-        <Button 
-          onClick={handleSubmit} 
-          disabled={!content.trim() || isSubmitting}
-          size="sm"
-        >
-          Publicar
-        </Button>
-      </CardFooter>
+        </CardFooter>
+      )}
     </Card>
   );
 };
