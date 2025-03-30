@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Trash, Loader2 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { Comment } from '../hooks/useComments';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';

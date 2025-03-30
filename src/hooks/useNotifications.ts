@@ -1,7 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from './useAuth';
+import { useAuth } from '@/hooks/useAuth';
 import { NotificationType } from '@/types/notifications';
 
 interface Notification {
