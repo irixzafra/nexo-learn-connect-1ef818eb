@@ -12,7 +12,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { PlusCircle } from 'lucide-react';
-import { UserRoleType, toUserRoleType } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 
 interface GestionNavigationProps {
   isOpen: boolean;

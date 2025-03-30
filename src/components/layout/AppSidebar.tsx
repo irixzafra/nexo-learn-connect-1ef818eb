@@ -8,10 +8,8 @@ import {
 import SidebarFooterContent from './SidebarFooterContent';
 import { UserRoleType } from '@/types/auth';
 
-type ViewAsRole = UserRoleType | 'current';
-
 interface AppSidebarProps {
-  viewAsRole: ViewAsRole;
+  viewAsRole: UserRoleType | 'current';
   onRoleChange: (role: UserRoleType) => void;
 }
 

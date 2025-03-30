@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { UserProfile, UserRoleType, toUserRoleType } from "@/types/auth";
+import { UserProfile, UserRoleType } from "@/types/auth";
 import {
   Table,
   TableBody,
@@ -24,7 +23,6 @@ import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import AppLayout from "@/layouts/AppLayout";
-import { Users as UsersIcon } from "lucide-react";
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { type UserRoleType } from '@/types/auth';
@@ -58,5 +57,5 @@ export const UserRoleDisplay: React.FC<UserRoleDisplayProps> = ({
   );
 };
 
-// Export the component as UserRoleTypeDisplay
-export { UserRoleDisplay as UserRoleTypeDisplay };
+// Export the component as UserRoleType for backward compatibility
+export { UserRoleDisplay as UserRoleType };

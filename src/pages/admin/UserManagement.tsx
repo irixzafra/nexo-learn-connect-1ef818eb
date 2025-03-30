@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import { UserProfile, UserRole } from "@/types/auth";
+import { UserProfile, UserRoleType } from "@/types/auth";
 import {
   Table,
   TableBody,
@@ -26,7 +25,7 @@ import { Search, RefreshCw, UserPlus, ChevronLeft, UserCog, PencilLine, Trash2, 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRoleSearch } from "@/components/admin/UserRoleSearch";
 import SectionPageLayout, { PageSection } from "@/layouts/SectionPageLayout";
-import { UserRoleType } from "@/features/users/UserRoleType";
+import { UserRoleDisplay } from "@/features/users/UserRoleType";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -87,7 +86,7 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: UserRole) => {
+  const handleRoleChange = async (userId: string, newRole: UserRoleType) => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -267,7 +266,7 @@ const UserManagement: React.FC = () => {
                             {user.full_name || 'Usuario sin nombre'}
                           </TableCell>
                           <TableCell>
-                            <UserRoleType role={user.role} showIcon={true} />
+                            <UserRoleDisplay role={user.role} showIcon={true} />
                           </TableCell>
                           <TableCell>
                             {new Date(user.created_at || '').toLocaleDateString()}
@@ -378,7 +377,7 @@ const UserManagement: React.FC = () => {
                               {user.full_name || 'Usuario sin nombre'}
                             </TableCell>
                             <TableCell>
-                              <UserRoleType role={user.role} showIcon={true} />
+                              <UserRoleDisplay role={user.role} showIcon={true} />
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
                               {new Date(user.created_at || '').toLocaleDateString()}
@@ -504,7 +503,7 @@ const UserManagement: React.FC = () => {
               </div>
               <div className="flex flex-col space-y-1">
                 <span className="text-sm font-medium">Rol:</span>
-                <UserRoleType role={selectedUser.role} showIcon={true} />
+                <UserRoleDisplay role={selectedUser.role} showIcon={true} />
               </div>
               <div className="flex flex-col space-y-1">
                 <span className="text-sm font-medium">Fecha de registro:</span>

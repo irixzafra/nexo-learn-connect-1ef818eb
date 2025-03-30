@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -98,7 +97,9 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
               >
                 <div className="flex items-center gap-1">
                   {getRoleIcon(toUserRoleType(userRole || ''))}
-                  <span className="capitalize truncate">{userRole || 'Usuario'}</span>
+                  <span className="capitalize truncate">
+                    {toUserRoleType(userRole || '')}
+                  </span>
                 </div>
               </Badge>
             </div>
@@ -142,26 +143,7 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  ) : (
-    <div className="flex flex-col w-full gap-2">
-      <Button 
-        variant="default" 
-        size="sm" 
-        className="w-full"
-        onClick={() => navigate('/auth/login')}
-      >
-        Iniciar sesión
-      </Button>
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className="w-full"
-        onClick={() => navigate('/auth/register')}
-      >
-        Registrarse
-      </Button>
-    </div>
-  );
+  ) : null;
 };
 
 export default UserInfoDisplay;

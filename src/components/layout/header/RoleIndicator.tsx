@@ -14,7 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 
 interface RoleIndicatorProps {
-  viewingAs?: UserRoleType | string;
+  viewingAs?: UserRoleType | 'current';
   onRoleChange?: (role: UserRoleType) => void;
 }
 
@@ -25,7 +25,7 @@ export const RoleIndicator: React.FC<RoleIndicatorProps> = ({
   const { toast } = useToast();
   const { userRole } = useAuth();
   const [selectedRole, setSelectedRole] = useState<UserRoleType>(
-    (viewingAs && viewingAs !== 'current') ? toUserRoleType(viewingAs) : toUserRoleType(userRole as string)
+    (viewingAs && viewingAs !== 'current') ? toUserRoleType(viewingAs as string) : toUserRoleType(userRole as string)
   );
   
   const getRoleInfo = (role: UserRoleType) => {

@@ -28,7 +28,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   languages,
   changeLanguage
 }) => {
-  const isViewingAsOtherRole = currentViewRole !== 'current' && toUserRoleType(currentViewRole) !== userRole;
+  const isViewingAsOtherRole = currentViewRole !== 'current' && toUserRoleType(currentViewRole as string) !== userRole;
   
   // If sidebar is collapsed, show only minimal UI
   if (isCollapsed) {
@@ -56,17 +56,17 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
           </div>
           
           <div className="flex flex-col space-y-1">
-            {['admin', 'instructor', 'student', 'sistemas', 'anonimo'].map((role) => (
+            {(['admin', 'instructor', 'student', 'sistemas', 'anonimo'] as UserRoleType[]).map((role) => (
               <button
                 key={role}
-                onClick={() => handleRoleChange(role as UserRoleType)}
+                onClick={() => handleRoleChange(role)}
                 className={`w-full text-left p-2 rounded-md text-sm ${
                   effectiveRole === role 
                     ? 'bg-primary/10 text-primary font-medium' 
                     : 'hover:bg-accent text-foreground/80 hover:text-foreground'
                 }`}
               >
-                {getRoleName(role as UserRoleType)}
+                {getRoleName(role)}
               </button>
             ))}
           </div>

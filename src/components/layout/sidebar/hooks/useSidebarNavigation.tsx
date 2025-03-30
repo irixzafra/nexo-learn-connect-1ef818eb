@@ -1,32 +1,39 @@
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
-
-interface SidebarNavigationHookResult {
-  isCollapsed: boolean;
-  currentViewRole: 'current' | UserRoleType;
-  currentLanguage: string;
-  effectiveRole: UserRoleType;
-  handleRoleChange: (role: UserRoleType) => void;
-  getRoleName: (role: UserRoleType) => string;
-  getHomePath: (role: UserRoleType) => string;
-  changeLanguage: (code: string) => void;
-}
+import { getRoleName, getHomePath } from '@/utils/roleUtils';
 
 export const useSidebarNavigation = (
   userRole: UserRoleType,
   viewAsRole?: 'current' | UserRoleType,
   onRoleChange?: (role: UserRoleType) => void
-): SidebarNavigationHookResult => {
-  // Local state
+) => {
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  // Track "view as" role for admin role-switching
   const [currentViewRole, setCurrentViewRole] = useState<'current' | UserRoleType>(viewAsRole || 'current');
+  
+  // Track current language (could come from a context/cookie)
   const [currentLanguage, setCurrentLanguage] = useState('es');
   
-  // Calculate the effective role (the role used for rendering the UI)
-  const effectiveRole = currentViewRole === 'current' ? userRole : currentViewRole;
+  // Update local state if prop changes
+  useEffect(() => {
+    if (viewAsRole) {
+      setCurrentViewRole(viewAsRole);
+    }
+  }, [viewAsRole]);
   
-  // Handler for role changes
+  // Calculate effective role (actual or viewed-as)
+  const effectiveRole = currentViewRole === 'current' ? userRole : toUserRoleType(currentViewRole as string);
+  
+  // Toggle sidebar expanded/collapsed state
+  const toggleSidebar = () => {
+    setIsCollapsed(prev => !prev);
+  };
+  
+  // Handle role change
   const handleRoleChange = (role: UserRoleType) => {
     setCurrentViewRole(role);
     
@@ -35,46 +42,15 @@ export const useSidebarNavigation = (
     }
   };
   
-  // Get role display name
-  const getRoleName = (role: UserRoleType): string => {
-    switch (role) {
-      case 'admin':
-        return 'Administrador';
-      case 'instructor':
-        return 'Instructor';
-      case 'student':
-        return 'Estudiante';
-      case 'sistemas':
-        return 'Sistemas';
-      case 'anonimo':
-        return 'Anónimo';
-      default:
-        return role;
-    }
-  };
-  
-  // Get home path based on role
-  const getHomePath = (role: UserRoleType): string => {
-    switch (role) {
-      case 'admin':
-        return '/admin/dashboard';
-      case 'instructor':
-        return '/instructor/dashboard';
-      case 'sistemas':
-        return '/admin/systems';
-      default:
-        return '/home';
-    }
-  };
-  
-  // Change language handler
+  // Handle language change
   const changeLanguage = (code: string) => {
     setCurrentLanguage(code);
-    // Additional language change logic here
+    // Additional logic for language change (e.g., update context, store in cookies)
   };
   
   return {
     isCollapsed,
+    toggleSidebar,
     currentViewRole,
     currentLanguage,
     effectiveRole,

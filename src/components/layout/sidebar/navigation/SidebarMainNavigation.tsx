@@ -6,7 +6,7 @@ import {
   TooltipContent,
   TooltipTrigger 
 } from '@/components/ui/tooltip';
-import { UserRole } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 
 interface SidebarMainNavigationProps {
-  effectiveRole: UserRole;
+  effectiveRole: UserRoleType;
   isCollapsed: boolean;
   messagesCount: number;
   notificationsCount: number;

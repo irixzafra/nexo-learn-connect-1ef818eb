@@ -50,18 +50,18 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
       {/* Main Navigation Section */}
       <SidebarMainNavigation 
-        effectiveRole={effectiveRole as UserRoleType}
+        effectiveRole={effectiveRole}
         isCollapsed={isCollapsed}
         messagesCount={messagesCount}
         notificationsCount={notificationsCount}
-        getHomePath={getHomePath}
+        getHomePath={() => getHomePath(effectiveRole)}
       />
       
       {/* Footer Section with Role Switcher and Language Selector */}
       <SidebarFooterSection 
         userRole={toUserRoleType(userRole as string)}
         isCollapsed={isCollapsed}
-        effectiveRole={effectiveRole as UserRoleType}
+        effectiveRole={effectiveRole}
         currentViewRole={currentViewRole}
         handleRoleChange={handleRoleChange}
         getRoleName={getRoleName}
