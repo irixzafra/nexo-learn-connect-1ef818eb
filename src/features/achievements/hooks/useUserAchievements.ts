@@ -32,12 +32,19 @@ interface UserStats {
   leaderboardPosition: number | null;
 }
 
+interface UserAchievementsData {
+  achievements: Achievement[];
+  certificates: Certificate[];
+  badges: Badge[];
+  stats: UserStats;
+}
+
 export const useUserAchievements = (userId: string) => {
   return useQuery({
     queryKey: ['userAchievements', userId],
-    queryFn: async () => {
+    queryFn: async (): Promise<UserAchievementsData> => {
       // Fetch achievements
-      const { data: achievements, error: achievementsError } = await supabase
+      const { data: achievementsData, error: achievementsError } = await supabase
         .from('user_achievements')
         .select(`
           id,
@@ -56,7 +63,7 @@ export const useUserAchievements = (userId: string) => {
       }
 
       // Fetch certificates
-      const { data: certificates, error: certificatesError } = await supabase
+      const { data: certificatesData, error: certificatesError } = await supabase
         .from('certificates')
         .select(`
           id,
@@ -75,7 +82,7 @@ export const useUserAchievements = (userId: string) => {
       }
 
       // Fetch badges
-      const { data: badges, error: badgesError } = await supabase
+      const { data: badgesData, error: badgesError } = await supabase
         .from('user_badges')
         .select(`
           id,
@@ -104,30 +111,30 @@ export const useUserAchievements = (userId: string) => {
       }
 
       // Format achievements
-      const formattedAchievements = achievements.map((item) => ({
+      const formattedAchievements = achievementsData.map((item) => ({
         id: item.id,
-        title: item.achievement.title,
-        description: item.achievement.description,
+        title: item.achievement?.title || '',
+        description: item.achievement?.description || '',
         earned_date: item.earned_at
-      })) as Achievement[];
+      }));
 
       // Format certificates
-      const formattedCertificates = certificates.map((item) => ({
+      const formattedCertificates = certificatesData.map((item) => ({
         id: item.id,
         course_id: item.course_id,
         course_name: item.courses?.title || 'Curso',
         issue_date: item.issue_date,
         certificate_url: item.certificate_url
-      })) as Certificate[];
+      }));
 
       // Format badges
-      const formattedBadges = badges.map((item) => ({
+      const formattedBadges = badgesData.map((item) => ({
         id: item.id,
         name: item.badges?.name || '',
         description: item.badges?.description || '',
         icon_name: item.badges?.icon_name || 'award',
         earned_at: item.earned_at
-      })) as Badge[];
+      }));
 
       // If RPC doesn't exist, provide a fallback for stats
       const stats = userStats || {

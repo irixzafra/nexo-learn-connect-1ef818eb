@@ -3,7 +3,7 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Award, Certificate, Zap, Trophy, Star } from 'lucide-react';
+import { Award, FileText, Zap, Trophy, Star } from 'lucide-react';
 import { useUserAchievements } from '../hooks/useUserAchievements';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -13,10 +13,17 @@ interface UserAchievementsProps {
 
 export const UserAchievements: React.FC<UserAchievementsProps> = ({ userId }) => {
   const { 
-    achievements, 
-    certificates, 
-    badges, 
-    stats, 
+    data: { achievements, certificates, badges, stats } = { 
+      achievements: [], 
+      certificates: [], 
+      badges: [], 
+      stats: { 
+        completedCourses: 0, 
+        completedLessons: 0, 
+        totalPoints: 0, 
+        leaderboardPosition: null 
+      } 
+    },
     isLoading 
   } = useUserAchievements(userId);
 
@@ -41,7 +48,7 @@ export const UserAchievements: React.FC<UserAchievementsProps> = ({ userId }) =>
           <span>Logros</span>
         </TabsTrigger>
         <TabsTrigger value="certificates" className="flex items-center gap-2">
-          <Certificate className="h-4 w-4" />
+          <FileText className="h-4 w-4" />
           <span>Certificados</span>
         </TabsTrigger>
         <TabsTrigger value="badges" className="flex items-center gap-2">
@@ -103,7 +110,7 @@ export const UserAchievements: React.FC<UserAchievementsProps> = ({ userId }) =>
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-lg">{certificate.course_name}</CardTitle>
-                    <Certificate className="h-5 w-5 text-blue-500" />
+                    <FileText className="h-5 w-5 text-blue-500" />
                   </div>
                   <CardDescription>Certificado de finalización</CardDescription>
                 </CardHeader>
