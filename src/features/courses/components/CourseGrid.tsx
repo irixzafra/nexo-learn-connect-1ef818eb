@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -27,10 +26,10 @@ export interface FeaturedCourse {
   start_date?: string;
   currency?: 'eur' | 'usd';
   slug?: string;
-  instructor_id?: string;
-  is_published?: boolean;
-  created_at?: string;
-  updated_at?: string;
+  instructor_id: string;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 interface CourseGridProps {
