@@ -276,7 +276,8 @@ const CoursesCatalog: React.FC = () => {
             <p className="text-muted-foreground mb-5 text-sm md:text-base">
               Explora nuestra variedad de rutas de aprendizaje diseñadas para guiarte paso a paso hasta dominar las habilidades que necesitas.
             </p>
-            <Button className="group" size="sm" md:size="md">
+            {/* Fix: Remove the invalid md:size attribute and use className for responsive styling */}
+            <Button className="group text-sm md:text-base md:px-6 md:py-2" size="sm">
               Explorar rutas de aprendizaje
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>

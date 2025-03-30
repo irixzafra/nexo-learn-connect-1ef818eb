@@ -31,11 +31,16 @@ const CourseLanding: React.FC = () => {
     handleEnroll,
     expandedFAQs,
     setExpandedFAQs,
-    formatCurrency,
+    formatCurrency: formatCurrencyFn,
     totalLessons,
     previewableLessons
   } = useCourseLanding(identifier, isSlug);
   
+  // Create a wrapper function that matches the expected signature
+  const formatCurrency = (price: number) => {
+    return formatCurrencyFn(price);
+  };
+
   if (isLoading || isChecking) {
     return (
       <PublicLayout>

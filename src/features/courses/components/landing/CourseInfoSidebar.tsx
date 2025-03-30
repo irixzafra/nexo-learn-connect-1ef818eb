@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Clock, Users, Award, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { Course } from "@/types/courses";
+import { Course } from "@/types/course";
 
 interface CourseInfoSidebarProps {
   course: Course;
