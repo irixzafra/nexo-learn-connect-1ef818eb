@@ -1,6 +1,5 @@
 
 import React from 'react';
-import AppLayout from '@/layouts/AppLayout';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { Settings } from 'lucide-react';
 import { toast } from 'sonner';
@@ -15,19 +14,17 @@ const SystemSettings: React.FC = () => {
   };
 
   return (
-    <AppLayout>
-      <div className="container mx-auto p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Settings className="h-6 w-6 text-primary" />
-          <h1 className="text-3xl font-bold">Configuración del Sistema</h1>
-        </div>
-
-        <SettingsTabs 
-          featuresConfig={featuresConfig}
-          onToggleFeature={handleToggleFeature}
-        />
+    <div className="container mx-auto p-6">
+      <div className="flex items-center gap-3 mb-6">
+        <Settings className="h-6 w-6 text-primary" />
+        <h1 className="text-3xl font-bold">Configuración del Sistema</h1>
       </div>
-    </AppLayout>
+
+      <SettingsTabs 
+        featuresConfig={featuresConfig}
+        onToggleFeature={handleToggleFeature}
+      />
+    </div>
   );
 };
 

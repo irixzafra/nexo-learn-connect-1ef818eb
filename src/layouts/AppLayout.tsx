@@ -25,9 +25,14 @@ import { PanelLeft, PanelRight } from "lucide-react";
 interface AppLayoutProps {
   children: React.ReactNode;
   className?: string;
+  hideHeader?: boolean; // New prop to optionally hide the header
 }
 
-const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
+const AppLayout: React.FC<AppLayoutProps> = ({ 
+  children, 
+  className,
+  hideHeader = false // Default to showing the header
+}) => {
   const isMobile = useIsMobile();
   const [isOnline, setIsOnline] = useState(connectionService.isCurrentlyOnline());
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
@@ -93,48 +98,50 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     <EditModeProvider>
       <SidebarProvider defaultOpen={!isCollapsed}>
         <div className="min-h-screen flex flex-col dark:bg-gray-950 w-full">
-          {/* Top header - Full width */}
-          <header className="h-14 border-b flex items-center justify-between px-4 z-10 bg-background">
-            <div className="flex items-center gap-2">
-              {/* Mobile sidebar with logo as trigger */}
-              {isMobile ? (
-                <MobileSidebar 
-                  viewAsRole={viewAsRole} 
-                  trigger={LogoTrigger}
-                />
-              ) : (
-                <div className="flex items-center gap-2">
-                  {/* Desktop logo */}
-                  {LogoTrigger}
-                  
-                  {/* Separate collapse button for better visibility */}
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={toggleSidebar}
-                    className="ml-2 text-muted-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                    aria-label={isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}
-                  >
-                    {isCollapsed ? (
-                      <PanelRight className="h-5 w-5" />
-                    ) : (
-                      <PanelLeft className="h-5 w-5" />
-                    )}
-                  </Button>
-                </div>
-              )}
-            </div>
-            
-            <div className="flex items-center gap-2 ml-auto">
-              {/* Theme Selector */}
-              <ThemeSelector />
+          {/* Top header - Only show if hideHeader is false */}
+          {!hideHeader && (
+            <header className="h-14 border-b flex items-center justify-between px-4 z-10 bg-background">
+              <div className="flex items-center gap-2">
+                {/* Mobile sidebar with logo as trigger */}
+                {isMobile ? (
+                  <MobileSidebar 
+                    viewAsRole={viewAsRole} 
+                    trigger={LogoTrigger}
+                  />
+                ) : (
+                  <div className="flex items-center gap-2">
+                    {/* Desktop logo */}
+                    {LogoTrigger}
+                    
+                    {/* Separate collapse button for better visibility */}
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={toggleSidebar}
+                      className="ml-2 text-muted-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      aria-label={isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}
+                    >
+                      {isCollapsed ? (
+                        <PanelRight className="h-5 w-5" />
+                      ) : (
+                        <PanelLeft className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </div>
               
-              {/* Notification Icon */}
-              <NotificationIndicator />
-              
-              <UserMenu />
-            </div>
-          </header>
+              <div className="flex items-center gap-2 ml-auto">
+                {/* Theme Selector */}
+                <ThemeSelector />
+                
+                {/* Notification Icon */}
+                <NotificationIndicator />
+                
+                <UserMenu />
+              </div>
+            </header>
+          )}
 
           {/* Main content with sidebar */}
           <div className="flex flex-1 min-h-[calc(100vh-3.5rem)]">

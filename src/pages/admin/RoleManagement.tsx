@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { UserProfile, UserRole } from '@/types/auth';
@@ -21,7 +20,6 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
-import AppLayout from "@/layouts/AppLayout";
 
 const RoleManagement: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -66,7 +64,6 @@ const RoleManagement: React.FC = () => {
     fetchUsers();
   }, [toast]);
 
-  // Filter users based on search term
   useEffect(() => {
     if (!searchTerm.trim()) {
       setFilteredUsers(users);
@@ -98,7 +95,6 @@ const RoleManagement: React.FC = () => {
         return;
       }
 
-      // Update local state
       setUsers(prevUsers => 
         prevUsers.map(u => 
           u.id === userId ? { ...u, role: newRole } : u
@@ -213,11 +209,9 @@ const RoleManagement: React.FC = () => {
 
 export default function RoleManagementPage() {
   return (
-    <AppLayout>
-      <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">Gestión de Roles y Permisos</h1>
-        <RoleManagement />
-      </div>
-    </AppLayout>
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">Gestión de Roles y Permisos</h1>
+      <RoleManagement />
+    </div>
   );
 }
