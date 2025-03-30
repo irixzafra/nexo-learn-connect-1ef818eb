@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import ManualEnrollmentDialog from '@/components/admin/ManualEnrollmentDialog';
 import { useCourseEnrollments } from '@/features/admin/hooks/useCourseEnrollments';
-import { StudentsSectionHeader } from './StudentsSectionHeader';
-import { EnrollButton } from './EnrollButton';
-import { StudentsCard } from './StudentsCard';
+import StudentsSectionHeader from './StudentsSectionHeader';
+import EnrollButton from './EnrollButton';
+import StudentsCard from './StudentsCard';
 
 interface StudentsSectionProps {
   courseId: string;
