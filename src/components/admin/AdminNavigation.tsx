@@ -74,7 +74,7 @@ const AdminNavigation: React.FC = () => {
   };
   
   return (
-    <div className="w-full border-b mb-0 sticky top-0 bg-background z-10 shadow-sm">
+    <div className="w-full border-b mb-6 sticky top-0 bg-background z-10">
       <div className="container mx-auto py-2">
         {/* Main Categories Navigation */}
         <div className="flex flex-wrap gap-1 justify-center md:justify-start">
