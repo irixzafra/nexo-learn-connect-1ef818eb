@@ -1,29 +1,65 @@
 
-export function getPageTitle(path: string): string {
-  const segments = path.split('/').filter(p => p);
-  if (segments.length === 0) return 'Inicio';
+/**
+ * Utility to get the page title based on the current path
+ */
+export const getPageTitle = (path: string): string => {
+  // Remove leading and trailing slashes, then split by slash
+  const segments = path.replace(/^\/|\/$/g, '').split('/');
   
-  const lastSegment = segments[segments.length - 1];
+  // Special case for home and root path
+  if (!segments[0] || segments[0] === 'home') {
+    return 'Inicio';
+  }
   
-  const titleMap: { [key: string]: string } = {
-    'profile': 'Mi Perfil',
-    'courses': 'Cursos',
-    'my-courses': 'Mis Cursos',
-    'settings': 'Configuración',
-    'messages': 'Mensajes',
-    'calendar': 'Calendario',
-    'admin': 'Administración',
-    'instructor': 'Instructor',
-    'dashboard': 'Dashboard',
-    'search': 'Búsqueda',
-    'system-settings': 'Configuración del Sistema',
-    'roles': 'Gestión de Roles',
-    'users': 'Gestión de Usuarios',
-    'categories': 'Gestión de Categorías',
-    'test-data': 'Datos de Prueba',
-    'instructors': 'Instructores'
-  };
-  
-  return titleMap[lastSegment] || 
-    (lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).toLowerCase());
-}
+  // Handle admin paths
+  if (segments[0] === 'admin') {
+    if (segments.length === 1) return 'Administración';
+    
+    switch (segments[1]) {
+      case 'dashboard': return 'Dashboard';
+      case 'users': return 'Gestión de Usuarios';
+      case 'courses': return 'Gestión de Cursos';
+      case 'roles': return 'Roles y Permisos';
+      case 'settings': return 'Configuración';
+      case 'analytics': return 'Analíticas';
+      case 'content': return 'Contenido';
+      case 'billing': return 'Facturación';
+      case 'test-data': return 'Datos de Prueba';
+      case 'learning-paths': return 'Rutas de Aprendizaje';
+      case 'audit-log': return 'Historial de Auditoría';
+      case 'instructors': return 'Instructores';
+      default: 
+        // Try to capitalize the path segment
+        return segments[1].charAt(0).toUpperCase() + segments[1].slice(1);
+    }
+  }
+
+  // Handle instructor paths
+  if (segments[0] === 'instructor') {
+    if (segments.length === 1) return 'Instructor';
+    
+    switch (segments[1]) {
+      case 'dashboard': return 'Dashboard';
+      case 'courses': return 'Mis Cursos';
+      case 'students': return 'Mis Estudiantes';
+      case 'analytics': return 'Analíticas';
+      default: 
+        return segments[1].charAt(0).toUpperCase() + segments[1].slice(1);
+    }
+  }
+
+  // Handle other known paths
+  switch (segments[0]) {
+    case 'courses': return 'Cursos';
+    case 'profile': return 'Perfil';
+    case 'settings': return 'Configuración';
+    case 'messages': return 'Mensajes';
+    case 'notifications': return 'Notificaciones';
+    case 'billing': return 'Facturación';
+    case 'community': return 'Comunidad';
+    case 'learning-paths': return 'Rutas de Aprendizaje';
+    default:
+      // Capitalize the first segment as a fallback
+      return segments[0].charAt(0).toUpperCase() + segments[0].slice(1);
+  }
+};

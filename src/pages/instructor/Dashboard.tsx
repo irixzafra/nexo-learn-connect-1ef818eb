@@ -1,225 +1,162 @@
-import React from "react";
-import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
-import { BookOpen, Users, BookPlus, TrendingUp, Plus, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { OnboardingTrigger } from "@/components/onboarding/OnboardingTrigger";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useDashboardStats } from "@/features/instructor/hooks/useDashboardStats";
+
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  BarChart3, 
+  Users, 
+  BookOpen, 
+  DollarSign, 
+  TrendingUp,
+  MessageSquare,
+  CalendarRange,
+  Award
+} from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import DashboardStatCard from '@/features/instructor/components/DashboardStatCard';
+import PopularCoursesCard from '@/features/instructor/components/PopularCoursesCard';
+import RecentEnrollmentsCard from '@/features/instructor/components/RecentEnrollmentsCard';
+import { useDashboardStats } from '@/features/instructor/hooks/useDashboardStats';
 
 const InstructorDashboard: React.FC = () => {
-  const {
-    coursesCount,
-    publishedCoursesCount,
-    totalEnrollments,
-    recentEnrollments,
-    popularCourses,
-    isLoading,
-  } = useDashboardStats();
+  const { stats, isLoading } = useDashboardStats();
   
-  const { user } = useAuth();
-  
-  // Check if the user is new (created within the last 7 days)
-  const isNewUser = user?.created_at && 
-    new Date(user.created_at).getTime() > Date.now() - (7 * 24 * 60 * 60 * 1000); // 7 days
-
   return (
-    <SectionPageLayout
-      header={{
-        title: "Panel de Instructor",
-        description: "Administra tus cursos y visualiza estadísticas",
-        actions: [
-          {
-            label: "Crear Curso",
-            icon: <Plus className="h-4 w-4" />,
-            href: "/instructor/courses/create",
-          }
-        ]
-      }}
-      stats={{
-        stats: [
-          {
-            label: "Total de Cursos",
-            value: isLoading ? "-" : coursesCount,
-            icon: <BookOpen className="h-5 w-5" />,
-            loading: isLoading,
-            color: "primary"
-          },
-          {
-            label: "Cursos Publicados",
-            value: isLoading ? "-" : publishedCoursesCount,
-            icon: <BookPlus className="h-5 w-5" />,
-            descriptor: isLoading ? "-" : `${
-              coursesCount ? Math.round((publishedCoursesCount / coursesCount) * 100) : 0
-            }% de tus cursos están publicados`,
-            loading: isLoading,
-            color: "success"
-          },
-          {
-            label: "Total de Inscripciones",
-            value: isLoading ? "-" : totalEnrollments,
-            icon: <Users className="h-5 w-5" />,
-            descriptor: isLoading ? "-" : coursesCount
-              ? `Promedio: ${(totalEnrollments / coursesCount).toFixed(1)} por curso`
-              : "Crea tu primer curso",
-            loading: isLoading,
-            color: "primary"
-          },
-          {
-            label: "Tasa de Conversión",
-            value: isLoading ? "-" : `${
-              totalEnrollments && popularCourses.length
-                ? ((totalEnrollments / popularCourses.length) * 100).toFixed(1)
-                : 0
-            }%`,
-            icon: <TrendingUp className="h-5 w-5" />,
-            descriptor: "Inscripciones por visitante",
-            loading: isLoading,
-            color: "warning"
-          }
-        ]
-      }}
-      help={{
-        title: "Recursos para Instructores",
-        description: "Herramientas y guías para optimizar tus cursos",
-        links: [
-          {
-            title: "Guía para instructores",
-            description: "Aprende a crear cursos atractivos",
-            href: "/instructor/guide",
-          },
-          {
-            title: "Centro de recursos",
-            description: "Material de apoyo y plantillas",
-            href: "/resources",
-            external: true
-          }
-        ]
-      }}
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {isLoading ? (
-          <>
-            <div className="space-y-3">
-              <Skeleton className="h-8 w-48" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-            </div>
-            <div className="space-y-3">
-              <Skeleton className="h-8 w-48" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
-            </div>
-          </>
-        ) : (
-          <>
-            <PageSection 
-              title="Inscripciones Recientes" 
-              variant="card"
-            >
-              {recentEnrollments.length > 0 ? (
-                <div className="space-y-3">
-                  {recentEnrollments.map((enrollment, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Users className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="font-medium">{enrollment.profiles?.full_name || 'Usuario Desconocido'}</p>
-                          <p className="text-sm text-muted-foreground">{enrollment.courses?.title || 'Curso Desconocido'}</p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(enrollment.enrolled_at || Date.now()).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center p-6 text-muted-foreground">
-                  <p>No hay inscripciones recientes</p>
-                </div>
-              )}
-              
-              <div className="flex justify-end mt-4">
-                <Button variant="outline" asChild>
-                  <Link to="/instructor/students">
-                    Ver todos los estudiantes
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            </PageSection>
-            
-            <PageSection 
-              title="Cursos Populares" 
-              variant="card"
-            >
-              {popularCourses.length > 0 ? (
-                <div className="space-y-3">
-                  {popularCourses.map((course, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-md bg-blue-500/10 flex items-center justify-center">
-                          <BookOpen className="h-5 w-5 text-blue-500" />
-                        </div>
-                        <div>
-                          <p className="font-medium">{course.title}</p>
-                          <p className="text-sm text-muted-foreground">{course.enrollmentCount} estudiantes</p>
-                        </div>
-                      </div>
-                      <Button size="sm" variant="outline" asChild>
-                        <Link to={`/instructor/courses/${course.id}`}>
-                          Editar
-                        </Link>
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center p-6 text-muted-foreground">
-                  <p>No hay cursos disponibles</p>
-                </div>
-              )}
-              
-              <div className="flex justify-end mt-4">
-                <Button variant="outline" asChild>
-                  <Link to="/instructor/courses">
-                    Ver todos los cursos
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            </PageSection>
-          </>
-        )}
-      </div>
-      
-      {/* New Instructor Call-to-Action */}
-      {isNewUser && (
-        <div className="mt-8 bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-lg p-6 border border-primary/20">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-              <h3 className="text-xl font-bold">¡Bienvenido a la plataforma de instructor!</h3>
-              <p className="text-muted-foreground">
-                Comienza a crear tu primer curso y comparte tu conocimiento con el mundo.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <OnboardingTrigger autoStart={false} />
-              <Button asChild>
-                <Link to="/instructor/courses/create">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Crear mi primer curso
-                </Link>
-              </Button>
-            </div>
-          </div>
+    <div className="container mx-auto px-4 py-6 space-y-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard de Instructor</h1>
+          <p className="mt-1 text-muted-foreground">
+            Bienvenido de vuelta! Aquí tienes una visión general de tus cursos y estudiantes.
+          </p>
         </div>
-      )}
-    </SectionPageLayout>
+        <div className="flex space-x-2">
+          <Button variant="outline">
+            <CalendarRange className="mr-2 h-4 w-4" />
+            Programar clase
+          </Button>
+          <Button>
+            <BookOpen className="mr-2 h-4 w-4" />
+            Crear curso
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats Row */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <DashboardStatCard 
+          title="Estudiantes"
+          value={stats.totalStudents}
+          icon={<Users className="h-4 w-4" />}
+          trend={12}
+          trendLabel="vs mes anterior"
+          loading={isLoading}
+        />
+        <DashboardStatCard 
+          title="Cursos"
+          value={stats.totalCourses}
+          icon={<BookOpen className="h-4 w-4" />}
+          trend={4}
+          trendLabel="vs mes anterior"
+          loading={isLoading}
+        />
+        <DashboardStatCard 
+          title="Ingresos"
+          value={`$${stats.totalRevenue}`}
+          icon={<DollarSign className="h-4 w-4" />}
+          trend={8}
+          trendLabel="vs mes anterior"
+          loading={isLoading}
+        />
+        <DashboardStatCard 
+          title="Valoración"
+          value={stats.averageRating.toFixed(1)}
+          icon={<Award className="h-4 w-4" />}
+          trend={0.2}
+          trendLabel="vs mes anterior"
+          loading={isLoading}
+        />
+      </div>
+
+      {/* Content Tabs */}
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="overview">Vista general</TabsTrigger>
+          <TabsTrigger value="courses">Cursos</TabsTrigger>
+          <TabsTrigger value="students">Estudiantes</TabsTrigger>
+          <TabsTrigger value="revenue">Ingresos</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <PopularCoursesCard />
+            <RecentEnrollmentsCard />
+          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Rendimiento</CardTitle>
+              <CardDescription>
+                Visión general del rendimiento de tus cursos en los últimos 30 días
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px] flex items-center justify-center bg-muted/40 rounded-md">
+                Gráfico de rendimiento (en desarrollo)
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="courses" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Mis Cursos</CardTitle>
+              <CardDescription>
+                Lista de todos tus cursos activos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[400px] flex items-center justify-center bg-muted/40 rounded-md">
+                Tabla de cursos (en desarrollo)
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="students" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Mis Estudiantes</CardTitle>
+              <CardDescription>
+                Lista de estudiantes inscritos en tus cursos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[400px] flex items-center justify-center bg-muted/40 rounded-md">
+                Tabla de estudiantes (en desarrollo)
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="revenue" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Análisis de Ingresos</CardTitle>
+              <CardDescription>
+                Visualización de tus ingresos a lo largo del tiempo
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[400px] flex items-center justify-center bg-muted/40 rounded-md">
+                Gráfico de ingresos (en desarrollo)
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 
