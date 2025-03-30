@@ -1,13 +1,5 @@
 
-import React from 'react';
-import { 
-  Search, 
-  Download,
-  CheckCircle2,
-  XCircle,
-  Info
-} from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import React, { useState } from 'react';
 import { 
   Table, 
   TableBody, 
@@ -16,88 +8,38 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { 
-  useCertificates, 
-  CourseWithCertificate 
-} from '@/features/admin/hooks/useCertificates';
+  Card, 
+  CardContent,
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { 
+  AlertCircle, 
+  ArrowUpDown, 
+  Check, 
+  ChevronsUpDown, 
+  FileCheck, 
+  MoreHorizontal, 
+  Search, 
+  SlidersHorizontal 
+} from 'lucide-react';
+import { useCertificates, CourseWithCertificate } from '@/features/admin/hooks/useCertificates';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AdminTableHead } from '@/components/layout/admin/AdminPageLayout';
-
-const CertificatesStats: React.FC = () => {
-  const { 
-    certifiedCoursesCount, 
-    totalCoursesCount, 
-    certificationRate 
-  } = useCertificates();
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Cursos con Certificado
-              </p>
-              <p className="text-2xl font-bold mt-1">
-                {certifiedCoursesCount}
-              </p>
-            </div>
-            <div className="bg-green-500/10 text-green-500 p-2 rounded-full">
-              <CheckCircle2 className="h-5 w-5" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Cursos sin Certificado
-              </p>
-              <p className="text-2xl font-bold mt-1">
-                {totalCoursesCount - certifiedCoursesCount}
-              </p>
-            </div>
-            <div className="bg-orange-500/10 text-orange-500 p-2 rounded-full">
-              <XCircle className="h-5 w-5" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Tasa de Certificación
-              </p>
-              <p className="text-2xl font-bold mt-1">
-                {certificationRate}%
-              </p>
-            </div>
-            <div className="bg-blue-500/10 text-blue-500 p-2 rounded-full">
-              <Info className="h-5 w-5" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+import { formatPrice, formatDate, formatStatus } from '@/features/admin/utils/formatters';
 
 const AllCertificatesTab: React.FC = () => {
   const { 
@@ -106,115 +48,186 @@ const AllCertificatesTab: React.FC = () => {
     error, 
     searchTerm, 
     setSearchTerm, 
-    updateCourseCertificate 
+    updateCourseCertificate,
+    certifiedCoursesCount,
+    totalCoursesCount,
+    certificationRate
   } = useCertificates();
 
-  const handleToggleCertificate = (courseId: string, currentValue: boolean) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleCertificateToggle = (courseId: string, currentValue: boolean) => {
     updateCourseCertificate.mutate({
       courseId,
       grantsCertificate: !currentValue
     });
   };
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium">Error al cargar los certificados</h3>
+          <p className="text-sm text-muted-foreground">{error.message}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <CertificatesStats />
-      
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="flex items-center w-full sm:w-auto max-w-md">
-          <div className="relative w-full">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Buscar cursos..."
-              className="w-full pl-8"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+      <div className="grid gap-6 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-2xl">{isLoading ? '...' : certifiedCoursesCount}</CardTitle>
+            <CardDescription>Cursos con certificados</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-2xl">{isLoading ? '...' : totalCoursesCount}</CardTitle>
+            <CardDescription>Cursos totales</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-2xl">{isLoading ? '...' : `${certificationRate}%`}</CardTitle>
+            <CardDescription>Tasa de certificación</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col md:flex-row justify-between gap-4">
+            <div>
+              <CardTitle>Gestión de Certificados</CardTitle>
+              <CardDescription>Administra qué cursos otorgan certificados al completarse</CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Buscar cursos..."
+                  className="pl-8 w-full md:w-[250px]"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <SlidersHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>Todos los cursos</DropdownMenuItem>
+                  <DropdownMenuItem>Solo con certificado</DropdownMenuItem>
+                  <DropdownMenuItem>Sin certificado</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Publicados</DropdownMenuItem>
+                  <DropdownMenuItem>Borradores</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
-        </div>
-        
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Exportar Reporte
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Exportar lista de cursos con certificados</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-      
-      {error && (
-        <div className="bg-destructive/10 border border-destructive rounded-md p-4">
-          <p className="text-destructive font-medium">Error: {error.message}</p>
-        </div>
-      )}
-      
-      <div className="border rounded-md">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <AdminTableHead>Curso</AdminTableHead>
-              <AdminTableHead>Estado</AdminTableHead>
-              <AdminTableHead>Duración</AdminTableHead>
-              <AdminTableHead>Fecha Actualización</AdminTableHead>
-              <AdminTableHead>Certificado</AdminTableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array(5).fill(null).map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell colSpan={5}>
-                    <Skeleton className="h-10 w-full" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : filteredCourses && filteredCourses.length > 0 ? (
-              filteredCourses.map((course: CourseWithCertificate) => (
-                <TableRow key={course.id}>
-                  <TableCell className="font-medium">
-                    {course.title}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={course.is_published ? "success" : "secondary"}>
-                      {course.is_published ? "Publicado" : "Borrador"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {course.duration ? `${course.duration} min` : "—"}
-                  </TableCell>
-                  <TableCell>
-                    {course.updated_at ? new Date(course.updated_at).toLocaleDateString() : "—"}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        checked={course.grants_certificate}
-                        onCheckedChange={() => handleToggleCertificate(course.id, course.grants_certificate)}
-                      />
-                      <span>
-                        {course.grants_certificate ? "Activado" : "Desactivado"}
-                      </span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  {searchTerm ? "No se encontraron resultados para la búsqueda." : "No hay cursos disponibles."}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between p-4">
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                  </div>
+                  <Skeleton className="h-6 w-12" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Curso</TableHead>
+                    <TableHead>Precio</TableHead>
+                    <TableHead>Estado</TableHead>
+                    <TableHead>Creado</TableHead>
+                    <TableHead>
+                      <div className="flex items-center justify-end">
+                        <span>Otorga Certificado</span>
+                      </div>
+                    </TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredCourses?.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                        No se encontraron cursos.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {filteredCourses?.map((course) => (
+                    <TableRow key={course.id}>
+                      <TableCell>
+                        <div className="font-medium">{course.title}</div>
+                        <div className="text-xs text-muted-foreground line-clamp-1">
+                          {course.description || 'Sin descripción'}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {formatPrice(course.price, course.currency)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={course.is_published ? 'default' : 'secondary'}>
+                          {formatStatus(course.is_published ? 'published' : 'draft')}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {formatDate(course.created_at)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex justify-end">
+                          <Switch 
+                            checked={course.grants_certificate} 
+                            onCheckedChange={() => handleCertificateToggle(course.id, course.grants_certificate || false)}
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>
+                              <FileCheck className="h-4 w-4 mr-2" />
+                              <span>Ver detalles del certificado</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <span>Editar curso</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };

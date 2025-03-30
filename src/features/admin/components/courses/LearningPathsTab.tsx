@@ -1,615 +1,451 @@
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Network, 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  MoreHorizontal,
-  BookOpen,
-  ArrowUp,
-  ArrowDown,
-  X
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose
-} from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useLearningPaths, LearningPath } from '@/features/admin/hooks/useLearningPaths';
-import { Skeleton } from '@/components/ui/skeleton';
-import { AdminTableHead } from '@/components/layout/admin/AdminPageLayout';
-import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { useLearningPaths } from '@/features/admin/hooks/useLearningPaths';
 import { Course } from '@/types/courses';
+import { Trash2, Plus, ArrowUpDown, DragHandleDots2Icon, AlertCircle, PenLine, FileText, ListChecks, ListFilter, Search } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { formatDate } from '@/features/admin/utils/formatters';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
-// Path Form
-const LearningPathForm: React.FC<{
-  path?: LearningPath;
-  onSubmit: (data: Omit<LearningPath, 'id' | 'created_at'>) => void;
-  onCancel: () => void;
-}> = ({ path, onSubmit, onCancel }) => {
-  const [formData, setFormData] = useState({
-    title: path?.title || '',
-    description: path?.description || ''
-  });
+interface LearningPathForm {
+  title: string;
+  description: string;
+  estimatedHours?: number;
+}
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="title">Título</Label>
-        <Input
-          id="title"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Título de la ruta de aprendizaje"
-          required
-        />
-      </div>
-      
-      <div className="space-y-2">
-        <Label htmlFor="description">Descripción</Label>
-        <Textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Descripción de la ruta de aprendizaje"
-          rows={4}
-        />
-      </div>
-      
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button type="button" variant="outline" onClick={onCancel}>Cancelar</Button>
-        </DialogClose>
-        <Button type="submit">{path ? 'Actualizar' : 'Crear'}</Button>
-      </DialogFooter>
-    </form>
-  );
-};
-
-// Path Courses Manager
-const PathCoursesManager: React.FC<{
+interface LearningPathCourseForm {
   pathId: string;
-  onClose: () => void;
-}> = ({ pathId, onClose }) => {
-  const {
-    getLearningPathWithCourses,
-    courses,
-    addCourseToLearningPath,
-    removeCourseFromLearningPath,
-    updateCoursesOrder
-  } = useLearningPaths();
-  
-  const [path, setPath] = useState<LearningPath | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedCourseId, setSelectedCourseId] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  useEffect(() => {
-    const fetchPath = async () => {
-      try {
-        const fetchedPath = await getLearningPathWithCourses(pathId);
-        setPath(fetchedPath);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching learning path:", error);
-        setIsLoading(false);
-      }
-    };
-    
-    fetchPath();
-  }, [pathId, getLearningPathWithCourses]);
-  
-  const availableCourses = courses?.filter(course => {
-    return !path?.courses?.some(c => c.id === course.id) &&
-      course.title.toLowerCase().includes(searchTerm.toLowerCase());
-  });
-  
-  const handleAddCourse = () => {
-    if (selectedCourseId && pathId) {
-      const nextOrder = path?.courses?.length || 0;
-      addCourseToLearningPath.mutate({
-        learningPathId: pathId,
-        courseId: selectedCourseId,
-        order: nextOrder
-      });
-      
-      // Optimistically update the local state
-      const courseToAdd = courses?.find(c => c.id === selectedCourseId);
-      if (courseToAdd && path) {
-        setPath({
-          ...path,
-          courses: [...(path.courses || []), { ...courseToAdd, order: nextOrder }]
-        });
-      }
-      
-      setSelectedCourseId('');
-    }
-  };
-  
-  const handleRemoveCourse = (courseId: string) => {
-    if (pathId) {
-      removeCourseFromLearningPath.mutate({
-        learningPathId: pathId,
-        courseId
-      });
-      
-      // Optimistically update the local state
-      if (path) {
-        setPath({
-          ...path,
-          courses: path.courses?.filter(c => c.id !== courseId) || []
-        });
-      }
-    }
-  };
-  
-  const handleMoveUp = (index: number) => {
-    if (index > 0 && path?.courses) {
-      const newCourses = [...path.courses];
-      [newCourses[index - 1], newCourses[index]] = [newCourses[index], newCourses[index - 1]];
-      
-      // Update order values
-      const orderedCourses = newCourses.map((course, idx) => ({
-        course_id: course.id,
-        order: idx
-      }));
-      
-      updateCoursesOrder.mutate({
-        learningPathId: pathId,
-        orderedCourses
-      });
-      
-      // Optimistically update local state
-      setPath({
-        ...path,
-        courses: newCourses
-      });
-    }
-  };
-  
-  const handleMoveDown = (index: number) => {
-    if (path?.courses && index < path.courses.length - 1) {
-      const newCourses = [...path.courses];
-      [newCourses[index], newCourses[index + 1]] = [newCourses[index + 1], newCourses[index]];
-      
-      // Update order values
-      const orderedCourses = newCourses.map((course, idx) => ({
-        course_id: course.id,
-        order: idx
-      }));
-      
-      updateCoursesOrder.mutate({
-        learningPathId: pathId,
-        orderedCourses
-      });
-      
-      // Optimistically update local state
-      setPath({
-        ...path,
-        courses: newCourses
-      });
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-medium">Gestionar Cursos</h3>
-          <p className="text-sm text-muted-foreground">
-            {path?.title && `Ruta: ${path.title}`}
-          </p>
-        </div>
-        <Button variant="ghost" size="sm" onClick={onClose}>
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
-      
-      {/* Add new course section */}
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium">Añadir curso a la ruta</h4>
-        <div className="flex items-start gap-2">
-          <div className="relative flex-1">
-            <Input
-              placeholder="Buscar cursos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full mb-2"
-            />
-            <Select 
-              value={selectedCourseId} 
-              onValueChange={setSelectedCourseId}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Seleccionar curso" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableCourses?.map(course => (
-                  <SelectItem key={course.id} value={course.id}>
-                    {course.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <Button 
-            onClick={handleAddCourse} 
-            disabled={!selectedCourseId}
-            className="mt-10"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Añadir
-          </Button>
-        </div>
-      </div>
-      
-      {/* Courses list */}
-      <div className="border rounded-md">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Orden</TableHead>
-              <TableHead>Curso</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array(3).fill(null).map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell colSpan={3}>
-                    <Skeleton className="h-10 w-full" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : path?.courses && path.courses.length > 0 ? (
-              path.courses.map((course, index) => (
-                <TableRow key={course.id}>
-                  <TableCell className="w-20 text-center font-medium">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <BookOpen className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{course.title}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleMoveUp(index)}
-                        disabled={index === 0}
-                        className="h-8 w-8 p-0"
-                      >
-                        <ArrowUp className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleMoveDown(index)}
-                        disabled={index === (path.courses?.length || 0) - 1}
-                        className="h-8 w-8 p-0"
-                      >
-                        <ArrowDown className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleRemoveCourse(course.id)}
-                        className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={3} className="h-24 text-center">
-                  No hay cursos en esta ruta. Añada cursos usando el selector de arriba.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
-  );
-};
+  courseId: string;
+  courseOrder: number;
+  isRequired: boolean;
+}
 
 const LearningPathsTab: React.FC = () => {
-  const {
-    filteredLearningPaths,
-    isLoading,
-    error,
-    searchTerm,
-    setSearchTerm,
-    createLearningPath,
-    updateLearningPath,
+  const { 
+    learningPaths, 
+    courses, 
+    isLoading, 
+    error, 
+    createLearningPath, 
     deleteLearningPath,
-    getLearningPathWithCourses
+    addCourseToPath,
+    removeCourseFromPath,
+    reorderPathCourse,
+    isCreatingPath,
+    isUpdatingPath,
+    isDeletingPath,
   } = useLearningPaths();
-  
-  const [selectedPath, setSelectedPath] = useState<LearningPath | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isManageCoursesDialogOpen, setIsManageCoursesDialogOpen] = useState(false);
-  
-  const handleEdit = (path: LearningPath) => {
-    setSelectedPath(path);
-    setIsEditDialogOpen(true);
+
+  const [newPathForm, setNewPathForm] = useState<LearningPathForm>({
+    title: '',
+    description: '',
+  });
+
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPathId, setSelectedPathId] = useState<string | null>(null);
+
+  const filteredPaths = learningPaths?.filter(path => 
+    path.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (path.description && path.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  const selectedPath = selectedPathId 
+    ? learningPaths?.find(path => path.id === selectedPathId) 
+    : null;
+
+  const handleCreatePath = () => {
+    if (!newPathForm.title.trim()) return;
+    
+    createLearningPath.mutate({
+      title: newPathForm.title,
+      description: newPathForm.description,
+      estimatedHours: newPathForm.estimatedHours
+    }, {
+      onSuccess: () => {
+        setNewPathForm({ title: '', description: '' });
+        setIsCreateDialogOpen(false);
+      }
+    });
   };
-  
-  const handleDelete = (path: LearningPath) => {
-    setSelectedPath(path);
-    setIsDeleteDialogOpen(true);
+
+  const handleAddCourse = (courseId: string) => {
+    if (!selectedPathId) return;
+    
+    const courseOrder = selectedPath?.courses?.length || 0;
+    
+    addCourseToPath.mutate({
+      pathId: selectedPathId,
+      courseId,
+      courseOrder,
+      isRequired: true
+    });
   };
-  
-  const handleManageCourses = (path: LearningPath) => {
-    setSelectedPath(path);
-    setIsManageCoursesDialogOpen(true);
+
+  const handleRemoveCourse = (pathCourseId: string) => {
+    if (!selectedPathId) return;
+    
+    removeCourseFromPath.mutate({
+      pathCourseId
+    });
   };
-  
-  const confirmDelete = () => {
-    if (selectedPath) {
-      deleteLearningPath.mutate(selectedPath.id);
-      setIsDeleteDialogOpen(false);
-    }
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
-  
-  const handleCreateSubmit = (data: Omit<LearningPath, 'id' | 'created_at'>) => {
-    createLearningPath.mutate(data);
-  };
-  
-  const handleUpdateSubmit = (data: Omit<LearningPath, 'id' | 'created_at'>) => {
-    if (selectedPath) {
-      updateLearningPath.mutate({ id: selectedPath.id, ...data });
-    }
-  };
+
+  const availableCourses = courses?.filter(course => {
+    // Don't show courses that are already in the path
+    const isAlreadyInPath = selectedPath?.courses?.some(pc => pc.course_id === course.id);
+    return !isAlreadyInPath;
+  });
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium">Error al cargar las rutas de aprendizaje</h3>
+          <p className="text-sm text-muted-foreground">{error.message}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="flex items-center w-full sm:w-auto max-w-md">
-          <div className="relative w-full">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Buscar rutas de aprendizaje..."
-              className="w-full pl-8"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+      {/* Action Bar */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="relative">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Buscar rutas de aprendizaje..."
+            className="pl-8 w-full sm:w-[300px]"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
         </div>
-        
-        <Dialog>
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" className="w-full sm:w-auto">
+            <Button>
               <Plus className="h-4 w-4 mr-2" />
               Nueva Ruta
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Crear Nueva Ruta de Aprendizaje</DialogTitle>
+              <DialogTitle>Crear Ruta de Aprendizaje</DialogTitle>
               <DialogDescription>
-                Crea una nueva ruta de aprendizaje para guiar a tus estudiantes.
+                Crea una nueva ruta de aprendizaje para organizar cursos relacionados.
               </DialogDescription>
             </DialogHeader>
-            <LearningPathForm 
-              onSubmit={handleCreateSubmit} 
-              onCancel={() => {}} 
-            />
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Título</Label>
+                <Input 
+                  id="title" 
+                  value={newPathForm.title}
+                  onChange={(e) => setNewPathForm({...newPathForm, title: e.target.value})}
+                  placeholder="Ej: Desarrollo Web Completo"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Descripción</Label>
+                <Textarea 
+                  id="description" 
+                  value={newPathForm.description}
+                  onChange={(e) => setNewPathForm({...newPathForm, description: e.target.value})}
+                  placeholder="Ej: Aprende todas las tecnologías necesarias para ser un desarrollador web completo"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="estimatedHours">Horas estimadas (opcional)</Label>
+                <Input 
+                  id="estimatedHours" 
+                  type="number"
+                  value={newPathForm.estimatedHours || ''}
+                  onChange={(e) => setNewPathForm({
+                    ...newPathForm, 
+                    estimatedHours: e.target.value ? parseInt(e.target.value) : undefined
+                  })}
+                  placeholder="Ej: 120"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsCreateDialogOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleCreatePath}
+                disabled={!newPathForm.title.trim() || isCreatingPath}
+              >
+                {isCreatingPath ? 'Creando...' : 'Crear Ruta'}
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
-      
-      {error && (
-        <div className="bg-destructive/10 border border-destructive rounded-md p-4">
-          <p className="text-destructive font-medium">Error: {error.message}</p>
-        </div>
-      )}
-      
-      <div className="border rounded-md">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <AdminTableHead>Título</AdminTableHead>
-              <AdminTableHead>Descripción</AdminTableHead>
-              <AdminTableHead>Cursos</AdminTableHead>
-              <AdminTableHead>Fecha Creación</AdminTableHead>
-              <AdminTableHead className="text-right">Acciones</AdminTableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array(5).fill(null).map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell colSpan={5}>
-                    <Skeleton className="h-10 w-full" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : filteredLearningPaths && filteredLearningPaths.length > 0 ? (
-              filteredLearningPaths.map((path) => (
-                <TableRow key={path.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                      <Network className="h-4 w-4 text-muted-foreground" />
-                      {path.title}
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Left Column - Learning Paths List */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Rutas de Aprendizaje</CardTitle>
+              <CardDescription>Selecciona una ruta para gestionar sus cursos</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="space-y-2">
+                      <Skeleton className="h-5 w-[200px]" />
+                      <Skeleton className="h-4 w-[150px]" />
+                      <Separator className="my-3" />
                     </div>
-                  </TableCell>
-                  <TableCell className="max-w-[300px] truncate">
-                    {path.description || "—"}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="font-normal">
-                      {path.courses?.length || 0} cursos
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(path.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                          <span className="sr-only">Abrir menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => handleManageCourses(path)}>
-                          <BookOpen className="h-4 w-4 mr-2" />
-                          Gestionar Cursos
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleEdit(path)}>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Editar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={() => handleDelete(path)}
-                          className="text-destructive focus:text-destructive"
+                  ))}
+                </div>
+              ) : (
+                <ScrollArea className="h-[500px]">
+                  <div className="space-y-3">
+                    {filteredPaths?.length === 0 && (
+                      <div className="text-center py-8">
+                        <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-muted-foreground">No hay rutas de aprendizaje</p>
+                        <p className="text-xs text-muted-foreground mt-1">Crea una nueva ruta para empezar</p>
+                      </div>
+                    )}
+                    {filteredPaths?.map(path => (
+                      <div key={path.id} className="space-y-2">
+                        <div 
+                          className={cn(
+                            "p-3 rounded-md cursor-pointer transition-colors",
+                            selectedPathId === path.id ? "bg-primary/10" : "hover:bg-muted"
+                          )}
+                          onClick={() => setSelectedPathId(path.id)}
                         >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Eliminar
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  {searchTerm ? "No se encontraron resultados para la búsqueda." : "No hay rutas de aprendizaje. Crea una nueva."}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-medium text-sm">{path.title}</h4>
+                              <p className="text-xs text-muted-foreground line-clamp-1">
+                                {path.description || 'Sin descripción'}
+                              </p>
+                              <div className="flex gap-2 mt-1">
+                                <Badge variant="outline" className="text-xs">
+                                  {path.courses?.length || 0} cursos
+                                </Badge>
+                                {path.estimated_hours && (
+                                  <Badge variant="outline" className="text-xs">
+                                    {path.estimated_hours} horas
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            <Button 
+                              size="icon"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (confirm('¿Estás seguro de que deseas eliminar esta ruta de aprendizaje?')) {
+                                  deleteLearningPath.mutate(path.id);
+                                  if (selectedPathId === path.id) {
+                                    setSelectedPathId(null);
+                                  }
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 text-muted-foreground" />
+                            </Button>
+                          </div>
+                        </div>
+                        <Separator />
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Columns - Path Details + Course Management */}
+        <div className="md:col-span-2 space-y-6">
+          {selectedPath ? (
+            <>
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle>{selectedPath.title}</CardTitle>
+                      <CardDescription>{selectedPath.description}</CardDescription>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <PenLine className="h-4 w-4 mr-2" />
+                      Editar
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-3">
+                    <div className="bg-muted px-3 py-1 rounded-md text-sm">
+                      <span className="text-muted-foreground mr-1">Creada:</span>
+                      {formatDate(selectedPath.created_at)}
+                    </div>
+                    <div className="bg-muted px-3 py-1 rounded-md text-sm">
+                      <span className="text-muted-foreground mr-1">Cursos:</span>
+                      {selectedPath.courses?.length || 0}
+                    </div>
+                    {selectedPath.estimated_hours && (
+                      <div className="bg-muted px-3 py-1 rounded-md text-sm">
+                        <span className="text-muted-foreground mr-1">Horas estimadas:</span>
+                        {selectedPath.estimated_hours}
+                      </div>
+                    )}
+                    <div className="bg-muted px-3 py-1 rounded-md text-sm">
+                      <span className="text-muted-foreground mr-1">Estado:</span>
+                      <Badge variant={selectedPath.is_published ? "default" : "secondary"} className="ml-1">
+                        {selectedPath.is_published ? 'Publicada' : 'Borrador'}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Tabs defaultValue="courses">
+                <TabsList>
+                  <TabsTrigger value="courses">Cursos en la Ruta</TabsTrigger>
+                  <TabsTrigger value="add">Añadir Cursos</TabsTrigger>
+                </TabsList>
+                <TabsContent value="courses" className="space-y-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Cursos en esta Ruta</CardTitle>
+                      <CardDescription>Arrastra para reordenar los cursos</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {selectedPath.courses?.length === 0 ? (
+                        <div className="text-center py-8">
+                          <ListChecks className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-muted-foreground">No hay cursos en esta ruta</p>
+                          <p className="text-xs text-muted-foreground mt-1">Añade cursos desde la pestaña "Añadir Cursos"</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          {selectedPath.courses?.map((pathCourse, index) => {
+                            const course = pathCourse.course;
+                            return (
+                              <div 
+                                key={pathCourse.id} 
+                                className="flex items-center justify-between p-3 border rounded-md"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="flex-shrink-0">
+                                    <DragHandleDots2Icon className="h-5 w-5 text-muted-foreground cursor-move" />
+                                  </div>
+                                  <div>
+                                    <p className="font-medium">{course.title}</p>
+                                    <p className="text-xs text-muted-foreground line-clamp-1">
+                                      {course.description || 'Sin descripción'}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Badge variant="outline">
+                                    {pathCourse.isRequired ? 'Obligatorio' : 'Opcional'}
+                                  </Badge>
+                                  <Button 
+                                    size="icon" 
+                                    variant="ghost"
+                                    onClick={() => handleRemoveCourse(pathCourse.id)}
+                                  >
+                                    <Trash2 className="h-4 w-4 text-muted-foreground" />
+                                  </Button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                <TabsContent value="add">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Añadir Cursos a la Ruta</CardTitle>
+                      <CardDescription>Selecciona los cursos que deseas añadir</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex mb-4">
+                        <Input 
+                          placeholder="Buscar cursos..." 
+                          className="w-full"
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        {availableCourses?.length === 0 ? (
+                          <div className="text-center py-8">
+                            <ListFilter className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-muted-foreground">No hay cursos disponibles</p>
+                            <p className="text-xs text-muted-foreground mt-1">Todos los cursos ya están añadidos a esta ruta</p>
+                          </div>
+                        ) : (
+                          availableCourses?.map(course => (
+                            <div 
+                              key={course.id} 
+                              className="flex items-center justify-between p-3 border rounded-md"
+                            >
+                              <div>
+                                <p className="font-medium">{course.title}</p>
+                                <p className="text-xs text-muted-foreground line-clamp-1">
+                                  {course.description || 'Sin descripción'}
+                                </p>
+                              </div>
+                              <Button 
+                                size="sm"
+                                onClick={() => handleAddCourse(course.id)}
+                              >
+                                <Plus className="h-4 w-4 mr-2" />
+                                Añadir
+                              </Button>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </>
+          ) : (
+            <Card>
+              <div className="flex flex-col items-center justify-center p-10 text-center">
+                <FileText className="h-10 w-10 text-muted-foreground mb-4" />
+                <h3 className="font-medium text-lg mb-1">Selecciona una Ruta de Aprendizaje</h3>
+                <p className="text-muted-foreground">
+                  Elige una ruta de la lista o crea una nueva para gestionar sus cursos.
+                </p>
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
-      
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Editar Ruta de Aprendizaje</DialogTitle>
-            <DialogDescription>
-              Actualiza los detalles de la ruta de aprendizaje.
-            </DialogDescription>
-          </DialogHeader>
-          {selectedPath && (
-            <LearningPathForm 
-              path={selectedPath} 
-              onSubmit={handleUpdateSubmit} 
-              onCancel={() => setIsEditDialogOpen(false)} 
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-      
-      {/* Manage Courses Dialog */}
-      <Dialog 
-        open={isManageCoursesDialogOpen} 
-        onOpenChange={setIsManageCoursesDialogOpen}
-      >
-        <DialogContent className="max-w-2xl">
-          {selectedPath && (
-            <PathCoursesManager 
-              pathId={selectedPath.id} 
-              onClose={() => setIsManageCoursesDialogOpen(false)} 
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-      
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. Esto eliminará permanentemente la ruta de aprendizaje
-              "{selectedPath?.title}".
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={confirmDelete}
-              className="bg-destructive hover:bg-destructive/90"
-            >
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
