@@ -62,7 +62,8 @@ export const useAdminCourses = () => {
           instructor_id, 
           is_published,
           created_at, 
-          updated_at
+          updated_at,
+          profiles(full_name)
         `)
         .order('created_at', { ascending: false });
       
@@ -70,21 +71,9 @@ export const useAdminCourses = () => {
       
       console.log("Cursos encontrados:", coursesData);
       
-      // Then, get instructor info for each course
-      const formattedCourses: Course[] = await Promise.all((coursesData || []).map(async (course: any) => {
-        let instructorName = 'Sin instructor asignado';
-        
-        if (course.instructor_id) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('full_name')
-            .eq('id', course.instructor_id)
-            .single();
-            
-          if (profileData) {
-            instructorName = profileData.full_name || 'Sin nombre';
-          }
-        }
+      // Get enrollments count for each course (in a real app, you'd implement this)
+      const formattedCourses: Course[] = coursesData.map((course: any) => {
+        const instructorName = course.profiles?.full_name || 'Sin instructor asignado';
         
         return {
           ...course,
@@ -92,9 +81,9 @@ export const useAdminCourses = () => {
             full_name: instructorName
           },
           status: course.is_published ? 'published' : 'draft',
-          students_count: 0
+          students_count: 0 // In a real app, you'd get this from enrollments
         };
-      }));
+      });
       
       console.log("Cursos formateados:", formattedCourses);
       setCourses(formattedCourses);
