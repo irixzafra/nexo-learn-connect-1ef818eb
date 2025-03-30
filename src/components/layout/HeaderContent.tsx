@@ -44,7 +44,6 @@ const HeaderContent: React.FC = () => {
       <div className="container mx-auto flex justify-between items-center h-14">
         {/* Left side */}
         <div className="flex items-center gap-4">
-          <SidebarTrigger className="h-8 w-8" />
           <NexoLogoBase className="hidden sm:flex" />
           <span className="text-lg font-medium">{getPageTitle()}</span>
         </div>

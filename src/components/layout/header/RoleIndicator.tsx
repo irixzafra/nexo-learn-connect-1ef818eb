@@ -1,40 +1,102 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Badge } from "@/components/ui/badge";
 import { UserRole } from '@/types/auth';
-import { Badge } from '@/components/ui/badge';
-import { Eye } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { Shield, UserCog, User, Terminal, Ghost } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/use-toast';
 
-export interface RoleIndicatorProps {
-  viewingAs: string | null;
+interface RoleIndicatorProps {
+  viewingAs?: UserRole | string;
+  onRoleChange?: (role: UserRole) => void;
 }
 
-export const RoleIndicator: React.FC<RoleIndicatorProps> = ({ viewingAs }) => {
-  if (!viewingAs) return null;
+export const RoleIndicator: React.FC<RoleIndicatorProps> = ({ 
+  viewingAs,
+  onRoleChange
+}) => {
+  const { toast } = useToast();
+  const { userRole } = useAuth();
+  const [selectedRole, setSelectedRole] = useState<UserRole>(
+    (viewingAs && viewingAs !== 'current') ? viewingAs as UserRole : (userRole as UserRole)
+  );
   
-  const getRoleLabel = (role: string): string => {
+  const getRoleInfo = (role: string) => {
     switch (role) {
       case 'admin':
-        return 'Admin';
+        return { label: 'Admin', color: 'bg-yellow-500 hover:bg-yellow-600', icon: <Shield className="h-3 w-3 mr-1" /> };
       case 'instructor':
-        return 'Instructor';
-      case 'sistemas':
-        return 'Sistemas';
-      case 'anonimo':
-        return 'Anónimo';
+        return { label: 'Instructor', color: 'bg-blue-500 hover:bg-blue-600', icon: <UserCog className="h-3 w-3 mr-1" /> };
       case 'student':
-        return 'Estudiante';
+        return { label: 'Estudiante', color: 'bg-green-500 hover:bg-green-600', icon: <User className="h-3 w-3 mr-1" /> };
+      case 'sistemas':
+        return { label: 'Sistemas', color: 'bg-purple-500 hover:bg-purple-600', icon: <Terminal className="h-3 w-3 mr-1" /> };
+      case 'anonimo':
+        return { label: 'Anónimo', color: 'bg-gray-500 hover:bg-gray-600', icon: <Ghost className="h-3 w-3 mr-1" /> };
       default:
-        return role;
+        return { label: role, color: 'bg-neutral-500 hover:bg-neutral-600', icon: null };
     }
   };
   
+  const handleRoleChange = (role: UserRole) => {
+    setSelectedRole(role);
+    
+    if (onRoleChange) {
+      onRoleChange(role);
+    } else {
+      toast({
+        title: "Modo de vista cambiado",
+        description: `Ahora estás viendo la aplicación como ${getRoleInfo(role).label}`,
+      });
+    }
+  };
+  
+  const currentRole = viewingAs === 'current' ? userRole : viewingAs;
+  const { label, color, icon } = getRoleInfo(selectedRole || 'student');
+  
   return (
-    <Badge 
-      variant="outline" 
-      className="bg-amber-50 text-amber-800 border-amber-200 flex items-center gap-1 py-0.5 px-2 text-xs"
-    >
-      <Eye className="h-3 w-3" />
-      {getRoleLabel(viewingAs)}
-    </Badge>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Badge 
+          className={cn(
+            "cursor-pointer transition-colors flex items-center gap-1",
+            color
+          )}
+          variant="outline"
+        >
+          {icon}
+          {label}
+        </Badge>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => handleRoleChange('admin')} className="flex items-center gap-2">
+          <Shield className="h-4 w-4" />
+          <span>Administrador</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleRoleChange('instructor')} className="flex items-center gap-2">
+          <UserCog className="h-4 w-4" />
+          <span>Instructor</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleRoleChange('sistemas')} className="flex items-center gap-2">
+          <Terminal className="h-4 w-4" />
+          <span>Sistemas</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleRoleChange('student')} className="flex items-center gap-2">
+          <User className="h-4 w-4" />
+          <span>Estudiante</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleRoleChange('anonimo')} className="flex items-center gap-2">
+          <Ghost className="h-4 w-4" />
+          <span>Anónimo</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
