@@ -29,12 +29,14 @@ const CourseDetailPage: React.FC = () => {
     return Promise.resolve();
   };
   
-  // Estimate course stats based on data or provide fallbacks
-  const totalLessons = 
-    course?.modules?.reduce((acc, mod) => acc + (mod.lessons?.length || 0), 0) || 10;
+  // Calculate course stats from the actual data
+  const totalLessons = course?.modules?.reduce(
+    (acc, module) => acc + (module.lessons?.length || 0), 0
+  ) || 0;
   
-  const previewableLessons = 
-    course?.modules?.flatMap(m => m.lessons || []).filter(l => l?.is_previewable).length || 2;
+  const previewableLessons = course?.modules?.flatMap(
+    m => m.lessons || []
+  ).filter(l => l?.is_previewable).length || 0;
   
   // Format currency function
   const formatCurrency = (price: number) => `${price.toFixed(2).replace('.', ',')} €`;

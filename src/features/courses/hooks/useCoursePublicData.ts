@@ -21,7 +21,16 @@ export const useCoursePublicData = (courseId: string | undefined) => {
       
       let query = supabase
         .from('courses')
-        .select('*, profiles(full_name)')
+        .select(`
+          *, 
+          profiles(full_name),
+          modules!inner(
+            *,
+            lessons!inner(
+              *
+            ) order by lesson_order asc
+          ) order by module_order asc
+        `)
         .eq('is_published', true);
       
       // Use the appropriate column based on ID type
@@ -67,7 +76,16 @@ export const useCoursePublicDataBySlug = (slug: string | undefined) => {
 
       const { data, error } = await supabase
         .from('courses')
-        .select('*, profiles(full_name)')
+        .select(`
+          *,
+          profiles(full_name),
+          modules!inner(
+            *,
+            lessons!inner(
+              *
+            ) order by lesson_order asc
+          ) order by module_order asc
+        `)
         .eq('slug', slug)
         .eq('is_published', true)
         .single();

@@ -266,10 +266,20 @@ export const CourseOverview: React.FC<CourseOverviewProps> = ({
               </div>
             </div>
             
-            <CourseContentAccordion 
-              modulesWithLessons={modulesWithLessons || []}
-              courseId={course.id}
-            />
+            {modulesWithLessons.length > 0 ? (
+              <CourseContentAccordion 
+                modulesWithLessons={modulesWithLessons || []}
+                courseId={course.id}
+              />
+            ) : (
+              <div className="text-center py-8 bg-muted/20 rounded-lg border">
+                <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                <h4 className="text-xl font-medium mb-2">Contenido no disponible</h4>
+                <p className="text-muted-foreground">
+                  El contenido de este curso aún no está disponible.
+                </p>
+              </div>
+            )}
             
             <div className="mt-8 bg-primary/5 rounded-xl p-6 border border-primary/10">
               <div className="flex gap-4 items-start">
