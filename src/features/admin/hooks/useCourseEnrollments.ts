@@ -25,13 +25,14 @@ export const useCourseEnrollments = (courseId: string) => {
           throw new Error("ID del curso no proporcionado");
         }
         
+        // Using a more explicit join approach instead of the foreign key relationship shorthand
         const { data, error } = await supabase
           .from('enrollments')
           .select(`
             id,
-            enrolled_at,
             user_id,
-            profiles:user_id (
+            enrolled_at,
+            profiles!inner (
               id, 
               full_name,
               email
@@ -44,18 +45,13 @@ export const useCourseEnrollments = (courseId: string) => {
         if (!data || data.length === 0) return [];
 
         // Transform the data to flatten the structure
-        return data.map((enrollment: any) => {
-          // Access the profile data - it's returned as an object, not an array
-          const profile = enrollment.profiles || {};
-          
-          return {
-            id: enrollment.id,
-            user_id: enrollment.user_id,
-            full_name: profile.full_name || null,
-            email: profile.email || null,
-            enrolled_at: enrollment.enrolled_at
-          };
-        });
+        return data.map((enrollment: any) => ({
+          id: enrollment.id,
+          user_id: enrollment.user_id,
+          full_name: enrollment.profiles?.full_name || null,
+          email: enrollment.profiles?.email || null,
+          enrolled_at: enrollment.enrolled_at
+        }));
       } catch (error: any) {
         console.error("Error fetching enrolled students:", error);
         throw error;
