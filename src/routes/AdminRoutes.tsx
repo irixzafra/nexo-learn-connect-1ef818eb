@@ -11,7 +11,7 @@ const AdminCourses = lazy(() => import('@/pages/admin/courses/AdminCourses'));
 const AdminCourseDetail = lazy(() => import('@/pages/admin/courses/AdminCourseDetail'));
 const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings'));
 const FinanceManagement = lazy(() => import('@/pages/admin/FinanceManagement'));
-// Add learning paths page if it exists
+// Learning paths page
 const LearningPaths = lazy(() => import('@/pages/admin/learning-paths/LearningPaths'));
 
 // Loading component for Suspense
