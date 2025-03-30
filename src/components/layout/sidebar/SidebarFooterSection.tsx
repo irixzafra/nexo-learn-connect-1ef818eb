@@ -35,10 +35,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
     return (
       <div className="mt-auto flex flex-col items-center gap-2">
         {userRole === 'admin' && (
-          <RoleIndicator 
-            viewingAs={currentViewRole} 
-            onRoleChange={handleRoleChange}
-          />
+          <RoleIndicator role={effectiveRole} />
         )}
       </div>
     );
@@ -60,13 +57,13 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
               <button
                 key={role}
                 onClick={() => handleRoleChange(role)}
-                className={`w-full text-left p-2 rounded-md text-sm ${
+                className={`w-full text-left p-2 rounded-md text-sm flex items-center ${
                   effectiveRole === role 
                     ? 'bg-primary/10 text-primary font-medium' 
                     : 'hover:bg-accent text-foreground/80 hover:text-foreground'
                 }`}
               >
-                {getRoleName(role)}
+                <RoleIndicator role={role} />
               </button>
             ))}
           </div>

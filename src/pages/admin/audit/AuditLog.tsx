@@ -1,168 +1,108 @@
-import React, { useState } from 'react';
-import { AdminPageLayout } from '@/components/layout/admin/AdminPageLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DatePicker } from '@/components/ui/date-picker';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { 
-  Download, 
-  Filter, 
-  User, 
-  Calendar, 
-  Search, 
-  RefreshCcw
-} from 'lucide-react';
 
-// Datos de ejemplo para la tabla de auditoría
-const auditLogData = [
-  { 
-    id: 1, 
-    action: 'Inicio de sesión', 
-    user: 'admin@ejemplo.com', 
-    timestamp: '2023-07-20 14:32:45', 
-    ipAddress: '192.168.1.1', 
-    details: 'Acceso correcto desde navegador Chrome'
-  },
-  { 
-    id: 2, 
-    action: 'Creación de curso', 
-    user: 'instructor@ejemplo.com', 
-    timestamp: '2023-07-20 10:15:22', 
-    ipAddress: '192.168.1.5', 
-    details: 'Curso "Introducción a React" creado'
-  },
-  { 
-    id: 3, 
-    action: 'Actualización de usuario', 
-    user: 'admin@ejemplo.com', 
-    timestamp: '2023-07-19 16:44:11', 
-    ipAddress: '192.168.1.1', 
-    details: 'Cambio de rol para usuario student@ejemplo.com'
-  },
-  // Más ejemplos...
-];
+import React from 'react';
+import SectionPageLayout from '@/layouts/SectionPageLayout';
+import { Button } from '@/components/ui/button';
+import { Calendar, ChevronLeft, ChevronRight, Filter, List, Download } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+// Replacing the import with existing components
+// import { DatePicker } from '@/components/ui/date-picker';
 
 const AuditLog: React.FC = () => {
-  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
-  const [toDate, setToDate] = useState<Date | undefined>(undefined);
-  
+  const navigationActions = React.useMemo(() => [
+    <Button key="filter" variant="outline" size="sm" className="gap-1">
+      <Filter className="h-4 w-4" /> Filtrar
+    </Button>,
+    <Button key="view" variant="outline" size="sm" className="gap-1">
+      <List className="h-4 w-4" /> Ver
+    </Button>,
+    <Button key="export" variant="outline" size="sm" className="gap-1">
+      <Download className="h-4 w-4" /> Exportar
+    </Button>
+  ], []);
+
   return (
-    <AdminPageLayout>
-      <Card className="mb-6">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Log de Auditoría</CardTitle>
-            <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline">
-                <RefreshCcw className="h-4 w-4 mr-2" />
-                Actualizar
-              </Button>
-              <Button size="sm" variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                Exportar
-              </Button>
-              <Button size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtrar
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="space-y-2">
-              <Label htmlFor="search">Buscar</Label>
+    <SectionPageLayout
+      title="Registro de Auditoría"
+      subtitle="Monitorea todos los cambios y acciones en el sistema"
+      actions={navigationActions}
+    >
+      <div className="p-6 bg-card rounded-lg shadow-sm border">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap gap-2 items-center justify-between">
+            <div className="flex flex-wrap gap-2">
+              <Select defaultValue="all">
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Tipo de Evento" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="user">Usuario</SelectItem>
+                  <SelectItem value="content">Contenido</SelectItem>
+                  <SelectItem value="system">Sistema</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Select defaultValue="all">
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Usuario" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="admin">Administradores</SelectItem>
+                  <SelectItem value="instructor">Instructores</SelectItem>
+                  <SelectItem value="student">Estudiantes</SelectItem>
+                </SelectContent>
+              </Select>
+              
               <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  id="search"
-                  type="search"
-                  placeholder="Buscar en logs..."
-                  className="pl-8"
+                  type="text"
+                  placeholder="Buscar"
+                  className="pl-8 w-[200px]"
                 />
+                <Calendar className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               </div>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="action-type">Tipo de acción</Label>
-              <Select>
-                <SelectTrigger id="action-type">
-                  <SelectValue placeholder="Todas las acciones" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas las acciones</SelectItem>
-                  <SelectItem value="login">Inicio de sesión</SelectItem>
-                  <SelectItem value="logout">Cierre de sesión</SelectItem>
-                  <SelectItem value="create">Creación</SelectItem>
-                  <SelectItem value="update">Actualización</SelectItem>
-                  <SelectItem value="delete">Eliminación</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="from-date">Desde</Label>
-              <DatePicker
-                id="from-date"
-                date={fromDate}
-                setDate={setFromDate}
-                placeholder="Seleccionar fecha"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="to-date">Hasta</Label>
-              <DatePicker
-                id="to-date"
-                date={toDate}
-                setDate={setToDate}
-                placeholder="Seleccionar fecha"
-              />
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" className="h-8 w-8">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-sm">Página 1 de 10</span>
+              <Button variant="outline" size="icon" className="h-8 w-8">
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
           </div>
           
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Fecha y Hora</TableHead>
-                  <TableHead>Usuario</TableHead>
-                  <TableHead>Acción</TableHead>
-                  <TableHead>Dirección IP</TableHead>
-                  <TableHead>Detalles</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {auditLogData.map((log) => (
-                  <TableRow key={log.id}>
-                    <TableCell>{log.timestamp}</TableCell>
-                    <TableCell className="flex items-center">
-                      <User className="h-4 w-4 mr-2 text-muted-foreground" />
-                      {log.user}
-                    </TableCell>
-                    <TableCell>{log.action}</TableCell>
-                    <TableCell>{log.ipAddress}</TableCell>
-                    <TableCell className="max-w-xs truncate" title={log.details}>
-                      {log.details}
-                    </TableCell>
-                  </TableRow>
+          <div className="border rounded-md">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="py-3 px-4 text-left font-medium text-xs">FECHA</th>
+                  <th className="py-3 px-4 text-left font-medium text-xs">USUARIO</th>
+                  <th className="py-3 px-4 text-left font-medium text-xs">ACCIÓN</th>
+                  <th className="py-3 px-4 text-left font-medium text-xs">DETALLES</th>
+                  <th className="py-3 px-4 text-left font-medium text-xs">IP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...Array(5)].map((_, i) => (
+                  <tr key={i} className="border-b">
+                    <td className="py-3 px-4 text-sm">2023-06-{10 + i}</td>
+                    <td className="py-3 px-4 text-sm">admin@ejemplo.com</td>
+                    <td className="py-3 px-4 text-sm">Actualización de usuario</td>
+                    <td className="py-3 px-4 text-sm">Cambió rol de usuario ID #1234</td>
+                    <td className="py-3 px-4 text-sm">192.168.1.{100 + i}</td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
           </div>
-        </CardContent>
-      </Card>
-    </AdminPageLayout>
+        </div>
+      </div>
+    </SectionPageLayout>
   );
 };
 

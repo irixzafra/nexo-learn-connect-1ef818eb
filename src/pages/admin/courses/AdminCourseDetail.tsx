@@ -1,149 +1,110 @@
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import SectionPageLayout from '@/layouts/SectionPageLayout';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
-  Save, 
-  Trash, 
+  Edit, 
+  Trash2,
   Eye, 
-  Info, 
-  Users, 
-  BookOpen, 
-  FileText
+  MoreHorizontal, 
+  Loader2, 
+  AlertTriangle
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import SectionPageLayout from '@/layouts/SectionPageLayout';
+import { AdminTabs } from '@/components/admin/AdminTabs';
+import { useCourseDetail } from '@/features/admin/hooks/useCourseDetail';
 
-// Refactored components
-import CourseLoadingState from '@/features/admin/components/courses/CourseLoadingState';
-import CourseNotFound from '@/features/admin/components/courses/CourseNotFound';
 import CourseGeneralTab from '@/features/admin/components/courses/CourseGeneralTab';
 import CourseContentTab from '@/features/admin/components/courses/CourseContentTab';
 import CourseStudentsTab from '@/features/admin/components/courses/CourseStudentsTab';
 import CourseStatsTab from '@/features/admin/components/courses/CourseStatsTab';
-
-// Custom hook
-import useCourseDetail from '@/features/admin/hooks/useCourseDetail';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import CourseLoadingState from '@/features/admin/components/courses/CourseLoadingState';
+import CourseError from '@/features/admin/components/courses/CourseError';
+import CourseNotFound from '@/features/admin/components/courses/CourseNotFound';
 
 const AdminCourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
-  const initialTab = location.state?.activeTab || 'general';
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const { course, isLoading, error } = useCourseDetail(courseId);
 
-  const { 
-    course, 
-    isLoading, 
-    isSaving, 
-    editedCourse, 
-    handleInputChange, 
-    handleSwitchChange, 
-    handleSave 
-  } = useCourseDetail({
-    courseId, 
-    onError: () => navigate('/admin/courses')
-  });
-
-  // Efecto para actualizar la pestaña activa si cambia en la navegación
-  useEffect(() => {
-    if (location.state?.activeTab) {
-      setActiveTab(location.state.activeTab);
+  // Return to course list
+  const handleBack = () => {
+    navigate('/admin/courses');
+  };
+  
+  // Handle delete course
+  const handleDelete = async () => {
+    if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
+      alert('Curso eliminado (simulado)');
+      navigate('/admin/courses');
     }
-  }, [location.state]);
+  };
 
-  if (isLoading) {
-    return <CourseLoadingState />;
-  }
+  // Render loading, error or not found states
+  if (isLoading) return <CourseLoadingState />;
+  if (error) return <CourseError error={error} />;
+  if (!course) return <CourseNotFound />;
 
-  if (!course) {
-    return <CourseNotFound />;
-  }
+  // Define available tabs
+  const tabs = [
+    { id: 'general', label: 'General', icon: <Eye className="h-4 w-4" /> },
+    { id: 'content', label: 'Contenido', icon: <Edit className="h-4 w-4" /> },
+    { id: 'students', label: 'Estudiantes', icon: <Eye className="h-4 w-4" /> },
+    { id: 'stats', label: 'Estadísticas', icon: <Eye className="h-4 w-4" /> },
+  ];
+
+  // Define actions for the header
+  const headerActions = React.useMemo(() => [
+    <Button key="view" variant="outline" size="sm">
+      <Eye className="h-4 w-4 mr-2" />
+      Ver Curso
+    </Button>,
+    <Button key="edit" variant="outline" size="sm">
+      <Edit className="h-4 w-4 mr-2" />
+      Editar
+    </Button>,
+    <Button key="delete" variant="destructive" size="sm" onClick={handleDelete}>
+      <Trash2 className="h-4 w-4 mr-2" />
+      Eliminar
+    </Button>
+  ], [handleDelete]);
 
   return (
-    <TooltipProvider>
-      <SectionPageLayout
-        header={{
-          title: course.title,
-          description: `ID: ${course.id}`,
-          breadcrumbs: [
-            { title: "Admin", href: "/admin" },
-            { title: "Cursos", href: "/admin/courses" },
-            { title: course.title }
-          ],
-          actions: [
-            {
-              icon: <Eye />,
-              href: `/courses/${course.id}`,
-              variant: "outline",
-              tooltip: "Vista Previa",
-              size: "icon"
-            },
-            {
-              icon: <Trash />,
-              onClick: () => {
-                // Mostrar confirmación de eliminación
-                console.log("Eliminar curso", course.id);
-              },
-              variant: "destructive",
-              tooltip: "Eliminar",
-              size: "icon"
-            },
-            {
-              icon: isSaving ? undefined : <Save />,
-              onClick: handleSave,
-              disabled: isSaving,
-              tooltip: "Guardar Cambios",
-              size: "icon"
-            }
-          ]
-        }}
-      >
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full md:w-auto">
-            <TabsTrigger value="general" className="flex items-center gap-2">
-              <Info className="h-4 w-4" />
-              <span className="hidden md:inline">General</span>
-            </TabsTrigger>
-            <TabsTrigger value="content" className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              <span className="hidden md:inline">Contenido</span>
-            </TabsTrigger>
-            <TabsTrigger value="students" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span className="hidden md:inline">Estudiantes</span>
-            </TabsTrigger>
-            <TabsTrigger value="stats" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span className="hidden md:inline">Estadísticas</span>
-            </TabsTrigger>
-          </TabsList>
-
+    <SectionPageLayout
+      title={course.title}
+      subtitle={`ID: ${course.id} · Creado: ${new Date(course.created_at).toLocaleDateString()}`}
+      actions={headerActions}
+      breadcrumbs={[
+        { href: '/admin/dashboard', label: 'Dashboard' },
+        { href: '/admin/courses', label: 'Cursos' },
+        { href: '#', label: course.title, current: true }
+      ]}
+    >
+      <div className="space-y-4">
+        <AdminTabs tabs={tabs} defaultTabId="general" />
+        
+        <Tabs defaultValue="general" className="w-full">
           <TabsContent value="general">
-            <CourseGeneralTab 
-              course={course} 
-              editedCourse={editedCourse} 
-              handleInputChange={handleInputChange} 
-              handleSwitchChange={handleSwitchChange} 
-            />
+            <CourseGeneralTab course={course} />
           </TabsContent>
-
+          
           <TabsContent value="content">
-            <CourseContentTab />
+            <CourseContentTab course={course} />
           </TabsContent>
-
+          
           <TabsContent value="students">
-            <CourseStudentsTab courseId={courseId as string} courseName={course.title} />
+            <CourseStudentsTab courseId={course.id} />
           </TabsContent>
-
+          
           <TabsContent value="stats">
-            <CourseStatsTab />
+            <CourseStatsTab courseId={course.id} />
           </TabsContent>
         </Tabs>
-      </SectionPageLayout>
-    </TooltipProvider>
+      </div>
+    </SectionPageLayout>
   );
 };
 

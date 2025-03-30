@@ -2,41 +2,33 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { UserRoleType } from '@/types/auth';
+import { getRoleBadgeColor, getRoleName } from '@/utils/roleUtils';
+import { Shield, UserCog, User, Terminal, Ghost } from 'lucide-react';
 
 export interface RoleIndicatorProps {
   role: UserRoleType;
 }
 
 export const RoleIndicator: React.FC<RoleIndicatorProps> = ({ role }) => {
-  const getRoleName = () => {
+  const getRoleIcon = () => {
     switch (role) {
       case 'admin':
-        return 'Administrador';
+        return <Shield className="h-4 w-4 mr-2" />;
       case 'instructor':
-        return 'Instructor';
-      case 'student':
-        return 'Estudiante';
+        return <UserCog className="h-4 w-4 mr-2" />;
+      case 'sistemas':
+        return <Terminal className="h-4 w-4 mr-2" />;
+      case 'anonimo':
+        return <Ghost className="h-4 w-4 mr-2" />;
       default:
-        return 'Usuario';
-    }
-  };
-  
-  const getRoleColor = () => {
-    switch (role) {
-      case 'admin':
-        return 'bg-red-100 text-red-800 hover:bg-red-200';
-      case 'instructor':
-        return 'bg-blue-100 text-blue-800 hover:bg-blue-200';
-      case 'student':
-        return 'bg-green-100 text-green-800 hover:bg-green-200';
-      default:
-        return 'bg-gray-100 text-gray-800 hover:bg-gray-200';
+        return <User className="h-4 w-4 mr-2" />;
     }
   };
   
   return (
-    <Badge variant="outline" className={`${getRoleColor()} transition-colors`}>
-      {getRoleName()}
+    <Badge variant="outline" className={`${getRoleBadgeColor(role)} transition-colors flex items-center`}>
+      {getRoleIcon()}
+      {getRoleName(role)}
     </Badge>
   );
 };
