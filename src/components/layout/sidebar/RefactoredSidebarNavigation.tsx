@@ -17,11 +17,13 @@ import {
   Settings, 
   User, 
   Phone,
-  Shield
+  Shield,
+  ChevronRight
 } from 'lucide-react';
 
 // Import subcomponents
 import SidebarFooterSection from './SidebarFooterSection';
+import SidebarMainNavigation from './navigation/SidebarMainNavigation';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRole;
@@ -33,7 +35,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
   onRoleChange 
 }) => {
   const { userRole } = useAuth();
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
@@ -191,32 +193,27 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
         {isCollapsed ? (
           <NexoLogo variant="icon" className="h-8 w-auto mx-auto" />
         ) : (
-          <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
-        )}
-      </div>
-
-      {/* Main Navigation Section - Usando el nuevo componente AdminMenu */}
-      <div className={cn(
-        "flex-1 overflow-auto",
-        isCollapsed ? "px-2" : "px-4"
-      )}>
-        <AdminMenu 
-          items={getMainNavigationItems()}
-          variant={isCollapsed ? "sidebar" : "default"}
-          className={isCollapsed ? "space-y-4" : ""}
-        />
-
-        {/* Sección de administración para admins */}
-        {effectiveRole === 'admin' && !isCollapsed && (
-          <div className="mt-6">
-            <h3 className="mb-2 px-4 text-sm font-medium text-muted-foreground">Administración</h3>
-            <AdminMenu 
-              items={adminMainMenuItems.slice(0, 4)} // Solo mostrar los primeros 4 elementos para no sobrecargar
-              variant="default"
-            />
+          <div className="flex items-center justify-between w-full">
+            <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
+            <button 
+              onClick={toggleSidebar}
+              className="p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-muted-foreground"
+              aria-label="Colapsar menú lateral"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         )}
       </div>
+
+      {/* Main Navigation Section - Usando SidebarMainNavigation para mejor organización */}
+      <SidebarMainNavigation 
+        effectiveRole={effectiveRole}
+        isCollapsed={isCollapsed}
+        messagesCount={messagesCount}
+        notificationsCount={notificationsCount}
+        getHomePath={getHomePath}
+      />
       
       {/* Footer Section with Role Switcher and Language Selector */}
       <SidebarFooterSection 

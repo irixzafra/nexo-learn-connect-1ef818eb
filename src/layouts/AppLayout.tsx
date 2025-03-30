@@ -21,6 +21,8 @@ import { NotificationIndicator } from "@/components/notifications/NotificationIn
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { MobileSidebar } from "@/components/layout/header/MobileSidebar";
 import { useLocation } from "react-router-dom";
+import { PanelLeft, PanelRight } from "lucide-react";
+import { useSidebar } from "@/components/ui/sidebar/use-sidebar";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -75,6 +77,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     </Button>
   );
 
+  // Sidebar collapse state
+  const { state: sidebarState, toggleSidebar } = useSidebar();
+  const isCollapsed = sidebarState === "collapsed";
+
   return (
     <EditModeProvider>
       <SidebarProvider>
@@ -90,10 +96,23 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
                 />
               ) : (
                 <div className="flex items-center gap-2">
-                  {/* Desktop sidebar trigger with logo */}
-                  <SidebarTrigger className="hover:bg-transparent p-0 h-auto w-auto">
-                    {LogoTrigger}
-                  </SidebarTrigger>
+                  {/* Desktop logo */}
+                  {LogoTrigger}
+                  
+                  {/* Separate collapse button for better visibility */}
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={toggleSidebar}
+                    className="ml-2 text-muted-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    aria-label={isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}
+                  >
+                    {isCollapsed ? (
+                      <PanelRight className="h-5 w-5" />
+                    ) : (
+                      <PanelLeft className="h-5 w-5" />
+                    )}
+                  </Button>
                 </div>
               )}
             </div>

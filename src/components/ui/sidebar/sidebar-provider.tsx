@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -10,6 +11,8 @@ import {
   SIDEBAR_WIDTH_ICON,
   SIDEBAR_KEYBOARD_SHORTCUT
 } from "./sidebar-context"
+import { ChevronRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,
@@ -34,9 +37,21 @@ const SidebarProvider = React.forwardRef<
     const isMobile = useIsMobile()
     const [openMobile, setOpenMobile] = React.useState(false)
 
+    // Try to get saved state from cookie
+    const getSavedState = React.useCallback(() => {
+      const cookies = document.cookie.split(';')
+      for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=')
+        if (name === SIDEBAR_COOKIE_NAME) {
+          return value === 'true'
+        }
+      }
+      return defaultOpen
+    }, [defaultOpen])
+
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
-    const [_open, _setOpen] = React.useState(defaultOpen)
+    const [_open, _setOpen] = React.useState(getSavedState())
     const open = openProp ?? _open
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
@@ -112,6 +127,19 @@ const SidebarProvider = React.forwardRef<
             {...props}
           >
             {children}
+            
+            {/* Expand button that appears when sidebar is collapsed */}
+            {!isMobile && state === "collapsed" && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute left-[calc(var(--sidebar-width-icon)_-_10px)] top-[70px] h-6 w-6 rounded-full opacity-0 shadow-md bg-primary text-primary-foreground hover:bg-primary/90 group-hover/sidebar-wrapper:opacity-100 transition-opacity"
+                onClick={toggleSidebar}
+                aria-label="Expandir menú lateral"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </TooltipProvider>
       </SidebarContext.Provider>

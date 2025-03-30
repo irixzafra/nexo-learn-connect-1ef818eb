@@ -1,6 +1,6 @@
 
 import * as React from "react"
-import { Menu, PanelLeft, X } from "lucide-react"
+import { Menu, PanelLeft, PanelRight, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useSidebar } from "../use-sidebar"
@@ -40,7 +40,11 @@ export const SidebarTrigger = React.forwardRef<
           <Menu className="h-5 w-5" aria-hidden="true" />
         )
       ) : (
-        <PanelLeft className="h-5 w-5" aria-hidden="true" />
+        isCollapsed ? (
+          <PanelRight className="h-5 w-5" aria-hidden="true" />
+        ) : (
+          <PanelLeft className="h-5 w-5" aria-hidden="true" />
+        )
       ))}
       <span className="sr-only">{isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}</span>
     </Button>
