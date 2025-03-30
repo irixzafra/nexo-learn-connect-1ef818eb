@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useTestData, TestDataType } from '@/contexts/test-data';
 import {
@@ -6,11 +7,12 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import { dataTypeLabels, dataTypeGroups, groupLabels } from './DataTypeSelector';
+import { dataTypeLabels, dataTypeGroups, groupLabels, typeIcons } from './DataTypeSelector';
 import { DataTypeTabContent } from './DataTypeTabContent';
 import { Database, Info, HardDrive } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 
 export const TestDataTable: React.FC = () => {
   const { testData } = useTestData();
@@ -37,9 +39,9 @@ export const TestDataTable: React.FC = () => {
           <Database className="h-5 w-5 text-muted-foreground" />
           <h3 className="text-lg font-medium">Datos generados</h3>
           {hasAnyData && (
-            <span className="text-sm bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+            <Badge variant="outline" className="bg-blue-100 text-blue-600 border-blue-200 hover:bg-blue-100">
               {totalItems} elementos
-            </span>
+            </Badge>
           )}
         </div>
       </div>
@@ -68,48 +70,31 @@ export const TestDataTable: React.FC = () => {
           onValueChange={(value) => setActiveTab(value as TestDataType)}
           className="mt-2"
         >
-          <div className="space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-4">
             {Object.entries(dataTypeGroups).map(([groupKey, types]) => {
               // Only show groups that have data
               if (!groupHasData[groupKey]) return null;
               
-              return (
-                <div key={groupKey} className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="h-0.5 w-4 bg-muted-foreground/20"></div>
-                    <span className="text-xs font-medium text-muted-foreground">{groupLabels[groupKey]}</span>
-                    <div className="h-0.5 flex-1 bg-muted-foreground/20"></div>
-                  </div>
-                  <TabsList className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-1 bg-muted/30 p-1">
-                    {types.map(type => {
-                      const count = testData[type].length;
-                      if (count === 0) return null;
-                      
-                      return (
-                        <TabsTrigger 
-                          key={type} 
-                          value={type}
-                          className="relative"
-                        >
-                          <span className="sr-only">{dataTypeLabels[type]}</span>
-                          <div className="flex flex-col items-center gap-1">
-                            <span title={dataTypeLabels[type]}>
-                              {React.cloneElement(
-                                // @ts-ignore - we know this is a valid icon
-                                React.Children.only(dataTypeLabels[type]), 
-                                { className: "h-4 w-4" }
-                              )}
-                            </span>
-                            <span className="text-xs bg-primary/10 text-primary px-1.5 rounded-full min-w-5 text-center">
-                              {count}
-                            </span>
-                          </div>
-                        </TabsTrigger>
-                      );
-                    })}
-                  </TabsList>
-                </div>
-              );
+              return types.map(type => {
+                const count = testData[type].length;
+                if (count === 0) return null;
+                
+                return (
+                  <TabsTrigger 
+                    key={type} 
+                    value={type}
+                    className="relative flex items-center gap-2 px-3 py-2 h-auto"
+                  >
+                    <div className="flex items-center gap-2">
+                      {typeIcons[type]}
+                      <span className="font-medium">{dataTypeLabels[type]}</span>
+                    </div>
+                    <Badge variant="secondary" className="ml-auto bg-blue-100 text-blue-600 border-none">
+                      {count}
+                    </Badge>
+                  </TabsTrigger>
+                );
+              });
             })}
           </div>
 

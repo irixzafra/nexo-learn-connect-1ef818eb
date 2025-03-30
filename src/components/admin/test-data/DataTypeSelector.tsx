@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useTestData, TestDataType } from '@/contexts/test-data';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,7 @@ import {
   Users,
   FileText,
   MessageSquare,
-  Folders,
+  Folder,
   UserCircle,
   ClipboardList,
   Tag,
@@ -26,20 +27,20 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
-// Mapping de tipos de datos a iconos
-const typeIcons: Record<TestDataType, React.ReactNode> = {
-  course: <BookOpen className="h-4 w-4" />,
-  user: <Users className="h-4 w-4" />,
-  lesson: <FileText className="h-4 w-4" />,
-  message: <MessageSquare className="h-4 w-4" />,
-  module: <Folders className="h-4 w-4" />,
-  profile: <UserCircle className="h-4 w-4" />,
-  assignment: <ClipboardList className="h-4 w-4" />,
-  category: <Tag className="h-4 w-4" />,
-  enrollment: <GraduationCap className="h-4 w-4" />,
-  quiz: <ScrollText className="h-4 w-4" />,
-  certificate: <Award className="h-4 w-4" />,
-  payment: <CreditCard className="h-4 w-4" />
+// Mapping of data types to icons
+export const typeIcons: Record<TestDataType, React.ReactNode> = {
+  course: <BookOpen className="h-5 w-5" />,
+  user: <Users className="h-5 w-5" />,
+  lesson: <FileText className="h-5 w-5" />,
+  message: <MessageSquare className="h-5 w-5" />,
+  module: <Folder className="h-5 w-5" />,
+  profile: <UserCircle className="h-5 w-5" />,
+  assignment: <ClipboardList className="h-5 w-5" />,
+  category: <Tag className="h-5 w-5" />,
+  enrollment: <GraduationCap className="h-5 w-5" />,
+  quiz: <ScrollText className="h-5 w-5" />,
+  certificate: <Award className="h-5 w-5" />,
+  payment: <CreditCard className="h-5 w-5" />
 };
 
 // Data types with their display names
@@ -58,7 +59,7 @@ export const dataTypeLabels: Record<TestDataType, string> = {
   payment: 'Pagos'
 };
 
-// Agrupación de los tipos de datos en categorías lógicas
+// Logical grouping of data types
 export const dataTypeGroups = {
   content: ['course', 'module', 'lesson', 'quiz', 'assignment'] as TestDataType[],
   users: ['user', 'profile'] as TestDataType[],
@@ -104,12 +105,12 @@ export const DataTypeSelector: React.FC = () => {
   const handleTypeToggle = (type: TestDataType) => {
     setSelectedTypes(prev => {
       if (prev.includes(type)) {
-        // Remove the type if it's already selected
+        // Remove if already selected
         const newTypes = prev.filter(t => t !== type);
         // Ensure at least one type is selected
         return newTypes.length > 0 ? newTypes : prev;
       } else {
-        // Add the type if it's not already selected
+        // Add if not selected
         return [...prev, type];
       }
     });
@@ -123,7 +124,6 @@ export const DataTypeSelector: React.FC = () => {
       const deps = dataTypeDependencies[type];
       if (deps) {
         const missingDeps = deps.filter(dep => 
-          // Check if there's no test data of this type and it's not selected for generation
           testData[dep].length === 0 && !selectedTypes.includes(dep)
         );
         
@@ -208,7 +208,7 @@ export const DataTypeSelector: React.FC = () => {
         
         <div>
           <Label htmlFor="data-type" className="text-sm font-medium mb-1.5 block">Tipo de datos</Label>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {Object.entries(dataTypeGroups).map(([groupKey, types]) => (
               <div key={groupKey} className="space-y-2">
                 <div className="flex items-center gap-2">
@@ -216,22 +216,23 @@ export const DataTypeSelector: React.FC = () => {
                   <span className="text-xs font-medium text-muted-foreground">{groupLabels[groupKey]}</span>
                   <div className="h-0.5 flex-1 bg-muted-foreground/20"></div>
                 </div>
-                <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
                   {types.map(type => {
                     const isSelected = selectedTypes.includes(type);
                     return (
                       <Button
                         key={type}
                         variant={isSelected ? "default" : "outline"}
-                        size="icon"
                         className={cn(
-                          "h-10 w-10 rounded-lg transition-all",
+                          "h-12 rounded-lg transition-all",
                           isSelected ? 'bg-primary/90' : 'text-muted-foreground bg-transparent'
                         )}
                         title={dataTypeLabels[type]}
                         onClick={() => handleTypeToggle(type)}
                       >
-                        {typeIcons[type]}
+                        <div className="flex flex-col items-center gap-1">
+                          {typeIcons[type]}
+                        </div>
                         {isSelected && (
                           <motion.div
                             initial={{ scale: 0.5, opacity: 0 }}
@@ -252,7 +253,7 @@ export const DataTypeSelector: React.FC = () => {
 
         <div className="mt-4">
           <Label htmlFor="count" className="text-sm font-medium mb-1.5 block">Cantidad por tipo</Label>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <Input
               id="count"
               type="number"
@@ -260,12 +261,12 @@ export const DataTypeSelector: React.FC = () => {
               max={100}
               value={count}
               onChange={handleCountChange}
-              className="w-28"
+              className="w-24"
             />
             <Button
               onClick={handleGenerate}
               disabled={isGenerating}
-              className="transition-all duration-200 relative"
+              className="transition-all duration-200 bg-blue-500 hover:bg-blue-600 text-white flex-grow sm:flex-grow-0"
             >
               {isGenerating ? (
                 <>

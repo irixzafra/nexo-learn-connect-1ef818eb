@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { useTestData, TestDataType } from '@/contexts/test-data';
 import { 
@@ -10,15 +11,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DeleteTypeDataDialog } from './DeleteTypeDataDialog';
+import { typeIcons } from './DataTypeSelector';
 import { 
   Trash2, 
   Check, 
   Calendar, 
-  FileText,
   Search
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { dataTypeLabels } from './DataTypeSelector';
 import { 
   Table,
   TableBody,
@@ -86,7 +86,7 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
       <CardHeader className="pb-2 bg-muted/10">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <CardTitle className="text-lg font-medium flex items-center gap-2">
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            {typeIcons[type]}
             {label} ({items.length})
           </CardTitle>
           
@@ -119,7 +119,7 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
       
       <CardContent className="p-0">
         {filteredItems.length > 0 ? (
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-[calc(100vh-400px)] overflow-y-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -160,8 +160,8 @@ export const DataTypeTabContent: React.FC<DataTypeTabContentProps> = ({
             </Table>
           </div>
         ) : (
-          <div className="py-10 text-center text-muted-foreground flex flex-col items-center gap-2">
-            <FileText className="h-8 w-8 text-muted-foreground/50" />
+          <div className="py-8 text-center text-muted-foreground flex flex-col items-center gap-2">
+            {typeIcons[type]}
             {searchTerm ? (
               <p>No se encontraron datos que coincidan con "{searchTerm}"</p>
             ) : (

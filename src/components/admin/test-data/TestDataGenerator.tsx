@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useTestData } from '@/contexts/TestDataContext';
+import { useTestData } from '@/contexts/test-data';
 import { 
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import { Database } from 'lucide-react';
 import { DataTypeSelector } from './DataTypeSelector';
 import { TestDataTable } from './TestDataTable';
