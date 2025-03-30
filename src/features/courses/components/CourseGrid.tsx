@@ -1,10 +1,30 @@
 
 import React, { useState } from 'react';
-import { FeaturedCourse } from './FeaturedCourseCard';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { EnhancedCourseCard } from './EnhancedCourseCard';
+
+export interface FeaturedCourse {
+  id: number | string;
+  title: string;
+  description: string;
+  image_url: string;
+  price: number;
+  instructor: {
+    name: string;
+    avatar?: string;
+  };
+  category: string;
+  level: string;
+  duration: string;
+  students_count: number;
+  rating: number;
+  is_featured?: boolean;
+  discount?: number;
+  tags?: string[];
+  start_date?: string; // Added this property to fix the error
+}
 
 interface CourseGridProps {
   filteredCourses: FeaturedCourse[];

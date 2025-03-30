@@ -1,403 +1,397 @@
 
-import React, { Suspense, useState, useRef, useEffect } from 'react';
-import { useCoursesCatalog } from '@/features/courses/hooks/useCoursesCatalog';
-import { LoadingPage } from '@/components/ui/loading-page';
-import { CourseCardSkeleton } from '@/features/courses/components/CourseCardSkeleton';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { 
-  BookOpen, Search, Filter, Code, PenTool, BookMarked, Briefcase, 
-  TrendingUp, BarChart3, Lightbulb, Award, ChevronRight, ChevronLeft,
-  Clock, Signal, Users
-} from 'lucide-react';
-import { 
-  Tabs, TabsContent, TabsList, TabsTrigger 
-} from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { EnhancedCourseCard } from '@/features/courses/components/EnhancedCourseCard';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
+import { Card, CardContent } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { 
+  Search, 
+  GraduationCap, 
+  BookOpen, 
+  Code, 
+  LineChart, 
+  Palette, 
+  Languages, 
+  Briefcase, 
+  Award, 
+  Flame,
+  SlidersHorizontal
+} from 'lucide-react';
+import CourseGrid, { FeaturedCourse } from '@/features/courses/components/CourseGrid';
+import { LearningPathCard } from '@/features/courses/components/LearningPathCard';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
-// Definir categorías con iconos
+// Categorías disponibles con iconos
 const categories = [
   { id: 'all', name: 'Todos', icon: BookOpen },
-  { id: 'development', name: 'Desarrollo', icon: Code },
-  { id: 'design', name: 'Diseño', icon: PenTool },
+  { id: 'masters', name: 'Másters', icon: GraduationCap },
+  { id: 'programming', name: 'Programación', icon: Code },
   { id: 'business', name: 'Negocios', icon: Briefcase },
-  { id: 'marketing', name: 'Marketing', icon: TrendingUp },
-  { id: 'data', name: 'Datos', icon: BarChart3 },
-  { id: 'personal', name: 'Personal', icon: Lightbulb }
+  { id: 'marketing', name: 'Marketing', icon: LineChart },
+  { id: 'design', name: 'Diseño', icon: Palette },
+  { id: 'languages', name: 'Idiomas', icon: Languages },
+  { id: 'certificates', name: 'Certificaciones', icon: Award }
 ];
 
-// Definir rutas de aprendizaje
+// Datos de ejemplo para rutas de aprendizaje
 const learningPaths = [
   {
     id: 1,
-    title: 'Máster en Desarrollo Web Full Stack',
-    description: 'Domina el desarrollo web desde el frontend hasta el backend',
-    image: 'https://placehold.co/600x400?text=Master+Web',
-    courses: 8,
-    duration: '10 meses',
-    level: 'Intermedio-Avanzado',
-    categories: ['development', 'design'],
+    title: 'Full Stack Developer',
+    description: 'Conviértete en un desarrollador completo dominando frontend y backend',
+    image: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2831&q=80',
+    courses: 5,
+    duration: '6 meses',
+    level: 'Intermedio',
+    categories: ['programming', 'design'],
     badge: 'Popular'
   },
   {
     id: 2,
-    title: 'Máster en Marketing Digital',
-    description: 'Estrategias avanzadas para el crecimiento de negocios online',
-    image: 'https://placehold.co/600x400?text=Master+Marketing',
-    courses: 6,
-    duration: '8 meses',
-    level: 'Todos los niveles',
-    categories: ['marketing', 'business'],
-    badge: 'Certificado'
+    title: 'Marketing Digital Avanzado',
+    description: 'Aprende estrategias avanzadas de marketing digital para hacer crecer tu negocio',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2815&q=80',
+    courses: 4,
+    duration: '4 meses',
+    level: 'Avanzado',
+    categories: ['marketing', 'business']
   },
   {
     id: 3,
-    title: 'Ruta Data Science',
-    description: 'Desde el análisis de datos básico hasta machine learning avanzado',
-    image: 'https://placehold.co/600x400?text=Ruta+Data',
-    courses: 7,
-    duration: '9 meses',
-    level: 'Básico-Avanzado',
-    categories: ['data', 'development'],
+    title: 'Ciencia de Datos Completa',
+    description: 'Domina Python, estadísticas y machine learning para análisis de datos',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
+    courses: 6,
+    duration: '8 meses',
+    level: 'Intermedio-Avanzado',
+    categories: ['programming'],
     badge: 'Nuevo'
+  }
+];
+
+// Datos de ejemplo para los cursos
+const mockCourses: FeaturedCourse[] = [
+  {
+    id: 1,
+    title: 'Máster en Desarrollo Web Full Stack',
+    description: 'Aprende desarrollo web completo, desde el frontend con React hasta el backend con Node.js',
+    image_url: 'https://images.unsplash.com/photo-1593720213428-28a5b9e94613?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
+    price: 999,
+    instructor: {
+      name: 'Carlos Rodriguez',
+      avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
+    },
+    category: 'masters',
+    level: 'Todos los niveles',
+    duration: '6 meses',
+    students_count: 1245,
+    rating: 4.8,
+    is_featured: true,
+    tags: ['React', 'Node.js', 'JavaScript', 'MongoDB'],
+    start_date: '2023-11-01'
+  },
+  {
+    id: 2,
+    title: 'Marketing Digital Completo',
+    description: 'Domina todas las estrategias de marketing digital: SEO, SEM, redes sociales y más',
+    image_url: 'https://images.unsplash.com/photo-1432888622747-4eb9a8f5a70d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2874&q=80',
+    price: 699,
+    instructor: {
+      name: 'Laura Gómez',
+      avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+    },
+    category: 'marketing',
+    level: 'Principiante a Intermedio',
+    duration: '4 meses',
+    students_count: 2356,
+    rating: 4.7,
+    is_featured: true,
+    tags: ['SEO', 'Redes Sociales', 'Google Ads'],
+    start_date: '2023-12-15'
+  },
+  {
+    id: 3,
+    title: 'Diseño UI/UX Profesional',
+    description: 'Conviértete en un diseñador UI/UX profesional y crea interfaces atractivas y funcionales',
+    image_url: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2864&q=80',
+    price: 799,
+    instructor: {
+      name: 'Miguel Ángel Durán',
+      avatar: 'https://randomuser.me/api/portraits/men/36.jpg'
+    },
+    category: 'design',
+    level: 'Intermedio',
+    duration: '3 meses',
+    students_count: 1856,
+    rating: 4.9,
+    tags: ['Figma', 'Adobe XD', 'Sketch', 'Principios de Diseño'],
+    start_date: '2024-01-10'
   },
   {
     id: 4,
-    title: 'Máster UX/UI Design',
-    description: 'Diseño centrado en el usuario y experiencias digitales',
-    image: 'https://placehold.co/600x400?text=Master+UX/UI',
-    courses: 5,
-    duration: '7 meses',
+    title: 'Python para Ciencia de Datos',
+    description: 'Aprende Python enfocado en análisis de datos, visualización y machine learning',
+    image_url: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
+    price: 849,
+    instructor: {
+      name: 'Ana Martínez',
+      avatar: 'https://randomuser.me/api/portraits/women/68.jpg'
+    },
+    category: 'programming',
+    level: 'Intermedio a Avanzado',
+    duration: '5 meses',
+    students_count: 1532,
+    rating: 4.7,
+    tags: ['Python', 'Pandas', 'NumPy', 'Matplotlib', 'Scikit-learn']
+  },
+  {
+    id: 5,
+    title: 'MBA en Transformación Digital',
+    description: 'Aprende a liderar la transformación digital en tu empresa con este MBA especializado',
+    image_url: 'https://images.unsplash.com/photo-1434626881859-194d67b2b86f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2874&q=80',
+    price: 1299,
+    instructor: {
+      name: 'Francisco Javier López',
+      avatar: 'https://randomuser.me/api/portraits/men/42.jpg'
+    },
+    category: 'masters',
+    level: 'Avanzado',
+    duration: '10 meses',
+    students_count: 875,
+    rating: 4.8,
+    is_featured: true,
+    tags: ['MBA', 'Transformación Digital', 'Liderazgo', 'Estrategia'],
+    start_date: '2023-11-30'
+  },
+  {
+    id: 6,
+    title: 'Inglés para Negocios',
+    description: 'Mejora tu inglés profesional para reuniones, presentaciones y comunicación empresarial',
+    image_url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
+    price: 599,
+    instructor: {
+      name: 'Elizabeth Johnson',
+      avatar: 'https://randomuser.me/api/portraits/women/23.jpg'
+    },
+    category: 'languages',
     level: 'Intermedio',
-    categories: ['design'],
-    badge: 'Tendencia'
+    duration: '3 meses',
+    students_count: 2145,
+    rating: 4.6,
+    tags: ['Inglés', 'Business English', 'Comunicación']
+  },
+  {
+    id: 7,
+    title: 'Fundamentos de React Native',
+    description: 'Aprende a crear aplicaciones móviles multiplataforma con React Native',
+    image_url: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2674&q=80',
+    price: 649,
+    instructor: {
+      name: 'David Torres',
+      avatar: 'https://randomuser.me/api/portraits/men/85.jpg'
+    },
+    category: 'programming',
+    level: 'Intermedio',
+    duration: '2 meses',
+    students_count: 987,
+    rating: 4.5,
+    tags: ['React Native', 'JavaScript', 'Mobile Development']
+  },
+  {
+    id: 8,
+    title: 'Certificación AWS Solutions Architect',
+    description: 'Prepárate para obtener la certificación de AWS Solutions Architect Associate',
+    image_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2944&q=80',
+    price: 749,
+    instructor: {
+      name: 'Roberto Sánchez',
+      avatar: 'https://randomuser.me/api/portraits/men/46.jpg'
+    },
+    category: 'certificates',
+    level: 'Intermedio a Avanzado',
+    duration: '2 meses',
+    students_count: 1245,
+    rating: 4.8,
+    tags: ['AWS', 'Cloud', 'Certificación']
   }
 ];
 
 const CoursesCatalog: React.FC = () => {
-  const { 
-    filteredCourses, 
-    isLoading, 
-    error, 
-    searchTerm, 
-    setSearchTerm, 
-    clearFilters,
-    fetchCourses 
-  } = useCoursesCatalog();
-  
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeTab, setActiveTab] = useState<string>('courses');
-  const [isHeroVisible, setIsHeroVisible] = useState(true);
-  const heroRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    const handleScroll = () => {
-      if (heroRef.current) {
-        const scrollPosition = window.scrollY;
-        const heroHeight = heroRef.current.offsetHeight;
-        setIsHeroVisible(scrollPosition < heroHeight / 2);
-      }
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-  
-  // Filtrar cursos por categoría
-  const filteredByCategory = selectedCategory === 'all' 
-    ? filteredCourses 
-    : filteredCourses.filter(course => 
-        course.category?.toLowerCase() === selectedCategory.toLowerCase() ||
-        course.tags?.includes(selectedCategory)
-      );
-  
-  // Filtrar rutas de aprendizaje por categoría
-  const filteredPaths = selectedCategory === 'all'
-    ? learningPaths
-    : learningPaths.filter(path => 
-        path.categories.includes(selectedCategory)
-      );
-  
-  // Manejar error
-  if (error) {
-    return (
-      <div className="container mx-auto p-8 text-center">
-        <h2 className="text-2xl font-bold text-red-500 mb-4">Error al cargar los cursos</h2>
-        <p className="mb-6">{error}</p>
-        <Button onClick={fetchCourses}>Intentar de nuevo</Button>
-      </div>
-    );
-  }
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [filteredCourses, setFilteredCourses] = useState<FeaturedCourse[]>(mockCourses);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const getCategoryIcon = (categoryId: string) => {
-    const category = categories.find(c => c.id === categoryId);
-    const Icon = category?.icon || BookOpen;
-    return <Icon className="h-5 w-5" />;
+  useEffect(() => {
+    // Filter courses based on search query and selected category
+    const filtered = mockCourses.filter(course => {
+      const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                           course.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || course.category === selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    });
+    
+    setFilteredCourses(filtered);
+  }, [searchQuery, selectedCategory]);
+
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategory(categoryId);
   };
 
   return (
-    <div className="relative min-h-screen pb-12">
-      {/* Hero Section */}
-      <div 
-        ref={heroRef}
-        className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white py-12 md:py-24 relative overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="absolute inset-0 bg-[url('public/lovable-uploads/ed420cd9-2fc1-4d89-b094-dbb7096664a6.png')] bg-cover bg-center mix-blend-overlay opacity-20"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
+    <div className="min-h-screen bg-background">
+      {/* Hero section with search */}
+      <section className="py-12 px-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
+        <div className="container mx-auto">
           <motion.div 
-            className="max-w-3xl mx-auto text-center"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            className="text-center max-w-3xl mx-auto mb-10"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Aprende sin límites</h1>
-            <p className="text-xl opacity-90 mb-8">
-              Explora nuestro catálogo de cursos y rutas de aprendizaje diseñados por expertos 
-              para impulsar tu carrera profesional.
+            <h1 className="text-3xl md:text-4xl font-extrabold mb-4">Explora nuestro catálogo de formación</h1>
+            <p className="text-lg text-muted-foreground mb-6">
+              Encuentra cursos, másters, certificaciones y rutas de aprendizaje adaptados a tus necesidades
             </p>
             
-            <div className="relative max-w-xl mx-auto">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Input
-                type="search"
-                placeholder="Buscar cursos, temas, instructores..."
-                className="pl-10 py-6 rounded-full bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/70 focus:bg-white/20"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+            <div className="relative max-w-md mx-auto">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                type="text" 
+                placeholder="Buscar cursos, temas o habilidades..." 
+                className="pl-10 h-12 rounded-full" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </motion.div>
-        </div>
-      </div>
-      
-      {/* Navegación de categorías */}
-      <div className={cn(
-        "sticky top-0 z-10 bg-background border-b transition-all duration-300",
-        !isHeroVisible ? "shadow-md" : ""
-      )}>
-        <div className="container mx-auto">
-          <div className="flex justify-between items-center py-2 md:py-3">
-            <ScrollArea className="w-full">
-              <div className="flex space-x-2 p-2">
-                {categories.map((category) => {
-                  const Icon = category.icon;
-                  const isActive = selectedCategory === category.id;
-                  
-                  return (
-                    <Button
-                      key={category.id}
-                      variant={isActive ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedCategory(category.id)}
-                      className="flex items-center gap-1.5"
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span>{category.name}</span>
-                    </Button>
-                  );
-                })}
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          </div>
-        </div>
-      </div>
-        
-      <div className="container mx-auto px-4 py-8">
-        {/* Tabs para cambiar entre cursos y rutas */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <TabsList>
-              <TabsTrigger value="courses" className="px-6">Cursos</TabsTrigger>
-              <TabsTrigger value="paths" className="px-6">Rutas de aprendizaje</TabsTrigger>
-            </TabsList>
-            
-            {selectedCategory !== 'all' && (
-              <Button variant="ghost" size="sm" onClick={() => setSelectedCategory('all')}>
-                Borrar filtros
-              </Button>
-            )}
-          </div>
           
-          {/* Contenido de cursos */}
-          <TabsContent value="courses" className="mt-4">
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <CourseCardSkeleton count={6} />
-              </div>
-            ) : filteredByCategory.length > 0 ? (
-              <div>
-                {/* Destacados */}
-                <section className="mb-12">
-                  <h2 className="text-2xl font-bold mb-6 flex items-center">
-                    <Award className="mr-2 h-6 w-6 text-primary" />
-                    Cursos destacados
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredByCategory.slice(0, 3).map((course, index) => (
-                      <EnhancedCourseCard 
-                        key={course.id} 
-                        course={course} 
-                        index={index}
-                        isPopular={index === 0}
-                        isNew={index === 1}
-                      />
-                    ))}
-                  </div>
-                </section>
+          {/* Badges for popular searches - only on desktop */}
+          {!isMobile && (
+            <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
+              <Badge variant="outline" className="cursor-pointer hover:bg-primary/10" onClick={() => setSearchQuery('javascript')}>
+                JavaScript
+              </Badge>
+              <Badge variant="outline" className="cursor-pointer hover:bg-primary/10" onClick={() => setSearchQuery('marketing')}>
+                Marketing Digital
+              </Badge>
+              <Badge variant="outline" className="cursor-pointer hover:bg-primary/10" onClick={() => setSearchQuery('diseño')}>
+                Diseño UX/UI
+              </Badge>
+              <Badge variant="outline" className="cursor-pointer hover:bg-primary/10" onClick={() => setSearchQuery('data')}>
+                Data Science
+              </Badge>
+              <Badge variant="outline" className="cursor-pointer hover:bg-primary/10" onClick={() => setSearchQuery('inglés')}>
+                Inglés
+              </Badge>
+            </div>
+          )}
+        </div>
+      </section>
+      
+      {/* Category navigation */}
+      <div className="bg-background sticky top-[56px] z-10 border-b">
+        <div className="container mx-auto py-4">
+          <ScrollArea className="pb-2">
+            <div className={`flex ${isMobile ? 'gap-2' : 'gap-4'} px-1`}>
+              {categories.map((category) => {
+                const Icon = category.icon;
+                const isActive = selectedCategory === category.id;
                 
-                {/* Resto de cursos */}
-                <section>
-                  <h2 className="text-2xl font-bold mb-6">Todos los cursos</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredByCategory.slice(3).map((course, index) => (
-                      <EnhancedCourseCard key={course.id} course={course} index={index} />
-                    ))}
-                  </div>
-                </section>
-              </div>
-            ) : (
-              <div className="text-center py-16">
-                <div className="inline-block p-6 bg-muted rounded-full mb-4">
-                  <Search className="h-10 w-10 text-muted-foreground" />
-                </div>
-                <h3 className="text-2xl font-bold mb-2">No encontramos cursos</h3>
-                <p className="text-muted-foreground mb-6">
-                  No hay cursos que coincidan con tu búsqueda o filtros. Intenta con otros términos.
-                </p>
-                <Button onClick={clearFilters}>Ver todos los cursos</Button>
-              </div>
-            )}
-          </TabsContent>
-          
-          {/* Contenido de rutas de aprendizaje */}
-          <TabsContent value="paths" className="mt-4">
-            {filteredPaths.length > 0 ? (
-              <>
-                <h2 className="text-2xl font-bold mb-6 flex items-center">
-                  <BookMarked className="mr-2 h-6 w-6 text-primary" />
-                  Másters y rutas de especialización
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {filteredPaths.map((path) => (
-                    <Link key={path.id} to={`/learning-paths/${path.id}`}>
-                      <Card className="overflow-hidden h-full hover:shadow-lg transition-all duration-300">
-                        <div className="aspect-video relative">
-                          <img src={path.image} alt={path.title} className="w-full h-full object-cover" />
-                          {path.badge && (
-                            <Badge className="absolute top-3 right-3 bg-primary">{path.badge}</Badge>
-                          )}
-                        </div>
-                        <div className="p-6">
-                          <h3 className="text-xl font-bold mb-2">{path.title}</h3>
-                          <p className="text-muted-foreground mb-4">{path.description}</p>
-                          
-                          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm mb-4">
-                            <div className="flex items-center gap-1.5">
-                              <BookOpen className="h-4 w-4 text-primary" />
-                              <span>{path.courses} cursos</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <Clock className="h-4 w-4 text-primary" />
-                              <span>{path.duration}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <Signal className="h-4 w-4 text-primary" />
-                              <span>{path.level}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="flex justify-between items-center">
-                            <div className="flex gap-1">
-                              {path.categories.map(cat => (
-                                <Badge key={cat} variant="outline" className="flex items-center gap-1">
-                                  {getCategoryIcon(cat)}
-                                  <span>{categories.find(c => c.id === cat)?.name}</span>
-                                </Badge>
-                              ))}
-                            </div>
-                            <Button variant="outline" size="sm" className="gap-1">
-                              Ver detalle <ChevronRight className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </Card>
-                    </Link>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="text-center py-16">
-                <div className="inline-block p-6 bg-muted rounded-full mb-4">
-                  <BookMarked className="h-10 w-10 text-muted-foreground" />
-                </div>
-                <h3 className="text-2xl font-bold mb-2">No encontramos rutas</h3>
-                <p className="text-muted-foreground mb-6">
-                  No hay rutas de aprendizaje que coincidan con tu búsqueda o filtros.
-                </p>
-                <Button onClick={() => setSelectedCategory('all')}>Ver todas las rutas</Button>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+                return (
+                  <Card 
+                    key={category.id}
+                    className={`cursor-pointer transition-all duration-200 border ${
+                      isActive 
+                        ? 'border-primary bg-primary/5' 
+                        : 'border-border bg-background hover:bg-muted/50'
+                    }`}
+                    onClick={() => handleCategorySelect(category.id)}
+                  >
+                    <CardContent className={`p-3 ${isMobile ? 'flex flex-col items-center text-center' : 'flex items-center gap-2'}`}>
+                      <Icon className={`h-5 w-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <span className={`${isMobile ? 'text-xs mt-1' : 'text-sm'} font-medium ${isActive ? 'text-primary' : ''}`}>
+                        {category.name}
+                      </span>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        </div>
       </div>
       
-      {/* CTA Promocional */}
-      <div className="container mx-auto px-4 my-12">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-8 md:p-12 text-white overflow-hidden relative">
-          <div className="absolute inset-0 bg-[url('public/lovable-uploads/ed420cd9-2fc1-4d89-b094-dbb7096664a6.png')] bg-cover bg-center mix-blend-overlay opacity-10"></div>
-          <div className="relative z-10 md:max-w-2xl">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">¿Quieres avanzar más rápido en tu carrera?</h2>
-            <p className="text-white/90 mb-6">
-              Nuestros programas premium te ofrecen mentoría personalizada, acceso a recursos exclusivos
-              y un camino estructurado hacia tu objetivo profesional.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-white/90">
-                Explorar programas premium
+      {/* Main content with tabs */}
+      <main className="container mx-auto py-8 px-4">
+        <div className="flex justify-between items-center mb-6">
+          <Tabs defaultValue="courses" className="w-full" value={activeTab} onValueChange={setActiveTab}>
+            <div className="flex justify-between items-center mb-6">
+              <TabsList>
+                <TabsTrigger value="courses" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Cursos
+                </TabsTrigger>
+                <TabsTrigger value="learning-paths" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <GraduationCap className="h-4 w-4 mr-2" />
+                  Rutas de Aprendizaje
+                </TabsTrigger>
+              </TabsList>
+              
+              <Button variant="outline" size="sm" className="gap-1">
+                <SlidersHorizontal className="h-4 w-4" />
+                <span className="hidden sm:inline">Filtros</span>
               </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
+            </div>
+            
+            <TabsContent value="courses" className="mt-0">
+              <CourseGrid 
+                filteredCourses={filteredCourses} 
+                selectedCategory={selectedCategory} 
+              />
+            </TabsContent>
+            
+            <TabsContent value="learning-paths" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {learningPaths.map((path, index) => (
+                  <LearningPathCard 
+                    key={path.id}
+                    {...path}
+                    index={index}
+                    availableCategories={categories}
+                  />
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
+      
+      {/* Promotional section at the bottom */}
+      <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-12 px-4">
+        <div className="container mx-auto text-center">
+          <div className="max-w-2xl mx-auto">
+            <Flame className="h-12 w-12 mx-auto mb-4" />
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">¿No encuentras lo que buscas?</h2>
+            <p className="text-lg mb-6 text-blue-100">
+              Contáctanos para recibir asesoramiento personalizado o para solicitar un curso específico
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" variant="secondary">
+                Solicitar un curso
+              </Button>
+              <Button size="lg" variant="outline" className="bg-transparent text-white hover:bg-white/20 hover:text-white">
                 Hablar con un asesor
               </Button>
             </div>
           </div>
         </div>
-      </div>
-      
-      {/* Navegación móvil de categorías - visible solo en móvil */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-2 md:hidden">
-        <ScrollArea className="w-full">
-          <div className="flex space-x-2">
-            {categories.map((category) => {
-              const Icon = category.icon;
-              const isActive = selectedCategory === category.id;
-              
-              return (
-                <Button
-                  key={category.id}
-                  variant={isActive ? "default" : "outline"}
-                  size="icon"
-                  onClick={() => setSelectedCategory(category.id)}
-                  className="rounded-full h-10 w-10 flex-shrink-0"
-                  title={category.name}
-                >
-                  <Icon className="h-5 w-5" />
-                </Button>
-              );
-            })}
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-      </div>
+      </section>
     </div>
   );
 };

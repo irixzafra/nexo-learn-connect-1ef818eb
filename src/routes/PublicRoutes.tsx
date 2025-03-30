@@ -39,6 +39,11 @@ const PublicRoutes: React.FC = () => {
           <CourseDetail />
         </AppLayout>
       } />
+      <Route path="/learning-paths" element={
+        <AppLayout>
+          <CoursesCatalog />
+        </AppLayout>
+      } />
       <Route path="/learning-paths/:pathId" element={
         <AppLayout>
           <div className="container mx-auto p-8">
