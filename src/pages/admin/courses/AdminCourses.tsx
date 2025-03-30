@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -45,6 +44,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import ManualEnrollmentDialog from "@/components/admin/ManualEnrollmentDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Breadcrumb } from "@/components/layout/page/PageHeader";
 
 interface Instructor {
   full_name: string | null;
@@ -175,7 +175,7 @@ const AdminCourses: React.FC = () => {
         breadcrumbs: [
           { title: "Dashboard", href: "/admin/dashboard" },
           { title: "Gestión de Cursos" }
-        ] as Breadcrumb[] // Correct type assertion
+        ] as Breadcrumb[]
       }}
     >
       <div className="flex mb-4">
