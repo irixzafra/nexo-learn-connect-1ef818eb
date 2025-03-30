@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { TestDataGenerator } from '@/components/admin/test-data';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Database, Sparkles } from 'lucide-react';
+import { ArrowLeft, Database } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const TestDataManagement: React.FC = () => {
@@ -41,8 +41,7 @@ const TestDataManagement: React.FC = () => {
             Gestión de Datos de Prueba
           </h1>
         </div>
-        <p className="text-muted-foreground ml-12 flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary/70" />
+        <p className="text-muted-foreground ml-12">
           Esta herramienta te permite generar y gestionar datos de prueba para la aplicación
         </p>
       </motion.div>
