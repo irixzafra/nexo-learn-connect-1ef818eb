@@ -17,6 +17,10 @@ import {
 import { UserMenu } from "@/components/layout/header/UserMenu";
 import { RoleIndicator } from "@/components/layout/header/RoleIndicator";
 import { NexoLogo } from "@/components/ui/logo";
+import { Bell, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { NotificationIndicator } from "@/components/notifications/NotificationIndicator";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -74,6 +78,20 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
                 )}
               </div>
               <div className="flex items-center gap-2 ml-auto">
+                {/* Notification Icon */}
+                <NotificationIndicator />
+                
+                {/* Contact Icon */}
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-9 w-9"
+                  title="Contacto"
+                  onClick={() => window.location.href = '/contact'}
+                >
+                  <Phone className="h-5 w-5" />
+                </Button>
+                
                 {userRole && <RoleIndicator viewingAs={userRole} onRoleChange={handleRoleChange} />}
                 <UserMenu />
               </div>

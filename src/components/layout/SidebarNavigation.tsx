@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
@@ -14,7 +14,8 @@ import {
   Settings, 
   User, 
   Phone,
-  Bell
+  Bell,
+  Globe
 } from 'lucide-react';
 import { 
   Tooltip,
@@ -23,6 +24,13 @@ import {
 } from '@/components/ui/tooltip';
 import { NavLink } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRole;
@@ -34,6 +42,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   const isCollapsed = state === "collapsed";
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
+  const [currentLanguage, setCurrentLanguage] = useState('es'); // Default language is Spanish
   
   // Determine the effective role
   const getEffectiveRole = (): UserRole => {
@@ -95,6 +104,19 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
       tooltip: "Contacto"
     }
   ];
+
+  // Language options
+  const languages = [
+    { code: 'es', name: 'Español' },
+    { code: 'en', name: 'English' },
+    { code: 'pt', name: 'Português' }
+  ];
+
+  const changeLanguage = (langCode: string) => {
+    setCurrentLanguage(langCode);
+    // Here you would typically change the language in your app's state/context
+    console.log(`Language changed to ${langCode}`);
+  };
 
   return (
     <div className="h-full flex flex-col py-4">
@@ -164,6 +186,45 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
       </div>
       
       <div className="mt-auto pt-4 border-t px-4">
+        {/* Language Switcher */}
+        <div className="mb-3 flex justify-center">
+          {isCollapsed ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <Globe className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Cambiar idioma</p>
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center gap-2 w-full">
+                  <Globe className="h-4 w-4" />
+                  <span>{languages.find(lang => lang.code === currentLanguage)?.name || 'Idioma'}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center">
+                {languages.map(lang => (
+                  <DropdownMenuItem 
+                    key={lang.code}
+                    onClick={() => changeLanguage(lang.code)}
+                    className={cn(
+                      "cursor-pointer",
+                      currentLanguage === lang.code && "font-bold bg-primary/10"
+                    )}
+                  >
+                    {lang.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+        
         <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
           Nexo Academia © {new Date().getFullYear()}
         </div>
