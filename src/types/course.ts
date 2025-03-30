@@ -29,7 +29,7 @@ export interface Course {
   title: string;
   description: string;
   price: number;
-  currency: 'eur' | 'usd';
+  currency: 'eur' | 'usd';  // Adding this property to fix the error
   is_published: boolean;
   created_at: string;
   updated_at: string;
