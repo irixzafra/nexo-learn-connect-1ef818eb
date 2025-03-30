@@ -28,6 +28,7 @@ const LessonView = lazy(() => import('@/pages/student/LessonView'));
 const Notifications = lazy(() => import('@/pages/Notifications'));
 const Messages = lazy(() => import('@/pages/placeholder/Messages'));
 const Billing = lazy(() => import('@/pages/placeholder/Billing'));
+const Community = lazy(() => import('@/pages/Community'));
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -65,6 +66,13 @@ const AppRouter: React.FC = () => {
               <LessonView />
             </Suspense>
           </ProtectedRoute>
+        } />
+        
+        {/* Community route */}
+        <Route path="/community" element={
+          <Suspense fallback={<LoadingFallback />}>
+            <Community />
+          </Suspense>
         } />
         
         {/* Página de notificaciones */}

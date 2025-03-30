@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, MessageSquare, Newspaper, UsersRound } from 'lucide-react';
+import { Users, MessageSquare, Newspaper, UsersRound, Rss, Trophy } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -32,8 +32,22 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
       <SidebarMenu>
         <MenuItem
           to="/community"
-          icon={Newspaper}
+          icon={Rss}
           label="Feed"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/community?tab=popular"
+          icon={Newspaper}
+          label="Popular"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/community?tab=leaderboard"
+          icon={Trophy}
+          label="Leaderboard"
           isCollapsed={isCollapsed}
         />
         
@@ -46,9 +60,9 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
         />
         
         <MenuItem
-          to="/network"
+          to="/community?tab=groups"
           icon={UsersRound}
-          label="Red de Contactos"
+          label="Grupos"
           disabled={true}
           isCollapsed={isCollapsed}
         />

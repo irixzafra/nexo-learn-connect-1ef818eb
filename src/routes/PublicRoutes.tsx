@@ -19,6 +19,7 @@ import CoursesCatalog from '@/pages/CoursesCatalog';
 import LessonView from '@/pages/student/LessonView';
 import PublicLayout from '@/layouts/PublicLayout';
 import CourseDetailPage from '@/pages/CourseDetailPage';
+import Community from '@/pages/Community';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -32,6 +33,9 @@ const PublicRoutes: React.FC = () => {
       <Route path="/unauthorized" element={<PublicLayout><Unauthorized /></PublicLayout>} />
       <Route path="/payment/success" element={<PublicLayout><PaymentSuccess /></PublicLayout>} />
       <Route path="/payment/cancel" element={<PublicLayout><PaymentCancel /></PublicLayout>} />
+      
+      {/* Community Route */}
+      <Route path="/community" element={<Community />} />
       
       {/* Acceso a cursos */}
       <Route path="/courses" element={
