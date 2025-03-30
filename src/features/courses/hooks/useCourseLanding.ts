@@ -67,7 +67,8 @@ export const useCourseLanding = (courseIdentifier: string, isSlug: boolean = fal
       return;
     }
 
-    if (isEnrolled || !course || !user?.id) return;
+    // Fixed: Using !!enrollment instead of isEnrolled variable which is defined later
+    if (!!enrollment || !course || !user?.id) return;
 
     setIsEnrolling(true);
 
