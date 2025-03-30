@@ -9,16 +9,7 @@ const CourseNotFound: React.FC = () => {
   const navigate = useNavigate();
   
   return (
-    <SectionPageLayout
-      header={{
-        title: "Curso no encontrado",
-        breadcrumbs: [
-          { title: "Admin", href: "/admin" },
-          { title: "Cursos", href: "/admin/courses" },
-          { title: "Detalle" }
-        ],
-      }}
-    >
+    <SectionPageLayout>
       <PageSection variant="card">
         <div className="flex flex-col items-center justify-center p-6">
           <Info className="h-12 w-12 text-muted-foreground mb-4" />

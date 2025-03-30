@@ -11,12 +11,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { UserRoleType } from '@/types/auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
 export const UsersListTab: React.FC = () => {
-  const { users, isLoading, searchTerm, setSearchTerm, handleRoleChange } = useUsers();
+  const { users, isLoading, searchQuery, setSearchQuery, updateUserRole, deactivateUser } = useUsers();
   const { toast } = useToast();
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
@@ -72,7 +72,7 @@ export const UsersListTab: React.FC = () => {
 
   const confirmRoleChange = async () => {
     if (selectedUserId && selectedRole) {
-      await handleRoleChange(selectedUserId, selectedRole);
+      await updateUserRole(selectedUserId, selectedRole as UserRoleType);
       setIsRoleDialogOpen(false);
     }
   };
@@ -98,8 +98,8 @@ export const UsersListTab: React.FC = () => {
             <Input
               placeholder="Buscar usuarios..."
               className="pl-8"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </CardHeader>
@@ -146,7 +146,7 @@ export const UsersListTab: React.FC = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {new Date(user.created_at).toLocaleDateString()}
+                        {new Date(user.created_at || '').toLocaleDateString()}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>

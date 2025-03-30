@@ -1,84 +1,47 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import SectionPageLayout from '@/layouts/SectionPageLayout';
-import ContinueLearningSection from '@/features/home/components/ContinueLearningSection';
-import UpcomingClassesSection from '@/features/home/components/UpcomingClassesSection';
-import AchievementsSection from '@/features/home/components/AchievementsSection';
-import ExploreCoursesCard from '@/features/home/components/ExploreCoursesCard';
-import { getGreeting } from '@/features/home/utils/getWelcomeMessage';
-import { BookOpen, Clock, Award, TrendingUp } from 'lucide-react';
+import { DashboardWidgetArea } from '@/components/dashboard/DashboardWidgetArea';
+import { StatsSection } from '@/components/dashboard/StatsSection';
+import { CoursesWidget } from '@/components/dashboard/CoursesWidget';
+import { WelcomeSection } from '@/components/dashboard/WelcomeSection';
+import { HelpSection } from '@/components/dashboard/HelpSection';
 
 const Home: React.FC = () => {
-  const { user, profile, userRole } = useAuth();
+  // These are examples of stats that might be shown to a student
+  const studentStats = [
+    { label: "Cursos Inscritos", value: "4", icon: <div>📚</div>, color: "text-blue-500" },
+    { label: "Progreso Total", value: "63%", change: { value: 12, positive: true }, icon: <div>📈</div>, color: "text-emerald-500" },
+    { label: "Horas Estudiadas", value: "18", icon: <div>⏱️</div>, color: "text-amber-500" },
+    { label: "Certificados", value: "1", icon: <div>🏆</div>, color: "text-purple-500" }
+  ];
 
   return (
-    <SectionPageLayout
-      header={{
-        title: `${getGreeting()}, ${profile?.full_name?.split(' ')[0] || 'Usuario'}`,
-        description: 'Bienvenido a la plataforma de aprendizaje. Aquí tienes un resumen de tu actividad.',
-      }}
-      stats={{
-        stats: [
-          {
-            label: "Cursos activos",
-            value: "3",
-            icon: <BookOpen className="h-5 w-5" />,
-            color: "primary"
-          },
-          {
-            label: "Horas esta semana",
-            value: "12",
-            icon: <Clock className="h-5 w-5" />,
-            color: "success"
-          },
-          {
-            label: "Certificados",
-            value: "8",
-            icon: <Award className="h-5 w-5" />,
-            color: "warning"
-          },
-          {
-            label: "Días consecutivos",
-            value: "23",
-            change: { value: 15, type: "increase" },
-            icon: <TrendingUp className="h-5 w-5" />,
-            color: "success"
-          }
-        ]
-      }}
-      help={{
-        title: "Tu progreso",
-        description: "Recursos para ayudarte a continuar tu aprendizaje.",
-        links: [
-          {
-            title: "Completar perfil",
-            description: "Actualiza tu información personal y preferencias",
-            href: "/profile"
-          },
-          {
-            title: "Centro de ayuda",
-            description: "Consulta la documentación y tutoriales",
-            href: "/help",
-            external: true
-          }
-        ]
-      }}
-    >
-      {/* Sección principal - Continuar aprendiendo */}
-      <ContinueLearningSection />
-
-      {/* Segunda fila - Próximas clases y Logros */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Columna próximas clases */}
-        <UpcomingClassesSection />
-
-        {/* Columna logros */}
-        <AchievementsSection />
+    <SectionPageLayout className="container px-4 py-8">
+      <WelcomeSection 
+        title="Panel de Control"
+        description="Bienvenido a tu espacio personal de aprendizaje"
+      />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="md:col-span-2">
+          <StatsSection stats={studentStats} />
+          <DashboardWidgetArea />
+        </div>
+        
+        <div className="flex flex-col gap-6">
+          <CoursesWidget />
+          <HelpSection
+            title="¿Necesitas ayuda?"
+            description="Nuestro equipo está listo para ayudarte con cualquier duda."
+            links={[
+              { text: "Centro de ayuda", href: "/help" },
+              { text: "Tutoriales", href: "/tutorials" },
+              { text: "Contactar soporte", href: "/contact" }
+            ]}
+          />
+        </div>
       </div>
-
-      {/* Banner de exploración */}
-      <ExploreCoursesCard />
     </SectionPageLayout>
   );
 };

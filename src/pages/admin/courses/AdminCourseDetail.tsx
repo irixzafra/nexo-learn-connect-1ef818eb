@@ -1,125 +1,94 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, 
-  Edit, 
-  Trash2,
-  Eye, 
-  MoreHorizontal, 
-  Loader2, 
-  AlertTriangle
+  BookOpen, Settings, Users, List
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
-import SectionPageLayout from '@/layouts/SectionPageLayout';
-import AdminTabs from '@/components/admin/AdminTabs';
-import useCourseDetail from '@/features/admin/hooks/useCourseDetail';
-
-import CourseGeneralTab from '@/features/admin/components/courses/CourseGeneralTab';
+import { AdminTabItem } from "@/components/admin/AdminTabs";
+import { useCourseDetails } from '@/features/admin/hooks/useCourseDetails';
 import CourseContentTab from '@/features/admin/components/courses/CourseContentTab';
 import CourseStudentsTab from '@/features/admin/components/courses/CourseStudentsTab';
-import CourseStatsTab from '@/features/admin/components/courses/CourseStatsTab';
-import CourseLoadingState from '@/features/admin/components/courses/CourseLoadingState';
-import CourseError from '@/features/admin/components/courses/CourseError';
 import CourseNotFound from '@/features/admin/components/courses/CourseNotFound';
+import { AdminPageLayout } from '@/layouts/AdminPageLayout';
 
 const AdminCourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
-  const navigate = useNavigate();
-  const { course, isLoading, error } = useCourseDetail({ courseId });
-
-  // Return to course list
-  const handleBack = () => {
-    navigate('/admin/courses');
-  };
+  const [activeTab, setActiveTab] = useState("settings");
   
-  // Handle delete course
-  const handleDelete = async () => {
-    if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
-      alert('Curso eliminado (simulado)');
-      navigate('/admin/courses');
+  const { 
+    course, 
+    isLoading, 
+    isSaving,
+    editedCourse,
+    handleInputChange,
+    handleSwitchChange,
+    handleSave,
+    fetchCourseDetails
+  } = useCourseDetails();
+  
+  useEffect(() => {
+    if (courseId) {
+      fetchCourseDetails(courseId);
     }
-  };
+  }, [courseId]);
+  
+  if (isLoading) {
+    return (
+      <div className="p-8 flex justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
+  
+  if (!course) {
+    return <CourseNotFound />;
+  }
 
-  // Render loading, error or not found states
-  if (isLoading) return <CourseLoadingState />;
-  if (error) return <CourseError error={error} onRetry={() => {}} onDismiss={() => {}} />;
-  if (!course) return <CourseNotFound />;
-
-  // Define available tabs
-  const tabs = [
-    { id: 'general', label: 'General', icon: <Eye className="h-4 w-4" /> },
-    { id: 'content', label: 'Contenido', icon: <Edit className="h-4 w-4" /> },
-    { id: 'students', label: 'Estudiantes', icon: <Eye className="h-4 w-4" /> },
-    { id: 'stats', label: 'Estadísticas', icon: <Eye className="h-4 w-4" /> },
+  // Define the tabs for the course detail page
+  const tabs: AdminTabItem[] = [
+    {
+      value: 'settings',
+      label: 'Configuración',
+      icon: <Settings className="h-4 w-4" />,
+      content: (
+        <div className="p-4">
+          <h2 className="text-xl font-bold mb-4">Configuración del curso</h2>
+          <p>Contenido de configuración aquí</p>
+        </div>
+      )
+    },
+    {
+      value: 'content',
+      label: 'Contenido',
+      icon: <List className="h-4 w-4" />,
+      content: <CourseContentTab course={course} />
+    },
+    {
+      value: 'students',
+      label: 'Estudiantes',
+      icon: <Users className="h-4 w-4" />,
+      content: <CourseStudentsTab courseId={course.id} courseName={course.title} />
+    },
+    {
+      value: 'instructors',
+      label: 'Instructores',
+      icon: <BookOpen className="h-4 w-4" />,
+      content: (
+        <div className="p-4">
+          <h2 className="text-xl font-bold mb-4">Instructores del curso</h2>
+          <p>Gestión de instructores aquí</p>
+        </div>
+      )
+    }
   ];
 
-  // Define actions for the header
-  const headerActions = React.useMemo(() => [
-    <Button key="view" variant="outline" size="sm">
-      <Eye className="h-4 w-4 mr-2" />
-      Ver Curso
-    </Button>,
-    <Button key="edit" variant="outline" size="sm">
-      <Edit className="h-4 w-4 mr-2" />
-      Editar
-    </Button>,
-    <Button key="delete" variant="destructive" size="sm" onClick={handleDelete}>
-      <Trash2 className="h-4 w-4 mr-2" />
-      Eliminar
-    </Button>
-  ], [handleDelete]);
-
   return (
-    <SectionPageLayout
-      pageTitle={course.title}
-      subtitle={`ID: ${course.id} · Creado: ${new Date(course.created_at).toLocaleDateString()}`}
-      actions={headerActions}
-      breadcrumbs={[
-        { href: '/admin/dashboard', label: 'Dashboard' },
-        { href: '/admin/courses', label: 'Cursos' },
-        { href: '#', label: course.title, current: true }
-      ]}
-    >
-      <div className="space-y-4">
-        <AdminTabs tabs={tabs} defaultTabId="general" />
-        
-        <Tabs defaultValue="general" className="w-full">
-          <TabsContent value="general">
-            <CourseGeneralTab 
-              course={course} 
-              editedCourse={{
-                title: course.title || '',
-                description: course.description || '',
-                price: course.price || 0,
-                is_published: course.is_published || false,
-                category: course.category || '',
-                level: course.level || '',
-                currency: course.currency || 'eur',
-                cover_image_url: course.cover_image_url || '',
-                slug: course.slug || '',
-              }}
-              handleInputChange={() => {}}
-              handleSwitchChange={() => {}}
-            />
-          </TabsContent>
-          
-          <TabsContent value="content">
-            <CourseContentTab />
-          </TabsContent>
-          
-          <TabsContent value="students">
-            <CourseStudentsTab courseId={course.id} courseName={course.title} />
-          </TabsContent>
-          
-          <TabsContent value="stats">
-            <CourseStatsTab />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </SectionPageLayout>
+    <AdminPageLayout
+      title={course.title || "Detalles del curso"}
+      subtitle="Administra los detalles del curso"
+      tabs={tabs}
+      defaultTabValue="settings"
+    />
   );
 };
 

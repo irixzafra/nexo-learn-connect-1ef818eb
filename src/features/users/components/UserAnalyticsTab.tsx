@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useUserStatistics } from '../hooks/useUserStatistics';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { 
@@ -9,7 +9,8 @@ import {
   BarChart, PieChart, LineChart, RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { BarChart as RechartsBarChart, 
+import { 
+  BarChart as RechartsBarChart, 
   Bar, 
   XAxis, 
   YAxis, 
@@ -31,18 +32,15 @@ const ROLE_COLORS: Record<string, string> = {
   student: '#00C49F',
   moderator: '#FFBB28',
   support: '#A569BD',
-  // Add more role colors as needed
 };
 
 export const UserAnalyticsTab: React.FC = () => {
   const { 
+    userCounts, 
     roleDistribution, 
-    registrationData, 
-    totalUsers, 
-    activeUsers, 
-    newUsers, 
+    dailyRegistrations, 
     isLoading,
-    refreshStatistics
+    refetchAll
   } = useUserStatistics();
 
   // Format date for display
@@ -79,7 +77,7 @@ export const UserAnalyticsTab: React.FC = () => {
     return result;
   };
 
-  const filledRegistrationData = fillMissingDates(registrationData);
+  const filledRegistrationData = fillMissingDates(dailyRegistrations);
 
   // Get a simplified version of registration data for display
   const simplifiedRegistrationData = filledRegistrationData.map(item => ({
@@ -111,7 +109,7 @@ export const UserAnalyticsTab: React.FC = () => {
             {isLoading ? (
               <Skeleton className="h-8 w-24 mt-2" />
             ) : (
-              <div className="text-3xl font-bold mt-2">{totalUsers}</div>
+              <div className="text-3xl font-bold mt-2">{userCounts.total}</div>
             )}
           </CardContent>
         </Card>
@@ -125,7 +123,7 @@ export const UserAnalyticsTab: React.FC = () => {
             {isLoading ? (
               <Skeleton className="h-8 w-24 mt-2" />
             ) : (
-              <div className="text-3xl font-bold mt-2">{activeUsers}</div>
+              <div className="text-3xl font-bold mt-2">{userCounts.active}</div>
             )}
           </CardContent>
         </Card>
@@ -139,7 +137,7 @@ export const UserAnalyticsTab: React.FC = () => {
             {isLoading ? (
               <Skeleton className="h-8 w-24 mt-2" />
             ) : (
-              <div className="text-3xl font-bold mt-2">{newUsers}</div>
+              <div className="text-3xl font-bold mt-2">{userCounts.new}</div>
             )}
           </CardContent>
         </Card>
@@ -154,7 +152,7 @@ export const UserAnalyticsTab: React.FC = () => {
               <Skeleton className="h-8 w-24 mt-2" />
             ) : (
               <div className="text-3xl font-bold mt-2">
-                {totalUsers ? Math.round((activeUsers / totalUsers) * 100) : 0}%
+                {userCounts.total ? Math.round((userCounts.active / userCounts.total) * 100) : 0}%
               </div>
             )}
           </CardContent>
@@ -175,7 +173,7 @@ export const UserAnalyticsTab: React.FC = () => {
             </TabsTrigger>
           </TabsList>
           
-          <Button variant="outline" size="sm" onClick={refreshStatistics} disabled={isLoading}>
+          <Button variant="outline" size="sm" onClick={refetchAll} disabled={isLoading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Actualizar
           </Button>
@@ -209,6 +207,7 @@ export const UserAnalyticsTab: React.FC = () => {
                           outerRadius={120}
                           fill="#8884d8"
                           dataKey="value"
+                          nameKey="name"
                           label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                         >
                           {pieData.map((entry, index) => (
