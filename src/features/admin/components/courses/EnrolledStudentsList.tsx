@@ -50,7 +50,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface EnrolledStudentsListProps {
   courseId: string;
@@ -63,6 +63,7 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showContactInfoDialog, setShowContactInfoDialog] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<EnrolledStudent | null>(null);
+  const navigate = useNavigate();
 
   const filteredStudents = enrolledStudents?.filter(student => 
     student.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -119,6 +120,10 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
       setShowDeleteDialog(false);
       setStudentToDelete(null);
     }
+  };
+
+  const handleEditUserInfo = (userId: string) => {
+    navigate(`/admin/users?edit=${userId}`);
   };
 
   if (isLoading) {
@@ -305,11 +310,18 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col sm:flex-row gap-2">
-                <Button asChild variant="default" className="w-full sm:w-auto">
-                  <Link to={`/admin/users?edit=${selectedStudent?.user_id}`} className="w-full">
-                    <Edit className="mr-2 h-4 w-4" />
-                    Editar información
-                  </Link>
+                <Button 
+                  variant="default" 
+                  className="w-full sm:w-auto"
+                  onClick={() => {
+                    if (selectedStudent) {
+                      handleEditUserInfo(selectedStudent.user_id);
+                      setShowContactInfoDialog(false);
+                    }
+                  }}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Editar información
                 </Button>
                 <Button 
                   variant="secondary" 
