@@ -473,11 +473,13 @@ export type Database = {
       }
       courses: {
         Row: {
+          badge: string | null
           category: string
           cover_image_url: string | null
           created_at: string
           currency: string
           description: string | null
+          discount_percentage: number | null
           display_order: number | null
           duration_text: string | null
           featured_instructor: string | null
@@ -486,20 +488,26 @@ export type Database = {
           is_featured_on_landing: boolean | null
           is_published: boolean
           level: string | null
+          original_price: number | null
           prerequisites_text: string | null
           price: number
+          rating: number | null
           seo_description: string | null
           seo_title: string | null
           slug: string | null
+          student_count: number | null
+          tags: string[] | null
           title: string
           updated_at: string
         }
         Insert: {
+          badge?: string | null
           category?: string
           cover_image_url?: string | null
           created_at?: string
           currency?: string
           description?: string | null
+          discount_percentage?: number | null
           display_order?: number | null
           duration_text?: string | null
           featured_instructor?: string | null
@@ -508,20 +516,26 @@ export type Database = {
           is_featured_on_landing?: boolean | null
           is_published?: boolean
           level?: string | null
+          original_price?: number | null
           prerequisites_text?: string | null
           price?: number
+          rating?: number | null
           seo_description?: string | null
           seo_title?: string | null
           slug?: string | null
+          student_count?: number | null
+          tags?: string[] | null
           title: string
           updated_at?: string
         }
         Update: {
+          badge?: string | null
           category?: string
           cover_image_url?: string | null
           created_at?: string
           currency?: string
           description?: string | null
+          discount_percentage?: number | null
           display_order?: number | null
           duration_text?: string | null
           featured_instructor?: string | null
@@ -530,11 +544,15 @@ export type Database = {
           is_featured_on_landing?: boolean | null
           is_published?: boolean
           level?: string | null
+          original_price?: number | null
           prerequisites_text?: string | null
           price?: number
+          rating?: number | null
           seo_description?: string | null
           seo_title?: string | null
           slug?: string | null
+          student_count?: number | null
+          tags?: string[] | null
           title?: string
           updated_at?: string
         }

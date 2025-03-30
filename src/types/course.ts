@@ -55,6 +55,9 @@ export interface Course {
   rating?: number;
   tags?: string[];
   popular_score?: number;
+  // Nuevos campos añadidos
+  badge?: string;
+  discount_percentage?: number;
   // Relationships
   instructor?: {
     id: string;
