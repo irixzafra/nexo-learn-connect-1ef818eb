@@ -1,19 +1,23 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users } from 'lucide-react'; // Replacing UserGroupIcon with Users from lucide-react
-import { Sparkles } from 'lucide-react';
+import { Users, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import useCourseDetail from '@/features/admin/hooks/useCourseDetail'; // Fixed import syntax
+import useCourseDetail from '@/features/admin/hooks/useCourseDetail';
 
 interface StudentsCardProps {
   courseId: string;
   enrolledCount: number;
+  actionButtons?: React.ReactNode;
 }
 
-const StudentsCard: React.FC<StudentsCardProps> = ({ courseId, enrolledCount }) => {
-  const { course } = useCourseDetail({ courseId }); // Updated function call to match the hook's expected parameters
+const StudentsCard: React.FC<StudentsCardProps> = ({ 
+  courseId, 
+  enrolledCount,
+  actionButtons
+}) => {
+  const { course } = useCourseDetail({ courseId });
   
   const formatDate = (dateString: string) => {
     try {
@@ -26,10 +30,13 @@ const StudentsCard: React.FC<StudentsCardProps> = ({ courseId, enrolledCount }) 
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Users className="h-5 w-5" /> {/* Changed from UserGroupIcon to Users */}
-          Resumen de estudiantes
-        </CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            Resumen de estudiantes
+          </CardTitle>
+          {actionButtons}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">

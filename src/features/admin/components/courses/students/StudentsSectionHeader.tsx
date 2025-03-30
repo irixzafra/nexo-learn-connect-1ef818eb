@@ -18,14 +18,6 @@ const StudentsSectionHeader: React.FC<StudentsSectionHeaderProps> = ({
           <p className="text-muted-foreground">Gestión de participantes del curso</p>
         </div>
       )}
-      
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h3 className="text-xl font-semibold">
-            Estudiantes Inscritos en: {courseName}
-          </h3>
-        </div>
-      </div>
     </React.Fragment>
   );
 };

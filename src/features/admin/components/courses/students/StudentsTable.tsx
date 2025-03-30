@@ -2,7 +2,6 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Trash2 } from 'lucide-react';
 import { 
   Table, 
   TableHeader, 
@@ -12,11 +11,6 @@ import {
   TableCell 
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { 
-  Tooltip, 
-  TooltipContent, 
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
 import { EnrolledStudent } from '@/features/admin/hooks/useCourseEnrollments';
 import StudentContactButtons from './StudentContactButtons';
 

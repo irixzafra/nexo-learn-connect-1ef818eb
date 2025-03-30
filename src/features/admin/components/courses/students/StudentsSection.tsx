@@ -8,6 +8,7 @@ import StudentsSectionHeader from './StudentsSectionHeader';
 import EnrollButton from './EnrollButton';
 import ExportButton from './ExportButton';
 import StudentsCard from './StudentsCard';
+import StudentsTable from './StudentsTable';
 import Papa from 'papaparse';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -25,7 +26,7 @@ const StudentsSection: React.FC<StudentsSectionProps> = ({
   showTitle = true 
 }) => {
   const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
-  const { enrolledStudents, refetch } = useCourseEnrollments(courseId);
+  const { enrolledStudents, refetch, isLoading, error } = useCourseEnrollments(courseId);
   
   // Use the table hook to get sorted and filtered students
   const {
@@ -78,6 +79,11 @@ const StudentsSection: React.FC<StudentsSectionProps> = ({
     toast.success("Archivo CSV generado correctamente");
   };
 
+  const handleDeleteStudent = (student: any) => {
+    // Implementar lógica de eliminación
+    console.log('Eliminar estudiante:', student);
+  };
+
   return (
     <div className="space-y-6">
       <StudentsSectionHeader 
@@ -85,15 +91,26 @@ const StudentsSection: React.FC<StudentsSectionProps> = ({
         showTitle={showTitle} 
       />
       
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4">
-        <EnrollButton onClick={() => setIsEnrollDialogOpen(true)} />
-        <ExportButton onClick={handleExportCSV} />
-      </div>
-      
       <StudentsCard 
         courseId={courseId} 
-        enrolledCount={enrolledStudents?.length || 0} 
+        enrolledCount={enrolledStudents?.length || 0}
+        actionButtons={
+          <div className="flex gap-2">
+            <EnrollButton onClick={() => setIsEnrollDialogOpen(true)} iconOnly={true} />
+            <ExportButton onClick={handleExportCSV} iconOnly={true} />
+          </div>
+        }
       />
+      
+      <div className="mt-6">
+        <StudentsTable 
+          students={sortedStudents} 
+          searchTerm={searchTerm}
+          onEmailClick={(student) => console.log('Email:', student.email)}
+          onPhoneClick={(student) => console.log('Phone:', student.phone)}
+          onDeleteClick={handleDeleteStudent}
+        />
+      </div>
       
       <ManualEnrollmentDialog
         open={isEnrollDialogOpen}
