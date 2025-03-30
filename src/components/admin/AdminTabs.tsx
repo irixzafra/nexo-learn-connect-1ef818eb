@@ -43,8 +43,8 @@ const AdminTabs: React.FC<AdminTabsProps> = ({
     >
       <TabsList 
         className={cn(
-          "w-full sm:w-auto flex overflow-auto bg-muted/60 p-1 rounded-lg",
-          orientation === 'vertical' && "flex-col h-auto"
+          "w-full bg-muted/60 p-1 rounded-lg h-auto",
+          orientation === 'vertical' ? "flex-col" : "flex"
         )}
       >
         <TooltipProvider delayDuration={300}>
@@ -56,8 +56,6 @@ const AdminTabs: React.FC<AdminTabsProps> = ({
                   className={cn(
                     "flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-all", 
                     "data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
-                    "data-[state=active]:border-b-2 data-[state=active]:border-primary",
-                    isSmallScreen && iconPosition === 'left' && "px-3",
                     isMobile && "flex-1",
                     isMobile && iconPosition === 'top' && "flex-col gap-1 py-3",
                   )}

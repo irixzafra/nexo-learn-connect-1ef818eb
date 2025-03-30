@@ -16,6 +16,9 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { UserStats } from "./UserStats";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 interface UserManagementTabsProps {
   isAdmin: boolean;
@@ -23,6 +26,8 @@ interface UserManagementTabsProps {
 
 export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin }) => {
   const [activeTab, setActiveTab] = useState("users-list");
+  const isMobile = useMediaQuery("(max-width: 640px)");
+  const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   if (!isAdmin) {
     return (
@@ -50,23 +55,56 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
       className="w-full"
     >
       <div className="flex justify-between items-center mb-6">
-        <TabsList className="grid grid-cols-3 md:grid-cols-4 w-full md:w-auto">
-          <TabsTrigger value="users-list" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            <span className="hidden md:inline">Usuarios</span>
-          </TabsTrigger>
-          <TabsTrigger value="roles" className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4" />
-            <span className="hidden md:inline">Roles</span>
-          </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
-            <BarChart className="h-4 w-4" />
-            <span className="hidden md:inline">Analíticas</span>
-          </TabsTrigger>
-          <TabsTrigger value="add-user" className="flex items-center gap-2">
-            <UserPlus className="h-4 w-4" />
-            <span className="hidden md:inline">Añadir</span>
-          </TabsTrigger>
+        <TabsList className="bg-muted/60 p-1 rounded-lg">
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TabsTrigger value="users-list" className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  {!isSmallScreen && <span>Usuarios</span>}
+                </TabsTrigger>
+              </TooltipTrigger>
+              {isSmallScreen && !isMobile && (
+                <TooltipContent side="bottom">Usuarios</TooltipContent>
+              )}
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TabsTrigger value="roles" className="flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4" />
+                  {!isSmallScreen && <span>Roles</span>}
+                </TabsTrigger>
+              </TooltipTrigger>
+              {isSmallScreen && !isMobile && (
+                <TooltipContent side="bottom">Roles</TooltipContent>
+              )}
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TabsTrigger value="analytics" className="flex items-center gap-2">
+                  <BarChart className="h-4 w-4" />
+                  {!isSmallScreen && <span>Analíticas</span>}
+                </TabsTrigger>
+              </TooltipTrigger>
+              {isSmallScreen && !isMobile && (
+                <TooltipContent side="bottom">Analíticas</TooltipContent>
+              )}
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TabsTrigger value="add-user" className="flex items-center gap-2">
+                  <UserPlus className="h-4 w-4" />
+                  {!isSmallScreen && <span>Añadir</span>}
+                </TabsTrigger>
+              </TooltipTrigger>
+              {isSmallScreen && !isMobile && (
+                <TooltipContent side="bottom">Añadir Usuario</TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
         </TabsList>
 
         <div className="hidden md:flex items-center gap-2">
