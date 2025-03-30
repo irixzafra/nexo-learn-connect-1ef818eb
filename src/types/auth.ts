@@ -14,10 +14,10 @@ export type UserRoleType =
 export interface UserProfile {
   id: string;
   email?: string;
-  full_name?: string;
+  full_name: string; // Changed from optional to required for consistency
   avatar_url?: string;
   username?: string;
-  role: UserRoleType; // Changed from optional to required
+  role: UserRoleType; // Required
   bio?: string;
   created_at?: string;
   updated_at?: string;

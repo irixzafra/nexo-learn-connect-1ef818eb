@@ -1,29 +1,27 @@
+
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react';
-import {
-  useSession,
-  useSupabaseClient,
-  useUser,
-} from '@supabase/auth-helpers-react';
-import { useRouter } from 'next/router';
+import { supabase } from '@/lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   isLoading: boolean;
   isAuthReady: boolean;
+  isAuthenticated: boolean; // Added missing property
   user: any | null;
   session: Session | null;
   profile: UserProfile | null;
   userRole: UserRoleType | null;
+  viewAsRole: UserRoleType | 'current'; // Added missing property
   theme: string;
-  supabaseClient: any;
   showAuthModal: boolean;
   toggleAuthModal: () => void;
   logout: () => Promise<void>;
   updateProfile: (updates: any) => Promise<void>;
   setTheme: (theme: string) => void;
   setUserRole: (role: UserRoleType) => void;
+  setViewAsRole: (role: UserRoleType | 'current') => void; // Added setter
   saveUserPreferences: (preferences: { theme?: string; role?: UserRoleType }) => Promise<void>;
 }
 
@@ -36,22 +34,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAuthReady, setIsAuthReady] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [role, setRole] = useState<UserRoleType | null>(null);
-  const [theme, setTheme] = useState<string>(localStorage.getItem('theme') || 'dark');
+  const [viewAs, setViewAs] = useState<UserRoleType | 'current'>('current');
+  const [theme, setThemeState] = useState<string>(localStorage.getItem('theme') || 'dark');
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [user, setUser] = useState<any | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   
-  const supabaseClient = useSupabaseClient();
-  const user = useUser();
-  const session = useSession();
-  const router = useRouter();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (!error && data.session) {
+        setSession(data.session);
+        setUser(data.session.user);
+      }
+    };
+    
+    getSession();
+    
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      setSession(currentSession);
+      setUser(currentSession?.user || null);
+      setIsAuthReady(true);
+      
+      if (event === 'SIGNED_OUT') {
+        setProfile(null);
+        setRole(null);
+      }
+    });
+    
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const getProfile = async () => {
       setIsLoading(true);
       try {
         if (user) {
-          const { data: profileData, error, status } = await supabaseClient
+          const { data: profileData, error, status } = await supabase
             .from('profiles')
-            .select(`full_name, avatar_url, username, website, role, bio, created_at, updated_at`)
+            .select(`full_name, avatar_url, username, role, bio, created_at, updated_at`)
             .eq('id', user.id)
             .single();
 
@@ -80,24 +105,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error fetching profile:", error.message);
       } finally {
         setIsLoading(false);
-        setIsAuthReady(true);
       }
     };
 
-    getProfile();
-  }, [user, supabaseClient]);
+    if (user) {
+      getProfile();
+    } else {
+      setIsLoading(false);
+    }
+  }, [user]);
   
   useEffect(() => {
     // Load theme from localStorage
     const storedTheme = localStorage.getItem('theme');
     if (storedTheme) {
-      setTheme(storedTheme);
+      setThemeState(storedTheme);
     }
     
     // Load user role from localStorage
     const storedRole = localStorage.getItem('userRole');
     if (storedRole) {
       setRole(toUserRoleType(storedRole));
+    }
+    
+    // Load viewAsRole from localStorage
+    const storedViewAsRole = localStorage.getItem('viewAsRole');
+    if (storedViewAsRole) {
+      setViewAs(storedViewAsRole as UserRoleType | 'current');
     }
   }, []);
 
@@ -107,10 +141,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = async () => {
     try {
-      await supabaseClient.auth.signOut();
+      await supabase.auth.signOut();
       setProfile(null);
       setRole(null);
-      router.push('/auth/login');
+      navigate('/auth/login');
     } catch (error: any) {
       console.error('Error during logout:', error.message);
     }
@@ -119,7 +153,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const updateProfile = async (updates: any) => {
     setIsLoading(true);
     try {
-      const { error } = await supabaseClient.from('profiles').upsert(
+      const { error } = await supabase.from('profiles').upsert(
         {
           id: user?.id,
           updated_at: new Date().toISOString(),
@@ -141,42 +175,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const setTheme = (theme: string) => {
-    setTheme(theme);
-    localStorage.setItem('theme', theme);
+  const setTheme = (newTheme: string) => {
+    setThemeState(newTheme);
+    localStorage.setItem('theme', newTheme);
   };
 
-  const setUserRole = (role: UserRoleType) => {
-    setRole(role);
+  const setUserRole = (newRole: UserRoleType) => {
+    setRole(newRole);
+    localStorage.setItem('userRole', newRole);
+  };
+  
+  const setViewAsRole = (newViewAsRole: UserRoleType | 'current') => {
+    setViewAs(newViewAsRole);
+    localStorage.setItem('viewAsRole', newViewAsRole);
   };
 
   const saveUserPreferences = async (preferences: { theme?: string; role?: UserRoleType }) => {
     if (preferences.theme) {
       setTheme(preferences.theme);
-      localStorage.setItem('theme', preferences.theme);
     }
     
     if (preferences.role) {
-      setRole(preferences.role);
-      localStorage.setItem('userRole', preferences.role);
+      setUserRole(preferences.role);
     }
   };
 
   const value: AuthContextType = {
     isLoading,
     isAuthReady,
+    isAuthenticated: !!session, // Compute from session
     user,
     session,
     profile,
     userRole: role,
+    viewAsRole: viewAs,
     theme,
-    supabaseClient,
     showAuthModal,
     toggleAuthModal,
     logout,
     updateProfile,
     setTheme,
     setUserRole,
+    setViewAsRole,
     saveUserPreferences,
   };
 
