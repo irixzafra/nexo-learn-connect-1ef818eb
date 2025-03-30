@@ -1,431 +1,530 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { PlusCircle, Pencil, Trash2, ImagePlus, Upload, Download } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Separator } from "@/components/ui/separator";
+import { useCourses } from '@/hooks/useCourses';
+import { Course } from '@/types/course';
+import { supabase } from '@/lib/supabase';
+import { format } from 'date-fns';
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { useLearningPaths } from '@/features/admin/hooks/useLearningPaths';
-import { Course } from '@/types/courses';
-import { Trash2, Plus, ArrowUpDown, GripVertical, AlertCircle, PenLine, FileText, ListChecks, ListFilter, Search } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { formatDate } from '@/features/admin/utils/formatters';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
-
-interface LearningPathForm {
+interface LearningPath {
+  id: string;
   title: string;
   description: string;
-  estimated_hours?: number;
+  cover_image_url: string;
+  is_published: boolean;
+  created_at: string;
+  created_by: string;
+  estimatedHours: number | null;
 }
 
-const LearningPathsTab: React.FC = () => {
-  const { 
-    learningPaths, 
-    courses, 
-    isLoading, 
-    error, 
-    createLearningPath, 
-    deleteLearningPath,
-    addCourseToLearningPath,
-    removeCourseFromLearningPath,
-    updateCoursesOrder
-  } = useLearningPaths();
-
-  const [newPathForm, setNewPathForm] = useState<LearningPathForm>({
-    title: '',
-    description: '',
-  });
-
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+export const LearningPathsTab: React.FC = () => {
+  const [paths, setPaths] = useState<LearningPath[]>([]);
+  const [isCreatingPath, setIsCreatingPath] = useState(false);
+  const [isEditingPath, setIsEditingPath] = useState(false);
+  const [selectedPath, setSelectedPath] = useState<LearningPath | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPathId, setSelectedPathId] = useState<string | null>(null);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const { courses } = useCourses();
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
 
-  const filteredPaths = learningPaths?.filter(path => 
-    path.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (path.description && path.description.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  useEffect(() => {
+    fetchPaths();
+  }, []);
 
-  const selectedPath = selectedPathId 
-    ? learningPaths?.find(path => path.id === selectedPathId) 
-    : null;
+  const fetchPaths = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('learning_paths')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  const handleCreatePath = () => {
-    if (!newPathForm.title.trim()) return;
-    
-    createLearningPath.mutate({
-      title: newPathForm.title,
-      description: newPathForm.description,
-      estimated_hours: newPathForm.estimated_hours
-    }, {
-      onSuccess: () => {
-        setNewPathForm({ title: '', description: '' });
-        setIsCreateDialogOpen(false);
+      if (error) {
+        console.error('Error fetching learning paths:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudieron cargar las rutas de aprendizaje.",
+        });
+        return;
       }
-    });
+
+      setPaths(data as LearningPath[]);
+    } catch (error) {
+      console.error('Error in fetchPaths:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al obtener las rutas de aprendizaje.",
+      });
+    }
   };
 
-  const handleAddCourse = (courseId: string) => {
-    if (!selectedPathId) return;
-    
-    const courseOrder = selectedPath?.courses?.length || 0;
-    
-    addCourseToLearningPath.mutate({
-      learningPathId: selectedPathId,
-      courseId,
-      order: courseOrder
-    });
+  const createPath = async (data: Omit<LearningPath, "id" | "created_at">) => {
+    try {
+      setIsCreatingPath(true);
+      
+      const newPath = {
+        title: data.title,
+        description: data.description,
+        cover_image_url: data.cover_image_url,
+        is_published: false,
+        created_by: user?.id,
+        estimatedHours: data.estimatedHours || null  // Change to match schema - should be estimated_hours
+      };
+
+      const { data: createdPath, error } = await supabase
+        .from('learning_paths')
+        .insert([newPath])
+        .select('*')
+        .single();
+
+      if (error) {
+        console.error('Error creating learning path:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo crear la ruta de aprendizaje.",
+        });
+        return;
+      }
+
+      setPaths(prevPaths => [...prevPaths, createdPath as LearningPath]);
+      toast({
+        title: "Ruta creada",
+        description: "La ruta de aprendizaje ha sido creada exitosamente.",
+      });
+    } catch (error) {
+      console.error('Error in createPath:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al crear la ruta de aprendizaje.",
+      });
+    } finally {
+      setIsCreatingPath(false);
+    }
   };
 
-  const handleRemoveCourse = (courseId: string) => {
-    if (!selectedPathId) return;
-    
-    removeCourseFromLearningPath.mutate({
-      learningPathId: selectedPathId,
-      courseId
-    });
+  const updatePath = async (pathId: string, data: Partial<LearningPath>) => {
+    try {
+      setIsEditingPath(true);
+
+      const { data: updatedPath, error } = await supabase
+        .from('learning_paths')
+        .update(data)
+        .eq('id', pathId)
+        .select('*')
+        .single();
+
+      if (error) {
+        console.error('Error updating learning path:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo actualizar la ruta de aprendizaje.",
+        });
+        return;
+      }
+
+      setPaths(prevPaths =>
+        prevPaths.map(path => (path.id === pathId ? updatedPath as LearningPath : path))
+      );
+      toast({
+        title: "Ruta actualizada",
+        description: "La ruta de aprendizaje ha sido actualizada exitosamente.",
+      });
+    } catch (error) {
+      console.error('Error in updatePath:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al actualizar la ruta de aprendizaje.",
+      });
+    } finally {
+      setIsEditingPath(false);
+    }
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  const deletePath = async (pathId: string) => {
+    try {
+      const { error } = await supabase
+        .from('learning_paths')
+        .delete()
+        .eq('id', pathId);
+
+      if (error) {
+        console.error('Error deleting learning path:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo eliminar la ruta de aprendizaje.",
+        });
+        return;
+      }
+
+      setPaths(prevPaths => prevPaths.filter(path => path.id !== pathId));
+      toast({
+        title: "Ruta eliminada",
+        description: "La ruta de aprendizaje ha sido eliminada exitosamente.",
+      });
+    } catch (error) {
+      console.error('Error in deletePath:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al eliminar la ruta de aprendizaje.",
+      });
+    }
   };
 
-  const availableCourses = courses?.filter(course => {
-    // Don't show courses that are already in the path
-    const isAlreadyInPath = selectedPath?.courses?.some(pc => pc.id === course.id);
-    return !isAlreadyInPath;
-  });
+  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverImage(file);
+      setCoverImageUrl(URL.createObjectURL(file));
+    }
+  };
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium">Error al cargar las rutas de aprendizaje</h3>
-          <p className="text-sm text-muted-foreground">{error.message}</p>
-        </div>
-      </div>
-    );
-  }
+  const uploadCoverImage = async () => {
+    if (!coverImage) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Por favor, selecciona una imagen de portada.",
+      });
+      return null;
+    }
+
+    try {
+      const timestamp = new Date().getTime();
+      const filePath = `learning_paths/${user?.id}/${timestamp}-${coverImage.name}`;
+
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(filePath, coverImage, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        console.error("Error uploading image: ", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo subir la imagen de portada.",
+        });
+        return null;
+      }
+
+      const publicUrl = `https://yydtceuhpvfsenlwuvmn.supabase.co/storage/v1/object/public/${data.key}`;
+      return publicUrl;
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al subir la imagen de portada.",
+      });
+      return null;
+    }
+  };
+
+  const handleCreatePath = async (values: any) => {
+    const imageUrl = await uploadCoverImage();
+    if (imageUrl) {
+      await createPath({
+        ...values,
+        cover_image_url: imageUrl
+      });
+    }
+  };
+
+  const handleUpdatePath = async (pathId: string, values: any) => {
+    let imageUrl = selectedPath?.cover_image_url;
+    if (coverImage) {
+      imageUrl = await uploadCoverImage() || selectedPath?.cover_image_url;
+    }
+    if (imageUrl) {
+      await updatePath(pathId, {
+        ...values,
+        cover_image_url: imageUrl
+      });
+    }
+  };
+
+  const filteredPaths = paths.filter(path =>
+    path.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Buscar rutas de aprendizaje..."
-            className="pl-8 w-full sm:w-[300px]"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </div>
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Nueva Ruta
+    <>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle>Rutas de Aprendizaje</CardTitle>
+          <div className="space-x-2">
+            <Button variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Exportar CSV
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Crear Ruta de Aprendizaje</DialogTitle>
-              <DialogDescription>
-                Crea una nueva ruta de aprendizaje para organizar cursos relacionados.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Título</Label>
-                <Input 
-                  id="title" 
-                  value={newPathForm.title}
-                  onChange={(e) => setNewPathForm({...newPathForm, title: e.target.value})}
-                  placeholder="Ej: Desarrollo Web Completo"
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="sm">
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Nueva Ruta
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[525px]">
+                <DialogHeader>
+                  <DialogTitle>Crear Ruta de Aprendizaje</DialogTitle>
+                  <DialogDescription>
+                    Crea una nueva ruta de aprendizaje para guiar a los estudiantes.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="title" className="text-right">
+                      Título
+                    </Label>
+                    <Input
+                      type="text"
+                      id="title"
+                      defaultValue=""
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="description" className="text-right">
+                      Descripción
+                    </Label>
+                    <Textarea
+                      id="description"
+                      defaultValue=""
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="estimatedHours" className="text-right">
+                      Duración estimada (horas)
+                    </Label>
+                    <Input
+                      type="number"
+                      id="estimatedHours"
+                      defaultValue={0}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="coverImage" className="text-right">
+                      Imagen de Portada
+                    </Label>
+                    <div className="col-span-3">
+                      <Input
+                        type="file"
+                        id="coverImage"
+                        className="hidden"
+                        onChange={handleCoverImageChange}
+                      />
+                      <Label htmlFor="coverImage" className="cursor-pointer bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md px-3 py-1.5 text-sm font-medium">
+                        <Upload className="h-4 w-4 mr-2" />
+                        Subir Imagen
+                      </Label>
+                      {coverImageUrl && (
+                        <img
+                          src={coverImageUrl}
+                          alt="Vista previa de la portada"
+                          className="mt-2 rounded-md max-h-32 object-cover"
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="submit" onClick={async () => {
+                    const title = (document.getElementById('title') as HTMLInputElement).value;
+                    const description = (document.getElementById('description') as HTMLTextAreaElement).value;
+                    const estimatedHours = parseFloat((document.getElementById('estimatedHours') as HTMLInputElement).value);
+
+                    await handleCreatePath({ title, description, estimatedHours });
+                  }}>
+                    Crear
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center space-x-2">
+            <Input
+              placeholder="Buscar ruta..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <Separator className="my-4" />
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Título</TableHead>
+                  <TableHead>Descripción</TableHead>
+                  <TableHead>Duración</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredPaths.map(path => (
+                  <TableRow key={path.id}>
+                    <TableCell className="font-medium">{path.title}</TableCell>
+                    <TableCell>{path.description}</TableCell>
+                    <TableCell>{path.estimatedHours}</TableCell>
+                    <TableCell>{path.is_published ? 'Publicado' : 'Borrador'}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm">
+                        <Pencil className="h-4 w-4 mr-2" />
+                        Editar
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Eliminar
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Dialog open={isEditingPath} onOpenChange={setIsEditingPath}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle>Editar Ruta de Aprendizaje</DialogTitle>
+            <DialogDescription>
+              Modifica los detalles de la ruta de aprendizaje seleccionada.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">
+                Título
+              </Label>
+              <Input
+                type="text"
+                id="title"
+                defaultValue={selectedPath?.title}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="description" className="text-right">
+                Descripción
+              </Label>
+              <Textarea
+                id="description"
+                defaultValue={selectedPath?.description}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="estimatedHours" className="text-right">
+                Duración estimada (horas)
+              </Label>
+              <Input
+                type="number"
+                id="estimatedHours"
+                defaultValue={selectedPath?.estimatedHours}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="coverImage" className="text-right">
+                Imagen de Portada
+              </Label>
+              <div className="col-span-3">
+                <Input
+                  type="file"
+                  id="coverImage"
+                  className="hidden"
+                  onChange={handleCoverImageChange}
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Descripción</Label>
-                <Textarea 
-                  id="description" 
-                  value={newPathForm.description}
-                  onChange={(e) => setNewPathForm({...newPathForm, description: e.target.value})}
-                  placeholder="Ej: Aprende todas las tecnologías necesarias para ser un desarrollador web completo"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="estimated_hours">Horas estimadas (opcional)</Label>
-                <Input 
-                  id="estimated_hours" 
-                  type="number"
-                  value={newPathForm.estimated_hours || ''}
-                  onChange={(e) => setNewPathForm({
-                    ...newPathForm, 
-                    estimated_hours: e.target.value ? parseInt(e.target.value) : undefined
-                  })}
-                  placeholder="Ej: 120"
-                />
+                <Label htmlFor="coverImage" className="cursor-pointer bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md px-3 py-1.5 text-sm font-medium">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Subir Imagen
+                </Label>
+                {coverImageUrl ? (
+                  <img
+                    src={coverImageUrl}
+                    alt="Vista previa de la portada"
+                    className="mt-2 rounded-md max-h-32 object-cover"
+                  />
+                ) : selectedPath?.cover_image_url ? (
+                  <img
+                    src={selectedPath.cover_image_url}
+                    alt="Portada actual"
+                    className="mt-2 rounded-md max-h-32 object-cover"
+                  />
+                ) : null}
               </div>
             </div>
-            <DialogFooter>
-              <Button 
-                variant="outline" 
-                onClick={() => setIsCreateDialogOpen(false)}
-              >
-                Cancelar
-              </Button>
-              <Button 
-                onClick={handleCreatePath}
-                disabled={!newPathForm.title.trim() || createLearningPath.isPending}
-              >
-                {createLearningPath.isPending ? 'Creando...' : 'Crear Ruta'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit" onClick={async () => {
+              if (selectedPath) {
+                const title = (document.getElementById('title') as HTMLInputElement).value;
+                const description = (document.getElementById('description') as HTMLTextAreaElement).value;
+                const estimatedHours = parseFloat((document.getElementById('estimatedHours') as HTMLInputElement).value);
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left Column - Learning Paths List */}
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Rutas de Aprendizaje</CardTitle>
-              <CardDescription>Selecciona una ruta para gestionar sus cursos</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="space-y-3">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="space-y-2">
-                      <Skeleton className="h-5 w-[200px]" />
-                      <Skeleton className="h-4 w-[150px]" />
-                      <Separator className="my-3" />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <ScrollArea className="h-[500px]">
-                  <div className="space-y-3">
-                    {filteredPaths?.length === 0 && (
-                      <div className="text-center py-8">
-                        <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-muted-foreground">No hay rutas de aprendizaje</p>
-                        <p className="text-xs text-muted-foreground mt-1">Crea una nueva ruta para empezar</p>
-                      </div>
-                    )}
-                    {filteredPaths?.map(path => (
-                      <div key={path.id} className="space-y-2">
-                        <div 
-                          className={cn(
-                            "p-3 rounded-md cursor-pointer transition-colors",
-                            selectedPathId === path.id ? "bg-primary/10" : "hover:bg-muted"
-                          )}
-                          onClick={() => setSelectedPathId(path.id)}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-medium text-sm">{path.title}</h4>
-                              <p className="text-xs text-muted-foreground line-clamp-1">
-                                {path.description || 'Sin descripción'}
-                              </p>
-                              <div className="flex gap-2 mt-1">
-                                <Badge variant="outline" className="text-xs">
-                                  {path.courses?.length || 0} cursos
-                                </Badge>
-                                {path.estimated_hours && (
-                                  <Badge variant="outline" className="text-xs">
-                                    {path.estimated_hours} horas
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                            <Button 
-                              size="icon"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (confirm('¿Estás seguro de que deseas eliminar esta ruta de aprendizaje?')) {
-                                  deleteLearningPath.mutate(path.id);
-                                  if (selectedPathId === path.id) {
-                                    setSelectedPathId(null);
-                                  }
-                                }
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4 text-muted-foreground" />
-                            </Button>
-                          </div>
-                        </div>
-                        <Separator />
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Columns - Path Details + Course Management */}
-        <div className="md:col-span-2 space-y-6">
-          {selectedPath ? (
-            <>
-              <Card>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle>{selectedPath.title}</CardTitle>
-                      <CardDescription>{selectedPath.description}</CardDescription>
-                    </div>
-                    <Button size="sm" variant="outline">
-                      <PenLine className="h-4 w-4 mr-2" />
-                      Editar
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-3">
-                    <div className="bg-muted px-3 py-1 rounded-md text-sm">
-                      <span className="text-muted-foreground mr-1">Creada:</span>
-                      {formatDate(selectedPath.created_at)}
-                    </div>
-                    <div className="bg-muted px-3 py-1 rounded-md text-sm">
-                      <span className="text-muted-foreground mr-1">Cursos:</span>
-                      {selectedPath.courses?.length || 0}
-                    </div>
-                    {selectedPath.estimated_hours && (
-                      <div className="bg-muted px-3 py-1 rounded-md text-sm">
-                        <span className="text-muted-foreground mr-1">Horas estimadas:</span>
-                        {selectedPath.estimated_hours}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Tabs defaultValue="courses">
-                <TabsList>
-                  <TabsTrigger value="courses">Cursos en la Ruta</TabsTrigger>
-                  <TabsTrigger value="add">Añadir Cursos</TabsTrigger>
-                </TabsList>
-                <TabsContent value="courses" className="space-y-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Cursos en esta Ruta</CardTitle>
-                      <CardDescription>Arrastra para reordenar los cursos</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {selectedPath.courses?.length === 0 ? (
-                        <div className="text-center py-8">
-                          <ListChecks className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                          <p className="text-muted-foreground">No hay cursos en esta ruta</p>
-                          <p className="text-xs text-muted-foreground mt-1">Añade cursos desde la pestaña "Añadir Cursos"</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-3">
-                          {selectedPath.courses?.map((course, index) => (
-                            <div 
-                              key={course.id} 
-                              className="flex items-center justify-between p-3 border rounded-md"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="flex-shrink-0">
-                                  <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
-                                </div>
-                                <div>
-                                  <p className="font-medium">{course.title}</p>
-                                  <p className="text-xs text-muted-foreground line-clamp-1">
-                                    {course.description || 'Sin descripción'}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Button 
-                                  size="icon" 
-                                  variant="ghost"
-                                  onClick={() => handleRemoveCourse(course.id)}
-                                >
-                                  <Trash2 className="h-4 w-4 text-muted-foreground" />
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-                <TabsContent value="add">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Añadir Cursos a la Ruta</CardTitle>
-                      <CardDescription>Selecciona los cursos que deseas añadir</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex mb-4">
-                        <Input 
-                          placeholder="Buscar cursos..." 
-                          className="w-full"
-                        />
-                      </div>
-                      <div className="space-y-3">
-                        {availableCourses?.length === 0 ? (
-                          <div className="text-center py-8">
-                            <ListFilter className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                            <p className="text-muted-foreground">No hay cursos disponibles</p>
-                            <p className="text-xs text-muted-foreground mt-1">Todos los cursos ya están añadidos a esta ruta</p>
-                          </div>
-                        ) : (
-                          availableCourses?.map(course => (
-                            <div 
-                              key={course.id} 
-                              className="flex items-center justify-between p-3 border rounded-md"
-                            >
-                              <div>
-                                <p className="font-medium">{course.title}</p>
-                                <p className="text-xs text-muted-foreground line-clamp-1">
-                                  {course.description || 'Sin descripción'}
-                                </p>
-                              </div>
-                              <Button 
-                                size="sm"
-                                onClick={() => handleAddCourse(course.id)}
-                              >
-                                <Plus className="h-4 w-4 mr-2" />
-                                Añadir
-                              </Button>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-            </>
-          ) : (
-            <Card>
-              <div className="flex flex-col items-center justify-center p-10 text-center">
-                <FileText className="h-10 w-10 text-muted-foreground mb-4" />
-                <h3 className="font-medium text-lg mb-1">Selecciona una Ruta de Aprendizaje</h3>
-                <p className="text-muted-foreground">
-                  Elige una ruta de la lista o crea una nueva para gestionar sus cursos.
-                </p>
-              </div>
-            </Card>
-          )}
-        </div>
-      </div>
-    </div>
+                await handleUpdatePath(selectedPath.id, { title, description, estimatedHours });
+              }
+            }}>
+              Guardar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
-
-export default LearningPathsTab;

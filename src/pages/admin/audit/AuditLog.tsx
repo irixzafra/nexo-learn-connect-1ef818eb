@@ -83,12 +83,12 @@ const AuditLog: React.FC = () => {
           
           <div>
             <p className="text-sm font-medium mb-2">Fecha Desde</p>
-            <DatePicker date={startDate} onDateChange={setStartDate} />
+            <DatePicker date={startDate} onDateChange={(date) => setStartDate(date)} />
           </div>
           
           <div>
             <p className="text-sm font-medium mb-2">Fecha Hasta</p>
-            <DatePicker date={endDate} onDateChange={setEndDate} />
+            <DatePicker date={endDate} onDateChange={(date) => setEndDate(date)} />
           </div>
         </div>
         

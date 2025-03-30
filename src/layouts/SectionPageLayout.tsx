@@ -10,7 +10,6 @@ interface SectionPageLayoutProps {
   header?: {
     title: string;
     description?: string;
-    actions?: React.ReactNode;
     breadcrumbs?: Array<{ title: string; href?: string }>;
   };
   className?: string;
@@ -46,7 +45,7 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
   actions
 }) => {
   return (
-    <div className={cn("container py-8 space-y-8", className)}>
+    <div className={cn("container space-y-8", className)}>
       {/* Header Section */}
       {header && (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -70,9 +69,9 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
             <h1 className="text-2xl font-bold tracking-tight">{header.title}</h1>
             {header.description && <p className="text-muted-foreground">{header.description}</p>}
           </div>
-          {(header.actions || actions) && (
+          {(actions) && (
             <div className="flex items-center gap-2 mt-2 sm:mt-0">
-              {header.actions || actions}
+              {actions}
             </div>
           )}
         </div>

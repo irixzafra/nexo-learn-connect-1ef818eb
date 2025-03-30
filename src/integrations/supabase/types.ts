@@ -2069,6 +2069,12 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      get_payment_statistics: {
+        Args: {
+          days_back?: number
+        }
+        Returns: Json
+      }
       get_popular_courses: {
         Args: {
           limit_count?: number
@@ -2077,6 +2083,38 @@ export type Database = {
           course_id: string
           title: string
           enrollment_count: number
+        }[]
+      }
+      get_revenue_by_course: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          course_id: string
+          course_title: string
+          total_revenue: number
+          transaction_count: number
+        }[]
+      }
+      get_revenue_by_day: {
+        Args: {
+          days_back?: number
+        }
+        Returns: {
+          day: string
+          total_revenue: number
+          transaction_count: number
+        }[]
+      }
+      get_subscription_statistics: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      get_subscriptions_by_plan: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          plan_id: string
+          plan_name: string
+          subscriber_count: number
+          total_revenue: number
         }[]
       }
       get_table_columns: {

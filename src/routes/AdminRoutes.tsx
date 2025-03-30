@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AppLayout from '@/layouts/AppLayout';
@@ -16,8 +15,8 @@ import AccessControl from '@/pages/admin/access/AccessControl';
 import { Navigate } from 'react-router-dom';
 import AdminNavigation from '@/components/admin/AdminNavigation';
 import ContentManagement from '@/pages/admin/content/ContentManagement';
+import FinanceManagement from '@/pages/admin/finanzas/FinanceManagement';
 
-// Create a wrapper component for Admin content that includes the navigation
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <AppLayout>
@@ -85,22 +84,27 @@ const AdminRoutes: React.FC = () => {
       {/* Rutas de Facturación */}
       <Route path="billing" element={
         <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
+          <Navigate to="/admin/finanzas" replace />
+        </AdminLayout>
+      } />
+      <Route path="finanzas" element={
+        <AdminLayout>
+          <FinanceManagement />
         </AdminLayout>
       } />
       <Route path="billing/payments" element={
         <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
+          <Navigate to="/admin/finanzas" replace />
         </AdminLayout>
       } />
       <Route path="billing/subscriptions" element={
         <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
+          <Navigate to="/admin/finanzas" replace />
         </AdminLayout>
       } />
       <Route path="billing/analytics" element={
         <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
+          <Navigate to="/admin/finanzas" replace />
         </AdminLayout>
       } />
       
