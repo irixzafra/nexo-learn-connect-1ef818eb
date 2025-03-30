@@ -52,15 +52,21 @@ export const TestDataTable: React.FC = () => {
             groupHasData={groupHasData}
             testData={testData}
           />
-
+          
           <AnimatePresence mode="wait">
-            {Object.entries(dataTypeLabels).map(([type, label]) => (
-              <TestDataContent 
-                key={type}
-                type={type as TestDataType}
-                label={label}
-              />
-            ))}
+            {Object.entries(dataTypeLabels).map(([type, label]) => {
+              const dataType = type as TestDataType;
+              // Only render tab content if there's data for this type
+              if (testData[dataType].length === 0) return null;
+              
+              return (
+                <TestDataContent 
+                  key={type}
+                  type={dataType}
+                  label={label}
+                />
+              );
+            })}
           </AnimatePresence>
         </Tabs>
       )}

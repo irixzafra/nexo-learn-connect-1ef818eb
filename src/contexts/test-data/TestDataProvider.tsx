@@ -42,12 +42,12 @@ export const TestDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
   
   // This is a helper function to access the setter from the custom hook
-  const setTestData = (newState) => {
+  const setTestData = (newState: any) => {
     clearTestData();
     Object.entries(newState).forEach(([type, items]) => {
-      if (items.length > 0) {
-        items.forEach(item => {
-          testData[type].push(item);
+      if (Array.isArray(items) && items.length > 0) {
+        items.forEach((item: any) => {
+          testData[type as TestDataType].push(item);
         });
       }
     });
