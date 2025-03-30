@@ -14,10 +14,7 @@ import {
   Settings, 
   User, 
   Phone,
-  Bell,
-  BookOpen,
-  Award,
-  Activity
+  Bell
 } from 'lucide-react';
 import { 
   Tooltip,
@@ -51,66 +48,51 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
   // Check if a role should see specific sections
   const canSeeAdmin = effectiveRole === 'admin' || effectiveRole === 'instructor';
   
-  // Navegación simplificada - categorías principales
+  // Navegación simplificada - solo categorías principales
   const navigationItems = [
     {
       name: "Inicio",
       icon: Home,
       path: "/home",
-      tooltip: "Accesos rápidos a cursos y progreso",
-      submenu: [
-        { name: "Mis Cursos", icon: BookOpen, path: "/my-courses" },
-        { name: "Certificados", icon: Award, path: "/certificates" },
-        { name: "Mi Progreso", icon: Activity, path: "/progress" }
-      ]
+      tooltip: "Inicio"
     },
     {
       name: "Explorar",
       icon: Compass,
       path: "/courses",
-      tooltip: "Descubrir cursos y rutas de aprendizaje",
-      submenu: [
-        { name: "Cursos", icon: BookOpen, path: "/courses" },
-        { name: "Rutas de Aprendizaje", icon: Activity, path: "/learning-paths" }
-      ]
+      tooltip: "Explorar cursos"
     },
     {
       name: "Comunidad",
       icon: Users,
       path: "/community",
-      tooltip: "Feed, mensajes y contactos",
-      submenu: [
-        { name: "Feed", icon: Users, path: "/community" },
-        { name: "Mensajes", icon: MessageSquare, path: "/messages" },
-        { name: "Contactos", icon: Users, path: "/network" },
-        { name: "Grupos", icon: Users, path: "/groups" }
-      ]
+      tooltip: "Comunidad"
     },
     {
       name: "Mensajes",
       icon: MessageSquare,
       path: "/messages",
-      tooltip: "Centro de mensajes",
+      tooltip: "Mensajes",
       badge: messagesCount
     },
     ...(canSeeAdmin ? [{
       name: "Administración",
       icon: Settings,
       path: "/admin/dashboard",
-      tooltip: "Panel de administración"
+      tooltip: "Administración"
     }] : []),
     {
       name: "Perfil",
       icon: User,
       path: "/profile",
-      tooltip: "Mi perfil y configuraciones",
+      tooltip: "Mi perfil",
       badge: notificationsCount
     },
     {
       name: "Contacto",
       icon: Phone,
       path: "/contact",
-      tooltip: "WhatsApp y asistente de voz"
+      tooltip: "Contacto"
     }
   ];
 
@@ -151,44 +133,23 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
                   </TooltipContent>
                 </Tooltip>
               ) : (
-                <div>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) => cn(
-                      "flex items-center justify-between gap-3 w-full px-3 py-2 rounded-md text-sm font-medium",
-                      isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                    )}
-                  >
-                    <span className="flex items-center gap-3">
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.name}</span>
-                    </span>
-                    {item.badge && item.badge > 0 && (
-                      <Badge variant="destructive">
-                        {item.badge}
-                      </Badge>
-                    )}
-                  </NavLink>
-                  
-                  {/* Submenu items when not collapsed */}
-                  {item.submenu && (
-                    <div className="pl-10 mt-1 space-y-1">
-                      {item.submenu.map((subItem) => (
-                        <NavLink
-                          key={subItem.path}
-                          to={subItem.path}
-                          className={({ isActive }) => cn(
-                            "flex items-center gap-2 px-2 py-1.5 rounded-md text-sm",
-                            isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-accent/50"
-                          )}
-                        >
-                          <subItem.icon className="h-4 w-4" />
-                          <span>{subItem.name}</span>
-                        </NavLink>
-                      ))}
-                    </div>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) => cn(
+                    "flex items-center justify-between gap-3 w-full px-3 py-2 rounded-md text-sm font-medium",
+                    isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   )}
-                </div>
+                >
+                  <span className="flex items-center gap-3">
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </span>
+                  {item.badge && item.badge > 0 && (
+                    <Badge variant="destructive">
+                      {item.badge}
+                    </Badge>
+                  )}
+                </NavLink>
               )}
             </div>
           ))}
