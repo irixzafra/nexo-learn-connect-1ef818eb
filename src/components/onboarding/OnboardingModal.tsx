@@ -2,7 +2,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useOnboarding, OnboardingStep } from '@/contexts/OnboardingContext';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { ProfileStep } from './steps/ProfileStep';
 import { ExploreCoursesStep } from './steps/ExploreCoursesStep';
@@ -20,13 +20,13 @@ export const OnboardingModal: React.FC = () => {
   // Render the appropriate step content
   const renderStepContent = () => {
     switch (currentStep) {
-      case 'welcome':
+      case 0:
         return <WelcomeStep />;
-      case 'profile':
+      case 1:
         return <ProfileStep />;
-      case 'explore-courses':
+      case 2:
         return <ExploreCoursesStep />;
-      case 'platform-tour':
+      case 3:
         return <PlatformTourStep />;
       default:
         return <WelcomeStep />;
@@ -34,15 +34,15 @@ export const OnboardingModal: React.FC = () => {
   };
 
   // Get appropriate step title
-  const getStepTitle = (step: OnboardingStep): string => {
+  const getStepTitle = (step: number): string => {
     switch (step) {
-      case 'welcome':
+      case 0:
         return 'Bienvenido a Nexo';
-      case 'profile':
+      case 1:
         return 'Completa tu perfil';
-      case 'explore-courses':
+      case 2:
         return 'Explora cursos disponibles';
-      case 'platform-tour':
+      case 3:
         return 'Conoce la plataforma';
       default:
         return 'Bienvenido';
@@ -50,8 +50,8 @@ export const OnboardingModal: React.FC = () => {
   };
 
   // Check if it's the first or last step
-  const isFirstStep = currentStep === 'welcome';
-  const isLastStep = currentStep === 'platform-tour';
+  const isFirstStep = currentStep === 0;
+  const isLastStep = currentStep === 3;
 
   return (
     <Dialog open={isOnboardingActive} onOpenChange={skipOnboarding}>

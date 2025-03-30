@@ -4,12 +4,15 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 
+// Define OnboardingStep type
+export type OnboardingStep = 'welcome' | 'profile' | 'explore-courses' | 'platform-tour';
+
 // Configuración de características
 type FeaturesConfig = {
   autoStartOnboarding: boolean;
   showOnboardingTrigger: boolean;
   enableNotifications: boolean;
-  enableTestDataGenerator: boolean; // Nueva característica añadida
+  enableTestDataGenerator: boolean;
 };
 
 interface OnboardingContextValue {
@@ -22,6 +25,12 @@ interface OnboardingContextValue {
   prevStep: () => void;
   goToStep: (step: number) => void;
   updateFeaturesConfig: (updates: Partial<FeaturesConfig>) => void;
+  
+  // Added missing properties
+  isOnboardingActive: boolean;
+  startOnboarding: () => void;
+  skipOnboarding: () => void;
+  previousStep: () => void;
 }
 
 // Valor predeterminado para el contexto
@@ -32,7 +41,7 @@ const defaultContextValue: OnboardingContextValue = {
     autoStartOnboarding: true,
     showOnboardingTrigger: true,
     enableNotifications: true,
-    enableTestDataGenerator: false, // Desactivado por defecto
+    enableTestDataGenerator: false,
   },
   openOnboarding: () => {},
   closeOnboarding: () => {},
@@ -40,6 +49,12 @@ const defaultContextValue: OnboardingContextValue = {
   prevStep: () => {},
   goToStep: () => {},
   updateFeaturesConfig: () => {},
+  
+  // Added missing properties
+  isOnboardingActive: false,
+  startOnboarding: () => {},
+  skipOnboarding: () => {},
+  previousStep: () => {},
 };
 
 // Creación del contexto
@@ -54,6 +69,9 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [currentStep, setCurrentStep] = useState(0);
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(defaultContextValue.featuresConfig);
   const { user } = useAuth();
+
+  // Added isOnboardingActive alias for compatibility
+  const isOnboardingActive = isOnboardingOpen;
 
   // Cargar configuración desde Supabase (si está disponible)
   useEffect(() => {
@@ -119,8 +137,18 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setCurrentStep(0);
   };
 
+  // Alias for openOnboarding for compatibility
+  const startOnboarding = () => {
+    openOnboarding();
+  };
+
   const closeOnboarding = () => {
     setIsOnboardingOpen(false);
+  };
+
+  // Alias for closeOnboarding for compatibility
+  const skipOnboarding = () => {
+    closeOnboarding();
   };
 
   const nextStep = () => {
@@ -129,6 +157,11 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const prevStep = () => {
     setCurrentStep(prev => Math.max(0, prev - 1));
+  };
+
+  // Alias for prevStep for compatibility
+  const previousStep = () => {
+    prevStep();
   };
 
   const goToStep = (step: number) => {
@@ -153,7 +186,12 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         nextStep,
         prevStep,
         goToStep,
-        updateFeaturesConfig
+        updateFeaturesConfig,
+        // Added missing properties
+        isOnboardingActive,
+        startOnboarding,
+        skipOnboarding,
+        previousStep
       }}
     >
       {children}
