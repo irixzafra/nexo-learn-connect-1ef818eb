@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -46,8 +45,30 @@ import { useNavigate } from "react-router-dom";
 import ManualEnrollmentDialog from "@/components/admin/ManualEnrollmentDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
+interface Instructor {
+  full_name: string | null;
+}
+
+interface Course {
+  id: string;
+  title: string;
+  description: string | null;
+  price: number;
+  currency: string;
+  instructor_id: string;
+  is_published: boolean;
+  status: string;
+  students_count: number;
+  created_at: string;
+  updated_at: string;
+  profiles?: Instructor;
+  instructors?: {
+    full_name: string;
+  };
+}
+
 const AdminCourses: React.FC = () => {
-  const [courses, setCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all-courses");
@@ -88,7 +109,6 @@ const AdminCourses: React.FC = () => {
         throw error;
       }
       
-      // Transformar los datos para adaptarlos a la estructura esperada por la UI
       const formattedCourses = data?.map(course => ({
         ...course,
         instructors: {
@@ -208,7 +228,6 @@ const AdminCourses: React.FC = () => {
           </TabsTrigger>
         </TabsList>
         
-        {/* Contenido de las pestañas */}
         <TabsContent value="all-courses" className="space-y-6">
           <Card>
             <CardHeader className="pb-3">
@@ -474,7 +493,6 @@ const AdminCourses: React.FC = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Diálogo para matricular usuarios manualmente */}
       {selectedCourse && (
         <ManualEnrollmentDialog
           open={enrollmentDialogOpen}
