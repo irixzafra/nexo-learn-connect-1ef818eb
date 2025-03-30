@@ -55,7 +55,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ limit = 10, className 
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
+                <div className="w-8 h-8 rounded-full bg-muted animate-pulse flex items-center justify-center" />
                 <div className="flex-1">
                   <div className="h-4 w-24 bg-muted rounded animate-pulse" />
                   <div className="h-3 w-16 bg-muted rounded animate-pulse mt-1" />
@@ -79,9 +79,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ limit = 10, className 
                   <AvatarFallback>{user.full_name?.charAt(0) || 'U'}</AvatarFallback>
                 </Avatar>
                 
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{user.full_name}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-medium truncate">{user.full_name}</span>
                     <Badge 
                       variant="outline" 
                       className={cn(
@@ -99,7 +99,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ limit = 10, className 
                       {user.level_icon} {user.level_name}
                     </Badge>
                   </div>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-muted-foreground block truncate">
                     {user.points.toLocaleString()} puntos
                   </span>
                 </div>

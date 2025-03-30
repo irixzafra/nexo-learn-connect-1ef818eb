@@ -1,26 +1,29 @@
 
 import React from 'react';
-import { Users, MessageSquare, Newspaper, UsersRound, Rss, Trophy } from 'lucide-react';
+import { Users, MessageSquare, Newspaper, UsersRound, Rss, Trophy, Bell } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import { MenuItem } from '../MenuItems';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface ComunidadNavigationProps {
   isOpen: boolean;
   onToggle: () => void;
-  messagesCount?: number;
 }
 
 const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({ 
   isOpen, 
-  onToggle,
-  messagesCount = 2 // Valor predeterminado para mostrar notificaciones
+  onToggle
 }) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const { unreadCount: notificationsCount } = useNotifications();
+  
+  // This is a placeholder - in a real implementation, you would fetch the unread messages count
+  const messagesCount = 2;
 
   return (
     <SidebarGroup
@@ -55,7 +58,15 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
           to="/messages"
           icon={MessageSquare}
           label="Mensajes"
-          badge={messagesCount}
+          badge={messagesCount > 0 ? messagesCount.toString() : undefined}
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/notifications"
+          icon={Bell}
+          label="Notificaciones"
+          badge={notificationsCount > 0 ? notificationsCount.toString() : undefined}
           isCollapsed={isCollapsed}
         />
         
@@ -63,7 +74,7 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
           to="/community?tab=groups"
           icon={UsersRound}
           label="Grupos"
-          disabled={true}
+          disabled={false}
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>

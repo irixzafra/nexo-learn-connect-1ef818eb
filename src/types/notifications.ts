@@ -4,7 +4,8 @@ export type NotificationType =
   | 'course_completed' 
   | 'announcement' 
   | 'achievement' 
-  | 'system';
+  | 'system'
+  | 'community';
 
 export interface Notification {
   id: string;
@@ -17,4 +18,7 @@ export interface Notification {
   resource_type?: string;
   resource_id?: string;
   action_url?: string;
+  sender_id?: string;
+  sender_name?: string;
+  sender_avatar?: string;
 }
