@@ -78,20 +78,13 @@ const StudentsTable: React.FC<StudentsTableProps> = ({
                   />
                 </TableCell>
                 <TableCell>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => onDeleteClick(student)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      Eliminar del curso
-                    </TooltipContent>
-                  </Tooltip>
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    onClick={() => onDeleteClick(student)}
+                  >
+                    Eliminar
+                  </Button>
                 </TableCell>
               </TableRow>
             ))

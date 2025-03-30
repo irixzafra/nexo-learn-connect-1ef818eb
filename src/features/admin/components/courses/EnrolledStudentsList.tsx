@@ -137,34 +137,7 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>
-                  <Button 
-                    variant="ghost" 
-                    className="p-0 h-auto font-medium hover:bg-transparent"
-                    onClick={() => handleSort('full_name')}
-                  >
-                    Nombre
-                    {sortField === 'full_name' && (
-                      sortDirection === 'asc' 
-                        ? <ArrowUp className="ml-1 h-4 w-4 inline" />
-                        : <ArrowDown className="ml-1 h-4 w-4 inline" />
-                    )}
-                  </Button>
-                </TableHead>
-                <TableHead>
-                  <Button 
-                    variant="ghost" 
-                    className="p-0 h-auto font-medium hover:bg-transparent"
-                    onClick={() => handleSort('email')}
-                  >
-                    Email
-                    {sortField === 'email' && (
-                      sortDirection === 'asc' 
-                        ? <ArrowUp className="ml-1 h-4 w-4 inline" />
-                        : <ArrowDown className="ml-1 h-4 w-4 inline" />
-                    )}
-                  </Button>
-                </TableHead>
+                <TableHead>Nombre</TableHead>
                 <TableHead>ID de Usuario</TableHead>
                 <TableHead>
                   <Button 
@@ -191,7 +164,6 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
                     <TableCell className="font-medium">
                       {student.full_name || `Usuario ${student.user_id.substring(0, 8)}`}
                     </TableCell>
-                    <TableCell>{student.email || 'No disponible'}</TableCell>
                     <TableCell className="font-mono text-xs">
                       {student.user_id.substring(0, 12)}...
                     </TableCell>
@@ -218,7 +190,7 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center">
+                  <TableCell colSpan={5} className="h-24 text-center">
                     {searchTerm 
                       ? `No se encontraron estudiantes que coincidan con "${searchTerm}"`
                       : "No hay estudiantes inscritos en este curso"}
