@@ -35,14 +35,16 @@ export interface FeaturedCourse {
   updated_at: string;
 }
 
-interface CourseGridProps {
+export interface CourseGridProps {
   filteredCourses: FeaturedCourse[];
   selectedCategory?: string;
+  onCourseClick?: (courseId: string, courseName?: string) => void;
 }
 
 export const CourseGrid: React.FC<CourseGridProps> = ({ 
   filteredCourses,
-  selectedCategory = 'all'
+  selectedCategory = 'all',
+  onCourseClick
 }) => {
   const [visibleCourses, setVisibleCourses] = useState<number>(6);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -103,6 +105,7 @@ export const CourseGrid: React.FC<CourseGridProps> = ({
               isPopular={index === 0 && selectedCategory === 'all'}
               isNew={index === 1 && selectedCategory === 'all'}
               isUpcoming={index === 2 && course.start_date !== undefined}
+              onClick={onCourseClick ? () => onCourseClick(course.id, course.title) : undefined}
             />
           </motion.div>
         ))}

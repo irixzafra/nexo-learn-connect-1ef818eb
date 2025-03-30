@@ -132,12 +132,12 @@ const InstructorDashboard: React.FC = () => {
                           <Users className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <p className="font-medium">{enrollment.user.name}</p>
-                          <p className="text-sm text-muted-foreground">{enrollment.course.title}</p>
+                          <p className="font-medium">{enrollment.profiles?.full_name || 'Usuario Desconocido'}</p>
+                          <p className="text-sm text-muted-foreground">{enrollment.courses?.title || 'Curso Desconocido'}</p>
                         </div>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(enrollment.date).toLocaleDateString()}
+                        {new Date(enrollment.enrolled_at || Date.now()).toLocaleDateString()}
                       </p>
                     </div>
                   ))}
@@ -173,7 +173,7 @@ const InstructorDashboard: React.FC = () => {
                         </div>
                         <div>
                           <p className="font-medium">{course.title}</p>
-                          <p className="text-sm text-muted-foreground">{course.enrollments} estudiantes</p>
+                          <p className="text-sm text-muted-foreground">{course.enrollmentCount} estudiantes</p>
                         </div>
                       </div>
                       <Button size="sm" variant="outline" asChild>

@@ -33,17 +33,9 @@ const CoursesCatalog: React.FC = () => {
     courses,
     isLoading,
     error,
-    fetchCourses
-  } = useCoursesCatalog({
-    level: selectedLevel || undefined,
-    category: selectedCategory || undefined,
-    tags: selectedTags.length > 0 ? selectedTags : undefined,
-    priceMin: priceRange[0],
-    priceMax: priceRange[1],
-    sortBy,
-    popular: showPopular,
-    upcoming: showUpcoming,
-  });
+    fetchCourses,
+    filteredCourses
+  } = useCoursesCatalog();
 
   // Extract unique categories and tags from courses
   const availableCategories = React.useMemo(() => {
@@ -176,7 +168,7 @@ const CoursesCatalog: React.FC = () => {
             message={error}
             onRetry={fetchCourses} 
           />
-        ) : !courses || courses.length === 0 ? (
+        ) : !filteredCourses || filteredCourses.length === 0 ? (
           <Card className="w-full">
             <CardContent className="flex flex-col items-center justify-center py-10">
               <div className="text-muted-foreground text-center mb-4">
@@ -197,7 +189,8 @@ const CoursesCatalog: React.FC = () => {
           </Card>
         ) : (
           <CourseGrid
-            courses={courses}
+            filteredCourses={filteredCourses}
+            selectedCategory={selectedCategory || 'all'}
             onCourseClick={handleCourseClick}
           />
         )}
