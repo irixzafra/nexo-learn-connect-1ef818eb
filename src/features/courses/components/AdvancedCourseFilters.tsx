@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,6 +46,7 @@ interface FiltersProps {
   onClearFilters: () => void;
   availableCategories: string[];
   availableTags: string[];
+  onFilterChange?: (filterData: any) => void;
 }
 
 export const AdvancedCourseFilters: React.FC<FiltersProps> = ({
@@ -66,7 +66,8 @@ export const AdvancedCourseFilters: React.FC<FiltersProps> = ({
   setSortBy,
   onClearFilters,
   availableCategories,
-  availableTags
+  availableTags,
+  onFilterChange
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
@@ -86,15 +87,26 @@ export const AdvancedCourseFilters: React.FC<FiltersProps> = ({
   ];
 
   const handleLevelChange = (value: string) => {
-    setSelectedLevel(value === "todos" ? null : value);
+    const newLevel = value === "todos" ? null : value;
+    setSelectedLevel(newLevel);
+    if (onFilterChange) {
+      onFilterChange({ level: newLevel, price: selectedCategory ? "paid" : "all", duration: "all" });
+    }
   };
 
   const handleCategoryChange = (value: string) => {
-    setSelectedCategory(value === "todas" ? null : value);
+    const newCategory = value === "todas" ? null : value;
+    setSelectedCategory(newCategory);
+    if (onFilterChange) {
+      onFilterChange({ level: selectedLevel, price: "all", duration: "all", category: newCategory });
+    }
   };
 
   const handleSortChange = (value: string) => {
     setSortBy(value);
+    if (onFilterChange) {
+      onFilterChange({ level: selectedLevel, price: "all", duration: "all", sort: value });
+    }
   };
 
   const toggleTag = (tag: string) => {

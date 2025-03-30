@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AppLayout from '@/layouts/AppLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -6,8 +5,8 @@ import { motion } from 'framer-motion';
 import CourseGrid, { FeaturedCourse } from '@/features/courses/components/CourseGrid';
 import { CoursesHeader } from '@/features/courses/components/CoursesHeader';
 import { LearningPathCard } from '@/features/courses/components/LearningPathCard';
-import CategorySelector from '@/features/courses/components/CategorySelector';
-import AdvancedCourseFilters from '@/features/courses/components/AdvancedCourseFilters';
+import { CategorySelector } from '@/features/courses/components/CategorySelector';
+import { AdvancedCourseFilters } from '@/features/courses/components/AdvancedCourseFilters';
 import { Book, Code, Dumbbell, HeartPulse, Lightbulb, PenTool, Smartphone, Zap } from 'lucide-react';
 
 const availableCategories = [
@@ -308,18 +307,13 @@ const CoursesCatalog: React.FC = () => {
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
-        <CoursesHeader 
-          title="Explora el conocimiento"
-          subtitle="Descubre cursos y rutas de aprendizaje diseñados por expertos para impulsar tu carrera"
-          showFilters={showFilters}
-          onToggleFilters={() => setShowFilters(!showFilters)}
-        />
+        <CoursesHeader />
         
         <div className="mb-8">
           <CategorySelector 
-            categories={availableCategories}
+            categories={availableCategories.map(cat => cat.id)}
             selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
+            setSelectedCategory={setSelectedCategory}
           />
         </div>
         
@@ -331,7 +325,26 @@ const CoursesCatalog: React.FC = () => {
             transition={{ duration: 0.3 }}
             className="mb-8"
           >
-            <AdvancedCourseFilters onFilterChange={handleFilterChange} />
+            <AdvancedCourseFilters 
+              selectedLevel={null}
+              setSelectedLevel={() => {}}
+              selectedCategory={null}
+              setSelectedCategory={() => {}}
+              selectedTags={[]}
+              setSelectedTags={() => {}}
+              priceRange={[0, 1000]}
+              setPriceRange={() => {}}
+              showPopular={false}
+              setShowPopular={() => {}}
+              showUpcoming={false}
+              setShowUpcoming={() => {}}
+              sortBy="relevance"
+              setSortBy={() => {}}
+              onClearFilters={() => {}}
+              availableCategories={availableCategories.map(cat => cat.id)}
+              availableTags={[]}
+              onFilterChange={handleFilterChange}
+            />
           </motion.div>
         )}
         
