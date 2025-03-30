@@ -87,9 +87,11 @@ const AppRouter: React.FC = () => {
         
         <Route path="/admin/*" element={
           <ProtectedRoute>
-            <Suspense fallback={<LoadingFallback />}>
-              <AdminRoutes />
-            </Suspense>
+            <AppLayout>
+              <Suspense fallback={<LoadingFallback />}>
+                <AdminRoutes />
+              </Suspense>
+            </AppLayout>
           </ProtectedRoute>
         } />
         

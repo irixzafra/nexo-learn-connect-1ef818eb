@@ -19,12 +19,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
 import { Search, RefreshCw, UserPlus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRoleSearch } from "@/components/admin/UserRoleSearch";
-import AppLayout from "@/layouts/AppLayout";
+import SectionPageLayout, { PageSection } from "@/layouts/SectionPageLayout";
 import { UserRoleType } from "@/features/users/UserRoleType";
 
 const UserManagement: React.FC = () => {
@@ -111,127 +111,117 @@ const UserManagement: React.FC = () => {
         user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
-    <AppLayout>
-      <div className="px-0 sm:px-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-          <h1 className="text-3xl font-bold">Gestión de Usuarios</h1>
-          <div className="flex items-center mt-4 md:mt-0">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={fetchUsers} 
-              disabled={isLoading}
-              className="mr-2"
-            >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              <span className="sr-only">Actualizar</span>
-            </Button>
-            <Button variant="default">
-              <UserPlus className="h-4 w-4 mr-2" />
-              <span>Añadir Usuario</span>
-            </Button>
-          </div>
-        </div>
+    <SectionPageLayout
+      header={{
+        title: "Gestión de Usuarios",
+        description: "Administra los usuarios y sus roles en la plataforma",
+        actions: [
+          {
+            label: "Añadir Usuario",
+            icon: <UserPlus className="h-4 w-4" />,
+            onClick: () => console.log("Añadir usuario clicked"),
+          }
+        ]
+      }}
+    >
+      <Tabs defaultValue="all-users" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="all-users">Todos los Usuarios</TabsTrigger>
+          <TabsTrigger value="search-users">Buscar y Editar</TabsTrigger>
+        </TabsList>
         
-        <Tabs defaultValue="all-users" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="all-users">Todos los Usuarios</TabsTrigger>
-            <TabsTrigger value="search-users">Buscar y Editar</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="all-users" className="space-y-6">
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex flex-col md:flex-row justify-between md:items-center">
-                  <div>
-                    <CardTitle>Lista de Usuarios</CardTitle>
-                    <CardDescription>
-                      Gestiona los usuarios de la plataforma y sus roles
-                    </CardDescription>
-                  </div>
-                  <div className="relative mt-4 md:mt-0 w-full md:w-64">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="search"
-                      placeholder="Buscar usuarios..."
-                      className="pl-8 w-full"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
+        <TabsContent value="all-users" className="space-y-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex flex-col md:flex-row justify-between md:items-center">
+                <div>
+                  <CardTitle>Lista de Usuarios</CardTitle>
+                  <CardDescription>
+                    Gestiona los usuarios de la plataforma y sus roles
+                  </CardDescription>
                 </div>
-              </CardHeader>
-              <CardContent>
-                {isLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-                  </div>
-                ) : (
-                  <div className="rounded-md border">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[250px]">Usuario</TableHead>
-                          <TableHead>Rol</TableHead>
-                          <TableHead className="hidden md:table-cell">Fecha de registro</TableHead>
-                          <TableHead>Acciones</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredUsers.length > 0 ? (
-                          filteredUsers.map((user) => (
-                            <TableRow key={user.id}>
-                              <TableCell className="font-medium">
-                                {user.full_name || 'Usuario sin nombre'}
-                              </TableCell>
-                              <TableCell>
-                                <UserRoleType role={user.role} showIcon={true} />
-                              </TableCell>
-                              <TableCell className="hidden md:table-cell">
-                                {new Date(user.created_at || '').toLocaleDateString()}
-                              </TableCell>
-                              <TableCell>
-                                <UserRoleSwitcher 
-                                  userId={user.id}
-                                  currentRole={user.role}
-                                  onRoleChange={handleRoleChange}
-                                />
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        ) : (
-                          <TableRow>
-                            <TableCell colSpan={4} className="text-center h-24">
-                              {searchTerm.trim() !== "" 
-                                ? "No se encontraron usuarios que coincidan con la búsqueda." 
-                                : "No hay usuarios para mostrar."}
+                <div className="relative mt-4 md:mt-0 w-full md:w-64">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder="Buscar usuarios..."
+                    className="pl-8 w-full"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="flex justify-center py-8">
+                  <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[250px]">Usuario</TableHead>
+                        <TableHead>Rol</TableHead>
+                        <TableHead className="hidden md:table-cell">Fecha de registro</TableHead>
+                        <TableHead>Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredUsers.length > 0 ? (
+                        filteredUsers.map((user) => (
+                          <TableRow key={user.id}>
+                            <TableCell className="font-medium">
+                              {user.full_name || 'Usuario sin nombre'}
+                            </TableCell>
+                            <TableCell>
+                              <UserRoleType role={user.role} showIcon={true} />
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              {new Date(user.created_at || '').toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <UserRoleSwitcher 
+                                userId={user.id}
+                                currentRole={user.role}
+                                onRoleChange={handleRoleChange}
+                              />
                             </TableCell>
                           </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="search-users">
-            <Card>
-              <CardHeader>
-                <CardTitle>Búsqueda avanzada</CardTitle>
-                <CardDescription>
-                  Busca usuarios específicos y edita sus roles
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <UserRoleSearch />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </AppLayout>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center h-24">
+                            {searchTerm.trim() !== "" 
+                              ? "No se encontraron usuarios que coincidan con la búsqueda." 
+                              : "No hay usuarios para mostrar."}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="search-users">
+          <Card>
+            <CardHeader>
+              <CardTitle>Búsqueda avanzada</CardTitle>
+              <CardDescription>
+                Busca usuarios específicos y edita sus roles
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <UserRoleSearch />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </SectionPageLayout>
   );
 };
 
