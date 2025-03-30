@@ -7,9 +7,20 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { NexoLogo } from '@/components/ui/logo';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
+import { adminMainMenuItems, adminMobileMenuItems } from '@/components/ui/admin-menu/AdminMenuPresets';
+import { 
+  Home, 
+  Compass, 
+  Users, 
+  MessageSquare, 
+  Settings, 
+  User, 
+  Phone,
+  Shield
+} from 'lucide-react';
 
 // Import subcomponents
-import SidebarMainNavigation from './navigation/SidebarMainNavigation';
 import SidebarFooterSection from './SidebarFooterSection';
 
 interface SidebarNavigationProps {
@@ -101,6 +112,75 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
     console.log(`Language changed to ${langCode}`);
   };
 
+  // Build main navigation items based on role
+  const getMainNavigationItems = () => {
+    const baseItems = [
+      {
+        icon: Home,
+        label: "Inicio",
+        href: getHomePath(),
+      },
+      {
+        icon: Compass,
+        label: "Explorar",
+        href: "/courses",
+      },
+      {
+        icon: Users,
+        label: "Comunidad",
+        href: "/community",
+      },
+      {
+        icon: MessageSquare,
+        label: "Mensajes",
+        href: "/messages",
+        badge: messagesCount
+      }
+    ];
+
+    // Admin-specific items
+    if (effectiveRole === 'admin') {
+      // En dispositivos móviles, usamos íconos sin texto para el sidebar cuando está colapsado
+      return isCollapsed 
+        ? adminMobileMenuItems 
+        : [
+            ...baseItems,
+            {
+              icon: Shield,
+              label: "Administración",
+              href: "/admin/dashboard",
+            },
+            {
+              icon: User,
+              label: "Perfil",
+              href: "/profile",
+              badge: notificationsCount
+            },
+            {
+              icon: Phone,
+              label: "Contacto",
+              href: "/contact",
+            }
+          ];
+    }
+
+    // Para otros roles
+    return [
+      ...baseItems,
+      {
+        icon: User,
+        label: "Perfil",
+        href: "/profile",
+        badge: notificationsCount
+      },
+      {
+        icon: Phone,
+        label: "Contacto",
+        href: "/contact",
+      }
+    ];
+  };
+
   return (
     <div className="h-full flex flex-col py-4">
       {/* Logo at the top with full title and subtitle */}
@@ -115,14 +195,28 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
         )}
       </div>
 
-      {/* Main Navigation Section */}
-      <SidebarMainNavigation 
-        effectiveRole={effectiveRole}
-        isCollapsed={isCollapsed}
-        messagesCount={messagesCount}
-        notificationsCount={notificationsCount}
-        getHomePath={getHomePath}
-      />
+      {/* Main Navigation Section - Usando el nuevo componente AdminMenu */}
+      <div className={cn(
+        "flex-1 overflow-auto",
+        isCollapsed ? "px-2" : "px-4"
+      )}>
+        <AdminMenu 
+          items={getMainNavigationItems()}
+          variant={isCollapsed ? "sidebar" : "default"}
+          className={isCollapsed ? "space-y-4" : ""}
+        />
+
+        {/* Sección de administración para admins */}
+        {effectiveRole === 'admin' && !isCollapsed && (
+          <div className="mt-6">
+            <h3 className="mb-2 px-4 text-sm font-medium text-muted-foreground">Administración</h3>
+            <AdminMenu 
+              items={adminMainMenuItems.slice(0, 4)} // Solo mostrar los primeros 4 elementos para no sobrecargar
+              variant="default"
+            />
+          </div>
+        )}
+      </div>
       
       {/* Footer Section with Role Switcher and Language Selector */}
       <SidebarFooterSection 

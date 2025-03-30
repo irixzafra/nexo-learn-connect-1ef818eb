@@ -1,22 +1,22 @@
 
 import React from 'react';
 import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Card } from '@/components/ui/card';
 import { 
   BarChart3, 
   Users, 
   BookOpen, 
   CreditCard, 
-  ChevronRight, 
   Settings, 
-  DatabaseIcon, 
   AlertCircle, 
   ShieldCheck,
-  TrendingUp,
   UserPlus
 } from 'lucide-react';
+import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
+import { 
+  adminMainMenuItems, 
+  adminAlertMenuItems 
+} from '@/components/ui/admin-menu/AdminMenuPresets';
 
 const AdminDashboard: React.FC = () => {
   return (
@@ -91,53 +91,10 @@ const AdminDashboard: React.FC = () => {
           variant="card"
           className="md:col-span-1"
         >
-          <div className="space-y-2">
-            <Button variant="outline" className="w-full justify-between" asChild>
-              <Link to="/admin/users">
-                <div className="flex items-center">
-                  <Users className="h-4 w-4 mr-2" />
-                  <span>Gestión de Usuarios</span>
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" className="w-full justify-between" asChild>
-              <Link to="/admin/courses">
-                <div className="flex items-center">
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  <span>Gestión de Cursos</span>
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" className="w-full justify-between" asChild>
-              <Link to="/admin/settings">
-                <div className="flex items-center">
-                  <Settings className="h-4 w-4 mr-2" />
-                  <span>Configuración del Sistema</span>
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" className="w-full justify-between" asChild>
-              <Link to="/admin/billing">
-                <div className="flex items-center">
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  <span>Facturación</span>
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" className="w-full justify-between" asChild>
-              <Link to="/admin/test-data">
-                <div className="flex items-center">
-                  <DatabaseIcon className="h-4 w-4 mr-2" />
-                  <span>Datos de Prueba</span>
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
+          <AdminMenu 
+            items={adminMainMenuItems}
+            variant="buttons"
+          />
         </PageSection>
 
         {/* Alertas del sistema */}
@@ -147,28 +104,10 @@ const AdminDashboard: React.FC = () => {
           variant="card"
           className="md:col-span-2"
         >
-          <div className="space-y-4">
-            <div className="bg-amber-50 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400 p-4 rounded-md flex gap-2">
-              <AlertCircle className="h-5 w-5 flex-shrink-0" />
-              <div>
-                <p className="font-medium">Actualización de Seguridad Pendiente</p>
-                <p className="text-sm mt-1">Se recomienda actualizar los módulos de seguridad a la última versión.</p>
-              </div>
-            </div>
-            <div className="bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 p-4 rounded-md flex gap-2">
-              <ShieldCheck className="h-5 w-5 flex-shrink-0" />
-              <div>
-                <p className="font-medium">Auditoría Completada</p>
-                <p className="text-sm mt-1">La auditoría de seguridad mensual ha sido completada. Sin problemas encontrados.</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex justify-end mt-4">
-            <Button variant="outline" size="sm">
-              Ver todas las alertas
-            </Button>
-          </div>
+          <AdminMenu 
+            items={adminAlertMenuItems}
+            variant="default"
+          />
         </PageSection>
       </div>
       
@@ -208,19 +147,18 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline">Ver perfil</Button>
+                <AdminMenu 
+                  items={[{
+                    icon: Users,
+                    label: "Ver perfil",
+                    href: `/admin/users/profile-${index + 1}`
+                  }]}
+                  variant="sidebar"
+                  className="!space-y-0"
+                />
               </div>
             </div>
           ))}
-        </div>
-        
-        <div className="flex justify-end mt-4">
-          <Button variant="outline" asChild>
-            <Link to="/admin/users">
-              Ver todos los usuarios
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
         </div>
       </PageSection>
     </SectionPageLayout>

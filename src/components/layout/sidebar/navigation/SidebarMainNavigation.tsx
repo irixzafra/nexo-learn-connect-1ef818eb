@@ -1,24 +1,24 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { NavLink } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
 import { 
   Tooltip,
   TooltipContent,
   TooltipTrigger 
 } from '@/components/ui/tooltip';
 import { UserRole } from '@/types/auth';
+import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
+import { adminMobileMenuItems } from '@/components/ui/admin-menu/AdminMenuPresets';
+import { AdminMenuItem } from '@/components/ui/admin-menu/AdminMenu';
 import { 
   Home, 
   Compass, 
   Users, 
   MessageSquare, 
-  Settings, 
   User, 
   Phone,
-  Search,
   Shield
 } from 'lucide-react';
 
@@ -41,124 +41,134 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   const canSeeAdmin = effectiveRole === 'admin' || effectiveRole === 'instructor';
 
   // Navegación simplificada - solo categorías principales
-  const navigationItems = [
-    {
-      name: "Inicio",
-      icon: Home,
-      path: getHomePath(),
-      tooltip: "Inicio"
-    },
-    {
-      name: "Explorar",
-      icon: Compass,
-      path: "/courses",
-      tooltip: "Explorar cursos"
-    },
-    {
-      name: "Comunidad",
-      icon: Users,
-      path: "/community",
-      tooltip: "Comunidad"
-    },
-    {
-      name: "Mensajes",
-      icon: MessageSquare,
-      path: "/messages",
-      tooltip: "Mensajes",
-      badge: messagesCount
-    },
-    ...(canSeeAdmin ? [{
-      name: "Administración",
-      icon: Shield,
-      path: "/admin/dashboard",
-      tooltip: "Administración"
-    }] : []),
-    {
-      name: "Perfil",
-      icon: User,
-      path: "/profile",
-      tooltip: "Mi perfil",
-      badge: notificationsCount
-    },
-    {
-      name: "Contacto",
-      icon: Phone,
-      path: "/contact",
-      tooltip: "Contacto"
+  const getNavigationItems = (): AdminMenuItem[] => {
+    const baseItems = [
+      {
+        icon: Home,
+        label: "Inicio",
+        href: getHomePath(),
+      },
+      {
+        icon: Compass,
+        label: "Explorar",
+        href: "/courses",
+      },
+      {
+        icon: Users,
+        label: "Comunidad",
+        href: "/community",
+      },
+      {
+        icon: MessageSquare,
+        label: "Mensajes",
+        href: "/messages",
+        badge: messagesCount,
+      }
+    ];
+
+    if (canSeeAdmin) {
+      return [
+        ...baseItems,
+        {
+          icon: Shield,
+          label: "Administración",
+          href: "/admin/dashboard",
+        },
+        {
+          icon: User,
+          label: "Perfil",
+          href: "/profile",
+          badge: notificationsCount,
+        },
+        {
+          icon: Phone,
+          label: "Contacto",
+          href: "/contact",
+        }
+      ];
     }
-  ];
+
+    return [
+      ...baseItems,
+      {
+        icon: User,
+        label: "Perfil",
+        href: "/profile",
+        badge: notificationsCount,
+      },
+      {
+        icon: Phone,
+        label: "Contacto",
+        href: "/contact",
+      }
+    ];
+  };
+
+  // Para administradores en versión móvil (colapsada)
+  const getMobileAdminItems = (): AdminMenuItem[] => {
+    if (effectiveRole === 'admin') {
+      return adminMobileMenuItems;
+    }
+    
+    // Para roles no admin, simplemente adaptar los items normales
+    return getNavigationItems();
+  };
 
   return (
     <div className={cn(
       "flex-1 overflow-auto",
       isCollapsed ? "px-2" : "px-4"
     )}>
-      <nav className="space-y-2 pt-4">
-        {navigationItems.map((item) => (
-          <div key={item.name} className="mb-1">
-            {isCollapsed ? (
-              <Tooltip>
+      {isCollapsed ? (
+        <>
+          {/* Menú colapsado usando tooltips */}
+          <div className="space-y-4 pt-4">
+            {getMobileAdminItems().map((item) => (
+              <Tooltip key={item.href}>
                 <TooltipTrigger asChild>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) => cn(
-                      "flex h-10 w-10 items-center justify-center rounded-md transition-colors relative",
-                      isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                    )}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    {item.badge && item.badge > 0 && (
-                      <Badge variant="destructive" className="absolute -top-1 -right-1 px-1 min-h-5 min-w-5 flex items-center justify-center">
-                        {item.badge}
-                      </Badge>
-                    )}
-                  </NavLink>
+                  <div>
+                    <AdminMenu 
+                      items={[item]} 
+                      variant="sidebar"
+                      className="!space-y-0"
+                    />
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  <p>{item.tooltip || item.name}</p>
+                  <p>{item.label}</p>
                 </TooltipContent>
               </Tooltip>
-            ) : (
-              <NavLink
-                to={item.path}
-                className={({ isActive }) => cn(
-                  "flex items-center justify-between gap-3 w-full px-3 py-2 rounded-md text-sm font-medium",
-                  isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                )}
-              >
-                <span className="flex items-center gap-3">
-                  <item.icon className="h-5 w-5" />
-                  <span>{item.name}</span>
-                </span>
-                {item.badge && item.badge > 0 && (
-                  <Badge variant="destructive">
-                    {item.badge}
-                  </Badge>
-                )}
-              </NavLink>
-            )}
+            ))}
           </div>
-        ))}
-      </nav>
 
-      {/* Search button for collapsed sidebar - only for admins */}
-      {effectiveRole === 'admin' && isCollapsed && (
-        <div className="px-2 mb-4 flex justify-center">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-9 w-9"
-                onClick={() => window.location.href = '/admin/users'}
-              >
-                <Search className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Buscar usuarios</p>
-            </TooltipContent>
-          </Tooltip>
+          {/* Search button for collapsed sidebar - only for admins */}
+          {effectiveRole === 'admin' && (
+            <div className="px-2 mt-6 flex justify-center">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-9 w-9"
+                    onClick={() => window.location.href = '/admin/users'}
+                  >
+                    <Search className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Buscar usuarios</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          )}
+        </>
+      ) : (
+        // Menú expandido con AdminMenu
+        <div className="space-y-1 pt-4">
+          <AdminMenu 
+            items={getNavigationItems()}
+            variant="default"
+          />
         </div>
       )}
     </div>

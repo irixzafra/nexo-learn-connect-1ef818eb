@@ -16,10 +16,9 @@ import {
 } from "@/components/ui/sidebar";
 import { UserMenu } from "@/components/layout/header/UserMenu";
 import { NexoLogo } from "@/components/ui/logo";
-import { Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { NotificationIndicator } from "@/components/notifications/NotificationIndicator";
 import { ThemeSelector } from "@/components/ThemeSelector";
+import MobileNavMenu from "@/components/layout/MobileNavMenu";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -67,8 +66,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     <EditModeProvider>
       <SidebarProvider>
         <div className="min-h-screen flex dark:bg-gray-950 w-full">
-          {/* Left Sidebar */}
-          <Sidebar className="border-r bg-sidebar">
+          {/* Left Sidebar - Hidden in mobile */}
+          <Sidebar className="border-r bg-sidebar hidden md:flex">
             <SidebarContent className="p-0">
               <SidebarNavigation viewAsRole={viewAsRole} onRoleChange={handleRoleChange} />
             </SidebarContent>
@@ -76,32 +75,31 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
 
           {/* Main Content */}
           <div className="flex-1 flex flex-col min-h-screen">
-            {/* Minimal top bar with user menu */}
+            {/* Top bar with menu trigger, logo, user menu */}
             <div className="h-14 border-b flex items-center justify-between px-4">
-              <div className="md:hidden">
-                {isMobile && (
-                  <SidebarTrigger className="hover:bg-transparent p-0 h-auto w-auto">
-                    <NexoLogo variant="icon" className="h-8 w-auto cursor-pointer" />
-                  </SidebarTrigger>
-                )}
+              <div className="flex items-center gap-2">
+                {/* Trigger móvil */}
+                <div className="md:hidden">
+                  <MobileNavMenu userRole={userRole} />
+                </div>
+                
+                {/* Logo en la versión móvil */}
+                <div className="md:hidden">
+                  <NexoLogo variant="icon" className="h-8 w-auto" />
+                </div>
+                
+                {/* Trigger desktop */}
+                <div className="hidden md:block">
+                  <SidebarTrigger className="hover:bg-transparent p-0 h-auto w-auto" />
+                </div>
               </div>
+              
               <div className="flex items-center gap-2 ml-auto">
                 {/* Theme Selector */}
                 <ThemeSelector />
                 
                 {/* Notification Icon */}
                 <NotificationIndicator />
-                
-                {/* Contact Icon */}
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="h-9 w-9"
-                  title="Contacto"
-                  onClick={() => window.location.href = '/contact'}
-                >
-                  <Phone className="h-5 w-5" />
-                </Button>
                 
                 <UserMenu />
               </div>
