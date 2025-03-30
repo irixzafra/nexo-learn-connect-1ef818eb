@@ -5,6 +5,8 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { Course } from '../../hooks/useAdminCourses';
 import { Badge } from '@/components/ui/badge';
 import CourseActionsDropdown from './CourseActionsDropdown';
+import { Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface CoursesListProps {
   courses: Course[];
@@ -28,7 +30,7 @@ const CoursesList: React.FC<CoursesListProps> = ({
   if (courses.length === 0) {
     return (
       <TableRow>
-        <TableCell colSpan={6} className="h-24 text-center">
+        <TableCell colSpan={7} className="h-24 text-center">
           {searchTerm
             ? `No se encontraron cursos que coincidan con "${searchTerm}"`
             : "No hay cursos disponibles"}
@@ -54,6 +56,17 @@ const CoursesList: React.FC<CoursesListProps> = ({
             >
               {course.is_published ? "Publicado" : "Borrador"}
             </Badge>
+          </TableCell>
+          <TableCell>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex items-center gap-1 hover:bg-slate-100"
+              onClick={() => onEnrollUsers(course.id, course.title)}
+            >
+              <Users className="h-4 w-4 text-muted-foreground" />
+              <span>{course.students_count}</span>
+            </Button>
           </TableCell>
           <TableCell>{formatDate(course.created_at)}</TableCell>
           <TableCell className="text-right">

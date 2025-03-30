@@ -2,7 +2,7 @@
 import { useState, useMemo } from 'react';
 import { Course } from '../hooks/useAdminCourses';
 
-export type SortField = 'title' | 'instructor' | 'price' | 'status' | 'created_at';
+export type SortField = 'title' | 'instructor' | 'price' | 'status' | 'created_at' | 'students_count';
 export type SortDirection = 'asc' | 'desc';
 
 interface UseCoursesTableProps {
@@ -48,6 +48,10 @@ export const useCoursesTable = ({ courses, searchTerm }: UseCoursesTableProps) =
         case 'status':
           aValue = a.status?.toLowerCase() || '';
           bValue = b.status?.toLowerCase() || '';
+          break;
+        case 'students_count':
+          aValue = a.students_count || 0;
+          bValue = b.students_count || 0;
           break;
         case 'created_at':
           aValue = new Date(a.created_at).getTime();

@@ -71,7 +71,27 @@ export const useAdminCourses = () => {
       
       console.log("Cursos encontrados:", coursesData);
       
-      // Get enrollments count for each course (in a real app, you'd implement this)
+      // Get enrollments count for each course
+      const enrollmentCounts: Record<string, number> = {};
+      
+      try {
+        // Get enrollment counts for all courses at once
+        const { data: enrollmentsData, error: enrollmentsError } = await supabase
+          .from('enrollments')
+          .select('course_id, count')
+          .select('course_id, count(*)', { count: 'exact' })
+          .group('course_id');
+        
+        if (!enrollmentsError && enrollmentsData) {
+          enrollmentsData.forEach((item: any) => {
+            enrollmentCounts[item.course_id] = parseInt(item.count);
+          });
+        }
+      } catch (err) {
+        console.error('Error al obtener conteo de inscripciones:', err);
+        // Continue even if enrollment count fails
+      }
+      
       const formattedCourses: Course[] = coursesData.map((course: any) => {
         const instructorName = course.profiles?.full_name || 'Sin instructor asignado';
         
@@ -81,7 +101,7 @@ export const useAdminCourses = () => {
             full_name: instructorName
           },
           status: course.is_published ? 'published' : 'draft',
-          students_count: 0 // In a real app, you'd get this from enrollments
+          students_count: enrollmentCounts[course.id] || 0
         };
       });
       
