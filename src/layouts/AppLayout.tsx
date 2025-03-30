@@ -18,7 +18,7 @@ import { UserMenu } from "@/components/layout/header/UserMenu";
 import { NexoLogo } from "@/components/ui/logo";
 import { NotificationIndicator } from "@/components/notifications/NotificationIndicator";
 import { ThemeSelector } from "@/components/ThemeSelector";
-import MobileNavMenu from "@/components/layout/MobileNavMenu";
+import { MobileSidebar } from "@/components/layout/header/MobileSidebar";
 import { useLocation } from "react-router-dom";
 
 interface AppLayoutProps {
@@ -67,6 +67,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
     localStorage.setItem('viewAsRole', role);
   };
 
+  // Logo component that will be used as a trigger for the mobile sidebar
+  const LogoTrigger = (
+    <Button variant="ghost" className="p-0 h-auto">
+      <NexoLogo variant={isMobile ? "icon" : "default"} className="h-8 w-auto" subtitle="ecosistema creativo" />
+    </Button>
+  );
+
   return (
     <EditModeProvider>
       <SidebarProvider>
@@ -83,17 +90,20 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
             {/* Top bar with menu trigger, logo, user menu */}
             <div className="h-14 border-b flex items-center justify-between px-4">
               <div className="flex items-center gap-2">
-                {/* Mobile menu - Not shown on admin pages to avoid duplication */}
-                <MobileNavMenu userRole={userRole} />
-                
-                {/* Logo en la versión móvil */}
-                <div className="md:hidden">
-                  <NexoLogo variant="icon" className="h-8 w-auto" />
-                </div>
+                {/* Mobile sidebar with logo as trigger */}
+                <MobileSidebar 
+                  viewAsRole={viewAsRole} 
+                  trigger={LogoTrigger}
+                />
                 
                 {/* Trigger desktop */}
                 <div className="hidden md:block">
                   <SidebarTrigger className="hover:bg-transparent p-0 h-auto w-auto" />
+                </div>
+                
+                {/* Desktop logo, hidden on mobile */}
+                <div className="hidden md:block">
+                  <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
                 </div>
               </div>
               
