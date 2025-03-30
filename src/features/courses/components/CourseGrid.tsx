@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { EnhancedCourseCard } from './EnhancedCourseCard';
+import { Course } from '@/types/course';
 
 export interface FeaturedCourse {
   id: number | string;
@@ -23,7 +24,13 @@ export interface FeaturedCourse {
   is_featured?: boolean;
   discount?: number;
   tags?: string[];
-  start_date?: string; // Added this property to fix the error
+  start_date?: string;
+  currency?: 'eur' | 'usd';
+  slug?: string;
+  instructor_id?: string;
+  is_published?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface CourseGridProps {
