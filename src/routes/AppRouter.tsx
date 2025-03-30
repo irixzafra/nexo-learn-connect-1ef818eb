@@ -140,13 +140,12 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         } />
         
+        {/* Admin routes - MODIFIED: removed the double layout wrapping */}
         <Route path="/admin/*" element={
           <ProtectedRoute>
-            <AppLayout>
-              <Suspense fallback={<LoadingFallback />}>
-                <AdminRoutes />
-              </Suspense>
-            </AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <AdminRoutes />
+            </Suspense>
           </ProtectedRoute>
         } />
         
