@@ -9,8 +9,9 @@ import {
 } from '@/components/ui/tabs';
 import { dataTypeLabels } from './DataTypeSelector';
 import { DataTypeTabContent } from './DataTypeTabContent';
-import { Database, Info } from 'lucide-react';
+import { Database, Info, HardDrive } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export const TestDataTable: React.FC = () => {
   const { testData } = useTestData();
@@ -27,16 +28,23 @@ export const TestDataTable: React.FC = () => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Database className="h-5 w-5 text-muted-foreground" />
-          Datos generados
+          <h3 className="text-lg font-medium">Datos generados</h3>
           {hasAnyData && (
             <span className="text-sm bg-primary/10 text-primary px-2 py-0.5 rounded-full">
               {totalItems} elementos
             </span>
           )}
-        </h3>
+        </div>
       </div>
+      
+      <Alert variant="info" className="bg-blue-50/50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900/30">
+        <HardDrive className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        <AlertDescription className="text-sm text-blue-700 dark:text-blue-300">
+          Los datos generados se almacenan únicamente en memoria y se perderán al recargar la página. No se escriben en la base de datos real.
+        </AlertDescription>
+      </Alert>
       
       {!hasAnyData ? (
         <div className="bg-muted/20 border rounded-lg p-6 text-center flex flex-col items-center gap-3">

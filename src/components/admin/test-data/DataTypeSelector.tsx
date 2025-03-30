@@ -189,29 +189,29 @@ export const DataTypeSelector: React.FC = () => {
         
         <div>
           <Label htmlFor="data-type" className="text-sm font-medium mb-1.5 block">Tipo de datos</Label>
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+          <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
             {Object.entries(dataTypeLabels).map(([type, label]) => {
               const isSelected = selectedTypes.includes(type as TestDataType);
               return (
                 <Button
                   key={type}
                   variant={isSelected ? "default" : "outline"}
-                  size="sm"
+                  size="icon"
                   className={cn(
-                    "h-9 font-normal transition-all flex items-center gap-1.5", 
-                    isSelected ? 'pr-1.5 bg-primary/90' : 'text-muted-foreground'
+                    "h-10 w-10 rounded-lg transition-all",
+                    isSelected ? 'bg-primary/90' : 'text-muted-foreground bg-transparent'
                   )}
+                  title={label}
                   onClick={() => handleTypeToggle(type as TestDataType)}
                 >
                   {typeIcons[type as TestDataType]}
-                  <span>{label}</span>
                   {isSelected && (
                     <motion.div
                       initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      className="flex items-center justify-center ml-auto"
+                      className="absolute -top-1 -right-1 flex items-center justify-center"
                     >
-                      <CheckCircle2 className="h-3.5 w-3.5 text-primary-foreground" />
+                      <CheckCircle2 className="h-3.5 w-3.5 text-primary-foreground bg-primary rounded-full" />
                     </motion.div>
                   )}
                 </Button>
@@ -261,7 +261,7 @@ export const DataTypeSelector: React.FC = () => {
       </div>
 
       {showDependencyAlert && (
-        <Alert variant="destructive" className="bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800">
+        <Alert variant="warning" className="bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800">
           <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
           <AlertDescription className="mt-2">
             <p className="font-medium text-amber-800 dark:text-amber-300 mb-1">

@@ -1,180 +1,142 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import { cn } from '@/lib/utils';
-import { 
-  Bold, 
-  Italic, 
-  Link as LinkIcon, 
-  Image as ImageIcon, 
-  List, 
-  ListOrdered, 
-  Quote, 
-  Video, 
-  Code, 
-  Type, 
-  Send,
-  FilePenLine,
-  X
-} from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Loader2, Bold, Italic, Link, Image, Video, List, ListOrdered, AlignLeft, Smile, AtSign, Send } from 'lucide-react';
 import { quillModules, quillFormats, handleImageUpload, createVideoModule } from '../utils/quillModules';
-import { Alert, AlertTitle } from '@/components/ui/alert';
 
 interface RichTextEditorProps {
-  placeholder?: string;
   value: string;
   onChange: (value: string) => void;
-  onSubmit?: () => void;
-  className?: string;
+  placeholder?: string;
   minHeight?: string;
-  showToolbar?: boolean;
+  onSubmit?: () => void;
   submitting?: boolean;
 }
 
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({
-  placeholder = 'Escribe algo...',
   value,
   onChange,
-  onSubmit,
-  className,
+  placeholder = 'Escribe tu contenido aquí...',
   minHeight = '200px',
-  showToolbar = true,
-  submitting = false,
+  onSubmit,
+  submitting = false
 }) => {
   const quillRef = useRef<ReactQuill>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [modules, setModules] = useState(quillModules);
-  const [toolbarVisible, setToolbarVisible] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   
+  // Custom handler setup for editor toolbar
   useEffect(() => {
-    if (quillRef.current && showToolbar) {
+    if (quillRef.current) {
       const quill = quillRef.current.getEditor();
       
-      // Personalizar los manejadores de la barra de herramientas
-      const updatedModules = { ...quillModules };
-      updatedModules.toolbar.handlers = {
-        ...updatedModules.toolbar.handlers,
-        image: () => handleImageUpload(quill),
-        video: () => createVideoModule(quill)(),
-      };
+      // Set up image handler
+      const toolbar = quill.getModule('toolbar');
+      toolbar.addHandler('image', () => {
+        handleImageUpload(quill);
+      });
       
-      setModules(updatedModules);
+      // Set up video embed functionality
+      createVideoModule(quill);
     }
-  }, [quillRef, showToolbar]);
+  }, []);
   
-  // Manejar errores de carga
-  const handleError = (message: string) => {
-    setError(message);
-    setTimeout(() => setError(null), 5000);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Submit on Ctrl+Enter or Cmd+Enter
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && onSubmit) {
+      e.preventDefault();
+      onSubmit();
+    }
   };
   
-  // Mostrar/ocultar la barra de herramientas en dispositivos móviles
-  const toggleToolbar = () => {
-    setToolbarVisible(!toolbarVisible);
+  // Custom toolbar component
+  const CustomToolbar = () => {
+    if (!quillRef.current) return null;
+    
+    const quill = quillRef.current.getEditor();
+    
+    const applyFormat = (format: string, value?: any) => {
+      const range = quill.getSelection();
+      if (range) {
+        quill.format(format, value || !quill.getFormat(range)[format]);
+      }
+    };
+    
+    const insertEmbed = (type: string) => {
+      if (type === 'image') {
+        handleImageUpload(quill);
+      } else if (type === 'video') {
+        // The video handler is already implemented via the toolbar config
+        const toolbar = quill.getModule('toolbar');
+        toolbar.handlers['video']();
+      }
+    };
+    
+    return (
+      <div className="flex flex-wrap items-center gap-1 py-2 bg-muted/20 rounded-lg px-2 mb-2">
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => applyFormat('bold')}>
+          <Bold className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => applyFormat('italic')}>
+          <Italic className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => applyFormat('link', prompt('Enter link URL:'))}>
+          <Link className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => insertEmbed('image')}>
+          <Image className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => insertEmbed('video')}>
+          <Video className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => applyFormat('list', 'bullet')}>
+          <List className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => applyFormat('list', 'ordered')}>
+          <ListOrdered className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => applyFormat('align', 'center')}>
+          <AlignLeft className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Smile className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <AtSign className="h-4 w-4" />
+        </Button>
+      </div>
+    );
   };
   
   return (
-    <div className={cn("border rounded-md overflow-hidden bg-white dark:bg-gray-950", className)}>
-      {error && (
-        <Alert variant="destructive" className="mb-2">
-          <AlertTitle>{error}</AlertTitle>
-        </Alert>
-      )}
+    <div className={`quill-editor-container rounded-lg border bg-card ${isFocused ? 'ring-1 ring-primary' : ''}`} style={{ minHeight }}>
+      {isFocused && <CustomToolbar />}
       
-      {/* Botón para mostrar/ocultar la barra de herramientas en móviles */}
-      {showToolbar && (
-        <div className="md:hidden border-b p-2 flex justify-between items-center">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={toggleToolbar}
-            className="flex items-center gap-1"
-          >
-            {toolbarVisible ? <X size={16} /> : <FilePenLine size={16} />}
-            {toolbarVisible ? 'Ocultar Formato' : 'Mostrar Formato'}
-          </Button>
-        </div>
-      )}
+      <ReactQuill
+        ref={quillRef}
+        theme="snow"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        modules={quillModules}
+        formats={quillFormats}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        onKeyDown={handleKeyDown}
+      />
       
-      {/* Barra de herramientas personalizada */}
-      {showToolbar && (toolbarVisible || window.innerWidth >= 768) && (
-        <div className="border-b p-2 bg-gray-50 dark:bg-gray-900">
-          <div className="flex items-center gap-1 flex-wrap">
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <Type size={16} />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <Bold size={16} />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <Italic size={16} />
-            </Button>
-            <div className="h-full border-r mx-1 dark:border-gray-700" />
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <LinkIcon size={16} />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <ImageIcon size={16} />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <Video size={16} />
-            </Button>
-            <div className="h-full border-r mx-1 dark:border-gray-700" />
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <ListOrdered size={16} />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <List size={16} />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <Quote size={16} />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <Code size={16} />
-            </Button>
-          </div>
-        </div>
-      )}
-      
-      {/* Editor Quill con tema personalizado */}
-      <div className="quill-editor-container">
-        <ReactQuill
-          ref={quillRef}
-          theme="snow"
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          modules={modules}
-          formats={quillFormats}
-          className="bg-transparent border-none"
-          style={{ 
-            minHeight,
-            maxHeight: '550px',
-            overflowY: 'auto',
-            border: 'none' 
-          }}
-        />
-      </div>
-      
-      {/* Botón de envío */}
-      {onSubmit && (
-        <div className="flex justify-end p-2 border-t bg-gray-50 dark:bg-gray-900">
+      {isFocused && onSubmit && (
+        <div className="flex justify-end py-2 px-3 bg-muted/10 border-t">
           <Button 
             onClick={onSubmit} 
-            type="button"
-            disabled={submitting || !value.trim()}
+            disabled={!value.trim() || submitting} 
             size="sm"
-            className="flex items-center gap-1"
           >
-            {submitting ? 'Publicando...' : 'Publicar'}
-            <Send className="h-4 w-4 ml-1" />
+            {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
+            Publicar
           </Button>
         </div>
       )}
     </div>
   );
 };
-
-export default RichTextEditor;
