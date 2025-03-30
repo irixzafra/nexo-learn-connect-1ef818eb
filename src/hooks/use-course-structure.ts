@@ -1,9 +1,7 @@
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
-// Create a new module
 export const useCreateModule = () => {
   const queryClient = useQueryClient();
   
@@ -39,7 +37,6 @@ export const useCreateModule = () => {
   });
 };
 
-// Update a module
 export const useUpdateModule = () => {
   const queryClient = useQueryClient();
   
@@ -72,7 +69,6 @@ export const useUpdateModule = () => {
   });
 };
 
-// Delete a module
 export const useDeleteModule = () => {
   const queryClient = useQueryClient();
   
@@ -103,7 +99,6 @@ export const useDeleteModule = () => {
   });
 };
 
-// Create a new lesson
 export const useCreateLesson = () => {
   const queryClient = useQueryClient();
   
@@ -144,7 +139,6 @@ export const useCreateLesson = () => {
   });
 };
 
-// Update a lesson
 export const useUpdateLesson = () => {
   const queryClient = useQueryClient();
   
@@ -152,47 +146,55 @@ export const useUpdateLesson = () => {
     mutationFn: async ({ 
       lessonId, 
       title,
-      isPreviewable
-    }: { 
-      lessonId: string; 
+      lessonOrder,
+      isPreviewable,
+      contentType,
+      contentText,
+      contentVideoUrl 
+    }: {
+      lessonId: string;
       title?: string;
+      lessonOrder?: number;
       isPreviewable?: boolean;
+      contentType?: 'text' | 'video';
+      contentText?: any;
+      contentVideoUrl?: string;
     }) => {
-      // Construir el objeto de actualización basado en los parámetros proporcionados
-      const updates: { title?: string; is_previewable?: boolean } = {};
+      const updates: Record<string, any> = {};
       
-      if (title !== undefined) {
-        updates.title = title;
-      }
-      
-      if (isPreviewable !== undefined) {
-        updates.is_previewable = isPreviewable;
-      }
-      
+      if (title !== undefined) updates.title = title;
+      if (lessonOrder !== undefined) updates.lesson_order = lessonOrder;
+      if (isPreviewable !== undefined) updates.is_previewable = isPreviewable;
+      if (contentType !== undefined) updates.content_type = contentType;
+      if (contentText !== undefined) updates.content_text = contentText;
+      if (contentVideoUrl !== undefined) updates.content_video_url = contentVideoUrl;
+
       const { data, error } = await supabase
         .from('lessons')
         .update(updates)
         .eq('id', lessonId)
-        .select('*')
+        .select()
         .single();
-        
-      if (error) throw error;
+
+      if (error) {
+        console.error("Error updating lesson:", error);
+        throw error;
+      }
+
       return data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['moduleLessons', data.module_id] });
+      if (data.module_id) {
+        queryClient.invalidateQueries({ queryKey: ['moduleLessons', data.module_id] });
+      }
+      if (data.course_id) {
+        queryClient.invalidateQueries({ queryKey: ['courseLessons', data.course_id] });
+      }
       queryClient.invalidateQueries({ queryKey: ['lesson', data.id] });
-      queryClient.invalidateQueries({ queryKey: ['course', data.course_id] });
-      queryClient.invalidateQueries({ queryKey: ['courseLessons', data.course_id] });
     },
-    onError: (error) => {
-      console.error('Error updating lesson:', error);
-      toast.error('Error al actualizar la lección');
-    }
   });
 };
 
-// Delete a lesson
 export const useDeleteLesson = () => {
   const queryClient = useQueryClient();
   
@@ -223,7 +225,6 @@ export const useDeleteLesson = () => {
   });
 };
 
-// Update modules order
 export const useUpdateModulesOrder = () => {
   const queryClient = useQueryClient();
   
@@ -235,7 +236,6 @@ export const useUpdateModulesOrder = () => {
       courseId: string; 
       modules: Array<{ id: string; order: number }> 
     }) => {
-      // Preparar los datos para la actualización
       const updates = modules.map(module => ({
         id: module.id,
         module_order: module.order
@@ -259,7 +259,6 @@ export const useUpdateModulesOrder = () => {
   });
 };
 
-// Update lessons order
 export const useUpdateLessonsOrder = () => {
   const queryClient = useQueryClient();
   
@@ -271,7 +270,6 @@ export const useUpdateLessonsOrder = () => {
       moduleId: string; 
       lessons: Array<{ id: string; order: number }> 
     }) => {
-      // Preparar los datos para la actualización
       const updates = lessons.map(lesson => ({
         id: lesson.id,
         lesson_order: lesson.order

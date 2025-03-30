@@ -16,6 +16,7 @@ import CourseDetail from '@/pages/CourseDetail';
 import CourseLanding from '@/pages/CourseLanding';
 import AppLayout from '@/layouts/AppLayout';
 import CoursesCatalog from '@/pages/CoursesCatalog';
+import LessonView from '@/pages/student/LessonView';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -37,6 +38,11 @@ const PublicRoutes: React.FC = () => {
       <Route path="/courses/:courseId" element={
         <AppLayout>
           <CourseDetail />
+        </AppLayout>
+      } />
+      <Route path="/courses/:courseId/learn/:lessonId" element={
+        <AppLayout>
+          <LessonView />
         </AppLayout>
       } />
       <Route path="/learning-paths" element={
