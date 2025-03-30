@@ -25,17 +25,20 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
   
   // Example counter for unread messages
   const hasUnreadMessages = 3;
+  
+  // Convert userRole to UserRoleType
+  const userRoleType = toUserRoleType(userRole as string);
 
   return (
     <header className="w-full py-2 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-20 border-b">
       <div className="container mx-auto flex justify-between items-center h-14">
         <HeaderLogo 
           pageTitle={pageTitleText} 
-          viewAsRole={toUserRoleType(userRole as string)} 
+          viewAsRole={userRoleType} 
         />
         
         <MainNavigationMenu 
-          userRole={toUserRoleType(userRole as string)} 
+          userRole={userRoleType} 
           hasUnreadMessages={hasUnreadMessages} 
         />
         

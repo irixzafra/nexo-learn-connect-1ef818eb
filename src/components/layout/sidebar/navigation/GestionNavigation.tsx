@@ -12,12 +12,12 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { PlusCircle } from 'lucide-react';
-import { UserRole } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 
 interface GestionNavigationProps {
   isOpen: boolean;
   onToggle: () => void;
-  role: UserRole;
+  role: UserRoleType;
 }
 
 const GestionNavigation: React.FC<GestionNavigationProps> = ({ isOpen, onToggle, role }) => {
