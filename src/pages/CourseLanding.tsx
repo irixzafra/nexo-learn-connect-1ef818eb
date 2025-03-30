@@ -105,7 +105,7 @@ const CourseLanding: React.FC = () => {
   
   return (
     <PublicLayout>
-      {/* Hero Section */}
+      {/* Hero Section with SEO-optimized headings and content */}
       <section className="bg-gradient-to-b from-background to-primary/5 pt-16 pb-24">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -178,7 +178,7 @@ const CourseLanding: React.FC = () => {
         </div>
       </section>
       
-      {/* Course Overview */}
+      {/* Course Overview - Value Proposition */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
