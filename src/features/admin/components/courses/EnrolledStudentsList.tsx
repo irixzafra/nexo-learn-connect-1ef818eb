@@ -57,7 +57,7 @@ interface EnrollmentData {
   id: string;
   enrolled_at: string;
   user_id: string;
-  profiles: ProfileData | null;
+  profiles: ProfileData;
 }
 
 interface EnrolledStudentsListProps {
@@ -104,9 +104,9 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({
         
         // Get progress for all students
         const studentsWithProgress = await Promise.all(
-          data.map(async (enrollment: EnrollmentData) => {
+          data.map(async (enrollment: any) => {
             // Safely access the nested profile data with proper typing
-            const profileData: ProfileData = enrollment.profiles || {};
+            const profileData = enrollment.profiles || {};
             
             // Calculate progress for each student
             const { data: progressData } = await supabase.rpc(
