@@ -149,6 +149,10 @@ const AllCoursesTab: React.FC<AllCoursesTabProps> = ({
     }
   };
 
+  // Check if the previous/next buttons should be clickable
+  const isPreviousDisabled = currentPage === 1;
+  const isNextDisabled = currentPage === sortedAndPaginatedCourses.totalPages;
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -275,10 +279,8 @@ const AllCoursesTab: React.FC<AllCoursesTabProps> = ({
                   <PaginationContent>
                     <PaginationItem>
                       <PaginationPrevious 
-                        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                        disabled={currentPage === 1}
-                        aria-disabled={currentPage === 1}
-                        className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                        onClick={() => !isPreviousDisabled && handlePageChange(Math.max(1, currentPage - 1))}
+                        className={isPreviousDisabled ? "pointer-events-none opacity-50" : ""}
                       />
                     </PaginationItem>
                     
@@ -308,10 +310,8 @@ const AllCoursesTab: React.FC<AllCoursesTabProps> = ({
                     
                     <PaginationItem>
                       <PaginationNext 
-                        onClick={() => handlePageChange(Math.min(sortedAndPaginatedCourses.totalPages, currentPage + 1))}
-                        disabled={currentPage === sortedAndPaginatedCourses.totalPages}
-                        aria-disabled={currentPage === sortedAndPaginatedCourses.totalPages}
-                        className={currentPage === sortedAndPaginatedCourses.totalPages ? "pointer-events-none opacity-50" : ""}
+                        onClick={() => !isNextDisabled && handlePageChange(Math.min(sortedAndPaginatedCourses.totalPages, currentPage + 1))}
+                        className={isNextDisabled ? "pointer-events-none opacity-50" : ""}
                       />
                     </PaginationItem>
                   </PaginationContent>
