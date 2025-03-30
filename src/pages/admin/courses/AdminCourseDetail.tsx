@@ -47,6 +47,12 @@ const AdminCourseDetail: React.FC = () => {
     return <CourseNotFound />;
   }
 
+  // Aseguramos que el curso tiene todas las propiedades necesarias
+  const enhancedCourse = {
+    ...course,
+    currency: course.currency || 'eur' // Proporcionar un valor por defecto
+  };
+
   // Define the tabs for the course detail page
   const tabs: AdminTabItem[] = [
     {
@@ -55,7 +61,7 @@ const AdminCourseDetail: React.FC = () => {
       icon: <Settings className="h-4 w-4" />,
       content: (
         <CourseSettingsTab 
-          course={course} 
+          course={enhancedCourse} 
           isSaving={isSaving} 
           editedCourse={editedCourse}
           handleInputChange={handleInputChange}
@@ -68,31 +74,31 @@ const AdminCourseDetail: React.FC = () => {
       value: 'content',
       label: 'Contenido',
       icon: <List className="h-4 w-4" />,
-      content: <CourseContentTab course={course} />
+      content: <CourseContentTab course={enhancedCourse} />
     },
     {
       value: 'students',
       label: 'Estudiantes',
       icon: <Users className="h-4 w-4" />,
-      content: <CourseStudentsTab courseId={course.id} courseName={course.title} />
+      content: <CourseStudentsTab courseId={enhancedCourse.id} courseName={enhancedCourse.title} />
     },
     {
       value: 'instructors',
       label: 'Instructores',
       icon: <BookOpen className="h-4 w-4" />,
-      content: <CourseInstructorsTab courseId={course.id} courseName={course.title} />
+      content: <CourseInstructorsTab courseId={enhancedCourse.id} courseName={enhancedCourse.title} />
     },
     {
       value: 'analytics',
       label: 'Analíticas',
       icon: <BarChart className="h-4 w-4" />,
-      content: <CourseAnalyticsTab courseId={course.id} courseName={course.title} />
+      content: <CourseAnalyticsTab courseId={enhancedCourse.id} courseName={enhancedCourse.title} />
     }
   ];
 
   return (
     <AdminPageLayout
-      title={course.title || "Detalles del curso"}
+      title={enhancedCourse.title || "Detalles del curso"}
       subtitle="Administra los detalles del curso"
       tabs={tabs}
       defaultTabValue="settings"
