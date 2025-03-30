@@ -20,7 +20,7 @@ export const SidebarTrigger = React.forwardRef<
       variant="ghost"
       size="icon"
       className={cn(
-        "h-8 w-8 focus-visible:ring-2 focus-visible:ring-primary transition-all duration-200",
+        "h-10 w-10 rounded-full focus-visible:ring-2 focus-visible:ring-primary transition-all duration-200",
         isMobile && "z-50",
         className
       )}
