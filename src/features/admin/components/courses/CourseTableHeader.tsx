@@ -1,10 +1,9 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 
-export type SortField = 'title' | 'instructor' | 'status' | 'price' | 'students_count' | 'updated_at';
+export type SortField = 'title' | 'instructor' | 'price' | 'status' | 'created_at';
 export type SortDirection = 'asc' | 'desc';
 
 interface CourseTableHeaderProps {
@@ -19,83 +18,31 @@ const CourseTableHeader: React.FC<CourseTableHeaderProps> = ({
   onSort,
 }) => {
   const renderSortIcon = (field: SortField) => {
-    if (sortField === field) {
-      return sortDirection === 'asc' ? 
-        <ChevronUp className="ml-1 h-4 w-4" /> : 
-        <ChevronDown className="ml-1 h-4 w-4" />;
-    }
-    return null;
+    if (sortField !== field) return null;
+    
+    return sortDirection === 'asc' ? 
+      <ArrowUp className="ml-2 h-4 w-4" /> : 
+      <ArrowDown className="ml-2 h-4 w-4" />;
   };
-
+  
+  const createSortableHeader = (field: SortField, label: string) => (
+    <div 
+      className="flex items-center cursor-pointer" 
+      onClick={() => onSort(field)}
+    >
+      {label}
+      {renderSortIcon(field)}
+    </div>
+  );
+  
   return (
     <TableHeader>
       <TableRow>
-        <TableHead className="w-[200px]">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="font-medium flex items-center"
-            onClick={() => onSort('title')}
-          >
-            Título
-            {renderSortIcon('title')}
-          </Button>
-        </TableHead>
-        <TableHead>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="font-medium flex items-center"
-            onClick={() => onSort('instructor')}
-          >
-            Instructor
-            {renderSortIcon('instructor')}
-          </Button>
-        </TableHead>
-        <TableHead>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="font-medium flex items-center"
-            onClick={() => onSort('status')}
-          >
-            Estado
-            {renderSortIcon('status')}
-          </Button>
-        </TableHead>
-        <TableHead>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="font-medium flex items-center"
-            onClick={() => onSort('price')}
-          >
-            Precio
-            {renderSortIcon('price')}
-          </Button>
-        </TableHead>
-        <TableHead>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="font-medium flex items-center"
-            onClick={() => onSort('students_count')}
-          >
-            Estudiantes
-            {renderSortIcon('students_count')}
-          </Button>
-        </TableHead>
-        <TableHead>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="font-medium flex items-center"
-            onClick={() => onSort('updated_at')}
-          >
-            Última Actualización
-            {renderSortIcon('updated_at')}
-          </Button>
-        </TableHead>
+        <TableHead>{createSortableHeader('title', 'Título')}</TableHead>
+        <TableHead>{createSortableHeader('instructor', 'Instructor')}</TableHead>
+        <TableHead>{createSortableHeader('price', 'Precio')}</TableHead>
+        <TableHead>{createSortableHeader('status', 'Estado')}</TableHead>
+        <TableHead>{createSortableHeader('created_at', 'Fecha')}</TableHead>
         <TableHead className="text-right">Acciones</TableHead>
       </TableRow>
     </TableHeader>

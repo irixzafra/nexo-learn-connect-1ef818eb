@@ -1,19 +1,79 @@
 
 import { useState, useMemo } from 'react';
 import { Course } from '../hooks/useAdminCourses';
-import { SortField, SortDirection } from '../components/courses/CourseTableHeader';
 
-const ITEMS_PER_PAGE = 10;
+export type SortField = 'title' | 'instructor' | 'price' | 'status' | 'created_at';
+export type SortDirection = 'asc' | 'desc';
 
-export const useCoursesTable = (courses: Course[], searchTerm: string) => {
-  // Sorting state
-  const [sortField, setSortField] = useState<SortField>('updated_at');
+interface UseCoursesTableProps {
+  courses: Course[];
+  searchTerm: string;
+}
+
+export const useCoursesTable = ({ courses, searchTerm }: UseCoursesTableProps) => {
+  const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-  
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-
-  // Handle sorting
+  const itemsPerPage = 10;
+  
+  // Filter courses based on search term
+  const filteredCourses = useMemo(() => {
+    if (!searchTerm.trim()) return courses;
+    
+    const lowercaseSearch = searchTerm.toLowerCase();
+    return courses.filter(course => 
+      course.title?.toLowerCase().includes(lowercaseSearch) ||
+      course.instructors?.full_name?.toLowerCase().includes(lowercaseSearch)
+    );
+  }, [courses, searchTerm]);
+  
+  // Sort courses based on sort field and direction
+  const sortedCourses = useMemo(() => {
+    return [...filteredCourses].sort((a, b) => {
+      let aValue, bValue;
+      
+      switch (sortField) {
+        case 'title':
+          aValue = a.title?.toLowerCase() || '';
+          bValue = b.title?.toLowerCase() || '';
+          break;
+        case 'instructor':
+          aValue = a.instructors?.full_name?.toLowerCase() || '';
+          bValue = b.instructors?.full_name?.toLowerCase() || '';
+          break;
+        case 'price':
+          aValue = a.price || 0;
+          bValue = b.price || 0;
+          break;
+        case 'status':
+          aValue = a.status?.toLowerCase() || '';
+          bValue = b.status?.toLowerCase() || '';
+          break;
+        case 'created_at':
+          aValue = new Date(a.created_at).getTime();
+          bValue = new Date(b.created_at).getTime();
+          break;
+        default:
+          return 0;
+      }
+      
+      const compareResult = typeof aValue === 'string'
+        ? aValue.localeCompare(bValue as string)
+        : (aValue as number) - (bValue as number);
+        
+      return sortDirection === 'asc' ? compareResult : -compareResult;
+    });
+  }, [filteredCourses, sortField, sortDirection]);
+  
+  // Calculate pagination
+  const paginatedCourses = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return sortedCourses.slice(startIndex, startIndex + itemsPerPage);
+  }, [sortedCourses, currentPage, itemsPerPage]);
+  
+  const totalPages = Math.max(1, Math.ceil(sortedCourses.length / itemsPerPage));
+  
+  // Handle sort toggle
   const handleSort = (field: SortField) => {
     if (field === sortField) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -22,72 +82,19 @@ export const useCoursesTable = (courses: Course[], searchTerm: string) => {
       setSortDirection('asc');
     }
   };
-
-  // Calculate sorted and paginated data
-  const sortedAndPaginatedCourses = useMemo(() => {
-    // First apply the search filter
-    const filteredCourses = searchTerm.trim() === '' 
-      ? courses 
-      : courses.filter(course => 
-          course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          course.instructors?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    // Then sort
-    const sorted = [...filteredCourses].sort((a, b) => {
-      let comparison = 0;
-      
-      switch (sortField) {
-        case 'title':
-          comparison = (a.title || '').localeCompare(b.title || '');
-          break;
-        case 'instructor':
-          comparison = (a.instructors?.full_name || '').localeCompare(b.instructors?.full_name || '');
-          break;
-        case 'status':
-          const statusA = a.is_published ? 'published' : 'draft';
-          const statusB = b.is_published ? 'published' : 'draft';
-          comparison = statusA.localeCompare(statusB);
-          break;
-        case 'price':
-          comparison = (a.price || 0) - (b.price || 0);
-          break;
-        case 'students_count':
-          comparison = (a.students_count || 0) - (b.students_count || 0);
-          break;
-        case 'updated_at':
-          comparison = new Date(a.updated_at || 0).getTime() - new Date(b.updated_at || 0).getTime();
-          break;
-        default:
-          comparison = 0;
-      }
-      
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-    
-    // Calculate pagination
-    const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const paginatedCourses = sorted.slice(startIndex, endIndex);
-    
-    return {
-      courses: paginatedCourses,
-      totalItems: sorted.length,
-      totalPages
-    };
-  }, [courses, searchTerm, sortField, sortDirection, currentPage]);
-
+  
   // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
+  
   return {
     sortField,
     sortDirection,
     currentPage,
-    sortedAndPaginatedCourses,
+    totalPages,
+    paginatedCourses,
     handleSort,
-    handlePageChange
+    handlePageChange,
   };
 };

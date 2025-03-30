@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Course } from '../../hooks/useAdminCourses';
+import { Badge } from '@/components/ui/badge';
 import CourseActionsDropdown from './CourseActionsDropdown';
 
 interface CoursesListProps {
@@ -11,9 +10,9 @@ interface CoursesListProps {
   onViewDetails: (id: string) => void;
   onEdit: (id: string) => void;
   onEnrollUsers: (id: string, title: string) => void;
-  searchTerm?: string;
-  formatPrice?: (price: number, currency: string) => string;
-  formatDate?: (date: string) => string;
+  searchTerm: string;
+  formatPrice: (price: number, currency: string) => string;
+  formatDate: (date: string) => string;
 }
 
 const CoursesList: React.FC<CoursesListProps> = ({
@@ -21,17 +20,17 @@ const CoursesList: React.FC<CoursesListProps> = ({
   onViewDetails,
   onEdit,
   onEnrollUsers,
-  searchTerm = '',
-  formatPrice = (price, currency) => `${currency === 'eur' ? '€' : '$'}${price.toFixed(2)}`,
-  formatDate = (date) => date.substring(0, 10),
+  searchTerm,
+  formatPrice,
+  formatDate,
 }) => {
   if (courses.length === 0) {
     return (
       <TableRow>
-        <TableCell colSpan={7} className="text-center h-24">
-          {searchTerm.trim() !== ''
-            ? 'No se encontraron cursos que coincidan con la búsqueda.'
-            : 'No hay cursos para mostrar.'}
+        <TableCell colSpan={6} className="h-24 text-center">
+          {searchTerm
+            ? `No se encontraron cursos que coincidan con "${searchTerm}"`
+            : "No hay cursos disponibles"}
         </TableCell>
       </TableRow>
     );
@@ -41,27 +40,17 @@ const CoursesList: React.FC<CoursesListProps> = ({
     <>
       {courses.map((course) => (
         <TableRow key={course.id}>
-          <TableCell className="font-medium">
-            <Link to={`/admin/courses/${course.id}`} className="hover:underline">
-              {course.title}
-            </Link>
-          </TableCell>
-          <TableCell>{course.instructors?.full_name || 'Sin instructor'}</TableCell>
+          <TableCell className="font-medium">{course.title}</TableCell>
+          <TableCell>{course.instructors?.full_name || "Sin instructor"}</TableCell>
+          <TableCell>{formatPrice(course.price, course.currency)}</TableCell>
           <TableCell>
             <Badge
-              variant="outline"
-              className={
-                course.status === 'published' || course.is_published
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-amber-100 text-amber-800'
-              }
+              variant={course.is_published ? "default" : "secondary"}
             >
-              {course.status === 'published' || course.is_published ? 'Publicado' : 'Borrador'}
+              {course.is_published ? "Publicado" : "Borrador"}
             </Badge>
           </TableCell>
-          <TableCell>{formatPrice(course.price, course.currency || 'eur')}</TableCell>
-          <TableCell>{course.students_count || 0}</TableCell>
-          <TableCell>{formatDate(course.updated_at)}</TableCell>
+          <TableCell>{formatDate(course.created_at)}</TableCell>
           <TableCell className="text-right">
             <CourseActionsDropdown
               courseId={course.id}
