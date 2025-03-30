@@ -7,7 +7,7 @@ import { EnhancedCourseCard } from './EnhancedCourseCard';
 import { Course } from '@/types/course';
 
 export interface FeaturedCourse {
-  id: number | string;
+  id: string;
   title: string;
   description: string;
   image_url: string;
