@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
@@ -102,7 +101,7 @@ const StatCard: React.FC<StatItem> = ({
 
 const PageStats: React.FC<PageStatsProps> = ({ stats, className }) => {
   return (
-    <div className={cn("grid grid-cols-1 sm:grid-cols-2 gap-4", className)}>
+    <div className={cn("grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4", className)}>
       {stats.map((stat, index) => (
         <StatCard key={index} {...stat} />
       ))}

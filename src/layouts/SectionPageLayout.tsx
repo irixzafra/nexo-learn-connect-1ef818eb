@@ -33,7 +33,7 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
       {/* Header Section */}
       <PageHeader {...header} />
 
-      {/* Stats Section */}
+      {/* Stats Section - Now displays up to 4 stats on desktop */}
       {stats && (
         <div className="mt-6">
           <PageStats {...stats} />
@@ -47,7 +47,7 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
         </div>
       )}
 
-      {/* Content Section with optional sidebar */}
+      {/* Content Section with optional sidebar - Maintaining 2 columns max */}
       <div className={cn(
         "mt-6 grid gap-6",
         sidebarPosition === 'right' && help ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1"

@@ -1,16 +1,12 @@
-
 import React from "react";
 import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
-import { DashboardStatCard } from "@/features/instructor/components/DashboardStatCard";
-import { RecentEnrollmentsCard } from "@/features/instructor/components/RecentEnrollmentsCard";
-import { PopularCoursesCard } from "@/features/instructor/components/PopularCoursesCard";
-import { useDashboardStats } from "@/features/instructor/hooks/useDashboardStats";
 import { BookOpen, Users, BookPlus, TrendingUp, Plus, ChevronRight } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@/contexts/AuthContext";
-import { OnboardingTrigger } from "@/components/onboarding/OnboardingTrigger";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { OnboardingTrigger } from "@/components/onboarding/OnboardingTrigger";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDashboardStats } from "@/features/instructor/hooks/useDashboardStats";
 
 const InstructorDashboard: React.FC = () => {
   const {
@@ -102,15 +98,15 @@ const InstructorDashboard: React.FC = () => {
         ]
       }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {isLoading ? (
           <>
-            <div className="col-span-2 space-y-3">
+            <div className="space-y-3">
               <Skeleton className="h-8 w-48" />
               <Skeleton className="h-20 w-full" />
               <Skeleton className="h-20 w-full" />
             </div>
-            <div className="col-span-2 space-y-3">
+            <div className="space-y-3">
               <Skeleton className="h-8 w-48" />
               <Skeleton className="h-20 w-full" />
               <Skeleton className="h-20 w-full" />
@@ -121,7 +117,6 @@ const InstructorDashboard: React.FC = () => {
             <PageSection 
               title="Inscripciones Recientes" 
               variant="card"
-              className="col-span-2"
             >
               {recentEnrollments.length > 0 ? (
                 <div className="space-y-3">
@@ -161,7 +156,6 @@ const InstructorDashboard: React.FC = () => {
             <PageSection 
               title="Cursos Populares" 
               variant="card"
-              className="col-span-2"
             >
               {popularCourses.length > 0 ? (
                 <div className="space-y-3">
