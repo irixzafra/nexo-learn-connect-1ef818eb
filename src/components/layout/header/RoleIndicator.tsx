@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
-import { UserRole } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { cn } from '@/lib/utils';
 import { 
   DropdownMenu,
@@ -14,8 +14,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 
 interface RoleIndicatorProps {
-  viewingAs?: UserRole | string;
-  onRoleChange?: (role: UserRole) => void;
+  viewingAs?: UserRoleType | string;
+  onRoleChange?: (role: UserRoleType) => void;
 }
 
 export const RoleIndicator: React.FC<RoleIndicatorProps> = ({ 
@@ -24,11 +24,11 @@ export const RoleIndicator: React.FC<RoleIndicatorProps> = ({
 }) => {
   const { toast } = useToast();
   const { userRole } = useAuth();
-  const [selectedRole, setSelectedRole] = useState<UserRole>(
-    (viewingAs && viewingAs !== 'current') ? viewingAs as UserRole : (userRole as UserRole)
+  const [selectedRole, setSelectedRole] = useState<UserRoleType>(
+    (viewingAs && viewingAs !== 'current') ? toUserRoleType(viewingAs) : toUserRoleType(userRole as string)
   );
   
-  const getRoleInfo = (role: string) => {
+  const getRoleInfo = (role: UserRoleType) => {
     switch (role) {
       case 'admin':
         return { label: 'Admin', color: 'bg-yellow-500 hover:bg-yellow-600', icon: <Shield className="h-3 w-3 mr-1" /> };
@@ -41,11 +41,11 @@ export const RoleIndicator: React.FC<RoleIndicatorProps> = ({
       case 'anonimo':
         return { label: 'Anónimo', color: 'bg-gray-500 hover:bg-gray-600', icon: <Ghost className="h-3 w-3 mr-1" /> };
       default:
-        return { label: role, color: 'bg-neutral-500 hover:bg-neutral-600', icon: null };
+        return { label: role.toString(), color: 'bg-neutral-500 hover:bg-neutral-600', icon: null };
     }
   };
   
-  const handleRoleChange = (role: UserRole) => {
+  const handleRoleChange = (role: UserRoleType) => {
     setSelectedRole(role);
     
     if (onRoleChange) {
@@ -58,8 +58,8 @@ export const RoleIndicator: React.FC<RoleIndicatorProps> = ({
     }
   };
   
-  const currentRole = viewingAs === 'current' ? userRole : viewingAs;
-  const { label, color, icon } = getRoleInfo(selectedRole || 'student');
+  const currentRole = viewingAs === 'current' ? toUserRoleType(userRole as string) : toUserRoleType(viewingAs as string);
+  const { label, color, icon } = getRoleInfo(selectedRole);
   
   return (
     <DropdownMenu>

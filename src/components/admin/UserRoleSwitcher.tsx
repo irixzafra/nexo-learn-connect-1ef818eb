@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { UserRoleType, asUserRoleType } from '@/types/auth';
+import { UserRoleType, toUserRoleType, asUserRoleType } from '@/types/auth';
 import { 
   Select,
   SelectContent,
@@ -28,8 +28,8 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
   const { toast } = useToast();
   
   // Use the role from props if provided, otherwise use the context
-  const currentRole = propCurrentRole || contextUserRole || 'student';
-  const [selectedRole, setSelectedRole] = useState<UserRoleType>(currentRole as UserRoleType);
+  const currentRole = propCurrentRole || toUserRoleType(contextUserRole || 'student');
+  const [selectedRole, setSelectedRole] = useState<UserRoleType>(currentRole);
   const [isChanging, setIsChanging] = useState(false);
   
   const handleChange = async () => {

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { UserRole } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { cn } from '@/lib/utils';
 import { 
   Tooltip,
@@ -14,16 +14,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { UserRoleType } from '@/features/users/UserRoleType';
+import { UserRoleDisplay } from '@/features/users/UserRoleType';
 import { Shield, Globe } from 'lucide-react';
 
 interface SidebarFooterSectionProps {
-  userRole: UserRole | null;
+  userRole: UserRoleType | null;
   isCollapsed: boolean;
-  effectiveRole: UserRole;
-  currentViewRole: 'current' | UserRole;
-  handleRoleChange: (role: UserRole) => void;
-  getRoleName: (role: UserRole) => string;
+  effectiveRole: UserRoleType;
+  currentViewRole: 'current' | UserRoleType;
+  handleRoleChange: (role: UserRoleType) => void;
+  getRoleName: (role: UserRoleType) => string;
   currentLanguage: string;
   languages: { code: string; name: string }[];
   changeLanguage: (langCode: string) => void;
@@ -41,7 +41,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   changeLanguage
 }) => {
   // Available roles for switching view
-  const availableRoles: UserRole[] = ['admin', 'instructor', 'student', 'sistemas', 'anonimo'];
+  const availableRoles: UserRoleType[] = ['admin', 'instructor', 'student', 'sistemas', 'anonimo'];
 
   return (
     <div className="mt-auto pt-4 border-t px-4">
@@ -64,13 +64,13 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="flex items-center gap-2 w-full">
                   <Shield className="h-4 w-4" />
-                  <span>{getRoleName(effectiveRole as UserRole)}</span>
+                  <span>{getRoleName(effectiveRole)}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center">
                 {availableRoles.map(role => (
                   <DropdownMenuItem 
-                    key={role}
+                    key={role.toString()}
                     onClick={() => handleRoleChange(role)}
                     className={cn(
                       "cursor-pointer",
@@ -78,7 +78,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
                     )}
                   >
                     <div className="flex items-center gap-2">
-                      <UserRoleType role={role} />
+                      <UserRoleDisplay role={role} />
                     </div>
                   </DropdownMenuItem>
                 ))}

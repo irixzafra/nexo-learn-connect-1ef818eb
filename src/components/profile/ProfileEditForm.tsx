@@ -14,14 +14,19 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { UserProfile, UserRole } from '@/types/auth';
+import { UserProfile, UserRoleType } from '@/types/auth';
 import { useProfileEdit } from '@/hooks/use-profile-edit';
+
+// Define allowed roles to prevent the type error with the enum
+const allowedRoles = [
+  'admin', 'instructor', 'student', 'sistemas', 'anonimo'
+] as const;
 
 const profileFormSchema = z.object({
   full_name: z.string().min(2, {
     message: "El nombre debe tener al menos 2 caracteres.",
   }),
-  role: z.enum(['admin', 'instructor', 'student', 'sistemas', 'anonimo']).default('student'),
+  role: z.enum(allowedRoles).default('student'),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -37,7 +42,9 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ profile, user_id, onS
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       full_name: profile?.full_name || '',
-      role: profile?.role || 'student',
+      role: (profile?.role && allowedRoles.includes(profile.role as any)) 
+        ? (profile.role as any) 
+        : 'student',
     },
   });
   

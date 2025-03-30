@@ -74,5 +74,5 @@ export const toUserRoleType = (value: string | UserRoleType): UserRoleType => {
   return asUserRoleType(value as string);
 };
 
-// For backward compatibility, export a type alias, but don't declare a duplicate
-export type { UserRoleType as UserRole };
+// This type alias using 'type' keyword is NOT exported, avoiding the duplicate conflict
+type UserRoleAlias = UserRoleType;

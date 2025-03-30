@@ -3,7 +3,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { HeaderActions } from './header/HeaderActions';
 import { UserMenu } from './header/UserMenu';
@@ -12,7 +12,7 @@ import MainNavigationMenu from './header/MainNavigationMenu';
 import { getPageTitle } from './header/utils/getTitleFromPath';
 
 interface HeaderContentProps {
-  onRoleChange?: (role: UserRole) => void;
+  onRoleChange?: (role: UserRoleType) => void;
 }
 
 const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
@@ -31,7 +31,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
       <div className="container mx-auto flex justify-between items-center h-14">
         <HeaderLogo 
           pageTitle={pageTitleText} 
-          viewAsRole={userRole as UserRole} 
+          viewAsRole={toUserRoleType(userRole as string)} 
         />
         
         <MainNavigationMenu 

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRoleType, asUserRoleType, toUserRoleType } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { 
   Popover,
   PopoverContent,
@@ -33,7 +33,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   }
 
   const getEffectiveRole = () => {
-    if (currentViewRole === 'current') return userRole;
+    if (currentViewRole === 'current') return toUserRoleType(userRole as string);
     return currentViewRole;
   };
 
@@ -42,8 +42,8 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   const handleRoleChange = (role: UserRoleType | 'current') => {
     if (onChange) {
       if (role === 'current') {
-        onChange(userRole as UserRoleType);
-        toast.success(`Volviendo a tu rol original: ${getRoleLabel(userRole as UserRoleType)}`);
+        onChange(toUserRoleType(userRole as string));
+        toast.success(`Volviendo a tu rol original: ${getRoleLabel(toUserRoleType(userRole as string))}`);
       } else {
         onChange(role);
         toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);
@@ -94,7 +94,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     getRoleLabel(role).toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== userRole;
+  const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== toUserRoleType(userRole as string);
 
   return (
     <div className="px-2 py-1 mb-2">
@@ -112,9 +112,9 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
           >
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-6 h-6">
-                {getRoleIcon(effectiveRole as UserRoleType)}
+                {getRoleIcon(effectiveRole)}
               </div>
-              <span className="font-medium">{getRoleLabel(effectiveRole as UserRoleType)}</span>
+              <span className="font-medium">{getRoleLabel(effectiveRole)}</span>
               {isViewingAsOtherRole && (
                 <Badge variant="outline" className="h-5 text-xs bg-amber-50 text-amber-800 border-amber-200">
                   Vista previa
@@ -140,7 +140,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
               <CommandGroup heading="Cambiar vista">
                 {filteredRoles.map((role) => (
                   <CommandItem 
-                    key={role.toString()}
+                    key={role}
                     onSelect={() => handleRoleChange(role)}
                     className="flex items-center gap-2 cursor-pointer"
                   >
@@ -164,7 +164,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
                       className="flex items-center gap-2 cursor-pointer"
                     >
                       <ArrowLeftRight className="h-4 w-4 mr-2" />
-                      <span>Volver a mi rol ({getRoleLabel(userRole as UserRoleType)})</span>
+                      <span>Volver a mi rol ({getRoleLabel(toUserRoleType(userRole as string))})</span>
                     </CommandItem>
                   </CommandGroup>
                 </>

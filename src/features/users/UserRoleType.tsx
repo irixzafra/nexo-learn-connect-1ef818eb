@@ -10,7 +10,7 @@ interface UserRoleDisplayProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-// Renamed component to avoid conflict with the type
+// Component to display user roles with appropriate styling
 export const UserRoleDisplay: React.FC<UserRoleDisplayProps> = ({ 
   role, 
   showIcon = true,
@@ -58,5 +58,5 @@ export const UserRoleDisplay: React.FC<UserRoleDisplayProps> = ({
   );
 };
 
-// Also export with the old name for backward compatibility to avoid breaking changes
-export const UserRoleType = UserRoleDisplay;
+// Export the component with a different name to avoid conflicts with the type
+export const UserRoleTypeDisplay = UserRoleDisplay;

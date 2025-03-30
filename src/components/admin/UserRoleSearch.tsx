@@ -63,7 +63,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
         throw error;
       }
 
-      // Update local state
+      // Update local state with properly typed data
       setUsers(prevUsers => 
         prevUsers.map(user => 
           user.id === userId ? { ...user, role: newRole } : user

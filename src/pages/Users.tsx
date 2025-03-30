@@ -1,6 +1,7 @@
+
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { UserProfile, UserRole } from "@/types/auth";
+import { UserProfile, UserRoleType, toUserRoleType } from "@/types/auth";
 import {
   Table,
   TableBody,
@@ -140,7 +141,7 @@ const Users: React.FC = () => {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: UserRole) => {
+  const handleRoleChange = async (userId: string, newRole: UserRoleType) => {
     try {
       if (userId === user?.id) {
         toast({
