@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -16,6 +15,7 @@ interface EnhancedCourseCardProps {
   isNew?: boolean;
   isUpcoming?: boolean;
   isFeatured?: boolean;
+  onClick?: () => void;
 }
 
 export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({ 
@@ -24,7 +24,8 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
   isPopular = false,
   isNew = false,
   isUpcoming = false,
-  isFeatured = false
+  isFeatured = false,
+  onClick
 }) => {
   const isStartingSoon = course.start_date && new Date(course.start_date) > new Date() && 
     new Date(course.start_date).getTime() - new Date().getTime() < 14 * 24 * 60 * 60 * 1000; // 14 days
@@ -42,6 +43,12 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
     });
   };
 
+  const cardClickHandler = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -49,11 +56,13 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
       transition={{ duration: 0.5, delay: index * 0.1 }}
       whileHover={{ y: -5 }}
       className="h-full"
+      onClick={cardClickHandler}
     >
       <Card className={cn(
         "h-full flex flex-col overflow-hidden transition-all duration-300",
         "hover:shadow-md border-opacity-50",
-        isFeatured && "border-primary/30 bg-primary/5"
+        isFeatured && "border-primary/30 bg-primary/5",
+        onClick && "cursor-pointer"
       )}>
         {/* Course Image */}
         <div className="aspect-video overflow-hidden relative">
@@ -116,6 +125,10 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
             variant="ghost" 
             size="icon"
             className="absolute bottom-2 right-2 bg-black/20 text-white hover:bg-black/40 backdrop-blur-sm rounded-full w-8 h-8"
+            onClick={(e) => {
+              e.stopPropagation();
+              // Bookmark functionality would go here
+            }}
           >
             <Bookmark className="h-4 w-4" />
           </Button>
@@ -204,3 +217,5 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
     </motion.div>
   );
 };
+
+export default EnhancedCourseCard;
