@@ -10,11 +10,10 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import {
-  StudentsTable,
-  StudentsSearchBar,
   DeleteStudentDialog,
   ContactInfoDialog
 } from './students';
+import StudentContactButtons from './students/StudentContactButtons';
 import {
   Table,
   TableHeader,
@@ -200,24 +199,11 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({ courseId })
                       {new Date(student.enrolled_at).toLocaleDateString('es-ES')}
                     </TableCell>
                     <TableCell>
-                      <div className="flex space-x-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => handleSendEmail(student)}
-                          disabled={!student.email}
-                        >
-                          Email
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => handleCallPhone(student)}
-                          disabled={!student.phone}
-                        >
-                          Teléfono
-                        </Button>
-                      </div>
+                      <StudentContactButtons
+                        student={student}
+                        onEmailClick={handleSendEmail}
+                        onPhoneClick={handleCallPhone}
+                      />
                     </TableCell>
                     <TableCell>
                       <Button 
