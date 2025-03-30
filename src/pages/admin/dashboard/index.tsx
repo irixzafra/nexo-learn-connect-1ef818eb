@@ -1,4 +1,3 @@
-
 import React from 'react';
 import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
 import { 
@@ -20,29 +19,28 @@ const AdminDashboard: React.FC = () => {
   const { stats, isLoading } = useAdminDashboardStats();
 
   // Create a simplified array of admin menu items for direct access to main sections
-  // Updated to match the AdminMenuItem interface which requires 'label' instead of 'title'
   const adminQuickMenuItems = [
     {
       label: "Gestionar Usuarios",
-      icon: <Users className="h-5 w-5 text-blue-500" />,
+      icon: Users,
       description: "Administrar usuarios y roles",
       href: "/admin/users"
     },
     {
       label: "Gestionar Cursos",
-      icon: <BookOpen className="h-5 w-5 text-green-500" />,
+      icon: BookOpen,
       description: "Administrar catálogo de cursos",
       href: "/admin/courses"
     },
     {
       label: "Gestionar Instructores",
-      icon: <School className="h-5 w-5 text-orange-500" />,
+      icon: School,
       description: "Administrar instructores",
       href: "/admin/instructors"
     },
     {
       label: "Roles y Permisos",
-      icon: <Users className="h-5 w-5 text-purple-500" />,
+      icon: Users,
       description: "Configurar roles de usuarios",
       href: "/admin/roles"
     }

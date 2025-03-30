@@ -18,6 +18,7 @@ const AdminRoutes: React.FC = () => {
       <Route path="courses" element={<AdminCourses />} />
       <Route path="courses/:courseId" element={<AdminCourseDetail />} />
       <Route path="system-settings" element={<SystemSettings />} />
+      <Route path="settings" element={<SystemSettings />} /> {/* Nueva ruta añadida */}
       <Route path="categories" element={<CategoryManagement />} />
       <Route path="users" element={<UserManagement />} />
       <Route path="roles" element={<RoleManagement />} />
