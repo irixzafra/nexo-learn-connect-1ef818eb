@@ -13,7 +13,9 @@ export interface FeaturedCourse {
   image_url: string;
   price: number;
   instructor: {
-    name: string;
+    id: string; // Added to match Course type
+    full_name: string; // Added to match Course type
+    name?: string; // Keep for backward compatibility
     avatar?: string;
   };
   category: string;
@@ -25,7 +27,7 @@ export interface FeaturedCourse {
   discount?: number;
   tags?: string[];
   start_date?: string;
-  currency: 'eur' | 'usd'; // Making currency required
+  currency: 'eur' | 'usd'; // Required as in Course type
   slug?: string;
   instructor_id: string;
   is_published: boolean;
