@@ -30,7 +30,7 @@ const StudentContactButtons: React.FC<StudentContactButtonsProps> = ({
             onClick={() => onEmailClick(student)}
             className="relative"
           >
-            <Mail className={`h-4 w-4 ${student.email ? 'text-blue-500' : 'text-orange-400'}`} />
+            <Mail className={`h-4 w-4 ${student.email ? 'text-blue-500' : 'text-gray-400'}`} />
             {!student.email && (
               <span className="absolute -top-1 -right-1 h-2 w-2 bg-orange-500 rounded-full"></span>
             )}
@@ -51,7 +51,7 @@ const StudentContactButtons: React.FC<StudentContactButtonsProps> = ({
             onClick={() => onPhoneClick(student)}
             className="relative"
           >
-            <Phone className={`h-4 w-4 ${student.phone ? 'text-green-500' : 'text-orange-400'}`} />
+            <Phone className={`h-4 w-4 ${student.phone ? 'text-green-500' : 'text-gray-400'}`} />
             {!student.phone && (
               <span className="absolute -top-1 -right-1 h-2 w-2 bg-orange-500 rounded-full"></span>
             )}
