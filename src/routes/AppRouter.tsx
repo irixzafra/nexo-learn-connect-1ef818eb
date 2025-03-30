@@ -1,188 +1,62 @@
-
-import React, { Suspense, lazy } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import ProtectedRoute from "@/components/ProtectedRoute";
-import NotFound from '@/pages/NotFound';
-import Profile from '@/pages/Profile';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import AppLayout from '@/layouts/AppLayout';
-import { useAuth } from '@/contexts/AuthContext';
-import { Loader2 } from 'lucide-react';
+import GuestLayout from '@/layouts/GuestLayout';
+import Home from '@/pages/Home';
+import Courses from '@/pages/Courses';
+import CourseDetail from '@/pages/CourseDetail';
+import LessonDetail from '@/pages/LessonDetail';
+import Pricing from '@/pages/Pricing';
+import Profile from '@/pages/Profile';
+import Settings from '@/pages/Settings';
+import AdminRoutes from './AdminRoutes';
+import InstructorRoutes from './InstructorRoutes';
+import AuthRoutes from './AuthRoutes';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import GuestRoute from '@/components/GuestRoute';
+import PaymentSuccess from '@/pages/payment/PaymentSuccess';
+import PaymentCancel from '@/pages/payment/PaymentCancel';
+import Community from '@/pages/Community';
+import PostDetail from '@/pages/PostDetail';
+import Messages from '@/pages/placeholder/Messages';
+import Network from '@/pages/placeholder/Network';
+import NotificationCenter from "@/pages/NotificationCenter";
 
-// Componente de carga para Suspense
-const LoadingFallback = () => (
-  <div className="flex h-[50vh] w-full items-center justify-center">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
-);
-
-// Lazy loading de rutas
-const PublicRoutes = lazy(() => import('./PublicRoutes'));
-const UserRoutes = lazy(() => import('./UserRoutes'));
-const InstructorRoutes = lazy(() => import('./InstructorRoutes'));
-const AdminRoutes = lazy(() => import('./AdminRoutes'));
-const PaymentRoutes = lazy(() => import('./PaymentRoutes'));
-const CoursesCatalog = lazy(() => import('@/pages/CoursesCatalog'));
-const CourseDetail = lazy(() => import('@/pages/CourseDetail'));
-const CourseLanding = lazy(() => import('@/pages/CourseLanding'));
-const CourseLearn = lazy(() => import('@/pages/student/CourseLearn'));
-const LessonView = lazy(() => import('@/pages/student/LessonView'));
-const Notifications = lazy(() => import('@/pages/Notifications'));
-const Messages = lazy(() => import('@/pages/placeholder/Messages'));
-const Billing = lazy(() => import('@/pages/placeholder/Billing'));
-const Community = lazy(() => import('@/pages/Community'));
-const PaymentSuccess = lazy(() => import('@/pages/payment/PaymentSuccess'));
-const PaymentCancel = lazy(() => import('@/pages/payment/PaymentCancel'));
-
-const AppRouter: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-
+const AppRouter = () => {
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <Routes>
-        {/* Public routes are accessible without authentication */}
-        <Route path="/*" element={<PublicRoutes />} />
-        
-        {/* Course public landing page */}
-        <Route path="/courses/:id" element={<CourseLanding />} />
-        
-        {/* User routes for standard authenticated users */}
-        <Route path="/home/*" element={
-          <ProtectedRoute>
-            <Suspense fallback={<LoadingFallback />}>
-              <UserRoutes />
-            </Suspense>
-          </ProtectedRoute>
-        } />
-        
-        {/* Course learning routes (authenticated) */}
-        <Route path="/courses/:courseId/learn" element={
-          <ProtectedRoute>
-            <Suspense fallback={<LoadingFallback />}>
-              <CourseLearn />
-            </Suspense>
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/courses/:courseId/learn/:lessonId" element={
-          <ProtectedRoute>
-            <Suspense fallback={<LoadingFallback />}>
-              <LessonView />
-            </Suspense>
-          </ProtectedRoute>
-        } />
-        
-        {/* Community route */}
-        <Route path="/community" element={
-          <Suspense fallback={<LoadingFallback />}>
-            <Community />
-          </Suspense>
-        } />
-        
-        {/* Página de notificaciones */}
-        <Route path="/notifications" element={
-          <ProtectedRoute>
-            <AppLayout>
-              <Suspense fallback={<LoadingFallback />}>
-                <Notifications />
-              </Suspense>
-            </AppLayout>
-          </ProtectedRoute>
-        } />
-        
-        {/* Página de mensajes */}
-        <Route path="/messages" element={
-          <ProtectedRoute>
-            <AppLayout>
-              <Suspense fallback={<LoadingFallback />}>
-                <Messages />
-              </Suspense>
-            </AppLayout>
-          </ProtectedRoute>
-        } />
-        
-        {/* Payment routes */}
-        <Route path="/payment/*" element={
-          <Suspense fallback={<LoadingFallback />}>
-            <PaymentRoutes />
-          </Suspense>
-        } />
-        
-        {/* Success and cancel pages for payments */}
-        <Route path="/payment/success" element={
-          <Suspense fallback={<LoadingFallback />}>
-            <PaymentSuccess />
-          </Suspense>
-        } />
-        
-        <Route path="/payment/cancel" element={
-          <Suspense fallback={<LoadingFallback />}>
-            <PaymentCancel />
-          </Suspense>
-        } />
-        
-        {/* Billing page */}
-        <Route path="/billing" element={
-          <ProtectedRoute>
-            <AppLayout>
-              <Suspense fallback={<LoadingFallback />}>
-                <Billing />
-              </Suspense>
-            </AppLayout>
-          </ProtectedRoute>
-        } />
-        
-        {/* Role-specific routes */}
-        <Route path="/instructor/*" element={
-          <ProtectedRoute>
-            <Suspense fallback={<LoadingFallback />}>
-              <InstructorRoutes />
-            </Suspense>
-          </ProtectedRoute>
-        } />
-        
-        {/* Admin routes - MODIFIED: removed the double layout wrapping */}
-        <Route path="/admin/*" element={
-          <ProtectedRoute>
-            <Suspense fallback={<LoadingFallback />}>
-              <AdminRoutes />
-            </Suspense>
-          </ProtectedRoute>
-        } />
-        
-        {/* Course catalog */}
-        <Route path="/courses" element={
-          <AppLayout>
-            <Suspense fallback={<LoadingFallback />}>
-              <CoursesCatalog />
-            </Suspense>
-          </AppLayout>
-        } />
-        
-        {/* My courses route with redirection to user routes */}
-        <Route path="/my-courses" element={
-          <ProtectedRoute>
-            <Navigate to="/home/my-courses" replace />
-          </ProtectedRoute>
-        } />
-        
-        {/* Profile with layout */}
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <AppLayout>
-              <div className="container mx-auto px-4 py-6">
-                <Profile />
-              </div>
-            </AppLayout>
-          </ProtectedRoute>
-        } />
-        
-        {/* Index redirect to home or landing page */}
-        <Route path="/index" element={<Navigate to="/" replace />} />
-        
-        {/* Catch-all route for not found pages */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Suspense>
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<AppLayout><Home /></AppLayout>} />
+      <Route path="/courses" element={<AppLayout><Courses /></AppLayout>} />
+      <Route path="/courses/:courseId" element={<AppLayout><CourseDetail /></AppLayout>} />
+      <Route path="/lessons/:lessonId" element={<AppLayout><LessonDetail /></AppLayout>} />
+      <Route path="/pricing" element={<AppLayout><Pricing /></AppLayout>} />
+      <Route path="/community" element={<AppLayout><Community /></AppLayout>} />
+      <Route path="/posts/:postId" element={<AppLayout><PostDetail /></AppLayout>} />
+
+      {/* Auth Routes */}
+      <Route path="/auth/*" element={<GuestRoute><AuthRoutes /></GuestRoute>} />
+
+      {/* Admin Routes */}
+      <Route path="/admin/*" element={<ProtectedRoute><AdminRoutes /></ProtectedRoute>} />
+
+      {/* Instructor Routes */}
+      <Route path="/instructor/*" element={<ProtectedRoute><InstructorRoutes /></ProtectedRoute>} />
+
+      {/* User Routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
+        <Route path="/settings" element={<AppLayout><Settings /></AppLayout>} />
+        <Route path="/payment/success" element={<AppLayout><PaymentSuccess /></AppLayout>} />
+        <Route path="/payment/cancel" element={<AppLayout><PaymentCancel /></AppLayout>} />
+        <Route path="/messages" element={<AppLayout><Messages /></AppLayout>} />
+        <Route path="/network" element={<AppLayout><Network /></AppLayout>} />
+        <Route path="/notifications" element={<NotificationCenter />} />
+      </Route>
+
+      {/* Catch-all route for 404 */}
+      <Route path="*" element={<div>404 Not Found</div>} />
+    </Routes>
   );
 };
 

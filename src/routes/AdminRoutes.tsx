@@ -15,6 +15,8 @@ const FinanceManagement = lazy(() => import('@/pages/admin/FinanceManagement'));
 const LearningPaths = lazy(() => import('@/pages/admin/learning-paths/LearningPaths'));
 // Test data management page
 const TestDataManagement = lazy(() => import('@/pages/admin/TestDataManagement'));
+// Notification Management
+const NotificationManagement = lazy(() => import('@/pages/admin/notifications/NotificationManagement'));
 
 // Loading component for Suspense
 const AdminLoading = () => (
@@ -37,6 +39,7 @@ const AdminRoutes = () => {
           <Route path="/finanzas" element={<FinanceManagement />} />
           <Route path="/learning-paths/*" element={<LearningPaths />} />
           <Route path="/test-data" element={<TestDataManagement />} />
+          <Route path="/notifications" element={<NotificationManagement />} />
           <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>
       </Suspense>
