@@ -10,9 +10,14 @@ import { Card, CardContent } from '@/components/ui/card';
 interface StudentsSectionProps {
   courseId: string;
   courseName: string;
+  showTitle?: boolean;
 }
 
-const StudentsSection: React.FC<StudentsSectionProps> = ({ courseId, courseName }) => {
+const StudentsSection: React.FC<StudentsSectionProps> = ({ 
+  courseId, 
+  courseName,
+  showTitle = true 
+}) => {
   const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
   const { enrolledStudents, refetch } = useCourseEnrollments(courseId);
   
@@ -22,10 +27,12 @@ const StudentsSection: React.FC<StudentsSectionProps> = ({ courseId, courseName 
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold mb-2">Estudiantes Inscritos</h2>
-        <p className="text-muted-foreground">Gestión de participantes del curso</p>
-      </div>
+      {showTitle && (
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Estudiantes Inscritos</h2>
+          <p className="text-muted-foreground">Gestión de participantes del curso</p>
+        </div>
+      )}
       
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
