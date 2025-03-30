@@ -10,7 +10,9 @@ import {
   ShieldCheck, 
   UserPlus, 
   FileSpreadsheet,
-  Download
+  Download,
+  LayoutDashboard,
+  BarChart
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -39,7 +41,7 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
       className="w-full"
     >
       <div className="flex justify-between items-center mb-6">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full md:w-auto">
+        <TabsList className="grid grid-cols-3 md:grid-cols-4 w-full md:w-auto">
           <TabsTrigger value="users-list" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span className="hidden md:inline">Usuarios</span>

@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
-import { Search, RefreshCw, UserPlus, ChevronLeft, UserCog, PencilLine, Trash2, ArrowLeft } from "lucide-react";
+import { Search, RefreshCw, UserPlus, ChevronLeft, UserCog, PencilLine, Trash2, ArrowLeft, LayoutDashboard, Users as UsersIcon, BarChart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRoleSearch } from "@/components/admin/UserRoleSearch";
 import SectionPageLayout, { PageSection } from "@/layouts/SectionPageLayout";
@@ -189,9 +189,18 @@ const UserManagement: React.FC = () => {
         className="space-y-6"
       >
         <TabsList>
-          <TabsTrigger value="overview">Vista General</TabsTrigger>
-          <TabsTrigger value="user-management">Gestión de Usuarios</TabsTrigger>
-          <TabsTrigger value="analytics">Analíticas</TabsTrigger>
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <LayoutDashboard className="h-4 w-4" />
+            <span className="hidden md:inline">Vista General</span>
+          </TabsTrigger>
+          <TabsTrigger value="user-management" className="flex items-center gap-2">
+            <UsersIcon className="h-4 w-4" />
+            <span className="hidden md:inline">Gestión de Usuarios</span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <BarChart className="h-4 w-4" />
+            <span className="hidden md:inline">Analíticas</span>
+          </TabsTrigger>
         </TabsList>
         
         {/* Vista General / Dashboard */}
