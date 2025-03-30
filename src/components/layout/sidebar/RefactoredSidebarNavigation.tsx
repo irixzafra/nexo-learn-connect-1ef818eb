@@ -22,7 +22,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
   onRoleChange 
 }) => {
   const { user, session, profile } = useAuth();
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
   const location = useLocation();
@@ -59,7 +59,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
   return (
     <div className="h-full flex flex-col py-4">
       {/* Logo at the top with full title and subtitle */}
-      <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={null} />
+      <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
 
       {/* Main Navigation Section */}
       <SidebarMainNavigation 
