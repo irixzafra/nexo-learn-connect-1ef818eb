@@ -20,7 +20,7 @@ export const CommunitySection: React.FC<CommunitySectionProps> = ({ expanded, on
       isExpanded={expanded} 
       onToggle={onToggle}
     >
-      <MenuItem to="/messages" icon={MessageSquare} label="Mensajes" badge={unreadCount > 0 ? unreadCount.toString() : undefined} />
+      <MenuItem to="/messages" icon={MessageSquare} label="Mensajes" badge={unreadCount > 0 ? unreadCount : undefined} />
       <MenuItem to="/notifications" icon={Bell} label="Notificaciones" />
       <MenuItem to="/network" icon={Users} label="Red de Contactos" disabled={true} />
     </SidebarGroup>

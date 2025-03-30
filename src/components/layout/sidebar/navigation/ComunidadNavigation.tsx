@@ -1,84 +1,107 @@
 
 import React from 'react';
-import { Users, MessageSquare, Newspaper, UsersRound, Rss, Trophy, Bell } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 import { 
-  SidebarMenu
-} from '@/components/ui/sidebar';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
-import { SidebarGroup } from '../SidebarGroup';
-import { MenuItem } from '../MenuItems';
-import { useNotifications } from '@/hooks/useNotifications';
+  Users, 
+  MessageSquare, 
+  Calendar, 
+  Briefcase, 
+  Megaphone, 
+  Newspaper, 
+  Settings
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface ComunidadNavigationProps {
-  isOpen: boolean;
-  onToggle: () => void;
+  isCollapsed: boolean;
+  messagesCount?: number;
+  notificationsCount?: number;
 }
 
-const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({ 
-  isOpen, 
-  onToggle
+export const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
+  isCollapsed,
+  messagesCount = 0,
+  notificationsCount = 0
 }) => {
-  const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
-  const { unreadCount: notificationsCount } = useNotifications();
+  const location = useLocation();
   
-  // This is a placeholder - in a real implementation, you would fetch the unread messages count
-  const messagesCount = 2;
-
+  const isActive = (path: string) => {
+    return location.pathname.startsWith(path);
+  };
+  
+  const routes = [
+    {
+      href: '/comunidad/foros',
+      label: 'Foros',
+      icon: Newspaper,
+      active: isActive('/comunidad/foros'),
+    },
+    {
+      href: '/comunidad/grupos',
+      label: 'Grupos',
+      icon: Users,
+      active: isActive('/comunidad/grupos'),
+    },
+    {
+      href: '/comunidad/mensajes',
+      label: 'Mensajes',
+      icon: MessageSquare,
+      active: isActive('/comunidad/mensajes'),
+      badge: messagesCount,
+    },
+    {
+      href: '/comunidad/eventos',
+      label: 'Eventos',
+      icon: Calendar,
+      active: isActive('/comunidad/eventos'),
+    },
+    {
+      href: '/comunidad/empleos',
+      label: 'Empleos',
+      icon: Briefcase,
+      active: isActive('/comunidad/empleos'),
+    },
+    {
+      href: '/comunidad/anuncios',
+      label: 'Anuncios',
+      icon: Megaphone,
+      active: isActive('/comunidad/anuncios'),
+      badge: notificationsCount,
+    },
+  ];
+  
   return (
-    <SidebarGroup
-      label="Comunidad"
-      icon={Users}
-      isExpanded={isOpen}
-      onToggle={onToggle}
-    >
-      <SidebarMenu>
-        <MenuItem
-          to="/community"
-          icon={Rss}
-          label="Feed"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/community?tab=popular"
-          icon={Newspaper}
-          label="Popular"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/community?tab=leaderboard"
-          icon={Trophy}
-          label="Leaderboard"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/messages"
-          icon={MessageSquare}
-          label="Mensajes"
-          badge={messagesCount > 0 ? messagesCount.toString() : undefined}
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/notifications"
-          icon={Bell}
-          label="Notificaciones"
-          badge={notificationsCount > 0 ? notificationsCount.toString() : undefined}
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/community?tab=groups"
-          icon={UsersRound}
-          label="Grupos"
-          disabled={false}
-          isCollapsed={isCollapsed}
-        />
-      </SidebarMenu>
-    </SidebarGroup>
+    <div className="space-y-1 py-2">
+      {routes.map((route) => (
+        <Link
+          key={route.href}
+          to={route.href}
+          className={cn(
+            "flex items-center py-2 px-3 text-sm font-medium rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors",
+            route.active 
+              ? "bg-gray-100 dark:bg-gray-800 text-primary" 
+              : "text-muted-foreground"
+          )}
+        >
+          <route.icon className={cn("h-4 w-4 mr-3", route.active && "text-primary")} />
+          {!isCollapsed && (
+            <span>{route.label}</span>
+          )}
+          {route.badge && route.badge > 0 && (
+            <Badge 
+              variant="default" 
+              className={cn(
+                "ml-auto rounded-full px-1.5 h-5 min-w-5", 
+                isCollapsed && "ml-0"
+              )}
+            >
+              {route.badge}
+            </Badge>
+          )}
+        </Link>
+      ))}
+    </div>
   );
 };
 
