@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { Post, PostCategory } from '@/types/community';
 import { useToast } from '@/hooks/use-toast';
 
-export const useCommunityFeed = (categoryId?: string) => {
+export const useCommunityFeed = (categoryId?: string | null) => {
   const { toast } = useToast();
 
   return useQuery({

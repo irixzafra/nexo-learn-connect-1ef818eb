@@ -7,10 +7,10 @@ import { useCommunityFeed } from '../hooks/useCommunityFeed';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const CommunityFeed: React.FC = () => {
-  const [currentFilter, setCurrentFilter] = useState<string>('all');
-  const { posts, isLoading, error } = useCommunityFeed(currentFilter);
+  const [currentFilter, setCurrentFilter] = useState<string | null>(null);
+  const { data: posts = [], isLoading, error } = useCommunityFeed(currentFilter);
 
-  const handleFilterChange = (filter: string) => {
+  const handleFilterChange = (filter: string | null) => {
     setCurrentFilter(filter);
   };
 
@@ -18,7 +18,10 @@ export const CommunityFeed: React.FC = () => {
     <div className="space-y-6">
       <EnhancedCreatePostForm />
       
-      <FeedFilters activeFilter={currentFilter} onFilterChange={handleFilterChange} />
+      <FeedFilters 
+        selectedCategory={currentFilter} 
+        onCategoryChange={handleFilterChange} 
+      />
       
       {isLoading && (
         <div className="space-y-4">
