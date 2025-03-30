@@ -1646,7 +1646,6 @@ export type Database = {
           user_id: string
           enrolled_at: string
           full_name: string
-          email: string
         }[]
       }
       get_table_columns: {

@@ -7,7 +7,6 @@ export interface EnrolledStudent {
   id: string;
   user_id: string;
   full_name: string | null;
-  email: string | null;
   enrolled_at: string;
 }
 
@@ -25,7 +24,7 @@ export const useCourseEnrollments = (courseId: string) => {
           throw new Error("ID del curso no proporcionado");
         }
         
-        // Use the new RPC function to get enrollments with user details
+        // Use the updated RPC function (without email field)
         const { data, error } = await supabase
           .rpc('get_course_enrollments_with_details', { course_id_param: courseId });
 
@@ -38,7 +37,6 @@ export const useCourseEnrollments = (courseId: string) => {
           id: enrollment.enrollment_id,
           user_id: enrollment.user_id,
           full_name: enrollment.full_name || `Usuario ${enrollment.user_id.substring(0, 8)}`,
-          email: enrollment.email,
           enrolled_at: enrollment.enrolled_at
         }));
       } catch (error: any) {
