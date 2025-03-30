@@ -46,12 +46,28 @@ import { useNavigate } from "react-router-dom";
 import ManualEnrollmentDialog from "@/components/admin/ManualEnrollmentDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-// Definimos correctamente la interfaz Instructor
+// Definición correcta de la interfaz
 interface Instructor {
   full_name: string | null;
 }
 
-// Interfaz para Course con la estructura correcta
+// Interfaz para los datos que vienen de la base de datos
+interface CourseData {
+  id: string;
+  title: string;
+  description: string | null;
+  price: number;
+  currency: string;
+  instructor_id: string;
+  is_published: boolean;
+  status?: string;
+  students_count?: number;
+  created_at: string;
+  updated_at: string;
+  profiles?: Instructor | null;
+}
+
+// Interfaz para el modelo de curso después de formatear
 interface Course {
   id: string;
   title: string;
@@ -64,7 +80,7 @@ interface Course {
   students_count: number;
   created_at: string;
   updated_at: string;
-  profiles?: Instructor | null; // Cambiado de Instructor a Instructor | null para manejar valores nulos
+  profiles?: Instructor | null;
   instructors?: {
     full_name: string | null;
   };
@@ -113,12 +129,13 @@ const AdminCourses: React.FC = () => {
       }
       
       // Formateamos los datos correctamente
-      const formattedCourses: Course[] = data?.map(course => ({
+      const formattedCourses: Course[] = data?.map((course: CourseData) => ({
         ...course,
         instructors: {
           full_name: course.profiles?.full_name || 'Sin instructor asignado'
         },
-        status: course.status || (course.is_published ? 'published' : 'draft')
+        status: course.status || (course.is_published ? 'published' : 'draft'),
+        students_count: course.students_count || 0
       })) || [];
       
       setCourses(formattedCourses);
