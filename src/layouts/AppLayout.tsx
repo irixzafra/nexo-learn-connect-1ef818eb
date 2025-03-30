@@ -15,11 +15,9 @@ import {
   SidebarContent,
 } from "@/components/ui/sidebar";
 import { UserMenu } from "@/components/layout/header/UserMenu";
-import { RoleIndicator } from "@/components/layout/header/RoleIndicator";
 import { NexoLogo } from "@/components/ui/logo";
-import { Bell, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { NotificationIndicator } from "@/components/notifications/NotificationIndicator";
 
 interface AppLayoutProps {
@@ -68,7 +66,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
 
           {/* Main Content */}
           <div className="flex-1 flex flex-col min-h-screen">
-            {/* Minimal top bar with user menu and role indicator */}
+            {/* Minimal top bar with user menu */}
             <div className="h-14 border-b flex items-center justify-between px-4">
               <div className="md:hidden">
                 {isMobile && (
@@ -92,7 +90,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
                   <Phone className="h-5 w-5" />
                 </Button>
                 
-                {userRole && <RoleIndicator viewingAs={viewAsRole === 'current' ? userRole : viewAsRole} onRoleChange={handleRoleChange} />}
                 <UserMenu />
               </div>
             </div>

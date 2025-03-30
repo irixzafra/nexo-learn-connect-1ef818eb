@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserMenu } from './header/UserMenu';
@@ -17,7 +16,6 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { NexoLogo } from '@/components/ui/logo';
 import { useAuth } from '@/contexts/AuthContext';
-import { RoleIndicator } from './header/RoleIndicator';
 import { 
   Home, 
   BookOpen, 
@@ -55,7 +53,6 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
   const { toggleSidebar } = useSidebar();
   const isMobile = useIsMobile();
   
-  // Extract page title from path
   const getPageTitle = () => {
     const path = location.pathname.split('/').filter(p => p);
     if (path.length === 0) return 'Inicio';
@@ -90,7 +87,6 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
   return (
     <header className="w-full py-2 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-20 border-b">
       <div className="container mx-auto flex justify-between items-center h-14">
-        {/* Left section with logo and mobile menu */}
         <div className="flex items-center gap-4">
           {isMobile ? (
             <Sheet>
@@ -121,10 +117,8 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
           {!isMobile && <span className="text-lg font-medium">{getPageTitle()}</span>}
         </div>
         
-        {/* Main Navigation Menu */}
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList className="gap-1">
-            {/* 1. Inicio */}
             <NavigationMenuItem>
               <NavigationMenuTrigger className={cn(
                 location.pathname === '/home' || location.pathname === '/' ? "text-primary" : ""
@@ -150,7 +144,6 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
               </NavigationMenuContent>
             </NavigationMenuItem>
             
-            {/* 2. Explorar */}
             <NavigationMenuItem>
               <NavigationMenuTrigger className={cn(
                 location.pathname.includes('/courses') || location.pathname.includes('/learning-paths') ? "text-primary" : ""
@@ -172,7 +165,6 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
               </NavigationMenuContent>
             </NavigationMenuItem>
             
-            {/* 3. Comunidad */}
             <NavigationMenuItem>
               <NavigationMenuTrigger className={cn(
                 location.pathname.includes('/community') ? "text-primary" : ""
@@ -202,7 +194,6 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
               </NavigationMenuContent>
             </NavigationMenuItem>
             
-            {/* 4. Mensajes */}
             <NavigationMenuItem>
               <Link to="/messages">
                 <NavigationMenuLink className={cn(
@@ -221,7 +212,6 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
               </Link>
             </NavigationMenuItem>
             
-            {/* 5. Administración (only for admin users) */}
             {(userRole === 'admin' || userRole === 'instructor') && (
               <NavigationMenuItem>
                 <NavigationMenuTrigger className={cn(
@@ -249,7 +239,6 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
               </NavigationMenuItem>
             )}
             
-            {/* 6. Perfil */}
             <NavigationMenuItem>
               <NavigationMenuTrigger className={cn(
                 location.pathname.includes('/profile') ? "text-primary" : ""
@@ -271,7 +260,6 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
               </NavigationMenuContent>
             </NavigationMenuItem>
             
-            {/* 7. Contacto */}
             <NavigationMenuItem>
               <NavigationMenuTrigger>
                 <Phone className="h-4 w-4 mr-2" />
@@ -293,7 +281,6 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
                     variant="ghost"
                     className="flex justify-start hover:bg-accent"
                     onClick={() => {
-                      // Logic to activate voice bot
                       alert('Voice bot activado');
                     }}
                   >
@@ -308,9 +295,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
           </NavigationMenuList>
         </NavigationMenu>
         
-        {/* Right section */}
         <div className="flex items-center gap-2">
-          {userRole && <RoleIndicator viewingAs={userRole} onRoleChange={onRoleChange} />}
           <HeaderActions />
           <UserMenu />
         </div>
