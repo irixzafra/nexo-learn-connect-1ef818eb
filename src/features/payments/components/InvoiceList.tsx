@@ -21,7 +21,7 @@ export const InvoiceList: React.FC = () => {
   const getBadgeVariant = (status: string) => {
     switch (status) {
       case 'paid':
-        return 'success';
+        return 'default'; // Changed from 'success' to 'default'
       case 'open':
         return 'outline';
       case 'void':
