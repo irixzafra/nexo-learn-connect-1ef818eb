@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Database, Server, Terminal, Settings } from 'lucide-react';
+import { Database, Shield, Server, Settings, BarChart3 } from 'lucide-react';
 import { 
   SidebarMenu, 
   SidebarMenuItem, 
@@ -35,16 +35,18 @@ const SistemasNavigation: React.FC<SistemasNavigationProps> = ({ isOpen, onToggl
       {isCollapsed ? (
         // Versión colapsada
         <>
-          <CollapsedMenuItem to="/sistemas/dashboard" icon={Server} label="Panel de Control" />
-          <CollapsedMenuItem to="/sistemas/logs" icon={Terminal} label="Logs del Sistema" />
-          <CollapsedMenuItem to="/sistemas/configuracion" icon={Settings} label="Configuración" />
+          <CollapsedMenuItem to="/sistemas/dashboard" icon={BarChart3} label="Dashboard" />
+          <CollapsedMenuItem to="/sistemas/servers" icon={Server} label="Servidores" />
+          <CollapsedMenuItem to="/sistemas/seguridad" icon={Shield} label="Seguridad" />
+          <CollapsedMenuItem to="/sistemas/config" icon={Settings} label="Configuración" />
         </>
       ) : (
         // Versión expandida
         <>
-          <MenuItem to="/sistemas/dashboard" icon={Server} label="Panel de Control" />
-          <MenuItem to="/sistemas/logs" icon={Terminal} label="Logs del Sistema" />
-          <MenuItem to="/sistemas/configuracion" icon={Settings} label="Configuración" />
+          <MenuItem to="/sistemas/dashboard" icon={BarChart3} label="Dashboard" />
+          <MenuItem to="/sistemas/servers" icon={Server} label="Servidores" />
+          <MenuItem to="/sistemas/seguridad" icon={Shield} label="Seguridad" />
+          <MenuItem to="/sistemas/config" icon={Settings} label="Configuración" />
         </>
       )}
     </SidebarGroup>
@@ -69,7 +71,6 @@ const MenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) => (
             ? "bg-[#E5E7EB] text-gray-900 dark:bg-gray-700 dark:text-white border-l-[3px] border-l-[#0E90F9] pl-[calc(0.75rem-3px)]" 
             : "hover:bg-[#F3F4F6] dark:hover:bg-gray-800"
         )}
-        aria-current={({ isActive }) => isActive ? "page" : undefined}
       >
         <Icon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
         <span>{label}</span>
@@ -92,7 +93,6 @@ const CollapsedMenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) =
                 ? "bg-[#E5E7EB] text-gray-900 dark:bg-gray-700 dark:text-white border-l-[3px] border-l-[#0E90F9]" 
                 : "text-gray-500 dark:text-gray-400 hover:bg-[#F3F4F6] dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
             )}
-            aria-current={({ isActive }) => isActive ? "page" : undefined}
           >
             <Icon className="h-5 w-5" />
             <span className="sr-only">{label}</span>

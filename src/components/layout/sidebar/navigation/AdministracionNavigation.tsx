@@ -71,7 +71,6 @@ const MenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) => (
             ? "bg-[#E5E7EB] text-gray-900 dark:bg-gray-700 dark:text-white border-l-[3px] border-l-[#0E90F9] pl-[calc(0.75rem-3px)]" 
             : "hover:bg-[#F3F4F6] dark:hover:bg-gray-800"
         )}
-        aria-current={({ isActive }) => isActive ? "page" : undefined}
       >
         <Icon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
         <span>{label}</span>
@@ -94,7 +93,6 @@ const CollapsedMenuItem: React.FC<MenuItemProps> = ({ to, icon: Icon, label }) =
                 ? "bg-[#E5E7EB] text-gray-900 dark:bg-gray-700 dark:text-white border-l-[3px] border-l-[#0E90F9]" 
                 : "text-gray-500 dark:text-gray-400 hover:bg-[#F3F4F6] dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
             )}
-            aria-current={({ isActive }) => isActive ? "page" : undefined}
           >
             <Icon className="h-5 w-5" />
             <span className="sr-only">{label}</span>
