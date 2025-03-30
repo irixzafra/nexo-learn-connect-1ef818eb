@@ -45,6 +45,21 @@ interface Student {
   last_active: string | null;
 }
 
+// Define types for the Supabase response
+interface ProfileData {
+  id?: string;
+  full_name?: string | null;
+  email?: { email: string }[] | null;
+  role?: string;
+}
+
+interface EnrollmentData {
+  id: string;
+  enrolled_at: string;
+  user_id: string;
+  profiles: ProfileData | null;
+}
+
 interface EnrolledStudentsListProps {
   courseId: string;
   courseName: string;
@@ -89,9 +104,9 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({
         
         // Get progress for all students
         const studentsWithProgress = await Promise.all(
-          data.map(async (enrollment) => {
-            // Fixed: Access the nested profile data correctly
-            const profileData = enrollment.profiles || {};
+          data.map(async (enrollment: EnrollmentData) => {
+            // Safely access the nested profile data with proper typing
+            const profileData: ProfileData = enrollment.profiles || {};
             
             // Calculate progress for each student
             const { data: progressData } = await supabase.rpc(
@@ -111,15 +126,16 @@ const EnrolledStudentsList: React.FC<EnrolledStudentsListProps> = ({
               .order('updated_at', { ascending: false })
               .limit(1);
               
-            // Fixed: Parse email from the nested structure properly
-            const emailValue = profileData.email && profileData.email[0] ? profileData.email[0].email : null;
+            // Safely extract email from the nested structure
+            const emailArray = profileData.email || [];
+            const emailValue = emailArray.length > 0 ? emailArray[0].email : null;
               
             return {
               id: enrollment.id,
               user_id: enrollment.user_id,
-              full_name: profileData.full_name,
+              full_name: profileData.full_name || null,
               email: emailValue,
-              role: profileData.role,
+              role: profileData.role || '',
               enrolled_at: enrollment.enrolled_at,
               progress: progressData || 0,
               last_active: lastActivity && lastActivity.length > 0 ? lastActivity[0].updated_at : null,
