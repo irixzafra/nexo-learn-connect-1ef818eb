@@ -111,7 +111,7 @@ export const useUserAchievements = (userId: string) => {
       }
 
       // Format achievements
-      const formattedAchievements = achievementsData.map((item) => ({
+      const formattedAchievements = achievementsData.map((item: any) => ({
         id: item.id,
         title: item.achievement?.title || '',
         description: item.achievement?.description || '',
@@ -119,7 +119,7 @@ export const useUserAchievements = (userId: string) => {
       }));
 
       // Format certificates
-      const formattedCertificates = certificatesData.map((item) => ({
+      const formattedCertificates = certificatesData.map((item: any) => ({
         id: item.id,
         course_id: item.course_id,
         course_name: item.courses?.title || 'Curso',
@@ -128,7 +128,7 @@ export const useUserAchievements = (userId: string) => {
       }));
 
       // Format badges
-      const formattedBadges = badgesData.map((item) => ({
+      const formattedBadges = badgesData.map((item: any) => ({
         id: item.id,
         name: item.badges?.name || '',
         description: item.badges?.description || '',

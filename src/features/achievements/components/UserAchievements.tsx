@@ -13,19 +13,20 @@ interface UserAchievementsProps {
 
 export const UserAchievements: React.FC<UserAchievementsProps> = ({ userId }) => {
   const { 
-    data: { achievements, certificates, badges, stats } = { 
-      achievements: [], 
-      certificates: [], 
-      badges: [], 
-      stats: { 
-        completedCourses: 0, 
-        completedLessons: 0, 
-        totalPoints: 0, 
-        leaderboardPosition: null 
-      } 
-    },
+    data,
     isLoading 
   } = useUserAchievements(userId);
+
+  // Set default values if data is undefined
+  const achievements = data?.achievements || [];
+  const certificates = data?.certificates || [];
+  const badges = data?.badges || [];
+  const stats = data?.stats || { 
+    completedCourses: 0, 
+    completedLessons: 0, 
+    totalPoints: 0, 
+    leaderboardPosition: null 
+  };
 
   if (isLoading) {
     return (
