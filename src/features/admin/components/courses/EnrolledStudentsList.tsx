@@ -12,7 +12,7 @@ import { Users, AlertCircle, RefreshCw, Trash2, Download, Mail, Phone } from "lu
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate } from "@/features/admin/utils/formatters";
-import { useCourseEnrollments } from "@/features/admin/hooks/useCourseEnrollments";
+import { useCourseEnrollments, EnrolledStudent } from "@/features/admin/hooks/useCourseEnrollments";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import {
