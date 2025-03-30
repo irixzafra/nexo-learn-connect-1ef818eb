@@ -16,8 +16,80 @@ import {
   BarChart,
   LineChart,
   School,
-  Route
+  Route,
+  Award,
+  Search,
+  Tags
 } from 'lucide-react';
+
+// Estructura de categorías y subcategorías
+const adminCategories = [
+  { 
+    id: 'dashboard',
+    icon: LayoutDashboard, 
+    label: "Dashboard", 
+    path: "/admin/dashboard"
+  },
+  { 
+    id: 'users',
+    icon: Users, 
+    label: "Usuarios", 
+    path: "/admin/users",
+    subCategories: [
+      { id: 'users-list', label: "Usuarios", path: "/admin/users" },
+      { id: 'roles', label: "Roles", path: "/admin/roles" },
+      { id: 'analytics', label: "Analíticas", path: "/admin/users/analytics" }
+    ]
+  },
+  { 
+    id: 'courses',
+    icon: BookOpen, 
+    label: "Cursos", 
+    path: "/admin/courses",
+    subCategories: [
+      { id: 'courses-list', label: "Listado de cursos", path: "/admin/courses" },
+      { id: 'categories', label: "Categorías", path: "/admin/content/categories" },
+      { id: 'learning-paths', label: "Rutas de Aprendizaje", path: "/admin/learning-paths" },
+      { id: 'certificates', label: "Certificados", path: "/admin/courses/certificates" },
+      { id: 'analytics', label: "Analíticas", path: "/admin/courses/analytics" }
+    ]
+  },
+  { 
+    id: 'finances',
+    icon: CreditCard, 
+    label: "Finanzas", 
+    path: "/admin/billing",
+    subCategories: [
+      { id: 'payments', label: "Cobros", path: "/admin/billing/payments" },
+      { id: 'subscriptions', label: "Suscripciones", path: "/admin/billing/subscriptions" },
+      { id: 'analytics', label: "Analíticas", path: "/admin/billing/analytics" }
+    ]
+  },
+  { 
+    id: 'data',
+    icon: Database, 
+    label: "Datos", 
+    path: "/admin/test-data",
+    subCategories: [
+      { id: 'content-generation', label: "Generación de Contenido", path: "/admin/test-data" },
+      { id: 'audit-logs', label: "Logs (Auditoría)", path: "/admin/audit-log" },
+      { id: 'analytics', label: "Analíticas", path: "/admin/data/analytics" }
+    ]
+  },
+  { 
+    id: 'config',
+    icon: Settings, 
+    label: "Config", 
+    path: "/admin/settings",
+    subCategories: [
+      { id: 'features', label: "Funcionalidades", path: "/admin/settings" },
+      { id: 'security', label: "Seguridad", path: "/admin/settings/security" },
+      { id: 'appearance', label: "Apariencia", path: "/admin/settings/appearance" },
+      { id: 'content', label: "Contenido", path: "/admin/settings/content" },
+      { id: 'analytics', label: "Analíticas", path: "/admin/settings/analytics" }
+    ]
+  }
+];
 
 const AdminNavigation = () => {
   const location = useLocation();
@@ -27,32 +99,28 @@ const AdminNavigation = () => {
     return path.includes(route);
   };
   
-  // Main categories as per the requirement
-  const mainCategories = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard", showOnMobile: true },
-    { icon: Users, label: "Usuarios", path: "/admin/users", showOnMobile: true },
-    { icon: BookOpen, label: "Educación", path: "/admin/courses", showOnMobile: true },
-    { icon: CreditCard, label: "Facturación", path: "/admin/billing", showOnMobile: true },
-    { icon: Folder, label: "Contenido", path: "/admin/content", showOnMobile: true },
-    { icon: Database, label: "Datos", path: "/admin/test-data", showOnMobile: true },
-    { icon: History, label: "Auditoría", path: "/admin/audit-log", showOnMobile: true },
-    { icon: Shield, label: "Roles", path: "/admin/roles", showOnMobile: true },
-    { icon: Settings, label: "Config", path: "/admin/settings", showOnMobile: true }
-  ];
+  // Obtiene la categoría actual basada en la ruta
+  const getCurrentCategory = () => {
+    return adminCategories.find(cat => 
+      path.includes(cat.id) || (cat.subCategories && cat.subCategories.some(sub => path.includes(sub.path)))
+    );
+  };
   
-  // Menú admin que se adapta bien en responsive
+  const currentCategory = getCurrentCategory();
+  
   return (
     <div className="w-full border-b mb-6 sticky top-0 bg-background z-10">
       <div className="container mx-auto py-2">
-        <div className="flex flex-wrap gap-1 justify-center md:justify-start">
-          {mainCategories.map((item) => (
+        {/* Main Categories Navigation */}
+        <div className="flex flex-wrap gap-1 justify-center md:justify-start mb-1">
+          {adminCategories.map((item) => (
             <Link 
               key={item.path}
               to={item.path}
               className={cn(
                 "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
                 "hover:bg-accent text-sm font-medium",
-                isActive(item.path) ? "bg-secondary" : ""
+                path.includes(item.id) ? "bg-secondary" : ""
               )}
             >
               <item.icon className="h-4 w-4 md:mr-1" />
@@ -60,6 +128,25 @@ const AdminNavigation = () => {
             </Link>
           ))}
         </div>
+        
+        {/* Subcategories for current section (shown as tabs) */}
+        {currentCategory?.subCategories && (
+          <div className="flex overflow-x-auto gap-1 px-1 py-1 border-t">
+            {currentCategory.subCategories.map((subItem) => (
+              <Link 
+                key={subItem.path}
+                to={subItem.path}
+                className={cn(
+                  "flex items-center px-3 py-1 rounded-md text-xs transition-colors",
+                  "hover:bg-muted whitespace-nowrap",
+                  path === subItem.path ? "bg-muted font-medium" : "text-muted-foreground"
+                )}
+              >
+                {subItem.label}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { type UserRoleType } from '@/types/auth';  // Use type-only import
+import { type UserRoleType } from '@/types/auth';
 import { Shield, UserCog, User, Terminal, Ghost } from 'lucide-react';
 
 interface UserRoleDisplayProps {

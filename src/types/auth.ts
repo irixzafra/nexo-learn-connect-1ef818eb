@@ -10,9 +10,9 @@ export interface UserRole {
 export interface UserProfile {
   id: string;
   email?: string;
-  full_name: string;  // Cambiado a requerido para coincidir con la definición usada
+  full_name: string;
   avatar_url?: string;
-  role: UserRoleType;  // Changed to required and ensure it's UserRoleType
+  role: UserRoleType;
   created_at?: string;
   roles?: UserRole[];
   username?: string;
@@ -54,5 +54,20 @@ export type UserRoleType =
   | 'content_creator'
   | 'guest'
   | 'beta_tester'
-  | 'sistemas'  // Added missing roles
-  | 'anonimo';  // Added missing roles
+  | 'sistemas'
+  | 'anonimo';
+
+// Helper functions for type conversion
+export const asUserRoleType = (value: string): UserRoleType => {
+  const validRoles: UserRoleType[] = [
+    'admin', 'instructor', 'student', 'moderator', 
+    'content_creator', 'guest', 'beta_tester', 'sistemas', 'anonimo'
+  ];
+  
+  return validRoles.includes(value as UserRoleType) 
+    ? (value as UserRoleType) 
+    : 'guest';
+};
+
+// For backward compatibility
+export type UserRole = UserRoleType;
