@@ -9,7 +9,7 @@ import {
   DropdownMenuItem 
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Globe, Users } from 'lucide-react';
+import { Globe, Users, ArrowLeftRight } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
@@ -51,71 +51,89 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
 
   return (
     <div className={cn(
-      "mt-auto flex items-center border-t border-gray-200 dark:border-gray-800",
-      isCollapsed ? "justify-center py-3" : "justify-between px-3 py-3"
+      "mt-auto flex flex-col border-t border-gray-200 dark:border-gray-800",
+      isCollapsed ? "items-center py-3" : "px-3 py-3"
     )}>
-      {/* Language Selector */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                <Globe className="h-4 w-4" />
-                <span className="sr-only">Cambiar idioma</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align={isCollapsed ? "center" : "start"} side={isCollapsed ? "right" : "top"}>
-              {languages.map((lang) => (
-                <DropdownMenuItem 
-                  key={lang.code}
-                  onClick={() => changeLanguage(lang.code)}
-                  className="cursor-pointer flex items-center gap-2"
-                >
-                  <span>{getLanguageFlag(lang.code)}</span>
-                  <span>{lang.name}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TooltipTrigger>
-        <TooltipContent side={isCollapsed ? "right" : "bottom"}>
-          <p>Cambiar idioma</p>
-        </TooltipContent>
-      </Tooltip>
+      {/* Si estamos viendo como otro rol, mostrar un botón destacado para volver */}
+      {isViewingAsOtherRole && !isCollapsed && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="mb-3 w-full flex items-center justify-center gap-1.5 text-xs bg-primary/5 text-primary border-primary/20 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+          onClick={() => handleRoleChange(userRole)}
+        >
+          <ArrowLeftRight className="h-3 w-3" />
+          <span className="truncate">Volver a mi rol</span>
+        </Button>
+      )}
       
-      {/* Role Switcher - Only for admins */}
-      {userRole === 'admin' && (
+      <div className={cn(
+        "flex items-center",
+        isCollapsed ? "justify-center" : "justify-between"
+      )}>
+        {/* Language Selector */}
         <Tooltip>
           <TooltipTrigger asChild>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-8 w-8 rounded-full"
-                >
-                  <Users className="h-4 w-4" />
-                  <span className="sr-only">Vista previa como otro rol</span>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                  <Globe className="h-4 w-4" />
+                  <span className="sr-only">Cambiar idioma</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align={isCollapsed ? "center" : "end"} side={isCollapsed ? "right" : "top"}>
-                {(['admin', 'instructor', 'student', 'sistemas', 'anonimo'] as UserRoleType[]).map((role) => (
+              <DropdownMenuContent align={isCollapsed ? "center" : "start"} side={isCollapsed ? "right" : "top"}>
+                {languages.map((lang) => (
                   <DropdownMenuItem 
-                    key={role}
-                    onClick={() => handleRoleChange(role)}
-                    className={`cursor-pointer ${effectiveRole === role ? 'bg-primary/10 text-primary' : ''}`}
+                    key={lang.code}
+                    onClick={() => changeLanguage(lang.code)}
+                    className="cursor-pointer flex items-center gap-2"
                   >
-                    <RoleIndicator role={role} />
+                    <span>{getLanguageFlag(lang.code)}</span>
+                    <span>{lang.name}</span>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </TooltipTrigger>
           <TooltipContent side={isCollapsed ? "right" : "bottom"}>
-            <p>Vista previa como otro rol</p>
+            <p>Cambiar idioma</p>
           </TooltipContent>
         </Tooltip>
-      )}
+        
+        {/* Role Switcher - Only for admins */}
+        {userRole === 'admin' && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 rounded-full"
+                  >
+                    <Users className="h-4 w-4" />
+                    <span className="sr-only">Vista previa como otro rol</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align={isCollapsed ? "center" : "end"} side={isCollapsed ? "right" : "top"}>
+                  {(['admin', 'instructor', 'student', 'sistemas', 'anonimo'] as UserRoleType[]).map((role) => (
+                    <DropdownMenuItem 
+                      key={role}
+                      onClick={() => handleRoleChange(role)}
+                      className={`cursor-pointer ${effectiveRole === role ? 'bg-primary/10 text-primary' : ''}`}
+                    >
+                      <RoleIndicator role={role} />
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TooltipTrigger>
+            <TooltipContent side={isCollapsed ? "right" : "bottom"}>
+              <p>Vista previa como otro rol</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
+      </div>
     </div>
   );
 };
