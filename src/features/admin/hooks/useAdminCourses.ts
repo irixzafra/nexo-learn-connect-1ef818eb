@@ -78,10 +78,8 @@ export const useAdminCourses = () => {
         // Fixed query to properly count enrollments by course_id
         const { data: enrollmentsData, error: enrollmentsError } = await supabase
           .from('enrollments')
-          .select('course_id', { count: 'exact', head: false })
-          .select('course_id')
-          .count()
-          .group('course_id');
+          .select('course_id, count(*)', { count: 'exact', head: false })
+          .groupby('course_id');
         
         if (!enrollmentsError && enrollmentsData) {
           console.log("Enrollment data:", enrollmentsData);
