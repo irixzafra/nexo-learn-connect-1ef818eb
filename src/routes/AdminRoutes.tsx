@@ -16,7 +16,6 @@ import AccessControl from '@/pages/admin/access/AccessControl';
 import { Navigate } from 'react-router-dom';
 import AdminNavigation from '@/components/admin/AdminNavigation';
 import ContentManagement from '@/pages/admin/content/ContentManagement';
-import AdminPageLayout from '@/layouts/AdminPageLayout';
 
 // Create a wrapper component for Admin content that includes the navigation
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {

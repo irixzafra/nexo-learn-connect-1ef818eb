@@ -22,7 +22,7 @@ interface AdminTabsProps {
   iconPosition?: 'left' | 'top';
 }
 
-export const AdminTabs: React.FC<AdminTabsProps> = ({
+const AdminTabs: React.FC<AdminTabsProps> = ({
   tabs,
   defaultValue,
   value,
