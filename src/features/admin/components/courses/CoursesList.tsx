@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Course } from '../../hooks/useAdminCourses';
 import { Badge } from '@/components/ui/badge';
@@ -40,7 +41,11 @@ const CoursesList: React.FC<CoursesListProps> = ({
     <>
       {courses.map((course) => (
         <TableRow key={course.id}>
-          <TableCell className="font-medium">{course.title}</TableCell>
+          <TableCell className="font-medium">
+            <Link to={`/admin/courses/${course.id}`} className="hover:underline text-primary">
+              {course.title}
+            </Link>
+          </TableCell>
           <TableCell>{course.instructors?.full_name || "Sin instructor"}</TableCell>
           <TableCell>{formatPrice(course.price, course.currency)}</TableCell>
           <TableCell>
