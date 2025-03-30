@@ -1,44 +1,99 @@
-
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { 
-  ArrowLeft, 
-  Book, 
-  Eye, 
-  Pencil, 
-  BarChart, 
-  Plus, 
-  Award,
-  FileText
+  List, 
+  FolderTree, 
+  Network, 
+  Award, 
+  BarChart3, 
+  Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
-import SectionPageLayout from "@/layouts/SectionPageLayout";
-import { Breadcrumb } from "@/components/layout/page/PageHeader";
-import ManualEnrollmentDialog from "@/components/admin/ManualEnrollmentDialog";
-import { AdminPageTitle, AdminPageLayout } from "@/components/layout/admin/AdminPageLayout";
-
-// Componentes refactorizados
-import CourseError from "@/features/admin/components/courses/CourseError";
+import AdminPageLayout from "@/layouts/AdminPageLayout";
+import { AdminTabItem } from "@/components/admin/AdminTabs";
 import AllCoursesTab from "@/features/admin/components/courses/AllCoursesTab";
-import PublishedCoursesTab from "@/features/admin/components/courses/PublishedCoursesTab";
-import DraftCoursesTab from "@/features/admin/components/courses/DraftCoursesTab";
-import AnalyticsTab from "@/features/admin/components/courses/AnalyticsTab";
-import CertificatesTab from "@/features/admin/components/courses/CertificatesTab";
-
-// Hook personalizado
 import { useAdminCourses } from "@/features/admin/hooks/useAdminCourses";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+// Create placeholder components for the new tabs
+const CategoriesTab: React.FC = () => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Gestión de Categorías</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-col items-center justify-center py-12 text-center bg-muted/40 rounded-md">
+        <FolderTree className="h-12 w-12 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-medium mb-2">Módulo en Desarrollo</h3>
+        <p className="text-muted-foreground">
+          La gestión de categorías estará disponible próximamente.
+        </p>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+const LearningPathsTab: React.FC = () => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Rutas de Aprendizaje</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-col items-center justify-center py-12 text-center bg-muted/40 rounded-md">
+        <Network className="h-12 w-12 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-medium mb-2">Módulo en Desarrollo</h3>
+        <p className="text-muted-foreground">
+          La gestión de rutas de aprendizaje estará disponible próximamente.
+        </p>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+const CertificatesTab: React.FC = () => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Certificados</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-col items-center justify-center py-12 text-center bg-muted/40 rounded-md">
+        <Award className="h-12 w-12 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-medium mb-2">Módulo en Desarrollo</h3>
+        <p className="text-muted-foreground">
+          La gestión de certificados estará disponible próximamente.
+        </p>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+const AnalyticsTab: React.FC = () => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Analíticas de Cursos</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-col items-center justify-center py-12 text-center bg-muted/40 rounded-md">
+        <BarChart3 className="h-12 w-12 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-medium mb-2">Módulo en Desarrollo</h3>
+        <p className="text-muted-foreground">
+          Las analíticas de cursos estarán disponibles próximamente.
+        </p>
+      </div>
+    </CardContent>
+  </Card>
+);
 
 const AdminCourses: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("all-courses");
   const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<{id: string, title: string} | null>(null);
-  
   const { courses, isLoading, error, fetchCourses, setCourses } = useAdminCourses();
 
+  const handleViewDetails = (courseId: string) => navigate(`/admin/courses/${courseId}`);
+  const handleEdit = (courseId: string) => navigate(`/instructor/course/${courseId}/edit`);
+  
   const handleEnrollUsers = (courseId: string, courseTitle: string) => {
     setSelectedCourse({ id: courseId, title: courseTitle });
     setEnrollmentDialogOpen(true);
@@ -54,143 +109,78 @@ const AdminCourses: React.FC = () => {
     setCourses([]);
   };
 
-  const filteredCourses = searchTerm.trim() === "" 
-    ? courses 
-    : courses.filter(course => 
-        course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.instructors?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()));
-
-  const publishedCourses = filteredCourses.filter(course => course.status === 'published' || course.is_published === true);
-  const draftCourses = filteredCourses.filter(course => course.status === 'draft' || course.is_published === false);
-
-  const navigateToDetails = (courseId: string) => navigate(`/admin/courses/${courseId}`);
-  const navigateToEdit = (courseId: string) => navigate(`/instructor/course/${courseId}/edit`);
+  // Create tabs array for AdminPageLayout
+  const tabs: AdminTabItem[] = [
+    {
+      value: 'list',
+      label: 'Listado de cursos',
+      icon: <List className="h-4 w-4" />,
+      content: (
+        <AllCoursesTab 
+          courses={courses}
+          isLoading={isLoading}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onViewDetails={handleViewDetails}
+          onEdit={handleEdit}
+          onEnrollUsers={handleEnrollUsers}
+        />
+      )
+    },
+    {
+      value: 'categories',
+      label: 'Categorías',
+      icon: <FolderTree className="h-4 w-4" />,
+      content: <CategoriesTab />
+    },
+    {
+      value: 'learning-paths',
+      label: 'Rutas de Aprendizaje',
+      icon: <Network className="h-4 w-4" />,
+      content: <LearningPathsTab />
+    },
+    {
+      value: 'certificates',
+      label: 'Certificados',
+      icon: <Award className="h-4 w-4" />,
+      content: <CertificatesTab />
+    },
+    {
+      value: 'analytics',
+      label: 'Analíticas',
+      icon: <BarChart3 className="h-4 w-4" />,
+      content: <AnalyticsTab />
+    }
+  ];
 
   return (
-    <SectionPageLayout
-      header={{
-        title: "Gestión de Cursos",
-        description: "Administra los cursos de la plataforma",
-        actions: [
-          {
-            label: "Crear Curso",
-            icon: <Plus className="h-4 w-4" />,
-            onClick: () => navigate("/instructor/create-course"),
-          }
-        ],
-        breadcrumbs: [
-          { title: "Dashboard", href: "/admin/dashboard" },
-          { title: "Gestión de Cursos" }
-        ] as Breadcrumb[]
-      }}
+    <AdminPageLayout
+      title="Gestión de Cursos"
+      subtitle="Administra cursos, categorías, rutas de aprendizaje y certificados"
+      tabs={tabs}
+      defaultTabValue="list"
     >
-      <AdminPageLayout>
-        <div className="flex mb-4">
-          <Button variant="ghost" size="sm" asChild className="mb-2">
-            <Link to="/admin/dashboard">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver al Dashboard
-            </Link>
+      {error && (
+        <div className="bg-destructive/10 border border-destructive rounded-md p-4 mb-6">
+          <p className="text-destructive font-medium">Error: {error}</p>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={fetchCourses} 
+            className="mt-2"
+          >
+            Reintentar
           </Button>
         </div>
+      )}
 
-        <AdminPageTitle 
-          title="Gestión de Cursos" 
-          description="Administra todos los cursos de la plataforma"
-          icon={<Book className="h-6 w-6" />}
-          actions={
-            <Button onClick={() => navigate("/instructor/create-course")} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Crear Curso
-            </Button>
-          }
-        />
-
-        {error && (
-          <CourseError 
-            error={error} 
-            onRetry={fetchCourses} 
-            onDismiss={handleDismissError} 
-          />
-        )}
-
-        <Tabs 
-          defaultValue="all-courses" 
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="space-y-6"
-        >
-          <TabsList className="w-full sm:w-auto flex overflow-auto">
-            <TabsTrigger value="all-courses" className="flex items-center gap-2">
-              <Book className="h-4 w-4" />
-              <span className="whitespace-nowrap">Todos los Cursos</span>
-            </TabsTrigger>
-            <TabsTrigger value="published" className="flex items-center gap-2">
-              <Eye className="h-4 w-4" />
-              <span className="whitespace-nowrap">Publicados</span>
-            </TabsTrigger>
-            <TabsTrigger value="drafts" className="flex items-center gap-2">
-              <Pencil className="h-4 w-4" />
-              <span className="whitespace-nowrap">Borradores</span>
-            </TabsTrigger>
-            <TabsTrigger value="certificates" className="flex items-center gap-2">
-              <Award className="h-4 w-4" />
-              <span className="whitespace-nowrap">Certificados</span>
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart className="h-4 w-4" />
-              <span className="whitespace-nowrap">Analíticas</span>
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="all-courses" className="space-y-6">
-            <AllCoursesTab
-              courses={filteredCourses}
-              isLoading={isLoading}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              onViewDetails={navigateToDetails}
-              onEdit={navigateToEdit}
-              onEnrollUsers={handleEnrollUsers}
-            />
-          </TabsContent>
-          
-          <TabsContent value="published" className="space-y-6">
-            <PublishedCoursesTab
-              publishedCourses={publishedCourses}
-              isLoading={isLoading}
-              onEnrollUsers={handleEnrollUsers}
-            />
-          </TabsContent>
-          
-          <TabsContent value="drafts" className="space-y-6">
-            <DraftCoursesTab
-              draftCourses={draftCourses}
-              isLoading={isLoading}
-              onEdit={navigateToEdit}
-            />
-          </TabsContent>
-          
-          <TabsContent value="certificates" className="space-y-6">
-            <CertificatesTab />
-          </TabsContent>
-          
-          <TabsContent value="analytics" className="space-y-6">
-            <AnalyticsTab />
-          </TabsContent>
-        </Tabs>
-
-        {selectedCourse && (
-          <ManualEnrollmentDialog
-            open={enrollmentDialogOpen}
-            onOpenChange={setEnrollmentDialogOpen}
-            courseId={selectedCourse.id}
-            courseName={selectedCourse.title}
-            onEnrollmentComplete={handleEnrollmentComplete}
-          />
-        )}
-      </AdminPageLayout>
-    </SectionPageLayout>
+      <div className="flex justify-end mb-4">
+        <Button onClick={() => navigate("/instructor/create-course")} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Crear Curso
+        </Button>
+      </div>
+    </AdminPageLayout>
   );
 };
 

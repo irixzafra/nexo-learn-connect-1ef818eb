@@ -1,36 +1,26 @@
 
-import React, { useState } from "react";
-import { PencilLine } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-import { UserProfile, UserRoleType } from "@/types/auth";
-import { useToast } from "@/hooks/use-toast";
-import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
-import { UserRoleDisplay } from "@/features/users/UserRoleType";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import React, { useState } from 'react';
+import { 
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
+} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { 
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, 
+  DropdownMenuLabel, DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
+import { Search, ChevronDown, MoreHorizontal } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { UserProfile, UserRoleType } from '@/types/auth';
 
 interface UserManagementListProps {
   users: UserProfile[];
   isLoading: boolean;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  onRoleChange: (userId: string, newRole: UserRoleType) => void;
+  onRoleChange: (userId: string, newRole: UserRoleType) => Promise<void>;
 }
 
 export const UserManagementList: React.FC<UserManagementListProps> = ({
@@ -38,104 +28,148 @@ export const UserManagementList: React.FC<UserManagementListProps> = ({
   isLoading,
   searchTerm,
   setSearchTerm,
-  onRoleChange
+  onRoleChange,
 }) => {
-  const filteredUsers = searchTerm.trim() === "" 
-    ? users 
-    : users.filter(user => 
-        user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredUsers = searchTerm.trim() === ""
+    ? users
+    : users.filter(user =>
+        user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+  const getRoleBadgeVariant = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return 'destructive';
+      case 'instructor':
+        return 'default';
+      case 'student':
+        return 'secondary';
+      default:
+        return 'outline';
+    }
+  };
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <div className="flex flex-col md:flex-row justify-between md:items-center">
-          <div>
-            <CardTitle>Lista de Usuarios</CardTitle>
-            <CardDescription>
-              Gestiona los usuarios de la plataforma y sus roles
-            </CardDescription>
-          </div>
-          <div className="relative mt-4 md:mt-0 w-full md:w-64">
-            <Input
-              type="search"
-              placeholder="Buscar usuarios..."
-              className="pl-8 w-full"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+      <CardHeader>
+        <CardTitle>Usuarios</CardTitle>
+        <CardDescription>
+          Gestiona los usuarios registrados en la plataforma
+        </CardDescription>
+        <div className="relative w-full md:w-64 mt-4">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar usuario..."
+            className="pl-8"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="flex justify-center py-8">
-            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-          </div>
-        ) : (
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Usuario</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Fecha de registro</TableHead>
+                <TableHead>Rol</TableHead>
+                <TableHead className="text-right">Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                // Loading skeleton
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={`skeleton-${i}`}>
+                    <TableCell><Skeleton className="h-6 w-32" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-40" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-28" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-20 ml-auto" /></TableCell>
+                  </TableRow>
+                ))
+              ) : filteredUsers.length === 0 ? (
                 <TableRow>
-                  <TableHead className="w-[50px]">
-                    <Checkbox 
-                      aria-label="Seleccionar todos"
-                    />
-                  </TableHead>
-                  <TableHead className="w-[250px]">Usuario</TableHead>
-                  <TableHead>Rol</TableHead>
-                  <TableHead className="hidden md:table-cell">Fecha de registro</TableHead>
-                  <TableHead>Acciones</TableHead>
+                  <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                    No se encontraron usuarios
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUsers.length > 0 ? (
-                  filteredUsers.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>
-                        <Checkbox 
-                          aria-label={`Seleccionar ${user.full_name || 'Usuario sin nombre'}`}
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {user.full_name || 'Usuario sin nombre'}
-                      </TableCell>
-                      <TableCell>
-                        <UserRoleDisplay role={user.role} showIcon={true} />
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {new Date(user.created_at || '').toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button 
-                            size="sm" 
-                            variant="ghost" 
-                          >
-                            <PencilLine className="h-4 w-4" />
+              ) : (
+                filteredUsers.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell className="font-medium">
+                      {user.full_name || "Usuario sin nombre"}
+                    </TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <Badge variant={getRoleBadgeVariant(user.role)}>
+                        {user.role === 'admin' ? 'Administrador' : 
+                         user.role === 'instructor' ? 'Instructor' : 
+                         user.role === 'student' ? 'Estudiante' : 
+                         'Desconocido'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
                           </Button>
-                          <UserRoleSwitcher 
-                            userId={user.id}
-                            currentRole={user.role}
-                            onRoleChange={onRoleChange}
-                          />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center h-24">
-                      {searchTerm.trim() !== "" 
-                        ? "No se encontraron usuarios que coincidan con la búsqueda." 
-                        : "No hay usuarios para mostrar."}
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                          <DropdownMenuItem 
+                            onClick={() => console.log('Ver detalles', user.id)}
+                          >
+                            Ver detalles
+                          </DropdownMenuItem>
+                          
+                          {/* Role Change Dropdown */}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="w-full justify-start pl-2">
+                                Cambiar rol
+                                <ChevronDown className="ml-auto h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem 
+                                onClick={() => onRoleChange(user.id, 'admin')}
+                                disabled={user.role === 'admin'}
+                              >
+                                Administrador
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => onRoleChange(user.id, 'instructor')}
+                                disabled={user.role === 'instructor'}
+                              >
+                                Instructor
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => onRoleChange(user.id, 'student')}
+                                disabled={user.role === 'student'}
+                              >
+                                Estudiante
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                          
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
 };
+
+export default UserManagementList;
