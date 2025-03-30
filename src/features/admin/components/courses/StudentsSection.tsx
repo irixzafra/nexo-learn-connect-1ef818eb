@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import EnrolledStudentsList from './EnrolledStudentsList';
 import ManualEnrollmentDialog from '@/components/admin/ManualEnrollmentDialog';
 import { useCourseEnrollments } from '@/features/admin/hooks/useCourseEnrollments';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface StudentsSectionProps {
   courseId: string;
@@ -13,7 +14,7 @@ interface StudentsSectionProps {
 
 const StudentsSection: React.FC<StudentsSectionProps> = ({ courseId, courseName }) => {
   const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
-  const { refetch } = useCourseEnrollments(courseId);
+  const { enrolledStudents, refetch } = useCourseEnrollments(courseId);
   
   const handleEnrollmentSuccess = () => {
     refetch();
@@ -21,10 +22,17 @@ const StudentsSection: React.FC<StudentsSectionProps> = ({ courseId, courseName 
 
   return (
     <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold mb-2">Estudiantes Inscritos</h2>
+        <p className="text-muted-foreground">Gestión de participantes del curso</p>
+      </div>
+      
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h2 className="text-xl font-semibold">
-          Estudiantes Inscritos en: {courseName}
-        </h2>
+        <div>
+          <h3 className="text-xl font-semibold">
+            Estudiantes Inscritos en: {courseName}
+          </h3>
+        </div>
         <Button 
           onClick={() => setIsEnrollDialogOpen(true)}
           className="w-full sm:w-auto"
@@ -34,7 +42,21 @@ const StudentsSection: React.FC<StudentsSectionProps> = ({ courseId, courseName 
         </Button>
       </div>
       
-      <EnrolledStudentsList courseId={courseId} />
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-semibold">
+              Total: {enrolledStudents?.length || 0} estudiantes
+            </h3>
+            <Button variant="outline">
+              <Download className="mr-2 h-4 w-4" />
+              Exportar CSV
+            </Button>
+          </div>
+          
+          <EnrolledStudentsList courseId={courseId} />
+        </CardContent>
+      </Card>
       
       <ManualEnrollmentDialog
         open={isEnrollDialogOpen}

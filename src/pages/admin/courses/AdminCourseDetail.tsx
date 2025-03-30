@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import SectionPageLayout from '@/layouts/SectionPageLayout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -29,7 +29,9 @@ import useCourseDetail from '@/features/admin/hooks/useCourseDetail';
 const AdminCourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('general');
+  const location = useLocation();
+  const initialTab = location.state?.activeTab || 'general';
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   const { 
     course, 
@@ -43,6 +45,13 @@ const AdminCourseDetail: React.FC = () => {
     courseId, 
     onError: () => navigate('/admin/courses')
   });
+
+  // Efecto para actualizar la pestaña activa si cambia en la navegación
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
 
   if (isLoading) {
     return <CourseLoadingState />;

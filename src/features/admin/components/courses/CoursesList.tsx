@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Course } from '../../hooks/useAdminCourses';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +27,13 @@ const CoursesList: React.FC<CoursesListProps> = ({
   formatPrice,
   formatDate,
 }) => {
+  const navigate = useNavigate();
+
+  const handleStudentsClick = (courseId: string) => {
+    // Navegar directamente a la pestaña de estudiantes del curso
+    navigate(`/admin/courses/${courseId}`, { state: { activeTab: 'students' } });
+  };
+
   if (courses.length === 0) {
     return (
       <TableRow>
@@ -62,7 +69,7 @@ const CoursesList: React.FC<CoursesListProps> = ({
               variant="ghost" 
               size="sm" 
               className="flex items-center gap-1 hover:bg-slate-100"
-              onClick={() => onEnrollUsers(course.id, course.title)}
+              onClick={() => handleStudentsClick(course.id)}
             >
               <Users className="h-4 w-4 text-muted-foreground" />
               <span>{course.students_count}</span>
