@@ -1,53 +1,75 @@
 
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { toast } from "sonner";
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export interface EnrolledStudent {
   id: string;
   user_id: string;
-  full_name: string | null;
   enrolled_at: string;
+  full_name: string | null;
+  email: string | null;
+  phone: string | null;
 }
 
-export const useCourseEnrollments = (courseId: string) => {
-  const { 
-    data: enrolledStudents = [], 
-    isLoading, 
-    error, 
-    refetch 
-  } = useQuery({
-    queryKey: ["courseEnrollments", courseId],
-    queryFn: async () => {
-      try {
-        if (!courseId) {
-          throw new Error("ID del curso no proporcionado");
-        }
-        
-        // Use the updated RPC function (without email field)
-        const { data, error } = await supabase
-          .rpc('get_course_enrollments_with_details', { course_id_param: courseId });
+export function useCourseEnrollments(courseId: string) {
+  const [enrolledStudents, setEnrolledStudents] = useState<EnrolledStudent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-        if (error) throw error;
-        
-        if (!data || data.length === 0) return [];
+  const fetchEnrollments = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const { data, error } = await supabase
+        .rpc('get_course_enrollments_with_details', {
+          course_id_param: courseId
+        });
+      
+      if (error) throw error;
+      
+      const { data: studentsWithContact, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, email, phone')
+        .in('id', data.map((student: any) => student.user_id));
+      
+      if (profilesError) throw profilesError;
+      
+      // Combinar los datos de inscripción con la información de contacto
+      const studentsWithContactMap = studentsWithContact.reduce((acc: Record<string, any>, profile: any) => {
+        acc[profile.id] = profile;
+        return acc;
+      }, {});
+      
+      const enrichedStudents = data.map((student: any) => ({
+        ...student,
+        email: studentsWithContactMap[student.user_id]?.email || null,
+        phone: studentsWithContactMap[student.user_id]?.phone || null
+      }));
+      
+      setEnrolledStudents(enrichedStudents);
+    } catch (err) {
+      console.error('Error fetching course enrollments:', err);
+      setError(err instanceof Error ? err : new Error('Error desconocido al cargar estudiantes'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        // Transform the data to match our existing interface
-        return data.map((enrollment: any) => ({
-          id: enrollment.enrollment_id,
-          user_id: enrollment.user_id,
-          full_name: enrollment.full_name || `Usuario ${enrollment.user_id.substring(0, 8)}`,
-          enrolled_at: enrollment.enrolled_at
-        }));
-      } catch (error: any) {
-        console.error("Error fetching enrolled students:", error);
-        toast.error("Error al cargar estudiantes: " + error.message);
-        throw error;
-      }
-    },
-    enabled: !!courseId,
-    retry: 1,
-  });
+  const refetch = () => {
+    fetchEnrollments();
+  };
 
-  return { enrolledStudents, isLoading, error, refetch };
-};
+  useEffect(() => {
+    if (courseId) {
+      fetchEnrollments();
+    }
+  }, [courseId]);
+
+  return {
+    enrolledStudents,
+    isLoading,
+    error,
+    refetch
+  };
+}
