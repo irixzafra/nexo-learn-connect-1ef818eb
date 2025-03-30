@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLikePost } from '../hooks/useCommunityFeed';
+import { useLikePost, usePostCategories } from '../hooks/useCommunityFeed';
 
 interface PostItemProps {
   post: Post;
@@ -28,6 +28,10 @@ export const PostItem: React.FC<PostItemProps> = ({ post, onCommentClick }) => {
   const { toggleLike } = useLikePost();
   const [liked, setLiked] = React.useState(false);
   const [localLikeCount, setLocalLikeCount] = React.useState(post.like_count);
+  const { data: categories = [] } = usePostCategories();
+  
+  // Find the category for this post
+  const category = categories.find(cat => cat.id === post.category_id);
 
   const handleLikeToggle = async () => {
     if (!user) return;
@@ -72,9 +76,13 @@ export const PostItem: React.FC<PostItemProps> = ({ post, onCommentClick }) => {
           </p>
         </div>
         
-        {post.category_id && (
-          <Badge variant="secondary" className="ml-auto">
-            {post.category || post.category_id}
+        {category && (
+          <Badge 
+            variant="secondary" 
+            className="ml-auto"
+            style={{ backgroundColor: `${category.color}20`, color: category.color }}
+          >
+            {category.icon} {category.name}
           </Badge>
         )}
       </CardHeader>

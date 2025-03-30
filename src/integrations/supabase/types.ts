@@ -1209,6 +1209,30 @@ export type Database = {
           },
         ]
       }
+      post_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       post_comments: {
         Row: {
           content: string
@@ -1275,6 +1299,7 @@ export type Database = {
       }
       posts: {
         Row: {
+          category_id: string | null
           content: string
           created_at: string
           id: string
@@ -1284,6 +1309,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          category_id?: string | null
           content: string
           created_at?: string
           id?: string
@@ -1293,6 +1319,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          category_id?: string | null
           content?: string
           created_at?: string
           id?: string
@@ -1301,7 +1328,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "posts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "post_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
