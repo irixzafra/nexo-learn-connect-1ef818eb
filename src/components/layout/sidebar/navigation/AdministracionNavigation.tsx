@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Settings, LayoutDashboard, Users, Library, CreditCard, Database, Settings2, KeyRound, History, Shield } from 'lucide-react';
+import { LayoutDashboard, Users, Library, Settings2, KeyRound, Shield, School } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -20,7 +20,7 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
   return (
     <SidebarGroup
       label="Administración"
-      icon={Settings}
+      icon={Shield}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
@@ -48,29 +48,8 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
         
         <MenuItem
           to="/admin/instructors"
-          icon={Users}
+          icon={School}
           label="Gestionar Instructores"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/billing"
-          icon={CreditCard}
-          label="Facturación"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/test-data"
-          icon={Database}
-          label="Datos de Prueba"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/access"
-          icon={Shield}
-          label="Control de Acceso"
           isCollapsed={isCollapsed}
         />
         
@@ -78,13 +57,6 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           to="/admin/roles"
           icon={KeyRound}
           label="Roles y Permisos"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/audit-log"
-          icon={History}
-          label="Auditoría"
           isCollapsed={isCollapsed}
         />
         

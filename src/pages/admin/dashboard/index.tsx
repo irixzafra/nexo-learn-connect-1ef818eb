@@ -9,17 +9,61 @@ import {
   AlertCircle, 
   CheckCircle,
   Link2,
-  ExternalLink
+  ExternalLink,
+  School
 } from 'lucide-react';
 import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
-import { 
-  adminMainMenuItems,
-  adminAlertMenuItems 
-} from '@/components/ui/admin-menu/AdminMenuPresets';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAdminDashboardStats } from '@/features/admin/hooks/useAdminDashboardStats';
 
 const AdminDashboard: React.FC = () => {
   const { stats, isLoading } = useAdminDashboardStats();
+
+  // Create a simplified array of admin menu items for direct access to main sections
+  const adminQuickMenuItems = [
+    {
+      title: "Gestionar Usuarios",
+      icon: <Users className="h-5 w-5 text-blue-500" />,
+      description: "Administrar usuarios y roles",
+      href: "/admin/users"
+    },
+    {
+      title: "Gestionar Cursos",
+      icon: <BookOpen className="h-5 w-5 text-green-500" />,
+      description: "Administrar catálogo de cursos",
+      href: "/admin/courses"
+    },
+    {
+      title: "Gestionar Instructores",
+      icon: <School className="h-5 w-5 text-orange-500" />,
+      description: "Administrar instructores",
+      href: "/admin/instructors"
+    },
+    {
+      title: "Roles y Permisos",
+      icon: <Users className="h-5 w-5 text-purple-500" />,
+      description: "Configurar roles de usuarios",
+      href: "/admin/roles"
+    }
+  ];
+
+  // System alerts for admin dashboard
+  const systemAlerts = [
+    {
+      id: 1,
+      type: "info",
+      title: "Actualización de Seguridad Pendiente",
+      description: "Se recomienda actualizar los módulos de seguridad a la última versión.",
+      icon: <AlertCircle className="h-5 w-5" />
+    },
+    {
+      id: 2,
+      type: "success",
+      title: "Auditoría Completada",
+      description: "La auditoría de seguridad mensual ha sido completada. Sin problemas encontrados.",
+      icon: <CheckCircle className="h-5 w-5" />
+    }
+  ];
 
   return (
     <SectionPageLayout
@@ -60,15 +104,15 @@ const AdminDashboard: React.FC = () => {
         ]
       }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Columna de Accesos Rápidos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Accesos Rápidos */}
         <PageSection
           title="Accesos Rápidos"
           description="Enlaces directos a las secciones principales"
           variant="card"
         >
           <AdminMenu 
-            items={adminMainMenuItems}
+            items={adminQuickMenuItems}
             variant="buttons"
           />
         </PageSection>
@@ -81,10 +125,19 @@ const AdminDashboard: React.FC = () => {
             description="Notificaciones recientes que requieren atención"
             variant="card"
           >
-            <AdminMenu 
-              items={adminAlertMenuItems}
-              variant="default"
-            />
+            <div className="space-y-4">
+              {systemAlerts.map(alert => (
+                <Alert key={alert.id} variant={alert.type as "default" | "destructive" | "success" | null}>
+                  <div className="flex items-start">
+                    <div className="mr-2 mt-0.5">{alert.icon}</div>
+                    <div>
+                      <AlertTitle>{alert.title}</AlertTitle>
+                      <AlertDescription>{alert.description}</AlertDescription>
+                    </div>
+                  </div>
+                </Alert>
+              ))}
+            </div>
           </PageSection>
 
           {/* Recursos de Administración */}

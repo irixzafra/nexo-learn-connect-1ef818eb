@@ -5,13 +5,11 @@ import { MenuItem } from './MenuItems';
 import { 
   BarChart3, 
   Users, 
-  Database, 
-  CreditCard, 
-  UserCog,
   Settings,
   BookOpen,
   School,
-  Shield
+  Shield,
+  KeyRound
 } from 'lucide-react';
 
 interface AdminSectionProps {
@@ -31,16 +29,13 @@ export const AdminSection: React.FC<AdminSectionProps> = ({ expanded, onToggle }
       
       {/* Gestión de usuarios */}
       <MenuItem to="/admin/users" icon={Users} label="Usuarios" />
-      <MenuItem to="/admin/roles" icon={UserCog} label="Roles y Permisos" />
-      <MenuItem to="/admin/access" icon={Shield} label="Control de Acceso" />
+      <MenuItem to="/admin/roles" icon={KeyRound} label="Roles y Permisos" />
       
       {/* Gestión educativa */}
       <MenuItem to="/admin/courses" icon={BookOpen} label="Cursos" />
       <MenuItem to="/admin/instructors" icon={School} label="Instructores" />
       
-      {/* Datos y finanzas */}
-      <MenuItem to="/admin/test-data" icon={Database} label="Datos de Prueba" />
-      <MenuItem to="/admin/billing" icon={CreditCard} label="Facturación" />
+      {/* Configuración */}
       <MenuItem to="/admin/settings" icon={Settings} label="Configuración" />
     </SidebarGroup>
   );
