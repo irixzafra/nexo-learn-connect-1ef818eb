@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { TableCell, TableRow } from '@/components/ui/table';
@@ -35,12 +34,8 @@ const CoursesList: React.FC<CoursesListProps> = ({
   };
 
   const handleViewDetails = (course: Course) => {
-    // Usar el slug si está disponible, de lo contrario usar el ID
-    if (course.slug) {
-      window.open(`/cursos/${course.slug}`, '_blank');
-    } else {
-      window.open(`/courses/${course.id}`, '_blank');
-    }
+    // For admin view, always use the course ID for navigation
+    window.open(`/courses/${course.id}`, '_blank');
   };
 
   if (courses.length === 0) {
