@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
 import { Check } from "lucide-react"
@@ -19,10 +20,49 @@ const Checkbox = React.forwardRef<
     <CheckboxPrimitive.Indicator
       className={cn("flex items-center justify-center text-current")}
     >
-      <Check className="h-4 w-4" />
+      <Check className="h-4 w-4" aria-hidden="true" />
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
 ))
 Checkbox.displayName = CheckboxPrimitive.Root.displayName
+
+// Componente contenedor para asociar correctamente las etiquetas
+export interface CheckboxWithLabelProps extends React.ComponentPropsWithoutRef<typeof Checkbox> {
+  label: string;
+  description?: string;
+}
+
+export const CheckboxWithLabel = React.forwardRef<
+  React.ElementRef<typeof Checkbox>,
+  CheckboxWithLabelProps
+>(({ label, description, id, ...props }, ref) => {
+  const checkboxId = id || React.useId();
+  const descriptionId = description ? `${checkboxId}-description` : undefined;
+  
+  return (
+    <div className="flex items-start space-x-2">
+      <Checkbox 
+        id={checkboxId} 
+        ref={ref} 
+        aria-describedby={descriptionId}
+        {...props} 
+      />
+      <div>
+        <label 
+          htmlFor={checkboxId}
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          {label}
+        </label>
+        {description && (
+          <p id={descriptionId} className="text-xs text-muted-foreground mt-1">
+            {description}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+});
+CheckboxWithLabel.displayName = "CheckboxWithLabel";
 
 export { Checkbox }

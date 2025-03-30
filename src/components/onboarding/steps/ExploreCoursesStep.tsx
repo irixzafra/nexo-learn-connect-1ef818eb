@@ -19,7 +19,11 @@ export const ExploreCoursesStep: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div 
+      className="space-y-6" 
+      role="region" 
+      aria-label="Explorar cursos"
+    >
       <motion.div 
         className="text-center"
         initial={{ opacity: 0, y: 20 }}
@@ -32,11 +36,15 @@ export const ExploreCoursesStep: React.FC = () => {
         </p>
       </motion.div>
 
-      <div className="space-y-4">
+      <div 
+        className="space-y-4"
+        aria-live="polite"
+        aria-busy={isLoading}
+      >
         {isLoading ? (
           // Skeleton loading state
           Array(3).fill(0).map((_, i) => (
-            <Card key={i} className="overflow-hidden">
+            <Card key={i} className="overflow-hidden" aria-hidden="true">
               <CardHeader className="pb-2">
                 <Skeleton className="h-4 w-2/3" />
               </CardHeader>
@@ -62,7 +70,12 @@ export const ExploreCoursesStep: React.FC = () => {
                   <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
                 </CardContent>
                 <CardFooter className="flex justify-end pt-0">
-                  <Button variant="ghost" size="sm" onClick={() => navigate(`/courses/${course.id}`)}>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => navigate(`/courses/${course.id}`)}
+                    aria-label={`Ver detalles de ${course.title}`}
+                  >
                     Ver detalles
                   </Button>
                 </CardFooter>
@@ -73,7 +86,11 @@ export const ExploreCoursesStep: React.FC = () => {
       </div>
       
       <div className="flex justify-center pt-4">
-        <Button onClick={handleExplore} variant="outline">
+        <Button 
+          onClick={handleExplore} 
+          variant="outline"
+          className="focus-visible:ring-2 focus-visible:ring-primary"
+        >
           Ver todos los cursos
         </Button>
       </div>

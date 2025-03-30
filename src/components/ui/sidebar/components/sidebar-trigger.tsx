@@ -9,7 +9,8 @@ export const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, state } = useSidebar()
+  const isCollapsed = state === "collapsed"
 
   return (
     <Button
@@ -17,15 +18,18 @@ export const SidebarTrigger = React.forwardRef<
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn("h-7 w-7", className)}
+      className={cn("h-7 w-7 focus-visible:ring-2 focus-visible:ring-primary", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
+      aria-expanded={!isCollapsed}
+      aria-label={isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}
+      aria-controls="sidebar"
       {...props}
     >
-      <PanelLeft />
-      <span className="sr-only">Toggle Sidebar</span>
+      <PanelLeft aria-hidden="true" />
+      <span className="sr-only">{isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}</span>
     </Button>
   )
 })

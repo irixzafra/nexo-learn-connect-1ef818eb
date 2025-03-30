@@ -34,6 +34,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({
     return location.pathname.startsWith(path);
   };
 
+  const isActive = isRouteActive(to);
+
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild disabled={disabled}>
@@ -41,8 +43,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({
           to={disabled ? "#" : to} 
           className={cn(
             "flex items-center justify-between gap-2 px-2 py-2 rounded-md",
-            isRouteActive(to) ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "hover:bg-accent/20",
-            disabled && "opacity-50 cursor-not-allowed"
+            isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "hover:bg-accent/20",
+            disabled && "opacity-50 cursor-not-allowed",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           )}
           onClick={(e) => {
             if (disabled) {
@@ -50,9 +53,13 @@ export const MenuItem: React.FC<MenuItemProps> = ({
               toast.info("Esta funcionalidad estará disponible próximamente");
             }
           }}
+          aria-current={isActive ? "page" : undefined}
+          aria-disabled={disabled}
+          role="menuitem"
+          tabIndex={disabled ? -1 : 0}
         >
           <span className="flex items-center gap-2">
-            <Icon className="h-4 w-4" />
+            <Icon className="h-4 w-4" aria-hidden="true" />
             <span>{label}</span>
           </span>
           {badge && (

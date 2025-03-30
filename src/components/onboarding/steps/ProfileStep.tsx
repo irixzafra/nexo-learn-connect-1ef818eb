@@ -44,6 +44,8 @@ export const ProfileStep: React.FC = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="space-y-6"
+      role="region"
+      aria-label="Completar perfil"
     >
       <div className="text-center mb-6">
         <motion.div
@@ -53,8 +55,8 @@ export const ProfileStep: React.FC = () => {
           className="mx-auto"
         >
           <Avatar className="w-24 h-24 mx-auto border-4 border-primary/20">
-            <AvatarImage src={profile?.avatar_url || ''} />
-            <AvatarFallback className="text-2xl bg-primary/10 text-primary">
+            <AvatarImage src={profile?.avatar_url || ''} alt={initialName || 'Foto de perfil'} />
+            <AvatarFallback className="text-2xl bg-primary/10 text-primary" aria-label="Iniciales del perfil">
               {getInitials(initialName)}
             </AvatarFallback>
           </Avatar>
@@ -81,36 +83,47 @@ export const ProfileStep: React.FC = () => {
       
       <Card>
         <CardContent className="pt-6">
-          <form className="space-y-4">
+          <form 
+            className="space-y-4" 
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSave();
+            }}
+            aria-label="Formulario de perfil"
+          >
             <div className="space-y-2">
-              <Label htmlFor="fullName">Nombre completo</Label>
+              <Label htmlFor="fullName" id="fullName-label">Nombre completo</Label>
               <Input
                 id="fullName"
                 placeholder="Tu nombre completo"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                aria-labelledby="fullName-label"
+                aria-required="true"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
+              <Label htmlFor="email" id="email-label">Correo electrónico</Label>
               <Input
                 id="email"
                 type="email"
                 value={user?.email || ''}
                 disabled
                 className="bg-muted/50"
+                aria-labelledby="email-label"
+                aria-readonly="true"
               />
-              <p className="text-xs text-muted-foreground">Tu correo electrónico no puede ser modificado</p>
+              <p className="text-xs text-muted-foreground" id="email-description">Tu correo electrónico no puede ser modificado</p>
             </div>
             
             <div className="pt-2">
               <Button 
-                type="button"
+                type="submit"
                 variant="outline"
-                className="w-full"
-                onClick={handleSave}
+                className="w-full focus-visible:ring-2 focus-visible:ring-primary"
                 disabled={profileMutation.isPending}
+                aria-busy={profileMutation.isPending}
               >
                 {profileMutation.isPending ? 'Guardando...' : 'Guardar cambios'}
               </Button>

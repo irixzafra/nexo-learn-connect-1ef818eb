@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { TestDataProvider } from '@/contexts/TestDataContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { OnboardingProvider } from '@/contexts/OnboardingContext';
+import { KeyboardShortcuts } from '@/components/accessibility/KeyboardShortcuts';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -28,6 +29,7 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             <EditModeProvider>
               <TestDataProvider>
                 <OnboardingProvider>
+                  <KeyboardShortcuts />
                   {children}
                   <Toaster position="top-right" />
                 </OnboardingProvider>
