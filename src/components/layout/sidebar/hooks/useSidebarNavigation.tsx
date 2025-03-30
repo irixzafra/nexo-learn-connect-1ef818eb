@@ -1,56 +1,49 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UserRoleType, toUserRoleType } from '@/types/auth';
-import { getRoleName, getHomePath } from '@/utils/roleUtils';
+import { UserRoleType } from '@/types/auth';
+import { getHomePath, getRoleName } from '@/utils/roleUtils';
 
 export const useSidebarNavigation = (
-  userRole: UserRoleType,
+  userRole: UserRoleType, 
   viewAsRole?: 'current' | UserRoleType,
   onRoleChange?: (role: UserRoleType) => void
 ) => {
-  const navigate = useNavigate();
+  // Estado para el colapso del sidebar
   const [isCollapsed, setIsCollapsed] = useState(false);
   
-  // Track "view as" role for admin role-switching
+  // Estado para el rol de vista actual
   const [currentViewRole, setCurrentViewRole] = useState<'current' | UserRoleType>(viewAsRole || 'current');
   
-  // Track current language (could come from a context/cookie)
+  // Estado para el idioma actual
   const [currentLanguage, setCurrentLanguage] = useState('es');
   
-  // Update local state if prop changes
-  useEffect(() => {
-    if (viewAsRole) {
-      setCurrentViewRole(viewAsRole);
-    }
-  }, [viewAsRole]);
+  // Determinar el rol efectivo basado en la vista actual
+  const effectiveRole = currentViewRole === 'current' ? userRole : currentViewRole;
   
-  // Calculate effective role (actual or viewed-as)
-  const effectiveRole = currentViewRole === 'current' ? userRole : toUserRoleType(currentViewRole as string);
-  
-  // Toggle sidebar expanded/collapsed state
-  const toggleSidebar = () => {
-    setIsCollapsed(prev => !prev);
-  };
-  
-  // Handle role change
-  const handleRoleChange = (role: UserRoleType) => {
-    setCurrentViewRole(role);
-    
+  // Manejar cambio de rol
+  const handleRoleChange = (newRole: UserRoleType) => {
+    setCurrentViewRole(newRole);
     if (onRoleChange) {
-      onRoleChange(role);
+      onRoleChange(newRole);
     }
   };
   
-  // Handle language change
-  const changeLanguage = (code: string) => {
-    setCurrentLanguage(code);
-    // Additional logic for language change (e.g., update context, store in cookies)
+  // Cambiar idioma
+  const changeLanguage = (language: string) => {
+    setCurrentLanguage(language);
+    localStorage.setItem('preferredLanguage', language);
   };
+  
+  // Cargar preferencia de idioma al iniciar
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('preferredLanguage');
+    if (savedLanguage) {
+      setCurrentLanguage(savedLanguage);
+    }
+  }, []);
   
   return {
     isCollapsed,
-    toggleSidebar,
     currentViewRole,
     currentLanguage,
     effectiveRole,

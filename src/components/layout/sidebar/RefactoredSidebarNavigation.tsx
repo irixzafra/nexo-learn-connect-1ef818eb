@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -36,6 +36,11 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
     changeLanguage
   } = useSidebarNavigation(toUserRoleType(userRole as string), viewAsRole, onRoleChange);
 
+  // Mostrar Landing Page para usuarios anónimos
+  if (effectiveRole === 'anonimo') {
+    return null; // Los usuarios anónimos solo ven la Landing Page
+  }
+
   // Language options
   const languages = [
     { code: 'es', name: 'Español' },
@@ -48,7 +53,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
       {/* Logo at the top with full title and subtitle */}
       <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={null} />
 
-      {/* Main Navigation Section */}
+      {/* Main Navigation Section - ahora usando el nuevo componente */}
       <SidebarMainNavigation 
         effectiveRole={effectiveRole}
         isCollapsed={isCollapsed}
