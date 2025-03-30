@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
@@ -23,6 +22,7 @@ import {
   FileText,
   Calendar 
 } from 'lucide-react';
+import StudentsSection from '@/features/admin/components/courses/StudentsSection';
 
 const AdminCourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -411,17 +411,7 @@ const AdminCourseDetail: React.FC = () => {
 
         <TabsContent value="students">
           <PageSection variant="card" title="Estudiantes Inscritos" description="Gestión de participantes">
-            <div className="text-center py-10">
-              <Users className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">Lista de Estudiantes</h3>
-              <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                Aquí podrás ver y gestionar los estudiantes inscritos en este curso. Esta funcionalidad está en desarrollo.
-              </p>
-              <Button variant="outline">
-                <Users className="h-4 w-4 mr-2" />
-                Ver estudiantes
-              </Button>
-            </div>
+            <StudentsSection courseId={courseId as string} courseName={course.title} />
           </PageSection>
         </TabsContent>
 

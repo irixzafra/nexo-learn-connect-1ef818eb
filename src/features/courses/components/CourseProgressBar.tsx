@@ -1,45 +1,38 @@
 
 import React from "react";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
 
 interface CourseProgressBarProps {
   progress: number;
-  showLabel?: boolean;
   size?: "sm" | "md" | "lg";
-  className?: string;
 }
 
-export const CourseProgressBar: React.FC<CourseProgressBarProps> = ({
-  progress,
-  showLabel = true,
-  size = "md",
-  className,
+export const CourseProgressBar: React.FC<CourseProgressBarProps> = ({ 
+  progress, 
+  size = "md" 
 }) => {
-  // Ensure progress is between 0 and 100
-  const normalizedProgress = Math.min(Math.max(progress, 0), 100);
-  
-  // Round to whole number for display
-  const displayProgress = Math.round(normalizedProgress);
-  
-  // Size classes
-  const sizeClasses = {
-    sm: "h-2",
-    md: "h-4",
-    lg: "h-6",
+  const getProgressColor = (value: number) => {
+    if (value < 25) return "bg-red-500";
+    if (value < 75) return "bg-amber-500";
+    return "bg-green-500";
   };
 
+  const getHeight = () => {
+    switch (size) {
+      case "sm": return "h-1.5";
+      case "lg": return "h-4";
+      default: return "h-2.5";
+    }
+  };
+
+  const heightClass = getHeight();
+  const colorClass = getProgressColor(progress);
+
   return (
-    <div className={cn("space-y-1", className)}>
-      <Progress 
-        value={normalizedProgress} 
-        className={cn(sizeClasses[size])}
+    <div className={`w-full bg-gray-200 rounded-full ${heightClass} dark:bg-gray-700`}>
+      <div 
+        className={`${heightClass} rounded-full ${colorClass} transition-all duration-300 ease-in-out`} 
+        style={{ width: `${Math.min(Math.max(progress, 0), 100)}%` }}
       />
-      {showLabel && (
-        <p className="text-xs text-muted-foreground text-right">
-          {displayProgress}% completado
-        </p>
-      )}
     </div>
   );
 };
