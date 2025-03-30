@@ -12,6 +12,7 @@ import { CourseGrid } from "@/features/courses/components/CourseGrid";
 import { CourseCatalogError } from "@/features/courses/components/CourseCatalogError";
 import { CourseCardSkeleton } from "@/features/courses/components/CourseCardSkeleton";
 import { useCoursesCatalog } from "@/features/courses/hooks/useCoursesCatalog";
+import { CatalogHeader } from "@/features/courses/components/CatalogHeader";
 import { Loader2, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -24,14 +25,15 @@ const CoursesCatalog: React.FC = () => {
   const [showUpcoming, setShowUpcoming] = useState(false);
   const [sortBy, setSortBy] = useState("relevance");
   const [showFilters, setShowFilters] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   // Get available categories and tags
   const {
     courses,
     isLoading,
-    isError,
-    refetch,
+    error,
+    fetchCourses
   } = useCoursesCatalog({
     level: selectedLevel || undefined,
     category: selectedCategory || undefined,
@@ -118,12 +120,11 @@ const CoursesCatalog: React.FC = () => {
       );
     }
 
-    if (isError) {
+    if (error) {
       return (
-        <CourseCatalogError
-          message="No pudimos cargar los cursos en este momento."
-          actionLabel="Reintentar"
-          onAction={() => refetch()}
+        <CourseCatalogError 
+          errorMessage={error}
+          onRetry={() => fetchCourses()} 
         />
       );
     }
@@ -153,7 +154,7 @@ const CoursesCatalog: React.FC = () => {
 
     return (
       <CourseGrid
-        courses={courses}
+        courseList={courses}
         onCourseClick={handleCourseClick}
       />
     );
@@ -161,11 +162,9 @@ const CoursesCatalog: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <CoursesHeader
-        title="Explora Nuestros Cursos"
-        subtitle="Descubre contenido educativo de alta calidad creado por expertos en la industria"
-        showFilters={showFilters}
-        onToggleFilters={handleToggleFilters}
+      <CatalogHeader 
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
       />
 
       <motion.div
@@ -175,7 +174,7 @@ const CoursesCatalog: React.FC = () => {
       >
         <CategorySelector 
           selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
+          setSelectedCategory={setSelectedCategory}
           categories={availableCategories}
         />
 

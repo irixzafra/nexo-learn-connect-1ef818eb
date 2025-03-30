@@ -17,19 +17,20 @@ import CourseLanding from '@/pages/CourseLanding';
 import AppLayout from '@/layouts/AppLayout';
 import CoursesCatalog from '@/pages/CoursesCatalog';
 import LessonView from '@/pages/student/LessonView';
+import PublicLayout from '@/layouts/PublicLayout';
 
 const PublicRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/landing" element={<LandingPage />} />
-      <Route path="/auth/login" element={<Login />} />
-      <Route path="/auth/register" element={<Register />} />
-      <Route path="/about-us" element={<AboutUs />} />
-      <Route path="/scholarships" element={<Scholarships />} />
-      <Route path="/unauthorized" element={<Unauthorized />} />
-      <Route path="/payment/success" element={<PaymentSuccess />} />
-      <Route path="/payment/cancel" element={<PaymentCancel />} />
+      <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
+      <Route path="/landing" element={<PublicLayout><LandingPage /></PublicLayout>} />
+      <Route path="/auth/login" element={<PublicLayout><Login /></PublicLayout>} />
+      <Route path="/auth/register" element={<PublicLayout><Register /></PublicLayout>} />
+      <Route path="/about-us" element={<PublicLayout><AboutUs /></PublicLayout>} />
+      <Route path="/scholarships" element={<PublicLayout><Scholarships /></PublicLayout>} />
+      <Route path="/unauthorized" element={<PublicLayout><Unauthorized /></PublicLayout>} />
+      <Route path="/payment/success" element={<PublicLayout><PaymentSuccess /></PublicLayout>} />
+      <Route path="/payment/cancel" element={<PublicLayout><PaymentCancel /></PublicLayout>} />
       <Route path="/courses" element={
         <AppLayout>
           <CoursesCatalog />

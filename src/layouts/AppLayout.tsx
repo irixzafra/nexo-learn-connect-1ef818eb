@@ -19,6 +19,7 @@ import { NexoLogo } from "@/components/ui/logo";
 import { Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationIndicator } from "@/components/notifications/NotificationIndicator";
+import { ThemeSelector } from "@/components/ThemeSelector";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -85,6 +86,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
                 )}
               </div>
               <div className="flex items-center gap-2 ml-auto">
+                {/* Theme Selector */}
+                <ThemeSelector />
+                
                 {/* Notification Icon */}
                 <NotificationIndicator />
                 

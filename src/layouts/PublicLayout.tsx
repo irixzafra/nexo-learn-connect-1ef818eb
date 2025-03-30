@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { LogIn } from 'lucide-react';
+import { ThemeSelector } from '@/components/ThemeSelector';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -55,6 +56,9 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
           </Link>
           
           <div className="flex items-center gap-4">
+            {/* Theme Selector */}
+            <ThemeSelector />
+            
             {!isAuthenticated && !isAuthPage ? (
               <motion.div 
                 className="flex items-center gap-4"

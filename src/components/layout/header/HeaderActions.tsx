@@ -24,7 +24,7 @@ export const HeaderActions: React.FC = () => {
         <NotificationIndicator />
       )}
       
-      {/* Theme Selector */}
+      {/* Theme Selector - ubicado en una posición destacada */}
       <ThemeSelector />
       
       {/* Connection Status - version más compacta */}
