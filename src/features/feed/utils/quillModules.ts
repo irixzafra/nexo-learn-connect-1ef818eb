@@ -1,38 +1,35 @@
 
 import { optimizeImage, getVideoEmbedUrl, isVideoUrl } from './imageOptimizer';
 
-// Define el formato del video
-const videoHandler = {
-  id: 'blot-formatter-video',
-  allowedTags: ['VIDEO', 'IFRAME'],
-};
-
-// Crea el módulo de videos para Quill
+// Define video handler for Quill with a different approach
 export const createVideoModule = (quill: any) => {
-  // Añade el formato de video
-  const VideoBlot = quill.import('formats/video');
-  quill.register(VideoBlot, true);
+  if (!quill) return;
   
-  // Añade el botón de video en la toolbar
+  // Add the button handler for video in the toolbar
   const toolbar = quill.getModule('toolbar');
-  toolbar.addHandler('video', () => {
-    const range = quill.getSelection(true);
-    
-    // Solicitar la URL del video
-    const url = prompt('Introduce la URL del video (YouTube o Vimeo):');
-    if (!url || !isVideoUrl(url)) {
-      alert('Por favor, introduce una URL válida de YouTube o Vimeo');
-      return;
-    }
-    
-    // Insertar el video en el editor con la URL embebida
-    quill.insertEmbed(range.index, 'video', getVideoEmbedUrl(url), 'user');
-    quill.setSelection(range.index + 1);
-  });
+  if (toolbar) {
+    toolbar.addHandler('video', () => {
+      const range = quill.getSelection(true);
+      
+      // Solicitar la URL del video
+      const url = prompt('Introduce la URL del video (YouTube o Vimeo):');
+      if (!url || !isVideoUrl(url)) {
+        alert('Por favor, introduce una URL válida de YouTube o Vimeo');
+        return;
+      }
+      
+      // Insert the video embed directly
+      const embedUrl = getVideoEmbedUrl(url);
+      quill.insertEmbed(range.index, 'video', embedUrl, 'user');
+      quill.setSelection(range.index + 1);
+    });
+  }
 };
 
 // Maneja la subida de imágenes optimizadas
 export const handleImageUpload = (quill: any) => {
+  if (!quill) return;
+  
   const input = document.createElement('input');
   input.setAttribute('type', 'file');
   input.setAttribute('accept', 'image/*');

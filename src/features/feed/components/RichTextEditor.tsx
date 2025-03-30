@@ -4,6 +4,8 @@ import ReactQuill from 'react-quill';
 import { Button } from '@/components/ui/button';
 import { Loader2, Bold, Italic, Link, Image, Video, List, ListOrdered, AlignLeft, Smile, AtSign, Send } from 'lucide-react';
 import { quillModules, quillFormats, handleImageUpload, createVideoModule } from '../utils/quillModules';
+import 'react-quill/dist/quill.snow.css';
+import '../styles/quill-custom.css';
 
 interface RichTextEditorProps {
   value: string;
@@ -32,12 +34,18 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       
       // Set up image handler
       const toolbar = quill.getModule('toolbar');
-      toolbar.addHandler('image', () => {
-        handleImageUpload(quill);
-      });
+      if (toolbar) {
+        toolbar.addHandler('image', () => {
+          handleImageUpload(quill);
+        });
+      }
       
-      // Set up video embed functionality
-      createVideoModule(quill);
+      // Set up video embed functionality with error handling
+      try {
+        createVideoModule(quill);
+      } catch (error) {
+        console.error('Error setting up video module:', error);
+      }
     }
   }, []);
   
@@ -66,9 +74,11 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       if (type === 'image') {
         handleImageUpload(quill);
       } else if (type === 'video') {
-        // The video handler is already implemented via the toolbar config
+        // Use a simpler approach for video
         const toolbar = quill.getModule('toolbar');
-        toolbar.handlers['video']();
+        if (toolbar && toolbar.handlers && toolbar.handlers['video']) {
+          toolbar.handlers['video']();
+        }
       }
     };
     

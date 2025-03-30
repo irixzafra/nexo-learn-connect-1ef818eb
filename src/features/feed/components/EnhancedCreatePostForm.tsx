@@ -10,6 +10,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Image, Video, AtSign, Smile, Send } from 'lucide-react';
 import { toast } from 'sonner';
+import 'react-quill/dist/quill.snow.css'; 
+import '../styles/quill-custom.css';
 
 export const EnhancedCreatePostForm: React.FC = () => {
   const { user } = useAuth();
