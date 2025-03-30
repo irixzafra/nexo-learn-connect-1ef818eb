@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
@@ -12,12 +13,9 @@ import {
   Sidebar, 
   SidebarTrigger, 
   SidebarContent,
-  SidebarHeader,
-  SidebarFooter
 } from "@/components/ui/sidebar";
 import { UserMenu } from "@/components/layout/header/UserMenu";
 import { RoleIndicator } from "@/components/layout/header/RoleIndicator";
-import { NexoLogo } from "@/components/ui/logo";
 
 interface AppLayoutProps {
   children: React.ReactNode;

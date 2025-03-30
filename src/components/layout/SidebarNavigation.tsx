@@ -98,9 +98,16 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ viewAsRole }) => 
 
   return (
     <div className="h-full flex flex-col py-4">
-      {/* Logo at the top */}
-      <div className="flex items-center justify-center py-4">
-        <NexoLogo variant="icon" className="h-8 w-auto" />
+      {/* Logo at the top with full title and subtitle */}
+      <div className={cn(
+        "flex items-center justify-start",
+        isCollapsed ? "px-2 mb-4" : "px-4 mb-6"
+      )}>
+        {isCollapsed ? (
+          <NexoLogo variant="icon" className="h-8 w-auto mx-auto" />
+        ) : (
+          <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
+        )}
       </div>
       
       <div className={cn(
