@@ -44,7 +44,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const shouldShowSidebar = isAuthenticated && showSidebar;
   
   return (
-    <SidebarProvider defaultCollapsed={isMobile}>
+    <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         {/* Sidebar */}
         {shouldShowSidebar && (

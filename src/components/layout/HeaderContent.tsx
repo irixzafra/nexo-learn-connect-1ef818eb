@@ -34,7 +34,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ onRoleChange }) => {
       <div className="container mx-auto flex justify-between items-center h-14">
         <HeaderLogo 
           pageTitle={pageTitleText} 
-          viewAsRole={userRoleType} 
+          viewAsRole={userRoleType as UserRoleType | 'current'} 
         />
         
         <MainNavigationMenu 

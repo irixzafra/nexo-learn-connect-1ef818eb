@@ -8,11 +8,11 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import SidebarNavigation from '../SidebarNavigation';
-import { UserRole } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 
 interface HeaderLogoProps {
   pageTitle?: string;
-  viewAsRole?: UserRole | 'current';
+  viewAsRole?: UserRoleType | 'current';
 }
 
 const HeaderLogo: React.FC<HeaderLogoProps> = ({ 
@@ -39,7 +39,7 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({
           </SheetTrigger>
           <SheetContent side="left" className="w-[80%] sm:w-[350px] p-0">
             <div className="flex flex-col h-full">
-              <SidebarNavigation viewAsRole={viewAsRole as UserRole} />
+              <SidebarNavigation viewAsRole={viewAsRole} />
             </div>
           </SheetContent>
         </Sheet>

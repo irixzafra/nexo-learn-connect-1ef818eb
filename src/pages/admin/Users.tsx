@@ -1,6 +1,7 @@
+
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { UserProfile, UserRoleType } from "@/types/auth";
+import { UserProfile, UserRoleType, toUserRoleType } from "@/types/auth";
 import {
   Table,
   TableBody,

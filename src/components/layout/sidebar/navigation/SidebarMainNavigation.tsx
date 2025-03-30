@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { 
@@ -6,7 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger 
 } from '@/components/ui/tooltip';
-import { UserRoleType } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
@@ -40,7 +39,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   // Check if a role should see specific sections
   const canSeeAdmin = effectiveRole === 'admin' || effectiveRole === 'instructor';
 
-  // Navegación simplificada - solo categorías principales
+  // Navigation items - only main categories
   const getNavigationItems = (): AdminMenuItem[] => {
     const baseItems = [
       {
@@ -104,13 +103,13 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
     ];
   };
 
-  // Para administradores en versión móvil (colapsada)
+  // For administrators in mobile version (collapsed)
   const getMobileAdminItems = (): AdminMenuItem[] => {
     if (effectiveRole === 'admin') {
       return adminMobileMenuItems;
     }
     
-    // Para roles no admin, simplemente adaptar los items normales
+    // For non-admin roles, simply adapt normal items
     return getNavigationItems();
   };
 

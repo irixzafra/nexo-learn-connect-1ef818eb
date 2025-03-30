@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import SidebarNavigation from '../SidebarNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { UserRole } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 
 interface MobileSidebarProps {
-  viewAsRole: 'current' | UserRole;
+  viewAsRole: 'current' | UserRoleType;
   trigger?: React.ReactNode;
 }
 
@@ -31,9 +31,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ viewAsRole, trigge
         </SheetTrigger>
         <SheetContent side="left" className="w-[80%] sm:w-[350px] p-0">
           <div className="flex flex-col h-full">
-            <div className="flex-1 overflow-auto">
-              <SidebarNavigation viewAsRole={viewAsRole} />
-            </div>
+            <SidebarNavigation viewAsRole={viewAsRole} />
           </div>
         </SheetContent>
       </Sheet>
