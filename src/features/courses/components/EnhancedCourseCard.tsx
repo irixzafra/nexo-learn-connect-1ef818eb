@@ -156,7 +156,9 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
           <div className="flex justify-between items-start">
             <div>
               <CardTitle className="line-clamp-2 group-hover:text-primary transition-colors text-lg">
-                {course.title}
+                <Link to={`/courses/${course.id}`} className="hover:underline">
+                  {course.title}
+                </Link>
               </CardTitle>
               <CardDescription className="text-sm mt-1 flex items-center gap-1">
                 <div className="flex items-center">

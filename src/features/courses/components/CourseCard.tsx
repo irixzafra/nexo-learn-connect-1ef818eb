@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Course } from '@/types/course';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +14,7 @@ export interface CourseCardProps {
 export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButton = false }) => {
   // Default placeholder values for any missing properties
   const {
+    id,
     title = 'Título del curso',
     category = 'Categoría',
     instructor = 'Instructor',
@@ -38,7 +40,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
       <CardContent className="p-4">
         <div className="flex flex-col space-y-2">
           <div className="space-y-1">
-            <h3 className="font-medium line-clamp-2">{title}</h3>
+            <Link to={`/courses/${id}`} className="hover:text-primary hover:underline transition-colors">
+              <h3 className="font-medium line-clamp-2">{title}</h3>
+            </Link>
             <p className="text-sm text-muted-foreground">
               {typeof instructor === 'string' ? instructor : instructor?.full_name}
             </p>
