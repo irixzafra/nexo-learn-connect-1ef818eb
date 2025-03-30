@@ -15,8 +15,6 @@ export interface CourseData {
   currency: string;
   instructor_id: string;
   is_published: boolean;
-  status?: string;
-  students_count?: number;
   created_at: string;
   updated_at: string;
   profiles?: Instructor | null;
