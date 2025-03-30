@@ -12,7 +12,12 @@ import {
   ArrowDown,
   FileText,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  ArrowLeft,
+  PieChart,
+  LineChart,
+  BarChart,
+  Users
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,6 +45,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar, PieChart as RechartsPieChart, Pie, Cell, Legend } from 'recharts';
+import { Link } from "react-router-dom";
 
 // Datos de ejemplo para la página de facturación
 const mockTransactions = [
@@ -117,6 +124,31 @@ const mockTransactions = [
   }
 ];
 
+// Datos para gráficos
+const monthlyRevenueData = [
+  { name: 'Ene', value: 2400 },
+  { name: 'Feb', value: 3100 },
+  { name: 'Mar', value: 2900 },
+  { name: 'Abr', value: 3800 },
+  { name: 'May', value: 4200 },
+  { name: 'Jun', value: 3900 },
+  { name: 'Jul', value: 4800 },
+  { name: 'Ago', value: 4300 },
+  { name: 'Sep', value: 5200 },
+  { name: 'Oct', value: 5500 },
+  { name: 'Nov', value: 4700 },
+  { name: 'Dic', value: 6100 },
+];
+
+const paymentMethodsData = [
+  { name: 'Tarjeta de Crédito', value: 65 },
+  { name: 'PayPal', value: 20 },
+  { name: 'Transferencia', value: 10 },
+  { name: 'Otros', value: 5 },
+];
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
 // Componente para mostrar el estado del pago
 const PaymentStatusBadge = ({ status }: { status: string }) => {
   switch (status) {
@@ -175,6 +207,8 @@ const Billing: React.FC = () => {
   const [filteredTransactions, setFilteredTransactions] = useState(mockTransactions);
   const [dateFilter, setDateFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [chartType, setChartType] = useState("line");
+  const [timeRange, setTimeRange] = useState("year");
 
   // Función para formatear el precio
   const formatPrice = (price: number): string => {
@@ -249,9 +283,85 @@ const Billing: React.FC = () => {
     filterTransactions(searchTerm, value, statusFilter);
   };
 
+  // Renderizar el gráfico seleccionado
+  const renderChart = () => {
+    switch (chartType) {
+      case "line":
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <RechartsLineChart data={monthlyRevenueData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip 
+                formatter={(value) => [formatPrice(Number(value)), "Ingresos"]}
+                labelFormatter={(label) => `Mes: ${label}`}
+              />
+              <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
+            </RechartsLineChart>
+          </ResponsiveContainer>
+        );
+      case "bar":
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <RechartsBarChart data={monthlyRevenueData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip 
+                formatter={(value) => [formatPrice(Number(value)), "Ingresos"]}
+                labelFormatter={(label) => `Mes: ${label}`}
+              />
+              <Bar dataKey="value" fill="#8884d8" />
+            </RechartsBarChart>
+          </ResponsiveContainer>
+        );
+      case "pie":
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <RechartsPieChart margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <Pie
+                data={paymentMethodsData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={100}
+                fill="#8884d8"
+                dataKey="value"
+                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+              >
+                {paymentMethodsData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => [`${value}%`, "Porcentaje"]} />
+              <Legend />
+            </RechartsPieChart>
+          </ResponsiveContainer>
+        );
+      default:
+        return (
+          <div className="h-[300px] flex items-center justify-center border-b mb-4">
+            <div className="text-center text-muted-foreground">
+              <BarChart3 className="h-12 w-12 mx-auto mb-2" />
+              <p>Seleccione un tipo de gráfico para visualizar los datos</p>
+            </div>
+          </div>
+        );
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Facturación</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Facturación</h1>
+        <Button variant="outline" asChild className="gap-2">
+          <Link to="/admin/dashboard">
+            <ArrowLeft className="h-4 w-4" />
+            Volver al Dashboard
+          </Link>
+        </Button>
+      </div>
       
       {/* Tarjetas de estadísticas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -315,18 +425,57 @@ const Billing: React.FC = () => {
       {/* Gráfico y filtros */}
       <Card>
         <CardHeader>
-          <CardTitle>Resumen de Ingresos</CardTitle>
-          <CardDescription>Vista general de las transacciones financieras</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[200px] flex items-center justify-center border-b mb-4">
-            <div className="text-center text-muted-foreground">
-              <BarChart3 className="h-12 w-12 mx-auto mb-2" />
-              <p>El gráfico de ingresos estará disponible próximamente</p>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div>
+              <CardTitle>Resumen de Ingresos</CardTitle>
+              <CardDescription>Vista general de las transacciones financieras</CardDescription>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
+              <Select value={chartType} onValueChange={setChartType}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Tipo de gráfico" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="line">
+                    <div className="flex items-center gap-2">
+                      <LineChart className="h-4 w-4" />
+                      <span>Línea</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="bar">
+                    <div className="flex items-center gap-2">
+                      <BarChart className="h-4 w-4" />
+                      <span>Barras</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="pie">
+                    <div className="flex items-center gap-2">
+                      <PieChart className="h-4 w-4" />
+                      <span>Métodos de pago</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Select value={timeRange} onValueChange={setTimeRange}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Periodo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="month">Este mes</SelectItem>
+                  <SelectItem value="quarter">Este trimestre</SelectItem>
+                  <SelectItem value="year">Este año</SelectItem>
+                  <SelectItem value="custom">Personalizado</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
+        </CardHeader>
+        <CardContent>
+          {/* Gráfico dinámico */}
+          {renderChart()}
           
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 mt-6">
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

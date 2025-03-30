@@ -26,6 +26,8 @@ const CourseLanding = lazy(() => import('@/pages/CourseLanding'));
 const CourseLearn = lazy(() => import('@/pages/student/CourseLearn'));
 const LessonView = lazy(() => import('@/pages/student/LessonView'));
 const Notifications = lazy(() => import('@/pages/Notifications'));
+const Messages = lazy(() => import('@/pages/placeholder/Messages'));
+const Billing = lazy(() => import('@/pages/placeholder/Billing'));
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -71,6 +73,28 @@ const AppRouter: React.FC = () => {
             <AppLayout>
               <Suspense fallback={<LoadingFallback />}>
                 <Notifications />
+              </Suspense>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Página de mensajes */}
+        <Route path="/messages" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Suspense fallback={<LoadingFallback />}>
+                <Messages />
+              </Suspense>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Ruta directa a facturación para pruebas */}
+        <Route path="/admin/billing" element={
+          <ProtectedRoute requiredRole="admin">
+            <AppLayout>
+              <Suspense fallback={<LoadingFallback />}>
+                <Billing />
               </Suspense>
             </AppLayout>
           </ProtectedRoute>
