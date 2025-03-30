@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -45,10 +46,12 @@ import { useNavigate } from "react-router-dom";
 import ManualEnrollmentDialog from "@/components/admin/ManualEnrollmentDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
+// Definimos correctamente la interfaz Instructor
 interface Instructor {
   full_name: string | null;
 }
 
+// Interfaz para Course con la estructura correcta
 interface Course {
   id: string;
   title: string;
@@ -61,9 +64,9 @@ interface Course {
   students_count: number;
   created_at: string;
   updated_at: string;
-  profiles?: Instructor;
+  profiles?: Instructor | null; // Cambiado de Instructor a Instructor | null para manejar valores nulos
   instructors?: {
-    full_name: string;
+    full_name: string | null;
   };
 }
 
@@ -109,7 +112,8 @@ const AdminCourses: React.FC = () => {
         throw error;
       }
       
-      const formattedCourses = data?.map(course => ({
+      // Formateamos los datos correctamente
+      const formattedCourses: Course[] = data?.map(course => ({
         ...course,
         instructors: {
           full_name: course.profiles?.full_name || 'Sin instructor asignado'
