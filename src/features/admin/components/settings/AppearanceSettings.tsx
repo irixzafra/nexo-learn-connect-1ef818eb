@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Paintbrush, Globe, Loader2 } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
-import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,13 +20,8 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
   onToggleFeature,
   isLoading = false
 }) => {
-  const { designFeatureEnabled, toggleDesignFeature } = useDesignSystem();
   const navigate = useNavigate();
 
-  const handleToggleDesignSystem = async (value: boolean) => {
-    await toggleDesignFeature(value);
-  };
-  
   return (
     <Card>
       <CardHeader>
@@ -82,51 +76,15 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
           </div>
         </div>
         
-        <Separator />
-        
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <Label htmlFor="enableDesignSystem">Sistema de Diseño</Label>
-            <p className="text-sm text-muted-foreground">
-              Activa o desactiva el sistema de personalización de diseño
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableDesignSystem"
-              checked={designFeatureEnabled}
-              onCheckedChange={handleToggleDesignSystem}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <div className={`mt-2 p-4 rounded-lg ${designFeatureEnabled ? 'bg-green-50' : 'bg-amber-50'}`}>
-          <div className="flex items-start gap-3">
-            <Paintbrush className={`h-5 w-5 mt-0.5 ${designFeatureEnabled ? 'text-green-600' : 'text-amber-600'}`} />
-            <div>
-              <p className={`text-sm font-medium ${designFeatureEnabled ? 'text-green-800' : 'text-amber-800'}`}>
-                {designFeatureEnabled ? 'Sistema de Diseño Activo' : 'Sistema de Diseño Desactivado'}
-              </p>
-              <p className={`text-xs ${designFeatureEnabled ? 'text-green-700' : 'text-amber-700'} mt-1`}>
-                {designFeatureEnabled 
-                  ? 'Los usuarios pueden personalizar los colores, tipografías y estilos de la plataforma.' 
-                  : 'La personalización de diseño está desactivada. Los usuarios no pueden modificar el aspecto visual de la plataforma.'
-                }
-              </p>
-              <Button 
-                variant="link" 
-                size="sm" 
-                className={`px-0 py-0 h-auto mt-2 ${designFeatureEnabled ? 'text-green-700' : 'text-amber-700'}`}
-                onClick={() => navigate('/admin/design')}
-              >
-                Ir al Sistema de Diseño →
-              </Button>
-            </div>
-          </div>
+        <div className="mt-6">
+          <Button 
+            variant="outline" 
+            className="w-full"
+            onClick={() => navigate('/admin/design')}
+          >
+            <Paintbrush className="mr-2 h-4 w-4" />
+            Ir al Sistema de Diseño
+          </Button>
         </div>
       </CardContent>
     </Card>

@@ -76,7 +76,6 @@ const AllCoursesTab: React.FC = () => {
         onSave={handleSaveCourse}
         entity={selectedCourse}
       >
-        {/* Use a function that returns JSX */}
         {(props) => <CourseForm data={props.data} onChange={props.onChange} />}
       </EntityDrawer>
 

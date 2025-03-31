@@ -12,6 +12,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import AdminNavigation from '@/components/admin/AdminNavigation';
 import AppLayout from '@/layouts/AppLayout';
 import DesignSystem from '@/pages/admin/design/DesignSystem';
+import SystemSettings from '@/pages/admin/SystemSettings';
 
 // User management components
 import { UserManagementTabs } from '@/features/users/UserManagementTabs';
@@ -109,10 +110,14 @@ const AdminRoutes: React.FC = () => {
         <Route path="/design" element={<DesignSystem />} />
         <Route path="/design/:tab" element={<DesignSystem />} />
         
-        {/* Content Management */}
-        <Route path="/settings/pages" element={<PageManagement />} />
-        <Route path="/settings/pages/create" element={<CreatePage />} />
-        <Route path="/settings/pages/:id" element={<EditPage />} />
+        {/* Content Management - Changed from settings/pages to pages */}
+        <Route path="/pages" element={<PageManagement />} />
+        <Route path="/pages/create" element={<CreatePage />} />
+        <Route path="/pages/:id" element={<EditPage />} />
+        
+        {/* System Settings */}
+        <Route path="/settings" element={<SystemSettings />} />
+        <Route path="/settings/:tab" element={<SystemSettings />} />
         
         {/* AI Services */}
         <Route path="/ai/services" element={<AIServicesPage />} />

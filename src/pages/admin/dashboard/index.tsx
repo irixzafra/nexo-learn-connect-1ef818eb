@@ -1,4 +1,3 @@
-
 import React from 'react';
 import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
 import { 
@@ -37,7 +36,6 @@ const AdminDashboard: React.FC = () => {
   const { stats, isLoading } = useAdminDashboardStats();
   const navigate = useNavigate();
 
-  // Ensure stats has default values to prevent "undefined" errors
   const safeStats = {
     total_users: stats?.total_users || 0,
     active_courses: stats?.active_courses || 0,
@@ -48,7 +46,6 @@ const AdminDashboard: React.FC = () => {
     completionRate: stats?.completionRate || 0
   };
 
-  // Accesos rápidos ampliados con todas las páginas administrativas disponibles
   const adminQuickMenuItems = [
     {
       label: "Dashboard",
@@ -145,7 +142,7 @@ const AdminDashboard: React.FC = () => {
       label: "Contenido",
       icon: FileText,
       description: "Gestión de páginas",
-      href: "/admin/settings/pages",
+      href: "/admin/pages",
       color: "bg-yellow-100 text-yellow-700"
     },
     {
@@ -157,7 +154,6 @@ const AdminDashboard: React.FC = () => {
     }
   ];
 
-  // System alerts for admin dashboard
   const systemAlerts = [
     {
       id: 1,
@@ -175,7 +171,6 @@ const AdminDashboard: React.FC = () => {
     }
   ];
 
-  // Categorías de acceso rápido
   const quickAccessCategories = [
     {
       title: "Gestión de Usuarios",
@@ -203,7 +198,6 @@ const AdminDashboard: React.FC = () => {
     }
   ];
 
-  // Recent activities
   const recentActivities = [
     {
       id: 1,
@@ -264,7 +258,6 @@ const AdminDashboard: React.FC = () => {
         ]
       }}
     >
-      {/* Mobile Quick Actions (visible only on small screens) */}
       <div className="block md:hidden mb-6">
         <Card>
           <CardHeader className="pb-3">
@@ -302,7 +295,6 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Mostrar indicadores de rendimiento */}
         <PageSection
           title="Estado del Sistema"
           description="Resumen de la actividad y rendimiento"
@@ -349,7 +341,6 @@ const AdminDashboard: React.FC = () => {
           </div>
         </PageSection>
         
-        {/* Alertas del Sistema */}
         <PageSection
           title="Alertas del Sistema"
           description="Notificaciones que requieren atención"
@@ -371,7 +362,6 @@ const AdminDashboard: React.FC = () => {
           </div>
         </PageSection>
         
-        {/* Actividad Reciente */}
         <PageSection
           title="Actividad Reciente"
           description="Últimas acciones realizadas en el sistema"
@@ -391,7 +381,6 @@ const AdminDashboard: React.FC = () => {
           </div>
         </PageSection>
         
-        {/* Enlaces Rápidos y Comunicación */}
         <PageSection
           title="Recursos y Soporte"
           description="Ayuda y herramientas para la administración"
@@ -454,7 +443,6 @@ const AdminDashboard: React.FC = () => {
         </PageSection>
       </div>
 
-      {/* Accesos Rápidos (Full Menu) */}
       <div id="allMenuItems" className="mt-8">
         <PageSection
           title="Acceso a Módulos"

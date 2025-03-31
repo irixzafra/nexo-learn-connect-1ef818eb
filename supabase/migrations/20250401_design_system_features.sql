@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS public.features_config (
     enable_multi_language BOOLEAN DEFAULT TRUE,
     design_system_enabled BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    CONSTRAINT features_config_id_check CHECK (id = 1)
 );
 
 -- If features_config already exists but doesn't have design_system_enabled column
@@ -42,6 +43,17 @@ CREATE POLICY IF NOT EXISTS "Cualquier usuario puede leer la configuración de d
 
 -- Writable only by admins
 CREATE POLICY IF NOT EXISTS "Solo administradores pueden modificar la configuración de diseño" ON public.design_system
+    FOR ALL USING (auth.jwt() ? 'role' AND auth.jwt()->>'role' = 'admin');
+
+-- Policies for features_config
+ALTER TABLE public.features_config ENABLE ROW LEVEL SECURITY;
+
+-- Readable by all users
+CREATE POLICY IF NOT EXISTS "Cualquier usuario puede leer la configuración de funcionalidades" ON public.features_config
+    FOR SELECT USING (true);
+
+-- Writable only by admins
+CREATE POLICY IF NOT EXISTS "Solo administradores pueden modificar la configuración de funcionalidades" ON public.features_config
     FOR ALL USING (auth.jwt() ? 'role' AND auth.jwt()->>'role' = 'admin');
 
 -- Insert default design theme if not exists
@@ -87,8 +99,8 @@ VALUES (1, '{
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert default features configuration if not exists
-INSERT INTO public.features_config (id, design_system_enabled)
-VALUES (1, TRUE)
+INSERT INTO public.features_config (id, design_system_enabled, enable_theme_switcher, enable_multi_language)
+VALUES (1, TRUE, TRUE, TRUE)
 ON CONFLICT (id) DO NOTHING;
 
 -- Grant permissions

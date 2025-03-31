@@ -53,7 +53,7 @@ const adminCategories = [
     id: 'pages',
     icon: FileText,
     label: "Páginas",
-    path: "/admin/settings/pages",
+    path: "/admin/pages",
     dataTag: "admin-nav-pages"  
   },
   { 

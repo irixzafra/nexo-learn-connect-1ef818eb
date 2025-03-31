@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
-import { ToggleRight, Users, BookOpen, Medal, Award, Route, Edit, MousePointer, BarChart3, Bot } from 'lucide-react';
+import { ToggleRight, Users, BookOpen, Medal, Award, Route, Edit, MousePointer, BarChart3, Bot, Paintbrush, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useDesignSystem } from '@/contexts/DesignSystemContext';
 
 interface Feature {
   id: string;
@@ -28,6 +29,44 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
   onToggleFeature,
   isLoading
 }) => {
+  const { designFeatureEnabled, toggleDesignFeature } = useDesignSystem();
+
+  // Core features section (includes design system)
+  const coreFeatures = [
+    {
+      id: 'design_system',
+      name: 'Sistema de Diseño',
+      description: 'Personalización visual y temas personalizados',
+      enabled: designFeatureEnabled,
+      icon: <Paintbrush className="h-5 w-5" />,
+      toggle: toggleDesignFeature
+    },
+    {
+      id: 'theme_switcher',
+      name: 'Selector de temas',
+      description: 'Permite a los usuarios cambiar entre tema claro y oscuro',
+      enabled: featuresConfig.enableThemeSwitcher || false,
+      icon: <ToggleRight className="h-5 w-5" />,
+      toggle: (value: boolean) => onToggleFeature('enableThemeSwitcher', value)
+    },
+    {
+      id: 'multi_language',
+      name: 'Soporte multilenguaje',
+      description: 'Habilita el soporte para múltiples idiomas',
+      enabled: featuresConfig.enableMultiLanguage || false,
+      icon: <ToggleRight className="h-5 w-5" />,
+      toggle: (value: boolean) => onToggleFeature('enableMultiLanguage', value)
+    },
+    {
+      id: 'notifications',
+      name: 'Notificaciones Globales',
+      description: 'Habilita el sistema de notificaciones en la plataforma',
+      enabled: featuresConfig.enableNotifications || false,
+      icon: <ToggleRight className="h-5 w-5" />,
+      toggle: (value: boolean) => onToggleFeature('enableNotifications', value)
+    }
+  ];
+
   // Simulated features list
   const features: Feature[] = [
     {
@@ -109,9 +148,56 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Core Platform Features */}
       <Card>
         <CardHeader>
-          <CardTitle>Gestión de Funcionalidades</CardTitle>
+          <CardTitle>Características Básicas</CardTitle>
+          <CardDescription>
+            Funcionalidades esenciales de la plataforma
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {coreFeatures.map((feature) => (
+              <div 
+                key={feature.id}
+                className="flex items-center justify-between space-x-2 rounded-lg border p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="rounded-lg bg-primary/10 p-2 text-primary">
+                    {feature.icon}
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-medium">{feature.name}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  {isLoading && (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+                  )}
+                  <Switch 
+                    checked={feature.enabled} 
+                    disabled={isLoading}
+                    onCheckedChange={(checked) => {
+                      if (feature.toggle) {
+                        feature.toggle(checked);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Module Features */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Gestión de Módulos</CardTitle>
           <CardDescription>
             Activa o desactiva módulos y características clave de la plataforma
           </CardDescription>
@@ -236,45 +322,6 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
           </CardContent>
         </Card>
       )}
-
-      {/* Notificaciones (siempre visible) */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Configuración de Notificaciones</CardTitle>
-          <CardDescription>
-            Configura las opciones de notificaciones de la plataforma
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between space-x-2 rounded-lg border p-4">
-            <div className="space-y-0.5">
-              <Label htmlFor="enable_notifications">Notificaciones Globales</Label>
-              <p className="text-sm text-muted-foreground">
-                Habilita el sistema de notificaciones en la plataforma
-              </p>
-            </div>
-            <Switch 
-              id="enable_notifications"
-              checked={featuresConfig.enableNotifications || false}
-              onCheckedChange={(checked) => onToggleFeature('enableNotifications', checked)}
-              disabled={isLoading}
-            />
-          </div>
-          <div className="flex items-center justify-between space-x-2 rounded-lg border p-4">
-            <div className="space-y-0.5">
-              <Label htmlFor="show_notification_badge">Indicador en Navegación</Label>
-              <p className="text-sm text-muted-foreground">
-                Muestra indicador de notificaciones no leídas en la navegación
-              </p>
-            </div>
-            <Switch 
-              id="show_notification_badge"
-              checked={true}
-              disabled={isLoading}
-            />
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
