@@ -14,12 +14,11 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Code, Layout, Search, FileText, Eye } from 'lucide-react';
+import { Loader2, Code, Search, FileText, Eye } from 'lucide-react';
 import { SitePage, PageLayout, PageStatus, PageBlock } from '@/types/pages';
 import { getPageById, updatePage, isSlugUnique } from '@/features/admin/services/pagesService';
 import PageContentEditor from './PageContentEditor';
 import PageSeoEditor from './PageSeoEditor';
-import PageDesignEditor from './PageDesignEditor';
 import PagePreview from './PagePreview';
 
 interface PageEditorProps {
@@ -157,10 +156,6 @@ const PageEditorDialog: React.FC<PageEditorProps> = ({
                   <FileText className="h-4 w-4" />
                   <span>Contenido</span>
                 </TabsTrigger>
-                <TabsTrigger value="design" className="flex items-center gap-2">
-                  <Layout className="h-4 w-4" />
-                  <span>Diseño</span>
-                </TabsTrigger>
                 <TabsTrigger value="seo" className="flex items-center gap-2">
                   <Search className="h-4 w-4" />
                   <span>SEO</span>
@@ -179,10 +174,6 @@ const PageEditorDialog: React.FC<PageEditorProps> = ({
                 <PageContentEditor form={form} />
               </TabsContent>
 
-              <TabsContent value="design" className="mt-0">
-                <PageDesignEditor form={form} />
-              </TabsContent>
-
               <TabsContent value="seo" className="mt-0">
                 <PageSeoEditor form={form} />
               </TabsContent>
@@ -191,7 +182,7 @@ const PageEditorDialog: React.FC<PageEditorProps> = ({
                 <div className="space-y-4">
                   <div className="rounded-md border">
                     <pre className="p-4 text-sm overflow-auto bg-muted h-96">
-                      {JSON.stringify(form.watch('content'), null, 2)}
+                      {JSON.stringify(form.watch(), null, 2)}
                     </pre>
                   </div>
                 </div>
