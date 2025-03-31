@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -198,6 +199,7 @@ const AllCoursesTab: React.FC = () => {
     window.open(`/courses/${course.slug || course.id}`, '_blank');
   };
 
+  // Fix #1: Properly type the CourseForm component with ForwardRef
   const CourseForm = React.forwardRef<
     HTMLDivElement,
     { data: Course | null; onChange: (data: Course) => void }
@@ -354,6 +356,7 @@ const AllCoursesTab: React.FC = () => {
     })
   ];
 
+  // Fix #2: Define emptyStateComponent as ReactNode explicitly
   const emptyStateComponent: ReactNode = (
     <div className="flex flex-col items-center justify-center text-muted-foreground py-8">
       <BookOpen className="h-8 w-8 mb-2" />
@@ -387,6 +390,7 @@ const AllCoursesTab: React.FC = () => {
         />
       </Card>
 
+      {/* Fix #3: Use the CourseForm component correctly with EntityDrawer */}
       <EntityDrawer<Course>
         title="Editar Curso"
         description="Modifica los detalles del curso"
@@ -470,3 +474,4 @@ const AdminCourses: React.FC = () => {
 };
 
 export default AdminCourses;
+
