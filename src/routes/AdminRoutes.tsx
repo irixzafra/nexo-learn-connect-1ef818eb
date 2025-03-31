@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { Card } from "@/components/ui/card";
 import { Outlet } from 'react-router-dom';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import AIServicesPage from '@/pages/admin/ai/AIServicesPage';
@@ -55,12 +54,9 @@ const AnalyticsPage = () => (
     title="Analíticas"
     subtitle="Métricas y estadísticas de la plataforma"
   >
-    <Card className="p-6">
-      <h2 className="text-lg font-medium mb-4">Analíticas de la Plataforma</h2>
-      <p className="text-muted-foreground">
-        Visualiza tendencias y métricas clave para tomar decisiones informadas.
-      </p>
-    </Card>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <UserAdminStats />
+    </div>
   </AdminPageLayout>
 );
 
@@ -70,12 +66,12 @@ const InstructorManagement = () => (
     title="Gestión de Instructores"
     subtitle="Administra los instructores de la plataforma"
   >
-    <Card className="p-6">
-      <h2 className="text-lg font-medium mb-4">Administración de Instructores</h2>
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold">Administración de Instructores</h2>
       <p className="text-muted-foreground">
         Gestiona los perfiles, cursos y rendimiento de los instructores.
       </p>
-    </Card>
+    </div>
   </AdminPageLayout>
 );
 

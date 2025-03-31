@@ -8,25 +8,16 @@ import {
   Bell, 
   Palette, 
   Database, 
-  FileText, 
   ToggleRight,
   Server,
-  Globe,
-  Info,
-  Users,
-  Lock,
-  BookMarked,
   Plug,
-  MousePointer,
-  FileUp,
   ShieldCheck,
   DatabaseZap
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import GeneralSettings from '@/features/admin/components/settings/GeneralSettings';
 import FeaturesSettings from '@/features/admin/components/settings/FeaturesSettings';
@@ -53,6 +44,9 @@ const SystemSettings: React.FC = () => {
       ...prev,
       [feature]: value
     }));
+    
+    // Show toast for feedback
+    toast.success(`Configuración actualizada: ${feature} ${value ? 'activado' : 'desactivado'}`);
   };
 
   const tabs: AdminTabItem[] = [
@@ -103,7 +97,6 @@ const SystemSettings: React.FC = () => {
         isLoading={isSaving}
       />
     }
-    // "Páginas" tab removed as requested
   ];
   
   return (

@@ -7,9 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
-import { ShieldCheck, Users, CheckCircle, KeyRound, Fingerprint, AlertCircle, UserCog, Link, LogOut, Clock, FileText } from 'lucide-react';
+import { ShieldCheck, Users, CheckCircle, KeyRound, Fingerprint, AlertCircle, UserCog, Link, LogOut, Clock, FileText, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import AuditFormatSelector from '../audit/AuditFormatSelector';
 
 interface SecuritySettingsProps {
   featuresConfig: FeaturesConfig;
@@ -24,6 +25,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
 }) => {
   return (
     <div className="space-y-6">
+      {/* Selector de formato para la auditoría */}
+      <AuditFormatSelector />
+      
       {/* Roadmap de Seguridad desde Auditoría */}
       <Card>
         <CardHeader>
@@ -101,8 +105,8 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
             </div>
             
             <div className="mt-4 flex justify-end">
-              <Button variant="outline" size="sm">
-                <Link className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="sm" className="gap-2">
+                <ExternalLink className="h-4 w-4" />
                 Ver Informe Completo
               </Button>
             </div>
@@ -222,7 +226,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
           <div className="space-y-2">
             <Label htmlFor="default_access_level">Rol por Defecto para Nuevos Usuarios</Label>
             <Select defaultValue="student">
-              <SelectTrigger>
+              <SelectTrigger id="default_access_level">
                 <SelectValue placeholder="Seleccionar rol por defecto" />
               </SelectTrigger>
               <SelectContent>
