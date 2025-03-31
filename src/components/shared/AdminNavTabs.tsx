@@ -10,6 +10,7 @@ export interface AdminTabItem {
   icon?: React.ReactNode;
   content?: React.ReactNode;
   disabled?: boolean;
+  dataTag?: string;
 }
 
 interface AdminNavTabsProps {
@@ -48,6 +49,7 @@ const AdminNavTabs: React.FC<AdminNavTabsProps> = ({
             key={tab.value} 
             value={tab.value}
             disabled={tab.disabled}
+            data-tag={tab.dataTag || `admin-tab-${tab.value}`}
             className={cn(
               "flex items-center gap-2 whitespace-nowrap",
               "data-[state=active]:bg-background data-[state=active]:shadow-sm",

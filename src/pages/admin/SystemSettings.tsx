@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import { 
@@ -24,10 +24,22 @@ import { TestDataSettings } from '@/features/admin/components/settings/TestDataS
 import { OnboardingSettings } from '@/features/admin/components/settings/OnboardingSettings';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
 
 const SystemSettings: React.FC = () => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
   const [isSaving, setIsSaving] = useState(false);
+  const [tabNavigationEnabled, setTabNavigationEnabled] = useState(true);
+  
+  // Cargar la configuración actual desde localStorage
+  useEffect(() => {
+    const storedValue = localStorage.getItem('tabNavigationEnabled');
+    if (storedValue !== null) {
+      setTabNavigationEnabled(storedValue === 'true');
+    }
+  }, []);
   
   const handleToggleFeature = (feature: keyof FeaturesConfig, value: boolean) => {
     setFeaturesConfig(prev => ({
@@ -36,12 +48,25 @@ const SystemSettings: React.FC = () => {
     }));
   };
 
+  const handleToggleTabNavigation = (checked: boolean) => {
+    setTabNavigationEnabled(checked);
+    
+    // Guardar en localStorage
+    localStorage.setItem('tabNavigationEnabled', String(checked));
+    
+    // Mostrar un toast para indicar que se ha cambiado la configuración
+    toast.success(`Navegación por pestañas ${checked ? 'activada' : 'desactivada'}`);
+    
+    // Aquí en un entorno real también sincronizaríamos con la base de datos
+  };
+
   // Crear las tabs para el AdminPageLayout
   const tabs: AdminTabItem[] = [
     {
       value: 'general',
       label: 'General',
       icon: <Settings className="h-4 w-4" />,
+      dataTag: "settings-tab-general",
       content: (
         <Card>
           <CardHeader>
@@ -51,10 +76,26 @@ const SystemSettings: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="h-64 flex items-center justify-center bg-muted/40 rounded-md">
+            <div className="flex items-center justify-between py-2">
+              <div className="space-y-0.5">
+                <Label htmlFor="tabNavigation">Navegación por pestañas</Label>
+                <p className="text-sm text-muted-foreground">
+                  Activa o desactiva la navegación por pestañas en las diferentes secciones de administración
+                </p>
+              </div>
+              <Switch
+                id="tabNavigation"
+                checked={tabNavigationEnabled}
+                onCheckedChange={handleToggleTabNavigation}
+                aria-label="Toggle tab navigation"
+                data-tag="tab-navigation-toggle"
+              />
+            </div>
+            
+            <div className="h-52 flex items-center justify-center bg-muted/40 rounded-md">
               <div className="text-center">
                 <Server className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-                <p>Configuración general en desarrollo</p>
+                <p>Otras configuraciones generales en desarrollo</p>
               </div>
             </div>
           </CardContent>

@@ -17,43 +17,57 @@ const adminCategories = [
     id: 'dashboard',
     icon: LayoutDashboard, 
     label: "Dashboard", 
-    path: "/admin/dashboard"
+    path: "/admin/dashboard",
+    dataTag: "admin-nav-dashboard"
   },
   { 
     id: 'users',
     icon: Users, 
     label: "Usuarios", 
     path: "/admin/users",
+    dataTag: "admin-nav-users"
   },
   { 
     id: 'courses',
     icon: BookOpen, 
     label: "Cursos", 
     path: "/admin/courses",
+    dataTag: "admin-nav-courses"
   },
   { 
     id: 'finances',
     icon: CreditCard, 
     label: "Finanzas", 
     path: "/admin/billing",
+    dataTag: "admin-nav-finances"
   },
   { 
     id: 'data',
     icon: Database, 
     label: "Datos", 
     path: "/admin/test-data",
+    dataTag: "admin-nav-data"
   },
   { 
     id: 'config',
     icon: Settings, 
     label: "Config", 
     path: "/admin/settings",
+    dataTag: "admin-nav-settings"
   }
 ];
 
-const AdminNavigation = () => {
+interface AdminNavigationProps {
+  enabled?: boolean;
+}
+
+const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => {
   const location = useLocation();
   const path = location.pathname;
+  
+  if (!enabled) {
+    return null;
+  }
   
   const isActive = (route: string) => {
     return path.includes(route);
@@ -68,6 +82,7 @@ const AdminNavigation = () => {
             <Link 
               key={item.path}
               to={item.path}
+              data-tag={item.dataTag}
               className={cn(
                 "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
                 "hover:bg-accent text-sm font-medium",

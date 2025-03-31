@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AppLayout from '@/layouts/AppLayout';
 import AdminDashboard from '@/pages/admin/dashboard';
@@ -19,9 +19,34 @@ import ContentManagement from '@/pages/admin/content/ContentManagement';
 
 // Create a wrapper component for Admin content that includes the navigation
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Esta es una implementación simple para el propósito de la demostración
+  // En un entorno real, obtendríamos este valor de un contexto o de una API
+  const [tabNavigationEnabled, setTabNavigationEnabled] = useState(true);
+  
+  // Simulando recuperar la configuración
+  useEffect(() => {
+    // Aquí se podría consultar la configuración real desde localStorage,
+    // una base de datos o una API
+    const checkLocalStorage = () => {
+      const storedValue = localStorage.getItem('tabNavigationEnabled');
+      if (storedValue !== null) {
+        setTabNavigationEnabled(storedValue === 'true');
+      }
+    };
+    
+    checkLocalStorage();
+    
+    // Escuchar cambios en localStorage por si se actualiza en otra pestaña
+    window.addEventListener('storage', checkLocalStorage);
+    
+    return () => {
+      window.removeEventListener('storage', checkLocalStorage);
+    };
+  }, []);
+  
   return (
     <AppLayout>
-      <AdminNavigation />
+      <AdminNavigation enabled={tabNavigationEnabled} />
       {children}
     </AppLayout>
   );
