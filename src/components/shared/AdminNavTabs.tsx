@@ -7,8 +7,8 @@ import { LucideIcon } from 'lucide-react';
 export interface AdminTabItem {
   value: string;
   label: string;
-  icon: React.ReactNode; // Changed from optional to required to match AdminTabs
-  content?: React.ReactNode;
+  icon: React.ReactNode; // Required icon property
+  content?: React.ReactNode; // Optional content property
   disabled?: boolean;
   dataTag?: string;
 }

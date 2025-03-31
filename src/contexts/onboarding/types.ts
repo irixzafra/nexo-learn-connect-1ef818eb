@@ -24,7 +24,35 @@ export interface FeaturesConfig {
   enableContentReordering: boolean;
   enableSocial: boolean;
   enablePasswordPolicy: boolean;
+  // Add these missing properties
+  enableThemeSwitcher: boolean;
+  enableMultiLanguage: boolean;
+  enableLeaderboard: boolean;
+  enableCategoryManagement: boolean;
 }
+
+// Add a default config for usage in the OnboardingProvider
+export const defaultFeaturesConfig: FeaturesConfig = {
+  autoStartOnboarding: true,
+  showOnboardingTrigger: true,
+  enableNotifications: true,
+  enableTestDataGenerator: false,
+  enableOnboardingSystem: true,
+  enableRoleManagement: true,
+  enableRoleSwitcher: true,
+  enableDebugMode: false,
+  showSectionTags: false,
+  enableEditMode: false,
+  enableAIFeatures: false,
+  enablePermissionsSystem: false,
+  enableContentReordering: false,
+  enableSocial: false,
+  enablePasswordPolicy: false,
+  enableThemeSwitcher: true,
+  enableMultiLanguage: false,
+  enableLeaderboard: false,
+  enableCategoryManagement: false
+};
 
 export interface OnboardingContextValue {
   steps: OnboardingStep[];
@@ -40,4 +68,9 @@ export interface OnboardingContextValue {
   featuresConfig: FeaturesConfig;
   updateFeaturesConfig: (config: Partial<FeaturesConfig>) => void;
   toggleFeature: (feature: keyof FeaturesConfig) => void;
+  // Add these missing properties for the OnboardingContextValue
+  isOnboardingActive: boolean;
+  previousStep: () => void;
+  skipOnboarding: () => void;
+  isOnboardingOpen: boolean;
 }

@@ -30,10 +30,10 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
             )}
           </div>
 
-          {tabs.length > 0 ? (
+          {tabs && tabs.length > 0 ? (
             <AdminTabs
               tabs={tabs}
-              defaultValue={defaultTabValue || tabs[0].value}
+              defaultValue={defaultTabValue || tabs[0]?.value}
             />
           ) : (
             <Card className="p-4">{children}</Card>
