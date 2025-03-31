@@ -3,17 +3,18 @@ import React from "react";
 import { Table } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Download, SlidersHorizontal, ChevronDown } from "lucide-react";
+import { Download, SlidersHorizontal, ChevronDown, GripVertical } from "lucide-react";
 import { 
   DropdownMenu, 
-  DropdownMenuCheckboxItem, 
   DropdownMenuContent, 
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuSeparator
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { exportTableToCSV } from "./table-utils";
+import { useTableColumns } from "@/hooks/use-table-info";
+import { ResizablePanel, ResizablePanelGroup, ResizableHandle } from "@/components/ui/resizable";
 
 interface TableToolbarProps<TData> {
   table: Table<TData>;
@@ -22,6 +23,7 @@ interface TableToolbarProps<TData> {
   globalFilter: string;
   setGlobalFilter: (value: string) => void;
   exportFilename?: string;
+  tableName?: string;
 }
 
 export function TableToolbar<TData>({
@@ -30,8 +32,12 @@ export function TableToolbar<TData>({
   searchPlaceholder = "Buscar...",
   globalFilter,
   setGlobalFilter,
-  exportFilename = "exported-data"
+  exportFilename = "exported-data",
+  tableName
 }: TableToolbarProps<TData>) {
+  // Fetch table columns from database if tableName is provided
+  const { data: dbColumns, isLoading } = useTableColumns(tableName || "");
+  
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between mb-4">
       {showSearch && (
@@ -56,7 +62,7 @@ export function TableToolbar<TData>({
           Exportar CSV
         </Button>
         
-        <ColumnsDropdown table={table} />
+        <ColumnsDropdown table={table} dbColumns={dbColumns} isLoading={isLoading} />
       </div>
     </div>
   );
@@ -64,9 +70,11 @@ export function TableToolbar<TData>({
 
 interface ColumnsDropdownProps<TData> {
   table: Table<TData>;
+  dbColumns?: any[];
+  isLoading?: boolean;
 }
 
-function ColumnsDropdown<TData>({ table }: ColumnsDropdownProps<TData>) {
+function ColumnsDropdown<TData>({ table, dbColumns, isLoading }: ColumnsDropdownProps<TData>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -76,30 +84,61 @@ function ColumnsDropdown<TData>({ table }: ColumnsDropdownProps<TData>) {
           <ChevronDown className="h-4 w-4 ml-1" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-background border shadow-md z-50 w-56">
+      <DropdownMenuContent align="end" className="bg-background border shadow-md z-50 w-[280px]">
         <DropdownMenuLabel>Columnas visibles</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <div className="max-h-[300px] overflow-auto p-1">
-          {table
-            .getAllColumns()
-            .filter((column) => column.getCanHide())
-            .map((column) => {
-              const headerValue = column.columnDef.header as string;
-              return (
-                <div
-                  key={column.id}
-                  className="flex items-center space-x-2 py-2 px-2 hover:bg-accent rounded-md cursor-pointer"
-                  onClick={() => column.toggleVisibility(!column.getIsVisible())}
-                >
-                  <Checkbox 
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(checked) => column.toggleVisibility(!!checked)}
-                    className="data-[state=checked]:bg-primary"
-                  />
-                  <span className="text-sm">{headerValue}</span>
-                </div>
-              );
-            })}
+          {isLoading ? (
+            <div className="p-2 text-sm text-muted-foreground">Cargando columnas...</div>
+          ) : (
+            table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                const headerValue = column.columnDef.header as string;
+                return (
+                  <div
+                    key={column.id}
+                    className="flex items-center space-x-2 py-2 px-2 hover:bg-accent rounded-md cursor-pointer"
+                    onClick={() => column.toggleVisibility(!column.getIsVisible())}
+                  >
+                    <Checkbox 
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(checked) => column.toggleVisibility(!!checked)}
+                      className="data-[state=checked]:bg-primary"
+                    />
+                    <span className="text-sm">{headerValue || column.id}</span>
+                    <GripVertical className="h-4 w-4 ml-auto text-muted-foreground" />
+                  </div>
+                );
+              })
+          )}
+          
+          {/* Display database columns that might not be in the table yet */}
+          {dbColumns && dbColumns.length > 0 && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="mt-2 text-xs text-muted-foreground">Columnas adicionales de la base de datos</DropdownMenuLabel>
+              {dbColumns
+                .filter(dbCol => 
+                  !table.getAllColumns().some(tableCol => 
+                    tableCol.id === dbCol.column_name || 
+                    (tableCol.columnDef.header as string)?.toLowerCase() === dbCol.column_name.toLowerCase()
+                  )
+                )
+                .map(dbCol => (
+                  <div
+                    key={dbCol.column_name}
+                    className="flex items-center space-x-2 py-2 px-2 hover:bg-accent rounded-md cursor-pointer opacity-70"
+                  >
+                    <Checkbox className="opacity-50" />
+                    <span className="text-sm">{dbCol.column_name}</span>
+                    <span className="text-xs text-muted-foreground ml-auto">{dbCol.data_type}</span>
+                  </div>
+                ))
+              }
+            </>
+          )}
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

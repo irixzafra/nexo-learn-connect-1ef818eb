@@ -1,104 +1,126 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Edit, CheckSquare, MoveHorizontal, Pencil, X, Plus, ListReorder } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Pencil, Save, X, ListOrdered, Plus, Move } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 const FloatingEditModeToggle: React.FC = () => {
-  const { isEditMode, toggleEditMode } = useEditMode();
-  const { userRole } = useAuth();
-  const [helpVisible, setHelpVisible] = useState(true);
-  
-  // Only admin or sistemas roles can see this
-  if (userRole !== 'admin' && userRole !== 'sistemas') {
-    return null;
-  }
+  const { isEditMode, toggleEditMode, isReorderMode, toggleReorderMode } = useEditMode();
 
-  const handleToggle = () => {
-    toggleEditMode();
-    
-    if (!isEditMode) {
-      // When activating edit mode, show a toast
-      toast.success("Modo edición activado", {
-        description: "Ahora puedes editar textos, reordenar y añadir elementos."
-      });
-      setHelpVisible(true);
+  const handleToggleEditMode = () => {
+    if (isEditMode) {
+      toast.success('Modo edición desactivado');
     } else {
-      toast.success("Modo edición desactivado", {
-        description: "Los cambios han sido guardados."
-      });
-      setHelpVisible(false);
+      toast.success('Modo edición activado. Ahora puedes editar textos y contenido.');
     }
+    toggleEditMode();
   };
 
-  return (
-    <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
+  const handleToggleReorderMode = () => {
+    if (!isEditMode) return;
+    
+    if (isReorderMode) {
+      toast.success('Modo reordenación desactivado');
+    } else {
+      toast.success('Modo reordenación activado. Ahora puedes arrastrar y soltar elementos.');
+    }
+    toggleReorderMode();
+  };
+
+  const handleAddElement = () => {
+    if (!isEditMode) return;
+    
+    toast.info('Funcionalidad para añadir elemento con IA en desarrollo');
+    // Aquí se implementaría la lógica para añadir un nuevo elemento mediante IA
+  };
+
+  if (!isEditMode && !isReorderMode) {
+    return (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              variant={isEditMode ? "default" : "outline"}
+              onClick={handleToggleEditMode}
+              className="fixed bottom-6 right-6 shadow-lg z-50 rounded-full h-14 w-14 p-0"
               size="icon"
-              onClick={handleToggle}
-              className={`h-12 w-12 rounded-full shadow-lg ${isEditMode ? 'bg-primary text-primary-foreground' : 'bg-background'}`}
+              variant="default"
             >
-              {isEditMode ? (
-                <CheckSquare className="h-6 w-6" />
-              ) : (
-                <Edit className="h-6 w-6" />
-              )}
+              <Pencil className="h-6 w-6" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="left">
-            <p>{isEditMode ? 'Desactivar modo edición' : 'Activar modo edición'}</p>
-            {isEditMode && (
-              <p className="text-xs text-muted-foreground">
-                Edita textos y arrastra elementos
-              </p>
-            )}
+            <p>Activar modo edición</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      
-      {isEditMode && helpVisible && (
-        <div className="absolute bottom-16 right-0 bg-card shadow-lg rounded-lg border p-4 mb-2 w-64">
-          <div className="flex justify-between items-center mb-3">
-            <div className="text-sm font-medium">Modo edición activado</div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-6 w-6" 
-              onClick={() => setHelpVisible(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          <div className="space-y-3 text-xs text-muted-foreground">
-            <div className="flex items-center">
-              <Pencil className="h-3.5 w-3.5 mr-2 text-primary" />
-              <span>Haz clic en textos para editarlos</span>
-            </div>
-            <div className="flex items-center">
-              <ListReorder className="h-3.5 w-3.5 mr-2 text-primary" />
-              <span>Arrastra elementos para reordenarlos</span>
-            </div>
-            <div className="flex items-center">
-              <Plus className="h-3.5 w-3.5 mr-2 text-primary" />
-              <span>Utiliza "+" para añadir elementos</span>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    );
+  }
+
+  return (
+    <Card className="fixed bottom-6 right-6 p-2 shadow-lg z-50 bg-background/90 backdrop-blur-sm border">
+      <div className="flex flex-col gap-2">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={handleToggleEditMode}
+                variant={isEditMode ? "destructive" : "default"}
+                size="icon"
+                className="rounded-full h-12 w-12"
+              >
+                {isEditMode ? <X className="h-5 w-5" /> : <Pencil className="h-5 w-5" />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              <p>{isEditMode ? "Desactivar edición" : "Activar edición"}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        {isEditMode && (
+          <>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={handleToggleReorderMode}
+                    variant={isReorderMode ? "outline" : "secondary"}
+                    size="icon"
+                    className="rounded-full h-12 w-12"
+                  >
+                    <ListOrdered className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p>Reordenar elementos</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={handleAddElement}
+                    variant="secondary"
+                    size="icon"
+                    className="rounded-full h-12 w-12"
+                  >
+                    <Plus className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p>Añadir elemento nuevo (IA)</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </>
+        )}
+      </div>
+    </Card>
   );
 };
 

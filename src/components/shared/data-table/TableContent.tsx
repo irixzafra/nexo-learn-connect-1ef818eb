@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Table as TableType } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 import {
@@ -10,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { cn } from "@/lib/utils";
 
 interface TableContentProps<TData> {
   table: TableType<TData>;
@@ -24,20 +26,72 @@ export function TableContent<TData>({
   emptyState,
   onRowClick
 }: TableContentProps<TData>) {
+  // Store column widths
+  const [columnSizes, setColumnSizes] = useState<Record<string, number>>(
+    Object.fromEntries(
+      columns.map((col, index) => [
+        col.id || index, 
+        100 / columns.length
+      ])
+    )
+  );
+
+  const handleResize = (colIndex: number, newSize: number) => {
+    setColumnSizes(prev => {
+      const columnId = table.getHeaderGroups()[0].headers[colIndex].id;
+      return { ...prev, [columnId]: newSize };
+    });
+  };
+
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
+              {headerGroup.headers.map((header, index) => (
+                <TableHead 
+                  key={header.id}
+                  className="relative"
+                  style={{ 
+                    width: `${columnSizes[header.id] || 100 / columns.length}%`
+                  }}
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
+                  {index < headerGroup.headers.length - 1 && (
+                    <div 
+                      className="absolute top-0 right-0 h-full w-2 cursor-col-resize hover:bg-muted/50 select-none" 
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        const startX = e.pageX;
+                        const startWidth = columnSizes[header.id] || 100 / columns.length;
+                        
+                        const onMouseMove = (e: MouseEvent) => {
+                          const dx = e.pageX - startX;
+                          const containerWidth = (e.target as HTMLElement).closest('table')?.clientWidth || 1000;
+                          const percentChange = (dx / containerWidth) * 100;
+                          
+                          handleResize(
+                            index,
+                            Math.max(5, startWidth + percentChange)
+                          );
+                        };
+                        
+                        const onMouseUp = () => {
+                          document.removeEventListener('mousemove', onMouseMove);
+                          document.removeEventListener('mouseup', onMouseUp);
+                        };
+                        
+                        document.addEventListener('mousemove', onMouseMove);
+                        document.addEventListener('mouseup', onMouseUp);
+                      }}
+                    />
+                  )}
                 </TableHead>
               ))}
             </TableRow>
@@ -50,10 +104,18 @@ export function TableContent<TData>({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
                 onClick={() => onRowClick && onRowClick(row.original)}
-                className={onRowClick ? "cursor-pointer hover:bg-muted" : ""}
+                className={cn(
+                  onRowClick ? "cursor-pointer hover:bg-muted" : "",
+                  "transition-colors"
+                )}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                {row.getVisibleCells().map((cell, index) => (
+                  <TableCell 
+                    key={cell.id}
+                    style={{ 
+                      width: `${columnSizes[cell.column.id] || 100 / columns.length}%` 
+                    }}
+                  >
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext()

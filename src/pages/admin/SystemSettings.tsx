@@ -12,7 +12,9 @@ import {
   Server,
   Plug,
   ShieldCheck,
-  DatabaseZap
+  DatabaseZap,
+  Globe,
+  Layout
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -26,6 +28,7 @@ import SecuritySettings from '@/features/admin/components/settings/SecuritySetti
 import DataSettings from '@/features/admin/components/settings/DataSettings';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
+import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
 
 const SystemSettings: React.FC = () => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
@@ -68,6 +71,33 @@ const SystemSettings: React.FC = () => {
       toast.error('Error al cambiar el estado del Sistema de Diseño');
     }
   };
+
+  const subMenuItems: AdminSubMenuItem[] = [
+    {
+      id: 'general',
+      label: 'General',
+      path: '/admin/settings/general',
+      icon: Settings
+    },
+    {
+      id: 'appearance',
+      label: 'Apariencia',
+      path: '/admin/settings/appearance',
+      icon: Palette
+    },
+    {
+      id: 'localization',
+      label: 'Localización',
+      path: '/admin/settings/localization',
+      icon: Globe
+    },
+    {
+      id: 'layout',
+      label: 'Interfaz',
+      path: '/admin/settings/layout',
+      icon: Layout
+    }
+  ];
 
   const tabs: AdminTabItem[] = [
     {
@@ -153,6 +183,8 @@ const SystemSettings: React.FC = () => {
       subtitle="Administra las configuraciones y preferencias del sistema"
       tabs={tabs}
       defaultTabValue={tab || "general"}
+      subMenuItems={subMenuItems}
+      baseRoute="/admin/settings"
     />
   );
 };
