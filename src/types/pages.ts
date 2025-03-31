@@ -1,13 +1,20 @@
 
 export type PageStatus = 'draft' | 'published' | 'archived';
+export type PageLayout = 'default' | 'landing' | 'marketing' | 'documentation' | 'course';
 
-export type PageLayout = 'default' | 'landing' | 'sidebar' | 'full-width';
+export interface PageBlock {
+  id: string;
+  type: 'text' | 'hero' | 'cta' | 'features' | 'testimonials' | 'faq' | 'pricing' | 'contact' | 'custom';
+  content: any;
+}
 
 export interface SitePage {
   id: string;
   title: string;
   slug: string;
-  content: any;
+  content?: {
+    blocks: PageBlock[];
+  };
   meta_description?: string;
   status: PageStatus;
   layout: PageLayout;
@@ -20,7 +27,9 @@ export interface SitePage {
 export interface PageRevision {
   id: string;
   page_id: string;
-  content: any;
+  content?: {
+    blocks: PageBlock[];
+  };
   meta_description?: string;
   created_at: string;
   created_by?: string;

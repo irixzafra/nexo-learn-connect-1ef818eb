@@ -16,8 +16,7 @@ import {
   FileText,
   Folder,
   Route,
-  LineChart,
-  File
+  LineChart
 } from 'lucide-react';
 
 interface AdminSectionProps {
