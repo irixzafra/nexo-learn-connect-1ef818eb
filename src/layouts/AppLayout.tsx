@@ -26,9 +26,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <SidebarProvider defaultOpen={!isAdminPage}>
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full bg-background">
         {!isAdminPage && (
-          <Sidebar>
+          <Sidebar variant="sidebar" collapsible="icon">
             <SidebarContent>
               <SidebarNavigation viewAsRole="current" />
             </SidebarContent>
@@ -38,7 +38,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
           {shouldShowHeader && <HeaderContent />}
           
-          <main className={`flex-1 ${isAdminPage ? 'w-full' : 'max-w-[1400px] mx-auto w-full'}`}>
+          <main className="flex-1 w-full">
             {children}
           </main>
         </div>

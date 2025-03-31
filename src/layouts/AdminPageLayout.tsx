@@ -45,7 +45,7 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
               defaultValue={defaultTabValue || tabs[0]?.value}
             />
           ) : (
-            <Card className="p-6 shadow-sm mx-4 flex flex-col">{children}</Card>
+            <Card className="p-6 shadow-sm mx-4">{children}</Card>
           )}
         </div>
       </div>

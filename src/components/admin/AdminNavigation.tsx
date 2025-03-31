@@ -96,14 +96,7 @@ const subMenus: Record<string, AdminSubMenuItem[]> = {
     { id: 'learning-paths', icon: Activity, label: 'Rutas de Aprendizaje', path: '/admin/courses/learning-paths' },
     { id: 'certificates', icon: FileText, label: 'Certificados', path: '/admin/courses/certificates' },
   ],
-  settings: [
-    { id: 'general', icon: Settings, label: 'General', path: '/admin/settings' },
-    { id: 'appearance', icon: Palette, label: 'Apariencia', path: '/admin/settings/appearance' },
-    { id: 'security', icon: ShieldCheck, label: 'Seguridad', path: '/admin/settings/security' },
-    { id: 'features', icon: ToggleRight, label: 'Funcionalidades', path: '/admin/settings/features' },
-    { id: 'notifications', icon: FileText, label: 'Notificaciones', path: '/admin/settings/notifications' },
-    { id: 'developer', icon: Plug, label: 'Desarrollador', path: '/admin/settings/developer' },
-  ],
+  settings: [],
   design: [
     { id: 'components', icon: Palette, label: 'Componentes', path: '/admin/design' },
     { id: 'themes', icon: Palette, label: 'Temas', path: '/admin/design/themes' },

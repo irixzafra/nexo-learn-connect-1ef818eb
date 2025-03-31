@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -12,7 +13,7 @@ import {
 } from "./sidebar-context"
 import { ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from 'framer-motion'
 
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,
@@ -134,12 +135,12 @@ const SidebarProvider = React.forwardRef<
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="relative"
+                className="relative z-50"
               >
                 <Button
                   variant="primary"
                   size="icon"
-                  className="absolute left-[calc(var(--sidebar-width-icon)_-_14px)] top-[50%] translate-y-[-50%] h-9 w-9 rounded-full opacity-0 shadow-md bg-primary text-primary-foreground hover:bg-primary/90 group-hover/sidebar-wrapper:opacity-100 transition-all duration-300"
+                  className="fixed left-[calc(var(--sidebar-width-icon)_-_14px)] top-[50%] translate-y-[-50%] h-9 w-9 rounded-full opacity-0 shadow-md bg-primary text-primary-foreground hover:bg-primary/90 group-hover/sidebar-wrapper:opacity-100 transition-all duration-300 z-50"
                   onClick={toggleSidebar}
                   aria-label="Expandir menú lateral"
                 >

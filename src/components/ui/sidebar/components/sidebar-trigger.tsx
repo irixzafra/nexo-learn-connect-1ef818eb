@@ -4,7 +4,6 @@ import { Menu, X, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useSidebar } from "../use-sidebar"
-import { NexoLogo } from '@/components/ui/logo'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export const SidebarTrigger = React.forwardRef<
