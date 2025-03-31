@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, GripVertical, FileText, Image, List, Link } from 'lucide-react';
-import PageAIContentGenerator from './PageAIContentGenerator';
+import { PageAIContentGenerator } from './ai-generator';
 import { Card, CardContent } from '@/components/ui/card';
 import { PageBlock } from '@/types/pages';
 
