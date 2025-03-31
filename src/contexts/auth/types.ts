@@ -19,5 +19,5 @@ export interface AuthContextType {
   setTheme: (theme: string) => void;
   setUserRole: (role: UserRoleType) => void;
   setViewAsRole: (role: UserRoleType | 'current') => void;
-  saveUserPreferences: (preferences: { theme?: string; role?: UserRoleType }) => Promise<void>;
+  saveUserPreferences: (preferences: { theme?: string; role?: UserRoleType }) => Promise<boolean>;
 }
