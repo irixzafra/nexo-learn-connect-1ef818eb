@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Invoice } from '@/types/payment';
 import { useToast } from '@/components/ui/use-toast';
+import { InvoiceProps } from '@/features/payments/components/invoice/InvoiceCard';
 
 export const useInvoices = (userId?: string) => {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [invoices, setInvoices] = useState<InvoiceProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'paid' | 'pending'>('all');
   const { toast } = useToast();
@@ -50,11 +51,17 @@ export const useInvoices = (userId?: string) => {
           throw error;
         }
         
-        // Transform the data to conform to the Invoice type
-        const processedInvoices: Invoice[] = (data || []).map(invoice => ({
-          ...invoice,
-          date: invoice.created_at ? new Date(invoice.created_at).toISOString() : new Date().toISOString(),
-          currency: (invoice.currency as "usd" | "eur") || "usd"
+        // Transform the data to conform to the InvoiceProps type
+        const processedInvoices: InvoiceProps[] = (data || []).map(invoice => ({
+          id: invoice.id,
+          invoiceNumber: `INV-${invoice.id.slice(0, 8).toUpperCase()}`,
+          amount: invoice.amount,
+          currency: (invoice.currency as "usd" | "eur") || "eur",
+          status: mapInvoiceStatus(invoice.status),
+          date: invoice.created_at,
+          courseName: invoice.course?.title || invoice.subscription?.subscription_plans?.name || 'Subscription',
+          pdfUrl: invoice.pdf_url || undefined,
+          invoiceUrl: invoice.invoice_url || undefined
         }));
         
         setInvoices(processedInvoices);
@@ -72,6 +79,13 @@ export const useInvoices = (userId?: string) => {
 
     fetchInvoices();
   }, [toast, userId, filter]);
+
+  // Helper function to map database status to UI status
+  const mapInvoiceStatus = (status: string): 'paid' | 'pending' | 'failed' => {
+    if (status === 'paid') return 'paid';
+    if (status === 'void' || status === 'uncollectible') return 'failed';
+    return 'pending'; // 'open', 'draft'
+  };
 
   return { invoices, isLoading, filter, setFilter };
 };
