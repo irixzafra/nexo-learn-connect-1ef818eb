@@ -17,7 +17,7 @@ export const SidebarTrigger = React.forwardRef<
     return window.innerWidth < 768;
   }, [])
 
-  const handleToggleClick = (e: React.MouseEvent) => {
+  const handleToggleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     console.log("SidebarTrigger clicked", isMobile ? "mobile" : "desktop");

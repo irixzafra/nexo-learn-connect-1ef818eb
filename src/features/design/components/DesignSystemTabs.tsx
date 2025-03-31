@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { List, Palette, Type, Maximize, Code, Wand2, BookTemplate } from 'lucide-react';
+import { List, Palette, Type, Maximize, Code, Wand2, BookTemplate, LayoutTemplate } from 'lucide-react';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import { ColorPaletteTab } from './tabs/ColorPaletteTab';
 import { TypographyTab } from './tabs/TypographyTab';
@@ -9,6 +9,7 @@ import { CustomCSSTab } from './tabs/CustomCSSTab';
 import { AIDesignAssistantTab } from './tabs/AIDesignAssistantTab';
 import { ThemeOverviewTab } from './tabs/ThemeOverviewTab';
 import { ThemePresetsTab } from './tabs/ThemePresetsTab';
+import { ComponentAccordionTab } from './tabs/ComponentAccordionTab';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 
 const DesignSystemTabs: React.FC = () => {
@@ -58,6 +59,12 @@ const DesignSystemTabs: React.FC = () => {
       label: 'Espaciado',
       icon: <Maximize className="h-4 w-4" />,
       content: <SpacingTab />
+    },
+    {
+      value: 'components',
+      label: 'Componentes',
+      icon: <LayoutTemplate className="h-4 w-4" />,
+      content: <ComponentAccordionTab />
     },
     {
       value: 'custom-css',

@@ -13,10 +13,7 @@ interface MobileSidebarProps {
 }
 
 export const MobileSidebar: React.FC<MobileSidebarProps> = ({ viewAsRole, trigger }) => {
-  const isMobile = useIsMobile();
-  
-  // Always render on mobile devices to ensure the menu button is visible
-  // Remove the conditional return that was hiding the component
+  // Siempre mostrar el botón en dispositivos móviles
   
   return (
     <div className="md:hidden fixed bottom-4 left-4 z-50">

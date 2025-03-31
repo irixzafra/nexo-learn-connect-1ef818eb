@@ -38,6 +38,14 @@ export interface ThemeSpacing {
   };
 }
 
+export interface ThemeComponentsConfig {
+  accordion?: {
+    variant?: 'default' | 'outline' | 'ghost';
+    gap?: 'none' | 'sm' | 'md';
+    type?: 'single' | 'multiple';
+  };
+}
+
 export interface ThemeConfig {
   mode: 'light' | 'dark' | 'system';
   colors: ThemeColors;
@@ -45,6 +53,7 @@ export interface ThemeConfig {
   spacing: ThemeSpacing;
   borderRadius: string;
   customCSS: string;
+  components?: ThemeComponentsConfig;
 }
 
 export interface DesignSystemContextType {
@@ -96,6 +105,7 @@ const defaultTheme: ThemeConfig = {
   },
   borderRadius: '0.5rem',
   customCSS: '',
+  components: {},
 };
 
 export const DesignSystemContext = createContext<DesignSystemContextType>({
