@@ -12,6 +12,7 @@ import SidebarMainNavigation from './navigation/SidebarMainNavigation';
 import SidebarLogoSection from './SidebarLogoSection';
 import { useSidebarNavigation } from './hooks/useSidebarNavigation';
 import { AdminSection } from './AdminSection';
+import { AccountSection } from './AccountSection';
 import { 
   Home, 
   BookOpen, 
@@ -54,13 +55,17 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
     changeLanguage
   } = useSidebarNavigation(toUserRoleType(currentUserRole), viewAsRole, onRoleChange);
 
-  // Admin section expand state
+  // Admin and Account sections expand state
   const [adminExpanded, setAdminExpanded] = useState(location.pathname.startsWith('/admin'));
+  const [accountExpanded, setAccountExpanded] = useState(false);
   
   // Update admin expanded state when route changes
   useEffect(() => {
     if (location.pathname.startsWith('/admin')) {
       setAdminExpanded(true);
+    }
+    if (location.pathname === '/profile' || location.pathname === '/settings') {
+      setAccountExpanded(true);
     }
   }, [location.pathname]);
 
@@ -126,6 +131,15 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
           />
           <MenuItem to="/profile" icon={User} label="Perfil" isCollapsed={isCollapsed} />
         </div>
+      </div>
+      
+      {/* Account Section - Added for user account management */}
+      <div className="mt-auto mb-4">
+        <AccountSection
+          expanded={accountExpanded}
+          onToggle={() => setAccountExpanded(!accountExpanded)}
+          isCollapsed={isCollapsed}
+        />
       </div>
       
       {/* Footer Section with Role Switcher and Language Selector */}
