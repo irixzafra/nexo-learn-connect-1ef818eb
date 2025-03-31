@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { SitePage } from '@/types/pages';
-import { Loader2, Plus } from 'lucide-react';
+import { SitePage, PageBlock, PageBlockType } from '@/types/pages';
+import { Loader2 } from 'lucide-react';
 import { useEditMode } from '@/contexts/EditModeContext';
 import InlineEdit from '@/components/admin/InlineEdit';
 import DraggableContent from '@/components/admin/DraggableContent';
@@ -104,7 +103,7 @@ const PageRenderer: React.FC = () => {
 
   // Transform content blocks to draggable items
   const contentBlocks = page.content?.blocks || [];
-  const draggableItems = contentBlocks.map((block: any, index: number) => ({
+  const draggableItems = contentBlocks.map((block: PageBlock, index: number) => ({
     id: block.id || `block-${index}`,
     order: index + 1,
     content: (
@@ -138,9 +137,9 @@ const PageRenderer: React.FC = () => {
   const handleAddBlock = (content: string, position?: number) => {
     if (!page || !page.content) return;
     
-    const newBlock = {
+    const newBlock: PageBlock = {
       id: `block-${Date.now()}`,
-      type: 'text',
+      type: 'text' as PageBlockType,
       content: content
     };
     

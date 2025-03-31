@@ -3,7 +3,7 @@ import React from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Pencil, Save, X, MoveHorizontal, Plus, Edit } from 'lucide-react';
+import { Pencil, Save, X, MoveHorizontal, Plus, Edit, Wand2, Layout } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
@@ -20,7 +20,7 @@ const FloatingEditModeToggle: React.FC = () => {
     if (isEditMode) {
       toast.success('Modo edición desactivado');
     } else {
-      toast.success('Modo edición activado. Ahora puedes editar y reordenar contenido.');
+      toast.success('Modo edición activado. Ahora puedes editar y reordenar cualquier elemento.');
     }
     toggleEditMode();
   };
@@ -70,6 +70,18 @@ const FloatingEditModeToggle: React.FC = () => {
                 <MoveHorizontal className="h-3 w-3 text-primary" />
               </div>
               <span>Reordenables</span>
+            </div>
+            <div className="flex items-center gap-1 text-xs">
+              <div className="bg-primary/20 p-1 rounded">
+                <Plus className="h-3 w-3 text-primary" />
+              </div>
+              <span>Insertables</span>
+            </div>
+            <div className="flex items-center gap-1 text-xs">
+              <div className="bg-primary/20 p-1 rounded">
+                <Wand2 className="h-3 w-3 text-primary" />
+              </div>
+              <span>IA asistida</span>
             </div>
           </div>
         </div>

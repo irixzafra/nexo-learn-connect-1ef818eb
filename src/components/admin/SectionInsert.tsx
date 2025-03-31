@@ -1,153 +1,162 @@
 
 import React, { useState } from 'react';
-import { useEditMode } from '@/contexts/EditModeContext';
-import { Plus, X, Brain, MessageSquareText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { toast } from 'sonner';
+import { Plus, ChevronDown, ChevronUp, Wand2 } from 'lucide-react';
+import AISectionCreator from './AISectionCreator';
 
 interface SectionInsertProps {
-  onAddSection?: (content: string) => void;
+  onAddSection: (content: string, type?: string) => void;
+  compact?: boolean;
 }
 
-const SectionInsert: React.FC<SectionInsertProps> = ({ onAddSection }) => {
-  const { isEditMode } = useEditMode();
-  const [isHovered, setIsHovered] = useState(false);
-  const [isActive, setIsActive] = useState(false);
-  const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
-  const [prompt, setPrompt] = useState('');
-  const [aiResult, setAiResult] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
+const SectionInsert: React.FC<SectionInsertProps> = ({ 
+  onAddSection,
+  compact = false 
+}) => {
+  const [expanded, setExpanded] = useState(false);
+  const [isAICreatorOpen, setIsAICreatorOpen] = useState(false);
 
-  if (!isEditMode) {
-    return null;
+  const handleAddTextSection = () => {
+    onAddSection('Nuevo contenido de texto');
+    setExpanded(false);
+  };
+
+  const handleAddHeroSection = () => {
+    onAddSection('Título destacado', 'hero');
+    setExpanded(false);
+  };
+
+  const handleOpenAICreator = () => {
+    setIsAICreatorOpen(true);
+    setExpanded(false);
+  };
+
+  const handleAddSectionWithAI = (content: string, type = 'text') => {
+    onAddSection(content, type);
+  };
+
+  if (compact) {
+    return (
+      <div className="relative group">
+        <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-full border shadow-sm z-10">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full hover:bg-primary hover:text-primary-foreground"
+            onClick={() => setExpanded(!expanded)}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+          {expanded && (
+            <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-44 bg-background rounded-lg shadow-lg border p-1 flex flex-col gap-1 z-20">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="justify-start"
+                onClick={handleAddTextSection}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Texto
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="justify-start"
+                onClick={handleAddHeroSection}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Título
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="justify-start text-primary"
+                onClick={handleOpenAICreator}
+              >
+                <Wand2 className="h-4 w-4 mr-2" />
+                Crear con IA
+              </Button>
+            </div>
+          )}
+        </div>
+        <div className="py-2 border-b border-dashed border-primary/20" />
+
+        <AISectionCreator
+          isOpen={isAICreatorOpen}
+          onOpenChange={setIsAICreatorOpen}
+          onAddSection={handleAddSectionWithAI}
+        />
+      </div>
+    );
   }
 
-  const handleAddSection = () => {
-    setIsActive(false);
-    setIsAIDialogOpen(true);
-  };
-
-  const handleAIGenerate = async () => {
-    if (!prompt.trim()) {
-      toast.error("Por favor, ingresa un prompt");
-      return;
-    }
-
-    setIsGenerating(true);
-    
-    try {
-      // Here we would call an AI API, for now simulating response
-      setTimeout(() => {
-        setAiResult(`Contenido generado basado en: ${prompt}`);
-        setIsGenerating(false);
-      }, 1500);
-    } catch (error) {
-      console.error('Error generating content:', error);
-      toast.error("Error al generar contenido con IA");
-      setIsGenerating(false);
-    }
-  };
-
-  const handleInsertContent = () => {
-    if (onAddSection && aiResult) {
-      onAddSection(aiResult);
-      setAiResult('');
-      setPrompt('');
-      setIsAIDialogOpen(false);
-      
-      toast.success("Nueva sección añadida correctamente");
-    }
-  };
-
   return (
-    <>
+    <div className="relative py-2">
       <div 
-        className={`relative w-full py-2 my-2 transition-all ${isActive || isHovered ? 'opacity-100' : 'opacity-0'} group`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        className={`
+          flex flex-col items-center justify-center gap-2
+          ${expanded ? 'p-4 border border-dashed border-primary/50 rounded-lg' : ''}
+        `}
       >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-full border-t-2 border-dashed border-primary/30"></div>
-        </div>
-        <div className="relative flex justify-center">
+        {!expanded ? (
           <Button
-            variant="outline"
+            variant="ghost" 
             size="sm"
-            className="h-8 bg-background border-primary/50 text-primary hover:bg-primary/10"
-            onClick={handleAddSection}
+            onClick={() => setExpanded(true)}
+            className="bg-muted/50 hover:bg-muted gap-1 text-muted-foreground"
           >
-            <Plus className="h-4 w-4 mr-1" />
+            <Plus className="h-4 w-4" />
             Añadir sección
+            <ChevronDown className="h-3 w-3 ml-2" />
           </Button>
-        </div>
+        ) : (
+          <>
+            <div className="text-sm font-medium mb-2">Añadir sección</div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 w-full">
+              <Button
+                variant="outline"
+                onClick={handleAddTextSection}
+                className="justify-start"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Texto
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleAddHeroSection}
+                className="justify-start"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Título
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleOpenAICreator}
+                className="justify-start text-primary"
+              >
+                <Wand2 className="h-4 w-4 mr-2" />
+                Crear con IA
+              </Button>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setExpanded(false)}
+              className="mt-2"
+            >
+              <ChevronUp className="h-3 w-3 mr-1" />
+              Cerrar
+            </Button>
+          </>
+        )}
       </div>
 
-      <Dialog open={isAIDialogOpen} onOpenChange={setIsAIDialogOpen}>
-        <DialogContent className="sm:max-w-[550px]">
-          <DialogHeader>
-            <DialogTitle>Generar nueva sección con IA</DialogTitle>
-            <DialogDescription>
-              Describe lo que quieres añadir y la IA te ayudará a generar el contenido.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="bg-primary/10 p-2 rounded-md">
-                <Brain className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-medium text-sm">Asistente de IA</h3>
-                <p className="text-xs text-muted-foreground">Genera contenido para tu nueva sección</p>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="ai-prompt" className="text-sm font-medium">
-                ¿Qué tipo de sección quieres crear?
-              </label>
-              <Textarea
-                id="ai-prompt"
-                placeholder="Ej: Una sección que explique las ventajas de nuestro servicio"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                className="min-h-[100px]"
-              />
-            </div>
-            
-            <Button 
-              onClick={handleAIGenerate} 
-              disabled={isGenerating || !prompt.trim()}
-              className="w-full"
-            >
-              {isGenerating ? 'Generando...' : 'Generar contenido con IA'}
-            </Button>
-            
-            {aiResult && (
-              <div className="border rounded-md p-4 bg-muted/50 mt-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <MessageSquareText className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium">Contenido generado:</span>
-                </div>
-                <Textarea 
-                  value={aiResult} 
-                  onChange={(e) => setAiResult(e.target.value)}
-                  rows={6}
-                  className="w-full mt-2"
-                />
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAIDialogOpen(false)}>Cancelar</Button>
-            <Button onClick={handleInsertContent} disabled={!aiResult}>Insertar sección</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+      <AISectionCreator
+        isOpen={isAICreatorOpen}
+        onOpenChange={setIsAICreatorOpen}
+        onAddSection={handleAddSectionWithAI}
+      />
+    </div>
   );
 };
 

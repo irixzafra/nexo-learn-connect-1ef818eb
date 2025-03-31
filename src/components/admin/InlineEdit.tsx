@@ -3,9 +3,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Pencil, Save, X, Check } from 'lucide-react';
+import { Pencil, Save, X, Check, Wand2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import AIElementEditor from './AIElementEditor';
 
 interface InlineEditProps {
   table: string;
@@ -39,6 +40,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
   const [originalText, setOriginalText] = useState(value);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAIEditorOpen, setIsAIEditorOpen] = useState(false);
 
   useEffect(() => {
     setText(value);
@@ -115,6 +117,11 @@ const InlineEdit: React.FC<InlineEditProps> = ({
     }
   };
 
+  const handleAIUpdate = async (newContent: string) => {
+    setText(newContent);
+    return await updateText(table, id, field, newContent);
+  };
+
   if (!isEditMode) {
     return (
       <Component className={className}>
@@ -154,6 +161,16 @@ const InlineEdit: React.FC<InlineEditProps> = ({
           <Button 
             variant="outline" 
             size="sm" 
+            onClick={() => setIsAIEditorOpen(true)}
+            className="h-8 px-2 mr-auto"
+            disabled={isSaving}
+          >
+            <Wand2 className="h-4 w-4 mr-1" />
+            Editar con IA
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
             onClick={handleCancel}
             className="h-8 px-2"
             disabled={isSaving}
@@ -181,15 +198,35 @@ const InlineEdit: React.FC<InlineEditProps> = ({
   }
 
   return (
-    <Component
-      className={`${className} group relative cursor-pointer border border-dashed border-transparent hover:border-primary/50 rounded p-1 -m-1 transition-colors`}
-      onClick={handleClick}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-    >
-      <span className={isHovering ? "text-primary" : ""}>{text || placeholder}</span>
-      <Pencil className="absolute right-1 top-1/2 -translate-y-1/2 h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-    </Component>
+    <>
+      <Component
+        className={`${className} group relative cursor-pointer border border-dashed border-transparent hover:border-primary/50 rounded p-1 -m-1 transition-colors`}
+        onClick={handleClick}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        <span className={isHovering ? "text-primary" : ""}>{text || placeholder}</span>
+        <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Wand2 
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsAIEditorOpen(true);
+            }}
+            className="h-4 w-4 text-primary bg-background border border-primary/20 rounded-full p-0.5"
+          />
+          <Pencil className="h-4 w-4 text-primary" />
+        </div>
+      </Component>
+      
+      <AIElementEditor
+        isOpen={isAIEditorOpen}
+        onOpenChange={setIsAIEditorOpen}
+        elementId={id}
+        elementType={field}
+        currentContent={text}
+        onContentUpdate={handleAIUpdate}
+      />
+    </>
   );
 };
 
