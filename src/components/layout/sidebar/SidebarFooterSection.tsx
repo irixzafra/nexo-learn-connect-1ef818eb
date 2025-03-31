@@ -41,7 +41,6 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
       {!isCollapsed && (
         <div className="px-3 pt-2 pb-4">
           <RoleSwitcher
-            userRole={userRole}
             onChange={handleRoleChange}
             currentViewRole={currentViewRole}
           />
