@@ -1,35 +1,11 @@
 
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
 import { useNavigate } from 'react-router-dom';
 
-interface AuthContextType {
-  isLoading: boolean;
-  isAuthReady: boolean;
-  isAuthenticated: boolean;
-  user: any | null;
-  session: Session | null;
-  profile: UserProfile | null;
-  userRole: UserRoleType | null;
-  viewAsRole: UserRoleType | 'current';
-  theme: string;
-  showAuthModal: boolean;
-  toggleAuthModal: () => void;
-  logout: () => Promise<void>;
-  updateProfile: (updates: any) => Promise<void>;
-  setTheme: (theme: string) => void;
-  setUserRole: (role: UserRoleType) => void;
-  setViewAsRole: (role: UserRoleType | 'current') => void;
-  saveUserPreferences: (preferences: { theme?: string; role?: UserRoleType }) => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export function useAuthState() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthReady, setIsAuthReady] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -42,6 +18,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   
   const navigate = useNavigate();
 
+  // Handle authentication state changes
   useEffect(() => {
     const getSession = async () => {
       const { data, error } = await supabase.auth.getSession();
@@ -69,6 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
+  // Fetch user profile when user changes
   useEffect(() => {
     const getProfile = async () => {
       setIsLoading(true);
@@ -115,6 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [user]);
   
+  // Load preferences from localStorage
   useEffect(() => {
     // Load theme from localStorage
     const storedTheme = localStorage.getItem('theme');
@@ -153,14 +132,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const updateProfile = async (updates: any) => {
     setIsLoading(true);
     try {
-      // Fix: Remove the 'returning' option as it's not supported in the current Supabase version
       const { error } = await supabase.from('profiles').upsert(
         {
           id: user?.id,
           updated_at: new Date().toISOString(),
           ...updates,
         },
-        { onConflict: 'id' } // Only specify supported options
+        { onConflict: 'id' }
       );
       
       if (error) {
@@ -203,7 +181,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const value: AuthContextType = {
+  return {
     isLoading,
     isAuthReady,
     isAuthenticated: !!session,
@@ -222,14 +200,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setViewAsRole,
     saveUserPreferences,
   };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within a AuthProvider');
-  }
-  return context;
 }
