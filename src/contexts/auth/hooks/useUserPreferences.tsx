@@ -46,7 +46,7 @@ export function useUserPreferences({ setRole }: UseUserPreferencesProps) {
     localStorage.setItem('viewAsRole', newViewAsRole);
   };
 
-  // Función explícita para switchViewAsRole
+  // Ensure switchViewAsRole is properly defined and exported
   const switchViewAsRole = (newViewAsRole: UserRoleType | 'current') => {
     setViewAsRole(newViewAsRole);
   };
@@ -70,7 +70,7 @@ export function useUserPreferences({ setRole }: UseUserPreferencesProps) {
     setUserRole,
     setViewAs,
     setViewAsRole,
-    switchViewAsRole, // Aseguramos que esta función se exporte explícitamente
+    switchViewAsRole, // Ensure this is exported
     saveUserPreferences
   };
 }
