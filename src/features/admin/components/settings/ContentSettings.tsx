@@ -20,20 +20,20 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
 }) => {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileText className="h-5 w-5 text-orange-500" />
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-base">
+          <FileText className="h-4 w-4 text-orange-500" />
           Contenido
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-xs">
           Configura cómo se gestiona el contenido en la plataforma
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <h3 className="font-medium text-sm">Gestión de categorías</h3>
+      <CardContent className="pt-0">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Gestión de categorías</h3>
               <p className="text-xs text-muted-foreground">
                 Habilita la gestión de categorías para cursos y contenidos
               </p>
@@ -53,9 +53,9 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
           
           <Separator />
           
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <h3 className="font-medium text-sm">Reordenamiento de contenido</h3>
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Reordenamiento de contenido</h3>
               <p className="text-xs text-muted-foreground">
                 Permite reordenar módulos y lecciones mediante arrastrar y soltar
               </p>
@@ -75,9 +75,9 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
           
           <Separator />
           
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <h3 className="font-medium text-sm">Leaderboard de gamificación</h3>
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Leaderboard de gamificación</h3>
               <p className="text-xs text-muted-foreground">
                 Activa el sistema de clasificaciones y puntos para estudiantes
               </p>
@@ -98,9 +98,9 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
           
           <Separator />
           
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <h3 className="font-medium text-sm">Contenidos interactivos</h3>
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Contenidos interactivos</h3>
               <p className="text-xs text-muted-foreground">
                 Permite crear cuestionarios, encuestas y ejercicios interactivos
               </p>
