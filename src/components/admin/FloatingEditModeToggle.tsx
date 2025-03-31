@@ -3,9 +3,10 @@ import React from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Pencil, Save, X, ListOrdered, Plus, Move } from 'lucide-react';
+import { Pencil, Save, X, MoveHorizontal, Plus, Edit } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
+import { Separator } from '@/components/ui/separator';
 
 const FloatingEditModeToggle: React.FC = () => {
   const { isEditMode, toggleEditMode, isReorderMode, toggleReorderMode } = useEditMode();
@@ -60,8 +61,12 @@ const FloatingEditModeToggle: React.FC = () => {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 p-2 shadow-lg z-50 bg-background/90 backdrop-blur-sm border">
-      <div className="flex flex-col gap-2">
+    <Card className="fixed bottom-6 right-6 p-3 shadow-lg z-50 bg-background/90 backdrop-blur-sm border">
+      <div className="flex flex-col gap-3">
+        <div className="text-xs font-medium text-center mb-1 text-muted-foreground">
+          {isReorderMode ? 'Modo reordenación' : 'Modo edición'}
+        </div>
+        
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -82,20 +87,26 @@ const FloatingEditModeToggle: React.FC = () => {
 
         {isEditMode && (
           <>
+            <Separator className="my-1" />
+            
+            <div className="text-xs font-medium mb-1 text-muted-foreground">
+              Acciones
+            </div>
+            
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     onClick={handleToggleReorderMode}
-                    variant={isReorderMode ? "outline" : "secondary"}
+                    variant={isReorderMode ? "default" : "outline"}
                     size="icon"
-                    className="rounded-full h-12 w-12"
+                    className={`rounded-full h-12 w-12 ${isReorderMode ? "bg-primary text-primary-foreground" : ""}`}
                   >
-                    <ListOrdered className="h-5 w-5" />
+                    <MoveHorizontal className="h-5 w-5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="left">
-                  <p>Reordenar elementos</p>
+                  <p>{isReorderMode ? "Desactivar reordenamiento" : "Activar reordenamiento"}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -114,6 +125,24 @@ const FloatingEditModeToggle: React.FC = () => {
                 </TooltipTrigger>
                 <TooltipContent side="left">
                   <p>Añadir elemento nuevo (IA)</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className={`rounded-full h-12 w-12 ${!isReorderMode ? "border-primary/50 text-primary" : ""}`}
+                    disabled={isReorderMode}
+                  >
+                    <Edit className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p>Edición en línea activa</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { GripVertical, Plus, MessageSquareText } from 'lucide-react';
+import { GripVertical, Plus, MessageSquareText, ArrowDown, ArrowUp, Move } from 'lucide-react';
 import { toast } from 'sonner';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Button } from '@/components/ui/button';
@@ -46,13 +46,16 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
   minSize = 10,
   onAddItem
 }) => {
-  const { isEditMode, reorderElements } = useEditMode();
+  const { isEditMode, isReorderMode, reorderElements } = useEditMode();
   const [draggableItems, setDraggableItems] = useState<DraggableItem[]>(items);
   const [draggedItem, setDraggedItem] = useState<DraggableItem | null>(null);
   const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [aiResult, setAiResult] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Añadir estado para el elemento sobre el que se está haciendo hover durante el arrastre
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   if (!isEditMode) {
     if (resizable) {
@@ -90,66 +93,117 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     );
   }
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, item: DraggableItem) => {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, item: DraggableItem, index: number) => {
+    if (!isReorderMode) return;
+    
     setDraggedItem(item);
     e.dataTransfer.effectAllowed = 'move';
     // Required for Firefox
     e.dataTransfer.setData('text/plain', item.id);
+    
+    // Añadir clase de estilos durante el arrastre
+    const element = e.currentTarget as HTMLElement;
+    element.classList.add('opacity-50', 'border-2', 'border-primary');
+    
+    // Mostrar una guía visual de que estamos arrastrando
+    toast.info("Arrastra para reordenar y suelta para guardar la posición", {
+      id: "drag-info",
+      duration: 2000,
+    });
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, item: DraggableItem) => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, item: DraggableItem, index: number) => {
     e.preventDefault();
-    if (!draggedItem || draggedItem.id === item.id) return;
+    if (!draggedItem || draggedItem.id === item.id || !isReorderMode) return;
     
-    // Reorder items
+    // Actualizar el índice sobre el que estamos
+    setHoverIndex(index);
+    
+    // Añadir indicadores visuales
+    const element = e.currentTarget as HTMLElement;
+    element.classList.add('bg-primary/10', 'border-primary');
+  };
+  
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    // Eliminar los indicadores visuales
+    const element = e.currentTarget as HTMLElement;
+    element.classList.remove('bg-primary/10', 'border-primary');
+    setHoverIndex(null);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, targetItem: DraggableItem, targetIndex: number) => {
+    e.preventDefault();
+    
+    // Eliminar los indicadores visuales
+    const allElements = document.querySelectorAll('.draggable-item');
+    allElements.forEach(el => {
+      (el as HTMLElement).classList.remove('opacity-50', 'border-2', 'border-primary', 'bg-primary/10');
+    });
+    
+    if (!draggedItem || draggedItem.id === targetItem.id || !isReorderMode) return;
+    
+    // Reordenar items
     const newItems = [...draggableItems];
     const draggedIndex = newItems.findIndex(i => i.id === draggedItem.id);
-    const targetIndex = newItems.findIndex(i => i.id === item.id);
     
-    if (draggedIndex === -1 || targetIndex === -1) return;
+    if (draggedIndex === -1) return;
     
-    // Remove dragged item and insert at target position
+    // Remover el elemento arrastrado y colocarlo en la nueva posición
     const [removedItem] = newItems.splice(draggedIndex, 1);
     newItems.splice(targetIndex, 0, removedItem);
     
-    // Update order values
+    // Actualizar order values
     const updatedItems = newItems.map((item, index) => ({
       ...item,
       order: index + 1
     }));
     
     setDraggableItems(updatedItems);
+    setHoverIndex(null);
+    
+    // Guardar el nuevo orden
+    handleSaveReorder(updatedItems);
   };
 
-  const handleDragEnd = async () => {
-    if (!draggedItem) return;
-    setDraggedItem(null);
+  const handleDragEnd = async (e: React.DragEvent<HTMLDivElement>) => {
+    // Eliminar los indicadores visuales
+    const allElements = document.querySelectorAll('.draggable-item');
+    allElements.forEach(el => {
+      (el as HTMLElement).classList.remove('opacity-50', 'border-2', 'border-primary', 'bg-primary/10');
+    });
     
-    // Save the new order to the database
-    if (reorderElements) {
-      try {
-        const elementsToUpdate = draggableItems.map(item => ({
-          id: item.id,
-          order: item.order
-        }));
-        
-        const success = await reorderElements(table, elementsToUpdate);
-        
-        if (success) {
-          if (onReorder) {
-            onReorder(draggableItems);
-          }
-        } else {
-          // Revert to original order on failure
-          setDraggableItems(items);
-          toast.error("No se pudo guardar el nuevo orden");
+    setDraggedItem(null);
+    setHoverIndex(null);
+    
+    // La operación de guardar se ha movido a handleDrop para que se ejecute solo una vez
+  };
+
+  const handleSaveReorder = async (itemsToSave: DraggableItem[]) => {
+    if (!reorderElements || !isReorderMode) return;
+    
+    try {
+      const elementsToUpdate = itemsToSave.map(item => ({
+        id: item.id,
+        order: item.order
+      }));
+      
+      const success = await reorderElements(table, elementsToUpdate);
+      
+      if (success) {
+        if (onReorder) {
+          onReorder(itemsToSave);
         }
-      } catch (error) {
-        console.error('Error saving new order:', error);
-        toast.error("Error al reordenar los elementos");
-        // Revert to original order on error
+        toast.success("Elementos reordenados correctamente");
+      } else {
+        // Revert to original order on failure
         setDraggableItems(items);
+        toast.error("No se pudo guardar el nuevo orden");
       }
+    } catch (error) {
+      console.error('Error saving new order:', error);
+      toast.error("Error al reordenar los elementos");
+      // Revert to original order on error
+      setDraggableItems(items);
     }
   };
 
@@ -180,7 +234,38 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
       setAiResult('');
       setPrompt('');
       setIsAIDialogOpen(false);
+      
+      toast.success("Nuevo elemento añadido correctamente");
     }
+  };
+
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    if (!isReorderMode) return;
+    
+    const newItems = [...draggableItems];
+    
+    // No hacer nada si intentamos mover el primer elemento hacia arriba
+    // o el último elemento hacia abajo
+    if ((index === 0 && direction === 'up') || 
+        (index === newItems.length - 1 && direction === 'down')) {
+      return;
+    }
+    
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    // Intercambiar elementos
+    [newItems[index], newItems[newIndex]] = [newItems[newIndex], newItems[index]];
+    
+    // Actualizar orden
+    const updatedItems = newItems.map((item, idx) => ({
+      ...item,
+      order: idx + 1
+    }));
+    
+    setDraggableItems(updatedItems);
+    
+    // Guardar el nuevo orden
+    handleSaveReorder(updatedItems);
   };
 
   const AddItemButton = () => (
@@ -206,21 +291,46 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
               <ResizablePanel 
                 defaultSize={item.width || 100 / items.length} 
                 minSize={minSize}
-                className={`${itemClassName} ${isEditMode ? 'cursor-move relative border border-dashed border-primary-500 p-2 group' : ''}`}
+                className={`${itemClassName} ${isEditMode ? 'relative' : ''} ${isReorderMode ? 'cursor-move border border-dashed rounded-md transition-colors' : ''} ${hoverIndex === index ? 'bg-primary/10 border-primary' : ''}`}
               >
                 <div
-                  draggable={isEditMode}
-                  onDragStart={(e) => handleDragStart(e, item)}
-                  onDragOver={(e) => handleDragOver(e, item)}
+                  draggable={isReorderMode}
+                  onDragStart={(e) => handleDragStart(e, item, index)}
+                  onDragOver={(e) => handleDragOver(e, item, index)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, item, index)}
                   onDragEnd={handleDragEnd}
-                  className="h-full w-full"
+                  className={`h-full w-full draggable-item ${isReorderMode ? 'group' : ''}`}
                 >
-                  {isEditMode && (
-                    <div className="absolute left-2 top-1/2 -translate-y-1/2 opacity-50 group-hover:opacity-100 z-10">
-                      <GripVertical className="h-4 w-4" />
+                  {isReorderMode && (
+                    <div className="absolute left-0 top-0 w-full bg-muted/70 p-1 flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <GripVertical className="h-4 w-4 text-primary cursor-grab" />
+                        <span className="text-xs font-medium">Elemento {index + 1}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 rounded-full"
+                          onClick={() => moveItem(index, 'up')}
+                          disabled={index === 0}
+                        >
+                          <ArrowUp className="h-3 w-3" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 rounded-full"
+                          onClick={() => moveItem(index, 'down')}
+                          disabled={index === draggableItems.length - 1}
+                        >
+                          <ArrowDown className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   )}
-                  <div className={isEditMode ? 'pl-6' : ''}>
+                  <div className={isReorderMode ? 'pt-8' : ''}>
                     {item.content}
                   </div>
                 </div>
@@ -288,21 +398,51 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
   return (
     <div className="relative">
       <div className={className}>
-        {draggableItems.map((item) => (
+        {draggableItems.map((item, index) => (
           <div
             key={item.id}
-            draggable={isEditMode}
-            onDragStart={(e) => handleDragStart(e, item)}
-            onDragOver={(e) => handleDragOver(e, item)}
+            draggable={isReorderMode}
+            onDragStart={(e) => handleDragStart(e, item, index)}
+            onDragOver={(e) => handleDragOver(e, item, index)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, item, index)}
             onDragEnd={handleDragEnd}
-            className={`${itemClassName} ${isEditMode ? 'cursor-move relative border border-dashed border-primary-500 p-2 group' : ''}`}
+            className={`
+              ${itemClassName} 
+              draggable-item
+              ${isReorderMode ? 'cursor-move border border-dashed rounded-md p-2 mb-2 relative transition-colors' : ''}
+              ${hoverIndex === index ? 'bg-primary/10 border-primary' : ''}
+            `}
           >
-            {isEditMode && (
-              <div className="absolute left-2 top-1/2 -translate-y-1/2 opacity-50 group-hover:opacity-100">
-                <GripVertical className="h-4 w-4" />
+            {isReorderMode && (
+              <div className="absolute left-0 top-0 w-full bg-muted/70 p-1 flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <GripVertical className="h-4 w-4 text-primary cursor-grab" />
+                  <span className="text-xs font-medium">Elemento {index + 1}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6 rounded-full"
+                    onClick={() => moveItem(index, 'up')}
+                    disabled={index === 0}
+                  >
+                    <ArrowUp className="h-3 w-3" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6 rounded-full"
+                    onClick={() => moveItem(index, 'down')}
+                    disabled={index === draggableItems.length - 1}
+                  >
+                    <ArrowDown className="h-3 w-3" />
+                  </Button>
+                </div>
               </div>
             )}
-            <div className={isEditMode ? 'pl-6' : ''}>
+            <div className={isReorderMode ? 'pt-8' : ''}>
               {item.content}
             </div>
           </div>

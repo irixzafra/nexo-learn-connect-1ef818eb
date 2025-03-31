@@ -44,6 +44,12 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [isEditMode, isReorderMode]);
 
+  // Check for feature configuration on mount
+  useEffect(() => {
+    // Here we would check from a settings service if the edit mode and reorder mode are enabled
+    console.log('Checking edit mode and reorder mode feature configuration');
+  }, []);
+
   const toggleEditMode = () => {
     if (canEdit) {
       setIsEditMode(prev => !prev);
@@ -57,6 +63,13 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const toggleReorderMode = () => {
     if (isEditMode && canEdit) {
       setIsReorderMode(prev => !prev);
+      // Mostrar tutorial o guía al activar el modo reordenación por primera vez
+      if (!isReorderMode) {
+        toast.info(
+          "Modo reordenación activado. Arrastra los elementos para cambiar su orden o usa los botones de flechas.",
+          { duration: 4000 }
+        );
+      }
     }
   };
 

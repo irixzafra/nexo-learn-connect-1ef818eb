@@ -19,7 +19,9 @@ import {
   Gamepad2,
   MessageCircle,
   Bot,
-  BookOpen
+  BookOpen,
+  Edit,
+  MoveHorizontal
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
@@ -122,17 +124,17 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
     // Content features
     {
       id: 'enableEditMode',
-      title: 'Modo de edición',
-      description: 'Habilita la edición de contenidos directamente',
+      title: 'Edición en línea',
+      description: 'Habilita la edición de contenidos directamente en la página',
       category: 'content',
-      icon: <Layout className="h-4 w-4 text-purple-500" />
+      icon: <Edit className="h-4 w-4 text-purple-500" />
     },
     {
       id: 'enableContentReordering',
       title: 'Reordenamiento de contenido',
       description: 'Permite reorganizar el contenido mediante drag & drop',
       category: 'content',
-      icon: <Layout className="h-4 w-4 text-purple-500" />
+      icon: <MoveHorizontal className="h-4 w-4 text-purple-500" />
     },
     {
       id: 'enableCategoryManagement',
