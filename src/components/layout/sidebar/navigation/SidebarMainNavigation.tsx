@@ -1,25 +1,29 @@
 
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
+import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType } from '@/types/auth';
 import { 
   Home, 
   Compass, 
+  Users, 
   MessageSquare, 
-  User, 
-  Phone,
-  Shield,
-  BookOpen,
+  BookOpen, 
+  Calendar,
+  Bell,
+  User,
+  Settings,
   GraduationCap,
-  ExternalLink,
-  Users
+  PlusCircle,
+  BarChart3,
+  LayoutDashboard,
+  Library,
+  Landmark,
+  Database
 } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+
+// Importamos los componentes de navegación
+import SidebarNavSection from './SidebarNavSection';
+import SidebarNavItem from './SidebarNavItem';
 
 interface SidebarMainNavigationProps {
   effectiveRole: UserRoleType;
@@ -36,150 +40,144 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   notificationsCount,
   getHomePath
 }) => {
-  // Check if a role should see specific sections
-  const canSeeAdmin = effectiveRole === 'admin' || effectiveRole === 'instructor';
-  const canSeeInstructor = effectiveRole === 'admin' || effectiveRole === 'instructor';
-  const isAnonymous = effectiveRole === 'anonimo';
-
   return (
-    <div className={cn(
-      "flex-1 overflow-auto",
-      isCollapsed ? "px-2" : "px-4"
-    )}>
+    <div className={`flex-1 overflow-auto ${isCollapsed ? "px-2" : "px-4"}`}>
       <div className="space-y-4 py-4">
-        <NavItem 
-          to={getHomePath()} 
-          icon={Home} 
-          label="Inicio" 
-          isCollapsed={isCollapsed} 
-        />
-        
-        <NavItem 
-          to="/courses" 
-          icon={Compass} 
-          label="Explorar" 
-          isCollapsed={isCollapsed} 
-        />
-        
-        <NavItem 
-          to="/community" 
-          icon={Users} 
-          label="Comunidad" 
-          isCollapsed={isCollapsed} 
-        />
-        
-        <NavItem 
-          to="/messages" 
-          icon={MessageSquare} 
-          label="Mensajes" 
-          badge={messagesCount > 0 ? messagesCount : undefined} 
-          isCollapsed={isCollapsed} 
-        />
-        
-        {effectiveRole === 'admin' && (
-          <NavItem 
-            to="/admin/dashboard" 
-            icon={Shield} 
-            label="Administración" 
+        {/* Sección "Principal" (SIEMPRE visible) */}
+        <SidebarNavSection title="Principal" isCollapsed={isCollapsed}>
+          <SidebarNavItem 
+            to="/" 
+            icon={Home} 
+            label="Inicio" 
             isCollapsed={isCollapsed} 
           />
-        )}
+          <SidebarNavItem 
+            to="/courses" 
+            icon={Compass} 
+            label="Explorar" 
+            isCollapsed={isCollapsed} 
+          />
+          <SidebarNavItem 
+            to="/community" 
+            icon={Users} 
+            label="Comunidad" 
+            isCollapsed={isCollapsed} 
+          />
+          <SidebarNavItem 
+            to="/messages" 
+            icon={MessageSquare} 
+            label="Mensajes" 
+            badge={messagesCount > 0 ? messagesCount : undefined} 
+            isCollapsed={isCollapsed} 
+          />
+        </SidebarNavSection>
         
-        {!isAnonymous && (
-          <NavItem 
+        {/* Sección "Mi Aprendizaje" (SIEMPRE visible) */}
+        <SidebarNavSection title="Mi Aprendizaje" isCollapsed={isCollapsed}>
+          <SidebarNavItem 
             to="/my-courses" 
             icon={BookOpen} 
             label="Mis Cursos" 
             isCollapsed={isCollapsed} 
           />
-        )}
-        
-        {canSeeInstructor && (
-          <NavItem 
-            to="/instructor/dashboard" 
-            icon={GraduationCap} 
-            label="Profesor" 
+          <SidebarNavItem 
+            to="/calendar" 
+            icon={Calendar} 
+            label="Calendario" 
             isCollapsed={isCollapsed} 
           />
+          <SidebarNavItem 
+            to="/notifications" 
+            icon={Bell} 
+            label="Notificaciones" 
+            badge={notificationsCount > 0 ? notificationsCount : undefined} 
+            isCollapsed={isCollapsed} 
+          />
+        </SidebarNavSection>
+        
+        {/* Sección "Cuenta" (SIEMPRE visible) */}
+        <SidebarNavSection title="Cuenta" isCollapsed={isCollapsed}>
+          <SidebarNavItem 
+            to="/profile" 
+            icon={User} 
+            label="Perfil" 
+            isCollapsed={isCollapsed} 
+          />
+          <SidebarNavItem 
+            to="/settings" 
+            icon={Settings} 
+            label="Ajustes" 
+            isCollapsed={isCollapsed} 
+          />
+        </SidebarNavSection>
+        
+        {/* Sección "Área Instructor" (SOLO si effectiveRole es 'instructor' o 'admin') */}
+        {(effectiveRole === 'instructor' || effectiveRole === 'admin') && (
+          <SidebarNavSection title="Área Instructor" isCollapsed={isCollapsed}>
+            <SidebarNavItem 
+              to="/instructor/courses" 
+              icon={GraduationCap} 
+              label="Mis Cursos (Gestión)" 
+              isCollapsed={isCollapsed} 
+            />
+            <SidebarNavItem 
+              to="/instructor/create-course" 
+              icon={PlusCircle} 
+              label="Crear Curso" 
+              isCollapsed={isCollapsed} 
+            />
+            <SidebarNavItem 
+              to="/instructor/analytics" 
+              icon={BarChart3} 
+              label="Estadísticas" 
+              isCollapsed={isCollapsed} 
+            />
+          </SidebarNavSection>
         )}
         
-        <NavItem 
-          to="/profile" 
-          icon={User} 
-          label="Perfil" 
-          badge={notificationsCount > 0 ? notificationsCount : undefined} 
-          isCollapsed={isCollapsed} 
-        />
-        
-        <NavItem 
-          to="/contact" 
-          icon={Phone} 
-          label="Contacto" 
-          isCollapsed={isCollapsed} 
-        />
-
-        <NavItem 
-          to="/landing" 
-          icon={ExternalLink} 
-          label="Landing Page" 
-          isCollapsed={isCollapsed} 
-        />
+        {/* Sección "Área Administración" (SOLO si effectiveRole es 'admin') */}
+        {effectiveRole === 'admin' && (
+          <SidebarNavSection title="Área Administración" isCollapsed={isCollapsed}>
+            <SidebarNavItem 
+              to="/admin/dashboard" 
+              icon={LayoutDashboard} 
+              label="Dashboard" 
+              isCollapsed={isCollapsed} 
+            />
+            <SidebarNavItem 
+              to="/admin/users" 
+              icon={Users} 
+              label="Usuarios" 
+              isCollapsed={isCollapsed} 
+            />
+            <SidebarNavItem 
+              to="/admin/courses" 
+              icon={Library} 
+              label="Cursos (Admin)" 
+              isCollapsed={isCollapsed} 
+            />
+            <SidebarNavItem 
+              to="/admin/finanzas" 
+              icon={Landmark} 
+              label="Finanzas" 
+              isCollapsed={isCollapsed} 
+            />
+            <SidebarNavItem 
+              to="/admin/datos" 
+              icon={Database} 
+              label="Datos" 
+              isCollapsed={isCollapsed} 
+            />
+            <SidebarNavItem 
+              to="/admin/settings" 
+              icon={Settings} 
+              label="Configuración Sistema" 
+              isCollapsed={isCollapsed} 
+            />
+          </SidebarNavSection>
+        )}
       </div>
     </div>
-  );
-};
-
-interface NavItemProps {
-  to: string;
-  icon: React.ElementType;
-  label: string;
-  badge?: number;
-  isCollapsed: boolean;
-}
-
-const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, badge, isCollapsed }) => {
-  if (isCollapsed) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <NavLink 
-            to={to}
-            className={({ isActive }) => cn(
-              "flex h-10 w-10 items-center justify-center rounded-md relative",
-              isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500"
-            )}
-          >
-            <Icon className="h-5 w-5" />
-            {badge && (
-              <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-blue-500 text-[10px] font-medium text-white flex items-center justify-center">
-                {badge > 99 ? '99+' : badge}
-              </span>
-            )}
-          </NavLink>
-        </TooltipTrigger>
-        <TooltipContent side="right">
-          <p>{label}</p>
-        </TooltipContent>
-      </Tooltip>
-    );
-  }
-
-  return (
-    <NavLink
-      to={to}
-      className={({ isActive }) => cn(
-        "flex items-center py-2 text-sm transition-colors",
-        isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500"
-      )}
-    >
-      <Icon className="mr-3 h-5 w-5 text-blue-500" />
-      <span>{label}</span>
-      {badge && (
-        <span className="ml-auto bg-blue-500 text-xs rounded-full h-5 min-w-5 px-1 flex items-center justify-center text-white">
-          {badge > 99 ? '99+' : badge}
-        </span>
-      )}
-    </NavLink>
   );
 };
 
