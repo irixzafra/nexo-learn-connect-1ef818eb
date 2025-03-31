@@ -23,9 +23,9 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
 }) => {
   return (
     <AppLayout>
-      <div className="w-full px-2 py-6">
+      <div className="w-full px-0 py-6">
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
               {subtitle && (
@@ -45,7 +45,7 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
               defaultValue={defaultTabValue || tabs[0]?.value}
             />
           ) : (
-            <Card className="p-6 shadow-sm">{children}</Card>
+            <Card className="p-6 shadow-sm mx-4">{children}</Card>
           )}
         </div>
       </div>

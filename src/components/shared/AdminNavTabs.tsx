@@ -42,7 +42,7 @@ const AdminNavTabs: React.FC<AdminNavTabsProps> = ({
       onValueChange={onValueChange}
       className={cn("w-full", className)}
     >
-      <TabsList className="bg-muted/60 p-1 rounded-lg w-full sm:w-auto flex overflow-auto">
+      <TabsList className="bg-muted/60 p-1 rounded-lg mx-4 sm:w-auto flex overflow-auto">
         {tabs.map((tab) => (
           <TabsTrigger 
             key={tab.value} 
@@ -69,7 +69,7 @@ const AdminNavTabs: React.FC<AdminNavTabsProps> = ({
               <TabsContent 
                 key={tab.value} 
                 value={tab.value}
-                className={cn("mt-4 rounded-md", contentClassName)}
+                className={cn("mt-4 rounded-md px-4", contentClassName)}
               >
                 {tab.content}
               </TabsContent>

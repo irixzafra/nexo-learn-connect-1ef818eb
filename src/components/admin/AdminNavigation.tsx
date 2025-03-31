@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -17,7 +16,11 @@ import {
   TrendingUp,
   Users2,
   Activity,
-  DollarSign
+  DollarSign,
+  ToggleRight,
+  Plug,
+  ShieldCheck,
+  DatabaseZap
 } from 'lucide-react';
 import AdminSubMenu, { AdminSubMenuItem } from './AdminSubMenu';
 
@@ -178,7 +181,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => 
                   "flex flex-shrink-0 items-center gap-1 px-3 py-2 rounded-md transition-colors",
                   "hover:bg-accent text-sm font-medium",
                   path.includes(item.id) 
-                    ? "bg-primary/10 text-primary border-l-[3px] border-l-primary pl-[calc(0.75rem-3px)]" 
+                    ? "bg-blue-600/10 text-blue-600 border-l-[3px] border-l-blue-600 pl-[calc(0.75rem-3px)]" 
                     : ""
                 )}
               >
