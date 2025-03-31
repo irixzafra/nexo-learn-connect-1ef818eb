@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { AppearanceSettings } from './AppearanceSettings';
 import { SecuritySettings } from './SecuritySettings';
@@ -22,8 +22,19 @@ import {
   Code,
   LayoutDashboard
 } from 'lucide-react';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
 
 const SettingsTabs: React.FC = () => {
+  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
+  const [isSaving, setIsSaving] = useState(false);
+  
+  const handleToggleFeature = (feature: keyof FeaturesConfig, value: boolean) => {
+    setFeaturesConfig(prev => ({
+      ...prev,
+      [feature]: value
+    }));
+  };
+  
   const tabs: AdminTabItem[] = [
     {
       label: 'General',
@@ -63,37 +74,61 @@ const SettingsTabs: React.FC = () => {
       label: 'Apariencia',
       value: 'appearance',
       icon: <PaintBucket className="h-4 w-4" />,
-      content: <AppearanceSettings />
+      content: <AppearanceSettings 
+        featuresConfig={featuresConfig}
+        onToggleFeature={handleToggleFeature}
+        isLoading={isSaving}
+      />
     },
     {
       label: 'Seguridad',
       value: 'security',
       icon: <Lock className="h-4 w-4" />,
-      content: <SecuritySettings />
+      content: <SecuritySettings 
+        featuresConfig={featuresConfig}
+        onToggleFeature={handleToggleFeature}
+        isLoading={isSaving}
+      />
     },
     {
       label: 'Notificaciones',
       value: 'notifications',
       icon: <Bell className="h-4 w-4" />,
-      content: <NotificationSettings />
+      content: <NotificationSettings 
+        featuresConfig={featuresConfig}
+        onToggleFeature={handleToggleFeature}
+        isLoading={isSaving}
+      />
     },
     {
       label: 'Contenido',
       value: 'content',
       icon: <FileText className="h-4 w-4" />,
-      content: <ContentSettings />
+      content: <ContentSettings 
+        featuresConfig={featuresConfig}
+        onToggleFeature={handleToggleFeature}
+        isLoading={isSaving}
+      />
     },
     {
       label: 'Onboarding',
       value: 'onboarding',
       icon: <Lightbulb className="h-4 w-4" />,
-      content: <OnboardingSettings />
+      content: <OnboardingSettings 
+        featuresConfig={featuresConfig}
+        onToggleFeature={handleToggleFeature}
+        isLoading={isSaving}
+      />
     },
     {
       label: 'Datos de Prueba',
       value: 'test-data',
       icon: <Database className="h-4 w-4" />,
-      content: <TestDataSettings />
+      content: <TestDataSettings 
+        featuresConfig={featuresConfig}
+        onToggleFeature={handleToggleFeature}
+        isLoading={isSaving}
+      />
     },
     {
       label: 'Desarrollador',
