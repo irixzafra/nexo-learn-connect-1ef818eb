@@ -35,7 +35,8 @@ export function useAuthState() {
     setShowAuthModal(!showAuthModal);
   };
 
-  // Restauramos esta función ya que parece necesaria según la interfaz AuthContextType
+  // Aseguramos que updateUserProfile esté definida aquí, aunque ya venga de profileData
+  // Esto garantiza que coincida con la firma en AuthContextType
   const updateUserProfile = async (updates: Partial<UserProfile>) => {
     try {
       if (!sessionData.user) throw new Error("No authenticated user");
@@ -64,7 +65,8 @@ export function useAuthState() {
     }
   };
 
-  // Restauramos esta función ya que parece necesaria según la interfaz AuthContextType
+  // Aseguramos que switchViewAsRole esté definida aquí, aunque ya venga de userPreferences
+  // Esto garantiza que coincida con la firma en AuthContextType
   const switchViewAsRole = (role: UserRoleType | 'current') => {
     userPreferences.setViewAsRole(role);
   };
@@ -79,7 +81,7 @@ export function useAuthState() {
     showAuthModal,
     toggleAuthModal,
     
-    // Restauramos estas funciones en el objeto retornado
+    // Aseguramos que estas funciones estén definidas en el objeto retornado
     updateUserProfile,
     switchViewAsRole,
 
