@@ -28,6 +28,11 @@ export interface FeaturesConfig {
   enableMultiLanguage: boolean;
   enableLeaderboard: boolean;
   enableCategoryManagement: boolean;
+  enableOfflineMode: boolean;
+  enableUserTracking: boolean;
+  enableGamification: boolean;
+  enableCommunity: boolean;
+  enableAI: boolean;
 }
 
 // Add a default config for usage in the OnboardingProvider
@@ -50,7 +55,12 @@ export const defaultFeaturesConfig: FeaturesConfig = {
   enableThemeSwitcher: true,
   enableMultiLanguage: false,
   enableLeaderboard: false,
-  enableCategoryManagement: false
+  enableCategoryManagement: false,
+  enableOfflineMode: false,
+  enableUserTracking: false,
+  enableGamification: false,
+  enableCommunity: false,
+  enableAI: false
 };
 
 export interface OnboardingContextValue {
