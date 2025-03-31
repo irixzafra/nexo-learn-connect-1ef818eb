@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AdminTabItem } from '@/components/admin/AdminTabs';
+import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 
 interface AdminPageLayoutProps {
   children?: React.ReactNode;
@@ -17,7 +16,7 @@ interface AdminPageLayoutProps {
   defaultTabValue?: string;
 }
 
-export const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
+const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   children,
   title,
   subtitle,
@@ -66,21 +65,12 @@ export const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
           
           {/* Tabs or Direct Content */}
           {tabs ? (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-              <TabsList className="bg-background">
-                {tabs.map((tab) => (
-                  <TabsTrigger key={tab.value} value={tab.value} className="flex items-center gap-2">
-                    {tab.icon}
-                    <span>{tab.label}</span>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              {tabs.map((tab) => (
-                <TabsContent key={tab.value} value={tab.value} className="bg-background rounded-md border p-4 shadow-sm">
-                  {tab.content}
-                </TabsContent>
-              ))}
-            </Tabs>
+            <AdminNavTabs 
+              tabs={tabs}
+              value={activeTab} 
+              onValueChange={setActiveTab}
+              contentClassName="bg-background rounded-md border p-4 shadow-sm"
+            />
           ) : (
             <div className="bg-background rounded-md border p-6 shadow-sm">
               {children}

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -11,13 +10,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdminPageLayout from "@/layouts/AdminPageLayout";
-import { AdminTabItem } from "@/components/admin/AdminTabs";
+import { AdminTabItem } from "@/components/shared/AdminNavTabs";
 import AllCoursesTab from "@/features/admin/components/courses/AllCoursesTab";
 import { useAdminCourses } from "@/features/admin/hooks/useAdminCourses";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
-// Create placeholder components for the new tabs
 const CategoriesTab: React.FC = () => (
   <Card>
     <CardHeader>
@@ -111,11 +109,9 @@ const AdminCourses: React.FC = () => {
   };
 
   const handleDismissError = () => {
-    // Solo limpiamos el error en la UI, pero no refrescamos los datos
     setCourses([]);
   };
 
-  // Create tabs array for AdminPageLayout
   const tabs: AdminTabItem[] = [
     {
       value: 'list',

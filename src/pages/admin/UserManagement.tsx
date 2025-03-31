@@ -2,7 +2,7 @@
 import React from "react";
 import { Users, Shield, Database, BarChart3 } from "lucide-react";
 import AdminPageLayout from "@/layouts/AdminPageLayout";
-import { AdminTabItem } from "@/components/admin/AdminTabs";
+import { AdminTabItem } from "@/components/shared/AdminNavTabs";
 import { UsersListTab } from "@/features/users/components/UsersListTab";
 import { RolesManagementTab } from "@/features/users/components/RolesManagementTab";
 import { PermissionsManagementTab } from "@/features/users/components/PermissionsManagementTab";

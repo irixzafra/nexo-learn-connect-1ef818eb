@@ -1,8 +1,5 @@
-
 import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
-import { UserRoleSearch } from "@/components/admin/UserRoleSearch";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   Users,
@@ -14,11 +11,11 @@ import {
   BarChart,
   LineChart
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { UserStats } from "./UserStats";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import AdminNavTabs, { AdminTabItem } from "@/components/shared/AdminNavTabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { UserStats } from "./UserStats";
 
 interface UserManagementTabsProps {
   isAdmin: boolean;
@@ -48,64 +45,38 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
     inactiveUsers: 125,
   };
 
+  const tabs: AdminTabItem[] = [
+    {
+      value: "users-list",
+      label: !isSmallScreen ? "Usuarios" : "",
+      icon: <Users className="h-4 w-4" />,
+    },
+    {
+      value: "roles",
+      label: !isSmallScreen ? "Roles" : "",
+      icon: <ShieldCheck className="h-4 w-4" />,
+    },
+    {
+      value: "analytics",
+      label: !isSmallScreen ? "Analíticas" : "",
+      icon: <BarChart className="h-4 w-4" />,
+    },
+    {
+      value: "add-user",
+      label: !isSmallScreen ? "Añadir" : "",
+      icon: <UserPlus className="h-4 w-4" />,
+    },
+  ];
+
   return (
-    <Tabs 
-      value={activeTab} 
-      onValueChange={setActiveTab}
-      className="w-full"
-    >
+    <div className="w-full">
       <div className="flex justify-between items-center mb-6">
-        <TabsList className="bg-muted/60 p-1 rounded-lg">
-          <TooltipProvider delayDuration={300}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <TabsTrigger value="users-list" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  {!isSmallScreen && <span>Usuarios</span>}
-                </TabsTrigger>
-              </TooltipTrigger>
-              {isSmallScreen && !isMobile && (
-                <TooltipContent side="bottom">Usuarios</TooltipContent>
-              )}
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <TabsTrigger value="roles" className="flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4" />
-                  {!isSmallScreen && <span>Roles</span>}
-                </TabsTrigger>
-              </TooltipTrigger>
-              {isSmallScreen && !isMobile && (
-                <TooltipContent side="bottom">Roles</TooltipContent>
-              )}
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <TabsTrigger value="analytics" className="flex items-center gap-2">
-                  <BarChart className="h-4 w-4" />
-                  {!isSmallScreen && <span>Analíticas</span>}
-                </TabsTrigger>
-              </TooltipTrigger>
-              {isSmallScreen && !isMobile && (
-                <TooltipContent side="bottom">Analíticas</TooltipContent>
-              )}
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <TabsTrigger value="add-user" className="flex items-center gap-2">
-                  <UserPlus className="h-4 w-4" />
-                  {!isSmallScreen && <span>Añadir</span>}
-                </TabsTrigger>
-              </TooltipTrigger>
-              {isSmallScreen && !isMobile && (
-                <TooltipContent side="bottom">Añadir Usuario</TooltipContent>
-              )}
-            </Tooltip>
-          </TooltipProvider>
-        </TabsList>
+        <AdminNavTabs 
+          tabs={tabs}
+          value={activeTab} 
+          onValueChange={setActiveTab}
+          showTabContent={false}
+        />
 
         <div className="hidden md:flex items-center gap-2">
           <Button variant="outline" size="sm" className="ml-auto">
@@ -119,11 +90,17 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
         </div>
       </div>
 
-      <TabsContent value="users-list" className="mt-0 border-none">
-        {/* Users list content will be handled by the main component */}
-      </TabsContent>
+      {/* Tab content */}
+      {activeTab === "users-list" && (
+        <Card className="p-6">
+          <h3 className="text-lg font-medium mb-4">Lista de Usuarios</h3>
+          <p className="text-muted-foreground mb-6">
+            Esta sección muestra la lista de usuarios del sistema.
+          </p>
+        </Card>
+      )}
 
-      <TabsContent value="roles" className="mt-0">
+      {activeTab === "roles" && (
         <Card className="p-6">
           <h3 className="text-lg font-medium mb-4">Gestión de Roles</h3>
           <p className="text-muted-foreground mb-6">
@@ -135,9 +112,9 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
             <p>Funcionalidad en desarrollo</p>
           </div>
         </Card>
-      </TabsContent>
+      )}
       
-      <TabsContent value="analytics" className="mt-0">
+      {activeTab === "analytics" && (
         <Card className="p-6">
           <h3 className="text-lg font-medium mb-4">Analíticas de Usuarios</h3>
           <p className="text-muted-foreground mb-6">
@@ -169,9 +146,9 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
             </Card>
           </div>
         </Card>
-      </TabsContent>
+      )}
 
-      <TabsContent value="add-user" className="mt-0">
+      {activeTab === "add-user" && (
         <Card className="p-6">
           <h3 className="text-lg font-medium mb-4">Añadir Nuevo Usuario</h3>
           <p className="text-muted-foreground mb-6">
@@ -183,7 +160,7 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
             <p>Formulario de creación en desarrollo</p>
           </div>
         </Card>
-      </TabsContent>
-    </Tabs>
+      )}
+    </div>
   );
 };
