@@ -135,30 +135,32 @@ export function EnhancedDataTable<TData, TValue>({
                 <ChevronDown className="h-4 w-4 ml-1" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 bg-background border shadow-md z-50">
               <DropdownMenuLabel>Columnas visibles</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    <Checkbox 
-                      id={`column-${column.id}`}
+              <div className="max-h-[300px] overflow-auto p-1">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize flex items-center gap-2 cursor-pointer focus:bg-accent"
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                      className="mr-2"
-                    />
-                    <label htmlFor={`column-${column.id}`} className="flex-1 cursor-pointer">
-                      {column.columnDef.header as string}
-                    </label>
-                  </DropdownMenuCheckboxItem>
-                ))}
+                    >
+                      <Checkbox 
+                        id={`column-${column.id}`}
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                        className="mr-2 data-[state=checked]:bg-primary"
+                      />
+                      <label htmlFor={`column-${column.id}`} className="flex-1 cursor-pointer">
+                        {column.columnDef.header as string}
+                      </label>
+                    </DropdownMenuCheckboxItem>
+                  ))}
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -171,7 +173,7 @@ export function EnhancedDataTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="font-semibold">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -190,7 +192,7 @@ export function EnhancedDataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   onClick={() => onRowClick && onRowClick(row.original)}
-                  className={onRowClick ? "cursor-pointer" : ""}
+                  className={onRowClick ? "cursor-pointer hover:bg-muted/50" : "hover:bg-muted/50"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -233,7 +235,7 @@ export function EnhancedDataTable<TData, TValue>({
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue placeholder="30" />
             </SelectTrigger>
-            <SelectContent side="top">
+            <SelectContent side="top" className="bg-background border shadow-md z-50">
               <SelectItem value="30">30</SelectItem>
               <SelectItem value="100">100</SelectItem>
               <SelectItem value={String(data.length)}>Todas</SelectItem>

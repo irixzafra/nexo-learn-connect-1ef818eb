@@ -20,7 +20,11 @@ import {
   ToggleRight,
   Plug,
   ShieldCheck,
-  DatabaseZap
+  DatabaseZap,
+  Bell,
+  BanknoteIcon,
+  Receipt,
+  CreditCard as CreditCardIcon
 } from 'lucide-react';
 import AdminSubMenu, { AdminSubMenuItem } from './AdminSubMenu';
 
@@ -111,10 +115,11 @@ const subMenus: Record<string, AdminSubMenuItem[]> = {
     { id: 'engagement', icon: Activity, label: 'Engagement', path: '/admin/analytics/engagement' },
   ],
   finances: [
-    { id: 'overview', icon: CreditCard, label: 'Resumen', path: '/admin/billing' },
-    { id: 'transactions', icon: DollarSign, label: 'Transacciones', path: '/admin/billing/transactions' },
-    { id: 'subscriptions', icon: FileText, label: 'Suscripciones', path: '/admin/billing/subscriptions' },
-    { id: 'reports', icon: PieChart, label: 'Informes', path: '/admin/billing/reports' },
+    { id: 'overview', icon: CreditCardIcon, label: 'Resumen', path: '/admin/billing' },
+    { id: 'invoices', icon: Receipt, label: 'Facturas', path: '/admin/billing/invoices' },
+    { id: 'subscriptions', icon: CreditCardIcon, label: 'Suscripciones', path: '/admin/billing/subscriptions' },
+    { id: 'bank', icon: BanknoteIcon, label: 'Movimientos Bancarios', path: '/admin/billing/bank' },
+    { id: 'alerts', icon: Bell, label: 'Alertas', path: '/admin/billing/alerts' },
   ],
   pages: [
     { id: 'all', icon: FileText, label: 'Todas las Páginas', path: '/admin/pages' },

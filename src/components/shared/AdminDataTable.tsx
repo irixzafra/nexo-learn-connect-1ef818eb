@@ -4,8 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { AdvancedDataTable } from "./AdvancedDataTable";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Download, SlidersHorizontal, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface AdminDataTableProps<TData, TValue> {
   title: string;
@@ -57,25 +56,8 @@ export function AdminDataTable<TData, TValue>({
       <CardContent>
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="w-full sm:w-auto">
-              <Input
-                placeholder={searchPlaceholder}
-                className="max-w-sm"
-              />
-            </div>
-            
-            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <div className="w-full flex items-center gap-2">
               {actionButtons}
-              
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Exportar CSV
-              </Button>
-              
-              <Button variant="outline" size="sm">
-                <SlidersHorizontal className="h-4 w-4 mr-2" />
-                Columnas
-              </Button>
             </div>
           </div>
           
