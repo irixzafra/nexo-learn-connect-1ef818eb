@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { AdminTabItem } from '@/components/shared/AdminNavTabs';
@@ -17,7 +16,7 @@ import {
   Lock,
   BookMarked,
   Plug,
-  MousePointerSquare
+  MousePointer
 } from 'lucide-react';
 import { AppearanceSettings } from '@/features/admin/components/settings/AppearanceSettings';
 import { SecuritySettings } from '@/features/admin/components/settings/SecuritySettings';
@@ -36,7 +35,6 @@ const SystemSettings: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [tabNavigationEnabled, setTabNavigationEnabled] = useState(true);
   
-  // Cargar la configuración actual desde localStorage
   useEffect(() => {
     const storedValue = localStorage.getItem('tabNavigationEnabled');
     if (storedValue !== null) {
@@ -54,16 +52,11 @@ const SystemSettings: React.FC = () => {
   const handleToggleTabNavigation = (checked: boolean) => {
     setTabNavigationEnabled(checked);
     
-    // Guardar en localStorage
     localStorage.setItem('tabNavigationEnabled', String(checked));
     
-    // Mostrar un toast para indicar que se ha cambiado la configuración
     toast.success(`Navegación por pestañas ${checked ? 'activada' : 'desactivada'}`);
-    
-    // Aquí en un entorno real también sincronizaríamos con la base de datos
   };
 
-  // Crear las tabs para el AdminPageLayout
   const tabs: AdminTabItem[] = [
     {
       value: 'general',
@@ -221,7 +214,7 @@ const SystemSettings: React.FC = () => {
     {
       value: 'onboarding',
       label: 'Onboarding',
-      icon: <MousePointerSquare className="h-4 w-4" />,
+      icon: <MousePointer className="h-4 w-4" />,
       dataTag: "settings-tab-onboarding",
       content: (
         <OnboardingSettings 
