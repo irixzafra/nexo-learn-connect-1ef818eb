@@ -9,7 +9,10 @@ import {
   CreditCard,
   Settings,
   FileText,
-  Palette
+  Palette,
+  Shield,
+  School,
+  LineChart
 } from 'lucide-react';
 
 // Main navigation categories
@@ -36,6 +39,13 @@ const adminCategories = [
     dataTag: "admin-nav-courses"
   },
   { 
+    id: 'instructors',
+    icon: School, 
+    label: "Instructores", 
+    path: "/admin/instructors",
+    dataTag: "admin-nav-instructors"
+  },
+  { 
     id: 'finances',
     icon: CreditCard, 
     label: "Finanzas", 
@@ -55,6 +65,20 @@ const adminCategories = [
     label: "Páginas",
     path: "/admin/pages",
     dataTag: "admin-nav-pages"  
+  },
+  { 
+    id: 'analytics',
+    icon: LineChart,
+    label: "Analíticas",
+    path: "/admin/analytics",
+    dataTag: "admin-nav-analytics"  
+  },
+  { 
+    id: 'security',
+    icon: Shield,
+    label: "Seguridad",
+    path: "/admin/roles",
+    dataTag: "admin-nav-security"  
   },
   { 
     id: 'config',

@@ -14,9 +14,9 @@ import {
   Database,
   History,
   FileText,
-  Folder,
   Route,
-  LineChart
+  LineChart,
+  Palette
 } from 'lucide-react';
 
 interface AdminSectionProps {
@@ -44,8 +44,8 @@ export const AdminSection: React.FC<AdminSectionProps> = ({ expanded, onToggle }
       <MenuItem to="/admin/learning-paths" icon={Route} label="Rutas de Aprendizaje" />
       
       {/* Gestión de contenido */}
-      <MenuItem to="/admin/content" icon={Folder} label="Contenido" />
       <MenuItem to="/admin/pages" icon={FileText} label="Páginas" />
+      <MenuItem to="/admin/design" icon={Palette} label="Diseño" />
       
       {/* Gestión de pagos */}
       <MenuItem to="/admin/billing" icon={CreditCard} label="Facturación" />

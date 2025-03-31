@@ -13,6 +13,7 @@ import AdminNavigation from '@/components/admin/AdminNavigation';
 import AppLayout from '@/layouts/AppLayout';
 import DesignSystem from '@/pages/admin/design/DesignSystem';
 import SystemSettings from '@/pages/admin/SystemSettings';
+import AdminDashboard from '@/pages/admin/dashboard';
 
 // User management components
 import { UserManagementTabs } from '@/features/users/UserManagementTabs';
@@ -20,47 +21,7 @@ import { RoleManagement } from '@/features/users/RoleManagement';
 import { UserAnalytics } from '@/features/users/UserAnalytics';
 import { PermissionsManagement } from '@/features/users/PermissionsManagement';
 import { UserAdminStats } from '@/features/users/UserAdminStats';
-
-// Temporary Dashboard component
-const Dashboard = () => (
-  <AdminPageLayout 
-    title="Panel de Administración"
-    subtitle="Gestiona todos los aspectos de la plataforma desde este panel."
-  >
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <UserAdminStats 
-        totalUsers={1243}
-        activeUsers={876}
-        newUsers={34}
-        inactiveUsers={87}
-      />
-    </div>
-  </AdminPageLayout>
-);
-
-// Temporary Course Management
-const CourseManagement = () => (
-  <AdminPageLayout title="Gestión de Cursos">
-    <Card className="p-6">
-      <h2 className="text-lg font-medium mb-4">Administración de Cursos</h2>
-      <p className="text-muted-foreground">
-        Esta sección permite gestionar los cursos de la plataforma. Actualmente en desarrollo.
-      </p>
-    </Card>
-  </AdminPageLayout>
-);
-
-// Temporary Enrollment Management
-const EnrollmentManagement = () => (
-  <AdminPageLayout title="Gestión de Inscripciones">
-    <Card className="p-6">
-      <h2 className="text-lg font-medium mb-4">Administración de Inscripciones</h2>
-      <p className="text-muted-foreground">
-        Esta sección permite gestionar las inscripciones a cursos. Actualmente en desarrollo.
-      </p>
-    </Card>
-  </AdminPageLayout>
-);
+import AllCoursesTab from '@/components/admin/courses/tabs/AllCoursesTab';
 
 // User Management Page
 const UserManagement = () => {
@@ -73,6 +34,46 @@ const UserManagement = () => {
     </AdminPageLayout>
   );
 };
+
+// Course Management Page
+const CourseManagement = () => (
+  <AdminPageLayout 
+    title="Gestión de Cursos"
+    subtitle="Administra el catálogo de cursos de la plataforma"
+  >
+    <AllCoursesTab />
+  </AdminPageLayout>
+);
+
+// Analytics Page
+const AnalyticsPage = () => (
+  <AdminPageLayout 
+    title="Analíticas"
+    subtitle="Métricas y estadísticas de la plataforma"
+  >
+    <Card className="p-6">
+      <h2 className="text-lg font-medium mb-4">Analíticas de la Plataforma</h2>
+      <p className="text-muted-foreground">
+        Visualiza tendencias y métricas clave para tomar decisiones informadas.
+      </p>
+    </Card>
+  </AdminPageLayout>
+);
+
+// Instructor Management
+const InstructorManagement = () => (
+  <AdminPageLayout 
+    title="Gestión de Instructores"
+    subtitle="Administra los instructores de la plataforma"
+  >
+    <Card className="p-6">
+      <h2 className="text-lg font-medium mb-4">Administración de Instructores</h2>
+      <p className="text-muted-foreground">
+        Gestiona los perfiles, cursos y rendimiento de los instructores.
+      </p>
+    </Card>
+  </AdminPageLayout>
+);
 
 // Layout component that provides the admin layout structure
 const AdminLayout = () => {
@@ -95,8 +96,8 @@ const AdminRoutes: React.FC = () => {
         </ProtectedRoute>
       }>
         {/* Dashboard */}
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<AdminDashboard />} />
+        <Route path="/dashboard" element={<AdminDashboard />} />
         
         {/* User Management */}
         <Route path="/users" element={<UserManagement />} />
@@ -104,13 +105,16 @@ const AdminRoutes: React.FC = () => {
         
         {/* Course Management */}
         <Route path="/courses" element={<CourseManagement />} />
-        <Route path="/enrollments" element={<EnrollmentManagement />} />
+        <Route path="/instructors" element={<InstructorManagement />} />
+        
+        {/* Analytics */}
+        <Route path="/analytics" element={<AnalyticsPage />} />
         
         {/* Design System */}
         <Route path="/design" element={<DesignSystem />} />
         <Route path="/design/:tab" element={<DesignSystem />} />
         
-        {/* Content Management - Changed from settings/pages to pages */}
+        {/* Content Management */}
         <Route path="/pages" element={<PageManagement />} />
         <Route path="/pages/create" element={<CreatePage />} />
         <Route path="/pages/:id" element={<EditPage />} />
@@ -123,7 +127,7 @@ const AdminRoutes: React.FC = () => {
         <Route path="/ai/services" element={<AIServicesPage />} />
         
         {/* Default redirect */}
-        <Route path="*" element={<Dashboard />} />
+        <Route path="*" element={<AdminDashboard />} />
       </Route>
     </Routes>
   );
