@@ -1910,6 +1910,86 @@ export type Database = {
         }
         Relationships: []
       }
+      site_page_revisions: {
+        Row: {
+          content: Json | null
+          created_at: string
+          created_by: string | null
+          id: string
+          meta_description: string | null
+          page_id: string
+          revision_notes: string | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          meta_description?: string | null
+          page_id: string
+          revision_notes?: string | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          meta_description?: string | null
+          page_id?: string
+          revision_notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_page_revisions_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "site_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_pages: {
+        Row: {
+          content: Json | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_system_page: boolean
+          layout: string
+          meta_description: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_system_page?: boolean
+          layout?: string
+          meta_description?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_system_page?: boolean
+          layout?: string
+          meta_description?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           created_at: string
@@ -2185,6 +2265,15 @@ export type Database = {
           course_id: string
           title: string
           enrollment_count: number
+        }[]
+      }
+      get_public_pages: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          title: string
+          slug: string
+          meta_description: string
         }[]
       }
       get_revenue_by_course: {

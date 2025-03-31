@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { AdminTabItem } from '@/components/shared/AdminNavTabs';
@@ -16,7 +17,8 @@ import {
   Lock,
   BookMarked,
   Plug,
-  MousePointer
+  MousePointer,
+  FileUp
 } from 'lucide-react';
 import { AppearanceSettings } from '@/features/admin/components/settings/AppearanceSettings';
 import { SecuritySettings } from '@/features/admin/components/settings/SecuritySettings';
@@ -29,11 +31,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const SystemSettings: React.FC = () => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
   const [isSaving, setIsSaving] = useState(false);
   const [tabNavigationEnabled, setTabNavigationEnabled] = useState(true);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const storedValue = localStorage.getItem('tabNavigationEnabled');
@@ -55,6 +60,10 @@ const SystemSettings: React.FC = () => {
     localStorage.setItem('tabNavigationEnabled', String(checked));
     
     toast.success(`Navegación por pestañas ${checked ? 'activada' : 'desactivada'}`);
+  };
+
+  const goToPageManagement = () => {
+    navigate('/admin/settings/pages');
   };
 
   const tabs: AdminTabItem[] = [
@@ -143,6 +152,35 @@ const SystemSettings: React.FC = () => {
                 <ToggleLeft className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
                 <p>Gestión de funcionalidades en desarrollo</p>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    },
+    {
+      value: 'pages',
+      label: 'Páginas',
+      icon: <FileText className="h-4 w-4" />,
+      dataTag: "settings-tab-pages",
+      content: (
+        <Card>
+          <CardHeader>
+            <CardTitle>Gestión de Páginas</CardTitle>
+            <CardDescription>
+              Administra las páginas públicas del sitio
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground mb-4">
+              Crea, edita y organiza todas las páginas del sitio. Puedes gestionar cualquier página incluyendo
+              la página de inicio, páginas legales y páginas personalizadas.
+            </p>
+            
+            <div className="flex justify-end">
+              <Button onClick={goToPageManagement}>
+                <FileUp className="mr-2 h-4 w-4" />
+                Administrar Páginas
+              </Button>
             </div>
           </CardContent>
         </Card>

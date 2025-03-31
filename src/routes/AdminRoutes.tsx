@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AppLayout from '@/layouts/AppLayout';
@@ -15,6 +16,9 @@ import AccessControl from '@/pages/admin/access/AccessControl';
 import { Navigate } from 'react-router-dom';
 import AdminNavigation from '@/components/admin/AdminNavigation';
 import ContentManagement from '@/pages/admin/content/ContentManagement';
+import PageManagement from '@/pages/admin/pages/PageManagement';
+import CreatePage from '@/pages/admin/pages/CreatePage';
+import EditPage from '@/pages/admin/pages/EditPage';
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tabNavigationEnabled, setTabNavigationEnabled] = useState(true);
@@ -136,6 +140,21 @@ const AdminRoutes: React.FC = () => {
       <Route path="settings" element={
         <AdminLayout>
           <SystemSettings />
+        </AdminLayout>
+      } />
+      <Route path="settings/pages" element={
+        <AdminLayout>
+          <PageManagement />
+        </AdminLayout>
+      } />
+      <Route path="settings/pages/create" element={
+        <AdminLayout>
+          <CreatePage />
+        </AdminLayout>
+      } />
+      <Route path="settings/pages/edit/:id" element={
+        <AdminLayout>
+          <EditPage />
         </AdminLayout>
       } />
       <Route path="settings/security" element={

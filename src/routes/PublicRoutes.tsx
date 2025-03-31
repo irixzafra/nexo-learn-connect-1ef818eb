@@ -25,6 +25,7 @@ import PrivacyPage from '@/pages/legal/PrivacyPage';
 import CookiesPage from '@/pages/legal/CookiesPage';
 import AccessibilityPage from '@/pages/legal/AccessibilityPage';
 import ContactPage from '@/pages/ContactPage';
+import DynamicPage from '@/pages/DynamicPage';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -45,6 +46,9 @@ const PublicRoutes: React.FC = () => {
       <Route path="/privacy" element={<PublicLayout><PrivacyPage /></PublicLayout>} />
       <Route path="/cookies" element={<PublicLayout><CookiesPage /></PublicLayout>} />
       <Route path="/accessibility" element={<PublicLayout><AccessibilityPage /></PublicLayout>} />
+      
+      {/* Dynamic pages */}
+      <Route path="/pages/:slug" element={<DynamicPage />} />
       
       {/* Community Route */}
       <Route path="/community" element={<Community />} />
