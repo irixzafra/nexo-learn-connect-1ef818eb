@@ -2,6 +2,7 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType } from '@/types/auth';
+import { useFeatureFlags } from '@/contexts/features/FeatureFlagsContext';
 import { 
   Home, 
   Compass, 
@@ -40,6 +41,8 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   notificationsCount,
   getHomePath
 }) => {
+  const { isFeatureEnabled } = useFeatureFlags();
+  
   return (
     <div className={`flex-1 overflow-auto ${isCollapsed ? "px-2" : "px-4"}`}>
       <div className="space-y-4 py-4">
@@ -57,19 +60,23 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             label="Explorar" 
             isCollapsed={isCollapsed} 
           />
-          <SidebarNavItem 
-            to="/community" 
-            icon={Users} 
-            label="Comunidad" 
-            isCollapsed={isCollapsed} 
-          />
-          <SidebarNavItem 
-            to="/messages" 
-            icon={MessageSquare} 
-            label="Mensajes" 
-            badge={messagesCount > 0 ? messagesCount : undefined} 
-            isCollapsed={isCollapsed} 
-          />
+          {isFeatureEnabled('community') && (
+            <SidebarNavItem 
+              to="/community" 
+              icon={Users} 
+              label="Comunidad" 
+              isCollapsed={isCollapsed} 
+            />
+          )}
+          {isFeatureEnabled('messages') && (
+            <SidebarNavItem 
+              to="/messages" 
+              icon={MessageSquare} 
+              label="Mensajes" 
+              badge={messagesCount > 0 ? messagesCount : undefined} 
+              isCollapsed={isCollapsed} 
+            />
+          )}
         </SidebarNavSection>
         
         {/* Sección "Mi Aprendizaje" (SIEMPRE visible) */}
@@ -126,12 +133,14 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
               label="Crear Curso" 
               isCollapsed={isCollapsed} 
             />
-            <SidebarNavItem 
-              to="/instructor/analytics" 
-              icon={BarChart3} 
-              label="Estadísticas" 
-              isCollapsed={isCollapsed} 
-            />
+            {isFeatureEnabled('instructor_analytics') && (
+              <SidebarNavItem 
+                to="/instructor/analytics" 
+                icon={BarChart3} 
+                label="Estadísticas" 
+                isCollapsed={isCollapsed} 
+              />
+            )}
           </SidebarNavSection>
         )}
         
@@ -156,18 +165,22 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
               label="Cursos (Admin)" 
               isCollapsed={isCollapsed} 
             />
-            <SidebarNavItem 
-              to="/admin/finanzas" 
-              icon={Landmark} 
-              label="Finanzas" 
-              isCollapsed={isCollapsed} 
-            />
-            <SidebarNavItem 
-              to="/admin/datos" 
-              icon={Database} 
-              label="Datos" 
-              isCollapsed={isCollapsed} 
-            />
+            {isFeatureEnabled('finances') && (
+              <SidebarNavItem 
+                to="/admin/finanzas" 
+                icon={Landmark} 
+                label="Finanzas" 
+                isCollapsed={isCollapsed} 
+              />
+            )}
+            {isFeatureEnabled('datos') && (
+              <SidebarNavItem 
+                to="/admin/datos" 
+                icon={Database} 
+                label="Datos" 
+                isCollapsed={isCollapsed} 
+              />
+            )}
             <SidebarNavItem 
               to="/admin/settings" 
               icon={Settings} 
