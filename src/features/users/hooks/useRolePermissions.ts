@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
+import { toast } from 'sonner';
 import { Permission } from './usePermissions';
 import { Role } from './useRoles';
 
@@ -15,7 +16,6 @@ interface RolePermission {
 export function useRolePermissions(roleId?: string) {
   const [rolePermissions, setRolePermissions] = useState<RolePermission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
   
   const fetchRolePermissions = async (id?: string) => {
     if (!id && !roleId) return;
@@ -31,22 +31,14 @@ export function useRolePermissions(roleId?: string) {
       
       if (error) {
         console.error('Error fetching role permissions:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "No se pudieron cargar los permisos del rol.",
-        });
+        toast.error("No se pudieron cargar los permisos del rol");
         return;
       }
       
       setRolePermissions(data || []);
     } catch (error) {
       console.error('Error in fetchRolePermissions:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Ocurrió un error al obtener los permisos del rol.",
-      });
+      toast.error("Ocurrió un error al obtener los permisos del rol");
     } finally {
       setIsLoading(false);
     }
@@ -75,11 +67,7 @@ export function useRolePermissions(roleId?: string) {
         
         if (error) {
           console.error('Error removing permission:', error);
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "No se pudo quitar el permiso.",
-          });
+          toast.error("No se pudo quitar el permiso");
           return false;
         }
         
@@ -87,10 +75,7 @@ export function useRolePermissions(roleId?: string) {
           rolePermissions.filter(rp => rp.id !== permissionToRemove.id)
         );
         
-        toast({
-          title: "Permiso actualizado",
-          description: `Se quitó el permiso "${permission.name}" del rol "${role.name}".`,
-        });
+        toast.success(`Se quitó el permiso "${permission.name}" del rol "${role.name}"`);
       } else {
         // Add permission
         const { data, error } = await supabase
@@ -100,30 +85,19 @@ export function useRolePermissions(roleId?: string) {
         
         if (error) {
           console.error('Error adding permission:', error);
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "No se pudo asignar el permiso.",
-          });
+          toast.error("No se pudo asignar el permiso");
           return false;
         }
         
         setRolePermissions([...rolePermissions, data[0]]);
         
-        toast({
-          title: "Permiso actualizado",
-          description: `Se asignó el permiso "${permission.name}" al rol "${role.name}".`,
-        });
+        toast.success(`Se asignó el permiso "${permission.name}" al rol "${role.name}"`);
       }
       
       return true;
     } catch (error) {
       console.error('Error in togglePermission:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Ocurrió un error al actualizar el permiso.",
-      });
+      toast.error("Ocurrió un error al actualizar el permiso");
       return false;
     }
   };

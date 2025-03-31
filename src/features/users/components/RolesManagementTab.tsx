@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRoles, Role } from '../hooks/useRoles';
 import { Plus, Pencil, Trash, Shield, MoreHorizontal } from 'lucide-react';
@@ -31,7 +30,6 @@ export const RolesManagementTab: React.FC = () => {
         // Esta consulta cuenta cuántos usuarios tienen cada rol
         const { data, error } = await supabase
           .from('user_roles')
-          .select('role_id, count')
           .select('role_id')
           .select('*', { count: 'exact', head: false })
           .throwOnError();

@@ -1,98 +1,116 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { loginSchema, type LoginFormValues } from '@/lib/validations/auth';
-import { useLogin } from '@/hooks/use-login';
-import PublicLayout from '@/layouts/PublicLayout';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 const Login: React.FC = () => {
-  const { login, isLoading } = useLogin();
-  
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
-  
-  const onSubmit = (data: LoginFormValues) => {
-    login(data);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const { error } = await login(email, password);
+      
+      if (error) {
+        toast.error(
+          error.message === 'Invalid login credentials' 
+            ? 'Credenciales inválidas. Por favor, verifica tu email y contraseña.' 
+            : error.message
+        );
+      } else {
+        toast.success('Inicio de sesión exitoso');
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Ocurrió un error durante el inicio de sesión');
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
+
   return (
-    <PublicLayout>
-      <div className="container mx-auto px-4 py-12 flex justify-center">
-        <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-background">
+      <div className="w-full max-w-md px-4">
+        <Card className="w-full">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Iniciar Sesión</CardTitle>
+            <CardTitle className="text-2xl text-center">
+              Iniciar sesión
+            </CardTitle>
             <CardDescription className="text-center">
-              Ingresa tus credenciales para acceder a tu cuenta
+              Ingresa tus credenciales para acceder
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Correo Electrónico</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="email" placeholder="usuario@ejemplo.com" autoComplete="email" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="ejemplo@correo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
-                
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contraseña</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="password" placeholder="••••••••" autoComplete="current-password" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Contraseña</Label>
+                  <Button variant="link" className="p-0 h-auto" onClick={() => navigate('/auth/forgot-password')}>
+                    ¿Olvidaste tu contraseña?
+                  </Button>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
-                
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Iniciando sesión...
-                    </>
-                  ) : (
-                    'Iniciar Sesión'
-                  )}
-                </Button>
-              </form>
-            </Form>
-            
-            <div className="mt-4 text-center">
-              <p className="text-sm text-muted-foreground">
-                ¿No tienes una cuenta?{' '}
-                <Link to="/auth/register" className="text-primary hover:underline">
-                  Regístrate
-                </Link>
-              </p>
-            </div>
+              </div>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Iniciando sesión...
+                  </>
+                ) : (
+                  'Iniciar sesión'
+                )}
+              </Button>
+            </form>
           </CardContent>
+          <CardFooter className="flex flex-col">
+            <div className="text-sm text-center text-muted-foreground mt-2">
+              ¿No tienes una cuenta?{' '}
+              <Button variant="link" className="p-0 h-auto" onClick={() => navigate('/auth/register')}>
+                Regístrate
+              </Button>
+            </div>
+          </CardFooter>
         </Card>
       </div>
-    </PublicLayout>
+    </div>
   );
 };
 

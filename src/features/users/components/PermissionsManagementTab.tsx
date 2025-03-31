@@ -5,7 +5,6 @@ import { usePermissions, Permission } from '../hooks/usePermissions';
 import { useRolePermissions } from '../hooks/useRolePermissions';
 import { Shield, Check, Lock } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
