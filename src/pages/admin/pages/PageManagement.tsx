@@ -9,25 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,7 +24,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import {
   FileText,
-  MoreHorizontal,
   Plus,
   Search,
   Eye,
@@ -52,16 +35,20 @@ import {
   Layout,
   Tag
 } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
 import { SitePage, PageStatus } from '@/types/pages'; 
 import { getAllPages, updatePageStatus, deletePage } from '@/features/admin/services/pagesService';
+import { AdvancedDataTable } from '@/components/shared/AdvancedDataTable';
+import { createColumn, createActionsColumn } from '@/components/shared/DataTableUtils';
+import { format } from 'date-fns';
+import PageEditorDialog from '@/components/admin/pages/PageEditorDialog';
 
 const PageManagement: React.FC = () => {
   const [pages, setPages] = useState<SitePage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [pageToDelete, setPageToDelete] = useState<SitePage | null>(null);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [selectedPageId, setSelectedPageId] = useState<string | undefined>(undefined);
   
   const navigate = useNavigate();
 
@@ -81,15 +68,6 @@ const PageManagement: React.FC = () => {
       setLoading(false);
     }
   };
-
-  const filteredPages = pages.filter((page) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      page.title.toLowerCase().includes(query) ||
-      page.slug.toLowerCase().includes(query) ||
-      page.status.toLowerCase().includes(query)
-    );
-  });
 
   const handleStatusChange = async (page: SitePage, status: PageStatus) => {
     try {
@@ -123,6 +101,20 @@ const PageManagement: React.FC = () => {
     }
   };
 
+  const handleEditPage = (page: SitePage) => {
+    setSelectedPageId(page.id);
+    setEditorOpen(true);
+  };
+
+  const handleViewPage = (page: SitePage) => {
+    // For system pages, we use their slug directly
+    if (page.is_system_page) {
+      window.open(`/${page.slug}`, '_blank');
+    } else {
+      window.open(`/${page.slug}`, '_blank');
+    }
+  };
+
   const getStatusBadge = (status: PageStatus) => {
     switch (status) {
       case 'published':
@@ -135,6 +127,101 @@ const PageManagement: React.FC = () => {
         return <Badge variant="outline">{status}</Badge>;
     }
   };
+
+  const columns = [
+    createColumn<SitePage>({
+      accessorKey: 'title',
+      header: 'Título',
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <FileText className="h-4 w-4 text-muted-foreground" />
+          <span className="font-medium">{row.getValue('title')}</span>
+          {row.original.is_system_page && (
+            <Badge variant="outline" className="ml-2 text-xs">Sistema</Badge>
+          )}
+        </div>
+      )
+    }),
+    createColumn<SitePage>({
+      accessorKey: 'slug',
+      header: 'Slug',
+      cell: ({ getValue }) => (
+        <code className="text-xs bg-muted px-1 py-0.5 rounded">
+          /{getValue() as string}
+        </code>
+      )
+    }),
+    createColumn<SitePage>({
+      accessorKey: 'layout',
+      header: 'Diseño',
+      cell: ({ getValue }) => (
+        <Badge variant="outline" className="flex items-center gap-1">
+          <Layout className="h-3 w-3" />
+          {getValue() as string}
+        </Badge>
+      )
+    }),
+    createColumn<SitePage>({
+      accessorKey: 'status',
+      header: 'Estado',
+      cell: ({ getValue }) => getStatusBadge(getValue() as PageStatus)
+    }),
+    createColumn<SitePage>({
+      accessorKey: 'updated_at',
+      header: 'Actualización',
+      cell: ({ getValue }) => (
+        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Clock className="h-3 w-3" />
+          {format(new Date(getValue() as string), 'dd/MM/yyyy HH:mm')}
+        </div>
+      )
+    }),
+    createActionsColumn<SitePage>(({ row }) => {
+      const page = row.original;
+      return (
+        <div className="flex justify-end gap-2">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEditPage(page);
+            }}
+          >
+            <PenSquare className="h-4 w-4" />
+            <span className="sr-only">Editar</span>
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewPage(page);
+            }}
+          >
+            <Eye className="h-4 w-4" />
+            <span className="sr-only">Ver</span>
+          </Button>
+          
+          {!page.is_system_page && (
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="text-destructive hover:text-destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteClick(page);
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+              <span className="sr-only">Eliminar</span>
+            </Button>
+          )}
+        </div>
+      );
+    })
+  ];
 
   return (
     <div className="space-y-4">
@@ -152,8 +239,6 @@ const PageManagement: React.FC = () => {
               <Input
                 placeholder="Buscar páginas..."
                 className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <Button onClick={() => navigate('/admin/settings/pages/create')}>
@@ -163,152 +248,34 @@ const PageManagement: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Título</TableHead>
-                  <TableHead>URL / Slug</TableHead>
-                  <TableHead>Layout</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Actualización</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  Array.from({ length: 5 }).map((_, index) => (
-                    <TableRow key={`skeleton-${index}`}>
-                      <TableCell><Skeleton className="h-6 w-32" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-32" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-24 ml-auto" /></TableCell>
-                    </TableRow>
-                  ))
-                ) : filteredPages.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="h-32 text-center">
-                      {searchQuery ? (
-                        <div className="flex flex-col items-center justify-center text-muted-foreground">
-                          <FileText className="h-8 w-8 mb-2" />
-                          <p>No se encontraron páginas para "{searchQuery}"</p>
-                          <Button variant="link" onClick={() => setSearchQuery('')}>
-                            Limpiar búsqueda
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center text-muted-foreground">
-                          <FileText className="h-8 w-8 mb-2" />
-                          <p>No hay páginas disponibles</p>
-                          <Button 
-                            variant="link" 
-                            onClick={() => navigate('/admin/settings/pages/create')}
-                          >
-                            Crear primera página
-                          </Button>
-                        </div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredPages.map((page) => (
-                    <TableRow key={page.id}>
-                      <TableCell className="font-medium flex items-center gap-2">
-                        {page.is_system_page && (
-                          <span title="Página del sistema" className="text-blue-500">
-                            <Tag className="h-4 w-4" />
-                          </span>
-                        )}
-                        {page.title}
-                      </TableCell>
-                      <TableCell>
-                        <code className="text-xs bg-muted px-1 py-0.5 rounded">
-                          /{page.slug}
-                        </code>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Layout className="h-3 w-3" />
-                          {page.layout}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{getStatusBadge(page.status)}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {new Date(page.updated_at).toLocaleDateString()}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Acciones</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                            <DropdownMenuItem 
-                              onClick={() => navigate(`/admin/settings/pages/edit/${page.id}`)}
-                            >
-                              <PenSquare className="h-4 w-4 mr-2" />
-                              Editar
-                            </DropdownMenuItem>
-                            
-                            <DropdownMenuSeparator />
-                            
-                            {page.status !== 'published' && (
-                              <DropdownMenuItem 
-                                onClick={() => handleStatusChange(page, 'published')}
-                              >
-                                <Eye className="h-4 w-4 mr-2" />
-                                Publicar
-                              </DropdownMenuItem>
-                            )}
-                            
-                            {page.status !== 'draft' && (
-                              <DropdownMenuItem 
-                                onClick={() => handleStatusChange(page, 'draft')}
-                              >
-                                <EyeOff className="h-4 w-4 mr-2" />
-                                Pasar a borrador
-                              </DropdownMenuItem>
-                            )}
-                            
-                            {page.status !== 'archived' && (
-                              <DropdownMenuItem 
-                                onClick={() => handleStatusChange(page, 'archived')}
-                              >
-                                <FileArchive className="h-4 w-4 mr-2" />
-                                Archivar
-                              </DropdownMenuItem>
-                            )}
-                            
-                            <DropdownMenuSeparator />
-                            
-                            {!page.is_system_page && (
-                              <DropdownMenuItem 
-                                className="text-destructive focus:text-destructive"
-                                onClick={() => handleDeleteClick(page)}
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Eliminar
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <AdvancedDataTable
+            columns={columns}
+            data={pages}
+            searchPlaceholder="Buscar por título, slug o estado..."
+            exportFilename="paginas-sitio"
+            emptyState={
+              <div className="flex flex-col items-center justify-center text-muted-foreground py-8">
+                <FileText className="h-8 w-8 mb-2" />
+                <p className="mb-2">No hay páginas disponibles</p>
+                <Button 
+                  variant="link" 
+                  onClick={() => navigate('/admin/settings/pages/create')}
+                >
+                  Crear primera página
+                </Button>
+              </div>
+            }
+            onRowClick={(page) => handleEditPage(page as SitePage)}
+          />
         </CardContent>
       </Card>
+
+      <PageEditorDialog
+        pageId={selectedPageId}
+        isOpen={editorOpen}
+        onOpenChange={setEditorOpen}
+        onPageUpdated={fetchPages}
+      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>

@@ -1,6 +1,6 @@
 
 export type PageStatus = 'draft' | 'published' | 'archived';
-export type PageLayout = 'default' | 'landing' | 'marketing' | 'documentation' | 'course';
+export type PageLayout = 'default' | 'landing' | 'marketing' | 'documentation' | 'course' | 'sidebar' | 'full-width';
 
 export interface PageBlock {
   id: string;
