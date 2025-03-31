@@ -1,3 +1,4 @@
+
 # NEXO LEARNING - ROADMAP FUNCIONAL
 
 > **NOTA IMPORTANTE**: Para ver el estado actual de implementación, consultar el archivo [Nexo_Roadmap_Implementation.md](./Nexo_Roadmap_Implementation.md)
@@ -16,7 +17,7 @@
 - [ ] Gamificación inicial y recompensas
 
 ### Fase 3: Interacción Social y Personalización
-- [ ] Comunidad y características sociales
+- [🧪] Comunidad y características sociales
 - [ ] Recomendaciones personalizadas
 - [ ] Sistema avanzado de evaluación y certificación
 
@@ -97,54 +98,60 @@
 ### Fase 2: Mejora de Experiencia de Usuario y Monetización
 
 #### UX-COMMENTS-01: Sistema de Comentarios en Lecciones
-- [🧪] Funcionalidad para que estudiantes comenten lecciones y respondan a otros comentarios.
+- [x] Funcionalidad para que estudiantes comenten lecciones y respondan a otros comentarios.
 - **Detalles**: Hilos de discusión anidados, notificaciones de respuestas, moderación por instructores.
 - **Impacto**: Fomenta interacción y resolución colaborativa de dudas.
-- **Estado**: En fase final de testing, pendiente de ajustes de rendimiento.
+- **Estado**: Implementado y verificado.
 
 #### PAY-STRIPE-01: Integración de Pagos con Stripe
-- [ ] Sistema para procesar pagos de cursos mediante la plataforma Stripe.
+- [🧪] Sistema para procesar pagos de cursos mediante la plataforma Stripe.
 - **Detalles**: Checkout seguro, gestión de tarjetas, facturación automática, manejo de impuestos.
 - **Impacto**: Habilita monetización directa de contenido premium.
 - **Consideraciones**: Cumplimiento PCI-DSS, soporte multi-divisa, manejo de reembolsos.
+- **Estado**: En fase final de pruebas.
 
 #### UX-LESSON-NOTES-01: Notas Personales en Lecciones
-- [ ] Funcionalidad para que estudiantes tomen notas privadas durante las lecciones.
+- [🧪] Funcionalidad para que estudiantes tomen notas privadas durante las lecciones.
 - **Detalles**: Editor de texto enriquecido, guardado automático, organización por lección/curso.
 - **Impacto**: Mejora retención de conocimiento y personalización de estudio.
 - **Características previstas**: Búsqueda, etiquetado, exportación en múltiples formatos.
+- **Estado**: En desarrollo, testing de UI en progreso.
 
 #### UX-COURSE-REVIEWS-01: Sistema de Reseñas y Valoraciones
-- [ ] Sistema para que estudiantes califiquen y escriban reseñas sobre los cursos completados.
+- [🧪] Sistema para que estudiantes califiquen y escriban reseñas sobre los cursos completados.
 - **Detalles**: Valoración numérica, comentarios textuales, respuestas de instructores, moderación.
 - **Impacto**: Proporciona social proof, orienta decisiones de nuevos estudiantes.
 - **Análisis**: Agregación de métricas, detección de patrones, alertas de valoraciones negativas.
+- **Estado**: Implementación básica completada, pendiente refinamiento.
 
 #### UX-DASHBOARD-01: Dashboard Personalizado para Estudiantes
-- [ ] Página de inicio personalizada con resumen de actividad y recomendaciones.
+- [x] Página de inicio personalizada con resumen de actividad y recomendaciones.
 - **Detalles**: Widgets configurables, accesos rápidos, progreso global, sugerencias contextuales.
 - **Impacto**: Centraliza experiencia del estudiante, mejora engagement y retención.
 - **Personalización**: Adaptación automática según comportamiento y preferencias.
 
 #### GAM-BADGES-01: Sistema Básico de Insignias y Logros
-- [ ] Mecanismo de recompensas virtuales por completar cursos y alcanzar hitos.
+- [🧪] Mecanismo de recompensas virtuales por completar cursos y alcanzar hitos.
 - **Detalles**: Diversas categorías de insignias, visualización en perfil, notificaciones de logros.
 - **Impacto**: Incrementa motivación y engagement mediante gamificación.
 - **Mecánicas**: Desbloqueo progresivo, colecciones, logros especiales por desempeño.
+- **Estado**: Diseño completado, implementación en primeras fases.
 
 ### Fase 3: Interacción Social y Personalización
 
 #### SOCIAL-CONNECT-01: Conexiones entre Estudiantes
-- [ ] Funcionalidad para que estudiantes se conecten, sigan perfiles y compartan actividad.
+- [🧪] Funcionalidad para que estudiantes se conecten, sigan perfiles y compartan actividad.
 - **Detalles**: Sistema de seguimiento bidireccional, perfiles públicos/privados, feed de actividad.
 - **Impacto**: Creación de comunidad, fomento de aprendizaje social.
 - **Privacidad**: Controles granulares sobre visibilidad de datos y actividad.
+- **Estado**: Implementación básica en pruebas.
 
 #### SOCIAL-GROUPS-01: Grupos de Estudio
-- [ ] Sistema para crear y unirse a grupos relacionados con cursos o temas específicos.
+- [🧪] Sistema para crear y unirse a grupos relacionados con cursos o temas específicos.
 - **Detalles**: Creación pública/privada, foros internos, recursos compartidos, roles dentro del grupo.
 - **Impacto**: Facilita colaboración estructurada entre estudiantes con intereses comunes.
 - **Moderación**: Herramientas para administradores, reportes de contenido inapropiado.
+- **Estado**: Fase inicial de implementación, pruebas internas.
 
 #### PERSONALIZE-RECOMMEND-01: Motor de Recomendaciones
 - [ ] Algoritmo para sugerir cursos relevantes basados en intereses y comportamiento.
@@ -159,16 +166,18 @@
 - **Seguridad**: Medidas anti-fraude, verificabilidad por terceros, expiración configurable.
 
 #### EVAL-QUIZ-01: Sistema de Cuestionarios
-- [ ] Funcionalidad para crear y responder cuestionarios evaluativos dentro de los cursos.
+- [🧪] Funcionalidad para crear y responder cuestionarios evaluativos dentro de los cursos.
 - **Detalles**: Múltiples tipos de preguntas, evaluación automática, retroalimentación específica.
 - **Impacto**: Refuerza aprendizaje, proporciona evaluación objetiva de conocimientos.
 - **Características avanzadas**: Aleatorización, tiempo limitado, análisis de resultados.
+- **Estado**: En fase de pruebas con instructores seleccionados.
 
 #### EVAL-ASSIGNMENT-01: Sistema de Tareas y Entregas
-- [ ] Mecanismo para que instructores asignen tareas y estudiantes las entreguen.
+- [🧪] Mecanismo para que instructores asignen tareas y estudiantes las entreguen.
 - **Detalles**: Instrucciones detalladas, subida de archivos, rúbricas de evaluación, comentarios.
 - **Impacto**: Facilita aprendizaje práctico y evaluación cualitativa.
 - **Workflow**: Asignación → Entrega → Revisión → Retroalimentación → Calificación.
+- **Estado**: Prototipo funcional en etapa de revisión.
 
 ### Fase 4: Expansión e Integración
 
