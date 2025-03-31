@@ -54,21 +54,19 @@ export function AdminDataTable<TData, TValue>({
       </CardHeader>
       
       <CardContent>
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="w-full flex items-center gap-2">
-              {actionButtons}
-            </div>
+        {actionButtons && (
+          <div className="flex items-center justify-end gap-2 mb-4">
+            {actionButtons}
           </div>
-          
-          <AdvancedDataTable
-            columns={columns}
-            data={data}
-            searchPlaceholder={searchPlaceholder}
-            searchColumn={searchColumn}
-            emptyState={emptyState}
-          />
-        </div>
+        )}
+        
+        <AdvancedDataTable
+          columns={columns}
+          data={data}
+          searchPlaceholder={searchPlaceholder}
+          searchColumn={searchColumn}
+          emptyState={emptyState}
+        />
       </CardContent>
     </Card>
   );

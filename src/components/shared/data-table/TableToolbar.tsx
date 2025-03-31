@@ -33,7 +33,7 @@ export function TableToolbar<TData>({
   exportFilename = "exported-data"
 }: TableToolbarProps<TData>) {
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between mb-4">
       {showSearch && (
         <div className="flex-1 max-w-sm w-full">
           <Input
@@ -49,7 +49,7 @@ export function TableToolbar<TData>({
         <Button 
           variant="outline" 
           size="sm"
-          className="ml-auto"
+          className="ml-auto whitespace-nowrap"
           onClick={() => exportTableToCSV(table, exportFilename)}
         >
           <Download className="h-4 w-4 mr-2" />
@@ -70,7 +70,7 @@ function ColumnsDropdown<TData>({ table }: ColumnsDropdownProps<TData>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="ml-auto">
+        <Button variant="outline" size="sm" className="ml-auto whitespace-nowrap">
           <SlidersHorizontal className="h-4 w-4 mr-2" />
           Columnas
           <ChevronDown className="h-4 w-4 ml-1" />

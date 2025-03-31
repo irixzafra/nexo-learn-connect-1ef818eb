@@ -3,6 +3,7 @@ import React from 'react';
 import AppLayout from './AppLayout';
 import { Card } from '@/components/ui/card';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
+import FloatingEditModeToggle from '@/components/admin/FloatingEditModeToggle';
 
 interface AdminPageLayoutProps {
   title: string;
@@ -49,6 +50,8 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
           )}
         </div>
       </div>
+      
+      <FloatingEditModeToggle />
     </AppLayout>
   );
 };

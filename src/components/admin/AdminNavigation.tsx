@@ -100,7 +100,12 @@ const subMenus: Record<string, AdminSubMenuItem[]> = {
     { id: 'learning-paths', icon: Activity, label: 'Rutas de Aprendizaje', path: '/admin/courses/learning-paths' },
     { id: 'certificates', icon: FileText, label: 'Certificados', path: '/admin/courses/certificates' },
   ],
-  settings: [],
+  settings: [
+    { id: 'general', icon: Settings, label: 'General', path: '/admin/settings' },
+    { id: 'security', icon: ShieldCheck, label: 'Seguridad', path: '/admin/settings/security' },
+    { id: 'integrations', icon: Plug, label: 'Integraciones', path: '/admin/settings/integrations' },
+    { id: 'database', icon: DatabaseZap, label: 'Base de Datos', path: '/admin/settings/database' },
+  ],
   design: [
     { id: 'components', icon: Palette, label: 'Componentes', path: '/admin/design' },
     { id: 'themes', icon: Palette, label: 'Temas', path: '/admin/design/themes' },
@@ -156,7 +161,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => 
       <div className="w-full border-b sticky top-0 bg-background/95 backdrop-blur-sm z-20">
         <div className="mx-auto">
           {/* Main Categories Navigation */}
-          <div className="flex flex-nowrap overflow-x-auto hide-scrollbar md:overflow-visible md:flex-wrap gap-1">
+          <div className="flex flex-nowrap overflow-x-auto hide-scrollbar px-4 py-1 md:overflow-visible md:flex-wrap gap-1">
             {adminCategories.map((item) => (
               <Link 
                 key={item.path}

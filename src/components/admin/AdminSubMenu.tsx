@@ -31,16 +31,16 @@ const AdminSubMenu: React.FC<AdminSubMenuProps> = ({
   return (
     <div className={cn("w-full border-b bg-background/95 backdrop-blur-sm sticky top-[49px] z-30", className)}>
       <div className="mx-auto">
-        <div className="flex overflow-x-auto hide-scrollbar gap-1">
+        <div className="flex overflow-x-auto hide-scrollbar px-4 gap-1 py-1">
           {items.map((item) => {
-            const isActive = currentPath.includes(`${baseRoute}/${item.id}`);
-            const path = item.path;
+            const isActive = currentPath === item.path || 
+                            (item.path !== baseRoute && currentPath.includes(item.path));
             const Icon = item.icon;
             
             return (
               <Link 
                 key={item.id}
-                to={path}
+                to={item.path}
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md whitespace-nowrap",
                   "hover:bg-accent/50 transition-colors",
