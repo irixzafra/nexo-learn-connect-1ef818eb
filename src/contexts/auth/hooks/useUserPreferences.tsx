@@ -70,7 +70,7 @@ export function useUserPreferences({ setRole }: UseUserPreferencesProps) {
     setUserRole,
     setViewAs,
     setViewAsRole,
-    switchViewAsRole,
+    switchViewAsRole, // Make sure this is included in the returned object
     saveUserPreferences
   };
 }

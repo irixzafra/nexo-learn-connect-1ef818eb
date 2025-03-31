@@ -48,7 +48,7 @@ export function useAuthState() {
     setUserRole,
     setViewAs, 
     setViewAsRole,
-    switchViewAsRole,
+    switchViewAsRole, // Make sure this is correctly extracted from useUserPreferences
     saveUserPreferences 
   } = useUserPreferences({ setRole });
 
@@ -56,6 +56,7 @@ export function useAuthState() {
     setShowAuthModal(!showAuthModal);
   };
 
+  // Return all properties required by AuthContextType
   return {
     isLoading,
     isAuthReady,
@@ -72,11 +73,11 @@ export function useAuthState() {
     signup,
     logout,
     resetPassword,
-    updateUserProfile,
+    updateUserProfile, // Make sure this is included
     setTheme,
     setUserRole,
     setViewAsRole,
-    switchViewAsRole,
+    switchViewAsRole, // Make sure this is included
     saveUserPreferences,
   };
 }
