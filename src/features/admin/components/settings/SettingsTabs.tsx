@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import AppearanceSettings from './AppearanceSettings';
-import SecuritySettings from './SecuritySettings';
-import NotificationSettings from './NotificationSettings';
-import ContentSettings from './ContentSettings';
-import OnboardingSettings from './OnboardingSettings';
-import TestDataSettings from './TestDataSettings';
+import { AppearanceSettings } from './AppearanceSettings';
+import { SecuritySettings } from './SecuritySettings';
+import { NotificationSettings } from './NotificationSettings';
+import { ContentSettings } from './ContentSettings';
+import { OnboardingSettings } from './OnboardingSettings';
+import { TestDataSettings } from './TestDataSettings';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import DeveloperSettings from '@/components/admin/settings/DeveloperSettings';
 import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
