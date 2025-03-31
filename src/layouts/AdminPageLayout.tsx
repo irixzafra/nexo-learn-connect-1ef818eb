@@ -48,9 +48,9 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-left">{title}</h1>
               {subtitle && (
-                <p className="text-muted-foreground">{subtitle}</p>
+                <p className="text-muted-foreground text-left">{subtitle}</p>
               )}
             </div>
             {actions && (

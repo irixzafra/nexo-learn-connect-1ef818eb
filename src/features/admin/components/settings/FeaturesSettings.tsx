@@ -22,6 +22,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 interface FeatureCategory {
   id: string;
@@ -242,69 +243,71 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
       <CardContent className="p-6 space-y-4">
         <div className="flex items-center mb-2">
           <ToggleRight className="h-5 w-5 text-blue-500 mr-2" />
-          <h2 className="text-xl font-semibold">Funcionalidades</h2>
+          <h2 className="text-xl font-semibold text-left">Funcionalidades</h2>
         </div>
-        <p className="text-sm text-muted-foreground mb-4">
+        <p className="text-sm text-muted-foreground mb-4 text-left">
           Activa o desactiva las funcionalidades del sistema
         </p>
 
         <div className="space-y-3">
-          {categories.map(category => (
-            <Collapsible 
-              key={category.id} 
-              open={openCategories[category.id]} 
-              onOpenChange={() => toggleCategory(category.id)}
-              className="border rounded-lg"
-            >
-              <CollapsibleTrigger className="flex items-center w-full px-4 py-3 hover:bg-muted/50 rounded-lg">
-                <div className="flex items-center gap-2 flex-1">
-                  {category.icon}
-                  <span className="font-medium">{category.title}</span>
-                </div>
-                <div className="text-muted-foreground">
-                  {openCategories[category.id] ? 
-                    <ChevronDown className="h-4 w-4" /> : 
-                    <ChevronRight className="h-4 w-4" />
-                  }
-                </div>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="px-4 pb-3 border-t pt-2">
-                <div className="space-y-3">
-                  {category.features.map((feature) => (
-                    <div key={feature.id} className="flex items-center justify-between py-2">
-                      <div className="flex gap-2">
-                        {feature.icon}
-                        <div>
-                          <h3 className="text-sm font-medium">{feature.title}</h3>
-                          <p className="text-xs text-muted-foreground">
-                            {feature.description}
-                          </p>
-                          {feature.comingSoon && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
-                              Próximamente
-                            </span>
+          {categories.map((category, idx) => (
+            <React.Fragment key={category.id}>
+              <Collapsible 
+                open={openCategories[category.id]} 
+                onOpenChange={() => toggleCategory(category.id)}
+                className="border rounded-lg overflow-hidden"
+              >
+                <CollapsibleTrigger className="flex items-center w-full px-4 py-3 hover:bg-muted/50 text-left">
+                  <div className="flex items-center gap-2 flex-1">
+                    {category.icon}
+                    <span className="font-medium">{category.title}</span>
+                  </div>
+                  <div className="text-muted-foreground">
+                    {openCategories[category.id] ? 
+                      <ChevronDown className="h-4 w-4" /> : 
+                      <ChevronRight className="h-4 w-4" />
+                    }
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="px-4 pb-3 border-t pt-2">
+                  <div className="space-y-0 divide-y">
+                    {category.features.map((feature, featureIdx) => (
+                      <div key={feature.id} className="flex items-center justify-between py-3">
+                        <div className="flex gap-2">
+                          {feature.icon}
+                          <div>
+                            <h3 className="text-sm font-medium text-left">{feature.title}</h3>
+                            <p className="text-xs text-muted-foreground text-left">
+                              {feature.description}
+                            </p>
+                            {feature.comingSoon && (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
+                                Próximamente
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          {isLoading && (
+                            <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
                           )}
+                          <Switch
+                            id={`enable-${feature.id}`}
+                            checked={!!featuresConfig[feature.id]}
+                            onCheckedChange={(value) => onToggleFeature(feature.id, value)}
+                            disabled={isLoading || feature.disabled}
+                            className={cn(
+                              feature.disabled && "opacity-50"
+                            )}
+                          />
                         </div>
                       </div>
-                      <div className="flex items-center">
-                        {isLoading && (
-                          <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-                        )}
-                        <Switch
-                          id={`enable-${feature.id}`}
-                          checked={!!featuresConfig[feature.id]}
-                          onCheckedChange={(value) => onToggleFeature(feature.id, value)}
-                          disabled={isLoading || feature.disabled}
-                          className={cn(
-                            feature.disabled && "opacity-50"
-                          )}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+              {idx < categories.length - 1 && <div className="h-2"></div>}
+            </React.Fragment>
           ))}
         </div>
       </CardContent>
