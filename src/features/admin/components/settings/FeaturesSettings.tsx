@@ -175,8 +175,8 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
               </div>
               <Switch 
                 id="onboarding_auto_start"
-                checked={featuresConfig.auto_start_onboarding || false}
-                onCheckedChange={(checked) => onToggleFeature('auto_start_onboarding', checked)}
+                checked={featuresConfig.autoStartOnboarding || false}
+                onCheckedChange={(checked) => onToggleFeature('autoStartOnboarding', checked)}
                 disabled={isLoading}
               />
             </div>
@@ -189,8 +189,8 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
               </div>
               <Switch 
                 id="onboarding_show_manual_button"
-                checked={featuresConfig.show_onboarding_trigger || false}
-                onCheckedChange={(checked) => onToggleFeature('show_onboarding_trigger', checked)}
+                checked={featuresConfig.showOnboardingTrigger || false}
+                onCheckedChange={(checked) => onToggleFeature('showOnboardingTrigger', checked)}
                 disabled={isLoading}
               />
             </div>
@@ -255,8 +255,8 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
             </div>
             <Switch 
               id="enable_notifications"
-              checked={featuresConfig.enable_notifications || false}
-              onCheckedChange={(checked) => onToggleFeature('enable_notifications', checked)}
+              checked={featuresConfig.enableNotifications || false}
+              onCheckedChange={(checked) => onToggleFeature('enableNotifications', checked)}
               disabled={isLoading}
             />
           </div>

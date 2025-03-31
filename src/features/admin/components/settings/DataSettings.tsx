@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -96,13 +95,13 @@ const DataSettings: React.FC<DataSettingsProps> = ({
             </div>
             <Switch 
               id="enable_test_data_generator"
-              checked={featuresConfig.enable_test_data_generator || false}
-              onCheckedChange={(checked) => onToggleFeature('enable_test_data_generator', checked)}
+              checked={featuresConfig.enableTestDataGenerator || false}
+              onCheckedChange={(checked) => onToggleFeature('enableTestDataGenerator', checked)}
               disabled={isLoading}
             />
           </div>
           
-          {(featuresConfig.enable_test_data_generator || false) && (
+          {(featuresConfig.enableTestDataGenerator || false) && (
             <div className="rounded-md border p-4 space-y-4">
               <h3 className="font-medium">Generador de Datos</h3>
               

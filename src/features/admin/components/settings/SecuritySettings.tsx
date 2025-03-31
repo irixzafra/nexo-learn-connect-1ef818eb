@@ -58,8 +58,8 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
             </div>
             <Switch 
               id="enable_role_switcher"
-              checked={featuresConfig.enable_role_switcher || false}
-              onCheckedChange={(checked) => onToggleFeature('enable_role_switcher', checked)}
+              checked={featuresConfig.enableRoleSwitcher || false}
+              onCheckedChange={(checked) => onToggleFeature('enableRoleSwitcher', checked)}
               disabled={isLoading}
             />
           </div>
@@ -73,8 +73,8 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
             </div>
             <Switch 
               id="enable_role_management"
-              checked={featuresConfig.enable_role_management || false}
-              onCheckedChange={(checked) => onToggleFeature('enable_role_management', checked)}
+              checked={featuresConfig.enableRoleManagement || false}
+              onCheckedChange={(checked) => onToggleFeature('enableRoleManagement', checked)}
               disabled={isLoading}
             />
           </div>
