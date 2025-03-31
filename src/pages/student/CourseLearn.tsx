@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,7 +16,8 @@ import {
   FileText, 
   Loader2, 
   Lock, 
-  PlayCircle 
+  PlayCircle,
+  Pencil
 } from "lucide-react";
 
 const CourseLearn: React.FC = () => {
@@ -36,10 +36,8 @@ const CourseLearn: React.FC = () => {
     isLoading: isLoadingProgress,
   } = useLessonProgress(user?.id, courseId);
 
-  // Find the next incomplete lesson
   useEffect(() => {
     if (modulesWithLessons.length > 0 && courseProgress) {
-      // Find incomplete lessons
       for (const module of modulesWithLessons) {
         const incompleteLesson = module.lessons.find(lesson => 
           !courseProgress.some(progress => 
@@ -56,7 +54,6 @@ const CourseLearn: React.FC = () => {
     }
   }, [modulesWithLessons, courseProgress]);
 
-  // Automatically expand the first module when data is loaded
   useEffect(() => {
     if (modulesWithLessons.length > 0 && expandedModules.length === 0) {
       setExpandedModules([modulesWithLessons[0].id]);
@@ -120,7 +117,6 @@ const CourseLearn: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Course progress overview */}
           <div className="lg:col-span-1">
             <Card className="sticky top-6">
               <CardHeader>
@@ -154,11 +150,23 @@ const CourseLearn: React.FC = () => {
                     </p>
                   )}
                 </div>
+
+                <Separator />
+                
+                <div className="pt-2">
+                  <Button 
+                    variant="outline" 
+                    className="w-full flex items-center gap-2"
+                    onClick={() => navigate(`/courses/${courseId}/notes`)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                    Mis Notas
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Course content */}
           <div className="lg:col-span-3">
             <Card>
               <CardHeader>

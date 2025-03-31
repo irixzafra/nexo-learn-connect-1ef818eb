@@ -21,6 +21,7 @@ const CourseLanding = React.lazy(() => import('@/pages/CourseLanding'));
 const Community = React.lazy(() => import('@/pages/Community'));
 const CourseLearn = React.lazy(() => import('@/pages/student/CourseLearn'));
 const LessonView = React.lazy(() => import('@/pages/student/LessonView'));
+const CourseNotes = React.lazy(() => import('@/pages/student/CourseNotes'));
 const Checkout = React.lazy(() => import('@/pages/student/Checkout'));
 const Notifications = React.lazy(() => import('@/pages/Notifications'));
 const Messages = React.lazy(() => import('@/pages/placeholder/Messages'));
@@ -104,6 +105,14 @@ const AppRouter: React.FC = () => {
         <ProtectedRoute>
           <React.Suspense fallback={<LoadingFallback />}>
             <LessonView />
+          </React.Suspense>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/courses/:courseId/notes" element={
+        <ProtectedRoute>
+          <React.Suspense fallback={<LoadingFallback />}>
+            <CourseNotes />
           </React.Suspense>
         </ProtectedRoute>
       } />

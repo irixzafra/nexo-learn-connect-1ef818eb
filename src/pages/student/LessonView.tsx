@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,6 +22,7 @@ import {
 } from "lucide-react";
 import { LessonProgressControls } from "@/features/lessons/components/LessonProgressControls";
 import { LessonComments } from "@/features/lessons/components/LessonComments";
+import { LessonNotes } from "@/features/lessons/components/LessonNotes";
 
 const LessonView: React.FC = () => {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
@@ -83,7 +83,6 @@ const LessonView: React.FC = () => {
   const fetchLessonData = async () => {
     setIsLoading(true);
     try {
-      // Fetch current lesson
       const { data: lessonData, error: lessonError } = await supabase
         .from("lessons")
         .select("*")
@@ -93,7 +92,6 @@ const LessonView: React.FC = () => {
       if (lessonError) throw lessonError;
       setLesson(lessonData as Lesson);
 
-      // Fetch course details
       const { data: courseData, error: courseError } = await supabase
         .from("courses")
         .select("*")
@@ -103,7 +101,6 @@ const LessonView: React.FC = () => {
       if (courseError) throw courseError;
       setCourse(courseData as Course);
 
-      // Fetch navigation lessons (next and previous)
       const { data: allLessonsData, error: allLessonsError } = await supabase
         .from("lessons")
         .select("*")
@@ -115,14 +112,12 @@ const LessonView: React.FC = () => {
       const allLessons = allLessonsData as Lesson[];
       const currentIndex = allLessons.findIndex(l => l.id === lessonId);
 
-      // Set previous lesson if exists
       if (currentIndex > 0) {
         setPrevLesson(allLessons[currentIndex - 1]);
       } else {
         setPrevLesson(null);
       }
 
-      // Set next lesson if exists
       if (currentIndex < allLessons.length - 1) {
         setNextLesson(allLessons[currentIndex + 1]);
       } else {
@@ -190,7 +185,6 @@ const LessonView: React.FC = () => {
     );
   }
 
-  // Check if user can access this lesson
   if (!isEnrolled && !lesson.is_previewable) {
     return (
       <AppLayout>
@@ -250,83 +244,90 @@ const LessonView: React.FC = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              {lesson.content_type === 'text' && (
-                <div className="prose prose-sm sm:prose lg:prose-lg max-w-none">
-                  {lesson.content_text?.content ? (
-                    <div>{lesson.content_text.content}</div>
-                  ) : (
-                    <p className="text-muted-foreground">
-                      Esta lección aún no tiene contenido.
-                    </p>
-                  )}
-                </div>
-              )}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <Card>
+              <CardContent className="p-6">
+                {lesson.content_type === 'text' && (
+                  <div className="prose prose-sm sm:prose lg:prose-lg max-w-none">
+                    {lesson.content_text?.content ? (
+                      <div>{lesson.content_text.content}</div>
+                    ) : (
+                      <p className="text-muted-foreground">
+                        Esta lección aún no tiene contenido.
+                      </p>
+                    )}
+                  </div>
+                )}
 
-              {lesson.content_type === 'video' && lesson.content_video_url && (
-                <div className="aspect-video">
-                  <iframe
-                    src={lesson.content_video_url}
-                    className="w-full h-full rounded-md"
-                    title={lesson.title}
-                    allowFullScreen
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  ></iframe>
-                </div>
-              )}
-              
-              {!isEnrolled && lesson.is_previewable && (
-                <div className="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
-                  <h3 className="text-lg font-medium mb-2">¿Te gusta el contenido?</h3>
-                  <p className="mb-4">Inscríbete en el curso para acceder a todas las lecciones y materiales.</p>
-                  {user ? (
-                    <Button variant="default" onClick={() => navigate(`/checkout/${courseId}`)}>
-                      Inscribirme ahora
-                    </Button>
-                  ) : (
-                    <Button variant="default" onClick={() => navigate('/auth/login', { state: { from: `/courses/${courseId}` } })}>
-                      Iniciar sesión para inscribirme
-                    </Button>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                {lesson.content_type === 'video' && lesson.content_video_url && (
+                  <div className="aspect-video">
+                    <iframe
+                      src={lesson.content_video_url}
+                      className="w-full h-full rounded-md"
+                      title={lesson.title}
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    ></iframe>
+                  </div>
+                )}
+                
+                {!isEnrolled && lesson.is_previewable && (
+                  <div className="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                    <h3 className="text-lg font-medium mb-2">¿Te gusta el contenido?</h3>
+                    <p className="mb-4">Inscríbete en el curso para acceder a todas las lecciones y materiales.</p>
+                    {user ? (
+                      <Button variant="default" onClick={() => navigate(`/checkout/${courseId}`)}>
+                        Inscribirme ahora
+                      </Button>
+                    ) : (
+                      <Button variant="default" onClick={() => navigate('/auth/login', { state: { from: `/courses/${courseId}` } })}>
+                        Iniciar sesión para inscribirme
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => navigateToLesson(prevLesson)}
-                disabled={!prevLesson || (!isEnrolled && !prevLesson.is_previewable)}
-              >
-                <ArrowLeft className="h-4 w-4 mr-1" /> Anterior
-              </Button>
-              <Button
-                onClick={() => navigateToLesson(nextLesson)}
-                disabled={!nextLesson || (!isEnrolled && !nextLesson.is_previewable)}
-              >
-                Siguiente <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => navigateToLesson(prevLesson)}
+                  disabled={!prevLesson || (!isEnrolled && !prevLesson.is_previewable)}
+                >
+                  <ArrowLeft className="h-4 w-4 mr-1" /> Anterior
+                </Button>
+                <Button
+                  onClick={() => navigateToLesson(nextLesson)}
+                  disabled={!nextLesson || (!isEnrolled && !nextLesson.is_previewable)}
+                >
+                  Siguiente <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+
+              {isEnrolled && (
+                <LessonProgressControls
+                  isCompleted={isCompleted}
+                  isUpdating={isUpdating}
+                  onMarkCompleted={handleMarkCompleted}
+                />
+              )}
             </div>
-
+            
             {isEnrolled && (
-              <LessonProgressControls
-                isCompleted={isCompleted}
-                isUpdating={isUpdating}
-                onMarkCompleted={handleMarkCompleted}
-              />
+              <div className="mt-6">
+                {lessonId && <LessonComments lessonId={lessonId} />}
+              </div>
             )}
           </div>
-          
-          {/* Comments Section - only visible for enrolled users */}
-          {isEnrolled && (
-            <div className="mt-6">
-              {lessonId && <LessonComments lessonId={lessonId} />}
-            </div>
-          )}
+
+          <div className="lg:col-span-1 space-y-6">
+            {courseId && lessonId && (
+              <LessonNotes courseId={courseId} lessonId={lessonId} />
+            )}
+          </div>
         </div>
       </div>
     </AppLayout>
