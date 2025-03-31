@@ -79,33 +79,16 @@ export function useAuthState() {
     // Status information
     isLoading,
     isAuthReady,
-    isAuthenticated: !!sessionData.session,
-    
-    // User and session data
-    ...sessionData,
-    
-    // Profile management
-    profile: profileData.profile,
-    userRole: profileData.role,
-    updateUserProfile,
-    
-    // Authentication methods
-    login: authMethods.login,
-    signup: authMethods.signup,
-    logout: authMethods.logout,
-    resetPassword: authMethods.resetPassword,
-    
-    // UI functions
+    isAuthenticated: !!sessionData.session, // Calculado aquí
+
+    // UI state/functions specific to useAuthState
     showAuthModal,
-    toggleAuthModal,
-    
-    // Preferences management
-    theme: userPreferences.theme,
-    viewAsRole: userPreferences.viewAs,
-    setTheme: userPreferences.setTheme,
-    setUserRole: userPreferences.setUserRole,
-    setViewAsRole: userPreferences.setViewAsRole,
-    switchViewAsRole,
-    saveUserPreferences: userPreferences.saveUserPreferences
+    toggleAuthModal, // Asegúrate que toggleAuthModal esté definida arriba
+
+    // Spread results from specialized hooks - This includes all their returned values/functions
+    ...sessionData,
+    ...profileData,
+    ...authMethods,
+    ...userPreferences
   };
 }
