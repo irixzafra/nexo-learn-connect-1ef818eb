@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { 
@@ -18,7 +19,10 @@ import {
   MessageSquare, 
   User, 
   Phone,
-  Shield
+  Shield,
+  BookOpen,
+  GraduationCap,
+  School
 } from 'lucide-react';
 
 interface SidebarMainNavigationProps {
@@ -38,6 +42,8 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
 }) => {
   // Check if a role should see specific sections
   const canSeeAdmin = effectiveRole === 'admin' || effectiveRole === 'instructor';
+  const canSeeInstructor = effectiveRole === 'admin' || effectiveRole === 'instructor';
+  const isAnonymous = effectiveRole === 'anonimo';
 
   // Navigation items - only main categories
   const getNavigationItems = (): AdminMenuItem[] => {
@@ -65,30 +71,35 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
       }
     ];
 
-    if (canSeeAdmin) {
-      return [
-        ...baseItems,
-        {
-          icon: Shield,
-          label: "Administración",
-          href: "/admin/dashboard",
-        },
-        {
-          icon: User,
-          label: "Perfil",
-          href: "/profile",
-          badge: notificationsCount,
-        },
-        {
-          icon: Phone,
-          label: "Contacto",
-          href: "/contact",
-        }
-      ];
-    }
+    // Items for all authenticated users except anonymous
+    const authenticatedItems = !isAnonymous ? [
+      {
+        icon: BookOpen,
+        label: "Mis Cursos",
+        href: "/my-courses",
+      },
+    ] : [];
 
-    return [
-      ...baseItems,
+    // Add instructor section for admin and instructor roles
+    const instructorItems = canSeeInstructor ? [
+      {
+        icon: GraduationCap,
+        label: "Profesor",
+        href: "/instructor/dashboard",
+      },
+    ] : [];
+
+    // Admin section for admin role
+    const adminItems = effectiveRole === 'admin' ? [
+      {
+        icon: Shield,
+        label: "Administración",
+        href: "/admin/dashboard",
+      },
+    ] : [];
+
+    // Profile and contact items for all users
+    const profileItems = [
       {
         icon: User,
         label: "Perfil",
@@ -100,6 +111,14 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         label: "Contacto",
         href: "/contact",
       }
+    ];
+
+    return [
+      ...baseItems,
+      ...authenticatedItems,
+      ...instructorItems,
+      ...adminItems,
+      ...profileItems
     ];
   };
 
