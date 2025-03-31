@@ -1,7 +1,3 @@
-
-// Only updating the part that has the type error
-// In the emptyState prop, we need to cast the unknown type to ReactNode
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
@@ -255,11 +251,13 @@ export const UsersListTab: React.FC = () => {
           searchColumn="full_name"
           exportFilename="usuarios"
           emptyState={
-            <div className="text-center py-10">
-              <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No se encontraron usuarios</p>
-            </div>
-          as React.ReactNode}
+            (
+              <div className="text-center py-10">
+                <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">No se encontraron usuarios</p>
+              </div>
+            ) as React.ReactNode
+          }
         />
       </CardContent>
 
