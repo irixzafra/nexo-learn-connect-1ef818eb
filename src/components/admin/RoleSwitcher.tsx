@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { 
@@ -10,13 +10,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Check, UserCog, ArrowLeftRight, Shield, User, Terminal, Ghost, Users, BookOpen, Book } from 'lucide-react';
+import { Check, ArrowLeftRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { supabase } from '@/lib/supabase';
 
 interface RoleSwitcherProps {
   onChange?: (role: UserRoleType) => void;
   currentViewRole: UserRoleType | 'current';
+}
+
+interface DbRole {
+  id: string;
+  name: string;
+  description: string | null;
+  is_default: boolean;
 }
 
 export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ 
@@ -24,11 +32,36 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   currentViewRole
 }) => {
   const { userRole } = useAuth();
+  const [availableRoles, setAvailableRoles] = useState<DbRole[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   
   // Solo los administradores pueden cambiar roles
   if (userRole !== 'admin') {
     return null;
   }
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      setIsLoading(true);
+      try {
+        // Usar la función RPC que creamos
+        const { data, error } = await supabase.rpc('get_available_roles');
+        
+        if (error) {
+          console.error('Error fetching roles:', error);
+          return;
+        }
+        
+        setAvailableRoles(data || []);
+      } catch (error) {
+        console.error('Error in fetchRoles:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchRoles();
+  }, []);
 
   const getEffectiveRole = () => {
     if (currentViewRole === 'current') return toUserRoleType(userRole as string);
@@ -49,28 +82,6 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
         onChange(role);
         toast.success(`Viendo como: ${getRoleName(role)}`);
       }
-    }
-  };
-
-  // Icono para cada rol
-  const getRoleIcon = (role: UserRoleType) => {
-    switch (role) {
-      case 'admin':
-        return <Shield className="h-4 w-4 mr-2" />;
-      case 'instructor':
-        return <BookOpen className="h-4 w-4 mr-2" />;
-      case 'student':
-        return <Book className="h-4 w-4 mr-2" />;
-      case 'moderator':
-        return <Users className="h-4 w-4 mr-2" />;
-      case 'content_creator':
-        return <UserCog className="h-4 w-4 mr-2" />;
-      case 'sistemas':
-        return <Terminal className="h-4 w-4 mr-2" />;
-      case 'guest':
-        return <Ghost className="h-4 w-4 mr-2" />;
-      default:
-        return <User className="h-4 w-4 mr-2" />;
     }
   };
 
@@ -128,54 +139,22 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           
-          {/* Lista de roles disponibles */}
-          <DropdownMenuItem onClick={() => handleRoleChange('admin')}>
-            {effectiveRole === 'admin' && <Check className="h-4 w-4 mr-2" />}
-            <div className="flex items-center ml-2">
-              {getRoleIcon('admin')}
-              <span>Administrador</span>
-            </div>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem onClick={() => handleRoleChange('instructor')}>
-            {effectiveRole === 'instructor' && <Check className="h-4 w-4 mr-2" />}
-            <div className="flex items-center ml-2">
-              {getRoleIcon('instructor')}
-              <span>Instructor</span>
-            </div>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem onClick={() => handleRoleChange('student')}>
-            {effectiveRole === 'student' && <Check className="h-4 w-4 mr-2" />}
-            <div className="flex items-center ml-2">
-              {getRoleIcon('student')}
-              <span>Estudiante</span>
-            </div>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem onClick={() => handleRoleChange('moderator')}>
-            {effectiveRole === 'moderator' && <Check className="h-4 w-4 mr-2" />}
-            <div className="flex items-center ml-2">
-              {getRoleIcon('moderator')}
-              <span>Moderador</span>
-            </div>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem onClick={() => handleRoleChange('content_creator')}>
-            {effectiveRole === 'content_creator' && <Check className="h-4 w-4 mr-2" />}
-            <div className="flex items-center ml-2">
-              {getRoleIcon('content_creator')}
-              <span>Creador de contenido</span>
-            </div>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem onClick={() => handleRoleChange('guest')}>
-            {effectiveRole === 'guest' && <Check className="h-4 w-4 mr-2" />}
-            <div className="flex items-center ml-2">
-              {getRoleIcon('guest')}
-              <span>Invitado</span>
-            </div>
-          </DropdownMenuItem>
+          {/* Lista de roles disponibles desde la base de datos */}
+          {isLoading ? (
+            <DropdownMenuItem disabled>Cargando roles...</DropdownMenuItem>
+          ) : (
+            availableRoles.map(role => (
+              <DropdownMenuItem 
+                key={role.id}
+                onClick={() => handleRoleChange(role.name as UserRoleType)}
+              >
+                {effectiveRole === role.name && <Check className="h-4 w-4 mr-2" />}
+                <div className="flex items-center ml-2">
+                  <span>{role.name}</span>
+                </div>
+              </DropdownMenuItem>
+            ))
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

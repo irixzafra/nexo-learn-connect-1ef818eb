@@ -18,15 +18,52 @@ export const updateUserRole = async (email: string, newRole: UserRoleType): Prom
       return false;
     }
     
-    // Now update the user's role
-    const { error: updateError } = await supabase
+    // Get the role ID for the new role
+    const { data: roleData, error: roleError } = await supabase
+      .from('roles')
+      .select('id')
+      .eq('name', newRole)
+      .single();
+      
+    if (roleError || !roleData) {
+      console.error('Error finding role:', roleError);
+      toast.error(`No se pudo encontrar el rol ${newRole}`);
+      return false;
+    }
+    
+    // Update the user's role in profiles (for compatibility)
+    const { error: profileError } = await supabase
       .from('profiles')
       .update({ role: newRole })
       .eq('id', userData.id);
       
-    if (updateError) {
-      console.error('Error updating user role:', updateError);
-      toast.error(`No se pudo actualizar el rol del usuario a ${newRole}`);
+    if (profileError) {
+      console.error('Error updating profile role:', profileError);
+      toast.error(`Error al actualizar el perfil del usuario`);
+      return false;
+    }
+    
+    // Remove existing roles for this user
+    const { error: deleteError } = await supabase
+      .from('user_roles')
+      .delete()
+      .eq('user_id', userData.id);
+      
+    if (deleteError) {
+      console.error('Error removing existing roles:', deleteError);
+    }
+    
+    // Add the new role
+    const { error: insertError } = await supabase
+      .from('user_roles')
+      .insert({
+        user_id: userData.id,
+        role_id: roleData.id
+      });
+      
+    if (insertError) {
+      console.error('Error assigning new role:', insertError);
+      toast.error(`Error al asignar el nuevo rol al usuario`);
       return false;
     }
     

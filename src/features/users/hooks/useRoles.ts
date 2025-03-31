@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
+import { UserRoleType, asUserRoleType } from '@/types/auth';
 
 export interface Role {
   id: string;
@@ -175,12 +176,99 @@ export function useRoles() {
     }
   };
 
+  const assignRoleToUser = async (userId: string, roleId: string) => {
+    try {
+      const { error } = await supabase
+        .from('user_roles')
+        .insert([{ user_id: userId, role_id: roleId }]);
+
+      if (error) {
+        console.error('Error assigning role to user:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo asignar el rol al usuario.",
+        });
+        return false;
+      }
+
+      toast({
+        title: "Rol asignado",
+        description: "El rol ha sido asignado al usuario con éxito.",
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('Error in assignRoleToUser:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al asignar el rol.",
+      });
+      return false;
+    }
+  };
+
+  const getUserRoles = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_user_roles', { p_user_id: userId });
+
+      if (error) {
+        console.error('Error getting user roles:', error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error in getUserRoles:', error);
+      return [];
+    }
+  };
+
+  const removeRoleFromUser = async (userId: string, roleId: string) => {
+    try {
+      const { error } = await supabase
+        .from('user_roles')
+        .delete()
+        .match({ user_id: userId, role_id: roleId });
+
+      if (error) {
+        console.error('Error removing role from user:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo quitar el rol del usuario.",
+        });
+        return false;
+      }
+
+      toast({
+        title: "Rol eliminado",
+        description: "El rol ha sido removido del usuario con éxito.",
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('Error in removeRoleFromUser:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al quitar el rol.",
+      });
+      return false;
+    }
+  };
+
   return {
     roles,
     isLoading,
     fetchRoles,
     createRole,
     updateRole,
-    deleteRole
+    deleteRole,
+    assignRoleToUser,
+    getUserRoles,
+    removeRoleFromUser
   };
 }

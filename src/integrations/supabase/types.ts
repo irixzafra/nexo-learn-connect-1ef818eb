@@ -2136,6 +2136,15 @@ export type Database = {
         }
         Returns: number
       }
+      get_available_roles: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          name: string
+          description: string
+          is_default: boolean
+        }[]
+      }
       get_course_enrollments_with_details: {
         Args: {
           course_id_param: string
@@ -2240,6 +2249,15 @@ export type Database = {
         Returns: {
           role: string
           count: number
+        }[]
+      }
+      get_user_roles: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: {
+          role_id: string
+          role_name: string
         }[]
       }
       is_admin: {

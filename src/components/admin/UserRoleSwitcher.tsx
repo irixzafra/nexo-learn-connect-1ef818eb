@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserRoleType, toUserRoleType, asUserRoleType } from '@/types/auth';
 import { 
   DropdownMenu,
@@ -12,6 +12,13 @@ import { useToast } from '@/components/ui/use-toast';
 import { UserCog, Shield, User, Terminal, Ghost, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { supabase } from '@/lib/supabase';
+
+interface RoleOption {
+  id: string;
+  name: string; 
+  description: string | null;
+}
 
 interface UserRoleSwitcherProps {
   userId?: string;
@@ -26,11 +33,35 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
 }) => {
   const { userRole: contextUserRole, user } = useAuth();
   const { toast } = useToast();
+  const [availableRoles, setAvailableRoles] = useState<RoleOption[]>([]);
   
   // Use the role from props if provided, otherwise use the context
   const currentRole = propCurrentRole || toUserRoleType(contextUserRole || 'student');
   const [selectedRole, setSelectedRole] = useState<UserRoleType>(currentRole);
   const [isChanging, setIsChanging] = useState(false);
+  
+  useEffect(() => {
+    // Cargar los roles disponibles desde la base de datos
+    const fetchRoles = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('roles')
+          .select('id, name, description')
+          .order('name');
+          
+        if (error) {
+          console.error('Error fetching roles:', error);
+          return;
+        }
+        
+        setAvailableRoles(data || []);
+      } catch (error) {
+        console.error('Error loading roles:', error);
+      }
+    };
+    
+    fetchRoles();
+  }, []);
   
   const handleRoleSelect = (role: UserRoleType) => {
     setSelectedRole(role);
@@ -86,23 +117,6 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
         return null;
     }
   };
-  
-  const getRoleName = (role: UserRoleType): string => {
-    switch (role) {
-      case 'admin':
-        return 'Administrador';
-      case 'instructor':
-        return 'Instructor';
-      case 'student':
-        return 'Estudiante';
-      case 'sistemas':
-        return 'Sistemas'; 
-      case 'anonimo':
-        return 'Anónimo';
-      default:
-        return role;
-    }
-  };
 
   return (
     <Tooltip>
@@ -124,15 +138,15 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            {(['admin', 'instructor', 'student', 'sistemas', 'anonimo'] as UserRoleType[]).map((role) => (
+            {availableRoles.map(role => (
               <DropdownMenuItem 
-                key={role}
-                onClick={() => handleRoleSelect(role)}
+                key={role.id}
+                onClick={() => handleRoleSelect(role.name as UserRoleType)}
                 className="cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  {getRoleIcon(role)}
-                  <span>{getRoleName(role)}</span>
+                  {getRoleIcon(role.name as UserRoleType)}
+                  <span>{role.name}</span>
                 </div>
               </DropdownMenuItem>
             ))}

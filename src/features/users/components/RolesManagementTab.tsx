@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRoles, Role } from '../hooks/useRoles';
 import { Plus, Pencil, Trash, Shield, MoreHorizontal } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { supabase } from '@/lib/supabase';
 
 export const RolesManagementTab: React.FC = () => {
   const { roles, isLoading, createRole, updateRole, deleteRole } = useRoles();
@@ -22,6 +23,46 @@ export const RolesManagementTab: React.FC = () => {
   const [description, setDescription] = useState('');
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [deleteDialogRoleId, setDeleteDialogRoleId] = useState<string | null>(null);
+  const [userCounts, setUserCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    const fetchUserCounts = async () => {
+      try {
+        // Esta consulta cuenta cuántos usuarios tienen cada rol
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role_id, count')
+          .select('role_id')
+          .select('*', { count: 'exact', head: false })
+          .throwOnError();
+        
+        if (error) {
+          console.error('Error fetching user counts:', error);
+          return;
+        }
+        
+        // Agrupar los resultados por role_id
+        const counts: Record<string, number> = {};
+        if (data) {
+          data.forEach(row => {
+            if (counts[row.role_id]) {
+              counts[row.role_id]++;
+            } else {
+              counts[row.role_id] = 1;
+            }
+          });
+        }
+        
+        setUserCounts(counts);
+      } catch (error) {
+        console.error('Error in fetchUserCounts:', error);
+      }
+    };
+    
+    if (roles.length > 0) {
+      fetchUserCounts();
+    }
+  }, [roles]);
 
   const handleOpenAddDialog = () => {
     setName('');
@@ -89,6 +130,7 @@ export const RolesManagementTab: React.FC = () => {
                   <TableHead>Nombre</TableHead>
                   <TableHead>Descripción</TableHead>
                   <TableHead>Estado</TableHead>
+                  <TableHead>Usuarios</TableHead>
                   <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
@@ -100,12 +142,13 @@ export const RolesManagementTab: React.FC = () => {
                       <TableCell><Skeleton className="h-6 w-32" /></TableCell>
                       <TableCell><Skeleton className="h-6 w-40" /></TableCell>
                       <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20" /></TableCell>
                       <TableCell><Skeleton className="h-6 w-20 ml-auto" /></TableCell>
                     </TableRow>
                   ))
                 ) : roles.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-10 text-muted-foreground">
+                    <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
                       No hay roles definidos
                     </TableCell>
                   </TableRow>
@@ -125,6 +168,11 @@ export const RolesManagementTab: React.FC = () => {
                             Predeterminado
                           </Badge>
                         ) : null}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {userCounts[role.id] || 0} usuarios
+                        </Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
