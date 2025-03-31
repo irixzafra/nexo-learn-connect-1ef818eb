@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'light' | 'dark' | 'futuristic';
+type Theme = 'light' | 'dark' | 'futuristic' | 'system';
 
 interface ThemeContextType {
   theme: Theme;
@@ -23,16 +23,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Guardar el tema en localStorage
     localStorage.setItem('theme', theme);
     
+    // Si el tema es "system", detectar la preferencia del sistema
+    const effectiveTheme = theme === 'system'
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      : theme;
+    
     // Aplicar clase de tema al elemento html
     const root = document.documentElement;
     
     // Eliminar todas las clases de tema
     root.classList.remove('light', 'dark', 'futuristic');
     
-    // Añadir la clase del tema actual
-    root.classList.add(theme);
+    // Añadir la clase del tema efectivo
+    root.classList.add(effectiveTheme);
     
-    console.log('Theme applied:', theme);
+    console.log('Theme applied:', effectiveTheme);
   }, [theme]);
 
   return (

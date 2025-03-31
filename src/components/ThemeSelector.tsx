@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Moon, Sun, SquareCode } from 'lucide-react';
+import { Moon, Sun, SquareCode, Monitor } from 'lucide-react';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -21,17 +21,20 @@ export const ThemeSelector: React.FC = () => {
         return <Moon className="h-[1.2rem] w-[1.2rem]" />;
       case 'futuristic':
         return <SquareCode className="h-[1.2rem] w-[1.2rem]" />;
+      case 'system':
+        return <Monitor className="h-[1.2rem] w-[1.2rem]" />;
       default:
         return <Sun className="h-[1.2rem] w-[1.2rem]" />;
     }
   };
 
-  const handleThemeChange = (newTheme: 'light' | 'dark' | 'futuristic') => {
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'futuristic' | 'system') => {
     setTheme(newTheme);
     toast.success(`Tema ${
       newTheme === 'light' ? 'Claro' : 
       newTheme === 'dark' ? 'Oscuro' : 
-      'Gris Futurista'
+      newTheme === 'futuristic' ? 'Gris Futurista' :
+      'Sistema'
     } aplicado`);
   };
 
@@ -55,6 +58,10 @@ export const ThemeSelector: React.FC = () => {
         <DropdownMenuItem onClick={() => handleThemeChange('futuristic')} className="flex items-center gap-2">
           <SquareCode className="h-4 w-4" />
           <span>Gris Futurista</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleThemeChange('system')} className="flex items-center gap-2">
+          <Monitor className="h-4 w-4" />
+          <span>Sistema</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
