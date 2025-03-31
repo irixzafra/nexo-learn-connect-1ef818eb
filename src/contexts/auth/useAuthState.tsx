@@ -16,41 +16,20 @@ export function useAuthState() {
   const navigate = useNavigate();
   
   // Session management
-  const { 
-    user, 
-    session, 
-    setUser, 
-    setSession 
-  } = useAuthSession({ setIsAuthReady });
+  const sessionData = useAuthSession({ setIsAuthReady });
 
   // User profile management
-  const { 
-    profile, 
-    role, 
-    setProfile, 
-    setRole, 
-    updateUserProfile 
-  } = useAuthProfile({ user, setIsLoading });
+  const profileData = useAuthProfile({ user: sessionData.user, setIsLoading });
 
   // Authentication methods
-  const { 
-    login, 
-    signup, 
-    logout, 
-    resetPassword 
-  } = useAuthMethods({ setProfile, setRole, navigate });
+  const authMethods = useAuthMethods({ 
+    setProfile: profileData.setProfile, 
+    setRole: profileData.setRole, 
+    navigate 
+  });
 
   // User preferences
-  const { 
-    theme, 
-    viewAs, 
-    setTheme, 
-    setUserRole,
-    setViewAs, 
-    setViewAsRole,
-    switchViewAsRole,
-    saveUserPreferences 
-  } = useUserPreferences({ setRole });
+  const userPreferences = useUserPreferences({ setRole: profileData.setRole });
 
   const toggleAuthModal = () => {
     setShowAuthModal(!showAuthModal);
@@ -60,34 +39,22 @@ export function useAuthState() {
     // Status information
     isLoading,
     isAuthReady,
-    isAuthenticated: !!session,
+    isAuthenticated: !!sessionData.session,
     
     // User and session data
-    user,
-    session,
-    profile,
-    userRole: role,
-    viewAsRole: viewAs,
-    theme,
-    showAuthModal,
-    
-    // UI functions
-    toggleAuthModal,
-    
-    // Authentication methods
-    login,
-    signup,
-    logout,
-    resetPassword,
+    ...sessionData,
     
     // Profile management
-    updateUserProfile,
+    ...profileData,
+    
+    // Authentication methods
+    ...authMethods,
+    
+    // UI functions
+    showAuthModal,
+    toggleAuthModal,
     
     // Preferences management
-    setTheme,
-    setUserRole,
-    setViewAsRole,
-    switchViewAsRole,
-    saveUserPreferences,
+    ...userPreferences,
   };
 }
