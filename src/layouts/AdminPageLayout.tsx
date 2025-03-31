@@ -6,6 +6,7 @@ import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import FloatingEditModeToggle from '@/components/admin/FloatingEditModeToggle';
 import { useLocation } from 'react-router-dom';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
+import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
 
 interface AdminPageLayoutProps {
   title: string;
@@ -14,6 +15,8 @@ interface AdminPageLayoutProps {
   defaultTabValue?: string;
   children?: React.ReactNode;
   actions?: React.ReactNode;
+  subMenuItems?: AdminSubMenuItem[];
+  baseRoute?: string;
 }
 
 const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
@@ -22,7 +25,9 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   tabs = [],
   defaultTabValue,
   children,
-  actions
+  actions,
+  subMenuItems,
+  baseRoute
 }) => {
   const location = useLocation();
   const { designFeatureEnabled } = useDesignSystem();
