@@ -37,6 +37,8 @@ src/
 ├── hooks/             # Hooks personalizados
 ├── layouts/           # Estructuras de página
 ├── lib/               # Utilidades y servicios
+│   ├── cache/         # Servicio de caché y Service Worker
+│   └── offline/       # Funcionalidad offline
 ├── pages/             # Componentes de página
 ├── routes/            # Configuración de rutas
 ├── types/             # Definiciones de tipos TypeScript
@@ -52,6 +54,7 @@ src/
 - **React Query**: Gestión de estado del servidor
 - **Supabase**: Backend como servicio (BaaS)
 - **PostgreSQL**: Base de datos relacional
+- **Service Worker**: Funcionalidad offline y caché
 
 ## 2. Base de Datos
 
@@ -178,6 +181,13 @@ Las principales políticas de Row Level Security implementadas son:
 - ✅ Redirecciones inteligentes basadas en estado de autenticación
 - ✅ Página de inicio configurable para usuarios no autenticados
 
+### Sistema de Caché y Funcionalidad Offline
+- ✅ Service Worker para caché de recursos
+- ✅ Detección de estado de conexión
+- ✅ Sincronización de operaciones offline
+- ✅ Actualización automática de caché
+- ⚠️ Mapeo offline completo (parcialmente implementado)
+
 ## 5. Elementos Pendientes
 
 ### Desarrollo Técnico
@@ -185,6 +195,7 @@ Las principales políticas de Row Level Security implementadas son:
 - Implementación de tests automatizados (cobertura < 60%)
 - Migración a la última versión de React Query
 - Documentación de API completa
+- Completar mapeo de operaciones offline
 
 ### Funcionalidades
 - Sistema completo de notificaciones
@@ -198,6 +209,7 @@ Las principales políticas de Row Level Security implementadas son:
 - Automatización de backups
 - Monitoreo completo de errores
 - Mejora de tiempos de carga iniciales
+- Implementación de estrategias avanzadas de caché
 
 ## 6. Recomendaciones
 
@@ -211,6 +223,7 @@ Las principales políticas de Row Level Security implementadas son:
    - Reducir tamaño de bundle
    - Implementar lazy loading en más componentes
    - Optimizar queries a base de datos
+   - Mejorar estrategias de caché con Service Worker
 
 3. **Completar funcionalidades críticas**:
    - Sistema de notificaciones
@@ -232,8 +245,13 @@ Las principales políticas de Row Level Security implementadas son:
    - Mejorar la captura de errores
    - Implementar análisis de rendimiento
    - Configurar alertas para problemas críticos
+   - Ampliar el monitoreo de operaciones offline
+
+4. **Gestión de caché**:
+   - Implementar estrategias de precarga para recursos críticos
+   - Optimizar la política de renovación de caché
+   - Mejorar la sincronización de datos entre online y offline
 
 ---
 
 Este documento proporciona una visión general del estado actual del sistema Nexo Learning. Se recomienda revisar periódicamente este documento y mantenerlo actualizado a medida que se implementan nuevas características o se realizan cambios significativos en la arquitectura.
-

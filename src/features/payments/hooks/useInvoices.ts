@@ -1,75 +1,53 @@
 
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { toast } from '@/hooks/use-toast';
-import { InvoiceProps } from '../components/invoice/InvoiceCard';
+import { Invoice } from '@/types/payment';
+import { useToast } from '@/components/ui/use-toast';
 
-export const useInvoices = (userId?: string) => {
-  const [filter, setFilter] = useState<'all' | 'paid' | 'pending'>('all');
+export const useInvoices = () => {
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
-  const { data: invoices = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['userInvoices', userId, filter],
-    queryFn: async () => {
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      setIsLoading(true);
+      
       try {
-        if (!userId) return [];
-
-        console.log("Fetching invoices for user:", userId, "with filter:", filter);
-
-        let query = supabase
+        const { data, error } = await supabase
           .from('invoices')
           .select(`
-            id,
-            amount,
-            currency,
-            status,
-            paid_at,
-            created_at,
-            course_id,
-            pdf_url,
-            invoice_url,
-            courses(title)
+            *,
+            course:course_id (
+              title
+            ),
+            subscription:subscription_id (
+              subscription_plans (
+                name
+              )
+            )
           `)
-          .eq('user_id', userId)
           .order('created_at', { ascending: false });
-
-        if (filter !== 'all') {
-          query = query.eq('status', filter);
+        
+        if (error) {
+          throw error;
         }
-
-        const { data, error } = await query;
-
-        if (error) throw error;
-
-        return data.map((invoice) => ({
-          id: invoice.id,
-          amount: invoice.amount,
-          currency: invoice.currency as 'eur' | 'usd',
-          status: invoice.status as 'paid' | 'pending' | 'failed',
-          date: invoice.paid_at || invoice.created_at,
-          courseName: invoice.courses?.title || undefined,
-          pdfUrl: invoice.pdf_url || undefined,
-          invoiceUrl: invoice.invoice_url || undefined,
-        })) as InvoiceProps[];
-      } catch (error: any) {
-        console.error("Error fetching invoices:", error);
+        
+        setInvoices(data || []);
+      } catch (error) {
+        console.error('Error fetching invoices:', error);
         toast({
-          title: "Error",
-          description: "No se pudieron cargar las facturas",
           variant: "destructive",
+          title: "Error",
+          description: "No se pudieron cargar las facturas.",
         });
-        return [];
+      } finally {
+        setIsLoading(false);
       }
-    },
-    enabled: !!userId,
-  });
+    };
 
-  return {
-    invoices,
-    isLoading,
-    error,
-    filter,
-    setFilter,
-    refetch,
-  };
+    fetchInvoices();
+  }, [toast]);
+
+  return { invoices, isLoading };
 };
