@@ -7,7 +7,7 @@ import AdminTabs, { AdminTabItem } from '@/components/admin/AdminTabs';
 interface AdminPageLayoutProps {
   title: string;
   subtitle?: string;
-  tabs: AdminTabItem[];
+  tabs?: AdminTabItem[];
   defaultTabValue?: string;
   children?: React.ReactNode;
 }
@@ -15,7 +15,7 @@ interface AdminPageLayoutProps {
 const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   title,
   subtitle,
-  tabs,
+  tabs = [],
   defaultTabValue,
   children
 }) => {

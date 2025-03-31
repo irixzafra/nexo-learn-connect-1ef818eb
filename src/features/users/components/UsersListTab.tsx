@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
@@ -74,7 +73,6 @@ export const UsersListTab: React.FC = () => {
 
       if (error) throw error;
 
-      // Update the local state
       setUsers((prevUsers) =>
         prevUsers.map((u) => (u.id === user.id ? user : u))
       );
@@ -89,8 +87,6 @@ export const UsersListTab: React.FC = () => {
 
   const handleCreateUser = async () => {
     try {
-      // In a real app, you would use Auth API to create a user
-      // For now, let's just add to profiles table as an example
       const { data, error } = await supabase
         .from("profiles")
         .insert({
@@ -127,7 +123,7 @@ export const UsersListTab: React.FC = () => {
       case "student":
         return <Badge variant="secondary">Estudiante</Badge>;
       default:
-        return <Badge variant="outline">{role}</Badge>;
+        return <Badge variant="outline">{role || 'Desconocido'}</Badge>;
     }
   };
 
@@ -263,7 +259,6 @@ export const UsersListTab: React.FC = () => {
         />
       </CardContent>
 
-      {/* Dialog for creating a new user */}
       <Dialog open={isUserFormOpen} onOpenChange={setIsUserFormOpen}>
         <DialogContent>
           <DialogHeader>
