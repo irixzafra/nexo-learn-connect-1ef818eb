@@ -177,7 +177,7 @@ const AppRouter: React.FC = () => {
       {/* Dynamic page route - must be after all specific routes */}
       <Route path="/:slug" element={<PageRenderer />} />
       
-      {/* Catch-all for not found */}
+      {/* Catch-all for not found - debe ser la última ruta */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

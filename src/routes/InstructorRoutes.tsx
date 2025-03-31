@@ -60,6 +60,7 @@ const InstructorRoutes: React.FC = () => {
           <Students />
         </AppLayout>
       } />
+      {/* Catch-all route para rutas de instructor no encontradas */}
       <Route path="*" element={
         <AppLayout>
           <NotFound />

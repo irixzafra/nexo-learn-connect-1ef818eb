@@ -51,6 +51,7 @@ const UserRoutes: React.FC = () => {
           <Settings />
         </AppLayout>
       } />
+      {/* Catch-all route para rutas de usuario no encontradas */}
       <Route path="*" element={
         <AppLayout>
           <NotFound />
