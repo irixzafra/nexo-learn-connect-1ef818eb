@@ -28,6 +28,10 @@ export interface FeaturesConfig {
   // Content Management
   enableCategoryManagement: boolean;
   enableContentReordering: boolean;
+  
+  // Security features
+  enableSocial: boolean;
+  enablePasswordPolicy: boolean;
 }
 
 // Default configuration values
@@ -44,6 +48,8 @@ export const defaultFeaturesConfig: FeaturesConfig = {
   enableThemeSwitcher: true,
   enableCategoryManagement: false,
   enableContentReordering: false,
+  enableSocial: false,
+  enablePasswordPolicy: false,
 };
 
 // Onboarding step interface

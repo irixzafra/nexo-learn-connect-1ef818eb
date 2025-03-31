@@ -66,7 +66,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
               )}
               <Switch
                 id="enableSocial"
-                checked={featuresConfig.enableSocial || false}
+                checked={featuresConfig.enableSocial}
                 onCheckedChange={(value) => onToggleFeature('enableSocial', value)}
                 disabled={isLoading}
               />
@@ -110,7 +110,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
               )}
               <Switch
                 id="enablePasswordPolicy"
-                checked={featuresConfig.enablePasswordPolicy || false}
+                checked={featuresConfig.enablePasswordPolicy}
                 onCheckedChange={(value) => onToggleFeature('enablePasswordPolicy', value)}
                 disabled={isLoading}
               />
