@@ -1,10 +1,11 @@
 
 import React, { useEffect } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { useAuth } from '@/contexts/auth/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Edit, CheckSquare } from 'lucide-react';
 import { toast } from 'sonner';
+import { UserRoleType } from '@/types/auth';
 
 const EditModeToggle: React.FC = () => {
   const { isEditMode, toggleEditMode } = useEditMode();

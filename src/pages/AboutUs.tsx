@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import AppLayout from '@/layouts/AppLayout';
 import PublicLayout from '@/layouts/PublicLayout';
 import { NexoLogo } from '@/components/ui/nexo-logo';

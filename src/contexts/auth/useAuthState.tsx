@@ -118,6 +118,7 @@ export function useAuthState() {
     setShowAuthModal(!showAuthModal);
   };
 
+  // Add the missing authentication methods required by AuthContextType
   const login = async (email: string, password: string) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
