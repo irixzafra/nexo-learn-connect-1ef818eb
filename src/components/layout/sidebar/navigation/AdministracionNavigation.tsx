@@ -53,12 +53,7 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           isCollapsed={isCollapsed}
         />
         
-        <MenuItem
-          to="/admin/roles"
-          icon={KeyRound}
-          label="Roles y Permisos"
-          isCollapsed={isCollapsed}
-        />
+        {/* Roles moved under users in the horizontal submenu */}
         
         {/* Educación */}
         <MenuItem

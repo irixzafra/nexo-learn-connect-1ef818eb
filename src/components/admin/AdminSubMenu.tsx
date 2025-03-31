@@ -1,0 +1,60 @@
+
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+
+export interface AdminSubMenuItem {
+  id: string;
+  label: string;
+  path: string;
+  icon?: React.ReactNode;
+}
+
+interface AdminSubMenuProps {
+  items: AdminSubMenuItem[];
+  baseRoute: string;
+  className?: string;
+}
+
+const AdminSubMenu: React.FC<AdminSubMenuProps> = ({ 
+  items, 
+  baseRoute,
+  className 
+}) => {
+  const location = useLocation();
+  const currentPath = location.pathname;
+  
+  if (!items || items.length === 0) {
+    return null;
+  }
+  
+  return (
+    <div className={cn("w-full border-b mb-4 bg-background/95 backdrop-blur-sm sticky top-[57px] z-30", className)}>
+      <div className="container mx-auto py-1">
+        <div className="flex overflow-x-auto hide-scrollbar gap-1 justify-start">
+          {items.map((item) => {
+            const isActive = currentPath.includes(`${baseRoute}/${item.id}`);
+            const path = `${baseRoute}/${item.id}`;
+            
+            return (
+              <Link 
+                key={item.id}
+                to={path}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md whitespace-nowrap",
+                  "hover:bg-accent/50 transition-colors",
+                  isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
+                )}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminSubMenu;

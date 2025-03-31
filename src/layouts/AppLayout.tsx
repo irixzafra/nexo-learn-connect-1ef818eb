@@ -17,7 +17,6 @@ interface AppLayoutProps {
 const AppLayout: React.FC<AppLayoutProps> = ({ 
   children,
   showHeader = true,
-  showAdminNavigation = false
 }) => {
   const location = useLocation();
   
@@ -38,7 +37,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           {/* Show header only if shouldShowHeader is true */}
           {shouldShowHeader && <HeaderContent />}
           
-          <main className="flex-1 px-6 py-6 md:px-8 max-w-[1400px] mx-auto w-full">
+          <main className="flex-1 max-w-[1400px] mx-auto w-full">
             {children}
           </main>
         </div>
