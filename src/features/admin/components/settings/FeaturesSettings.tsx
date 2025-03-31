@@ -88,14 +88,16 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
       name: 'Gamificación',
       description: 'Puntos, insignias, niveles y tablas de clasificación',
       enabled: false,
-      icon: <Medal className="h-5 w-5" />
+      icon: <Medal className="h-5 w-5" />,
+      coming_soon: true
     },
     {
       id: 'certificates',
       name: 'Certificados',
       description: 'Emite certificados digitales para cursos completados',
       enabled: false,
-      icon: <Award className="h-5 w-5" />
+      icon: <Award className="h-5 w-5" />,
+      coming_soon: true
     },
     {
       id: 'learning_paths',
@@ -130,7 +132,8 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
       name: 'Analíticas Avanzadas',
       description: 'Estadísticas detalladas y reportes avanzados',
       enabled: false,
-      icon: <BarChart3 className="h-5 w-5" />
+      icon: <BarChart3 className="h-5 w-5" />,
+      coming_soon: true
     },
     {
       id: 'ai_assistant',
@@ -157,26 +160,24 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {coreFeatures.map((feature) => (
               <div 
                 key={feature.id}
-                className="flex items-center justify-between space-x-2 rounded-lg border p-4"
+                className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2"
               >
-                <div className="flex items-start gap-3">
-                  <div className="rounded-lg bg-primary/10 p-2 text-primary">
+                <div className="flex flex-col items-center">
+                  <div className="rounded-lg bg-primary/10 p-2 text-primary mb-2">
                     {feature.icon}
                   </div>
-                  <div className="space-y-1">
-                    <h3 className="font-medium">{feature.name}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {feature.description}
-                    </p>
-                  </div>
+                  <h3 className="font-medium text-sm">{feature.name}</h3>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                    {feature.description}
+                  </p>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center pt-2">
                   {isLoading && (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+                    <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
                   )}
                   <Switch 
                     checked={feature.enabled} 
@@ -203,39 +204,39 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {features.map((feature) => (
               <div 
                 key={feature.id}
-                className="flex items-center justify-between space-x-2 rounded-lg border p-4"
+                className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2"
               >
-                <div className="flex items-start gap-3">
-                  <div className="rounded-lg bg-primary/10 p-2 text-primary">
+                <div className="flex flex-col items-center">
+                  <div className="rounded-lg bg-primary/10 p-2 text-primary mb-2">
                     {feature.icon}
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-medium">{feature.name}</h3>
-                      {feature.beta && (
-                        <Badge variant="outline" className="text-xs">Beta</Badge>
-                      )}
-                      {feature.coming_soon && (
-                        <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200">Próximamente</Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {feature.description}
-                    </p>
+                  <div className="flex flex-col items-center gap-1">
+                    <h3 className="font-medium text-sm">{feature.name}</h3>
+                    {feature.beta && (
+                      <Badge variant="outline" className="text-xs">Beta</Badge>
+                    )}
+                    {feature.coming_soon && (
+                      <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200">Próximamente</Badge>
+                    )}
                   </div>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                    {feature.description}
+                  </p>
                 </div>
-                <Switch 
-                  checked={feature.enabled} 
-                  disabled={feature.coming_soon || isLoading}
-                  onCheckedChange={(checked) => {
-                    // Simulate toggling the feature
-                    console.log(`Toggle feature ${feature.id} to ${checked}`);
-                  }}
-                />
+                <div className="flex items-center pt-2">
+                  <Switch 
+                    checked={feature.enabled} 
+                    disabled={feature.coming_soon || isLoading}
+                    onCheckedChange={(checked) => {
+                      // Simulate toggling the feature
+                      console.log(`Toggle feature ${feature.id} to ${checked}`);
+                    }}
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -251,34 +252,36 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
               Configura la experiencia de iniciación para nuevos usuarios
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between space-x-2 rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <Label htmlFor="onboarding_auto_start">Iniciar Automáticamente</Label>
-                <p className="text-sm text-muted-foreground">
-                  Inicia el tutorial automáticamente para nuevos usuarios
-                </p>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2">
+                <div className="flex flex-col items-center">
+                  <h3 className="font-medium text-sm">Iniciar Automáticamente</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Inicia el tutorial automáticamente para nuevos usuarios
+                  </p>
+                </div>
+                <Switch 
+                  id="onboarding_auto_start"
+                  checked={featuresConfig.autoStartOnboarding || false}
+                  onCheckedChange={(checked) => onToggleFeature('autoStartOnboarding', checked)}
+                  disabled={isLoading}
+                />
               </div>
-              <Switch 
-                id="onboarding_auto_start"
-                checked={featuresConfig.autoStartOnboarding || false}
-                onCheckedChange={(checked) => onToggleFeature('autoStartOnboarding', checked)}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="flex items-center justify-between space-x-2 rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <Label htmlFor="onboarding_show_manual_button">Mostrar Botón Manual</Label>
-                <p className="text-sm text-muted-foreground">
-                  Muestra un botón para iniciar el tutorial manualmente
-                </p>
+              <div className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2">
+                <div className="flex flex-col items-center">
+                  <h3 className="font-medium text-sm">Mostrar Botón Manual</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Muestra un botón para iniciar el tutorial manualmente
+                  </p>
+                </div>
+                <Switch 
+                  id="onboarding_show_manual_button"
+                  checked={featuresConfig.showOnboardingTrigger || false}
+                  onCheckedChange={(checked) => onToggleFeature('showOnboardingTrigger', checked)}
+                  disabled={isLoading}
+                />
               </div>
-              <Switch 
-                id="onboarding_show_manual_button"
-                checked={featuresConfig.showOnboardingTrigger || false}
-                onCheckedChange={(checked) => onToggleFeature('showOnboardingTrigger', checked)}
-                disabled={isLoading}
-              />
             </div>
           </CardContent>
         </Card>
@@ -292,32 +295,34 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
               Opciones para las funcionalidades sociales y de comunidad
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between space-x-2 rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <Label htmlFor="enable_lesson_comments">Comentarios en Lecciones</Label>
-                <p className="text-sm text-muted-foreground">
-                  Permite a los usuarios comentar en las lecciones
-                </p>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2">
+                <div className="flex flex-col items-center">
+                  <h3 className="font-medium text-sm">Comentarios en Lecciones</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Permite a los usuarios comentar en las lecciones
+                  </p>
+                </div>
+                <Switch 
+                  id="enable_lesson_comments"
+                  checked={true}
+                  disabled={isLoading}
+                />
               </div>
-              <Switch 
-                id="enable_lesson_comments"
-                checked={true}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="flex items-center justify-between space-x-2 rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <Label htmlFor="enable_user_messaging">Mensajería entre Usuarios</Label>
-                <p className="text-sm text-muted-foreground">
-                  Permite la comunicación privada entre usuarios
-                </p>
+              <div className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2">
+                <div className="flex flex-col items-center">
+                  <h3 className="font-medium text-sm">Mensajería entre Usuarios</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Permite la comunicación privada entre usuarios
+                  </p>
+                </div>
+                <Switch 
+                  id="enable_user_messaging"
+                  checked={true}
+                  disabled={isLoading}
+                />
               </div>
-              <Switch 
-                id="enable_user_messaging"
-                checked={true}
-                disabled={isLoading}
-              />
             </div>
           </CardContent>
         </Card>
