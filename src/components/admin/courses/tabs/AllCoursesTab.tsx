@@ -1,136 +1,206 @@
 
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import React, { useState } from 'react';
+import { AdminDataTable } from '@/components/shared/AdminDataTable';
+import { createColumn, createActionsColumn } from "@/components/shared/DataTableUtils";
+import { ColumnDef } from "@tanstack/react-table";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { format } from 'date-fns';
 import { 
-  AlertDialog, 
-  AlertDialogAction, 
-  AlertDialogCancel, 
-  AlertDialogContent, 
-  AlertDialogDescription, 
-  AlertDialogFooter, 
-  AlertDialogHeader, 
-  AlertDialogTitle 
-} from "@/components/ui/alert-dialog";
-import { EntityDrawer } from "@/components/shared/EntityDrawer";
-import { Course, useCoursesManagement } from "@/features/admin/hooks/useCoursesManagement";
-import CourseForm from "../CourseForm";
+  BookOpen, 
+  MoreHorizontal, 
+  Users, 
+  ArrowUpRight, 
+  Calendar, 
+  Tag, 
+  Plus, 
+  FileEdit,
+  Trash,
+  Eye
+} from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+
+// Definición de tipos para cursos
+interface Course {
+  id: string;
+  title: string;
+  slug: string;
+  status: 'published' | 'draft' | 'archived';
+  category: string;
+  enrolledStudents: number;
+  createdAt: string;
+  updatedAt: string;
+  instructor: string;
+}
 
 const AllCoursesTab: React.FC = () => {
-  const navigate = useNavigate();
-  const {
-    courses,
-    deleteDialogOpen,
-    courseToDelete,
-    editorOpen,
-    selectedCourse,
-    setEditorOpen,
-    handleDeleteClick,
-    confirmDelete,
-    handleEditCourse,
-    handleSaveCourse,
-    setDeleteDialogOpen
-  } = useCoursesManagement();
+  // Datos de ejemplo para cursos
+  const [courses, setCourses] = useState<Course[]>([
+    {
+      id: "course-1",
+      title: "Introducción a React",
+      slug: "introduccion-react",
+      status: "published",
+      category: "Programación",
+      enrolledStudents: 124,
+      createdAt: "2023-08-12T10:00:00Z",
+      updatedAt: "2023-09-05T14:30:00Z",
+      instructor: "Ana Martínez"
+    },
+    {
+      id: "course-2",
+      title: "Desarrollo Frontend Avanzado",
+      slug: "frontend-avanzado",
+      status: "draft",
+      category: "Desarrollo Web",
+      enrolledStudents: 0,
+      createdAt: "2023-09-01T08:15:00Z",
+      updatedAt: "2023-09-10T16:45:00Z",
+      instructor: "Carlos García"
+    },
+    {
+      id: "course-3",
+      title: "Node.js para Principiantes",
+      slug: "nodejs-principiantes",
+      status: "published",
+      category: "Programación",
+      enrolledStudents: 87,
+      createdAt: "2023-07-20T11:30:00Z",
+      updatedAt: "2023-08-28T09:20:00Z",
+      instructor: "Laura Fernández"
+    },
+    {
+      id: "course-4",
+      title: "Bases de Datos SQL y NoSQL",
+      slug: "bases-datos-sql-nosql",
+      status: "published",
+      category: "Bases de Datos",
+      enrolledStudents: 65,
+      createdAt: "2023-06-15T14:00:00Z",
+      updatedAt: "2023-07-10T13:15:00Z",
+      instructor: "Miguel Torres"
+    },
+    {
+      id: "course-5",
+      title: "Diseño UI/UX Moderno",
+      slug: "diseno-ui-ux-moderno",
+      status: "archived",
+      category: "Diseño",
+      enrolledStudents: 45,
+      createdAt: "2023-05-10T09:45:00Z",
+      updatedAt: "2023-06-05T10:30:00Z",
+      instructor: "Patricia López"
+    }
+  ]);
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "published":
+        return <Badge variant="success">Publicado</Badge>;
+      case "draft":
+        return <Badge variant="secondary">Borrador</Badge>;
+      case "archived":
+        return <Badge variant="outline">Archivado</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  // Columnas para la tabla de cursos
+  const columns: ColumnDef<Course, any>[] = [
+    createColumn<Course>({
+      accessorKey: "title",
+      header: "Título",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <BookOpen className="h-4 w-4 text-muted-foreground" />
+          <span className="font-medium">{row.getValue("title")}</span>
+        </div>
+      ),
+    }),
+    createColumn<Course>({
+      accessorKey: "instructor",
+      header: "Instructor",
+    }),
+    createColumn<Course>({
+      accessorKey: "category",
+      header: "Categoría",
+      cell: ({ getValue }) => (
+        <div className="flex items-center gap-2">
+          <Tag className="h-4 w-4 text-muted-foreground" />
+          <span>{getValue() as string}</span>
+        </div>
+      ),
+    }),
+    createColumn<Course>({
+      accessorKey: "status",
+      header: "Estado",
+      cell: ({ getValue }) => getStatusBadge(getValue() as string),
+    }),
+    createColumn<Course>({
+      accessorKey: "enrolledStudents",
+      header: "Estudiantes",
+      cell: ({ getValue }) => (
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-muted-foreground" />
+          <span>{getValue() as number}</span>
+        </div>
+      ),
+    }),
+    createColumn<Course>({
+      accessorKey: "updatedAt",
+      header: "Actualizado",
+      cell: ({ getValue }) => {
+        const date = getValue() as string;
+        return (
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <span>{format(new Date(date), "dd/MM/yyyy")}</span>
+          </div>
+        );
+      },
+    }),
+    createActionsColumn<Course>(({ row }) => {
+      return (
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+            <Eye className="h-4 w-4 text-muted-foreground" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+            <FileEdit className="h-4 w-4 text-muted-foreground" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+            <Trash className="h-4 w-4 text-muted-foreground" />
+          </Button>
+        </div>
+      );
+    }),
+  ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end mb-4">
-        <Button onClick={() => navigate("/instructor/create-course")} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Crear Curso
-        </Button>
-      </div>
-      
-      <Card className="p-4">
-        <div className="text-center py-6">
-          {courses.length === 0 ? (
-            <p className="text-muted-foreground">No hay cursos disponibles</p>
-          ) : (
-            <ul className="space-y-2">
-              {courses.map((course) => (
-                <li 
-                  key={course.id} 
-                  className="flex justify-between items-center border p-3 rounded-md cursor-pointer hover:bg-muted"
-                  onClick={() => handleEditCourse(course)}
-                >
-                  <div>
-                    <h3 className="font-medium">{course.title}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {course.is_published ? "Publicado" : "Borrador"} - {course.level || "Sin nivel"}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEditCourse(course);
-                      }}
-                    >
-                      Editar
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="destructive" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteClick(course);
-                      }}
-                    >
-                      Eliminar
-                    </Button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+    <AdminDataTable
+      title="Cursos"
+      description="Gestiona todos los cursos de la plataforma"
+      columns={columns}
+      data={courses}
+      searchPlaceholder="Buscar curso..."
+      searchColumn="title"
+      createButtonLabel="Crear Curso"
+      createButtonIcon={<Plus className="h-4 w-4 mr-2" />}
+      onCreateClick={() => {}}
+      emptyState={
+        <div className="text-center py-10">
+          <BookOpen className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
+          <p className="text-muted-foreground">No se encontraron cursos</p>
         </div>
-      </Card>
-
-      {/* The key fix is here - making sure the JSX syntax is clean and type parameters are placed correctly */}
-      {/* Forcing the key to reset the component on re-render to avoid stale debug attributes */}
-      <React.Fragment key="drawer-fragment">
-        <EntityDrawer<Course>
-          title="Editar Curso"
-          description="Modifica los detalles del curso"
-          isOpen={editorOpen}
-          onOpenChange={setEditorOpen}
-          onSave={handleSaveCourse}
-          entity={selectedCourse}
-        >
-          {({data, onChange}) => (
-            <CourseForm data={data} onChange={onChange} />
-          )}
-        </EntityDrawer>
-      </React.Fragment>
-
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar curso?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. El curso 
-              <span className="font-semibold mx-1">
-                {courseToDelete?.title}
-              </span> 
-              será eliminado permanentemente.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={confirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+      }
+      actionButtons={
+        <Button variant="outline" size="sm">
+          <Tag className="h-4 w-4 mr-2" />
+          Filtrar por categoría
+        </Button>
+      }
+    />
   );
 };
 

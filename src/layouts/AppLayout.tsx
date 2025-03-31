@@ -7,16 +7,17 @@ import { Sidebar, SidebarContent } from '@/components/ui/sidebar';
 import { useLocation } from 'react-router-dom';
 import HeaderContent from '@/components/layout/HeaderContent';
 import { MobileSidebar } from '@/components/layout/header/MobileSidebar';
-import AdminNavigation from '@/components/admin/AdminNavigation';
 
 interface AppLayoutProps {
   children: React.ReactNode;
   showHeader?: boolean;
+  showAdminNavigation?: boolean;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ 
   children,
-  showHeader = true 
+  showHeader = true,
+  showAdminNavigation = false
 }) => {
   const location = useLocation();
   
@@ -36,9 +37,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
           {/* Show header only if shouldShowHeader is true */}
           {shouldShowHeader && <HeaderContent />}
-          
-          {/* Show admin navigation on admin pages */}
-          {isAdminPage && <AdminNavigation />}
           
           <main className="flex-1 px-6 py-6 md:px-8 max-w-[1400px] mx-auto w-full">
             {children}

@@ -18,6 +18,7 @@ import TemplatesPage from '@/pages/admin/content/TemplatesPage';
 import AuditLog from '@/pages/admin/audit/AuditLog';
 import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminCourses from '@/pages/admin/courses/AdminCourses';
+import AdminFinances from '@/pages/admin/finances/AdminFinances';
 
 // User management components
 import { UserManagementTabs } from '@/features/users/UserManagementTabs';
@@ -86,6 +87,7 @@ const InstructorManagement = () => (
 const AdminLayout = () => {
   return (
     <AppLayout showHeader={false}>
+      <AdminNavigation />
       <main className="flex-1">
         <Outlet />
       </main>
@@ -112,6 +114,10 @@ const AdminRoutes: React.FC = () => {
         {/* Course Management */}
         <Route path="/courses" element={<AdminCourses />} />
         <Route path="/instructors" element={<InstructorManagement />} />
+        
+        {/* Finances */}
+        <Route path="/finances" element={<AdminFinances />} />
+        <Route path="/billing" element={<AdminFinances />} />
         
         {/* Analytics */}
         <Route path="/analytics" element={<AnalyticsPage />} />
