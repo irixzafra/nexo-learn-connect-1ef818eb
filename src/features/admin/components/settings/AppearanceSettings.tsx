@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Paintbrush, Globe, Loader2 } from 'lucide-react';
+import { Paintbrush, Globe, Loader2, Construction } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -40,6 +40,9 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
             <p className="text-xs text-muted-foreground">
               Permite a los usuarios cambiar entre tema claro y oscuro
             </p>
+            <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+              En desarrollo
+            </Badge>
           </div>
           <div className="flex items-center">
             {isLoading && (
@@ -62,6 +65,9 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
             <p className="text-xs text-muted-foreground">
               Habilita el soporte para múltiples idiomas
             </p>
+            <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+              En desarrollo
+            </Badge>
           </div>
           <div className="flex items-center">
             {isLoading && (
@@ -84,7 +90,10 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
             <p className="text-xs text-muted-foreground">
               Cambia el tema automáticamente según preferencias del sistema
             </p>
-            <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
+            <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+              <Construction className="h-3 w-3 mr-1" />
+              En desarrollo
+            </Badge>
           </div>
           <div className="flex items-center">
             {isLoading && (

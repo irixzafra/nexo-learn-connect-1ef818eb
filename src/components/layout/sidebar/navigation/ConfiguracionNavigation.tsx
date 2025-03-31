@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SlidersHorizontal, HelpCircle, Info } from 'lucide-react';
+import { SlidersHorizontal, HelpCircle, Info, Construction } from 'lucide-react';
 import { 
   SidebarMenu,
   SidebarMenuItem,
@@ -9,6 +9,7 @@ import {
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import { MenuItem } from './common/MenuItem';
+import { Badge } from '@/components/ui/badge';
 
 interface ConfiguracionNavigationProps {
   isOpen: boolean;
@@ -37,14 +38,28 @@ const ConfiguracionNavigation: React.FC<ConfiguracionNavigationProps> = ({ isOpe
         <MenuItem
           to="/help"
           icon={HelpCircle}
-          label="Ayuda / Soporte"
+          label={
+            <>
+              Ayuda / Soporte
+              <Badge variant="outline" className="ml-2 bg-amber-100 text-amber-800 text-xs border-amber-200">
+                En desarrollo
+              </Badge>
+            </>
+          }
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
           to="/about-us"
           icon={Info}
-          label="Acerca de Nosotros"
+          label={
+            <>
+              Acerca de Nosotros
+              <Badge variant="outline" className="ml-2 bg-amber-100 text-amber-800 text-xs border-amber-200">
+                En desarrollo
+              </Badge>
+            </>
+          }
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>

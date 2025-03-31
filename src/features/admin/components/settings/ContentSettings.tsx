@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { FileText, Trophy, Loader2 } from 'lucide-react';
+import { FileText, Trophy, Loader2, Construction } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -37,6 +37,9 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
               <p className="text-xs text-muted-foreground">
                 Habilita la gestión de categorías para cursos y contenidos
               </p>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+                En desarrollo
+              </Badge>
             </div>
             <div className="flex items-center">
               {isLoading && (
@@ -81,7 +84,10 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
               <p className="text-xs text-muted-foreground">
                 Activa el sistema de clasificaciones y puntos para estudiantes
               </p>
-              <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+                <Construction className="h-3 w-3 mr-1" />
+                En desarrollo
+              </Badge>
             </div>
             <div className="flex items-center">
               {isLoading && (
@@ -104,7 +110,10 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
               <p className="text-xs text-muted-foreground">
                 Permite crear cuestionarios, encuestas y ejercicios interactivos
               </p>
-              <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+                <Construction className="h-3 w-3 mr-1" />
+                En desarrollo
+              </Badge>
             </div>
             <div className="flex items-center">
               {isLoading && (

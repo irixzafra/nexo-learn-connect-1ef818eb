@@ -24,6 +24,8 @@ export const SidebarGroup: React.FC<SidebarGroupProps> = ({
       <button
         onClick={onToggle}
         className="flex items-center justify-between w-full p-2 rounded-md text-left hover:bg-accent/50 group transition-colors"
+        type="button"
+        aria-expanded={isExpanded}
       >
         <div className="flex items-center">
           <Icon className="h-4 w-4 mr-2 text-primary shrink-0" />
