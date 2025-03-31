@@ -20,7 +20,10 @@ import {
   FileText,
   Folder,
   Route,
-  LineChart
+  LineChart,
+  MessageSquare,
+  Calendar,
+  Newspaper
 } from 'lucide-react';
 
 interface MobileNavMenuProps {
@@ -32,13 +35,21 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) =>
   const isAdmin = userRole === 'admin';
   const location = useLocation();
   
-  // Check if we're on an admin page to avoid duplicate menus
+  // Verificar si estamos en una página de administración para evitar menús duplicados
   const isAdminPage = location.pathname.includes('/admin/');
   
-  // If we're on an admin page, don't render the mobile menu
+  // Si estamos en una página de administración, no renderizamos el menú móvil
   if (isAdminPage) {
     return null;
   }
+  
+  const communityMenuItems = [
+    { icon: Newspaper, label: 'Foros', href: '/comunidad/foros' },
+    { icon: Users, label: 'Grupos', href: '/comunidad/grupos' },
+    { icon: MessageSquare, label: 'Mensajes', href: '/comunidad/mensajes' },
+    { icon: Calendar, label: 'Eventos', href: '/comunidad/eventos' },
+    { icon: FileText, label: 'Empleos', href: '/comunidad/empleos' },
+  ];
   
   const adminMenuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard' },
@@ -47,10 +58,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) =>
     { icon: CreditCard, label: 'Facturación', href: '/admin/finanzas' },
     { icon: Folder, label: 'Contenido', href: '/admin/content' },
     { icon: Database, label: 'Datos', href: '/admin/test-data' },
-    { icon: History, label: 'Auditoría', href: '/admin/audit-log' },
     { icon: Shield, label: 'Roles', href: '/admin/roles' },
-    { icon: Route, label: 'Rutas', href: '/admin/learning-paths' },
-    { icon: LineChart, label: 'Analíticas', href: '/admin/analytics' },
     { icon: Settings, label: 'Config', href: '/admin/settings' }
   ];
   
@@ -70,6 +78,25 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) =>
             </div>
             
             <div className="flex-1 overflow-auto p-4 space-y-6">
+              {/* Menú de comunidad */}
+              {location.pathname.includes('/comunidad') && (
+                <div>
+                  <h3 className="font-medium mb-2">Comunidad</h3>
+                  <div className="grid gap-2">
+                    {communityMenuItems.map(item => (
+                      <Link 
+                        key={item.href}
+                        to={item.href}
+                        className="flex items-center gap-3 p-2 rounded-md hover:bg-accent transition-colors"
+                      >
+                        <item.icon className="h-5 w-5 text-primary" />
+                        <span>{item.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               {/* Menú de administración si es admin */}
               {isAdmin && (
                 <div>

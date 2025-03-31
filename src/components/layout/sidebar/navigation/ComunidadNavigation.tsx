@@ -8,8 +8,7 @@ import {
   Calendar, 
   Briefcase, 
   Megaphone, 
-  Newspaper, 
-  Settings
+  Newspaper
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 

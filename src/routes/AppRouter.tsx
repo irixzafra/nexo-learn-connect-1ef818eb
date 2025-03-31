@@ -15,8 +15,6 @@ import InstructorRoutes from './InstructorRoutes';
 import AuthRoutes from './AuthRoutes';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import GuestRoute from '@/components/GuestRoute';
-import PaymentSuccess from '@/pages/payment/PaymentSuccess';
-import PaymentCancel from '@/pages/payment/PaymentCancel';
 import Community from '@/pages/Community';
 import PostDetail from '@/pages/PostDetail';
 import Messages from '@/pages/placeholder/Messages';
@@ -26,33 +24,39 @@ import NotFound from '@/pages/NotFound';
 const AppRouter = () => {
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* Rutas públicas principales */}
       <Route path="/" element={<AppLayout><Home /></AppLayout>} />
       <Route path="/courses" element={<AppLayout><Courses /></AppLayout>} />
       <Route path="/courses/:courseId" element={<AppLayout><CourseDetail /></AppLayout>} />
       <Route path="/lessons/:lessonId" element={<AppLayout><LessonDetail /></AppLayout>} />
       <Route path="/pricing" element={<AppLayout><Pricing /></AppLayout>} />
+      
+      {/* Rutas de comunidad */}
       <Route path="/community" element={<AppLayout><Community /></AppLayout>} />
+      <Route path="/comunidad/foros" element={<AppLayout><Community /></AppLayout>} />
+      <Route path="/comunidad/grupos" element={<AppLayout><Community /></AppLayout>} />
+      <Route path="/comunidad/mensajes" element={<AppLayout><Messages /></AppLayout>} />
+      <Route path="/comunidad/eventos" element={<AppLayout><Community /></AppLayout>} />
+      <Route path="/comunidad/empleos" element={<AppLayout><Community /></AppLayout>} />
+      <Route path="/comunidad/anuncios" element={<AppLayout><Community /></AppLayout>} />
       <Route path="/posts/:postId" element={<AppLayout><PostDetail /></AppLayout>} />
 
-      {/* Auth Routes */}
+      {/* Rutas de autenticación */}
       <Route path="/auth/*" element={<GuestRoute><GuestLayout><AuthRoutes /></GuestLayout></GuestRoute>} />
 
-      {/* Admin Routes */}
+      {/* Rutas protegidas de administración */}
       <Route path="/admin/*" element={<ProtectedRoute><AdminRoutes /></ProtectedRoute>} />
 
-      {/* Instructor Routes */}
+      {/* Rutas protegidas de instructor */}
       <Route path="/instructor/*" element={<ProtectedRoute><InstructorRoutes /></ProtectedRoute>} />
 
-      {/* User Routes */}
+      {/* Rutas protegidas de usuario */}
       <Route path="/profile" element={<ProtectedRoute><AppLayout><Profile /></AppLayout></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><AppLayout><Settings /></AppLayout></ProtectedRoute>} />
-      <Route path="/payment/success" element={<ProtectedRoute><AppLayout><PaymentSuccess /></AppLayout></ProtectedRoute>} />
-      <Route path="/payment/cancel" element={<ProtectedRoute><AppLayout><PaymentCancel /></AppLayout></ProtectedRoute>} />
       <Route path="/messages" element={<ProtectedRoute><AppLayout><Messages /></AppLayout></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute><AppLayout><NotificationCenter /></AppLayout></ProtectedRoute>} />
 
-      {/* Catch-all route for 404 - unificado */}
+      {/* Catch-all para 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
