@@ -20,6 +20,11 @@ import LessonView from '@/pages/student/LessonView';
 import PublicLayout from '@/layouts/PublicLayout';
 import CourseDetailPage from '@/pages/CourseDetailPage';
 import Community from '@/pages/Community';
+import TermsPage from '@/pages/legal/TermsPage';
+import PrivacyPage from '@/pages/legal/PrivacyPage';
+import CookiesPage from '@/pages/legal/CookiesPage';
+import AccessibilityPage from '@/pages/legal/AccessibilityPage';
+import ContactPage from '@/pages/ContactPage';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -30,9 +35,16 @@ const PublicRoutes: React.FC = () => {
       <Route path="/auth/register" element={<PublicLayout><Register /></PublicLayout>} />
       <Route path="/about-us" element={<PublicLayout><AboutUs /></PublicLayout>} />
       <Route path="/scholarships" element={<PublicLayout><Scholarships /></PublicLayout>} />
+      <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
       <Route path="/unauthorized" element={<PublicLayout><Unauthorized /></PublicLayout>} />
       <Route path="/payment/success" element={<PublicLayout><PaymentSuccess /></PublicLayout>} />
       <Route path="/payment/cancel" element={<PublicLayout><PaymentCancel /></PublicLayout>} />
+      
+      {/* Legal pages */}
+      <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />
+      <Route path="/privacy" element={<PublicLayout><PrivacyPage /></PublicLayout>} />
+      <Route path="/cookies" element={<PublicLayout><CookiesPage /></PublicLayout>} />
+      <Route path="/accessibility" element={<PublicLayout><AccessibilityPage /></PublicLayout>} />
       
       {/* Community Route */}
       <Route path="/community" element={<Community />} />
