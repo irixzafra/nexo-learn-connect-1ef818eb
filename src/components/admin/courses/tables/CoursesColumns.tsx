@@ -42,7 +42,7 @@ export const createCoursesColumns = (
     cell: ({ getValue }) => (
       <div className="flex items-center gap-1">
         <Users className="h-4 w-4 text-muted-foreground" />
-        <span>{getValue() || 0}</span>
+        <span>{getValue() as number || 0}</span>
       </div>
     )
   }),

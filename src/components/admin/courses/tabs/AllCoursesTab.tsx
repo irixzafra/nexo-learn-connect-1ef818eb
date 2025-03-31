@@ -76,8 +76,12 @@ const AllCoursesTab: React.FC = () => {
         onSave={handleSaveCourse}
         entity={selectedCourse}
       >
-        {/* Pasamos el componente con el tipo correcto */}
-        {CourseForm}
+        {({ data, onChange }) => (
+          <CourseForm 
+            data={data} 
+            onChange={onChange} 
+          />
+        )}
       </EntityDrawer>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
