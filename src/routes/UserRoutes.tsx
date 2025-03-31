@@ -12,6 +12,9 @@ import StudentCourses from "@/pages/student/Courses";
 import CourseLearn from "@/pages/student/CourseLearn";
 import LessonView from "@/pages/student/LessonView";
 import Checkout from "@/pages/student/Checkout";
+import CheckoutSuccess from "@/pages/student/CheckoutSuccess";
+import CheckoutCancel from "@/pages/student/CheckoutCancel";
+import Invoices from "@/pages/student/Invoices";
 import Calendar from "@/pages/placeholder/Calendar";
 import Messages from "@/pages/placeholder/Messages";
 import Settings from "@/pages/placeholder/Settings";
@@ -40,14 +43,14 @@ const UserRoutes = () => {
           </AppLayout>
         </ProtectedRoute>
       } />
-      <Route path="/learn/:courseId" element={
+      <Route path="/courses/:courseId/learn" element={
         <ProtectedRoute>
           <AppLayout>
             <CourseLearn />
           </AppLayout>
         </ProtectedRoute>
       } />
-      <Route path="/learn/:courseId/lesson/:lessonId" element={
+      <Route path="/courses/:courseId/learn/:lessonId" element={
         <ProtectedRoute>
           <AppLayout>
             <LessonView />
@@ -58,6 +61,27 @@ const UserRoutes = () => {
         <ProtectedRoute>
           <AppLayout>
             <Checkout />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/checkout/success" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <CheckoutSuccess />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/checkout/cancel" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <CheckoutCancel />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/invoices" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <Invoices />
           </AppLayout>
         </ProtectedRoute>
       } />
