@@ -1,12 +1,15 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { toast } from 'sonner';
 
 interface EditModeContextType {
   isEditMode: boolean;
   toggleEditMode: () => void;
   isReorderMode: boolean;
   toggleReorderMode: () => void;
+  updateText: (table: string, id: string, field: string, value: string) => Promise<boolean>;
+  reorderElements: (table: string, elements: { id: string; order: number }[]) => Promise<boolean>;
 }
 
 const EditModeContext = createContext<EditModeContextType>({
@@ -14,6 +17,8 @@ const EditModeContext = createContext<EditModeContextType>({
   toggleEditMode: () => {},
   isReorderMode: false,
   toggleReorderMode: () => {},
+  updateText: async () => false,
+  reorderElements: async () => false,
 });
 
 export const useEditMode = () => useContext(EditModeContext);
@@ -55,12 +60,54 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  // Function to update text content in the database
+  const updateText = async (table: string, id: string, field: string, value: string): Promise<boolean> => {
+    try {
+      // In a real application, this would update the database
+      // For now, we'll simulate a successful update
+      console.log(`Updating ${field} in ${table} with ID ${id} to: ${value}`);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Show success toast
+      toast.success('Contenido actualizado correctamente');
+      return true;
+    } catch (error) {
+      console.error('Error updating text:', error);
+      toast.error('Error al actualizar el contenido');
+      return false;
+    }
+  };
+
+  // Function to reorder elements in the database
+  const reorderElements = async (table: string, elements: { id: string; order: number }[]): Promise<boolean> => {
+    try {
+      // In a real application, this would update the database
+      // For now, we'll simulate a successful update
+      console.log(`Reordering elements in ${table}:`, elements);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Show success toast
+      toast.success('Orden actualizado correctamente');
+      return true;
+    } catch (error) {
+      console.error('Error reordering elements:', error);
+      toast.error('Error al actualizar el orden');
+      return false;
+    }
+  };
+
   return (
     <EditModeContext.Provider value={{ 
       isEditMode, 
       toggleEditMode,
       isReorderMode,
-      toggleReorderMode
+      toggleReorderMode,
+      updateText,
+      reorderElements
     }}>
       {children}
     </EditModeContext.Provider>
