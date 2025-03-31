@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState, useEffect } from "react";
+
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import { UserProfile, UserRoleType } from "@/types/auth";
