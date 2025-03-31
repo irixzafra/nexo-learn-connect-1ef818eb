@@ -48,7 +48,7 @@ export function useAuthState() {
     setUserRole,
     setViewAs, 
     setViewAsRole,
-    switchViewAsRole, // Make sure this is properly included
+    switchViewAsRole, // Properly including switchViewAsRole from useUserPreferences
     saveUserPreferences 
   } = useUserPreferences({ setRole });
 
@@ -68,15 +68,15 @@ export function useAuthState() {
     theme,
     showAuthModal,
     toggleAuthModal,
-    login,
-    signup,
+    login,                // Including login from useAuthMethods
+    signup,               // Including signup from useAuthMethods
     logout,
-    resetPassword,
-    updateUserProfile,
+    resetPassword,        // Including resetPassword from useAuthMethods
+    updateUserProfile,    // Including updateUserProfile from useAuthProfile
     setTheme,
     setUserRole,
     setViewAsRole,
-    switchViewAsRole, // This is critical for fixing the error
+    switchViewAsRole,     // Including switchViewAsRole from useUserPreferences
     saveUserPreferences,
   };
 }
