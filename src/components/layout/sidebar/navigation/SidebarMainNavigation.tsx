@@ -9,7 +9,8 @@ import {
   Shield,
   User,
   Phone,
-  AppWindow
+  AppWindow,
+  BookOpen
 } from 'lucide-react';
 
 // Importamos los componentes de navegación
@@ -30,12 +31,19 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   messagesCount,
   getHomePath
 }) => {
+  // Determinamos las rutas basadas en el rol del usuario
+  const dashboardRoute = effectiveRole === 'instructor' ? '/instructor/dashboard' : 
+                        effectiveRole === 'admin' ? '/admin/dashboard' : '/home';
+  
+  const coursesRoute = effectiveRole === 'instructor' ? '/instructor/courses' : 
+                      effectiveRole === 'admin' ? '/admin/courses' : '/home/my-courses';
+
   return (
     <div className={`flex-1 overflow-auto ${isCollapsed ? "px-2" : "px-4"}`}>
       <div className="space-y-4 py-4">
         <SidebarNavSection title="Navegación" isCollapsed={isCollapsed}>
           <SidebarNavItem 
-            to="/" 
+            to={dashboardRoute}
             icon={Home} 
             label="Inicio" 
             isCollapsed={isCollapsed} 
@@ -43,9 +51,17 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
           <SidebarNavItem 
             to="/courses" 
             icon={Compass} 
-            label="Explorar" 
+            label="Explorar Cursos" 
             isCollapsed={isCollapsed} 
           />
+          {effectiveRole === 'student' && (
+            <SidebarNavItem 
+              to="/home/my-courses" 
+              icon={BookOpen} 
+              label="Mis Cursos" 
+              isCollapsed={isCollapsed} 
+            />
+          )}
           <SidebarNavItem 
             to="/community" 
             icon={Users} 

@@ -16,7 +16,6 @@ interface HeaderLogoProps {
 }
 
 const HeaderLogo: React.FC<HeaderLogoProps> = ({ 
-  pageTitle,
   viewAsRole = 'current' 
 }) => {
   const isMobile = useIsMobile();
@@ -49,9 +48,6 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({
           <LogoComponent />
         </>
       )}
-      
-      {/* Eliminando el título de la página como solicitado */}
-      {/* {!isMobile && pageTitle && <span className="text-lg font-medium">{pageTitle}</span>} */}
     </div>
   );
 };

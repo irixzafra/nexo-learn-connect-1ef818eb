@@ -118,9 +118,11 @@ const AppRouter: React.FC = () => {
       
       {/* Community route */}
       <Route path="/community" element={
-        <React.Suspense fallback={<LoadingFallback />}>
-          <Community />
-        </React.Suspense>
+        <AppLayout>
+          <React.Suspense fallback={<LoadingFallback />}>
+            <Community />
+          </React.Suspense>
+        </AppLayout>
       } />
       
       {/* Misc protected routes */}
@@ -174,10 +176,10 @@ const AppRouter: React.FC = () => {
       
       <Route path="/index" element={<Navigate to="/" replace />} />
       
-      {/* Dynamic page route - must be after all specific routes */}
+      {/* Dynamic page route - debe ser después de todas las rutas específicas y antes del catch-all */}
       <Route path="/:slug" element={<PageRenderer />} />
       
-      {/* Catch-all for not found - debe ser la última ruta */}
+      {/* Catch-all para rutas no encontradas - debe ser la última ruta */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
