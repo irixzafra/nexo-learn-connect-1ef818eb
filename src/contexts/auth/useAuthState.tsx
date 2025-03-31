@@ -45,16 +45,27 @@ export function useAuthState() {
     ...sessionData,
     
     // Profile management
-    ...profileData,
+    profile: profileData.profile,
+    userRole: profileData.role,
+    updateUserProfile: profileData.updateUserProfile,
     
     // Authentication methods
-    ...authMethods,
+    login: authMethods.login,
+    signup: authMethods.signup,
+    logout: authMethods.logout,
+    resetPassword: authMethods.resetPassword,
     
     // UI functions
     showAuthModal,
     toggleAuthModal,
     
     // Preferences management
-    ...userPreferences,
+    theme: userPreferences.theme,
+    viewAsRole: userPreferences.viewAs,
+    setTheme: userPreferences.setTheme,
+    setUserRole: userPreferences.setUserRole,
+    setViewAsRole: userPreferences.setViewAsRole,
+    switchViewAsRole: userPreferences.switchViewAsRole,
+    saveUserPreferences: userPreferences.saveUserPreferences
   };
 }
