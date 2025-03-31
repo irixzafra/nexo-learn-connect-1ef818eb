@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { Routes } from './routes';
 import './App.css';
 import { Toaster } from 'sonner';
-import './utils/consoleUtils'; // Import the console utilities
 import AppProviders from './providers/AppProviders';
 
 function App() {

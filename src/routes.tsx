@@ -1,7 +1,9 @@
 
 import { FC } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes as RouterRoutes, Route } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
+import Notifications from './pages/Notifications';
+import NotificationCenter from './pages/NotificationCenter';
 
 // Página de ejemplo para pruebas
 const DummyPage: FC<{ title: string }> = ({ title }) => (
@@ -14,7 +16,7 @@ const DummyPage: FC<{ title: string }> = ({ title }) => (
 export const Routes: FC = () => {
   return (
     <BrowserRouter>
-      <Routes>
+      <RouterRoutes>
         <Route path="/" element={
           <AppLayout>
             <DummyPage title="Página Principal" />
@@ -47,7 +49,12 @@ export const Routes: FC = () => {
         } />
         <Route path="/notifications" element={
           <AppLayout>
-            <DummyPage title="Notificaciones" />
+            <Notifications />
+          </AppLayout>
+        } />
+        <Route path="/notification-center" element={
+          <AppLayout>
+            <NotificationCenter />
           </AppLayout>
         } />
         <Route path="/reports" element={
@@ -82,7 +89,7 @@ export const Routes: FC = () => {
         } />
         <Route path="/auth/login" element={<DummyPage title="Login" />} />
         <Route path="/auth/register" element={<DummyPage title="Registro" />} />
-      </Routes>
+      </RouterRoutes>
     </BrowserRouter>
   );
 };

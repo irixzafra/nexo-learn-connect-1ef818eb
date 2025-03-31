@@ -7,20 +7,20 @@ import {
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import { MenuItem } from './common/MenuItem';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface PerfilNavigationProps {
   isOpen: boolean;
   onToggle: () => void;
-  notificationsCount?: number;
 }
 
 const PerfilNavigation: React.FC<PerfilNavigationProps> = ({ 
   isOpen, 
-  onToggle,
-  notificationsCount = 0
+  onToggle
 }) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const { unreadCount } = useNotifications();
 
   return (
     <SidebarGroup
@@ -41,7 +41,7 @@ const PerfilNavigation: React.FC<PerfilNavigationProps> = ({
           to="/notifications"
           icon={Bell}
           label="Notificaciones"
-          badge={notificationsCount}
+          badge={unreadCount}
           isCollapsed={isCollapsed}
         />
         

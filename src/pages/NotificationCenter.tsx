@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import AppLayout from "@/layouts/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -26,7 +27,7 @@ import {
 } from 'lucide-react';
 import { format, isToday, isYesterday } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { NotificationType } from '@/types/notifications';
+import { NotificationType, Notification } from '@/types/notifications';
 import { useNavigate } from 'react-router-dom';
 
 const NotificationCenter: React.FC = () => {
@@ -95,7 +96,7 @@ const NotificationCenter: React.FC = () => {
       return matchesFilter && matchesSearch;
     });
 
-    const grouped: Record<string, typeof notifications> = {};
+    const grouped: Record<string, Notification[]> = {};
     
     filtered.forEach(notification => {
       const date = new Date(notification.created_at);
