@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -9,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 import AdminRoutes from './AdminRoutes';
 import PageRenderer from '@/features/pages/PageRenderer';
+import PublicRoutes from './PublicRoutes';
 
 // Lazy loading of non-critical routes
 const CoursesCatalog = React.lazy(() => import('@/pages/CoursesCatalog'));
@@ -22,7 +22,6 @@ const Billing = React.lazy(() => import('@/pages/placeholder/Billing'));
 const Community = React.lazy(() => import('@/pages/Community'));
 const PaymentSuccess = React.lazy(() => import('@/pages/payment/PaymentSuccess'));
 const PaymentCancel = React.lazy(() => import('@/pages/payment/PaymentCancel'));
-const PublicRoutes = React.lazy(() => import('./PublicRoutes'));
 const UserRoutes = React.lazy(() => import('./UserRoutes'));
 const InstructorRoutes = React.lazy(() => import('./InstructorRoutes'));
 const PaymentRoutes = React.lazy(() => import('./PaymentRoutes'));
@@ -40,11 +39,7 @@ const AppRouter: React.FC = () => {
   return (
     <Routes>
       {/* Public routes are accessible without authentication */}
-      <Route path="/*" element={
-        <React.Suspense fallback={<LoadingFallback />}>
-          <PublicRoutes />
-        </React.Suspense>
-      } />
+      <Route path="/*" element={<PublicRoutes />} />
       
       {/* Course public landing page */}
       <Route path="/courses/:id" element={
