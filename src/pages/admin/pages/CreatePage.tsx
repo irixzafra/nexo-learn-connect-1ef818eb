@@ -33,7 +33,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { createPage, isSlugUnique } from '@/features/admin/services/pagesService';
 import { PageLayout, PageStatus, SitePage } from '@/types/pages'; 
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Wand2 } from 'lucide-react';
+import PageAIContentGenerator from '@/components/admin/pages/PageAIContentGenerator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CreatePageFormData {
   title: string;
@@ -45,6 +47,7 @@ interface CreatePageFormData {
 
 const CreatePage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState('basic');
   const navigate = useNavigate();
   const { user } = useAuth();
   
@@ -135,163 +138,183 @@ const CreatePage: React.FC = () => {
             Crea una nueva página para tu sitio web
           </CardDescription>
         </CardHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-6">
-              <FormField
-                control={form.control}
-                name="title"
-                rules={{ required: 'El título es obligatorio' }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Título</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        placeholder="Título de la página"
-                        onChange={handleTitleChange}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      El título visible de la página
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="slug"
-                rules={{ 
-                  required: 'La URL es obligatoria',
-                  pattern: {
-                    value: /^[a-z0-9-]+$/,
-                    message: 'Solo letras minúsculas, números y guiones'
-                  }
-                }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>URL / Slug</FormLabel>
-                    <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <div className="flex-shrink-0 text-muted-foreground">/</div>
-                        <Input 
-                          {...field} 
-                          placeholder="url-de-la-pagina"
-                        />
-                      </div>
-                    </FormControl>
-                    <FormDescription>
-                      URL amigable para acceder a la página
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="meta_description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descripción para SEO</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        {...field} 
-                        placeholder="Descripción breve para motores de búsqueda"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Aparecerá en los resultados de búsqueda (máx. 160 caracteres)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="layout"
-                  rules={{ required: 'El layout es obligatorio' }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Layout</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
+        
+        <Tabs defaultValue="basic" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="w-full mx-6">
+            <TabsTrigger value="basic">Información básica</TabsTrigger>
+            <TabsTrigger value="ai-assist" className="flex items-center gap-2">
+              <Wand2 className="h-4 w-4" />
+              Asistente IA
+            </TabsTrigger>
+          </TabsList>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <TabsContent value="basic">
+                <CardContent className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    rules={{ required: 'El título es obligatorio' }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Título</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecciona un layout" />
-                          </SelectTrigger>
+                          <Input 
+                            {...field} 
+                            placeholder="Título de la página"
+                            onChange={handleTitleChange}
+                          />
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="default">Por defecto</SelectItem>
-                          <SelectItem value="landing">Landing Page</SelectItem>
-                          <SelectItem value="marketing">Marketing</SelectItem>
-                          <SelectItem value="documentation">Documentación</SelectItem>
-                          <SelectItem value="course">Curso</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        Estructura y diseño de la página
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="status"
-                  rules={{ required: 'El estado es obligatorio' }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Estado</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
+                        <FormDescription>
+                          El título visible de la página
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="slug"
+                    rules={{ 
+                      required: 'La URL es obligatoria',
+                      pattern: {
+                        value: /^[a-z0-9-]+$/,
+                        message: 'Solo letras minúsculas, números y guiones'
+                      }
+                    }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>URL / Slug</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecciona un estado" />
-                          </SelectTrigger>
+                          <div className="flex items-center space-x-2">
+                            <div className="flex-shrink-0 text-muted-foreground">/</div>
+                            <Input 
+                              {...field} 
+                              placeholder="url-de-la-pagina"
+                            />
+                          </div>
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="draft">Borrador</SelectItem>
-                          <SelectItem value="published">Publicada</SelectItem>
-                          <SelectItem value="archived">Archivada</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        Solo las páginas publicadas serán visibles para el público
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/admin/settings/pages')}
-              >
-                Cancelar
-              </Button>
-              <Button 
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Crear Página
-              </Button>
-            </CardFooter>
-          </form>
-        </Form>
+                        <FormDescription>
+                          URL amigable para acceder a la página
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="meta_description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Descripción para SEO</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            {...field} 
+                            placeholder="Descripción breve para motores de búsqueda"
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Aparecerá en los resultados de búsqueda (máx. 160 caracteres)
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="layout"
+                      rules={{ required: 'El layout es obligatorio' }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Layout</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecciona un layout" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="default">Por defecto</SelectItem>
+                              <SelectItem value="landing">Landing Page</SelectItem>
+                              <SelectItem value="marketing">Marketing</SelectItem>
+                              <SelectItem value="documentation">Documentación</SelectItem>
+                              <SelectItem value="course">Curso</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            Estructura y diseño de la página
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      rules={{ required: 'El estado es obligatorio' }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Estado</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecciona un estado" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="draft">Borrador</SelectItem>
+                              <SelectItem value="published">Publicada</SelectItem>
+                              <SelectItem value="archived">Archivada</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            Solo las páginas publicadas serán visibles para el público
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </TabsContent>
+              
+              <TabsContent value="ai-assist">
+                <CardContent>
+                  <PageAIContentGenerator form={form} />
+                </CardContent>
+              </TabsContent>
+              
+              <CardFooter className="flex justify-between">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/admin/settings/pages')}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Crear Página
+                </Button>
+              </CardFooter>
+            </form>
+          </Form>
+        </Tabs>
       </Card>
     </div>
   );
