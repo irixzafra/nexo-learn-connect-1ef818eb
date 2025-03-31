@@ -116,6 +116,7 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [isLoading, setIsLoading] = useState(true);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [designFeatureEnabled, setDesignFeatureEnabled] = useState(true);
+  const [hasDBError, setHasDBError] = useState(false);
 
   useEffect(() => {
     loadTheme();
@@ -141,7 +142,13 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
       if (error) {
         if (error.code === 'PGRST116') {
           // No data found, use default theme
-          await saveTheme(defaultTheme);
+          console.log('No design system data found, will use default theme');
+          setTheme(defaultTheme);
+          setOriginalTheme(defaultTheme);
+        } else if (error.code === '42P01') {
+          // Table doesn't exist yet
+          console.log('Design system table does not exist yet, using default theme');
+          setHasDBError(true);
           setTheme(defaultTheme);
           setOriginalTheme(defaultTheme);
         } else {
@@ -154,7 +161,6 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
     } catch (error) {
       console.error('Error loading theme:', error);
-      toast.error('Error al cargar la configuración de diseño');
       // En caso de error, usamos el tema por defecto
       setTheme(defaultTheme);
       setOriginalTheme(defaultTheme);
@@ -173,9 +179,12 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
       if (error) {
         if (error.code === 'PGRST116') {
           // No data found, create default entry
-          await supabase
-            .from('features_config')
-            .insert({ id: 1, design_system_enabled: true });
+          console.log('No features config found, using default enabled state');
+          setDesignFeatureEnabled(true);
+        } else if (error.code === '42703' || error.code === '42P01') {
+          // Column or table doesn't exist yet
+          console.log('Features config table or column does not exist yet, using default enabled state');
+          setHasDBError(true);
           setDesignFeatureEnabled(true);
         } else {
           throw error;
@@ -194,6 +203,12 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const saveTheme = async (newTheme: ThemeConfig) => {
     try {
       setIsLoading(true);
+      
+      if (hasDBError) {
+        toast.warning('No es posible guardar la configuración porque la base de datos no está configurada correctamente');
+        console.log('Cannot save theme because the database is not properly set up');
+        return;
+      }
       
       const { error } = await supabase
         .from('design_system')
@@ -243,6 +258,12 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
     try {
       setIsLoading(true);
       
+      if (hasDBError) {
+        toast.warning('No es posible cambiar la configuración porque la base de datos no está configurada correctamente');
+        console.log('Cannot toggle design feature because the database is not properly set up');
+        return;
+      }
+      
       const { error } = await supabase
         .from('features_config')
         .upsert({ id: 1, design_system_enabled: enabled }, { onConflict: 'id' });
@@ -277,7 +298,7 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const applyThemeToDom = (theme: ThemeConfig) => {
-    if (!designFeatureEnabled) {
+    if (!designFeatureEnabled && !hasDBError) {
       console.log('Design system is disabled, not applying theme');
       return;
     }
@@ -375,6 +396,27 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
         toggleDesignFeature,
       }}
     >
+      {hasDBError && (
+        <div className="rounded-md bg-red-50 p-4 m-4 border border-red-200 dark:bg-red-900/20 dark:border-red-800/30">
+          <div className="flex items-center">
+            <div className="flex-shrink-0 text-red-500">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Error al cargar la configuración de diseño</h3>
+              <div className="mt-2 text-sm text-red-700 dark:text-red-300">
+                <p>
+                  La tabla de configuración de diseño no existe en la base de datos. Es necesario ejecutar las migraciones para resolver este problema.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {children}
     </DesignSystemContext.Provider>
   );

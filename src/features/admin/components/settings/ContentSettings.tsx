@@ -5,6 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { FileText, Trophy, Loader2 } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 
 export interface ContentSettingsProps {
   featuresConfig: FeaturesConfig;
@@ -29,15 +30,15 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2">
-            <div className="flex flex-col items-center">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
               <h3 className="font-medium text-sm">Gestión de categorías</h3>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground">
                 Habilita la gestión de categorías para cursos y contenidos
               </p>
             </div>
-            <div className="flex items-center pt-2">
+            <div className="flex items-center">
               {isLoading && (
                 <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
               )}
@@ -50,14 +51,16 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
             </div>
           </div>
           
-          <div className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2">
-            <div className="flex flex-col items-center">
+          <Separator />
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
               <h3 className="font-medium text-sm">Reordenamiento de contenido</h3>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground">
                 Permite reordenar módulos y lecciones mediante arrastrar y soltar
               </p>
             </div>
-            <div className="flex items-center pt-2">
+            <div className="flex items-center">
               {isLoading && (
                 <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
               )}
@@ -70,15 +73,17 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
             </div>
           </div>
           
-          <div className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2">
-            <div className="flex flex-col items-center">
+          <Separator />
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
               <h3 className="font-medium text-sm">Leaderboard de gamificación</h3>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground">
                 Activa el sistema de clasificaciones y puntos para estudiantes
               </p>
               <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
             </div>
-            <div className="flex items-center pt-2">
+            <div className="flex items-center">
               {isLoading && (
                 <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
               )}
@@ -86,6 +91,28 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
                 id="enableLeaderboard"
                 checked={featuresConfig.enableLeaderboard}
                 onCheckedChange={(value) => onToggleFeature('enableLeaderboard', value)}
+                disabled={true}
+              />
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <h3 className="font-medium text-sm">Contenidos interactivos</h3>
+              <p className="text-xs text-muted-foreground">
+                Permite crear cuestionarios, encuestas y ejercicios interactivos
+              </p>
+              <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableInteractiveContent"
+                checked={false}
                 disabled={true}
               />
             </div>

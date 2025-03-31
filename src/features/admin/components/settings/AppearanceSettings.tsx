@@ -7,6 +7,7 @@ import { Paintbrush, Globe, Loader2 } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 
 export interface AppearanceSettingsProps {
   featuresConfig: FeaturesConfig;
@@ -33,15 +34,15 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2">
-            <div className="flex flex-col items-center">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
               <h3 className="font-medium text-sm">Selector de temas</h3>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground">
                 Permite a los usuarios cambiar entre tema claro y oscuro
               </p>
             </div>
-            <div className="flex items-center pt-2">
+            <div className="flex items-center">
               {isLoading && (
                 <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
               )}
@@ -54,14 +55,16 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
             </div>
           </div>
           
-          <div className="flex flex-col items-center justify-between p-4 rounded-lg border text-center space-y-2">
-            <div className="flex flex-col items-center">
+          <Separator />
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
               <h3 className="font-medium text-sm">Soporte multilenguaje</h3>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground">
                 Habilita el soporte para múltiples idiomas
               </p>
             </div>
-            <div className="flex items-center pt-2">
+            <div className="flex items-center">
               {isLoading && (
                 <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
               )}
@@ -70,6 +73,28 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
                 checked={featuresConfig.enableMultiLanguage}
                 onCheckedChange={(value) => onToggleFeature('enableMultiLanguage', value)}
                 disabled={isLoading}
+              />
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <h3 className="font-medium text-sm">Modo oscuro automático</h3>
+              <p className="text-xs text-muted-foreground">
+                Cambia el tema automáticamente según preferencias del sistema
+              </p>
+              <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableAutoTheme"
+                checked={false}
+                disabled={true}
               />
             </div>
           </div>
