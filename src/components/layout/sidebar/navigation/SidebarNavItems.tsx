@@ -1,99 +1,214 @@
 
 import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 import { UserRoleType } from '@/types/auth';
+import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
 import { 
   Home, 
   BookOpen, 
-  Compass, 
   Users, 
-  User, 
-  MessageSquare,
+  Calendar, 
+  BarChart2, 
+  CreditCard,
+  Bookmark,
   Settings,
-  Shield,
-  School,
+  MessageSquare,
   Bell
 } from 'lucide-react';
-import { MenuItem } from '../MenuItems';
 
 interface SidebarNavItemsProps {
   role: UserRoleType;
   isCollapsed: boolean;
-  notificationsCount: number;
-  messagesCount: number;
+  notificationsCount?: number;
+  messagesCount?: number;
 }
 
-export const SidebarNavItems: React.FC<SidebarNavItemsProps> = ({
-  role,
+const SidebarNavItems: React.FC<SidebarNavItemsProps> = ({ 
+  role, 
   isCollapsed,
-  notificationsCount,
-  messagesCount
+  notificationsCount = 0,
+  messagesCount = 0
 }) => {
-  
-  // Base navigation items for all users
-  const baseItems = () => (
-    <>
-      <MenuItem to="/home" icon={Home} label="Inicio" isCollapsed={isCollapsed} />
-      <MenuItem to="/courses" icon={Compass} label="Explorar" isCollapsed={isCollapsed} />
-      <MenuItem to="/community" icon={Users} label="Comunidad" isCollapsed={isCollapsed} />
-      <MenuItem to="/messages" icon={MessageSquare} label="Mensajes" badge={messagesCount} isCollapsed={isCollapsed} />
-      <MenuItem to="/notifications" icon={Bell} label="Notificaciones" badge={notificationsCount} isCollapsed={isCollapsed} />
-      <MenuItem to="/profile" icon={User} label="Perfil" isCollapsed={isCollapsed} />
-    </>
-  );
-
-  // Elementos adicionales para estudiantes
-  const studentItems = () => (
-    <>
-      {baseItems()}
-      <MenuItem to="/my-courses" icon={BookOpen} label="Mis Cursos" isCollapsed={isCollapsed} />
-    </>
-  );
-
-  // Elementos adicionales para instructores (ahora llamados "profesores")
-  const instructorItems = () => (
-    <>
-      {baseItems()}
-      <MenuItem to="/instructor/dashboard" icon={School} label="Profesor" isCollapsed={isCollapsed} />
-      <MenuItem to="/my-courses" icon={BookOpen} label="Mis Cursos" isCollapsed={isCollapsed} />
-    </>
-  );
-
-  // Elementos adicionales para administradores
-  const adminItems = () => (
-    <>
-      {baseItems()}
-      <MenuItem to="/admin/dashboard" icon={Shield} label="Administración" isCollapsed={isCollapsed} />
-      <MenuItem to="/my-courses" icon={BookOpen} label="Mis Cursos" isCollapsed={isCollapsed} />
-    </>
-  );
-
-  // Elementos para sistemas (acceso técnico)
-  const systemsItems = () => (
-    <>
-      {baseItems()}
-      <MenuItem to="/admin/systems" icon={Settings} label="Sistemas" isCollapsed={isCollapsed} />
-      <MenuItem to="/admin/dashboard" icon={Shield} label="Administración" isCollapsed={isCollapsed} />
-    </>
-  );
-
-  // Renderizar elementos según el rol
-  const renderNavItems = () => {
+  // Definir los items según el rol del usuario
+  const getNavItems = () => {
+    const commonItems = [
+      { 
+        icon: Home, 
+        label: 'Panel Principal', 
+        path: '/home',
+        badge: 0
+      },
+      { 
+        icon: BookOpen, 
+        label: 'Mis Cursos', 
+        path: '/courses',
+        badge: 0
+      },
+      { 
+        icon: Users, 
+        label: 'Comunidad', 
+        path: '/community',
+        badge: 0
+      },
+      { 
+        icon: Calendar, 
+        label: 'Calendario', 
+        path: '/calendar',
+        badge: 0
+      },
+      { 
+        icon: MessageSquare, 
+        label: 'Mensajes', 
+        path: '/messages',
+        badge: messagesCount
+      },
+      { 
+        icon: Bell, 
+        label: 'Notificaciones', 
+        path: '/notifications',
+        badge: notificationsCount
+      },
+    ];
+    
+    const adminItems = [
+      ...commonItems,
+      { 
+        icon: BarChart2, 
+        label: 'Reportes', 
+        path: '/reports',
+        badge: 0
+      },
+      { 
+        icon: CreditCard, 
+        label: 'Finanzas', 
+        path: '/finances',
+        badge: 0
+      },
+      { 
+        icon: Bookmark, 
+        label: 'Elementos Guardados', 
+        path: '/saved-items',
+        badge: 0
+      },
+      { 
+        icon: Settings, 
+        label: 'Configuración', 
+        path: '/settings',
+        badge: 0
+      },
+    ];
+    
+    const instructorItems = [
+      ...commonItems,
+      { 
+        icon: BarChart2, 
+        label: 'Reportes', 
+        path: '/reports',
+        badge: 0
+      },
+      { 
+        icon: Settings, 
+        label: 'Configuración', 
+        path: '/settings',
+        badge: 0
+      },
+    ];
+    
+    const studentItems = [
+      ...commonItems,
+      { 
+        icon: Bookmark, 
+        label: 'Elementos Guardados', 
+        path: '/saved-items',
+        badge: 0
+      },
+      { 
+        icon: Settings, 
+        label: 'Configuración', 
+        path: '/settings',
+        badge: 0
+      },
+    ];
+    
     switch (role) {
       case 'admin':
-        return adminItems();
+        return adminItems;
       case 'instructor':
-        return instructorItems();
-      case 'sistemas':
-        return systemsItems();
+        return instructorItems;
+      case 'student':
       default:
-        return studentItems();
+        return studentItems;
     }
   };
-
+  
+  const navItems = getNavItems();
+  
+  if (isCollapsed) {
+    return (
+      <SidebarMenu>
+        {navItems.map((item) => (
+          <SidebarMenuItem key={item.path}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarMenuButton asChild>
+                  <NavLink
+                    to={item.path}
+                    className={({ isActive }) => cn(
+                      "flex h-10 w-10 items-center justify-center rounded-md relative",
+                      isActive 
+                        ? "bg-primary/10 text-primary" 
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span className="sr-only">{item.label}</span>
+                    {item.badge > 0 && (
+                      <Badge variant="default" className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-[20px] h-5 flex items-center justify-center">
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </NavLink>
+                </SidebarMenuButton>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>{item.label}</p>
+              </TooltipContent>
+            </Tooltip>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+    );
+  }
+  
   return (
-    <div className="flex flex-col gap-1">
-      {renderNavItems()}
-    </div>
+    <SidebarMenu>
+      {navItems.map((item) => (
+        <SidebarMenuItem key={item.path}>
+          <SidebarMenuButton asChild>
+            <NavLink
+              to={item.path}
+              className={({ isActive }) => cn(
+                "flex items-center gap-3 px-3 py-2 rounded-md w-full",
+                isActive 
+                  ? "bg-primary/10 text-primary font-medium" 
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <item.icon className="h-5 w-5 min-w-5" />
+              <span>{item.label}</span>
+              {item.badge > 0 && (
+                <Badge variant="default" className="ml-auto">
+                  {item.badge}
+                </Badge>
+              )}
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
   );
 };
 
