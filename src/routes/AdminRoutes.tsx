@@ -86,7 +86,6 @@ const InstructorManagement = () => (
 const AdminLayout = () => {
   return (
     <AppLayout showHeader={false}>
-      <AdminNavigation enabled={true} />
       <main className="flex-1">
         <Outlet />
       </main>

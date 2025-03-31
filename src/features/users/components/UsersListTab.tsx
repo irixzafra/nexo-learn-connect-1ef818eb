@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from 'react';
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import { UserProfile, UserRoleType } from "@/types/auth";
@@ -251,12 +252,10 @@ export const UsersListTab: React.FC = () => {
           searchColumn="full_name"
           exportFilename="usuarios"
           emptyState={
-            (
-              <div className="text-center py-10">
-                <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">No se encontraron usuarios</p>
-              </div>
-            ) as React.ReactNode
+            <div className="text-center py-10">
+              <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">No se encontraron usuarios</p>
+            </div>
           }
         />
       </CardContent>

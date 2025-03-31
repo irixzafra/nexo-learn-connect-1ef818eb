@@ -10,6 +10,7 @@ interface AdminPageLayoutProps {
   tabs?: AdminTabItem[];
   defaultTabValue?: string;
   children?: React.ReactNode;
+  actions?: React.ReactNode;
 }
 
 const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
@@ -17,7 +18,8 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   subtitle,
   tabs = [],
   defaultTabValue,
-  children
+  children,
+  actions
 }) => {
   return (
     <AppLayout>
@@ -30,6 +32,11 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
                 <p className="text-muted-foreground">{subtitle}</p>
               )}
             </div>
+            {actions && (
+              <div className="flex items-center gap-2">
+                {actions}
+              </div>
+            )}
           </div>
 
           {tabs && tabs.length > 0 ? (
