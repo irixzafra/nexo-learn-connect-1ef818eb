@@ -2,7 +2,7 @@
 import React from "react";
 import AppRouter from "./routes/AppRouter";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/contexts/AuthContext";
 import { SidebarProvider } from "@/components/layout/sidebar/SidebarProvider";

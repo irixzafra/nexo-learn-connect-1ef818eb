@@ -9,6 +9,7 @@ import { BadgesList } from '@/features/gamification/components/BadgesList';
 import { useBadges } from '@/features/gamification/hooks/useBadges';
 import { BadgeType } from '@/features/gamification/types';
 import { Award, BookOpen, Users, Activity, Star } from 'lucide-react';
+import { BadgeCard } from '@/features/gamification/components/BadgeCard';
 
 const Achievements: React.FC = () => {
   const { user } = useAuth();
