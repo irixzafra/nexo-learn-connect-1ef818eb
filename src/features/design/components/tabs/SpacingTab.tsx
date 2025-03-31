@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -8,7 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { RefreshCw, Maximize } from 'lucide-react';
+import { RefreshCw, Maximize, Smartphone, Tablet, Monitor } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const SpacingTab: React.FC = () => {
@@ -17,50 +17,48 @@ export const SpacingTab: React.FC = () => {
     ...theme.spacing,
     borderRadius: theme.borderRadius
   });
+  const [deviceView, setDeviceView] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
+  
+  // Update local state when theme changes
+  useEffect(() => {
+    setSpacingConfig({
+      ...theme.spacing,
+      borderRadius: theme.borderRadius
+    });
+  }, [theme]);
+  
+  // Apply changes in real-time
+  const applyChanges = (newSpacing: any) => {
+    const updatedTheme = {
+      ...theme,
+      spacing: {
+        unit: newSpacing.unit,
+        scale: newSpacing.scale
+      },
+      borderRadius: newSpacing.borderRadius
+    };
+    
+    previewTheme(updatedTheme);
+  };
   
   const handleBaseUnitChange = (value: number) => {
     const newSpacing = { ...spacingConfig, unit: value };
     setSpacingConfig(newSpacing);
-    
-    previewTheme({
-      ...theme,
-      spacing: {
-        unit: value,
-        scale: spacingConfig.scale
-      },
-      borderRadius: spacingConfig.borderRadius
-    });
+    applyChanges(newSpacing);
   };
   
-  const handleScaleChange = (
-    size: keyof typeof spacingConfig.scale,
-    value: number
-  ) => {
+  const handleScaleChange = (size: keyof typeof spacingConfig.scale, value: number) => {
     const newScale = { ...spacingConfig.scale, [size]: value };
     const newSpacing = { ...spacingConfig, scale: newScale };
     
     setSpacingConfig(newSpacing);
-    previewTheme({
-      ...theme,
-      spacing: {
-        unit: spacingConfig.unit,
-        scale: newScale
-      },
-      borderRadius: spacingConfig.borderRadius
-    });
+    applyChanges(newSpacing);
   };
   
   const handleBorderRadiusChange = (value: string) => {
-    setSpacingConfig({ ...spacingConfig, borderRadius: value });
-    
-    previewTheme({
-      ...theme,
-      spacing: {
-        unit: spacingConfig.unit,
-        scale: spacingConfig.scale
-      },
-      borderRadius: value
-    });
+    const newSpacing = { ...spacingConfig, borderRadius: value };
+    setSpacingConfig(newSpacing);
+    applyChanges(newSpacing);
   };
   
   const applySpacingPreset = (preset: 'compact' | 'moderate' | 'spacious') => {
@@ -106,14 +104,7 @@ export const SpacingTab: React.FC = () => {
     };
     
     setSpacingConfig(newSpacing);
-    previewTheme({
-      ...theme,
-      spacing: {
-        unit: spacingConfig.unit,
-        scale: newScale
-      },
-      borderRadius: newBorderRadius
-    });
+    applyChanges(newSpacing);
     
     toast.success(`Espaciado "${preset}" aplicado`);
   };
@@ -123,12 +114,47 @@ export const SpacingTab: React.FC = () => {
   
   return (
     <div className="space-y-6">
+      {/* Device Selector - Mobile-first approach */}
+      <div className="flex justify-center sm:justify-end mb-2">
+        <div className="flex items-center p-1 bg-muted rounded-lg">
+          <Button 
+            variant={deviceView === 'mobile' ? 'default' : 'ghost'} 
+            size="sm"
+            onClick={() => setDeviceView('mobile')}
+            className="gap-1"
+          >
+            <Smartphone className="h-4 w-4" />
+            <span className="hidden sm:inline">Móvil</span>
+          </Button>
+          
+          <Button 
+            variant={deviceView === 'tablet' ? 'default' : 'ghost'} 
+            size="sm"
+            onClick={() => setDeviceView('tablet')}
+            className="gap-1"
+          >
+            <Tablet className="h-4 w-4" />
+            <span className="hidden sm:inline">Tablet</span>
+          </Button>
+          
+          <Button 
+            variant={deviceView === 'desktop' ? 'default' : 'ghost'} 
+            size="sm"
+            onClick={() => setDeviceView('desktop')}
+            className="gap-1"
+          >
+            <Monitor className="h-4 w-4" />
+            <span className="hidden sm:inline">Escritorio</span>
+          </Button>
+        </div>
+      </div>
+      
       <Tabs defaultValue="spacing">
-        <TabsList className="mb-4">
-          <TabsTrigger value="spacing">Espaciado</TabsTrigger>
-          <TabsTrigger value="radius">Radio de Bordes</TabsTrigger>
-          <TabsTrigger value="presets">Presets</TabsTrigger>
-          <TabsTrigger value="preview">Vista Previa</TabsTrigger>
+        <TabsList className="mb-4 w-full sm:w-auto flex justify-between sm:justify-start">
+          <TabsTrigger value="spacing" className="flex-1 sm:flex-initial">Espaciado</TabsTrigger>
+          <TabsTrigger value="radius" className="flex-1 sm:flex-initial">Bordes</TabsTrigger>
+          <TabsTrigger value="presets" className="flex-1 sm:flex-initial">Presets</TabsTrigger>
+          <TabsTrigger value="preview" className="flex-1 sm:flex-initial">Vista Previa</TabsTrigger>
         </TabsList>
         
         <TabsContent value="spacing">
@@ -286,7 +312,7 @@ export const SpacingTab: React.FC = () => {
                 
                 <Separator />
                 
-                <div className="space-y-4">
+                <div className={deviceView === 'desktop' ? "space-y-4" : "space-y-4 transform scale-75 origin-top"}>
                   <h3 className="font-medium">Vista Previa</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -472,13 +498,18 @@ export const SpacingTab: React.FC = () => {
         <TabsContent value="preview">
           <Card>
             <CardHeader>
-              <CardTitle>Vista Previa de Espaciado</CardTitle>
+              <CardTitle className="flex items-center justify-between">
+                <span>Vista Previa de Espaciado</span>
+                <div className="text-sm bg-primary/10 text-primary px-2 py-1 rounded">
+                  {deviceView === 'mobile' ? 'Vista Móvil' : deviceView === 'tablet' ? 'Vista Tablet' : 'Vista Escritorio'}
+                </div>
+              </CardTitle>
               <CardDescription>
                 Previsualiza cómo se ven los diferentes espaciados
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
+              <div className={`space-y-6 ${deviceView === 'mobile' ? 'max-w-[320px] mx-auto' : deviceView === 'tablet' ? 'max-w-[768px] mx-auto' : ''}`}>
                 <div className="space-y-2">
                   <h3 className="font-medium">Espaciado en Elementos de Interfaz</h3>
                   <div className="border rounded-md p-4 space-y-4">
@@ -502,7 +533,7 @@ export const SpacingTab: React.FC = () => {
                     
                     <div className="space-y-2">
                       <Label>Espaciado MD ({getPixels(spacingConfig.scale.md)})</Label>
-                      <div className="flex items-center gap-3" style={{ gap: getPixels(spacingConfig.scale.md) }}>
+                      <div className="flex flex-wrap items-center gap-3" style={{ gap: getPixels(spacingConfig.scale.md) }}>
                         <Button>Botón 1</Button>
                         <Button variant="outline">Botón 2</Button>
                         <Button variant="secondary">Botón 3</Button>
@@ -511,7 +542,7 @@ export const SpacingTab: React.FC = () => {
                     
                     <div className="space-y-2">
                       <Label>Espaciado LG ({getPixels(spacingConfig.scale.lg)})</Label>
-                      <div className="flex items-center gap-4" style={{ gap: getPixels(spacingConfig.scale.lg) }}>
+                      <div className="flex flex-wrap items-center gap-4" style={{ gap: getPixels(spacingConfig.scale.lg) }}>
                         <div className="bg-accent/20 w-12 h-12 rounded flex items-center justify-center">1</div>
                         <div className="bg-accent/20 w-12 h-12 rounded flex items-center justify-center">2</div>
                         <div className="bg-accent/20 w-12 h-12 rounded flex items-center justify-center">3</div>
@@ -547,7 +578,7 @@ export const SpacingTab: React.FC = () => {
                 
                 <div className="space-y-2">
                   <h3 className="font-medium">Vista Previa de Radio de Bordes</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <div 
                         className="w-full aspect-square bg-primary/20 border mb-2"
