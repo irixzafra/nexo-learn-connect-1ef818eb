@@ -6,8 +6,7 @@ import {
   LayoutDashboard, 
   Users, 
   BookOpen, 
-  CreditCard, 
-  Database,
+  CreditCard,
   Settings,
   FileText
 } from 'lucide-react';
@@ -41,13 +40,6 @@ const adminCategories = [
     label: "Finanzas", 
     path: "/admin/billing",
     dataTag: "admin-nav-finances"
-  },
-  { 
-    id: 'data',
-    icon: Database, 
-    label: "Datos", 
-    path: "/admin/test-data",
-    dataTag: "admin-nav-data"
   },
   { 
     id: 'pages',

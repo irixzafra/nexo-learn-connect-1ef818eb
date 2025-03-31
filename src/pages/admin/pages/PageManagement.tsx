@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +24,6 @@ import {
 import {
   FileText,
   Plus,
-  Search,
   Eye,
   EyeOff,
   PenSquare,
@@ -233,14 +231,7 @@ const PageManagement: React.FC = () => {
               Administra todas las páginas del sitio web
             </CardDescription>
           </div>
-          <div className="flex gap-4 items-center">
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar páginas..."
-                className="pl-8"
-              />
-            </div>
+          <div>
             <Button onClick={() => navigate('/admin/settings/pages/create')}>
               <Plus className="h-4 w-4 mr-2" />
               Nueva Página

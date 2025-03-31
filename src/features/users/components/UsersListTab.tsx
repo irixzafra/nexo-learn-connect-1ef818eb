@@ -10,7 +10,7 @@ import { UserRoleSelector } from "./UserRoleSelector";
 import { Check, X, MoreHorizontal, UserIcon } from "lucide-react";
 import { createColumn, createActionsColumn } from "@/components/shared/DataTableUtils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { format } from "date-fns";
 
 export const UsersListTab: React.FC = () => {
@@ -160,32 +160,24 @@ export const UsersListTab: React.FC = () => {
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Usuarios del sistema</CardTitle>
-        <CardDescription>
-          Administra los usuarios registrados en la plataforma
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <EditableDataTable
-          columns={columns}
-          data={users}
-          title="Usuario"
-          description="Información del usuario"
-          searchPlaceholder="Buscar usuario..."
-          searchColumn="full_name"
-          exportFilename="usuarios"
-          onSave={handleSaveUser}
-          renderForm={renderUserForm}
-          emptyState={
-            <div className="text-center py-10">
-              <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No se encontraron usuarios</p>
-            </div>
-          }
-        />
-      </CardContent>
+    <Card className="p-4">
+      <EditableDataTable
+        columns={columns}
+        data={users}
+        title="Usuario"
+        description="Información del usuario"
+        searchPlaceholder="Buscar usuario..."
+        searchColumn="full_name"
+        exportFilename="usuarios"
+        onSave={handleSaveUser}
+        renderForm={renderUserForm}
+        emptyState={
+          <div className="text-center py-10">
+            <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
+            <p className="text-muted-foreground">No se encontraron usuarios</p>
+          </div>
+        }
+      />
     </Card>
   );
 };

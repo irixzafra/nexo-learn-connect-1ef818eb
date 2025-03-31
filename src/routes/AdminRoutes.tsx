@@ -60,18 +60,6 @@ const EnrollmentManagement = () => (
   </AdminPageLayout>
 );
 
-// Temporary Test Data Generator
-const TestDataGenerator = () => (
-  <AdminPageLayout title="Generador de Datos de Prueba">
-    <Card className="p-6">
-      <h2 className="text-lg font-medium mb-4">Generación de Datos de Prueba</h2>
-      <p className="text-muted-foreground">
-        Esta herramienta permite generar datos de prueba para la plataforma. Actualmente en desarrollo.
-      </p>
-    </Card>
-  </AdminPageLayout>
-);
-
 // User Management Page
 const UserManagement = () => {
   return (
@@ -123,9 +111,6 @@ const AdminRoutes: React.FC = () => {
         
         {/* AI Services */}
         <Route path="/ai/services" element={<AIServicesPage />} />
-        
-        {/* Test Data */}
-        <Route path="/data/generate" element={<TestDataGenerator />} />
         
         {/* Default redirect */}
         <Route path="*" element={<Dashboard />} />
