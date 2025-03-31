@@ -4,9 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { useNotifications } from '@/hooks/useNotifications';
-import { SidebarFooterSection, SidebarLogoSection } from '@/components/layout/sidebar';
 import SidebarMainNavigation from '@/components/layout/sidebar/navigation/SidebarMainNavigation';
 import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
+import SidebarLogoSection from '@/components/layout/sidebar/SidebarLogoSection';
+import SidebarFooterSection from '@/components/layout/sidebar/SidebarFooterSection';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRoleType;

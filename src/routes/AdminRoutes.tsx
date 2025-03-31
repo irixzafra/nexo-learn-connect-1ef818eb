@@ -55,7 +55,12 @@ const AnalyticsPage = () => (
     subtitle="Métricas y estadísticas de la plataforma"
   >
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <UserAdminStats />
+      <UserAdminStats 
+        totalUsers={845}
+        activeUsers={621}
+        newUsers={42}
+        inactiveUsers={124}
+      />
     </div>
   </AdminPageLayout>
 );
