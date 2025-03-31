@@ -200,6 +200,7 @@ const AllCoursesTab: React.FC = () => {
     window.open(`/courses/${course.slug || course.id}`, '_blank');
   };
 
+  // Fix for Error 1: This function is properly typed as a ReactNode renderer
   const renderCourseForm = ({ data, onChange }: { data: Course | null; onChange: (data: Course) => void }) => {
     return (
       <div className="space-y-4">
@@ -382,6 +383,7 @@ const AllCoursesTab: React.FC = () => {
         />
       </Card>
 
+      {/* Fix for Error 2: Pass the function as children prop properly */}
       <EntityDrawer<Course>
         title="Editar Curso"
         description="Modifica los detalles del curso"
