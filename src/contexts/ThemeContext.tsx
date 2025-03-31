@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type ThemeType = 'light' | 'dark' | 'futuristic';
+type ThemeType = 'light' | 'dark' | 'futuristic' | 'system';
 
 interface ThemeContextType {
   theme: ThemeType;
@@ -14,7 +14,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Intentar obtener el tema guardado en localStorage, o usar el sistema por defecto
   const [theme, setTheme] = useState<ThemeType>(() => {
     const savedTheme = localStorage.getItem('theme') as ThemeType;
-    if (savedTheme && ['light', 'dark', 'futuristic'].includes(savedTheme)) {
+    if (savedTheme && ['light', 'dark', 'futuristic', 'system'].includes(savedTheme)) {
       return savedTheme;
     }
     
@@ -33,8 +33,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Remover todas las clases de tema anteriores
     document.documentElement.classList.remove('light', 'dark', 'futuristic');
     
-    // Añadir la clase del tema actual
-    document.documentElement.classList.add(theme);
+    // Si es "system", determinar el tema basado en las preferencias del sistema
+    if (theme === 'system') {
+      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.add(isDarkMode ? 'dark' : 'light');
+    } else {
+      // Añadir la clase del tema actual
+      document.documentElement.classList.add(theme);
+    }
   }, [theme]);
 
   const value = {
