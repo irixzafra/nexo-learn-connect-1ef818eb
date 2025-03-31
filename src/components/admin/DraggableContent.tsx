@@ -15,12 +15,15 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import SectionInsert from './SectionInsert';
+import InlineEdit from './InlineEdit';
 
 interface DraggableItem {
   id: string;
   order: number;
   content: React.ReactNode;
   width?: number;
+  text?: string;
 }
 
 interface DraggableContentProps {
@@ -32,7 +35,7 @@ interface DraggableContentProps {
   resizable?: boolean;
   layout?: 'vertical' | 'horizontal';
   minSize?: number;
-  onAddItem?: (content: string) => void;
+  onAddItem?: (content: string, position?: number) => void;
 }
 
 const DraggableContent: React.FC<DraggableContentProps> = ({
@@ -46,16 +49,41 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
   minSize = 10,
   onAddItem
 }) => {
-  const { isEditMode, isReorderMode, reorderElements } = useEditMode();
+  const { isEditMode, isReorderMode, reorderElements, updateText } = useEditMode();
   const [draggableItems, setDraggableItems] = useState<DraggableItem[]>(items);
   const [draggedItem, setDraggedItem] = useState<DraggableItem | null>(null);
   const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [aiResult, setAiResult] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-
-  // Añadir estado para el elemento sobre el que se está haciendo hover durante el arrastre
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+
+  const handleAddSection = (content: string, position?: number) => {
+    if (onAddItem) {
+      onAddItem(content, position);
+    } else {
+      // Si no hay una función personalizada, agregamos el elemento al estado local
+      const newItem: DraggableItem = {
+        id: `item-${Date.now()}`,
+        order: position !== undefined ? position : draggableItems.length + 1,
+        content: <div>{content}</div>,
+        text: content
+      };
+      
+      const newItems = [...draggableItems];
+      if (position !== undefined) {
+        newItems.splice(position, 0, newItem);
+        // Actualizar el orden de los elementos siguientes
+        for (let i = position + 1; i < newItems.length; i++) {
+          newItems[i].order = i + 1;
+        }
+      } else {
+        newItems.push(newItem);
+      }
+      
+      setDraggableItems(newItems);
+    }
+  };
 
   if (!isEditMode) {
     if (resizable) {
@@ -174,8 +202,6 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     
     setDraggedItem(null);
     setHoverIndex(null);
-    
-    // La operación de guardar se ha movido a handleDrop para que se ejecute solo una vez
   };
 
   const handleSaveReorder = async (itemsToSave: DraggableItem[]) => {
@@ -229,8 +255,8 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
   };
 
   const handleAddItem = () => {
-    if (onAddItem && aiResult) {
-      onAddItem(aiResult);
+    if (aiResult) {
+      handleAddSection(aiResult);
       setAiResult('');
       setPrompt('');
       setIsAIDialogOpen(false);
@@ -281,7 +307,7 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
 
   if (resizable) {
     return (
-      <div className="relative">
+      <div className="relative space-y-2">
         <ResizablePanelGroup 
           direction={layout === 'vertical' ? 'vertical' : 'horizontal'}
           className={className}
@@ -289,7 +315,7 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
           {draggableItems.map((item, index) => (
             <React.Fragment key={item.id}>
               <ResizablePanel 
-                defaultSize={item.width || 100 / items.length} 
+                defaultSize={item.width || 100 / draggableItems.length} 
                 minSize={minSize}
                 className={`${itemClassName} ${isEditMode ? 'relative' : ''} ${isReorderMode ? 'cursor-move border border-dashed rounded-md transition-colors' : ''} ${hoverIndex === index ? 'bg-primary/10 border-primary' : ''}`}
               >
@@ -303,7 +329,7 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
                   className={`h-full w-full draggable-item ${isReorderMode ? 'group' : ''}`}
                 >
                   {isReorderMode && (
-                    <div className="absolute left-0 top-0 w-full bg-muted/70 p-1 flex items-center justify-between">
+                    <div className="absolute left-0 top-0 w-full bg-muted/70 p-1 flex items-center justify-between z-10">
                       <div className="flex items-center gap-1">
                         <GripVertical className="h-4 w-4 text-primary cursor-grab" />
                         <span className="text-xs font-medium">Elemento {index + 1}</span>
@@ -331,16 +357,36 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
                     </div>
                   )}
                   <div className={isReorderMode ? 'pt-8' : ''}>
-                    {item.content}
+                    {typeof item.content === 'string' || item.text ? (
+                      <InlineEdit
+                        table={table}
+                        id={item.id}
+                        field="content"
+                        value={item.text || (typeof item.content === 'string' ? item.content : '')}
+                        multiline={true}
+                        className="w-full"
+                      />
+                    ) : (
+                      item.content
+                    )}
                   </div>
                 </div>
               </ResizablePanel>
               {index < draggableItems.length - 1 && (
                 <ResizableHandle withHandle />
               )}
+              
+              {/* Insert Section Component between panels */}
+              {isEditMode && index < draggableItems.length - 1 && (
+                <SectionInsert onAddSection={(content) => handleAddSection(content, index + 1)} />
+              )}
             </React.Fragment>
           ))}
         </ResizablePanelGroup>
+        
+        {/* Add section at the end */}
+        {isEditMode && <SectionInsert onAddSection={handleAddSection} />}
+        
         {isEditMode && <AddItemButton />}
         
         <Dialog open={isAIDialogOpen} onOpenChange={setIsAIDialogOpen}>
@@ -396,58 +442,74 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
   }
 
   return (
-    <div className="relative">
+    <div className="relative space-y-2">
       <div className={className}>
         {draggableItems.map((item, index) => (
-          <div
-            key={item.id}
-            draggable={isReorderMode}
-            onDragStart={(e) => handleDragStart(e, item, index)}
-            onDragOver={(e) => handleDragOver(e, item, index)}
-            onDragLeave={handleDragLeave}
-            onDrop={(e) => handleDrop(e, item, index)}
-            onDragEnd={handleDragEnd}
-            className={`
-              ${itemClassName} 
-              draggable-item
-              ${isReorderMode ? 'cursor-move border border-dashed rounded-md p-2 mb-2 relative transition-colors' : ''}
-              ${hoverIndex === index ? 'bg-primary/10 border-primary' : ''}
-            `}
-          >
-            {isReorderMode && (
-              <div className="absolute left-0 top-0 w-full bg-muted/70 p-1 flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <GripVertical className="h-4 w-4 text-primary cursor-grab" />
-                  <span className="text-xs font-medium">Elemento {index + 1}</span>
+          <React.Fragment key={item.id}>
+            <div
+              draggable={isReorderMode}
+              onDragStart={(e) => handleDragStart(e, item, index)}
+              onDragOver={(e) => handleDragOver(e, item, index)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, item, index)}
+              onDragEnd={handleDragEnd}
+              className={`
+                ${itemClassName} 
+                draggable-item
+                ${isReorderMode ? 'cursor-move border border-dashed rounded-md p-2 mb-2 relative transition-colors' : ''}
+                ${hoverIndex === index ? 'bg-primary/10 border-primary' : ''}
+              `}
+            >
+              {isReorderMode && (
+                <div className="absolute left-0 top-0 w-full bg-muted/70 p-1 flex items-center justify-between z-10">
+                  <div className="flex items-center gap-1">
+                    <GripVertical className="h-4 w-4 text-primary cursor-grab" />
+                    <span className="text-xs font-medium">Elemento {index + 1}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6 rounded-full"
+                      onClick={() => moveItem(index, 'up')}
+                      disabled={index === 0}
+                    >
+                      <ArrowUp className="h-3 w-3" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6 rounded-full"
+                      onClick={() => moveItem(index, 'down')}
+                      disabled={index === draggableItems.length - 1}
+                    >
+                      <ArrowDown className="h-3 w-3" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-6 w-6 rounded-full"
-                    onClick={() => moveItem(index, 'up')}
-                    disabled={index === 0}
-                  >
-                    <ArrowUp className="h-3 w-3" />
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-6 w-6 rounded-full"
-                    onClick={() => moveItem(index, 'down')}
-                    disabled={index === draggableItems.length - 1}
-                  >
-                    <ArrowDown className="h-3 w-3" />
-                  </Button>
-                </div>
+              )}
+              <div className={isReorderMode ? 'pt-8' : ''}>
+                {typeof item.content === 'string' || item.text ? (
+                  <InlineEdit
+                    table={table}
+                    id={item.id}
+                    field="content"
+                    value={item.text || (typeof item.content === 'string' ? item.content : '')}
+                    multiline={true}
+                    className="w-full"
+                  />
+                ) : (
+                  item.content
+                )}
               </div>
-            )}
-            <div className={isReorderMode ? 'pt-8' : ''}>
-              {item.content}
             </div>
-          </div>
+            
+            {/* Insert Section Component between items */}
+            {isEditMode && <SectionInsert onAddSection={(content) => handleAddSection(content, index + 1)} />}
+          </React.Fragment>
         ))}
       </div>
+      
       {isEditMode && <AddItemButton />}
       
       <Dialog open={isAIDialogOpen} onOpenChange={setIsAIDialogOpen}>

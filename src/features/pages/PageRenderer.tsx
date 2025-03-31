@@ -2,7 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SitePage } from '@/types/pages';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
+import { useEditMode } from '@/contexts/EditModeContext';
+import InlineEdit from '@/components/admin/InlineEdit';
+import DraggableContent from '@/components/admin/DraggableContent';
+import SectionInsert from '@/components/admin/SectionInsert';
 
 // Import the page service
 const getPageBySlug = async (slug: string): Promise<SitePage | null> => {
@@ -15,7 +19,12 @@ const getPageBySlug = async (slug: string): Promise<SitePage | null> => {
           id: '1',
           title: 'Home Page',
           slug: 'home',
-          content: { blocks: [] },
+          content: { 
+            blocks: [
+              { id: 'block-1', type: 'text', content: 'Welcome to our platform!' },
+              { id: 'block-2', type: 'hero', content: 'Learn and Grow With Us' }
+            ] 
+          },
           status: 'published',
           layout: 'default',
           created_at: new Date().toISOString(),
@@ -34,6 +43,7 @@ const PageRenderer: React.FC = () => {
   const [page, setPage] = useState<SitePage | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isEditMode } = useEditMode();
 
   useEffect(() => {
     const fetchPage = async () => {
@@ -92,24 +102,133 @@ const PageRenderer: React.FC = () => {
     );
   }
 
+  // Transform content blocks to draggable items
+  const contentBlocks = page.content?.blocks || [];
+  const draggableItems = contentBlocks.map((block: any, index: number) => ({
+    id: block.id || `block-${index}`,
+    order: index + 1,
+    content: (
+      <div className="mb-6">
+        {block.type === 'text' && (
+          <InlineEdit
+            table="page_blocks"
+            id={block.id || `block-${index}`}
+            field="content"
+            value={block.content}
+            multiline={true}
+            className="prose max-w-none"
+          />
+        )}
+        {block.type === 'hero' && (
+          <div className="bg-primary/10 p-8 rounded-lg text-center mb-8">
+            <InlineEdit
+              table="page_blocks"
+              id={block.id || `block-${index}`}
+              field="content"
+              value={block.content}
+              className="text-2xl font-bold"
+            />
+          </div>
+        )}
+      </div>
+    ),
+    text: block.content
+  }));
+
+  const handleAddBlock = (content: string, position?: number) => {
+    if (!page || !page.content) return;
+    
+    const newBlock = {
+      id: `block-${Date.now()}`,
+      type: 'text',
+      content: content
+    };
+    
+    const blocks = [...(page.content.blocks || [])];
+    
+    if (position !== undefined) {
+      blocks.splice(position, 0, newBlock);
+    } else {
+      blocks.push(newBlock);
+    }
+    
+    setPage({
+      ...page,
+      content: {
+        ...page.content,
+        blocks
+      }
+    });
+    
+    // Here you would typically save the new content to the backend
+    console.log("Added new block:", newBlock);
+  };
+
+  const handleReorderBlocks = (items: any[]) => {
+    if (!page || !page.content) return;
+    
+    // Map the reordered items back to content blocks
+    const reorderedBlocks = items.map((item, index) => {
+      const originalBlock = page.content?.blocks.find((b: any) => b.id === item.id);
+      if (!originalBlock) return null;
+      
+      return {
+        ...originalBlock,
+        order: index + 1
+      };
+    }).filter(Boolean);
+    
+    setPage({
+      ...page,
+      content: {
+        ...page.content,
+        blocks: reorderedBlocks
+      }
+    });
+    
+    // Here you would typically save the reordered content to the backend
+    console.log("Reordered blocks:", reorderedBlocks);
+  };
+
   // Basic layout renderer based on page layout type
   const renderPageContent = () => {
-    const content = page.content?.blocks || [];
+    if (isEditMode) {
+      return (
+        <div className="page-content py-8">
+          {contentBlocks.length === 0 ? (
+            <div className="text-center py-12 border-2 border-dashed border-primary/20 rounded-lg">
+              <p className="text-muted-foreground mb-4">Esta página no tiene contenido.</p>
+              <SectionInsert onAddSection={handleAddBlock} />
+            </div>
+          ) : (
+            <DraggableContent
+              items={draggableItems}
+              table="page_blocks"
+              className="space-y-8"
+              onReorder={handleReorderBlocks}
+              onAddItem={handleAddBlock}
+            />
+          )}
+        </div>
+      );
+    }
     
     return (
       <div className="page-content py-8">
-        {content.length === 0 ? (
+        {contentBlocks.length === 0 ? (
           <div className="text-center text-muted-foreground py-12">
             <p>Esta página no tiene contenido.</p>
           </div>
         ) : (
           <div className="blocks-container space-y-8">
-            {content.map((block, index) => (
+            {contentBlocks.map((block: any, index: number) => (
               <div key={block.id || index} className="block">
-                {/* We would render different block types differently */}
-                <pre className="text-sm text-muted-foreground bg-muted p-4 rounded-md">
-                  {JSON.stringify(block, null, 2)}
-                </pre>
+                {block.type === 'text' && <p>{block.content}</p>}
+                {block.type === 'hero' && (
+                  <div className="bg-primary/10 p-8 rounded-lg text-center mb-8">
+                    <h2 className="text-2xl font-bold">{block.content}</h2>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -121,7 +240,18 @@ const PageRenderer: React.FC = () => {
   return (
     <div className={`page-container page-layout-${page.layout}`}>
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-6">{page.title}</h1>
+        {isEditMode ? (
+          <InlineEdit
+            table="pages"
+            id={page.id}
+            field="title"
+            value={page.title}
+            className="text-3xl font-bold mb-6"
+            placeholder="Título de la página"
+          />
+        ) : (
+          <h1 className="text-3xl font-bold mb-6">{page.title}</h1>
+        )}
         {renderPageContent()}
       </div>
     </div>

@@ -30,7 +30,7 @@ export const useEditMode = () => useContext(EditModeContext);
 export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isReorderMode, setIsReorderMode] = useState(false);
-  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(true); // Changed to true by default
   const { userRole } = useAuth();
 
   const canEdit = userRole === 'admin' || userRole === 'sistemas';
@@ -55,8 +55,8 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // Here we would check from a settings service if the edit mode is enabled
     console.log('Checking edit mode feature configuration');
     
-    // By default, we'll set it to false. In a real app, this would be loaded from the backend
-    setIsEditModeEnabled(false);
+    // By default, we'll set it to true
+    setIsEditModeEnabled(true);
   }, []);
 
   const toggleEditMode = () => {
@@ -64,7 +64,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const newValue = !isEditMode;
       setIsEditMode(newValue);
       
-      // Automatically enable reorder mode when edit mode is enabled
+      // Always enable reorder mode when edit mode is enabled
       if (newValue) {
         setIsReorderMode(true);
         toast.info(

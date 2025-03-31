@@ -30,7 +30,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
   multiline = false,
   maxLength,
   placeholder = 'Editar texto...',
-  autoSave = true,
+  autoSave = false,
 }) => {
   const { isEditMode, updateText } = useEditMode();
   const [isEditing, setIsEditing] = useState(false);
@@ -125,7 +125,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
 
   if (isEditing) {
     return (
-      <div className="inline-flex flex-col gap-2">
+      <div className="inline-flex flex-col gap-2 w-full">
         {multiline ? (
           <Textarea
             ref={inputRef as React.RefObject<HTMLTextAreaElement>}
@@ -150,34 +150,32 @@ const InlineEdit: React.FC<InlineEditProps> = ({
           />
         )}
         
-        {!autoSave && (
-          <div className="flex gap-2 justify-end">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleCancel}
-              className="h-8 px-2"
-              disabled={isSaving}
-            >
-              <X className="h-4 w-4 mr-1" /> Cancelar
-            </Button>
-            <Button 
-              variant="default" 
-              size="sm" 
-              onClick={handleSave}
-              className="h-8 px-2"
-              disabled={isSaving}
-            >
-              {isSaving ? (
-                <>Guardando...</>
-              ) : (
-                <>
-                  <Save className="h-4 w-4 mr-1" /> Guardar
-                </>
-              )}
-            </Button>
-          </div>
-        )}
+        <div className="flex gap-2 justify-end">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleCancel}
+            className="h-8 px-2"
+            disabled={isSaving}
+          >
+            <X className="h-4 w-4 mr-1" /> Cancelar
+          </Button>
+          <Button 
+            variant="default" 
+            size="sm" 
+            onClick={handleSave}
+            className="h-8 px-2"
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <>Guardando...</>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-1" /> Guardar
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     );
   }
