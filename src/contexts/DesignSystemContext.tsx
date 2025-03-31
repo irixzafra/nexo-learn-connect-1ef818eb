@@ -56,6 +56,8 @@ export interface DesignSystemContextType {
   previewTheme: (theme: ThemeConfig) => void;
   endPreview: () => void;
   isPreviewing: boolean;
+  designFeatureEnabled: boolean;
+  toggleDesignFeature: (enabled: boolean) => Promise<void>;
 }
 
 const defaultTheme: ThemeConfig = {
@@ -105,6 +107,8 @@ export const DesignSystemContext = createContext<DesignSystemContextType>({
   previewTheme: () => {},
   endPreview: () => {},
   isPreviewing: false,
+  designFeatureEnabled: true,
+  toggleDesignFeature: async () => {},
 });
 
 export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -112,9 +116,11 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [originalTheme, setOriginalTheme] = useState<ThemeConfig>(defaultTheme);
   const [isLoading, setIsLoading] = useState(true);
   const [isPreviewing, setIsPreviewing] = useState(false);
+  const [designFeatureEnabled, setDesignFeatureEnabled] = useState(true);
 
   useEffect(() => {
     loadTheme();
+    loadDesignFeatureState();
   }, []);
 
   const loadTheme = async () => {
@@ -145,6 +151,30 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
       toast.error('Error al cargar la configuración de diseño');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadDesignFeatureState = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('features_config')
+        .select('design_system_enabled')
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No data found, create default entry
+          await supabase
+            .from('features_config')
+            .insert({ id: 1, design_system_enabled: true });
+        } else {
+          throw error;
+        }
+      } else if (data) {
+        setDesignFeatureEnabled(data.design_system_enabled);
+      }
+    } catch (error) {
+      console.error('Error loading design feature state:', error);
     }
   };
 
@@ -196,6 +226,31 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
     applyThemeToDom(originalTheme);
   };
 
+  const toggleDesignFeature = async (enabled: boolean) => {
+    try {
+      setIsLoading(true);
+      
+      const { error } = await supabase
+        .from('features_config')
+        .upsert({ id: 1, design_system_enabled: enabled }, { onConflict: 'id' });
+      
+      if (error) throw error;
+      
+      setDesignFeatureEnabled(enabled);
+      
+      // Si se desactiva, cancelamos cualquier vista previa
+      if (!enabled && isPreviewing) {
+        endPreview();
+      }
+      
+    } catch (error) {
+      console.error('Error toggling design feature:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Apply theme to the DOM by updating CSS variables
   const applyThemeToDom = (theme: ThemeConfig) => {
     const root = document.documentElement;
@@ -238,6 +293,8 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
         previewTheme,
         endPreview,
         isPreviewing,
+        designFeatureEnabled,
+        toggleDesignFeature,
       }}
     >
       {children}
