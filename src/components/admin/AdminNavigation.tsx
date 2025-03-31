@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -88,7 +89,6 @@ const subMenus: Record<string, AdminSubMenuItem[]> = {
   users: [
     { id: 'list', icon: Users, label: 'Lista de Usuarios', path: '/admin/users' },
     { id: 'roles', icon: Users2, label: 'Roles y Permisos', path: '/admin/roles' },
-    { id: 'analytics', icon: BarChart3, label: 'Estadísticas', path: '/admin/users/analytics' },
   ],
   courses: [
     { id: 'list', icon: BookOpen, label: 'Todos los Cursos', path: '/admin/courses' },

@@ -1,10 +1,9 @@
 
 import React, { useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { Users, Shield, BarChart } from 'lucide-react';
+import { Users, Shield } from 'lucide-react';
 import { UsersListTab } from './components/UsersListTab';
 import { RolesManagementTab } from './components/RolesManagementTab';
-import { UserAnalyticsTab } from './components/UserAnalyticsTab';
 import { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import AdminNavTabs from '@/components/shared/AdminNavTabs';
 
@@ -27,12 +26,6 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
       label: 'Roles y Permisos',
       icon: <Shield className="h-4 w-4" />,
       content: <RolesManagementTab />
-    },
-    {
-      value: 'analytics',
-      label: 'Analíticas',
-      icon: <BarChart className="h-4 w-4" />,
-      content: <UserAnalyticsTab />
     }
   ];
 

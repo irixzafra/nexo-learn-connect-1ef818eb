@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
@@ -133,7 +134,6 @@ const AdminRoutes: React.FC = () => {
         
         {/* User Management */}
         <Route path="/users" element={<UserManagement />} />
-        <Route path="/users/analytics" element={<UserAnalyticsPage />} />
         <Route path="/roles" element={<RoleManagement />} />
         
         {/* Course Management */}

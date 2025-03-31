@@ -36,7 +36,7 @@ const AdminMenu: React.FC<AdminMenuProps> = ({
   // Estilos específicos por variante
   if (variant === 'buttons') {
     return (
-      <div className={cn("space-y-2", className)}>
+      <div className={cn("flex flex-col space-y-2", className)}>
         {items.map((item) => (
           <Link 
             key={item.href} 
@@ -89,7 +89,7 @@ const AdminMenu: React.FC<AdminMenuProps> = ({
 
   if (variant === 'sidebar') {
     return (
-      <div className={cn("space-y-1", className)}>
+      <div className={cn("flex flex-col space-y-1", className)}>
         {items.map((item) => (
           <Link
             key={item.href}

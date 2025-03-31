@@ -7,7 +7,6 @@ import {
   Settings2, 
   KeyRound, 
   Shield, 
-  School, 
   CreditCard, 
   Database, 
   History, 
@@ -53,20 +52,11 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           isCollapsed={isCollapsed}
         />
         
-        {/* Roles moved under users in the horizontal submenu */}
-        
         {/* Educación */}
         <MenuItem
           to="/admin/courses"
           icon={Library}
           label="Cursos"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/instructors"
-          icon={School}
-          label="Instructores"
           isCollapsed={isCollapsed}
         />
         
