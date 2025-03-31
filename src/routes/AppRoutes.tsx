@@ -3,6 +3,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import NotFound from '@/pages/NotFound';
 import PageRenderer from '@/features/pages/PageRenderer';
+import AdminRoutes from './AdminRoutes';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -23,7 +24,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/profile/settings" element={<div>Profile Settings Page</div>} />
       
       {/* Rutas de administración */}
-      <Route path="/admin/*" element={<div>Admin Routes</div>} />
+      <Route path="/admin/*" element={<AdminRoutes />} />
       
       {/* Dynamic page route - must be after all specific routes */}
       <Route path="/:slug" element={<PageRenderer />} />
