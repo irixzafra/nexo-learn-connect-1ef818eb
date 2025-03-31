@@ -57,11 +57,6 @@ const AllCoursesTab: React.FC = () => {
     </div>
   );
 
-  // Define the render function for CourseForm separately to fix typing issues
-  const renderCourseForm = (props: { data: Course | null; onChange: (data: Course) => void }) => (
-    <CourseForm data={props.data} onChange={props.onChange} />
-  );
-
   return (
     <div className="space-y-4">
       <div className="flex justify-end mb-4">
@@ -90,7 +85,7 @@ const AllCoursesTab: React.FC = () => {
         onSave={handleSaveCourse}
         entity={selectedCourse}
       >
-        {renderCourseForm}
+        {(props) => <CourseForm data={props.data} onChange={props.onChange} />}
       </EntityDrawer>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
