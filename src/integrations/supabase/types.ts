@@ -483,6 +483,7 @@ export type Database = {
           display_order: number | null
           duration_text: string | null
           featured_instructor: string | null
+          grants_certificate: boolean | null
           id: string
           instructor_id: string
           is_featured_on_landing: boolean | null
@@ -511,6 +512,7 @@ export type Database = {
           display_order?: number | null
           duration_text?: string | null
           featured_instructor?: string | null
+          grants_certificate?: boolean | null
           id?: string
           instructor_id: string
           is_featured_on_landing?: boolean | null
@@ -539,6 +541,7 @@ export type Database = {
           display_order?: number | null
           duration_text?: string | null
           featured_instructor?: string | null
+          grants_certificate?: boolean | null
           id?: string
           instructor_id?: string
           is_featured_on_landing?: boolean | null
@@ -594,6 +597,99 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      feature_flags: {
+        Row: {
+          config: Json | null
+          created_at: string | null
+          description: string | null
+          feature_name: string
+          id: string
+          is_enabled: boolean
+          scope: string | null
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          config?: Json | null
+          created_at?: string | null
+          description?: string | null
+          feature_name: string
+          id?: string
+          is_enabled?: boolean
+          scope?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          config?: Json | null
+          created_at?: string | null
+          description?: string | null
+          feature_name?: string
+          id?: string
+          is_enabled?: boolean
+          scope?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      features_config: {
+        Row: {
+          auto_start_onboarding: boolean | null
+          created_at: string | null
+          enable_category_management: boolean | null
+          enable_content_reordering: boolean | null
+          enable_leaderboard: boolean | null
+          enable_multi_language: boolean | null
+          enable_notifications: boolean | null
+          enable_onboarding_system: boolean | null
+          enable_role_management: boolean | null
+          enable_role_switcher: boolean | null
+          enable_test_data_generator: boolean | null
+          enable_theme_switcher: boolean | null
+          id: string
+          show_onboarding_trigger: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          auto_start_onboarding?: boolean | null
+          created_at?: string | null
+          enable_category_management?: boolean | null
+          enable_content_reordering?: boolean | null
+          enable_leaderboard?: boolean | null
+          enable_multi_language?: boolean | null
+          enable_notifications?: boolean | null
+          enable_onboarding_system?: boolean | null
+          enable_role_management?: boolean | null
+          enable_role_switcher?: boolean | null
+          enable_test_data_generator?: boolean | null
+          enable_theme_switcher?: boolean | null
+          id?: string
+          show_onboarding_trigger?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          auto_start_onboarding?: boolean | null
+          created_at?: string | null
+          enable_category_management?: boolean | null
+          enable_content_reordering?: boolean | null
+          enable_leaderboard?: boolean | null
+          enable_multi_language?: boolean | null
+          enable_notifications?: boolean | null
+          enable_onboarding_system?: boolean | null
+          enable_role_management?: boolean | null
+          enable_role_switcher?: boolean | null
+          enable_test_data_generator?: boolean | null
+          enable_theme_switcher?: boolean | null
+          id?: string
+          show_onboarding_trigger?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       follows: {
         Row: {
@@ -2040,6 +2136,15 @@ export type Database = {
         }
         Returns: number
       }
+      get_available_roles: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          name: string
+          description: string
+          is_default: boolean
+        }[]
+      }
       get_course_enrollments_with_details: {
         Args: {
           course_id_param: string
@@ -2058,9 +2163,61 @@ export type Database = {
           student_count: number
         }[]
       }
+      get_courses_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       get_dashboard_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      get_payment_statistics: {
+        Args: {
+          days_back?: number
+        }
+        Returns: Json
+      }
+      get_popular_courses: {
+        Args: {
+          limit_count?: number
+        }
+        Returns: {
+          course_id: string
+          title: string
+          enrollment_count: number
+        }[]
+      }
+      get_revenue_by_course: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          course_id: string
+          course_title: string
+          total_revenue: number
+          transaction_count: number
+        }[]
+      }
+      get_revenue_by_day: {
+        Args: {
+          days_back?: number
+        }
+        Returns: {
+          day: string
+          total_revenue: number
+          transaction_count: number
+        }[]
+      }
+      get_subscription_statistics: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      get_subscriptions_by_plan: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          plan_id: string
+          plan_name: string
+          subscriber_count: number
+          total_revenue: number
+        }[]
       }
       get_table_columns: {
         Args: {
@@ -2092,6 +2249,15 @@ export type Database = {
         Returns: {
           role: string
           count: number
+        }[]
+      }
+      get_user_roles: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: {
+          role_id: string
+          role_name: string
         }[]
       }
       is_admin: {

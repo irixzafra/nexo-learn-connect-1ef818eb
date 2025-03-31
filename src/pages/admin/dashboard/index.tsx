@@ -25,6 +25,17 @@ import { useAdminDashboardStats } from '@/features/admin/hooks/useAdminDashboard
 const AdminDashboard: React.FC = () => {
   const { stats, isLoading } = useAdminDashboardStats();
 
+  // Ensure stats has default values to prevent "undefined" errors
+  const safeStats = {
+    total_users: stats?.total_users || 0,
+    active_courses: stats?.active_courses || 0,
+    total_enrollments: stats?.total_enrollments || 0,
+    new_users_last_7_days: stats?.new_users_last_7_days || 0,
+    coursesCount: stats?.coursesCount || 0,
+    publishedCoursesCount: stats?.publishedCoursesCount || 0,
+    completionRate: stats?.completionRate || 0
+  };
+
   // Accesos rápidos ampliados con todas las páginas administrativas disponibles
   const adminQuickMenuItems = [
     {
@@ -123,28 +134,28 @@ const AdminDashboard: React.FC = () => {
         stats: [
           {
             label: "Usuarios Totales",
-            value: isLoading ? "-" : stats.total_users.toLocaleString(),
+            value: isLoading ? "-" : safeStats.total_users.toLocaleString(),
             icon: <Users className="h-5 w-5" />,
             loading: isLoading,
             color: "primary"
           },
           {
             label: "Cursos Activos",
-            value: isLoading ? "-" : stats.active_courses.toLocaleString(),
+            value: isLoading ? "-" : safeStats.active_courses.toLocaleString(),
             icon: <BookOpen className="h-5 w-5" />,
             loading: isLoading,
             color: "success"
           },
           {
             label: "Matriculaciones",
-            value: isLoading ? "-" : stats.total_enrollments.toLocaleString(),
+            value: isLoading ? "-" : safeStats.total_enrollments.toLocaleString(),
             icon: <CreditCard className="h-5 w-5" />,
             loading: isLoading,
             color: "primary"
           },
           {
             label: "Nuevos Usuarios",
-            value: isLoading ? "-" : `${stats.new_users_last_7_days} esta semana`,
+            value: isLoading ? "-" : `${safeStats.new_users_last_7_days} esta semana`,
             icon: <BarChart3 className="h-5 w-5" />,
             loading: isLoading,
             color: "warning"

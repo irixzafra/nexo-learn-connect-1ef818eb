@@ -14,6 +14,17 @@ export interface DashboardStats {
   completionRate: number;
 }
 
+// Default stats object to prevent undefined errors
+const defaultStats: DashboardStats = {
+  total_users: 0,
+  active_courses: 0,
+  total_enrollments: 0,
+  new_users_last_7_days: 0,
+  coursesCount: 0,
+  publishedCoursesCount: 0,
+  completionRate: 0
+};
+
 export const useAdminDashboardStats = () => {
   const { data: statsData, isLoading } = useQuery({
     queryKey: ["adminDashboardStats"],
@@ -25,13 +36,18 @@ export const useAdminDashboardStats = () => {
           throw error;
         }
         
-        // Asumimos que obtenemos datos básicos de la función RPC
-        // Complementamos con datos derivados
-        const basicStats = data || {
-          total_users: 0,
-          active_courses: 0,
-          total_enrollments: 0,
-          new_users_last_7_days: 0,
+        // Handle potentially null data from the RPC call
+        if (!data) {
+          console.warn('No data returned from get_dashboard_stats RPC');
+          return defaultStats;
+        }
+        
+        // Validate and sanitize the received data
+        const basicStats = {
+          total_users: data.total_users || 0,
+          active_courses: data.active_courses || 0,
+          total_enrollments: data.total_enrollments || 0,
+          new_users_last_7_days: data.new_users_last_7_days || 0,
         };
         
         // Datos derivados para AnalyticsTab
@@ -45,30 +61,15 @@ export const useAdminDashboardStats = () => {
         console.error("Error fetching admin dashboard stats:", error);
         toast.error("Error al cargar estadísticas del dashboard");
         
-        return {
-          total_users: 0,
-          active_courses: 0,
-          total_enrollments: 0,
-          new_users_last_7_days: 0,
-          coursesCount: 0,
-          publishedCoursesCount: 0,
-          completionRate: 0
-        };
+        // Return default stats on error to prevent undefined values
+        return defaultStats;
       }
     },
     refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
   });
 
   return {
-    stats: statsData || {
-      total_users: 0,
-      active_courses: 0,
-      total_enrollments: 0,
-      new_users_last_7_days: 0,
-      coursesCount: 0,
-      publishedCoursesCount: 0,
-      completionRate: 0
-    },
+    stats: statsData || defaultStats,
     isLoading
   };
 };
