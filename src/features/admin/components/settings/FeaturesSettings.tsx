@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import { useEditMode } from '@/contexts/EditModeContext';
 
 interface FeatureCategory {
   id: string;
@@ -54,6 +55,9 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
   onToggleFeature,
   isLoading = false
 }) => {
+  // Acceder al contexto de EditMode para poder actualizar el estado de la funcionalidad
+  const { setEditModeEnabled } = useEditMode();
+  
   // State for collapsible sections
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
     'basic': true,
@@ -65,12 +69,25 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
     'advanced': false
   });
 
+  // Effect to sync the edit mode enabled state with the feature toggle
+  useEffect(() => {
+    if (featuresConfig.enableEditMode !== undefined) {
+      setEditModeEnabled(featuresConfig.enableEditMode);
+    }
+  }, [featuresConfig.enableEditMode, setEditModeEnabled]);
+
   // Toggle category open/closed
   const toggleCategory = (categoryId: string) => {
     setOpenCategories(prev => ({
       ...prev,
       [categoryId]: !prev[categoryId]
     }));
+  };
+
+  // Handle toggling the edit mode feature specifically
+  const handleToggleEditMode = (value: boolean) => {
+    onToggleFeature('enableEditMode', value);
+    setEditModeEnabled(value);
   };
 
   // Define all features with categories
@@ -124,17 +141,10 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
     // Content features
     {
       id: 'enableEditMode',
-      title: 'Edición en línea',
-      description: 'Habilita la edición de contenidos directamente en la página',
+      title: 'Edición y reordenamiento en línea',
+      description: 'Habilita la edición de contenidos directamente en la página y reordenamiento mediante drag & drop',
       category: 'content',
       icon: <Edit className="h-4 w-4 text-purple-500" />
-    },
-    {
-      id: 'enableContentReordering',
-      title: 'Reordenamiento de contenido',
-      description: 'Permite reorganizar el contenido mediante drag & drop',
-      category: 'content',
-      icon: <MoveHorizontal className="h-4 w-4 text-purple-500" />
     },
     {
       id: 'enableCategoryManagement',
@@ -296,7 +306,14 @@ const FeaturesSettings: React.FC<FeaturesSettingsProps> = ({
                           <Switch
                             id={`enable-${feature.id}`}
                             checked={!!featuresConfig[feature.id]}
-                            onCheckedChange={(value) => onToggleFeature(feature.id, value)}
+                            onCheckedChange={(value) => {
+                              // Usar el manejador específico para enableEditMode
+                              if (feature.id === 'enableEditMode') {
+                                handleToggleEditMode(value);
+                              } else {
+                                onToggleFeature(feature.id, value);
+                              }
+                            }}
                             disabled={isLoading || feature.disabled}
                             className={cn(
                               feature.disabled && "opacity-50"

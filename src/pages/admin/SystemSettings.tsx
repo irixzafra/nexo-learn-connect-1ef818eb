@@ -29,19 +29,34 @@ import DataSettings from '@/features/admin/components/settings/DataSettings';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
+import { useEditMode } from '@/contexts/EditModeContext';
 
 const SystemSettings: React.FC = () => {
-  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
+  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({
+    enableEditMode: false, // Configuración inicial para edición en línea
+    enableContentReordering: false // Ya no necesitamos esta propiedad separada
+  } as FeaturesConfig);
   const [isSaving, setIsSaving] = useState(false);
   const { tab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
   const { designFeatureEnabled, toggleDesignFeature } = useDesignSystem();
+  const { setEditModeEnabled } = useEditMode();
+  
+  useEffect(() => {
+    // Sincronizar el estado de EditMode con el featuresConfig
+    setEditModeEnabled(featuresConfig.enableEditMode || false);
+  }, [featuresConfig.enableEditMode, setEditModeEnabled]);
   
   const handleToggleFeature = (feature: keyof FeaturesConfig, value: boolean) => {
     setFeaturesConfig(prev => ({
       ...prev,
       [feature]: value
     }));
+    
+    // Actualizar el estado de edición en línea si es esa característica
+    if (feature === 'enableEditMode') {
+      setEditModeEnabled(value);
+    }
     
     // Show toast for feedback
     toast.success(`Configuración actualizada: ${feature} ${value ? 'activado' : 'desactivado'}`);

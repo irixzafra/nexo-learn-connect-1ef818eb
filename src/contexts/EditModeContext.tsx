@@ -8,6 +8,8 @@ interface EditModeContextType {
   toggleEditMode: () => void;
   isReorderMode: boolean;
   toggleReorderMode: () => void;
+  isEditModeEnabled: boolean;
+  setEditModeEnabled: (enabled: boolean) => void;
   updateText: (table: string, id: string, field: string, value: string) => Promise<boolean>;
   reorderElements: (table: string, elements: { id: string; order: number }[]) => Promise<boolean>;
 }
@@ -17,6 +19,8 @@ const EditModeContext = createContext<EditModeContextType>({
   toggleEditMode: () => {},
   isReorderMode: false,
   toggleReorderMode: () => {},
+  isEditModeEnabled: false,
+  setEditModeEnabled: () => {},
   updateText: async () => false,
   reorderElements: async () => false,
 });
@@ -26,6 +30,7 @@ export const useEditMode = () => useContext(EditModeContext);
 export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isReorderMode, setIsReorderMode] = useState(false);
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
   const { userRole } = useAuth();
 
   const canEdit = userRole === 'admin' || userRole === 'sistemas';
@@ -36,6 +41,14 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setIsEditMode(false);
     }
   }, [userRole, canEdit, isEditMode]);
+
+  // Disable edit mode if the feature is disabled
+  useEffect(() => {
+    if (!isEditModeEnabled && isEditMode) {
+      setIsEditMode(false);
+      setIsReorderMode(false);
+    }
+  }, [isEditModeEnabled, isEditMode]);
 
   // Disable reorder mode when edit mode is turned off
   useEffect(() => {
@@ -48,20 +61,26 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     // Here we would check from a settings service if the edit mode and reorder mode are enabled
     console.log('Checking edit mode and reorder mode feature configuration');
+    
+    // By default, we'll set it to false. In a real app, this would be loaded from the backend
+    // We'll use the feature toggles to control this later
+    setIsEditModeEnabled(false);
   }, []);
 
   const toggleEditMode = () => {
-    if (canEdit) {
+    if (canEdit && isEditModeEnabled) {
       setIsEditMode(prev => !prev);
       // Turn off reorder mode when disabling edit mode
       if (isEditMode && isReorderMode) {
         setIsReorderMode(false);
       }
+    } else if (!isEditModeEnabled && canEdit) {
+      toast.error("La funcionalidad de edición en línea está desactivada");
     }
   };
 
   const toggleReorderMode = () => {
-    if (isEditMode && canEdit) {
+    if (isEditMode && canEdit && isEditModeEnabled) {
       setIsReorderMode(prev => !prev);
       // Mostrar tutorial o guía al activar el modo reordenación por primera vez
       if (!isReorderMode) {
@@ -119,6 +138,8 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       toggleEditMode,
       isReorderMode,
       toggleReorderMode,
+      isEditModeEnabled,
+      setEditModeEnabled,
       updateText,
       reorderElements
     }}>

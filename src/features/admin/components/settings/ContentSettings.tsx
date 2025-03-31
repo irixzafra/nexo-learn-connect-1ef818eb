@@ -55,28 +55,6 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
           
           <div className="flex items-center justify-between py-1">
             <div>
-              <h3 className="text-sm font-medium">Reordenamiento de contenido</h3>
-              <p className="text-xs text-muted-foreground">
-                Permite reordenar módulos y lecciones mediante arrastrar y soltar
-              </p>
-            </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableContentReordering"
-                checked={featuresConfig.enableContentReordering}
-                onCheckedChange={(value) => onToggleFeature('enableContentReordering', value)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
-          <Separator />
-          
-          <div className="flex items-center justify-between py-1">
-            <div>
               <h3 className="text-sm font-medium">Leaderboard de gamificación</h3>
               <p className="text-xs text-muted-foreground">
                 Activa el sistema de clasificaciones y puntos para estudiantes

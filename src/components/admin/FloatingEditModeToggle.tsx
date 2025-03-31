@@ -9,7 +9,12 @@ import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 
 const FloatingEditModeToggle: React.FC = () => {
-  const { isEditMode, toggleEditMode, isReorderMode, toggleReorderMode } = useEditMode();
+  const { isEditMode, toggleEditMode, isReorderMode, toggleReorderMode, isEditModeEnabled } = useEditMode();
+
+  // Si la funcionalidad no está habilitada, no mostrar nada
+  if (!isEditModeEnabled) {
+    return null;
+  }
 
   const handleToggleEditMode = () => {
     if (isEditMode) {

@@ -7,17 +7,17 @@ import { Edit, CheckSquare } from 'lucide-react';
 import { toast } from 'sonner';
 
 const EditModeToggle: React.FC = () => {
-  const { isEditMode, toggleEditMode } = useEditMode();
+  const { isEditMode, toggleEditMode, isEditModeEnabled } = useEditMode();
   const { userRole } = useAuth();
   
   useEffect(() => {
     // Debug information to check if the component is rendering
-    console.log('EditModeToggle rendering, userRole:', userRole);
-  }, [userRole]);
+    console.log('EditModeToggle rendering, userRole:', userRole, 'isEditModeEnabled:', isEditModeEnabled);
+  }, [userRole, isEditModeEnabled]);
   
-  // Si no eres administrador o sistemas, no muestra el botón
-  if (userRole !== 'admin' && userRole !== 'sistemas') {
-    console.log('Not showing edit button because userRole is not admin or sistemas:', userRole);
+  // No mostrar el botón si no es admin/sistemas o si la funcionalidad está desactivada
+  if ((userRole !== 'admin' && userRole !== 'sistemas') || !isEditModeEnabled) {
+    console.log('Not showing edit button because userRole is not admin/sistemas or feature is disabled');
     return null;
   }
 
