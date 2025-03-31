@@ -33,17 +33,9 @@ import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
 const SystemSettings: React.FC = () => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
   const [isSaving, setIsSaving] = useState(false);
-  const [tabNavigationEnabled, setTabNavigationEnabled] = useState(true);
   const { tab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
   const { designFeatureEnabled, toggleDesignFeature } = useDesignSystem();
-  
-  useEffect(() => {
-    const storedValue = localStorage.getItem('tabNavigationEnabled');
-    if (storedValue !== null) {
-      setTabNavigationEnabled(storedValue === 'true');
-    }
-  }, []);
   
   const handleToggleFeature = (feature: keyof FeaturesConfig, value: boolean) => {
     setFeaturesConfig(prev => ({

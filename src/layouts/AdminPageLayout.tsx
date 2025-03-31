@@ -68,12 +68,17 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
           )}
 
           {tabs && tabs.length > 0 ? (
-            <div className="bg-muted/30 px-0 py-1 border-b">
-              <AdminNavTabs
-                tabs={tabs}
-                defaultValue={defaultTabValue || tabs[0]?.value}
-              />
-            </div>
+            <>
+              <div className="bg-muted/30 px-0 py-1 border-b">
+                <AdminNavTabs
+                  tabs={tabs}
+                  defaultValue={defaultTabValue || tabs[0]?.value}
+                />
+              </div>
+              <div className="px-4">
+                {children}
+              </div>
+            </>
           ) : (
             <Card className="p-6 shadow-sm mx-4">{children}</Card>
           )}

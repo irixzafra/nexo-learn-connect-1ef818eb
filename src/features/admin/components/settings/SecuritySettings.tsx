@@ -54,28 +54,6 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
           
           <div className="flex items-center justify-between py-2">
             <div>
-              <h3 className="text-base font-medium">Registro con redes sociales</h3>
-              <p className="text-sm text-muted-foreground">
-                Permite iniciar sesión con Google, Facebook, etc.
-              </p>
-            </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableSocial"
-                checked={featuresConfig.enableSocial}
-                onCheckedChange={(value) => onToggleFeature('enableSocial', value)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
-          <Separator />
-          
-          <div className="flex items-center justify-between py-2">
-            <div>
               <h3 className="text-base font-medium">Bloqueo de cuentas</h3>
               <p className="text-sm text-muted-foreground">
                 Bloquea la cuenta después de varios intentos fallidos
@@ -98,9 +76,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
           
           <div className="flex items-center justify-between py-2">
             <div>
-              <h3 className="text-base font-medium">Políticas de contraseñas</h3>
+              <h3 className="text-base font-medium">Registros de auditoría</h3>
               <p className="text-sm text-muted-foreground">
-                Establece requisitos mínimos para contraseñas seguras
+                Mantiene un registro detallado de todas las actividades
               </p>
             </div>
             <div className="flex items-center">
@@ -108,10 +86,31 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
                 <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
               )}
               <Switch
-                id="enablePasswordPolicy"
-                checked={featuresConfig.enablePasswordPolicy}
-                onCheckedChange={(value) => onToggleFeature('enablePasswordPolicy', value)}
-                disabled={isLoading}
+                id="enableAuditLog"
+                checked={false}
+                disabled={true}
+              />
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <h3 className="text-base font-medium">Cifrado de datos sensibles</h3>
+              <p className="text-sm text-muted-foreground">
+                Protege información crítica mediante cifrado avanzado
+              </p>
+              <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableDataEncryption"
+                checked={false}
+                disabled={true}
               />
             </div>
           </div>
