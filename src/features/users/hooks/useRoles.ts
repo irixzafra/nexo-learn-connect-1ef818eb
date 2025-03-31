@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
-import { toast } from 'sonner';
 
 export interface Role {
   id: string;
@@ -10,29 +9,40 @@ export interface Role {
   description: string | null;
   is_default: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export function useRoles() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
   
   const fetchRoles = async () => {
     try {
       setIsLoading(true);
-      
-      // Usar la función RPC para obtener los roles
-      const { data, error } = await supabase.rpc('get_available_roles');
+      const { data, error } = await supabase
+        .from('roles')
+        .select('*')
+        .order('name', { ascending: true });
       
       if (error) {
         console.error('Error fetching roles:', error);
-        toast.error("No se pudieron cargar los roles");
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudieron cargar los roles.",
+        });
         return;
       }
       
       setRoles(data || []);
     } catch (error) {
       console.error('Error in fetchRoles:', error);
-      toast.error("Ocurrió un error al obtener los roles");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al obtener los roles.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -44,25 +54,39 @@ export function useRoles() {
 
   const createRole = async (name: string, description: string) => {
     try {
+      setIsLoading(true);
       const { data, error } = await supabase
         .from('roles')
         .insert([{ name, description }])
-        .select()
-        .single();
-      
+        .select();
+
       if (error) {
         console.error('Error creating role:', error);
-        toast.error("No se pudo crear el rol");
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo crear el rol.",
+        });
         return null;
       }
+
+      setRoles([...roles, data[0]]);
+      toast({
+        title: "Rol creado",
+        description: `El rol "${name}" ha sido creado con éxito.`,
+      });
       
-      setRoles([...roles, data as Role]);
-      toast.success(`Rol ${name} creado exitosamente`);
-      return data;
+      return data[0];
     } catch (error) {
       console.error('Error in createRole:', error);
-      toast.error("Ocurrió un error al crear el rol");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al crear el rol.",
+      });
       return null;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -72,64 +96,81 @@ export function useRoles() {
         .from('roles')
         .update({ name, description })
         .eq('id', id);
-      
+
       if (error) {
         console.error('Error updating role:', error);
-        toast.error("No se pudo actualizar el rol");
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo actualizar el rol.",
+        });
         return false;
       }
+
+      setRoles(
+        roles.map(role => (role.id === id ? { ...role, name, description } : role))
+      );
       
-      setRoles(roles.map(role => 
-        role.id === id
-          ? { ...role, name, description }
-          : role
-      ));
+      toast({
+        title: "Rol actualizado",
+        description: `El rol "${name}" ha sido actualizado con éxito.`,
+      });
       
-      toast.success(`Rol actualizado exitosamente`);
       return true;
     } catch (error) {
       console.error('Error in updateRole:', error);
-      toast.error("Ocurrió un error al actualizar el rol");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al actualizar el rol.",
+      });
       return false;
     }
   };
 
   const deleteRole = async (id: string) => {
     try {
-      // Verificar si hay usuarios con este rol
-      const { data: users, error: usersError } = await supabase
-        .from('user_roles')
-        .select('*')
-        .eq('role_id', id);
-      
-      if (usersError) {
-        console.error('Error checking users with role:', usersError);
-        toast.error("No se pudo verificar si hay usuarios con este rol");
+      // Check if this is a default role
+      const roleToDelete = roles.find(r => r.id === id);
+      if (roleToDelete?.is_default) {
+        toast({
+          variant: "destructive",
+          title: "Operación no permitida",
+          description: "No se pueden eliminar roles predeterminados del sistema.",
+        });
         return false;
       }
-      
-      if (users && users.length > 0) {
-        toast.error(`No se puede eliminar el rol porque hay ${users.length} usuarios asociados a él`);
-        return false;
-      }
-      
+
       const { error } = await supabase
         .from('roles')
         .delete()
         .eq('id', id);
-      
+
       if (error) {
         console.error('Error deleting role:', error);
-        toast.error("No se pudo eliminar el rol");
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo eliminar el rol.",
+        });
         return false;
       }
-      
+
       setRoles(roles.filter(role => role.id !== id));
-      toast.success("Rol eliminado exitosamente");
+      
+      toast({
+        title: "Rol eliminado",
+        description: "El rol ha sido eliminado con éxito.",
+      });
+      
       return true;
     } catch (error) {
       console.error('Error in deleteRole:', error);
-      toast.error("Ocurrió un error al eliminar el rol");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al eliminar el rol.",
+      });
       return false;
     }
   };

@@ -11,12 +11,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Settings, BookOpen, ArrowLeftRight } from 'lucide-react';
+import { LogOut, User, Settings, BookOpen, ArrowLeftRight, UserCog, Shield, Terminal, Ghost } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { toast } from 'sonner';
 
 interface UserInfoDisplayProps {
   viewAsRole: UserRoleType | 'current';
@@ -42,96 +41,109 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
 
   const handleLogout = async () => {
     await logout();
-    toast.success('Sesión cerrada correctamente');
     navigate('/');
   };
 
-  // Verifica si estamos viendo como otro rol
+  const getRoleBadgeVariant = (role?: UserRoleType) => {
+    switch (role) {
+      case 'admin':
+        return 'default';
+      case 'instructor':
+        return 'secondary';
+      case 'sistemas':
+        return 'destructive';
+      case 'anonimo':
+        return 'outline';
+      case 'student':
+        return 'outline';
+      default:
+        return 'outline';
+    }
+  };
+
+  const getRoleIcon = (role?: UserRoleType) => {
+    switch (role) {
+      case 'admin':
+        return <Shield className="h-4 w-4" />;
+      case 'instructor':
+        return <UserCog className="h-4 w-4" />;
+      case 'sistemas':
+        return <Terminal className="h-4 w-4" />;
+      case 'anonimo':
+        return <Ghost className="h-4 w-4" />;
+      case 'student':
+        return <User className="h-4 w-4" />;
+      default:
+        return <User className="h-4 w-4" />;
+    }
+  };
+
   const isViewingAsOtherRole = viewAsRole !== 'current' && viewAsRole !== effectiveUserRole;
 
   return user ? (
-    <div className="flex items-center gap-2">
-      {/* Logout direct button */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="relative h-9 w-9 rounded-full text-red-500 hover:bg-red-100 hover:text-red-600"
-            onClick={handleLogout}
-          >
-            <LogOut className="h-5 w-5" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          <p>Cerrar sesión</p>
-        </TooltipContent>
-      </Tooltip>
-
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full relative">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={profile?.avatar_url} alt={profile?.full_name || 'User'} />
-                  <AvatarFallback>{getUserInitials()}</AvatarFallback>
-                </Avatar>
-                {isViewingAsOtherRole && (
-                  <span className="absolute -bottom-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                    <ArrowLeftRight className="h-3 w-3" />
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={profile?.avatar_url} alt={profile?.full_name || 'User'} />
+                <AvatarFallback>{getUserInitials()}</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel className="flex items-center gap-2">
+              <span>{profile?.full_name || 'Usuario'}</span>
+              <Badge variant={getRoleBadgeVariant(toUserRoleType(userRole || ''))}>
+                <div className="flex items-center gap-1">
+                  {getRoleIcon(toUserRoleType(userRole || ''))}
+                  <span className="capitalize truncate">
+                    {toUserRoleType(userRole || '')}
                   </span>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-popover">
-              <DropdownMenuLabel>{profile?.full_name || 'Usuario'}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate('/profile')} className="cursor-pointer">
-                <User className="mr-2 h-4 w-4" />
-                <span>Perfil</span>
+                </div>
+              </Badge>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate('/profile')}>
+              <User className="mr-2 h-4 w-4" />
+              <span>Perfil</span>
+            </DropdownMenuItem>
+            
+            {effectiveUserRole === 'instructor' && (
+              <DropdownMenuItem onClick={() => navigate('/instructor/courses')}>
+                <BookOpen className="mr-2 h-4 w-4" />
+                <span>Mis cursos</span>
               </DropdownMenuItem>
-              
-              {effectiveUserRole === 'instructor' && (
-                <DropdownMenuItem onClick={() => navigate('/instructor/courses')} className="cursor-pointer">
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  <span>Mis cursos</span>
-                </DropdownMenuItem>
-              )}
-              
-              <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Configuración</span>
-              </DropdownMenuItem>
-              
-              <DropdownMenuSeparator />
-              
-              {/* Opción para volver al rol original - visible cuando se está viendo como otro rol */}
-              {isViewingAsOtherRole && (
-                <DropdownMenuItem 
-                  onClick={() => {
-                    onRoleChange(effectiveUserRole);
-                    toast.success(`Volviendo a tu rol original: ${effectiveUserRole}`);
-                  }}
-                  className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary font-medium cursor-pointer"
-                >
+            )}
+            
+            <DropdownMenuItem onClick={() => navigate('/settings')}>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Configuración</span>
+            </DropdownMenuItem>
+            
+            {isViewingAsOtherRole && effectiveUserRole === 'admin' && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => onRoleChange(toUserRoleType(userRole as string))}>
                   <ArrowLeftRight className="mr-2 h-4 w-4" />
                   <span>Volver a mi rol</span>
                 </DropdownMenuItem>
-              )}
-              
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 cursor-pointer font-medium">
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Cerrar sesión</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TooltipTrigger>
-        <TooltipContent side="left">
-          <p>Mi perfil</p>
-        </TooltipContent>
-      </Tooltip>
-    </div>
+              </>
+            )}
+            
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Cerrar sesión</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TooltipTrigger>
+      <TooltipContent side="left">
+        <p>Mi perfil</p>
+      </TooltipContent>
+    </Tooltip>
   ) : null;
 };
 

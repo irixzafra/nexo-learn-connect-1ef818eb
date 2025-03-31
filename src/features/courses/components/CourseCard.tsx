@@ -17,21 +17,17 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
     id,
     title = 'Título del curso',
     category = 'Categoría',
-    instructor_id = 'instructor-id',
+    instructor = 'Instructor',
     rating = 0,
     student_count = 0,
     duration_text = '0h',
     cover_image_url = '/placeholder.svg',
-    tags = [], // Ensure tags has a default empty array
+    tags = [],
     slug
   } = course;
 
   // Use slug for the URL if available, otherwise fallback to ID
   const courseUrl = slug ? `/cursos/${slug}` : `/courses/${id}`;
-
-  // This is a simplified version of instructor name display
-  // In a real app, you'd fetch the instructor details based on instructor_id
-  const instructorName = "Instructor"; // Placeholder - would be replaced with actual data
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-all cursor-pointer h-full">
@@ -50,7 +46,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
           <div className="space-y-1">
             <h3 className="font-medium line-clamp-2">{title}</h3>
             <p className="text-sm text-muted-foreground">
-              {instructorName}
+              {typeof instructor === 'string' ? instructor : instructor?.full_name}
             </p>
           </div>
           
@@ -77,7 +73,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
             )}
           </div>
           
-          {(category || (tags && tags.length > 0)) && (
+          {(category || tags.length > 0) && (
             <div className="flex flex-wrap gap-1 mt-2">
               {category && (
                 <Badge variant="outline" className="text-xs">
@@ -85,13 +81,13 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showContinueButt
                 </Badge>
               )}
               
-              {tags && tags.length > 0 && tags.slice(0, 2).map((tag, index) => (
+              {tags.slice(0, 2).map((tag, index) => (
                 <Badge key={index} variant="secondary" className="text-xs">
                   {tag}
                 </Badge>
               ))}
               
-              {tags && tags.length > 2 && (
+              {tags.length > 2 && (
                 <Badge variant="secondary" className="text-xs">
                   +{tags.length - 2}
                 </Badge>

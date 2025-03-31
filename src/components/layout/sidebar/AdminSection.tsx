@@ -3,13 +3,20 @@ import React from 'react';
 import { SidebarGroup } from './SidebarGroup';
 import { MenuItem } from './MenuItems';
 import { 
-  LayoutDashboard, 
+  BarChart3, 
   Users, 
   Settings,
   BookOpen,
+  School,
+  Shield,
+  KeyRound,
   CreditCard,
   Database,
-  Shield
+  History,
+  FileText,
+  Folder,
+  Route,
+  LineChart
 } from 'lucide-react';
 
 interface AdminSectionProps {
@@ -25,20 +32,29 @@ export const AdminSection: React.FC<AdminSectionProps> = ({ expanded, onToggle }
       isExpanded={expanded} 
       onToggle={onToggle}
     >
-      {/* Dashboard */}
-      <MenuItem to="/admin/dashboard" icon={LayoutDashboard} label="Dashboard" />
+      <MenuItem to="/admin/dashboard" icon={BarChart3} label="Dashboard" />
       
-      {/* Usuarios */}
+      {/* Gestión de usuarios */}
       <MenuItem to="/admin/users" icon={Users} label="Usuarios" />
+      <MenuItem to="/admin/roles" icon={KeyRound} label="Roles y Permisos" />
       
-      {/* Cursos */}
+      {/* Gestión educativa */}
       <MenuItem to="/admin/courses" icon={BookOpen} label="Cursos" />
+      <MenuItem to="/admin/instructors" icon={School} label="Instructores" />
+      <MenuItem to="/admin/learning-paths" icon={Route} label="Rutas de Aprendizaje" />
       
-      {/* Finanzas */}
-      <MenuItem to="/admin/finanzas" icon={CreditCard} label="Finanzas" />
+      {/* Gestión de contenido */}
+      <MenuItem to="/admin/content" icon={Folder} label="Contenido" />
       
-      {/* Datos */}
-      <MenuItem to="/admin/test-data" icon={Database} label="Datos" />
+      {/* Gestión de pagos */}
+      <MenuItem to="/admin/billing" icon={CreditCard} label="Facturación" />
+      
+      {/* Datos y configuración */}
+      <MenuItem to="/admin/test-data" icon={Database} label="Datos de Prueba" />
+      <MenuItem to="/admin/audit-log" icon={History} label="Auditoría" />
+      
+      {/* Análiticas */}
+      <MenuItem to="/admin/analytics" icon={LineChart} label="Analíticas" />
       
       {/* Configuración */}
       <MenuItem to="/admin/settings" icon={Settings} label="Configuración" />

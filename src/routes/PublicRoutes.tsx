@@ -68,8 +68,6 @@ const PublicRoutes: React.FC = () => {
           </div>
         </AppLayout>
       } />
-      
-      {/* Usamos la página NotFound centralizada */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

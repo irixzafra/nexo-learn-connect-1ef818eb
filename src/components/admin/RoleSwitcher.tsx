@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { 
@@ -10,21 +10,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Check, ArrowLeftRight } from 'lucide-react';
+import { Check, UserCog, ArrowLeftRight, Shield, User, Terminal, Ghost, Users } from 'lucide-react';
+import { RoleIndicator } from '@/components/layout/header/RoleIndicator';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { supabase } from '@/lib/supabase';
 
 interface RoleSwitcherProps {
   onChange?: (role: UserRoleType) => void;
   currentViewRole: UserRoleType | 'current';
-}
-
-interface DbRole {
-  id: string;
-  name: string;
-  description: string | null;
-  is_default: boolean;
 }
 
 export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ 
@@ -32,36 +25,11 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   currentViewRole
 }) => {
   const { userRole } = useAuth();
-  const [availableRoles, setAvailableRoles] = useState<DbRole[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   
   // Solo los administradores pueden cambiar roles
   if (userRole !== 'admin') {
     return null;
   }
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      setIsLoading(true);
-      try {
-        // Usar la función RPC que creamos
-        const { data, error } = await supabase.rpc('get_available_roles');
-        
-        if (error) {
-          console.error('Error fetching roles:', error);
-          return;
-        }
-        
-        setAvailableRoles(data || []);
-      } catch (error) {
-        console.error('Error in fetchRoles:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchRoles();
-  }, []);
 
   const getEffectiveRole = () => {
     if (currentViewRole === 'current') return toUserRoleType(userRole as string);
@@ -71,97 +39,108 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   const effectiveRole = getEffectiveRole();
   
   const handleRoleChange = (role: UserRoleType | 'current') => {
-    console.log("RoleSwitcher: handleRoleChange called with role:", role);
-    
     if (onChange) {
       if (role === 'current') {
-        const actualRole = toUserRoleType(userRole as string);
-        onChange(actualRole);
-        toast.success(`Volviendo a tu rol actual: ${getRoleName(actualRole)}`);
+        onChange(toUserRoleType(userRole as string));
+        toast.success(`Volviendo a tu rol original: ${getRoleLabel(toUserRoleType(userRole as string))}`);
       } else {
         onChange(role);
-        toast.success(`Viendo como: ${getRoleName(role)}`);
+        toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);
       }
     }
   };
 
-  // Nombre legible para cada rol
-  const getRoleName = (role: UserRoleType) => {
+  const getRoleIcon = (role: UserRoleType) => {
     switch (role) {
-      case 'admin': return 'Administrador';
-      case 'instructor': return 'Instructor';
-      case 'student': return 'Estudiante';
-      case 'moderator': return 'Moderador';
-      case 'content_creator': return 'Creador de contenido';
-      case 'sistemas': return 'Sistemas';
-      case 'guest': return 'Invitado';
-      case 'beta_tester': return 'Beta Tester';
-      case 'anonimo': return 'Anónimo';
-      default: return role;
+      case 'admin':
+        return <Shield className="h-4 w-4" />;
+      case 'instructor':
+        return <UserCog className="h-4 w-4 text-amber-500" />;
+      case 'sistemas':
+        return <Terminal className="h-4 w-4 text-blue-500" />;
+      case 'anonimo':
+        return <Ghost className="h-4 w-4" />;
+      case 'student':
+      default:
+        return <User className="h-4 w-4 text-emerald-500" />;
     }
   };
 
-  // Determinar si estamos viendo como otro rol
+  const getRoleLabel = (role: UserRoleType) => {
+    switch (role) {
+      case 'admin':
+        return 'Administrador';
+      case 'instructor':
+        return 'Instructor';
+      case 'student':
+        return 'Estudiante';
+      case 'sistemas':
+        return 'Sistemas';
+      case 'anonimo':
+        return 'Anónimo';
+      default:
+        return role;
+    }
+  };
+
+  // Roles disponibles para vista previa
+  const availableRoles: UserRoleType[] = ['admin', 'instructor', 'student', 'sistemas', 'anonimo'];
+  
   const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== toUserRoleType(userRole as string);
 
   return (
-    <div className="px-3 mb-2">
-      <DropdownMenu>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant={isViewingAsOtherRole ? "outline" : "outline"}
-                size="sm" 
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  isViewingAsOtherRole && "bg-red-100 text-red-600 border-red-200 hover:bg-red-200 hover:text-red-700"
-                )}
-              >
-                <ArrowLeftRight className="h-4 w-4 mr-2" />
-                <span className="flex-1 truncate">
-                  {isViewingAsOtherRole ? `Viendo como: ${getRoleName(effectiveRole)}` : `Ver como: ${getRoleName(effectiveRole)}`}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Cambiar perspectiva de visualización</p>
-          </TooltipContent>
-        </Tooltip>
-        <DropdownMenuContent className="w-56" align="start">
-          <DropdownMenuItem 
-            onClick={() => handleRoleChange('current')}
-            className="flex items-center"
-          >
-            {currentViewRole === 'current' && <Check className="h-4 w-4 mr-2" />}
-            <span className="ml-6">Tu rol actual</span>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          
-          {/* Lista de roles disponibles desde la base de datos */}
-          {isLoading ? (
-            <DropdownMenuItem disabled>Cargando roles...</DropdownMenuItem>
-          ) : (
-            availableRoles.map(role => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 rounded-full"
+            >
+              <Users className="h-4 w-4" />
+              <span className="sr-only">Cambiar vista de rol</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+              Vista previa como:
+            </div>
+            
+            {availableRoles.map((role) => (
               <DropdownMenuItem 
-                key={role.id}
-                onClick={() => handleRoleChange(role.name as UserRoleType)}
+                key={role}
+                onSelect={() => handleRoleChange(role)}
+                className="flex items-center gap-2 cursor-pointer"
               >
-                {effectiveRole === role.name && <Check className="h-4 w-4 mr-2" />}
-                <div className="flex items-center ml-2">
-                  <span>{role.name}</span>
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    {getRoleIcon(role)}
+                    <span>{getRoleLabel(role)}</span>
+                  </div>
+                  {currentViewRole === role && <Check className="h-4 w-4" />}
                 </div>
               </DropdownMenuItem>
-            ))
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+            ))}
+            
+            {isViewingAsOtherRole && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onSelect={() => handleRoleChange('current')}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <ArrowLeftRight className="h-4 w-4 mr-2" />
+                  <span>Volver a mi rol ({getRoleLabel(toUserRoleType(userRole as string))})</span>
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        <p>Vista previa como otro rol</p>
+      </TooltipContent>
+    </Tooltip>
   );
-};
-
-// Helper function that I forgot to import
-const cn = (...classes: (string | undefined | null | false | 0)[]) => {
-  return classes.filter(Boolean).join(' ');
 };

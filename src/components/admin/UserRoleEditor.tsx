@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { UserRoleType, asUserRoleType } from '@/types/auth';
 import { supabase } from '@/lib/supabase';
 import { 
@@ -13,12 +13,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from '@/components/ui/use-toast';
 import { UserCog, Shield, CheckCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-
-interface RoleOption {
-  id: string;
-  name: string;
-  description: string | null;
-}
 
 interface UserRoleEditorProps {
   userId: string;
@@ -36,31 +30,7 @@ const UserRoleEditor: React.FC<UserRoleEditorProps> = ({
   const [selectedRole, setSelectedRole] = useState<UserRoleType>(currentRole);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [availableRoles, setAvailableRoles] = useState<RoleOption[]>([]);
   const { toast } = useToast();
-  
-  useEffect(() => {
-    // Cargar los roles disponibles desde la base de datos
-    const fetchRoles = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('roles')
-          .select('id, name, description')
-          .order('name');
-          
-        if (error) {
-          console.error('Error fetching roles:', error);
-          return;
-        }
-        
-        setAvailableRoles(data || []);
-      } catch (error) {
-        console.error('Error loading roles:', error);
-      }
-    };
-    
-    fetchRoles();
-  }, []);
   
   const handleRoleChange = async () => {
     if (selectedRole === currentRole) {
@@ -71,8 +41,7 @@ const UserRoleEditor: React.FC<UserRoleEditorProps> = ({
     setIsSuccess(false);
     
     try {
-      // 1. Actualizar el rol en la tabla profiles (para compatibilidad)
-      const { error: profileError } = await supabase
+      const { error } = await supabase
         .from('profiles')
         .update({ 
           role: selectedRole,
@@ -80,44 +49,14 @@ const UserRoleEditor: React.FC<UserRoleEditorProps> = ({
         })
         .eq('id', userId);
       
-      if (profileError) {
-        console.error('Error al actualizar el rol en el perfil:', profileError);
-        throw profileError;
-      }
-      
-      // 2. Buscar el ID del rol seleccionado
-      const { data: roleData, error: roleError } = await supabase
-        .from('roles')
-        .select('id')
-        .eq('name', selectedRole)
-        .single();
-        
-      if (roleError || !roleData) {
-        console.error('Error al buscar el rol:', roleError);
-        throw roleError || new Error('No se encontró el rol');
-      }
-      
-      // 3. Eliminar los roles actuales del usuario
-      const { error: deleteError } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', userId);
-        
-      if (deleteError) {
-        console.error('Error al eliminar roles actuales:', deleteError);
-      }
-      
-      // 4. Asignar el nuevo rol
-      const { error: insertError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role_id: roleData.id
+      if (error) {
+        console.error('Error al actualizar el rol:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo actualizar el rol del usuario.",
         });
-        
-      if (insertError) {
-        console.error('Error al asignar el nuevo rol:', insertError);
-        throw insertError;
+        return;
       }
       
       toast({
@@ -172,15 +111,21 @@ const UserRoleEditor: React.FC<UserRoleEditorProps> = ({
               </div>
             </SelectTrigger>
             <SelectContent>
-              {availableRoles.map(role => (
-                <SelectItem key={role.id} value={role.name}>
-                  <div className="flex items-center gap-2">
-                    {role.name === 'admin' && <Shield className="h-4 w-4" />}
-                    {role.name === 'instructor' && <UserCog className="h-4 w-4" />}
-                    <span>{role.name}</span>
-                  </div>
-                </SelectItem>
-              ))}
+              <SelectItem value="admin">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  <span>Administrador</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="instructor">
+                <div className="flex items-center gap-2">
+                  <UserCog className="h-4 w-4" />
+                  <span>Instructor</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="student">
+                <span>Estudiante</span>
+              </SelectItem>
             </SelectContent>
           </Select>
           

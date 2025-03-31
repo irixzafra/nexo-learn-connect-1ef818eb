@@ -5,10 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings, User, ArrowLeftRight } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { toast } from 'sonner';
 
 interface SidebarFooterContentProps {
   viewAsRole: UserRoleType | 'current';
@@ -19,7 +17,7 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
   viewAsRole,
   onRoleChange
 }) => {
-  const { user, profile, logout, userRole } = useAuth();
+  const { user, profile, logout } = useAuth();
   const navigate = useNavigate();
   
   // Formato para iniciales del avatar
@@ -37,22 +35,10 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
     try {
       await logout();
       navigate('/auth/login');
-      toast.success("Sesión cerrada exitosamente");
     } catch (error) {
       console.error('Error durante el cierre de sesión:', error);
-      toast.error("Error al cerrar sesión");
     }
   };
-  
-  const handleRoleChange = (newRole: UserRoleType) => {
-    console.log("SidebarFooterContent: handleRoleChange called with role:", newRole);
-    onRoleChange(newRole);
-    toast.success(`Cambiando a rol: ${newRole}`);
-  };
-
-  // Verificar si estamos viendo como otro rol
-  const effectiveUserRole = toUserRoleType(userRole as string);
-  const isViewingAsOtherRole = viewAsRole !== 'current' && viewAsRole !== effectiveUserRole;
   
   return (
     <div className="flex flex-col gap-4">
@@ -60,20 +46,8 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
       {user && profile?.role === 'admin' && (
         <RoleSwitcher 
           currentViewRole={viewAsRole} 
-          onChange={handleRoleChange} 
+          onChange={onRoleChange} 
         />
-      )}
-      
-      {/* Botón para volver al rol original - visible sólo cuando se está viendo como otro rol */}
-      {isViewingAsOtherRole && (
-        <Button
-          variant="outline"
-          className="w-full bg-red-100 text-red-600 border-red-200 hover:bg-red-200 hover:text-red-700 font-medium"
-          onClick={() => onRoleChange(effectiveUserRole)}
-        >
-          <ArrowLeftRight className="mr-2 h-4 w-4" />
-          <span>Volver a mi rol</span>
-        </Button>
       )}
       
       {/* Info de Usuario */}
@@ -94,56 +68,22 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
         </div>
         
         <div className="flex items-center gap-1">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/profile')}
-                className="h-8 w-8"
-                aria-label="Perfil de usuario"
-              >
-                <User className="h-4 w-4 text-primary" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>Perfil</p>
-            </TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/settings')}
-                className="h-8 w-8"
-                aria-label="Configuración"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>Configuración</p>
-            </TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLogout}
-                className="h-8 w-8"
-                aria-label="Cerrar sesión"
-              >
-                <LogOut className="h-4 w-4 text-red-500" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>Cerrar sesión</p>
-            </TooltipContent>
-          </Tooltip>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/profile')}
+            className="h-8 w-8"
+          >
+            <Settings className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleLogout}
+            className="h-8 w-8"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>

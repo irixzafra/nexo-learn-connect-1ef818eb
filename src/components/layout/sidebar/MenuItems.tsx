@@ -1,19 +1,21 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { LucideIcon } from 'lucide-react';
+import { useLocation, Link } from 'react-router-dom';
+import { 
+  SidebarMenuButton,
+  SidebarMenuItem
+} from '@/components/ui/sidebar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { toast } from 'sonner';
 
 interface MenuItemProps {
-  to?: string;
-  icon: LucideIcon;
+  to: string;
+  icon: React.ElementType;
   label: string;
-  badge?: number;
+  badge?: string | number;
+  disabled?: boolean;
   isCollapsed?: boolean;
-  onClick?: () => void;
-  className?: string;
 }
 
 export const MenuItem: React.FC<MenuItemProps> = ({ 
@@ -21,94 +23,70 @@ export const MenuItem: React.FC<MenuItemProps> = ({
   icon: Icon, 
   label, 
   badge, 
-  isCollapsed = false,
-  onClick,
-  className = ""
+  disabled = false,
+  isCollapsed = false
 }) => {
-  const content = (
-    <>
-      <Icon className="h-5 w-5 shrink-0" />
-      {!isCollapsed && <span className="ml-2">{label}</span>}
-      {badge !== undefined && badge > 0 && !isCollapsed && (
-        <Badge variant="destructive" className="ml-auto">
-          {badge}
-        </Badge>
-      )}
-      {badge !== undefined && badge > 0 && isCollapsed && (
-        <Badge 
-          variant="destructive" 
-          className="absolute top-0 right-0 h-5 w-5 p-0 flex items-center justify-center text-xs"
-        >
-          {badge}
-        </Badge>
-      )}
-    </>
-  );
+  const location = useLocation();
   
-  // Si hay onClick, usar un botón
-  if (onClick) {
-    const buttonContent = (
-      <button
-        onClick={onClick}
-        className={cn(
-          "flex items-center px-3 py-2 rounded-md transition-colors relative w-full text-left",
-          "hover:bg-accent/50",
-          className
-        )}
-      >
-        {content}
-      </button>
-    );
-    
-    return isCollapsed ? (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="relative">
-            {buttonContent}
-          </div>
-        </TooltipTrigger>
-        <TooltipContent side="right">{label}</TooltipContent>
-      </Tooltip>
-    ) : buttonContent;
-  }
-  
-  // Si hay to, usar un NavLink
-  if (to) {
-    const linkContent = (
-      <NavLink
-        to={to}
-        className={({ isActive }) =>
-          cn(
-            "flex items-center px-3 py-2 rounded-md transition-colors relative",
-            isActive ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
-            className
-          )
-        }
-      >
-        {content}
-      </NavLink>
-    );
-    
-    return isCollapsed ? (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="relative">
-            {linkContent}
-          </div>
-        </TooltipTrigger>
-        <TooltipContent side="right">{label}</TooltipContent>
-      </Tooltip>
-    ) : linkContent;
-  }
-  
-  // Si no hay to ni onClick, mostrar solo el contenido
+  // Verificar si una ruta está activa (actual o sus subrutas)
+  const isRouteActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  const isActive = isRouteActive(to);
+
   return (
-    <div className={cn(
-      "flex items-center px-3 py-2 rounded-md transition-colors relative",
-      "hover:bg-accent/50",
-      className
-    )}>
-      {content}
-    </div>
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild disabled={disabled}>
+        <Link 
+          to={disabled ? "#" : to} 
+          className={cn(
+            "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-gray-600 dark:text-gray-300 font-medium text-[15px] font-inter transition-all duration-200",
+            isActive ? 
+              "bg-[#E5E7EB] text-gray-900 dark:bg-gray-700 dark:text-white border-l-[3px] border-l-[#0E90F9] pl-[calc(0.75rem-3px)]" : 
+              "hover:bg-[#F3F4F6] dark:hover:bg-gray-800",
+            disabled && "opacity-60 cursor-not-allowed text-[#9CA3AF] dark:text-gray-500 hover:bg-transparent dark:hover:bg-transparent",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          )}
+          onClick={(e) => {
+            if (disabled) {
+              e.preventDefault();
+              toast.info("Esta funcionalidad estará disponible próximamente");
+            }
+          }}
+          aria-current={isActive ? "page" : undefined}
+          aria-disabled={disabled}
+          role="menuitem"
+          tabIndex={disabled ? -1 : 0}
+        >
+          <span className="flex items-center gap-3">
+            <Icon 
+              className={cn(
+                "h-5 w-5 flex-shrink-0", 
+                isActive ? 
+                  "text-gray-900 dark:text-white" : 
+                  "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white",
+                disabled && "text-[#9CA3AF] dark:text-gray-500"
+              )} 
+              aria-hidden="true" 
+            />
+            {!isCollapsed && <span>{label}</span>}
+          </span>
+          {!isCollapsed && badge && (
+            <Badge variant={typeof badge === 'number' && badge > 0 ? "default" : "secondary"} className="ml-auto text-xs">
+              {badge}
+            </Badge>
+          )}
+          {!isCollapsed && disabled && (
+            <span className="ml-auto text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">
+              Próximamente
+            </span>
+          )}
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   );
 };

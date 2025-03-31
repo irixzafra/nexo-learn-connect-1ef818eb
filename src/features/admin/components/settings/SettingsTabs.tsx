@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, Paintbrush, FileText, BarChart, Settings } from 'lucide-react';
+import { Shield, Paintbrush, FileText, BarChart } from 'lucide-react';
 import { OnboardingSettings } from './OnboardingSettings';
 import { NotificationSettings } from './NotificationSettings';
 import { TestDataSettings } from './TestDataSettings';
@@ -24,27 +24,12 @@ export const SettingsTabs: React.FC<SettingsTabsProps> = ({
 }) => {
   return (
     <Tabs defaultValue="features" className="space-y-4">
-      <TabsList className="w-full justify-start mb-4 bg-muted/50 p-1 overflow-x-auto flex gap-1">
-        <TabsTrigger value="features" className="flex items-center gap-2">
-          <Settings className="h-5 w-5" />
-          <span>Funcionalidades</span>
-        </TabsTrigger>
-        <TabsTrigger value="security" className="flex items-center gap-2">
-          <Shield className="h-5 w-5" />
-          <span>Seguridad</span>
-        </TabsTrigger>
-        <TabsTrigger value="appearance" className="flex items-center gap-2">
-          <Paintbrush className="h-5 w-5" />
-          <span>Apariencia</span>
-        </TabsTrigger>
-        <TabsTrigger value="content" className="flex items-center gap-2">
-          <FileText className="h-5 w-5" />
-          <span>Contenido</span>
-        </TabsTrigger>
-        <TabsTrigger value="analytics" className="flex items-center gap-2">
-          <BarChart className="h-5 w-5" />
-          <span>Analíticas</span>
-        </TabsTrigger>
+      <TabsList>
+        <TabsTrigger value="features">Funcionalidades</TabsTrigger>
+        <TabsTrigger value="security">Seguridad</TabsTrigger>
+        <TabsTrigger value="appearance">Apariencia</TabsTrigger>
+        <TabsTrigger value="content">Contenido</TabsTrigger>
+        <TabsTrigger value="analytics">Analíticas</TabsTrigger>
       </TabsList>
 
       <TabsContent value="features" className="space-y-4">

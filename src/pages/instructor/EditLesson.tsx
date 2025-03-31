@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -23,14 +24,12 @@ import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 
-type ContentType = 'text' | 'video';
-
 const EditLesson: React.FC = () => {
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   
-  const [contentType, setContentType] = useState<ContentType>('text');
+  const [contentType, setContentType] = useState<'text' | 'video'>('text');
   const [textContent, setTextContent] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [showVideoPreview, setShowVideoPreview] = useState(false);
@@ -59,9 +58,7 @@ const EditLesson: React.FC = () => {
   // Set initial form values when lesson data is loaded
   useEffect(() => {
     if (lesson) {
-      setContentType((lesson.content_type === 'text' || lesson.content_type === 'video') 
-        ? lesson.content_type 
-        : 'text');
+      setContentType(lesson.content_type);
       setTextContent(lesson.content_text?.content || '');
       setVideoUrl(lesson.content_video_url || '');
       setIsPreviewable(lesson.is_previewable);
@@ -113,9 +110,7 @@ const EditLesson: React.FC = () => {
   });
 
   const handleContentTypeChange = (value: string) => {
-    if (value === 'text' || value === 'video') {
-      setContentType(value as ContentType);
-    }
+    setContentType(value as 'text' | 'video');
   };
 
   const handleTogglePreviewable = () => {

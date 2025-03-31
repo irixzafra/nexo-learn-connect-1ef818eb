@@ -10,7 +10,7 @@ interface SectionPageLayoutProps {
   header?: {
     title: string;
     description?: string;
-    breadcrumbs?: Array<{ title: string; href?: string }>;
+    actions?: React.ReactNode;
   };
   className?: string;
   stats?: {
@@ -22,7 +22,6 @@ interface SectionPageLayoutProps {
       loading?: boolean;
     }[];
   };
-  actions?: React.ReactNode;
 }
 
 // Define PageSection props
@@ -41,37 +40,20 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
   children,
   header,
   className,
-  stats,
-  actions
+  stats
 }) => {
   return (
-    <div className={cn("container space-y-8", className)}>
+    <div className={cn("container py-6 space-y-6", className)}>
       {/* Header Section */}
       {header && (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            {header.breadcrumbs && (
-              <nav className="flex mb-2 text-sm">
-                {header.breadcrumbs.map((crumb, index) => (
-                  <React.Fragment key={index}>
-                    {index > 0 && <span className="mx-2 text-muted-foreground">/</span>}
-                    {crumb.href ? (
-                      <a href={crumb.href} className="text-muted-foreground hover:text-foreground">
-                        {crumb.title}
-                      </a>
-                    ) : (
-                      <span className="font-medium">{crumb.title}</span>
-                    )}
-                  </React.Fragment>
-                ))}
-              </nav>
-            )}
             <h1 className="text-2xl font-bold tracking-tight">{header.title}</h1>
             {header.description && <p className="text-muted-foreground">{header.description}</p>}
           </div>
-          {(actions) && (
+          {header.actions && (
             <div className="flex items-center gap-2 mt-2 sm:mt-0">
-              {actions}
+              {header.actions}
             </div>
           )}
         </div>
@@ -87,7 +69,7 @@ const SectionPageLayout: React.FC<SectionPageLayoutProps> = ({
       )}
 
       {/* Main Content */}
-      <div className="space-y-8">
+      <div className="space-y-6">
         {children}
       </div>
     </div>

@@ -1,59 +1,84 @@
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Loader2 } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Comment } from "@/types/comments";
+import { Loader2, Send, X } from "lucide-react";
 
 interface CommentFormProps {
-  onSubmit: (content: string) => void;
+  onSubmit: (content: string, parentId?: string) => void;
   isSubmitting: boolean;
+  replyingTo?: Comment | null;
+  onCancelReply?: () => void;
+  placeholder?: string;
 }
 
-export const CommentForm: React.FC<CommentFormProps> = ({ 
-  onSubmit, 
-  isSubmitting 
+export const CommentForm: React.FC<CommentFormProps> = ({
+  onSubmit,
+  isSubmitting,
+  replyingTo,
+  onCancelReply,
+  placeholder = "Añade un comentario...",
 }) => {
-  const [content, setContent] = useState('');
-  const { user } = useAuth();
+  const [content, setContent] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (content.trim()) {
-      onSubmit(content);
-      setContent('');
-    }
+    
+    if (!content.trim()) return;
+    
+    onSubmit(content, replyingTo?.id);
+    setContent("");
   };
 
-  if (!user) {
-    return (
-      <div className="bg-muted p-4 rounded-md text-center text-muted-foreground">
-        Debes iniciar sesión para poder comentar.
-      </div>
-    );
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="mt-4">
+      {replyingTo && (
+        <div className="flex items-center mb-2 text-sm bg-muted p-2 rounded">
+          <span className="flex-1">
+            Respondiendo a <strong>{replyingTo.user_name || "Usuario"}</strong>
+          </span>
+          {onCancelReply && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onCancelReply}
+              className="h-6 w-6 p-0"
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Cancelar respuesta</span>
+            </Button>
+          )}
+        </div>
+      )}
+      
       <Textarea
-        placeholder="Escribe tu comentario aquí..."
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="min-h-[100px]"
+        placeholder={placeholder}
+        rows={3}
         disabled={isSubmitting}
+        className="resize-none"
       />
-      <div className="flex justify-end">
+      
+      <div className="flex justify-end mt-2">
         <Button 
           type="submit" 
-          disabled={!content.trim() || isSubmitting}
+          disabled={isSubmitting || !content.trim()}
+          size="sm"
+          className="gap-1"
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
               Enviando...
             </>
           ) : (
-            'Publicar comentario'
+            <>
+              <Send className="h-4 w-4" />
+              Enviar
+            </>
           )}
         </Button>
       </div>

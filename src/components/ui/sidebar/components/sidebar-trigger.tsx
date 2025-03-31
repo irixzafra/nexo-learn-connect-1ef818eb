@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { useSidebar } from "../use-sidebar"
 import { NexoLogo } from '@/components/ui/logo'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 export const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
@@ -17,53 +16,75 @@ export const SidebarTrigger = React.forwardRef<
   const isMobile = React.useMemo(() => window.innerWidth < 768, [])
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          ref={ref}
-          data-sidebar="trigger"
-          variant="outline"
-          size="icon"
-          className={cn("h-8 w-8 absolute top-4 left-4 z-[60] md:relative md:top-0 md:left-0 opacity-85 hover:opacity-100 transition-opacity shadow-sm hover:shadow bg-background/95 backdrop-blur-sm border border-border/50", className)}
-          onClick={(event) => {
-            onClick?.(event)
-            isMobile ? setOpenMobile(!openMobile) : toggleSidebar()
-          }}
-          aria-expanded={!isCollapsed}
-          aria-label={isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}
-          aria-controls="sidebar"
-          {...props}
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            {openMobile ? (
-              <motion.div
-                key="close-icon"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-              >
-                <X className="h-4 w-4" aria-hidden="true" />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="menu-icon"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-              >
-                <Menu className="h-4 w-4" aria-hidden="true" />
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <span className="sr-only">{isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}</span>
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent side="right">
-        <p>{isCollapsed ? "Expandir menú" : "Colapsar menú"}</p>
-      </TooltipContent>
-    </Tooltip>
+    <Button
+      ref={ref}
+      data-sidebar="trigger"
+      variant="ghost"
+      size="icon"
+      className={cn(
+        "h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300",
+        "fixed left-4 bottom-4 z-50 md:static md:left-auto md:bottom-auto md:z-auto",
+        isMobile && "z-50",
+        className
+      )}
+      onClick={(event) => {
+        onClick?.(event)
+        isMobile ? setOpenMobile(!openMobile) : toggleSidebar()
+      }}
+      aria-expanded={!isCollapsed}
+      aria-label={isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}
+      aria-controls="sidebar"
+      {...props}
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {isMobile ? (
+          openMobile ? (
+            <motion.div
+              key="close"
+              initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="menu"
+              initial={{ opacity: 0, rotate: 90, scale: 0.5 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, rotate: -90, scale: 0.5 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <Menu className="h-5 w-5" aria-hidden="true" />
+            </motion.div>
+          )
+        ) : (
+          isCollapsed ? (
+            <motion.div
+              key="logo-icon"
+              initial={{ opacity: 0, rotate: 180, scale: 0.5 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, rotate: -180, scale: 0.5 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <NexoLogo variant="icon" className="h-6 w-6" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="menu-icon"
+              initial={{ opacity: 0, rotate: -180, scale: 0.5 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, rotate: 180, scale: 0.5 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <Menu className="h-5 w-5" aria-hidden="true" />
+            </motion.div>
+          )
+        )}
+      </AnimatePresence>
+      <span className="sr-only">{isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}</span>
+    </Button>
   )
 })
 SidebarTrigger.displayName = "SidebarTrigger"

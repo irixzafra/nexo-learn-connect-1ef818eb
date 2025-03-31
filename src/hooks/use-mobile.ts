@@ -1,25 +1,23 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export const useIsMobile = () => {
+  // Initialize with a safe server-side value and check the window size once mounted
   const [isMobile, setIsMobile] = useState(false);
-  
+
   useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+    // Function to check if window width is less than the mobile breakpoint
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     
-    // Check on initial load
-    checkIfMobile();
+    // Set the initial value
+    checkMobile();
     
-    // Add event listener
-    window.addEventListener('resize', checkIfMobile);
+    // Add event listener for window resize
+    window.addEventListener("resize", checkMobile);
     
-    // Clean up
-    return () => {
-      window.removeEventListener('resize', checkIfMobile);
-    };
+    // Cleanup
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
-  
+
   return isMobile;
 };

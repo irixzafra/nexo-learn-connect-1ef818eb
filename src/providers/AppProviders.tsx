@@ -1,22 +1,47 @@
 
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { EditModeProvider } from '@/contexts/EditModeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { Toaster } from '@/components/ui/sonner';
+import { TestDataProvider } from '@/contexts/test-data';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import { FeatureFlagsProvider } from '@/contexts/features/FeatureFlagsContext';
+import { OnboardingProvider } from '@/contexts/OnboardingContext';
+import { KeyboardShortcuts } from '@/components/accessibility/KeyboardShortcuts';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
-interface AppProvidersProps {
-  children: React.ReactNode;
-}
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
-const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
+const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <FeatureFlagsProvider>
-          {children}
-        </FeatureFlagsProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <ThemeProvider>
+          <TooltipProvider delayDuration={300}>
+            <AuthProvider>
+              <EditModeProvider>
+                <TestDataProvider>
+                  <OnboardingProvider>
+                    <KeyboardShortcuts />
+                    {children}
+                    <Toaster position="top-right" />
+                  </OnboardingProvider>
+                </TestDataProvider>
+              </EditModeProvider>
+            </AuthProvider>
+          </TooltipProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 

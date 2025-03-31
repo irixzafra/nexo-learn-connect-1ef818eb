@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
+import { UserProfile, UserRoleType, asUserRoleType } from '@/types/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, X } from 'lucide-react';
@@ -43,13 +43,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
       
       if (error) throw error;
       
-      // Ensure all roles are valid UserRoleType
-      const typedData = data?.map(user => ({
-        ...user,
-        role: toUserRoleType(user.role)
-      })) || [];
-      
-      setUsers(typedData);
+      setUsers(data || []);
     } catch (error) {
       console.error('Error searching for users:', error);
       toast.error('Error al buscar usuarios');

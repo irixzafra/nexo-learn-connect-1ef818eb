@@ -1,31 +1,23 @@
 
-/**
- * Types for the notifications system
- */
-
 export type NotificationType = 
-  | 'message'
-  | 'course_completed'
-  | 'announcement'
-  | 'achievement'
-  | 'community'
+  | 'message' 
+  | 'course_completed' 
+  | 'announcement' 
+  | 'achievement' 
   | 'system'
-  | 'info'
-  | 'warning'
-  | 'error'
-  | 'success';
+  | 'community';
 
 export interface Notification {
   id: string;
-  title: string;
-  content: string;
+  user_id: string;
   type: NotificationType;
+  title: string;
+  content?: string;
   is_read: boolean;
   created_at: string;
-  user_id: string;
-  action_url?: string;
   resource_type?: string;
   resource_id?: string;
+  action_url?: string;
   sender_id?: string;
   sender_name?: string;
   sender_avatar?: string;

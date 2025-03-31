@@ -48,7 +48,7 @@ export const adminMainMenuItems: AdminMenuItem[] = [
   {
     icon: CreditCard,
     label: 'Facturación',
-    href: '/admin/finanzas',
+    href: '/admin/billing',
     description: 'Gestión de pagos e ingresos'
   },
   {
@@ -138,19 +138,19 @@ export const adminFinanceMenuItems: AdminMenuItem[] = [
   {
     icon: CreditCard,
     label: 'Cobros',
-    href: '/admin/finanzas/payments',
+    href: '/admin/billing/payments',
     description: 'Gestión de pagos'
   },
   {
     icon: CreditCard,
     label: 'Suscripciones',
-    href: '/admin/finanzas/subscriptions',
+    href: '/admin/billing/subscriptions',
     description: 'Gestión de suscripciones'
   },
   {
     icon: LineChart,
     label: 'Analíticas Financieras',
-    href: '/admin/finanzas/analytics',
+    href: '/admin/billing/analytics',
     description: 'Estadísticas financieras'
   }
 ];

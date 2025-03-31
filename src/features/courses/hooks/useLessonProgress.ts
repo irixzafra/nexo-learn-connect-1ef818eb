@@ -1,146 +1,207 @@
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
+import { toast } from "@/hooks/use-toast";
+
+type LessonProgress = {
+  id: string;
+  user_id: string;
+  lesson_id: string;
+  course_id: string;
+  is_completed: boolean;
+  completion_date: string | null;
+  last_position: number | null;
+  created_at: string;
+  updated_at: string;
+};
+
+type LessonProgressUpdate = {
+  is_completed?: boolean;
+  last_position?: number;
+  completion_date?: string | null;
+};
 
 export const useLessonProgress = (
-  userId: string | undefined, 
+  userId?: string, 
   courseId?: string, 
   lessonId?: string
 ) => {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
-  
-  const { 
-    data: courseProgress,
-    isLoading,
-    error
-  } = useQuery({
-    queryKey: ['lessonProgress', userId, courseId],
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Fetch progress for a specific lesson
+  const { data: lessonProgress, isLoading: isLoadingProgress } = useQuery({
+    queryKey: ["lessonProgress", userId, lessonId],
     queryFn: async () => {
-      if (!userId || !courseId) return [];
-      
-      const { data, error } = await supabase
-        .from('lesson_progress')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('course_id', courseId);
-      
-      if (error) throw error;
-      return data;
+      try {
+        if (!userId || !lessonId) return null;
+
+        const { data, error } = await supabase
+          .from("lesson_progress")
+          .select("*")
+          .eq("user_id", userId)
+          .eq("lesson_id", lessonId)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        return data as LessonProgress | null;
+      } catch (error: any) {
+        console.error("Error fetching lesson progress:", error);
+        return null;
+      }
+    },
+    enabled: !!userId && !!lessonId,
+  });
+
+  // Fetch all progress for a course
+  const { data: courseProgress, isLoading: isLoadingCourseProgress } = useQuery({
+    queryKey: ["courseProgress", userId, courseId],
+    queryFn: async () => {
+      try {
+        if (!userId || !courseId) return [];
+
+        const { data, error } = await supabase
+          .from("lesson_progress")
+          .select("*")
+          .eq("user_id", userId)
+          .eq("course_id", courseId);
+
+        if (error) throw error;
+
+        return data as LessonProgress[];
+      } catch (error: any) {
+        console.error("Error fetching course progress:", error);
+        return [];
+      }
     },
     enabled: !!userId && !!courseId,
   });
-  
-  // Calculate total completed lessons and percentage
-  const completedLessonsCount = courseProgress?.filter(p => p.is_completed)?.length || 0;
-  
-  // Get total lessons by course ID
-  const { data: totalLessons } = useQuery({
-    queryKey: ['totalLessons', courseId],
+
+  // Calculate overall course progress percentage
+  const { data: courseProgressPercentage, isLoading: isLoadingPercentage } = useQuery({
+    queryKey: ["courseProgressPercentage", userId, courseId],
     queryFn: async () => {
-      if (!courseId) return 0;
-      
-      const { count, error } = await supabase
-        .from('lessons')
-        .select('*', { count: 'exact', head: true })
-        .eq('course_id', courseId);
-      
-      if (error) throw error;
-      return count || 0;
+      try {
+        if (!userId || !courseId) return 0;
+
+        const { data, error } = await supabase.rpc(
+          "calculate_course_progress",
+          {
+            course_id_param: courseId,
+            user_id_param: userId,
+          }
+        );
+
+        if (error) throw error;
+
+        return data as number;
+      } catch (error: any) {
+        console.error("Error calculating course progress:", error);
+        return 0;
+      }
     },
-    enabled: !!courseId,
+    enabled: !!userId && !!courseId,
   });
-  
-  // Calculate percentage
-  const courseProgressPercentage = totalLessons && totalLessons > 0 
-    ? Math.round((completedLessonsCount / totalLessons) * 100) 
-    : 0;
-  
-  // Check if current lesson is completed
-  const isCompleted = lessonId 
-    ? courseProgress?.some(p => p.lesson_id === lessonId && p.is_completed) 
-    : false;
-  
-  // Mutation to mark a lesson as completed
-  const markLessonCompletedMutation = useMutation({
-    mutationFn: async () => {
-      if (!userId || !courseId || !lessonId) {
-        throw new Error('Missing required IDs');
+
+  // Update lesson progress
+  const updateProgress = async (updates: LessonProgressUpdate) => {
+    try {
+      if (!userId || !lessonId || !courseId) {
+        throw new Error("Missing required parameters");
       }
-      
-      // Check if record exists
-      const { data: existingProgress, error: checkError } = await supabase
-        .from('lesson_progress')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('course_id', courseId)
-        .eq('lesson_id', lessonId)
-        .single();
-      
-      if (checkError && checkError.code !== 'PGRST116') {
-        throw checkError;
-      }
-      
+
+      setIsUpdating(true);
+
+      // Check if progress record exists
+      const { data: existingProgress } = await supabase
+        .from("lesson_progress")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("lesson_id", lessonId)
+        .maybeSingle();
+
+      let result;
+
       if (existingProgress) {
         // Update existing record
-        const { error } = await supabase
-          .from('lesson_progress')
-          .update({ 
-            is_completed: true,
-            completion_date: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', existingProgress.id);
-          
-        if (error) throw error;
+        const updateData: LessonProgressUpdate = { ...updates };
+        
+        // If marking as completed, add completion date
+        if (updates.is_completed) {
+          updateData.completion_date = new Date().toISOString();
+        }
+
+        result = await supabase
+          .from("lesson_progress")
+          .update(updateData)
+          .eq("id", existingProgress.id)
+          .select()
+          .single();
       } else {
         // Create new record
-        const { error } = await supabase
-          .from('lesson_progress')
-          .insert({ 
+        result = await supabase
+          .from("lesson_progress")
+          .insert({
             user_id: userId,
-            course_id: courseId,
             lesson_id: lessonId,
-            is_completed: true,
-            completion_date: new Date().toISOString()
-          });
-          
-        if (error) throw error;
+            course_id: courseId,
+            ...(updates.is_completed ? { 
+              is_completed: true,
+              completion_date: new Date().toISOString() 
+            } : { is_completed: false }),
+            ...(updates.last_position !== undefined ? { last_position: updates.last_position } : {})
+          })
+          .select()
+          .single();
       }
+
+      if (result.error) throw result.error;
+
+      // Invalidate relevant queries
+      queryClient.invalidateQueries({ queryKey: ["lessonProgress", userId, lessonId] });
+      queryClient.invalidateQueries({ queryKey: ["courseProgress", userId, courseId] });
+      queryClient.invalidateQueries({ queryKey: ["courseProgressPercentage", userId, courseId] });
       
-      return true;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['lessonProgress', userId, courseId] });
-      toast({
-        title: "Progreso guardado",
-        description: "La lección ha sido marcada como completada.",
-      });
-    },
-    onError: (error) => {
+      return result.data as LessonProgress;
+    } catch (error: any) {
       console.error("Error updating lesson progress:", error);
       toast({
-        variant: "destructive",
         title: "Error",
-        description: "No se pudo actualizar el progreso de la lección.",
+        description: "No se pudo actualizar el progreso",
+        variant: "destructive",
       });
-    },
-  });
-  
-  const markLessonCompleted = async () => {
-    return await markLessonCompletedMutation.mutateAsync();
+      throw error;
+    } finally {
+      setIsUpdating(false);
+    }
   };
-  
+
+  // Mark lesson as completed
+  const markLessonCompleted = async () => {
+    return updateProgress({ is_completed: true });
+  };
+
+  // Update last position (for video lessons)
+  const updateLastPosition = async (position: number) => {
+    return updateProgress({ last_position: position });
+  };
+
+  // Get total completed lessons for the course
+  const completedLessonsCount = courseProgress?.filter(p => p.is_completed)?.length || 0;
+
   return {
+    lessonProgress,
     courseProgress,
-    isLoading,
-    error,
-    completedLessonsCount,
-    totalLessons,
     courseProgressPercentage,
-    isCompleted,
-    isUpdating: markLessonCompletedMutation.isPending,
-    markLessonCompleted
+    isCompleted: lessonProgress?.is_completed || false,
+    lastPosition: lessonProgress?.last_position || 0,
+    completedLessonsCount,
+    isLoading: isLoadingProgress || isLoadingCourseProgress || isLoadingPercentage,
+    isUpdating,
+    updateProgress,
+    markLessonCompleted,
+    updateLastPosition,
   };
 };

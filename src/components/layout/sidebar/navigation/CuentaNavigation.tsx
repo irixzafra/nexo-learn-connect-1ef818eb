@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { CircleUser, Settings, HelpCircle, Info, LogOut } from 'lucide-react';
+import { CircleUser, Settings, HelpCircle, Info } from 'lucide-react';
 import { 
   SidebarMenu, 
   SidebarMenuItem, 
@@ -15,10 +15,6 @@ import {
   TooltipContent,
   TooltipTrigger 
 } from '@/components/ui/tooltip';
-import { useAuth } from '@/contexts/auth';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 
 interface CuentaNavigationProps {
   isOpen: boolean;
@@ -27,20 +23,7 @@ interface CuentaNavigationProps {
 
 const CuentaNavigation: React.FC<CuentaNavigationProps> = ({ isOpen, onToggle }) => {
   const { state } = useSidebar();
-  const { logout } = useAuth();
-  const navigate = useNavigate();
   const isCollapsed = state === "collapsed";
-  
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast.success("Sesión cerrada exitosamente");
-      navigate('/auth/login');
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-      toast.error("No se pudo cerrar sesión");
-    }
-  };
 
   return (
     <SidebarGroup
@@ -52,47 +35,16 @@ const CuentaNavigation: React.FC<CuentaNavigationProps> = ({ isOpen, onToggle })
       {isCollapsed ? (
         // Versión colapsada
         <>
-          <CollapsedMenuItem to="/profile" icon={CircleUser} label="Perfil" />
           <CollapsedMenuItem to="/settings" icon={Settings} label="Configuración" />
           <CollapsedMenuItem to="/help" icon={HelpCircle} label="Ayuda" />
           <CollapsedMenuItem to="/about-us" icon={Info} label="Acerca de Nosotros" />
-          <SidebarMenuItem>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="destructive" 
-                  size="icon"
-                  onClick={handleLogout}
-                  className="h-10 w-10 flex items-center justify-center rounded-md"
-                >
-                  <LogOut className="h-5 w-5" />
-                  <span className="sr-only">Cerrar sesión</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Cerrar sesión</p>
-              </TooltipContent>
-            </Tooltip>
-          </SidebarMenuItem>
         </>
       ) : (
         // Versión expandida
         <>
-          <MenuItem to="/profile" icon={CircleUser} label="Perfil" />
           <MenuItem to="/settings" icon={Settings} label="Configuración" />
           <MenuItem to="/help" icon={HelpCircle} label="Ayuda / Soporte" />
           <MenuItem to="/about-us" icon={Info} label="Acerca de Nosotros" />
-          <div className="px-3 py-2">
-            <Button 
-              variant="destructive" 
-              size="sm" 
-              className="w-full justify-start" 
-              onClick={handleLogout}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Cerrar sesión
-            </Button>
-          </div>
         </>
       )}
     </SidebarGroup>

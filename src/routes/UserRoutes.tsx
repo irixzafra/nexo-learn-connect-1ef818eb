@@ -6,11 +6,13 @@ import NotFound from "@/pages/NotFound";
 import AppLayout from "@/layouts/AppLayout";
 
 // Student pages
+import Home from "@/pages/Home";
 import StudentDashboard from "@/pages/student/Dashboard";
 import StudentCourses from "@/pages/student/Courses";
 import CourseLearn from "@/pages/student/CourseLearn";
 import LessonView from "@/pages/student/LessonView";
 import Checkout from "@/pages/student/Checkout";
+import Calendar from "@/pages/placeholder/Calendar";
 import Messages from "@/pages/placeholder/Messages";
 import Settings from "@/pages/placeholder/Settings";
 
@@ -59,6 +61,13 @@ const UserRoutes = () => {
           </AppLayout>
         </ProtectedRoute>
       } />
+      <Route path="/calendar" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <Calendar />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
       <Route path="/messages" element={
         <ProtectedRoute>
           <AppLayout>
@@ -73,9 +82,13 @@ const UserRoutes = () => {
           </AppLayout>
         </ProtectedRoute>
       } />
-      
-      {/* Reemplazamos el 404 específico por la ruta general hacia NotFound */}
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={
+        <ProtectedRoute>
+          <AppLayout>
+            <NotFound />
+          </AppLayout>
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 };

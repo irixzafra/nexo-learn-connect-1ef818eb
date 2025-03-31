@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import AppLayout from '@/layouts/AppLayout';
 import PublicLayout from '@/layouts/PublicLayout';
 import { NexoLogo } from '@/components/ui/nexo-logo';
@@ -106,3 +106,4 @@ const AboutUs: React.FC = () => {
 };
 
 export default AboutUs;
+

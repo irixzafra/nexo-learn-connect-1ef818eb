@@ -1,73 +1,56 @@
 
 import { useState, useEffect } from 'react';
-import { UserRoleType } from '@/types/auth';
-import { getHomePath, getRoleName } from '@/utils/roleUtils';
-import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
+import { getRoleName, getHomePath } from '@/utils/roleUtils';
 
 export const useSidebarNavigation = (
-  userRole: UserRoleType, 
+  userRole: UserRoleType,
   viewAsRole?: 'current' | UserRoleType,
   onRoleChange?: (role: UserRoleType) => void
 ) => {
-  // Estado para el colapso del sidebar
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   
-  // Estado para el rol de vista actual
+  // Track "view as" role for admin role-switching
   const [currentViewRole, setCurrentViewRole] = useState<'current' | UserRoleType>(viewAsRole || 'current');
   
-  // Estado para el idioma actual
+  // Track current language (could come from a context/cookie)
   const [currentLanguage, setCurrentLanguage] = useState('es');
   
-  // Toast notifications
-  const { toast } = useToast();
-  
-  // Load saved view role preference
+  // Update local state if prop changes
   useEffect(() => {
-    const savedViewRole = localStorage.getItem('viewAsRole');
-    if (savedViewRole) {
-      setCurrentViewRole(savedViewRole as UserRoleType);
+    if (viewAsRole) {
+      setCurrentViewRole(viewAsRole);
     }
-  }, []);
+  }, [viewAsRole]);
   
-  // Determinar el rol efectivo basado en la vista actual
-  const effectiveRole = currentViewRole === 'current' ? userRole : currentViewRole;
+  // Calculate effective role (actual or viewed-as)
+  const effectiveRole = currentViewRole === 'current' ? userRole : toUserRoleType(currentViewRole as string);
   
-  // Manejar cambio de rol
-  const handleRoleChange = (newRole: UserRoleType) => {
-    console.log(`Changing role from ${effectiveRole} to ${newRole}`);
-    setCurrentViewRole(newRole);
+  // Toggle sidebar expanded/collapsed state
+  const toggleSidebar = () => {
+    setIsCollapsed(prev => !prev);
+  };
+  
+  // Handle role change
+  const handleRoleChange = (role: UserRoleType) => {
+    setCurrentViewRole(role);
     
-    // Save preference to localStorage
-    localStorage.setItem('viewAsRole', newRole);
-    
-    // Call the provided callback
     if (onRoleChange) {
-      onRoleChange(newRole);
+      onRoleChange(role);
     }
-    
-    // Show toast notification
-    toast({
-      title: "Rol cambiado",
-      description: `Ahora estás viendo la aplicación como ${getRoleName(newRole)}`,
-    });
   };
   
-  // Cambiar idioma
-  const changeLanguage = (language: string) => {
-    setCurrentLanguage(language);
-    localStorage.setItem('preferredLanguage', language);
+  // Handle language change
+  const changeLanguage = (code: string) => {
+    setCurrentLanguage(code);
+    // Additional logic for language change (e.g., update context, store in cookies)
   };
-  
-  // Cargar preferencia de idioma al iniciar
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('preferredLanguage');
-    if (savedLanguage) {
-      setCurrentLanguage(savedLanguage);
-    }
-  }, []);
   
   return {
     isCollapsed,
+    toggleSidebar,
     currentViewRole,
     currentLanguage,
     effectiveRole,

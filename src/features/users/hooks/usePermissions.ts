@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/components/ui/use-toast";
-import { toast } from 'sonner';
 
 export interface Permission {
   id: string;
@@ -16,6 +15,7 @@ export interface Permission {
 export function usePermissions() {
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
   
   const fetchPermissions = async () => {
     try {
@@ -28,14 +28,22 @@ export function usePermissions() {
       
       if (error) {
         console.error('Error fetching permissions:', error);
-        toast.error("No se pudieron cargar los permisos");
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudieron cargar los permisos.",
+        });
         return;
       }
       
       setPermissions(data || []);
     } catch (error) {
       console.error('Error in fetchPermissions:', error);
-      toast.error("Ocurrió un error al obtener los permisos");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ocurrió un error al obtener los permisos.",
+      });
     } finally {
       setIsLoading(false);
     }
