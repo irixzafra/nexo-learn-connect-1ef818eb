@@ -1,12 +1,14 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { PowerIcon, BellIcon } from 'lucide-react';
-import { RoleSwitcher } from '@/components/layout/RoleSwitcher';
-import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
+import { LanguageSelector } from '@/components/shared/LanguageSelector';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface SidebarFooterSectionProps {
   userRole: UserRoleType;
@@ -40,11 +42,8 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
         <div className="px-3 pt-2 pb-4">
           <RoleSwitcher
             userRole={userRole}
-            effectiveRole={effectiveRole}
+            onChange={handleRoleChange}
             currentViewRole={currentViewRole}
-            handleRoleChange={handleRoleChange}
-            getRoleName={getRoleName}
-            isCollapsed={isCollapsed}
           />
         </div>
       )}
@@ -74,25 +73,31 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
           isCollapsed ? "flex-col space-y-3" : "space-x-2"
         )}>
           {/* Notifications Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-full relative"
-          >
-            <BellIcon className="h-4 w-4 text-muted-foreground" />
-            {unreadNotifications > 0 && (
-              <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full flex items-center justify-center text-[8px] text-white">
-                {unreadNotifications > 9 ? '9+' : unreadNotifications}
-              </span>
-            )}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full relative"
+              >
+                <BellIcon className="h-4 w-4 text-muted-foreground" />
+                {unreadNotifications > 0 && (
+                  <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full flex items-center justify-center text-[8px] text-white">
+                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                  </span>
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>Notificaciones</p>
+            </TooltipContent>
+          </Tooltip>
           
           {/* Language Switcher */}
-          <LanguageSwitcher
+          <LanguageSelector
             currentLanguage={currentLanguage}
             languages={languages}
-            changeLanguage={changeLanguage}
-            isCollapsed={isCollapsed}
+            onChange={changeLanguage}
           />
           
           {/* Theme Toggle */}
