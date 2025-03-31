@@ -6,6 +6,7 @@ import { UserRoleType } from '@/types/auth';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requiredRole?: UserRoleType;
+  roles?: UserRoleType[];
   requiredRoles?: UserRoleType[];
   checkFn?: () => boolean;
   fallbackPath?: string;
@@ -14,12 +15,16 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
   requiredRole,
+  roles, // Para compatibilidad con código existente
   requiredRoles,
   checkFn,
   fallbackPath = "/unauthorized"
 }) => {
   const { isAuthenticated, userRole, isLoading } = useAuth();
   const location = useLocation();
+  
+  // Normalizar roles y requiredRoles para manejar ambas propiedades
+  const rolesToCheck = roles || requiredRoles;
 
   // Show loading state if authentication is still being verified
   if (isLoading) {
@@ -40,9 +45,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={fallbackPath} replace />;
   }
 
-  // If requiredRoles array is provided, check if the user has any of the required roles
-  if (requiredRoles && requiredRoles.length > 0) {
-    const hasRequiredRole = userRole === 'admin' || requiredRoles.includes(userRole as UserRoleType);
+  // If rolesToCheck array is provided, check if the user has any of the required roles
+  if (rolesToCheck && rolesToCheck.length > 0) {
+    const hasRequiredRole = userRole === 'admin' || rolesToCheck.includes(userRole as UserRoleType);
     if (!hasRequiredRole) {
       return <Navigate to={fallbackPath} replace />;
     }

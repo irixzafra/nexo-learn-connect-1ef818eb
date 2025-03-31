@@ -49,9 +49,13 @@ export const useBadges = (userId?: string) => {
       
       if (error) throw error;
       
+      // Corregir el tipado de los datos de retorno
       return data.map(item => ({
-        ...item,
-        badge: item.badges
+        id: item.id,
+        user_id: item.user_id,
+        badge_id: item.badge_id,
+        awarded_at: item.awarded_at,
+        badge: item.badges as unknown as Badge  // Conversión explícita para resolver problema de tipado
       })) as UserBadge[];
     },
     enabled: !!userId

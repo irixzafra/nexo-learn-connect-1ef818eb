@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AppLayout from '@/layouts/AppLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ProfileEditForm } from '@/components/profile/ProfileEditForm';
+import ProfileEditForm from '@/components/profile/ProfileEditForm';
 import { GamificationProfileSection } from '@/features/gamification/components/GamificationProfileSection';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
