@@ -24,7 +24,6 @@ export interface FeaturesConfig {
   enableContentReordering: boolean;
   enableSocial: boolean;
   enablePasswordPolicy: boolean;
-  // Add these missing properties
   enableThemeSwitcher: boolean;
   enableMultiLanguage: boolean;
   enableLeaderboard: boolean;
@@ -55,22 +54,19 @@ export const defaultFeaturesConfig: FeaturesConfig = {
 };
 
 export interface OnboardingContextValue {
-  steps: OnboardingStep[];
+  isOnboardingOpen: boolean;
   currentStep: number;
-  isActive: boolean;
-  startOnboarding: () => void;
-  endOnboarding: () => void;
-  goToStep: (step: number) => void;
+  featuresConfig: FeaturesConfig;
+  isSaving: boolean;
+  saveError: null | string;
+  openOnboarding: () => void;
+  closeOnboarding: () => void;
   nextStep: () => void;
   prevStep: () => void;
-  markStepComplete: (stepId: string) => void;
-  isStepComplete: (stepId: string) => void;
-  featuresConfig: FeaturesConfig;
+  goToStep: (step: number) => void;
   updateFeaturesConfig: (config: Partial<FeaturesConfig>) => void;
-  toggleFeature: (feature: keyof FeaturesConfig) => void;
-  // Add these missing properties for the OnboardingContextValue
   isOnboardingActive: boolean;
-  previousStep: () => void;
+  startOnboarding: () => void;
   skipOnboarding: () => void;
-  isOnboardingOpen: boolean;
+  previousStep: () => void;
 }

@@ -229,6 +229,13 @@ export const UsersListTab: React.FC = () => {
     }),
   ];
 
+  const emptyStateElement = (
+    <div className="text-center py-10">
+      <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
+      <p className="text-muted-foreground">No se encontraron usuarios</p>
+    </div>
+  );
+
   return (
     <AdminDataTable
       title="Usuarios"
@@ -240,12 +247,7 @@ export const UsersListTab: React.FC = () => {
       createButtonLabel="Nuevo Usuario"
       createButtonIcon={<UserPlus className="h-4 w-4 mr-2" />}
       onCreateClick={() => setIsUserFormOpen(true)}
-      emptyState={
-        <div className="text-center py-10">
-          <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">No se encontraron usuarios</p>
-        </div>
-      }
+      emptyState={emptyStateElement}
     />
   );
 };

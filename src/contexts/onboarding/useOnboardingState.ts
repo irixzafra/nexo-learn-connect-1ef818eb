@@ -32,20 +32,36 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
             const parsedConfig = JSON.parse(localConfig);
             // Only use it if it belongs to the current user
             if (parsedConfig.user_id === userId) {
-              setFeaturesConfig({
-                autoStartOnboarding: parsedConfig.auto_start_onboarding ?? defaultFeaturesConfig.autoStartOnboarding,
-                showOnboardingTrigger: parsedConfig.show_onboarding_trigger ?? defaultFeaturesConfig.showOnboardingTrigger,
-                enableNotifications: parsedConfig.enable_notifications ?? defaultFeaturesConfig.enableNotifications,
-                enableTestDataGenerator: parsedConfig.enable_test_data_generator ?? defaultFeaturesConfig.enableTestDataGenerator,
-                enableOnboardingSystem: parsedConfig.enable_onboarding_system ?? defaultFeaturesConfig.enableOnboardingSystem,
-                enableRoleManagement: parsedConfig.enable_role_management ?? defaultFeaturesConfig.enableRoleManagement,
-                enableRoleSwitcher: parsedConfig.enable_role_switcher ?? defaultFeaturesConfig.enableRoleSwitcher,
-                enableMultiLanguage: parsedConfig.enable_multi_language ?? defaultFeaturesConfig.enableMultiLanguage,
-                enableLeaderboard: parsedConfig.enable_leaderboard ?? defaultFeaturesConfig.enableLeaderboard,
-                enableThemeSwitcher: parsedConfig.enable_theme_switcher ?? defaultFeaturesConfig.enableThemeSwitcher,
-                enableCategoryManagement: parsedConfig.enable_category_management ?? defaultFeaturesConfig.enableCategoryManagement,
-                enableContentReordering: parsedConfig.enable_content_reordering ?? defaultFeaturesConfig.enableContentReordering,
-              });
+              // Create a new config object starting with default values
+              const updatedConfig = { ...defaultFeaturesConfig };
+              
+              // Only update properties that exist in the parsed config
+              if (parsedConfig.auto_start_onboarding !== undefined) 
+                updatedConfig.autoStartOnboarding = parsedConfig.auto_start_onboarding;
+              if (parsedConfig.show_onboarding_trigger !== undefined) 
+                updatedConfig.showOnboardingTrigger = parsedConfig.show_onboarding_trigger;
+              if (parsedConfig.enable_notifications !== undefined) 
+                updatedConfig.enableNotifications = parsedConfig.enable_notifications;
+              if (parsedConfig.enable_test_data_generator !== undefined) 
+                updatedConfig.enableTestDataGenerator = parsedConfig.enable_test_data_generator;
+              if (parsedConfig.enable_onboarding_system !== undefined) 
+                updatedConfig.enableOnboardingSystem = parsedConfig.enable_onboarding_system;
+              if (parsedConfig.enable_role_management !== undefined) 
+                updatedConfig.enableRoleManagement = parsedConfig.enable_role_management;
+              if (parsedConfig.enable_role_switcher !== undefined) 
+                updatedConfig.enableRoleSwitcher = parsedConfig.enable_role_switcher;
+              if (parsedConfig.enable_multi_language !== undefined) 
+                updatedConfig.enableMultiLanguage = parsedConfig.enable_multi_language;
+              if (parsedConfig.enable_leaderboard !== undefined) 
+                updatedConfig.enableLeaderboard = parsedConfig.enable_leaderboard;
+              if (parsedConfig.enable_theme_switcher !== undefined) 
+                updatedConfig.enableThemeSwitcher = parsedConfig.enable_theme_switcher;
+              if (parsedConfig.enable_category_management !== undefined) 
+                updatedConfig.enableCategoryManagement = parsedConfig.enable_category_management;
+              if (parsedConfig.enable_content_reordering !== undefined) 
+                updatedConfig.enableContentReordering = parsedConfig.enable_content_reordering;
+              
+              setFeaturesConfig(updatedConfig);
             }
           } catch (e) {
             console.warn('Error parsing local config:', e);
@@ -78,20 +94,36 @@ export function useOnboardingState({ userId }: OnboardingStateProps) {
         }
 
         if (data) {
-          setFeaturesConfig({
-            autoStartOnboarding: data.auto_start_onboarding ?? defaultFeaturesConfig.autoStartOnboarding,
-            showOnboardingTrigger: data.show_onboarding_trigger ?? defaultFeaturesConfig.showOnboardingTrigger,
-            enableNotifications: data.enable_notifications ?? defaultFeaturesConfig.enableNotifications,
-            enableTestDataGenerator: data.enable_test_data_generator ?? defaultFeaturesConfig.enableTestDataGenerator,
-            enableOnboardingSystem: data.enable_onboarding_system ?? defaultFeaturesConfig.enableOnboardingSystem,
-            enableRoleManagement: data.enable_role_management ?? defaultFeaturesConfig.enableRoleManagement,
-            enableRoleSwitcher: data.enable_role_switcher ?? defaultFeaturesConfig.enableRoleSwitcher,
-            enableMultiLanguage: data.enable_multi_language ?? defaultFeaturesConfig.enableMultiLanguage,
-            enableLeaderboard: data.enable_leaderboard ?? defaultFeaturesConfig.enableLeaderboard,
-            enableThemeSwitcher: data.enable_theme_switcher ?? defaultFeaturesConfig.enableThemeSwitcher,
-            enableCategoryManagement: data.enable_category_management ?? defaultFeaturesConfig.enableCategoryManagement,
-            enableContentReordering: data.enable_content_reordering ?? defaultFeaturesConfig.enableContentReordering,
-          });
+          // Create a new config object starting with default values
+          const updatedConfig = { ...defaultFeaturesConfig };
+          
+          // Only update properties that exist in the data
+          if (data.auto_start_onboarding !== undefined) 
+            updatedConfig.autoStartOnboarding = data.auto_start_onboarding;
+          if (data.show_onboarding_trigger !== undefined) 
+            updatedConfig.showOnboardingTrigger = data.show_onboarding_trigger;
+          if (data.enable_notifications !== undefined) 
+            updatedConfig.enableNotifications = data.enable_notifications;
+          if (data.enable_test_data_generator !== undefined) 
+            updatedConfig.enableTestDataGenerator = data.enable_test_data_generator;
+          if (data.enable_onboarding_system !== undefined) 
+            updatedConfig.enableOnboardingSystem = data.enable_onboarding_system;
+          if (data.enable_role_management !== undefined) 
+            updatedConfig.enableRoleManagement = data.enable_role_management;
+          if (data.enable_role_switcher !== undefined) 
+            updatedConfig.enableRoleSwitcher = data.enable_role_switcher;
+          if (data.enable_multi_language !== undefined) 
+            updatedConfig.enableMultiLanguage = data.enable_multi_language;
+          if (data.enable_leaderboard !== undefined) 
+            updatedConfig.enableLeaderboard = data.enable_leaderboard;
+          if (data.enable_theme_switcher !== undefined) 
+            updatedConfig.enableThemeSwitcher = data.enable_theme_switcher;
+          if (data.enable_category_management !== undefined) 
+            updatedConfig.enableCategoryManagement = data.enable_category_management;
+          if (data.enable_content_reordering !== undefined) 
+            updatedConfig.enableContentReordering = data.enable_content_reordering;
+          
+          setFeaturesConfig(updatedConfig);
           
           // Also update localStorage as a backup
           localStorage.setItem('features_config', JSON.stringify(data));
