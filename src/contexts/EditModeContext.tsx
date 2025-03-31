@@ -92,6 +92,11 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  // Wrapper for setting the edit mode enabled state
+  const setEditModeEnabled = (enabled: boolean) => {
+    setIsEditModeEnabled(enabled);
+  };
+
   // Function to update text content in the database
   const updateText = async (table: string, id: string, field: string, value: string): Promise<boolean> => {
     try {
