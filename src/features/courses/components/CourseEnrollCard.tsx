@@ -1,12 +1,11 @@
 
 import React from "react";
 import { Course } from "@/types/course";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookOpen, CheckCircle2, Loader2 } from "lucide-react";
 import { CourseProgressBar } from "./CourseProgressBar";
-import { useStripeCheckout } from "@/features/payments/hooks/useStripeCheckout";
 
 interface CourseEnrollCardProps {
   course: Course;
@@ -25,22 +24,17 @@ export const CourseEnrollCard: React.FC<CourseEnrollCardProps> = ({
   formatCurrency,
   onEnroll,
 }) => {
-  const { checkoutCourse, isLoading: isCheckoutLoading } = useStripeCheckout({
-    successUrl: `${window.location.origin}/payment/success?course=${course.id}`,
-    cancelUrl: `${window.location.origin}/payment/cancel?course=${course.id}`
-  });
+  const navigate = useNavigate();
 
   const handleEnrollClick = async () => {
     if (course.price > 0) {
-      // If it's a paid course, use Stripe checkout
-      await checkoutCourse(course.id);
+      // If it's a paid course, redirect to checkout
+      navigate(`/checkout/${course.id}`);
     } else {
       // If it's a free course, use the regular enrollment flow
       await onEnroll();
     }
   };
-
-  const isProcessing = isEnrolling || isCheckoutLoading;
 
   return (
     <Card className="sticky top-6">
@@ -85,9 +79,9 @@ export const CourseEnrollCard: React.FC<CourseEnrollCardProps> = ({
           <Button
             className="w-full mb-2"
             onClick={handleEnrollClick}
-            disabled={isProcessing}
+            disabled={isEnrolling}
           >
-            {isProcessing ? (
+            {isEnrolling ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Procesando...

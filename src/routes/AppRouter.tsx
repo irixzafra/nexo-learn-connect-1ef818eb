@@ -25,6 +25,7 @@ const PaymentCancel = React.lazy(() => import('@/pages/payment/PaymentCancel'));
 const UserRoutes = React.lazy(() => import('./UserRoutes'));
 const InstructorRoutes = React.lazy(() => import('./InstructorRoutes'));
 const PaymentRoutes = React.lazy(() => import('./PaymentRoutes'));
+const Checkout = React.lazy(() => import('@/pages/student/Checkout'));
 
 // Componente de carga para Suspense
 const LoadingFallback = () => (
@@ -70,6 +71,15 @@ const AppRouter: React.FC = () => {
         <ProtectedRoute>
           <React.Suspense fallback={<LoadingFallback />}>
             <LessonView />
+          </React.Suspense>
+        </ProtectedRoute>
+      } />
+      
+      {/* Checkout page for courses */}
+      <Route path="/checkout/:courseId" element={
+        <ProtectedRoute>
+          <React.Suspense fallback={<LoadingFallback />}>
+            <Checkout />
           </React.Suspense>
         </ProtectedRoute>
       } />

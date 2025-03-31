@@ -1,13 +1,15 @@
 
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ArrowLeft } from "lucide-react";
 import AppLayout from "@/layouts/AppLayout";
 
 const PaymentCancel: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const courseId = searchParams.get("course");
 
   return (
     <AppLayout>
@@ -29,8 +31,9 @@ const PaymentCancel: React.FC = () => {
               Si tuviste algún problema durante el proceso, puedes intentarlo nuevamente o contactar con nuestro equipo de soporte.
             </p>
           </CardContent>
-          <CardFooter className="flex flex-col gap-3 items-center sm:flex-row">
-            <Button variant="outline" onClick={() => navigate(-1)}>
+          <CardFooter className="flex flex-col gap-3 items-center sm:flex-row sm:justify-center">
+            <Button variant="outline" onClick={() => courseId ? navigate(`/courses/${courseId}`) : navigate("/courses")} className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
               Volver al curso
             </Button>
             <Button onClick={() => navigate("/courses")}>

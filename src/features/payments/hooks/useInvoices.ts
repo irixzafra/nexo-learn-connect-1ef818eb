@@ -1,64 +1,75 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/contexts/AuthContext";
 import { Invoice } from "@/types/payment";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 export const useInvoices = () => {
-  const { isAuthenticated } = useAuth();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const { user } = useAuth();
+  const { toast } = useToast();
 
-  // Fetch user's invoices
-  const fetchInvoices = async () => {
-    if (!isAuthenticated) {
-      setInvoices([]);
-      setIsLoading(false);
-      return;
+  useEffect(() => {
+    if (user) {
+      fetchInvoices();
     }
+  }, [user]);
+
+  const fetchInvoices = async () => {
+    if (!user) return;
 
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('invoices')
+        .from("invoices")
         .select(`
           *,
-          course:course_id(title),
-          subscription:subscription_id(subscription_plans(name))
+          course:course_id (
+            title
+          ),
+          subscription:subscription_id (
+            subscription_plans (
+              name
+            )
+          )
         `)
-        .order('created_at', { ascending: false });
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setInvoices(data || []);
-    } catch (err: any) {
-      console.error("Error fetching invoices:", err);
-      setError(err);
+    } catch (error) {
+      console.error("Error fetching invoices:", error);
+      toast({
+        title: "Error",
+        description: "No se pudieron cargar las facturas",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Download invoice PDF
-  const downloadInvoice = async (invoiceUrl: string) => {
-    window.open(invoiceUrl, '_blank');
-  };
-
-  // Load data on component mount or auth state change
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchInvoices();
-    } else {
-      setInvoices([]);
-      setIsLoading(false);
+  const downloadInvoice = async (invoice: Invoice) => {
+    if (!invoice.pdf_url) {
+      toast({
+        title: "Error",
+        description: "No hay un PDF disponible para esta factura",
+        variant: "destructive",
+      });
+      return;
     }
-  }, [isAuthenticated]);
+
+    // Open the PDF URL in a new tab
+    window.open(invoice.pdf_url, "_blank");
+  };
 
   return {
     invoices,
     isLoading,
-    error,
-    refetch: fetchInvoices,
+    fetchInvoices,
     downloadInvoice
   };
 };

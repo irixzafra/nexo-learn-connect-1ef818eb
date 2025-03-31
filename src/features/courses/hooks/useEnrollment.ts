@@ -1,9 +1,9 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export const useEnrollment = (courseId: string) => {
   const navigate = useNavigate();
@@ -11,6 +11,7 @@ export const useEnrollment = (courseId: string) => {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
+  const { toast } = useToast();
 
   const checkEnrollmentStatus = async () => {
     if (!courseId || !user) {
@@ -27,6 +28,7 @@ export const useEnrollment = (courseId: string) => {
         .eq("user_id", user.id)
         .single();
 
+      if (error) throw error;
       setIsEnrolled(!!data);
     } catch (error) {
       // Not enrolled (no enrollment found)
@@ -35,6 +37,15 @@ export const useEnrollment = (courseId: string) => {
       setIsChecking(false);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated && courseId) {
+      checkEnrollmentStatus();
+    } else {
+      setIsChecking(false);
+      setIsEnrolled(false);
+    }
+  }, [courseId, isAuthenticated, user?.id]);
 
   const handleEnroll = async () => {
     if (!isAuthenticated) {
