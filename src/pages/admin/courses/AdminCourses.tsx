@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   List, 
@@ -200,8 +200,8 @@ const AllCoursesTab: React.FC = () => {
     window.open(`/courses/${course.slug || course.id}`, '_blank');
   };
 
-  // Fix for Error 1: This function is properly typed as a ReactNode renderer
-  const renderCourseForm = ({ data, onChange }: { data: Course | null; onChange: (data: Course) => void }) => {
+  // This function is typed properly as a component rather than a render function
+  const CourseForm: React.FC<{ data: Course | null; onChange: (data: Course) => void }> = ({ data, onChange }) => {
     return (
       <div className="space-y-4">
         <div className="space-y-2">
@@ -352,6 +352,20 @@ const AllCoursesTab: React.FC = () => {
     })
   ];
 
+  // Fix for Error 1: Define emptyState as proper ReactNode
+  const emptyStateComponent: ReactNode = (
+    <div className="flex flex-col items-center justify-center text-muted-foreground py-8">
+      <BookOpen className="h-8 w-8 mb-2" />
+      <p className="mb-2">No hay cursos disponibles</p>
+      <Button 
+        variant="link" 
+        onClick={() => navigate('/instructor/create-course')}
+      >
+        Crear primer curso
+      </Button>
+    </div>
+  );
+
   return (
     <div className="space-y-4">
       <div className="flex justify-end mb-4">
@@ -367,23 +381,12 @@ const AllCoursesTab: React.FC = () => {
           data={courses}
           searchPlaceholder="Buscar por título, estado o nivel..."
           exportFilename="cursos"
-          emptyState={
-            <div className="flex flex-col items-center justify-center text-muted-foreground py-8">
-              <BookOpen className="h-8 w-8 mb-2" />
-              <p className="mb-2">No hay cursos disponibles</p>
-              <Button 
-                variant="link" 
-                onClick={() => navigate('/instructor/create-course')}
-              >
-                Crear primer curso
-              </Button>
-            </div>
-          }
+          emptyState={emptyStateComponent}
           onRowClick={(course) => handleEditCourse(course as Course)}
         />
       </Card>
 
-      {/* Fix for Error 2: Pass the function as children prop properly */}
+      {/* Fix for Error 2: Provide the component directly as children */}
       <EntityDrawer<Course>
         title="Editar Curso"
         description="Modifica los detalles del curso"
@@ -392,7 +395,7 @@ const AllCoursesTab: React.FC = () => {
         onSave={handleSaveCourse}
         entity={selectedCourse}
       >
-        {renderCourseForm}
+        <CourseForm />
       </EntityDrawer>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
