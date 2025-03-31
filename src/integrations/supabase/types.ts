@@ -598,6 +598,42 @@ export type Database = {
           },
         ]
       }
+      feature_flags: {
+        Row: {
+          config: Json | null
+          created_at: string | null
+          description: string | null
+          feature_name: string
+          id: string
+          is_enabled: boolean
+          scope: string | null
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          config?: Json | null
+          created_at?: string | null
+          description?: string | null
+          feature_name: string
+          id?: string
+          is_enabled?: boolean
+          scope?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          config?: Json | null
+          created_at?: string | null
+          description?: string | null
+          feature_name?: string
+          id?: string
+          is_enabled?: boolean
+          scope?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       features_config: {
         Row: {
           auto_start_onboarding: boolean | null
