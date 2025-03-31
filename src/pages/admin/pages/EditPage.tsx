@@ -7,6 +7,7 @@ import { getPageBySlug, updatePage } from '@/services/pagesService';
 import { SitePage } from '@/types/pages';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 const EditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

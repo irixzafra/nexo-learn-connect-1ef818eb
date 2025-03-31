@@ -1,224 +1,298 @@
 
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SitePage, PageStatus, PageLayout } from '@/types/pages';
-import { Card, CardContent } from '@/components/ui/card';
+import * as z from 'zod';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { PageStatus, PageLayout, SitePage } from '@/types/pages';
+import { Loader2 } from 'lucide-react';
 import { isSlugUnique } from '@/services/pagesService';
-import { toast } from 'sonner';
 
-const pageSchema = z.object({
-  title: z.string().min(1, 'El título es obligatorio'),
-  slug: z.string().min(1, 'El slug es obligatorio').regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'El slug solo puede contener letras minúsculas, números y guiones'),
-  meta_description: z.string().optional(),
-  layout: z.enum(['default', 'landing', 'sidebar', 'full-width']),
-  status: z.enum(['draft', 'published', 'archived']),
-  content: z.any().optional(),
+// Schema definition for form validation
+const pageFormSchema = z.object({
+  title: z.string().min(3, {
+    message: 'El título debe tener al menos 3 caracteres',
+  }),
+  slug: z.string().min(2, {
+    message: 'El slug debe tener al menos 2 caracteres',
+  }).regex(/^[a-z0-9-]+$/, {
+    message: 'El slug solo puede contener letras minúsculas, números y guiones',
+  }),
+  meta_description: z.string().max(160, {
+    message: 'La meta descripción no debe exceder los 160 caracteres',
+  }).optional().or(z.literal('')),
+  status: z.enum(['draft', 'published', 'archived'] as const),
+  layout: z.enum(['default', 'landing', 'sidebar', 'full-width'] as const),
+  content: z.any(), // For now, we'll use a simple textarea
 });
 
-type PageFormData = z.infer<typeof pageSchema>;
+type PageFormValues = z.infer<typeof pageFormSchema>;
 
 interface PageFormProps {
   initialData?: SitePage;
-  onSubmit: (data: PageFormData) => Promise<void>;
-  isLoading?: boolean;
+  onSubmit: (data: PageFormValues) => void;
+  isLoading: boolean;
 }
 
-const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading = false }) => {
-  const { user } = useAuth();
-  const [isSlugValid, setIsSlugValid] = useState(true);
+const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading }) => {
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   
-  const defaultValues: PageFormData = {
+  const defaultValues: PageFormValues = {
     title: initialData?.title || '',
     slug: initialData?.slug || '',
     meta_description: initialData?.meta_description || '',
-    layout: initialData?.layout || 'default',
     status: initialData?.status || 'draft',
-    content: initialData?.content || { blocks: [] },
+    layout: initialData?.layout || 'default',
+    content: initialData?.content || '',
   };
 
-  const { register, handleSubmit, watch, setValue, formState: { errors, isDirty } } = useForm<PageFormData>({
-    resolver: zodResolver(pageSchema),
+  const form = useForm<PageFormValues>({
+    resolver: zodResolver(pageFormSchema),
     defaultValues,
   });
 
-  const watchTitle = watch('title');
-  const watchSlug = watch('slug');
-
-  // Generate slug from title
+  // Effect to update form when initialData changes
   useEffect(() => {
-    if (!initialData && watchTitle && !watchSlug) {
-      const generatedSlug = watchTitle
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '');
-      
-      setValue('slug', generatedSlug);
+    if (initialData) {
+      form.reset({
+        title: initialData.title,
+        slug: initialData.slug,
+        meta_description: initialData.meta_description || '',
+        status: initialData.status,
+        layout: initialData.layout,
+        content: initialData.content,
+      });
     }
-  }, [watchTitle, watchSlug, initialData, setValue]);
+  }, [initialData, form]);
 
-  // Check slug uniqueness
-  useEffect(() => {
-    const checkSlug = async () => {
-      if (watchSlug) {
-        setIsCheckingSlug(true);
-        try {
-          const isUnique = await isSlugUnique(watchSlug, initialData?.id);
-          setIsSlugValid(isUnique);
-        } catch (error) {
-          console.error('Error checking slug uniqueness:', error);
-          toast.error('Error al verificar disponibilidad del slug');
-        } finally {
-          setIsCheckingSlug(false);
-        }
-      }
-    };
+  // Autogenerate slug from title
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/--+/g, '-')
+      .replace(/^-+/, '')
+      .replace(/-+$/, '');
+  };
 
-    const debounceTimer = setTimeout(checkSlug, 500);
-    return () => clearTimeout(debounceTimer);
-  }, [watchSlug, initialData?.id]);
-
-  const handleFormSubmit = async (data: PageFormData) => {
-    if (!isSlugValid) {
-      toast.error('El slug ya está en uso. Por favor, elige otro.');
-      return;
-    }
-
+  // Validate slug uniqueness when it changes
+  const validateSlugUniqueness = async (slug: string) => {
+    if (!slug) return true;
+    
     try {
-      // Add the current user as creator if it's a new page
-      if (!initialData && user) {
-        data.created_by = user.id;
-      }
-      
-      await onSubmit(data);
+      setIsCheckingSlug(true);
+      return await isSlugUnique(slug, initialData?.id);
     } catch (error) {
-      console.error('Error submitting form:', error);
-      toast.error('Error al guardar la página');
+      console.error('Error checking slug uniqueness:', error);
+      return false;
+    } finally {
+      setIsCheckingSlug(false);
     }
   };
 
-  return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-      <Card>
-        <CardContent className="pt-6">
-          <div className="grid gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Título</Label>
-                <Input 
-                  id="title" 
-                  placeholder="Título de la página" 
-                  {...register('title')} 
-                  error={errors.title?.message}
-                />
-                {errors.title && (
-                  <p className="text-sm text-red-500">{errors.title.message}</p>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="slug">
-                  Slug
-                  {isCheckingSlug && <span className="ml-2 text-xs text-muted-foreground">(Verificando...)</span>}
-                  {!isSlugValid && !isCheckingSlug && (
-                    <span className="ml-2 text-xs text-red-500">(Ya en uso)</span>
-                  )}
-                </Label>
-                <Input 
-                  id="slug" 
-                  placeholder="url-amigable" 
-                  {...register('slug')} 
-                  error={errors.slug?.message}
-                  className={!isSlugValid ? 'border-red-500' : ''}
-                />
-                {errors.slug && (
-                  <p className="text-sm text-red-500">{errors.slug.message}</p>
-                )}
-                {!isSlugValid && !isCheckingSlug && (
-                  <p className="text-sm text-red-500">Este slug ya está en uso</p>
-                )}
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="meta_description">Meta descripción</Label>
-              <Textarea 
-                id="meta_description" 
-                placeholder="Breve descripción para SEO" 
-                {...register('meta_description')} 
-                rows={2}
-              />
-            </div>
+  // Handler for form submission
+  const handleSubmit = form.handleSubmit(async (values) => {
+    onSubmit(values);
+  });
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="layout">Layout</Label>
+  return (
+    <Form {...form}>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Title field */}
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Título</FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field} 
+                    placeholder="Título de la página" 
+                    onChange={(e) => {
+                      field.onChange(e);
+                      // Only auto-generate slug if it's empty or if we're creating a new page
+                      if (!initialData && !form.getValues('slug')) {
+                        form.setValue('slug', generateSlug(e.target.value));
+                      }
+                    }}
+                    disabled={isLoading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Slug field */}
+          <FormField
+            control={form.control}
+            name="slug"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Slug 
+                  {isCheckingSlug && (
+                    <Loader2 className="inline ml-2 h-4 w-4 animate-spin" />
+                  )}
+                </FormLabel>
+                <FormControl>
+                  <Input 
+                    {...field} 
+                    placeholder="slug-de-la-pagina" 
+                    className="font-mono text-sm"
+                    disabled={isLoading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Meta Description */}
+        <FormField
+          control={form.control}
+          name="meta_description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Meta Descripción</FormLabel>
+              <FormControl>
+                <Textarea 
+                  {...field} 
+                  placeholder="Descripción para motores de búsqueda (SEO)" 
+                  className="resize-none h-20"
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Content - for now just a textarea */}
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Contenido</FormLabel>
+              <FormControl>
+                <Textarea 
+                  {...field} 
+                  value={typeof field.value === 'object' ? JSON.stringify(field.value, null, 2) : field.value}
+                  onChange={(e) => {
+                    try {
+                      // Try to parse as JSON if it looks like JSON
+                      if (e.target.value.trim().startsWith('{')) {
+                        field.onChange(JSON.parse(e.target.value));
+                      } else {
+                        field.onChange(e.target.value);
+                      }
+                    } catch {
+                      // If not valid JSON, just store as string
+                      field.onChange(e.target.value);
+                    }
+                  }}
+                  placeholder="Contenido de la página (JSON o texto)" 
+                  className="resize-none h-32 font-mono text-sm"
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Status select */}
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Estado</FormLabel>
                 <Select 
-                  onValueChange={(value: PageLayout) => setValue('layout', value)} 
-                  defaultValue={defaultValues.layout}
+                  onValueChange={field.onChange} 
+                  defaultValue={field.value}
+                  disabled={isLoading}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un layout" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="default">Por defecto</SelectItem>
-                    <SelectItem value="landing">Landing</SelectItem>
-                    <SelectItem value="sidebar">Con sidebar</SelectItem>
-                    <SelectItem value="full-width">Ancho completo</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="status">Estado</Label>
-                <Select 
-                  onValueChange={(value: PageStatus) => setValue('status', value)} 
-                  defaultValue={defaultValues.status}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un estado" />
-                  </SelectTrigger>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un estado" />
+                    </SelectTrigger>
+                  </FormControl>
                   <SelectContent>
                     <SelectItem value="draft">Borrador</SelectItem>
                     <SelectItem value="published">Publicada</SelectItem>
                     <SelectItem value="archived">Archivada</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-            
-            <div className="pt-2">
-              <Button 
-                type="submit" 
-                disabled={isLoading || !isDirty || !isSlugValid || isCheckingSlug}
-                className="mr-2"
-              >
-                {isLoading ? 'Guardando...' : 'Guardar página'}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => window.history.back()}>
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </form>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Layout select */}
+          <FormField
+            control={form.control}
+            name="layout"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Diseño</FormLabel>
+                <Select 
+                  onValueChange={field.onChange} 
+                  defaultValue={field.value}
+                  disabled={isLoading}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un diseño" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="default">Estándar</SelectItem>
+                    <SelectItem value="landing">Landing</SelectItem>
+                    <SelectItem value="sidebar">Con Sidebar</SelectItem>
+                    <SelectItem value="full-width">Ancho Completo</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Submit button */}
+        <Button type="submit" disabled={isLoading} className="w-full">
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Guardando...
+            </>
+          ) : initialData ? 'Actualizar Página' : 'Crear Página'}
+        </Button>
+      </form>
+    </Form>
   );
 };
 

@@ -197,9 +197,9 @@ export const adminConfigMenuItems: AdminMenuItem[] = [
   },
   {
     icon: FileText,
-    label: 'Contenido',
-    href: '/admin/settings/content',
-    description: 'Configuración de contenido'
+    label: 'Páginas',
+    href: '/admin/settings/pages',
+    description: 'Gestión de páginas'
   },
   {
     icon: LineChart,
