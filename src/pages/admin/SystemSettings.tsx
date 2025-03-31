@@ -14,7 +14,10 @@ import {
   Globe,
   Info,
   Users,
-  Lock
+  Lock,
+  BookMarked,
+  Plug,
+  MousePointerSquare
 } from 'lucide-react';
 import { AppearanceSettings } from '@/features/admin/components/settings/AppearanceSettings';
 import { SecuritySettings } from '@/features/admin/components/settings/SecuritySettings';
@@ -106,6 +109,7 @@ const SystemSettings: React.FC = () => {
       value: 'appearance',
       label: 'Apariencia',
       icon: <Palette className="h-4 w-4" />,
+      dataTag: "settings-tab-appearance",
       content: (
         <AppearanceSettings 
           featuresConfig={featuresConfig}
@@ -118,8 +122,46 @@ const SystemSettings: React.FC = () => {
       value: 'security',
       label: 'Seguridad',
       icon: <Shield className="h-4 w-4" />,
+      dataTag: "settings-tab-security",
       content: (
         <SecuritySettings 
+          featuresConfig={featuresConfig}
+          onToggleFeature={handleToggleFeature}
+          isLoading={isSaving}
+        />
+      )
+    },
+    {
+      value: 'features',
+      label: 'Funcionalidades',
+      icon: <ToggleLeft className="h-4 w-4" />,
+      dataTag: "settings-tab-features",
+      content: (
+        <Card>
+          <CardHeader>
+            <CardTitle>Gestión de Funcionalidades</CardTitle>
+            <CardDescription>
+              Activa o desactiva funciones específicas de la plataforma
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="h-64 flex items-center justify-center bg-muted/40 rounded-md">
+              <div className="text-center">
+                <ToggleLeft className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+                <p>Gestión de funcionalidades en desarrollo</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    },
+    {
+      value: 'content',
+      label: 'Contenido',
+      icon: <BookMarked className="h-4 w-4" />,
+      dataTag: "settings-tab-content",
+      content: (
+        <ContentSettings 
           featuresConfig={featuresConfig}
           onToggleFeature={handleToggleFeature}
           isLoading={isSaving}
@@ -130,6 +172,7 @@ const SystemSettings: React.FC = () => {
       value: 'notifications',
       label: 'Notificaciones',
       icon: <Bell className="h-4 w-4" />,
+      dataTag: "settings-tab-notifications",
       content: (
         <NotificationSettings 
           featuresConfig={featuresConfig}
@@ -139,21 +182,34 @@ const SystemSettings: React.FC = () => {
       )
     },
     {
-      value: 'content',
-      label: 'Contenido',
-      icon: <FileText className="h-4 w-4" />,
+      value: 'integrations',
+      label: 'Integraciones',
+      icon: <Plug className="h-4 w-4" />,
+      dataTag: "settings-tab-integrations",
       content: (
-        <ContentSettings 
-          featuresConfig={featuresConfig}
-          onToggleFeature={handleToggleFeature}
-          isLoading={isSaving}
-        />
+        <Card>
+          <CardHeader>
+            <CardTitle>Integraciones</CardTitle>
+            <CardDescription>
+              Conecta la plataforma con servicios externos y APIs
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="h-64 flex items-center justify-center bg-muted/40 rounded-md">
+              <div className="text-center">
+                <Plug className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+                <p>Gestión de integraciones en desarrollo</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )
     },
     {
       value: 'test-data',
       label: 'Datos de Prueba',
       icon: <Database className="h-4 w-4" />,
+      dataTag: "settings-tab-test-data",
       content: (
         <TestDataSettings 
           featuresConfig={featuresConfig}
@@ -165,7 +221,8 @@ const SystemSettings: React.FC = () => {
     {
       value: 'onboarding',
       label: 'Onboarding',
-      icon: <ToggleLeft className="h-4 w-4" />,
+      icon: <MousePointerSquare className="h-4 w-4" />,
+      dataTag: "settings-tab-onboarding",
       content: (
         <OnboardingSettings 
           featuresConfig={featuresConfig}
@@ -178,6 +235,7 @@ const SystemSettings: React.FC = () => {
       value: 'access',
       label: 'Acceso',
       icon: <Lock className="h-4 w-4" />,
+      dataTag: "settings-tab-access",
       content: (
         <Card>
           <CardHeader>
@@ -201,6 +259,7 @@ const SystemSettings: React.FC = () => {
       value: 'localization',
       label: 'Localización',
       icon: <Globe className="h-4 w-4" />,
+      dataTag: "settings-tab-localization",
       content: (
         <Card>
           <CardHeader>
@@ -224,6 +283,7 @@ const SystemSettings: React.FC = () => {
       value: 'about',
       label: 'Acerca de',
       icon: <Info className="h-4 w-4" />,
+      dataTag: "settings-tab-about",
       content: (
         <Card>
           <CardHeader>

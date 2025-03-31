@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AppLayout from '@/layouts/AppLayout';
@@ -17,16 +16,10 @@ import { Navigate } from 'react-router-dom';
 import AdminNavigation from '@/components/admin/AdminNavigation';
 import ContentManagement from '@/pages/admin/content/ContentManagement';
 
-// Create a wrapper component for Admin content that includes the navigation
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Esta es una implementación simple para el propósito de la demostración
-  // En un entorno real, obtendríamos este valor de un contexto o de una API
   const [tabNavigationEnabled, setTabNavigationEnabled] = useState(true);
   
-  // Simulando recuperar la configuración
   useEffect(() => {
-    // Aquí se podría consultar la configuración real desde localStorage,
-    // una base de datos o una API
     const checkLocalStorage = () => {
       const storedValue = localStorage.getItem('tabNavigationEnabled');
       if (storedValue !== null) {
@@ -36,7 +29,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     
     checkLocalStorage();
     
-    // Escuchar cambios en localStorage por si se actualiza en otra pestaña
     window.addEventListener('storage', checkLocalStorage);
     
     return () => {
@@ -61,7 +53,6 @@ const AdminRoutes: React.FC = () => {
         </AdminLayout>
       } />
       
-      {/* Rutas de Usuarios */}
       <Route path="users" element={
         <AdminLayout>
           <UserManagement />
@@ -73,7 +64,6 @@ const AdminRoutes: React.FC = () => {
         </AdminLayout>
       } />
       
-      {/* Rutas de Educación */}
       <Route path="courses" element={
         <AdminLayout>
           <AdminCourses />
@@ -95,7 +85,6 @@ const AdminRoutes: React.FC = () => {
         </AdminLayout>
       } />
       
-      {/* Rutas de Contenido */}
       <Route path="content" element={
         <AdminLayout>
           <ContentManagement />
@@ -107,7 +96,6 @@ const AdminRoutes: React.FC = () => {
         </AdminLayout>
       } />
       
-      {/* Rutas de Facturación */}
       <Route path="billing" element={
         <AdminLayout>
           <Navigate to="/admin/dashboard" replace />
@@ -129,7 +117,6 @@ const AdminRoutes: React.FC = () => {
         </AdminLayout>
       } />
       
-      {/* Rutas de Datos */}
       <Route path="test-data" element={
         <AdminLayout>
           <TestDataManagement />
@@ -146,7 +133,6 @@ const AdminRoutes: React.FC = () => {
         </AdminLayout>
       } />
       
-      {/* Rutas de Configuración */}
       <Route path="settings" element={
         <AdminLayout>
           <SystemSettings />
@@ -173,7 +159,6 @@ const AdminRoutes: React.FC = () => {
         </AdminLayout>
       } />
       
-      {/* Otras rutas */}
       <Route path="access" element={
         <AdminLayout>
           <AccessControl />
