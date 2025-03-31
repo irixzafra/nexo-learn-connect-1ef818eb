@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import LandingPage from '@/pages/LandingPage';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -37,8 +38,6 @@ const PublicRoutes: React.FC = () => {
       <Route path="/scholarships" element={<PublicLayout><Scholarships /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
       <Route path="/unauthorized" element={<PublicLayout><Unauthorized /></PublicLayout>} />
-      <Route path="/payment/success" element={<PublicLayout><PaymentSuccess /></PublicLayout>} />
-      <Route path="/payment/cancel" element={<PublicLayout><PaymentCancel /></PublicLayout>} />
       
       {/* Legal pages */}
       <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />
@@ -83,7 +82,6 @@ const PublicRoutes: React.FC = () => {
           </div>
         </AppLayout>
       } />
-      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

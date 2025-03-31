@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import AppLayout from '@/layouts/AppLayout';
 import Dashboard from '@/pages/instructor/Dashboard';
 import CoursesList from '@/pages/instructor/CoursesList';

@@ -1,12 +1,11 @@
 
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from "@/components/ProtectedRoute";
 import NotFound from "@/pages/NotFound";
 import AppLayout from "@/layouts/AppLayout";
 
 // Student pages
-import Home from "@/pages/Home";
 import StudentDashboard from "@/pages/student/Dashboard";
 import StudentCourses from "@/pages/student/Courses";
 import CourseLearn from "@/pages/student/CourseLearn";
@@ -23,95 +22,69 @@ const UserRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <StudentDashboard />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <StudentDashboard />
+        </AppLayout>
       } />
       <Route path="/dashboard" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <StudentDashboard />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <StudentDashboard />
+        </AppLayout>
       } />
       <Route path="/my-courses" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <StudentCourses />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <StudentCourses />
+        </AppLayout>
       } />
       <Route path="/courses/:courseId/learn" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <CourseLearn />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <CourseLearn />
+        </AppLayout>
       } />
       <Route path="/courses/:courseId/learn/:lessonId" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <LessonView />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <LessonView />
+        </AppLayout>
       } />
       <Route path="/checkout/:courseId" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Checkout />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <Checkout />
+        </AppLayout>
       } />
       <Route path="/checkout/success" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <CheckoutSuccess />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <CheckoutSuccess />
+        </AppLayout>
       } />
       <Route path="/checkout/cancel" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <CheckoutCancel />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <CheckoutCancel />
+        </AppLayout>
       } />
       <Route path="/invoices" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Invoices />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <Invoices />
+        </AppLayout>
       } />
       <Route path="/calendar" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Calendar />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <Calendar />
+        </AppLayout>
       } />
       <Route path="/messages" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Messages />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <Messages />
+        </AppLayout>
       } />
       <Route path="/settings" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Settings />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <Settings />
+        </AppLayout>
       } />
       <Route path="*" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <NotFound />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <NotFound />
+        </AppLayout>
       } />
     </Routes>
   );

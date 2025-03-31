@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -24,7 +25,6 @@ const PaymentSuccess = React.lazy(() => import('@/pages/payment/PaymentSuccess')
 const PaymentCancel = React.lazy(() => import('@/pages/payment/PaymentCancel'));
 const UserRoutes = React.lazy(() => import('./UserRoutes'));
 const InstructorRoutes = React.lazy(() => import('./InstructorRoutes'));
-const PaymentRoutes = React.lazy(() => import('./PaymentRoutes'));
 const Checkout = React.lazy(() => import('@/pages/student/Checkout'));
 
 // Componente de carga para Suspense
@@ -39,7 +39,7 @@ const AppRouter: React.FC = () => {
 
   return (
     <Routes>
-      {/* Public routes are accessible without authentication */}
+      {/* Public routes */}
       <Route path="/*" element={<PublicRoutes />} />
       
       {/* Course public landing page */}
@@ -113,14 +113,7 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* Payment routes */}
-      <Route path="/payment/*" element={
-        <React.Suspense fallback={<LoadingFallback />}>
-          <PaymentRoutes />
-        </React.Suspense>
-      } />
-      
-      {/* Success and cancel pages for payments */}
+      {/* Payment success and cancel pages */}
       <Route path="/payment/success" element={
         <React.Suspense fallback={<LoadingFallback />}>
           <PaymentSuccess />
@@ -153,7 +146,7 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* Admin routes - Import directly instead of using lazy loading */}
+      {/* Admin routes */}
       <Route path="/admin/*" element={
         <ProtectedRoute>
           <AdminRoutes />

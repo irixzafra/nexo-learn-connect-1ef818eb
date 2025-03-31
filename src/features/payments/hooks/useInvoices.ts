@@ -4,9 +4,10 @@ import { supabase } from '@/lib/supabase';
 import { Invoice } from '@/types/payment';
 import { useToast } from '@/components/ui/use-toast';
 
-export const useInvoices = () => {
+export const useInvoices = (userId?: string) => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'paid' | 'pending'>('all');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -14,7 +15,7 @@ export const useInvoices = () => {
       setIsLoading(true);
       
       try {
-        const { data, error } = await supabase
+        let query = supabase
           .from('invoices')
           .select(`
             *,
@@ -26,8 +27,24 @@ export const useInvoices = () => {
                 name
               )
             )
-          `)
-          .order('created_at', { ascending: false });
+          `);
+        
+        // Add user filter if userId is provided
+        if (userId) {
+          query = query.eq('user_id', userId);
+        }
+        
+        // Add status filter
+        if (filter === 'paid') {
+          query = query.eq('status', 'paid');
+        } else if (filter === 'pending') {
+          query = query.in('status', ['open', 'draft']);
+        }
+        
+        // Order by created_at
+        query = query.order('created_at', { ascending: false });
+        
+        const { data, error } = await query;
         
         if (error) {
           throw error;
@@ -47,7 +64,7 @@ export const useInvoices = () => {
     };
 
     fetchInvoices();
-  }, [toast]);
+  }, [toast, userId, filter]);
 
-  return { invoices, isLoading };
+  return { invoices, isLoading, filter, setFilter };
 };

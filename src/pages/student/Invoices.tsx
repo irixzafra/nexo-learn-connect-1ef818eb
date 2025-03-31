@@ -32,7 +32,14 @@ const Invoices: React.FC = () => {
                 </TabsList>
                 
                 <TabsContent value={filter}>
-                  <InvoiceList invoices={invoices} isLoading={isLoading} />
+                  {/* Pass proper props to InvoiceList */}
+                  <InvoiceList 
+                    invoices={invoices.map(invoice => ({
+                      ...invoice,
+                      date: new Date(invoice.created_at || Date.now()).toISOString()
+                    }))} 
+                    isLoading={isLoading} 
+                  />
                 </TabsContent>
               </Tabs>
             </CardContent>
