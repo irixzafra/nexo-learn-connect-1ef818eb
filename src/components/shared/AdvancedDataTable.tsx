@@ -5,7 +5,6 @@ import {
   ColumnFiltersState,
   SortingState,
   VisibilityState,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -13,26 +12,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { DataTablePagination } from "./DataTablePagination";
-import { Button } from "@/components/ui/button";
-import { 
-  DropdownMenu, 
-  DropdownMenuCheckboxItem, 
-  DropdownMenuContent, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { Download, SlidersHorizontal } from "lucide-react";
-import Papa from 'papaparse';
-import { saveAs } from 'file-saver';
+import { TableToolbar, TableContent, applyColumnFilter } from "./data-table";
 
 interface AdvancedDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -85,152 +66,26 @@ export function AdvancedDataTable<TData, TValue>({
   });
 
   useEffect(() => {
-    if (searchColumn !== "all" && globalFilter) {
-      setColumnFilters([
-        {
-          id: searchColumn,
-          value: globalFilter,
-        },
-      ]);
-    } else if (searchColumn !== "all") {
-      setColumnFilters([]);
-    }
+    applyColumnFilter(searchColumn, globalFilter, setColumnFilters);
   }, [globalFilter, searchColumn]);
-
-  const exportToCSV = () => {
-    const dataToExport = table.getFilteredRowModel().rows.map(row => {
-      const rowData: Record<string, any> = {};
-      
-      table.getAllColumns()
-        .filter(column => column.getIsVisible())
-        .forEach(column => {
-          const columnId = column.id;
-          const cellValue = row.getValue(columnId);
-          
-          rowData[column.columnDef.header as string] = 
-            typeof cellValue === 'object' ? JSON.stringify(cellValue) : cellValue;
-        });
-      
-      return rowData;
-    });
-    
-    const csv = Papa.unparse(dataToExport);
-    
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-    saveAs(blob, `${exportFilename}.csv`);
-  };
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        {showSearch && (
-          <div className="flex items-center">
-            <Input
-              placeholder={searchPlaceholder}
-              value={globalFilter}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              className="max-w-sm"
-            />
-          </div>
-        )}
-        
-        <div className="flex items-center gap-2 ml-auto">
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="ml-auto"
-            onClick={exportToCSV}
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Exportar CSV
-          </Button>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="ml-auto">
-                <SlidersHorizontal className="h-4 w-4 mr-2" />
-                Columnas
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.columnDef.header as string}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+      <TableToolbar
+        table={table}
+        showSearch={showSearch}
+        searchPlaceholder={searchPlaceholder}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
+        exportFilename={exportFilename}
+      />
       
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={() => onRowClick && onRowClick(row.original)}
-                  className={onRowClick ? "cursor-pointer hover:bg-muted" : ""}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  {emptyState ? (
-                    emptyState
-                  ) : (
-                    <span className="text-muted-foreground">
-                      No se encontraron resultados.
-                    </span>
-                  )}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <TableContent
+        table={table}
+        columns={columns}
+        emptyState={emptyState}
+        onRowClick={onRowClick}
+      />
       
       <DataTablePagination table={table} />
     </div>
