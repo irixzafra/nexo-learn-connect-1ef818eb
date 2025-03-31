@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
@@ -123,6 +122,13 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
     loadDesignFeatureState();
   }, []);
 
+  useEffect(() => {
+    if (!isLoading) {
+      applyThemeToDom(theme);
+      console.log('Design system theme applied:', theme);
+    }
+  }, [isLoading, theme]);
+
   const loadTheme = async () => {
     try {
       setIsLoading(true);
@@ -149,6 +155,9 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
     } catch (error) {
       console.error('Error loading theme:', error);
       toast.error('Error al cargar la configuración de diseño');
+      // En caso de error, usamos el tema por defecto
+      setTheme(defaultTheme);
+      setOriginalTheme(defaultTheme);
     } finally {
       setIsLoading(false);
     }
@@ -167,14 +176,18 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
           await supabase
             .from('features_config')
             .insert({ id: 1, design_system_enabled: true });
+          setDesignFeatureEnabled(true);
         } else {
           throw error;
         }
       } else if (data) {
         setDesignFeatureEnabled(data.design_system_enabled);
+        console.log('Design system enabled:', data.design_system_enabled);
       }
     } catch (error) {
       console.error('Error loading design feature state:', error);
+      // En caso de error, habilitamos por defecto
+      setDesignFeatureEnabled(true);
     }
   };
 
@@ -237,10 +250,22 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
       if (error) throw error;
       
       setDesignFeatureEnabled(enabled);
+      console.log('Design system feature toggled:', enabled);
       
       // Si se desactiva, cancelamos cualquier vista previa
       if (!enabled && isPreviewing) {
         endPreview();
+      }
+      
+      // Si se activa, aplicamos el tema actual
+      if (enabled) {
+        applyThemeToDom(theme);
+      } else {
+        // Si se desactiva, eliminamos cualquier estilo personalizado
+        const styleElement = document.getElementById('custom-theme-styles');
+        if (styleElement) {
+          styleElement.textContent = '';
+        }
       }
       
     } catch (error) {
@@ -251,36 +276,89 @@ export const DesignSystemProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   };
 
-  // Apply theme to the DOM by updating CSS variables
   const applyThemeToDom = (theme: ThemeConfig) => {
+    if (!designFeatureEnabled) {
+      console.log('Design system is disabled, not applying theme');
+      return;
+    }
+    
+    console.log('Applying theme to DOM:', theme);
+    
     const root = document.documentElement;
     
-    // Apply colors
+    const convertColorToHSL = (color: string) => {
+      if (color.startsWith('hsl')) {
+        return color;
+      }
+      
+      const tempEl = document.createElement('div');
+      tempEl.style.color = color;
+      document.body.appendChild(tempEl);
+      const rgbColor = getComputedStyle(tempEl).color;
+      document.body.removeChild(tempEl);
+      
+      const rgbMatch = rgbColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/);
+      if (!rgbMatch) return color;
+      
+      const r = parseInt(rgbMatch[1], 10);
+      const g = parseInt(rgbMatch[2], 10);
+      const b = parseInt(rgbMatch[3], 10);
+      
+      const r1 = r / 255;
+      const g1 = g / 255;
+      const b1 = b / 255;
+      
+      const max = Math.max(r1, g1, b1);
+      const min = Math.min(r1, g1, b1);
+      
+      let h = 0, s = 0, l = (max + min) / 2;
+      
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        
+        switch (max) {
+          case r1:
+            h = (g1 - b1) / d + (g1 < b1 ? 6 : 0);
+            break;
+          case g1:
+            h = (b1 - r1) / d + 2;
+            break;
+          case b1:
+            h = (r1 - g1) / d + 4;
+            break;
+        }
+        
+        h *= 60;
+      }
+      
+      return `${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+    };
+    
     Object.entries(theme.colors).forEach(([key, value]) => {
-      root.style.setProperty(`--${key}`, value);
+      const hslValue = convertColorToHSL(value);
+      root.style.setProperty(`--${key}`, hslValue);
     });
     
-    // Apply fonts
     root.style.setProperty('--font-heading', theme.fonts.heading);
     root.style.setProperty('--font-body', theme.fonts.body);
     root.style.setProperty('--font-mono', theme.fonts.mono);
     
-    // Apply font sizes
     Object.entries(theme.fonts.sizes).forEach(([key, value]) => {
       root.style.setProperty(`--font-size-${key}`, value);
     });
     
-    // Apply border radius
     root.style.setProperty('--radius', theme.borderRadius);
     
-    // Apply custom CSS if any
     let styleElement = document.getElementById('custom-theme-styles');
     if (!styleElement) {
       styleElement = document.createElement('style');
       styleElement.id = 'custom-theme-styles';
       document.head.appendChild(styleElement);
     }
-    styleElement.textContent = theme.customCSS;
+    styleElement.textContent = theme.customCSS || '';
+    
+    console.log('Theme applied successfully');
   };
 
   return (

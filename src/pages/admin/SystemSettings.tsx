@@ -18,19 +18,22 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import GeneralSettings from '@/features/admin/components/settings/GeneralSettings';
 import FeaturesSettings from '@/features/admin/components/settings/FeaturesSettings';
 import ConnectionsSettings from '@/features/admin/components/settings/ConnectionsSettings';
 import SecuritySettings from '@/features/admin/components/settings/SecuritySettings';
 import DataSettings from '@/features/admin/components/settings/DataSettings';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
+import { useDesignSystem } from '@/contexts/DesignSystemContext';
 
 const SystemSettings: React.FC = () => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
   const [isSaving, setIsSaving] = useState(false);
   const [tabNavigationEnabled, setTabNavigationEnabled] = useState(true);
+  const { tab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
+  const { designFeatureEnabled, toggleDesignFeature } = useDesignSystem();
   
   useEffect(() => {
     const storedValue = localStorage.getItem('tabNavigationEnabled');
@@ -49,13 +52,58 @@ const SystemSettings: React.FC = () => {
     toast.success(`Configuración actualizada: ${feature} ${value ? 'activado' : 'desactivado'}`);
   };
 
+  const handleToggleDesignSystem = async () => {
+    try {
+      await toggleDesignFeature(!designFeatureEnabled);
+      toast.success(designFeatureEnabled 
+        ? 'Sistema de Diseño desactivado' 
+        : 'Sistema de Diseño activado');
+      
+      // Recargar la página para aplicar los cambios del sistema de diseño
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error('Error toggling design system:', error);
+      toast.error('Error al cambiar el estado del Sistema de Diseño');
+    }
+  };
+
   const tabs: AdminTabItem[] = [
     {
       value: 'general',
       label: 'General',
       icon: <Settings className="h-4 w-4" />,
       dataTag: "settings-tab-general",
-      content: <GeneralSettings />
+      content: (
+        <div className="space-y-6">
+          <GeneralSettings />
+          
+          {/* Design System Switch */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <h3 className="text-lg font-medium">Sistema de Diseño</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Activa o desactiva el sistema de diseño personalizado
+                  </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="design-system-toggle">
+                    {designFeatureEnabled ? 'Activado' : 'Desactivado'}
+                  </Label>
+                  <Switch
+                    id="design-system-toggle"
+                    checked={designFeatureEnabled}
+                    onCheckedChange={handleToggleDesignSystem}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )
     },
     {
       value: 'features',
@@ -104,7 +152,7 @@ const SystemSettings: React.FC = () => {
       title="Configuración del Sistema"
       subtitle="Administra las configuraciones y preferencias del sistema"
       tabs={tabs}
-      defaultTabValue="general"
+      defaultTabValue={tab || "general"}
     />
   );
 };

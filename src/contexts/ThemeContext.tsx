@@ -1,64 +1,51 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type ThemeType = 'light' | 'dark' | 'futuristic' | 'system';
+type Theme = 'light' | 'dark' | 'futuristic';
 
 interface ThemeContextType {
-  theme: ThemeType;
-  setTheme: (theme: ThemeType) => void;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Intentar obtener el tema guardado en localStorage, o usar el sistema por defecto
-  const [theme, setTheme] = useState<ThemeType>(() => {
-    const savedTheme = localStorage.getItem('theme') as ThemeType;
-    if (savedTheme && ['light', 'dark', 'futuristic', 'system'].includes(savedTheme)) {
-      return savedTheme;
-    }
-    
-    // Si el sistema prefiere el modo oscuro, usarlo por defecto
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    
-    return 'light';
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Recuperar tema guardado del localStorage
+    const savedTheme = localStorage.getItem('theme') as Theme;
+    // Si no hay tema guardado, usar preferencia del sistema o 'light' por defecto
+    return savedTheme || 
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   });
 
   useEffect(() => {
     // Guardar el tema en localStorage
     localStorage.setItem('theme', theme);
     
-    // Remover todas las clases de tema anteriores
-    document.documentElement.classList.remove('light', 'dark', 'futuristic');
+    // Aplicar clase de tema al elemento html
+    const root = document.documentElement;
     
-    // Si es "system", determinar el tema basado en las preferencias del sistema
-    if (theme === 'system') {
-      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.classList.add(isDarkMode ? 'dark' : 'light');
-    } else {
-      // Añadir la clase del tema actual
-      document.documentElement.classList.add(theme);
-    }
+    // Eliminar todas las clases de tema
+    root.classList.remove('light', 'dark', 'futuristic');
+    
+    // Añadir la clase del tema actual
+    root.classList.add(theme);
+    
+    console.log('Theme applied:', theme);
   }, [theme]);
 
-  const value = {
-    theme,
-    setTheme,
-  };
-
   return (
-    <ThemeContext.Provider value={value}>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );
-};
+}
 
-export const useTheme = (): ThemeContextType => {
+export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
-};
+}

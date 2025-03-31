@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
+import { toast } from 'sonner';
 
 export const ThemeSelector: React.FC = () => {
   const { theme, setTheme } = useTheme();
@@ -25,6 +26,15 @@ export const ThemeSelector: React.FC = () => {
     }
   };
 
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'futuristic') => {
+    setTheme(newTheme);
+    toast.success(`Tema ${
+      newTheme === 'light' ? 'Claro' : 
+      newTheme === 'dark' ? 'Oscuro' : 
+      'Gris Futurista'
+    } aplicado`);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,15 +44,15 @@ export const ThemeSelector: React.FC = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme('light')} className="flex items-center gap-2">
+        <DropdownMenuItem onClick={() => handleThemeChange('light')} className="flex items-center gap-2">
           <Sun className="h-4 w-4" />
           <span>Claro</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')} className="flex items-center gap-2">
+        <DropdownMenuItem onClick={() => handleThemeChange('dark')} className="flex items-center gap-2">
           <Moon className="h-4 w-4" />
           <span>Oscuro</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('futuristic')} className="flex items-center gap-2">
+        <DropdownMenuItem onClick={() => handleThemeChange('futuristic')} className="flex items-center gap-2">
           <SquareCode className="h-4 w-4" />
           <span>Gris Futurista</span>
         </DropdownMenuItem>

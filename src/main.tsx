@@ -11,6 +11,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { EditModeProvider } from './contexts/EditModeContext';
 import CacheManager from './components/CacheManager';
 import { registerServiceWorker } from './lib/cache/serviceWorkerRegistration';
+import { DesignSystemProvider } from './contexts/DesignSystemContext';
+
+// Importar estilos explícitamente
+import './index.css';
+import './App.css';
 
 // Registrar el Service Worker
 registerServiceWorker().catch(console.error);
@@ -27,19 +32,36 @@ const queryClient = new QueryClient({
   },
 });
 
+// Forzar la carga de estilos en caso de que no se haya aplicado correctamente
+const forceStylesRefresh = () => {
+  const html = document.documentElement;
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  
+  // Asegurarse de que las clases de tema estén aplicadas
+  html.classList.remove('light', 'dark', 'futuristic');
+  html.classList.add(currentTheme);
+  
+  console.log('Styles refresh applied, current theme:', currentTheme);
+};
+
+// Ejecutar después de que el DOM esté cargado
+document.addEventListener('DOMContentLoaded', forceStylesRefresh);
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <AuthProvider>
-            <EditModeProvider>
-              <App />
-              <CacheManager />
-              <Toaster />
-              <SonnerToaster position="top-right" closeButton richColors />
-            </EditModeProvider>
-          </AuthProvider>
+          <DesignSystemProvider>
+            <AuthProvider>
+              <EditModeProvider>
+                <App />
+                <CacheManager />
+                <Toaster />
+                <SonnerToaster position="top-right" closeButton richColors />
+              </EditModeProvider>
+            </AuthProvider>
+          </DesignSystemProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </BrowserRouter>
