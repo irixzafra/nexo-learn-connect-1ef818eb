@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   ColumnDef,
@@ -84,7 +83,6 @@ export function AdvancedDataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
   });
 
-  // Si se especifica un searchColumn y no es "all", configurar filtro solo para esa columna
   useEffect(() => {
     if (searchColumn !== "all" && globalFilter) {
       setColumnFilters([
@@ -98,20 +96,16 @@ export function AdvancedDataTable<TData, TValue>({
     }
   }, [globalFilter, searchColumn]);
 
-  // Función para exportar los datos a CSV
   const exportToCSV = () => {
-    // Obtener datos filtrados y ordenados
     const dataToExport = table.getFilteredRowModel().rows.map(row => {
       const rowData: Record<string, any> = {};
       
-      // Iterar sobre las columnas visibles
       table.getAllColumns()
         .filter(column => column.getIsVisible())
         .forEach(column => {
           const columnId = column.id;
           const cellValue = row.getValue(columnId);
           
-          // Formatear el valor basado en si es un objeto o un valor simple
           rowData[column.columnDef.header as string] = 
             typeof cellValue === 'object' ? JSON.stringify(cellValue) : cellValue;
         });
@@ -119,10 +113,8 @@ export function AdvancedDataTable<TData, TValue>({
       return rowData;
     });
     
-    // Convertir a CSV
     const csv = Papa.unparse(dataToExport);
     
-    // Crear blob y descargar
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     saveAs(blob, `${exportFilename}.csv`);
   };

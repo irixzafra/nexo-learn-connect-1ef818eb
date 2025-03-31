@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,7 +24,7 @@ import { PageStatus, PageLayout, SitePage } from '@/types/pages';
 import { Loader2 } from 'lucide-react';
 import { isSlugUnique } from '@/services/pagesService';
 
-// Schema definition for form validation
+// Schema definition for form validation, only using the exact layout values from the type
 const pageFormSchema = z.object({
   title: z.string().min(3, {
     message: 'El título debe tener al menos 3 caracteres',
@@ -39,7 +38,7 @@ const pageFormSchema = z.object({
     message: 'La meta descripción no debe exceder los 160 caracteres',
   }).optional().or(z.literal('')),
   status: z.enum(['draft', 'published', 'archived'] as const),
-  layout: z.enum(['default', 'landing', 'sidebar', 'full-width'] as const),
+  layout: z.enum(['default', 'landing', 'marketing', 'documentation', 'course', 'sidebar', 'full-width'] as const),
   content: z.any(), // For now, we'll use a simple textarea
 });
 
@@ -54,12 +53,20 @@ interface PageFormProps {
 const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading }) => {
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   
+  // We need to ensure the layout is one of the valid values in our schema
+  const getSafeLayout = (layout?: string): PageLayout => {
+    const validLayouts: PageLayout[] = ['default', 'landing', 'marketing', 'documentation', 'course', 'sidebar', 'full-width'];
+    return layout && validLayouts.includes(layout as PageLayout) 
+      ? layout as PageLayout 
+      : 'default';
+  };
+
   const defaultValues: PageFormValues = {
     title: initialData?.title || '',
     slug: initialData?.slug || '',
     meta_description: initialData?.meta_description || '',
     status: initialData?.status || 'draft',
-    layout: initialData?.layout || 'default',
+    layout: getSafeLayout(initialData?.layout),
     content: initialData?.content || '',
   };
 
@@ -76,7 +83,7 @@ const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading })
         slug: initialData.slug,
         meta_description: initialData.meta_description || '',
         status: initialData.status,
-        layout: initialData.layout,
+        layout: getSafeLayout(initialData.layout),
         content: initialData.content,
       });
     }
@@ -252,7 +259,7 @@ const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading })
             )}
           />
 
-          {/* Layout select */}
+          {/* Layout select - ensuring all options match the schema */}
           <FormField
             control={form.control}
             name="layout"
@@ -272,6 +279,9 @@ const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading })
                   <SelectContent>
                     <SelectItem value="default">Estándar</SelectItem>
                     <SelectItem value="landing">Landing</SelectItem>
+                    <SelectItem value="marketing">Marketing</SelectItem>
+                    <SelectItem value="documentation">Documentación</SelectItem>
+                    <SelectItem value="course">Curso</SelectItem>
                     <SelectItem value="sidebar">Con Sidebar</SelectItem>
                     <SelectItem value="full-width">Ancho Completo</SelectItem>
                   </SelectContent>

@@ -23,7 +23,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/dashboard" element={<div>Dashboard Page</div>} />
       <Route path="/profile/settings" element={<div>Profile Settings Page</div>} />
       
-      {/* Rutas de administración */}
+      {/* Rutas de administración - Usando importación directa en lugar de dinámica */}
       <Route path="/admin/*" element={<AdminRoutes />} />
       
       {/* Dynamic page route - must be after all specific routes */}

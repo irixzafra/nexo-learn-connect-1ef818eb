@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Code, Layout, Search, FileText, Eye } from 'lucide-react';
-import { SitePage, PageLayout, PageStatus } from '@/types/pages';
+import { SitePage, PageLayout, PageStatus, PageBlock } from '@/types/pages';
 import { getPageById, updatePage, isSlugUnique } from '@/features/admin/services/pagesService';
 import PageContentEditor from './PageContentEditor';
 import PageSeoEditor from './PageSeoEditor';
@@ -198,7 +198,12 @@ const PageEditorDialog: React.FC<PageEditorProps> = ({
               </TabsContent>
 
               <TabsContent value="preview" className="mt-0">
-                <PagePreview page={form.watch()} />
+                <PagePreview page={{
+                  title: form.watch('title') || '',
+                  content: form.watch('content'),
+                  meta_description: form.watch('meta_description'),
+                  layout: form.watch('layout')
+                }} />
               </TabsContent>
             </Tabs>
 
