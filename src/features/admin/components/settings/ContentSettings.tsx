@@ -55,6 +55,28 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
           
           <div className="flex items-center justify-between py-1">
             <div>
+              <h3 className="text-sm font-medium">Edición y ordenación en línea</h3>
+              <p className="text-xs text-muted-foreground">
+                Permite editar contenido y reordenar elementos directamente en la interfaz
+              </p>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableEditMode"
+                checked={featuresConfig.enableEditMode}
+                onCheckedChange={(value) => onToggleFeature('enableEditMode', value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="flex items-center justify-between py-1">
+            <div>
               <h3 className="text-sm font-medium">Leaderboard de gamificación</h3>
               <p className="text-xs text-muted-foreground">
                 Activa el sistema de clasificaciones y puntos para estudiantes

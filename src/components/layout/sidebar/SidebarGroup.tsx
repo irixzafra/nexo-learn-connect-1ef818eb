@@ -1,93 +1,52 @@
 
 import React from 'react';
-import { 
-  SidebarGroup as UISidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
-  SidebarMenu
-} from '@/components/ui/sidebar';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { LucideIcon } from 'lucide-react';
 
 interface SidebarGroupProps {
   label: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
+  children: React.ReactNode;
   isExpanded: boolean;
   onToggle: () => void;
-  children: React.ReactNode;
 }
 
-export const SidebarGroup: React.FC<SidebarGroupProps> = ({ 
-  label, 
+export const SidebarGroup: React.FC<SidebarGroupProps> = ({
+  label,
   icon: Icon,
-  isExpanded, 
-  onToggle, 
-  children 
+  children,
+  isExpanded,
+  onToggle
 }) => {
-  const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
-
   return (
-    <UISidebarGroup className="mb-1">
-      {isCollapsed ? (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <SidebarGroupLabel 
-              onClick={onToggle}
-              className="cursor-pointer flex h-10 w-10 items-center justify-center rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 mx-auto"
-            >
-              <Icon size={20} className="text-gray-500 dark:text-gray-400" />
-            </SidebarGroupLabel>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <p>{label}</p>
-          </TooltipContent>
-        </Tooltip>
-      ) : (
-        <GroupLabel 
-          label={label} 
-          icon={Icon}
-          isExpanded={isExpanded} 
-          onClick={onToggle} 
+    <div className="py-1">
+      <button
+        onClick={onToggle}
+        className="flex items-center justify-between w-full p-2 rounded-md text-left hover:bg-accent/50 group transition-colors"
+      >
+        <div className="flex items-center">
+          <Icon className="h-4 w-4 mr-2 text-primary shrink-0" />
+          <span className="text-sm font-medium">{label}</span>
+        </div>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 text-muted-foreground transition-transform duration-200",
+            isExpanded && "transform rotate-180"
+          )}
         />
-      )}
+      </button>
       
-      {isExpanded && !isCollapsed && (
-        <SidebarGroupContent>
-          <SidebarMenu>
-            {children}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      )}
-    </UISidebarGroup>
+      <div
+        className={cn(
+          "overflow-hidden transition-all duration-200 ease-in-out",
+          isExpanded ? "max-h-96" : "max-h-0"
+        )}
+      >
+        <div className="pl-8 pr-2 py-1">
+          {children}
+        </div>
+      </div>
+    </div>
   );
 };
-
-interface GroupLabelProps {
-  label: string;
-  icon: React.ElementType;
-  isExpanded: boolean;
-  onClick: () => void;
-}
-
-const GroupLabel: React.FC<GroupLabelProps> = ({ label, icon: Icon, isExpanded, onClick }) => (
-  <SidebarGroupLabel 
-    onClick={onClick}
-    className="cursor-pointer flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors hover:text-gray-900 dark:hover:text-white"
-  >
-    <span className="flex items-center gap-2">
-      <Icon size={20} className="text-gray-500 dark:text-gray-400" />
-      <span className="font-medium">{label}</span>
-    </span>
-    <span className={cn("transform transition-transform duration-300", isExpanded ? 'rotate-180' : 'rotate-0')}>
-      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </span>
-  </SidebarGroupLabel>
-);

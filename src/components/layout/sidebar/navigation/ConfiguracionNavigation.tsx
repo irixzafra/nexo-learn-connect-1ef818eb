@@ -2,7 +2,9 @@
 import React from 'react';
 import { SlidersHorizontal, HelpCircle, Info } from 'lucide-react';
 import { 
-  SidebarMenu
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuLink
 } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
