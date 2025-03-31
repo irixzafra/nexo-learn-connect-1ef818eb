@@ -569,6 +569,27 @@ export type Database = {
           },
         ]
       }
+      design_system: {
+        Row: {
+          created_at: string | null
+          id: number
+          theme_config: Json
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          theme_config?: Json
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          theme_config?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       enrollments: {
         Row: {
           course_id: string
@@ -638,6 +659,7 @@ export type Database = {
         Row: {
           auto_start_onboarding: boolean | null
           created_at: string | null
+          design_system_enabled: boolean | null
           enable_category_management: boolean | null
           enable_content_reordering: boolean | null
           enable_leaderboard: boolean | null
@@ -656,6 +678,7 @@ export type Database = {
         Insert: {
           auto_start_onboarding?: boolean | null
           created_at?: string | null
+          design_system_enabled?: boolean | null
           enable_category_management?: boolean | null
           enable_content_reordering?: boolean | null
           enable_leaderboard?: boolean | null
@@ -674,6 +697,7 @@ export type Database = {
         Update: {
           auto_start_onboarding?: boolean | null
           created_at?: string | null
+          design_system_enabled?: boolean | null
           enable_category_management?: boolean | null
           enable_content_reordering?: boolean | null
           enable_leaderboard?: boolean | null

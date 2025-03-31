@@ -1,14 +1,10 @@
 
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { 
   Users,
   UserCog, 
   Shield, 
-  UserPlus, 
-  FileSpreadsheet,
-  Download,
   BarChart,
   LineChart
 } from "lucide-react";
@@ -74,17 +70,6 @@ export const UserManagementTabs: React.FC<UserManagementTabsProps> = ({ isAdmin 
           onValueChange={setActiveTab}
           showTabContent={false}
         />
-
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Exportar CSV
-          </Button>
-          <Button size="sm">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Nuevo Usuario
-          </Button>
-        </div>
       </div>
 
       {/* Tab content */}

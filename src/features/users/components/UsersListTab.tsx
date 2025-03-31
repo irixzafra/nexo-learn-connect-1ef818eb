@@ -3,19 +3,37 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import { UserProfile, UserRoleType } from "@/types/auth";
-import { EditableDataTable } from "@/components/shared/EditableDataTable";
+import { EnhancedDataTable } from "@/components/shared/EnhancedDataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { UserRoleSelector } from "./UserRoleSelector";
-import { Check, X, MoreHorizontal, UserIcon } from "lucide-react";
+import { Check, X, MoreHorizontal, UserIcon, Plus, UserPlus } from "lucide-react";
 import { createColumn, createActionsColumn } from "@/components/shared/DataTableUtils";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
+import { 
+  Dialog, 
+  DialogTrigger, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const UsersListTab: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isUserFormOpen, setIsUserFormOpen] = useState(false);
+  const [newUser, setNewUser] = useState<Partial<UserProfile>>({
+    full_name: "",
+    email: "",
+    phone: "",
+    role: "student" as UserRoleType
+  });
 
   useEffect(() => {
     fetchUsers();
@@ -69,6 +87,37 @@ export const UsersListTab: React.FC = () => {
     }
   };
 
+  const handleCreateUser = async () => {
+    try {
+      // In a real app, you would use Auth API to create a user
+      // For now, let's just add to profiles table as an example
+      const { data, error } = await supabase
+        .from("profiles")
+        .insert({
+          full_name: newUser.full_name,
+          email: newUser.email,
+          phone: newUser.phone,
+          role: newUser.role,
+        })
+        .select();
+
+      if (error) throw error;
+
+      toast.success("Usuario creado correctamente");
+      setUsers((prevUsers) => [...prevUsers, data[0] as UserProfile]);
+      setIsUserFormOpen(false);
+      setNewUser({
+        full_name: "",
+        email: "",
+        phone: "",
+        role: "student" as UserRoleType
+      });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      toast.error("Error al crear el usuario");
+    }
+  };
+
   const getRoleBadge = (role: string) => {
     switch (role) {
       case "admin":
@@ -80,51 +129,6 @@ export const UsersListTab: React.FC = () => {
       default:
         return <Badge variant="outline">{role}</Badge>;
     }
-  };
-
-  const renderUserForm = ({ data, onChange }: { data: UserProfile | null; onChange: (data: UserProfile) => void }) => {
-    return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Nombre completo</label>
-          <input
-            type="text"
-            className="w-full p-2 border rounded-md"
-            value={data?.full_name || ""}
-            onChange={(e) => onChange({ ...data, full_name: e.target.value } as UserProfile)}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Email</label>
-          <input
-            type="email"
-            className="w-full p-2 border rounded-md"
-            value={data?.email || ""}
-            onChange={(e) => onChange({ ...data, email: e.target.value } as UserProfile)}
-            disabled
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Teléfono</label>
-          <input
-            type="tel"
-            className="w-full p-2 border rounded-md"
-            value={data?.phone || ""}
-            onChange={(e) => onChange({ ...data, phone: e.target.value } as UserProfile)}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Rol</label>
-          <UserRoleSelector
-            value={data?.role as UserRoleType}
-            onChange={(role) => onChange({ ...data, role } as UserProfile)}
-          />
-        </div>
-      </div>
-    );
   };
 
   const columns: ColumnDef<UserProfile, any>[] = [
@@ -148,36 +152,179 @@ export const UsersListTab: React.FC = () => {
       cell: ({ getValue }) => getRoleBadge(getValue() as string),
     }),
     createColumn<UserProfile>({
+      accessorKey: "phone",
+      header: "Teléfono",
+      cell: ({ getValue }) => getValue() || "-",
+    }),
+    createColumn<UserProfile>({
       accessorKey: "created_at",
       header: "Fecha de registro",
-      cell: ({ getValue }) => format(new Date(getValue() as string), "dd/MM/yyyy"),
+      cell: ({ getValue }) => {
+        const date = getValue() as string;
+        return date ? format(new Date(date), "dd/MM/yyyy") : "-";
+      },
     }),
-    createActionsColumn<UserProfile>(() => (
-      <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-        <MoreHorizontal className="h-4 w-4" />
-      </Button>
-    )),
+    createActionsColumn<UserProfile>(({ row }) => {
+      const user = row.original;
+      return (
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Editar Usuario</DialogTitle>
+              <DialogDescription>
+                Editar información del usuario
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Nombre
+                </Label>
+                <Input
+                  id="name"
+                  defaultValue={user.full_name}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  defaultValue={user.email}
+                  className="col-span-3"
+                  disabled
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="phone" className="text-right">
+                  Teléfono
+                </Label>
+                <Input
+                  id="phone"
+                  defaultValue={user.phone || ""}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="role" className="text-right">
+                  Rol
+                </Label>
+                <div className="col-span-3">
+                  <UserRoleSelector
+                    value={user.role as UserRoleType}
+                    onChange={() => {}}
+                  />
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit">Guardar</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      );
+    }),
   ];
 
   return (
-    <Card className="p-4">
-      <EditableDataTable
-        columns={columns}
-        data={users}
-        title="Usuario"
-        description="Información del usuario"
-        searchPlaceholder="Buscar usuario..."
-        searchColumn="full_name"
-        exportFilename="usuarios"
-        onSave={handleSaveUser}
-        renderForm={renderUserForm}
-        emptyState={
-          <div className="text-center py-10">
-            <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">No se encontraron usuarios</p>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <div>
+          <CardTitle>Usuarios</CardTitle>
+          <CardDescription>
+            Gestiona los usuarios registrados en la plataforma
+          </CardDescription>
+        </div>
+        <Button onClick={() => setIsUserFormOpen(true)}>
+          <UserPlus className="h-4 w-4 mr-2" />
+          Nuevo Usuario
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <EnhancedDataTable
+          columns={columns}
+          data={users}
+          searchPlaceholder="Buscar usuario..."
+          searchColumn="full_name"
+          exportFilename="usuarios"
+          emptyState={
+            <div className="text-center py-10">
+              <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">No se encontraron usuarios</p>
+            </div>
+          }
+        />
+      </CardContent>
+
+      {/* Dialog for creating a new user */}
+      <Dialog open={isUserFormOpen} onOpenChange={setIsUserFormOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Nuevo Usuario</DialogTitle>
+            <DialogDescription>
+              Completa la información para crear un nuevo usuario
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="new-name" className="text-right">
+                Nombre
+              </Label>
+              <Input
+                id="new-name"
+                value={newUser.full_name}
+                onChange={(e) => setNewUser({...newUser, full_name: e.target.value})}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="new-email" className="text-right">
+                Email
+              </Label>
+              <Input
+                id="new-email"
+                type="email"
+                value={newUser.email}
+                onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="new-phone" className="text-right">
+                Teléfono
+              </Label>
+              <Input
+                id="new-phone"
+                value={newUser.phone || ""}
+                onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="new-role" className="text-right">
+                Rol
+              </Label>
+              <div className="col-span-3">
+                <UserRoleSelector
+                  value={newUser.role as UserRoleType}
+                  onChange={(role) => setNewUser({...newUser, role})}
+                />
+              </div>
+            </div>
           </div>
-        }
-      />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsUserFormOpen(false)}>Cancelar</Button>
+            <Button onClick={handleCreateUser}>Crear Usuario</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { SitePage, PageStatus } from '@/types/pages';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DataTable } from '@/components/shared/DataTable';
+import { EnhancedDataTable } from '@/components/shared/EnhancedDataTable';
 import { createColumn, createActionsColumn } from '@/components/shared/DataTableUtils';
 import { 
   Edit, 
@@ -188,11 +188,12 @@ const PageList: React.FC<PageListProps> = ({ pages, onPageUpdated }) => {
 
   return (
     <div>
-      <DataTable 
+      <EnhancedDataTable 
         columns={columns} 
         data={pages} 
         searchPlaceholder="Buscar páginas..."
         searchColumn="title"
+        exportFilename="paginas-del-sitio"
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

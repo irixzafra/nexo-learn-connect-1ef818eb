@@ -6,6 +6,7 @@ import { ShieldCheck, Lock, KeyRound, Fingerprint, Loader2 } from 'lucide-react'
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { CheckboxWithLabel } from '@/components/ui/checkbox';
 
 interface SecuritySettingsProps {
   featuresConfig: FeaturesConfig;
@@ -19,7 +20,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
   isLoading = false
 }) => {
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <ShieldCheck className="h-4 w-4 text-green-500" />
