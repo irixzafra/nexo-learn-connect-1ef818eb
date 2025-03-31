@@ -22,7 +22,7 @@ export const SidebarTrigger = React.forwardRef<
       variant="ghost"
       size="icon"
       className={cn(
-        "h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300",
+        "h-10 w-10 rounded-full bg-primary text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300",
         "fixed left-4 bottom-4 z-50 md:static md:left-auto md:bottom-auto md:z-auto",
         isMobile && "z-50",
         className

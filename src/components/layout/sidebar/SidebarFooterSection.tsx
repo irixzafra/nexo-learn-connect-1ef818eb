@@ -53,15 +53,20 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
 
   return (
     <div className="mt-auto">
-      {/* Actions Row - Contains Language, Role, Theme toggle */}
-      <div className={`flex ${isCollapsed ? 'flex-col' : 'items-center justify-around'} gap-2 p-2 mb-3 border-t pt-4`}>
+      {/* User Menu */}
+      <div className={`border-t pt-3 pb-2 px-3`}>
+        <UserMenu />
+      </div>
+      
+      {/* Footer Actions Row - unified in a single row */}
+      <div className={`flex items-center justify-center gap-1 p-2 border-t`}>
         {/* Language Selector */}
         <Tooltip>
           <TooltipTrigger asChild>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-secondary/20">
-                  <Globe className="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-secondary/20">
+                  <Globe className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align={isCollapsed ? "center" : "start"} side={isCollapsed ? "right" : "top"}>
@@ -92,9 +97,9 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-9 w-9 rounded-full hover:bg-secondary/20"
+                    className="h-8 w-8 rounded-full hover:bg-secondary/20"
                   >
-                    <Users className="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
+                    <Users className="h-4 w-4 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align={isCollapsed ? "center" : "end"} side={isCollapsed ? "right" : "top"}>
@@ -118,11 +123,6 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
         
         {/* Theme Toggle */}
         <ModeToggle />
-      </div>
-      
-      {/* User Menu */}
-      <div className="px-2 py-2 border-t">
-        <UserMenu />
       </div>
     </div>
   );

@@ -128,12 +128,12 @@ const SidebarProvider = React.forwardRef<
           >
             {children}
             
-            {/* Nuevo botón de expansión mejorado cuando el sidebar está colapsado */}
+            {/* Improved expand button when sidebar is collapsed */}
             {!isMobile && state === "collapsed" && (
               <Button
                 variant="primary"
                 size="icon"
-                className="absolute left-[calc(var(--sidebar-width-icon)_-_10px)] top-[70px] h-8 w-8 rounded-full opacity-0 shadow-md bg-blue-500 text-white hover:bg-blue-600 group-hover/sidebar-wrapper:opacity-100 transition-all duration-300"
+                className="absolute left-[calc(var(--sidebar-width-icon)_-_14px)] top-[50%] translate-y-[-50%] h-9 w-9 rounded-full opacity-0 shadow-md bg-blue-500 text-white hover:bg-blue-600 group-hover/sidebar-wrapper:opacity-100 transition-all duration-300"
                 onClick={toggleSidebar}
                 aria-label="Expandir menú lateral"
               >
