@@ -20,7 +20,7 @@ interface EntityDrawerProps<T> {
   onSave: (data: T) => Promise<void>;
   entity?: T | null;
   loading?: boolean;
-  children: ReactNode;
+  children: ReactNode | ((props: { data: T | null; onChange: (data: T) => void }) => ReactNode);
 }
 
 export function EntityDrawer<T>({
@@ -78,10 +78,9 @@ export function EntityDrawer<T>({
             </DrawerHeader>
 
             <div className="px-4 py-2 overflow-y-auto">
-              {React.cloneElement(children as React.ReactElement, { 
-                data: formData, 
-                onChange: setFormData 
-              })}
+              {typeof children === 'function' 
+                ? children({ data: formData, onChange: setFormData })
+                : children}
             </div>
 
             <DrawerFooter className="pt-2 border-t flex justify-between">
