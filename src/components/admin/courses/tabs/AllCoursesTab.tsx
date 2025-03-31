@@ -98,7 +98,7 @@ const AllCoursesTab: React.FC = () => {
         onSave={handleSaveCourse}
         entity={selectedCourse}
       >
-        {(props: { data: Course | null; onChange: (data: Course) => void }) => (
+        {(props) => (
           <CourseForm data={props.data} onChange={props.onChange} />
         )}
       </EntityDrawer>
