@@ -35,8 +35,7 @@ export function useAuthState() {
     setShowAuthModal(!showAuthModal);
   };
 
-  // Aseguramos que updateUserProfile esté definida aquí, aunque ya venga de profileData
-  // Esto garantiza que coincida con la firma en AuthContextType
+  // Make sure this function matches the signature in AuthContextType
   const updateUserProfile = async (updates: Partial<UserProfile>) => {
     try {
       if (!sessionData.user) throw new Error("No authenticated user");
@@ -65,12 +64,12 @@ export function useAuthState() {
     }
   };
 
-  // Aseguramos que switchViewAsRole esté definida aquí, aunque ya venga de userPreferences
-  // Esto garantiza que coincida con la firma en AuthContextType
+  // Make sure this function matches the signature in AuthContextType
   const switchViewAsRole = (role: UserRoleType | 'current') => {
     userPreferences.setViewAsRole(role);
   };
 
+  // Construct and log the return value to help debug
   const returnValue = { 
     // Status information
     isLoading,
@@ -81,17 +80,23 @@ export function useAuthState() {
     showAuthModal,
     toggleAuthModal,
     
-    // Aseguramos que estas funciones estén definidas en el objeto retornado
+    // Add these properties from authMethods
+    login: authMethods.login,
+    signup: authMethods.signup,
+    resetPassword: authMethods.resetPassword,
+    logout: authMethods.logout,
+    
+    // Make sure these specific functions are available
     updateUserProfile,
     switchViewAsRole,
 
-    // Spread results from specialized hooks
+    // Spread remaining data from our hooks
     ...sessionData,
     ...profileData,
-    ...authMethods,
     ...userPreferences
   };
   
+  // Add a debug log to see what's returned
   console.log('Keys returned by useAuthState:', Object.keys(returnValue));
   
   return returnValue;
