@@ -1,7 +1,7 @@
 
-import React, { ReactNode } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { 
@@ -15,16 +15,13 @@ import {
   AlertDialogTitle 
 } from "@/components/ui/alert-dialog";
 import { EntityDrawer } from "@/components/shared/EntityDrawer";
-import { AdvancedDataTable } from "@/components/shared/AdvancedDataTable";
 import { Course, useCoursesManagement } from "@/features/admin/hooks/useCoursesManagement";
 import CourseForm from "../CourseForm";
-import { createCoursesColumns } from "../tables/CoursesColumns";
 
 const AllCoursesTab: React.FC = () => {
   const navigate = useNavigate();
   const {
     courses,
-    loading,
     deleteDialogOpen,
     courseToDelete,
     editorOpen,
@@ -34,28 +31,8 @@ const AllCoursesTab: React.FC = () => {
     confirmDelete,
     handleEditCourse,
     handleSaveCourse,
-    handleViewCourse,
     setDeleteDialogOpen
   } = useCoursesManagement();
-
-  const columns = createCoursesColumns(
-    handleEditCourse,
-    handleViewCourse,
-    handleDeleteClick
-  );
-
-  const emptyStateComponent: ReactNode = (
-    <div className="flex flex-col items-center justify-center text-muted-foreground py-8">
-      <BookOpen className="h-8 w-8 mb-2" />
-      <p className="mb-2">No hay cursos disponibles</p>
-      <Button 
-        variant="link" 
-        onClick={() => navigate('/instructor/create-course')}
-      >
-        Crear primer curso
-      </Button>
-    </div>
-  );
 
   return (
     <div className="space-y-4">
@@ -67,14 +44,50 @@ const AllCoursesTab: React.FC = () => {
       </div>
       
       <Card className="p-4">
-        <AdvancedDataTable
-          columns={columns}
-          data={courses}
-          searchPlaceholder="Buscar por título, estado o nivel..."
-          exportFilename="cursos"
-          emptyState={emptyStateComponent}
-          onRowClick={(course) => handleEditCourse(course as Course)}
-        />
+        <div className="text-center py-6">
+          {courses.length === 0 ? (
+            <p className="text-muted-foreground">No hay cursos disponibles</p>
+          ) : (
+            <ul className="space-y-2">
+              {courses.map((course) => (
+                <li 
+                  key={course.id} 
+                  className="flex justify-between items-center border p-3 rounded-md cursor-pointer hover:bg-muted"
+                  onClick={() => handleEditCourse(course)}
+                >
+                  <div>
+                    <h3 className="font-medium">{course.title}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {course.is_published ? "Publicado" : "Borrador"} - {course.level || "Sin nivel"}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditCourse(course);
+                      }}
+                    >
+                      Editar
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteClick(course);
+                      }}
+                    >
+                      Eliminar
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </Card>
 
       <EntityDrawer<Course>
