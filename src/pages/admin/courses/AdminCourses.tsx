@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -182,7 +181,6 @@ const AllCoursesTab: React.FC = () => {
 
       if (error) throw error;
 
-      // Update the courses list
       setCourses(prevCourses => 
         prevCourses.map(c => c.id === course.id ? course : c)
       );
@@ -200,10 +198,12 @@ const AllCoursesTab: React.FC = () => {
     window.open(`/courses/${course.slug || course.id}`, '_blank');
   };
 
-  // This function is typed properly as a component
-  const CourseForm: React.FC<{ data: Course | null; onChange: (data: Course) => void }> = ({ data, onChange }) => {
+  const CourseForm = React.forwardRef<
+    HTMLDivElement,
+    { data: Course | null; onChange: (data: Course) => void }
+  >(({ data, onChange }, ref) => {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4" ref={ref}>
         <div className="space-y-2">
           <label className="text-sm font-medium">Título del curso</label>
           <input
@@ -260,7 +260,9 @@ const AllCoursesTab: React.FC = () => {
         </div>
       </div>
     );
-  };
+  });
+  
+  CourseForm.displayName = "CourseForm";
 
   const columns = [
     createColumn<Course>({
@@ -352,7 +354,6 @@ const AllCoursesTab: React.FC = () => {
     })
   ];
 
-  // Define emptyState as proper ReactNode
   const emptyStateComponent: ReactNode = (
     <div className="flex flex-col items-center justify-center text-muted-foreground py-8">
       <BookOpen className="h-8 w-8 mb-2" />
@@ -386,7 +387,6 @@ const AllCoursesTab: React.FC = () => {
         />
       </Card>
 
-      {/* Pass the CourseForm component with the required props */}
       <EntityDrawer<Course>
         title="Editar Curso"
         description="Modifica los detalles del curso"
@@ -395,7 +395,7 @@ const AllCoursesTab: React.FC = () => {
         onSave={handleSaveCourse}
         entity={selectedCourse}
       >
-        {(props) => <CourseForm {...props} />}
+        {CourseForm}
       </EntityDrawer>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
