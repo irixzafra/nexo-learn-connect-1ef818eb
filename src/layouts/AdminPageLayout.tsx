@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 
 interface AdminPageLayoutProps {
@@ -43,18 +42,13 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
     <div className="min-h-screen bg-muted/20 p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col gap-6">
-          {/* Header */}
+          {/* Header - Eliminando la flecha "Atrás" */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={handleBack} className="h-9 w-9 rounded-full">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-                {subtitle && (
-                  <p className="text-muted-foreground">{subtitle}</p>
-                )}
-              </div>
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+              {subtitle && (
+                <p className="text-muted-foreground">{subtitle}</p>
+              )}
             </div>
             {actions && (
               <div className="flex items-center gap-2">

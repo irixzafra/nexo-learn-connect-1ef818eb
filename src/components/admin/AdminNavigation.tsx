@@ -69,10 +69,6 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => 
     return null;
   }
   
-  const isActive = (route: string) => {
-    return path.includes(route);
-  };
-  
   return (
     <div className="w-full border-b mb-6 sticky top-0 bg-background z-10">
       <div className="container mx-auto py-2">
