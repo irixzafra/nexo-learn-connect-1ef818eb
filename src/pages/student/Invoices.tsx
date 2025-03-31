@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const Invoices: React.FC = () => {
   const { user } = useAuth();
-  const { invoices, isLoading, filter, setFilter } = useInvoices(user?.id);
+  const { invoices, isLoading, filter, setFilter, downloadInvoice } = useInvoices(user?.id);
 
   const handleFilterChange = (value: string) => {
     setFilter(value as 'all' | 'paid' | 'pending');
@@ -33,6 +33,7 @@ const Invoices: React.FC = () => {
                 <InvoiceList 
                   invoices={invoices} 
                   isLoading={isLoading} 
+                  downloadInvoice={downloadInvoice}
                 />
               </TabsContent>
             </Tabs>

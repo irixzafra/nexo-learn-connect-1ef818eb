@@ -7,7 +7,7 @@ import { InvoiceEmptyState } from './invoice/InvoiceEmptyState';
 import { InvoiceLoadingState } from './invoice/InvoiceLoadingState';
 
 export const InvoiceList: React.FC = () => {
-  const { invoices, isLoading } = useInvoices();
+  const { invoices, isLoading, downloadInvoice } = useInvoices();
 
   if (isLoading) {
     return <InvoiceLoadingState />;
@@ -22,7 +22,11 @@ export const InvoiceList: React.FC = () => {
       <InvoiceHeader />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {invoices.map((invoice) => (
-          <InvoiceCard key={invoice.id} {...invoice} />
+          <InvoiceCard 
+            key={invoice.id} 
+            {...invoice} 
+            onDownload={() => downloadInvoice(invoice.id)}
+          />
         ))}
       </div>
     </div>

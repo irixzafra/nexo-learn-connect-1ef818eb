@@ -58,7 +58,7 @@ export interface Course {
   // Nuevos campos añadidos
   badge?: string;
   discount_percentage?: number;
-  // Add the missing grants_certificate property
+  // Add the grants_certificate property
   grants_certificate?: boolean;
   // Relationships
   instructor?: {

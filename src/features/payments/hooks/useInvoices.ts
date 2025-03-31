@@ -59,7 +59,7 @@ export const useInvoices = (userId?: string) => {
           currency: (invoice.currency as "usd" | "eur") || "eur",
           status: mapInvoiceStatus(invoice.status),
           date: invoice.created_at,
-          courseName: invoice.course?.title || invoice.subscription?.subscription_plans?.name || 'Subscription',
+          courseName: invoice.course?.title || (invoice.subscription?.subscription_plans?.name || 'Subscription'),
           pdfUrl: invoice.pdf_url || undefined,
           invoiceUrl: invoice.invoice_url || undefined
         }));
@@ -86,6 +86,36 @@ export const useInvoices = (userId?: string) => {
     if (status === 'void' || status === 'uncollectible') return 'failed';
     return 'pending'; // 'open', 'draft'
   };
+  
+  // Function to download invoice
+  const downloadInvoice = async (invoiceId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('invoices')
+        .select('pdf_url')
+        .eq('id', invoiceId)
+        .single();
+      
+      if (error) throw error;
+      
+      if (data && data.pdf_url) {
+        window.open(data.pdf_url, '_blank');
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se encontró el PDF de la factura.",
+        });
+      }
+    } catch (error) {
+      console.error('Error downloading invoice:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Error al descargar la factura.",
+      });
+    }
+  };
 
-  return { invoices, isLoading, filter, setFilter };
+  return { invoices, isLoading, filter, setFilter, downloadInvoice };
 };

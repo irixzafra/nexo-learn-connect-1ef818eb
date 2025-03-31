@@ -7,9 +7,14 @@ import { InvoiceLoadingState } from './InvoiceLoadingState';
 interface InvoiceListProps {
   invoices: InvoiceProps[];
   isLoading: boolean;
+  downloadInvoice?: (invoiceId: string) => void;
 }
 
-export const InvoiceList: React.FC<InvoiceListProps> = ({ invoices, isLoading }) => {
+export const InvoiceList: React.FC<InvoiceListProps> = ({ 
+  invoices, 
+  isLoading,
+  downloadInvoice 
+}) => {
   if (isLoading) {
     return <InvoiceLoadingState />;
   }
@@ -21,7 +26,11 @@ export const InvoiceList: React.FC<InvoiceListProps> = ({ invoices, isLoading })
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {invoices.map((invoice) => (
-        <InvoiceCard key={invoice.id} {...invoice} />
+        <InvoiceCard 
+          key={invoice.id} 
+          {...invoice} 
+          onDownload={downloadInvoice ? () => downloadInvoice(invoice.id) : undefined}
+        />
       ))}
     </div>
   );

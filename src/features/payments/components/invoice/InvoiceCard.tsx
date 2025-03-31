@@ -1,89 +1,130 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download, ExternalLink, FileText } from 'lucide-react';
+import { Download, Eye, FileText } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import { formatDate } from '@/lib/formatters';
+import { Badge } from '@/components/ui/badge';
 
 export interface InvoiceProps {
   id: string;
-  invoiceNumber?: string;
-  amount: number;
-  currency: 'eur' | 'usd';
-  status: 'paid' | 'pending' | 'failed';
+  invoiceNumber: string;
   date: string;
-  courseName?: string;
+  amount: number;
+  currency: 'usd' | 'eur';
+  status: 'paid' | 'pending' | 'failed';
+  courseName: string;
   pdfUrl?: string;
   invoiceUrl?: string;
 }
 
-export const InvoiceCard: React.FC<InvoiceProps> = ({
-  id,
+interface InvoiceCardProps extends InvoiceProps {
+  onDownload?: () => void;
+}
+
+export const InvoiceCard: React.FC<InvoiceCardProps> = ({
   invoiceNumber,
+  date,
   amount,
   currency,
   status,
-  date,
   courseName,
   pdfUrl,
   invoiceUrl,
+  onDownload
 }) => {
-  const statusColors = {
-    paid: 'text-green-600 bg-green-50',
-    pending: 'text-amber-600 bg-amber-50',
-    failed: 'text-red-600 bg-red-50',
+  const formattedDate = new Date(date).toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   };
 
-  const statusText = {
-    paid: 'Pagado',
-    pending: 'Pendiente',
-    failed: 'Fallido',
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return 'Pagada';
+      case 'pending':
+        return 'Pendiente';
+      case 'failed':
+        return 'Fallida';
+      default:
+        return 'Desconocido';
+    }
   };
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="pb-3">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-lg">{invoiceNumber || `Factura ${id.slice(0, 8)}`}</CardTitle>
-            <CardDescription>{courseName && `Curso: ${courseName}`}</CardDescription>
-          </div>
-          <div className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusColors[status]}`}>
-            {statusText[status]}
-          </div>
+      <CardHeader className="bg-muted p-4 flex flex-row items-center justify-between">
+        <div className="flex items-center gap-2">
+          <FileText className="h-5 w-5 text-muted-foreground" />
+          <span className="font-medium">{invoiceNumber}</span>
         </div>
+        <Badge className={getStatusColor(status)}>{getStatusText(status)}</Badge>
       </CardHeader>
       
-      <CardContent className="pb-3">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-muted-foreground">Fecha</p>
-            <p className="font-medium">{formatDate(date)}</p>
+      <CardContent className="p-4">
+        <div className="space-y-4">
+          <div className="flex justify-between">
+            <span className="text-sm text-muted-foreground">Fecha</span>
+            <span className="text-sm font-medium">{formattedDate}</span>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Importe</p>
-            <p className="font-medium">{formatCurrency(amount, currency)}</p>
+          
+          <div className="flex justify-between">
+            <span className="text-sm text-muted-foreground">Concepto</span>
+            <span className="text-sm font-medium">{courseName}</span>
+          </div>
+          
+          <div className="flex justify-between">
+            <span className="text-sm text-muted-foreground">Importe</span>
+            <span className="text-sm font-medium">{formatCurrency(amount, currency)}</span>
+          </div>
+          
+          <div className="flex justify-end mt-4 gap-2">
+            {invoiceUrl && (
+              <Button variant="outline" size="sm" asChild>
+                <a href={invoiceUrl} target="_blank" rel="noopener noreferrer">
+                  <Eye className="h-4 w-4 mr-1" />
+                  Ver
+                </a>
+              </Button>
+            )}
+            
+            {(pdfUrl || onDownload) && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onDownload}
+                {...(pdfUrl && !onDownload ? { asChild: true } : {})}
+              >
+                {pdfUrl && !onDownload ? (
+                  <a href={pdfUrl} target="_blank" rel="noopener noreferrer">
+                    <Download className="h-4 w-4 mr-1" />
+                    Descargar
+                  </a>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4 mr-1" />
+                    Descargar
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>
-      
-      <CardFooter className="flex justify-end gap-2 pt-2">
-        {pdfUrl && (
-          <Button variant="outline" size="sm" className="gap-1">
-            <Download className="h-4 w-4" />
-            PDF
-          </Button>
-        )}
-        {invoiceUrl && (
-          <Button variant="outline" size="sm" className="gap-1" asChild>
-            <a href={invoiceUrl} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="h-4 w-4" />
-              Ver factura
-            </a>
-          </Button>
-        )}
-      </CardFooter>
     </Card>
   );
 };
