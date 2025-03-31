@@ -38,29 +38,25 @@ const ConfiguracionNavigation: React.FC<ConfiguracionNavigationProps> = ({ isOpe
         <MenuItem
           to="/help"
           icon={HelpCircle}
-          label={
-            <>
-              Ayuda / Soporte
-              <Badge variant="outline" className="ml-2 bg-amber-100 text-amber-800 text-xs border-amber-200">
-                En desarrollo
-              </Badge>
-            </>
-          }
+          label="Ayuda / Soporte"
           isCollapsed={isCollapsed}
+          badge={
+            <Badge variant="outline" className="ml-2 bg-amber-100 text-amber-800 text-xs border-amber-200">
+              En desarrollo
+            </Badge>
+          }
         />
         
         <MenuItem
           to="/about-us"
           icon={Info}
-          label={
-            <>
-              Acerca de Nosotros
-              <Badge variant="outline" className="ml-2 bg-amber-100 text-amber-800 text-xs border-amber-200">
-                En desarrollo
-              </Badge>
-            </>
-          }
+          label="Acerca de Nosotros"
           isCollapsed={isCollapsed}
+          badge={
+            <Badge variant="outline" className="ml-2 bg-amber-100 text-amber-800 text-xs border-amber-200">
+              En desarrollo
+            </Badge>
+          }
         />
       </SidebarMenu>
     </SidebarGroup>

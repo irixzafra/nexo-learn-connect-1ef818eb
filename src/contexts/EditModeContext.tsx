@@ -50,28 +50,28 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [isEditModeEnabled, isEditMode]);
 
-  // Disable reorder mode when edit mode is turned off
-  useEffect(() => {
-    if (!isEditMode && isReorderMode) {
-      setIsReorderMode(false);
-    }
-  }, [isEditMode, isReorderMode]);
-
   // Check for feature configuration on mount
   useEffect(() => {
-    // Here we would check from a settings service if the edit mode and reorder mode are enabled
-    console.log('Checking edit mode and reorder mode feature configuration');
+    // Here we would check from a settings service if the edit mode is enabled
+    console.log('Checking edit mode feature configuration');
     
     // By default, we'll set it to false. In a real app, this would be loaded from the backend
-    // We'll use the feature toggles to control this later
     setIsEditModeEnabled(false);
   }, []);
 
   const toggleEditMode = () => {
     if (canEdit && isEditModeEnabled) {
-      setIsEditMode(prev => !prev);
-      // Turn off reorder mode when disabling edit mode
-      if (isEditMode && isReorderMode) {
+      const newValue = !isEditMode;
+      setIsEditMode(newValue);
+      
+      // Automatically enable reorder mode when edit mode is enabled
+      if (newValue) {
+        setIsReorderMode(true);
+        toast.info(
+          "Modo edición activado. Todos los elementos son editables y reordenables.",
+          { duration: 4000 }
+        );
+      } else {
         setIsReorderMode(false);
       }
     } else if (!isEditModeEnabled && canEdit) {
@@ -79,16 +79,10 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  // This is now just a legacy function as reorder mode is always enabled with edit mode
   const toggleReorderMode = () => {
     if (isEditMode && canEdit && isEditModeEnabled) {
       setIsReorderMode(prev => !prev);
-      // Mostrar tutorial o guía al activar el modo reordenación por primera vez
-      if (!isReorderMode) {
-        toast.info(
-          "Modo reordenación activado. Arrastra los elementos para cambiar su orden o usa los botones de flechas.",
-          { duration: 4000 }
-        );
-      }
     }
   };
 
@@ -101,7 +95,6 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const updateText = async (table: string, id: string, field: string, value: string): Promise<boolean> => {
     try {
       // In a real application, this would update the database
-      // For now, we'll simulate a successful update
       console.log(`Updating ${field} in ${table} with ID ${id} to: ${value}`);
       
       // Simulate API call delay
@@ -121,7 +114,6 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const reorderElements = async (table: string, elements: { id: string; order: number }[]): Promise<boolean> => {
     try {
       // In a real application, this would update the database
-      // For now, we'll simulate a successful update
       console.log(`Reordering elements in ${table}:`, elements);
       
       // Simulate API call delay
