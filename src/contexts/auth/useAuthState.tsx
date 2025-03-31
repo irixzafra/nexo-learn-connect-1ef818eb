@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Session } from '@supabase/supabase-js';
-import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
+import { UserProfile, UserRoleType } from '@/types/auth';
 import { useNavigate } from 'react-router-dom';
 import { useAuthSession } from './hooks/useAuthSession';
 import { useAuthProfile } from './hooks/useAuthProfile';
