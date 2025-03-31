@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
@@ -13,12 +13,23 @@ interface MobileSidebarProps {
 }
 
 export const MobileSidebar: React.FC<MobileSidebarProps> = ({ viewAsRole, trigger }) => {
-  // Siempre mostrar el botón en dispositivos móviles
+  const [isOpen, setIsOpen] = useState(false);
+  
+  // Fix for sidebar toggle not working
+  const handleToggle = () => {
+    console.log('Toggling mobile sidebar:', !isOpen);
+    setIsOpen(!isOpen);
+  };
+  
+  // Log when sidebar state changes
+  useEffect(() => {
+    console.log('Mobile sidebar state changed:', isOpen);
+  }, [isOpen]);
   
   return (
     <div className="md:hidden fixed bottom-4 left-4 z-50">
-      <Sheet>
-        <SheetTrigger asChild>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild onClick={handleToggle}>
           {trigger || (
             <Button variant="primary" size="icon" className="h-12 w-12 rounded-full shadow-lg">
               <Menu className="h-5 w-5" />

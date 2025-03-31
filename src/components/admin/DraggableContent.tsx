@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { GripVertical, Plus, MessageSquareText, ArrowDown, ArrowUp, Move } from 'lucide-react';
@@ -58,6 +57,7 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
+  // Updated to accept position as number to fix type errors
   const handleAddSection = (content: string, position?: number) => {
     if (onAddItem) {
       onAddItem(content, position);
@@ -305,261 +305,151 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     </Button>
   );
 
-  if (resizable) {
-    return (
-      <div className="relative space-y-2">
-        <ResizablePanelGroup 
-          direction={layout === 'vertical' ? 'vertical' : 'horizontal'}
-          className={className}
-        >
-          {draggableItems.map((item, index) => (
-            <React.Fragment key={item.id}>
-              <ResizablePanel 
-                defaultSize={item.width || 100 / draggableItems.length} 
-                minSize={minSize}
-                className={`${itemClassName} ${isEditMode ? 'relative' : ''} ${isReorderMode ? 'cursor-move border border-dashed rounded-md transition-colors' : ''} ${hoverIndex === index ? 'bg-primary/10 border-primary' : ''}`}
-              >
-                <div
-                  draggable={isReorderMode}
-                  onDragStart={(e) => handleDragStart(e, item, index)}
-                  onDragOver={(e) => handleDragOver(e, item, index)}
-                  onDragLeave={handleDragLeave}
-                  onDrop={(e) => handleDrop(e, item, index)}
-                  onDragEnd={handleDragEnd}
-                  className={`h-full w-full draggable-item ${isReorderMode ? 'group' : ''}`}
+  if (isEditMode) {
+    if (resizable) {
+      return (
+        <div className="relative space-y-2">
+          <ResizablePanelGroup 
+            direction={layout === 'vertical' ? 'vertical' : 'horizontal'}
+            className={className}
+          >
+            {draggableItems.map((item, index) => (
+              <React.Fragment key={item.id}>
+                <ResizablePanel 
+                  defaultSize={item.width || 100 / draggableItems.length} 
+                  minSize={minSize}
+                  className={`${itemClassName} ${isEditMode ? 'relative' : ''} ${isReorderMode ? 'cursor-move border border-dashed rounded-md transition-colors' : ''} ${hoverIndex === index ? 'bg-primary/10 border-primary' : ''}`}
                 >
-                  {isReorderMode && (
-                    <div className="absolute left-0 top-0 w-full bg-muted/70 p-1 flex items-center justify-between z-10">
-                      <div className="flex items-center gap-1">
-                        <GripVertical className="h-4 w-4 text-primary cursor-grab" />
-                        <span className="text-xs font-medium">Elemento {index + 1}</span>
+                  <div
+                    draggable={isReorderMode}
+                    onDragStart={(e) => handleDragStart(e, item, index)}
+                    onDragOver={(e) => handleDragOver(e, item, index)}
+                    onDragLeave={handleDragLeave}
+                    onDrop={(e) => handleDrop(e, item, index)}
+                    onDragEnd={handleDragEnd}
+                    className={`h-full w-full draggable-item ${isReorderMode ? 'group' : ''}`}
+                  >
+                    {isReorderMode && (
+                      <div className="absolute left-0 top-0 w-full bg-muted/70 p-1 flex items-center justify-between z-10">
+                        <div className="flex items-center gap-1">
+                          <GripVertical className="h-4 w-4 text-primary cursor-grab" />
+                          <span className="text-xs font-medium">Elemento {index + 1}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full"
+                            onClick={() => moveItem(index, 'up')}
+                            disabled={index === 0}
+                          >
+                            <ArrowUp className="h-3 w-3" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 rounded-full"
+                            onClick={() => moveItem(index, 'down')}
+                            disabled={index === draggableItems.length - 1}
+                          >
+                            <ArrowDown className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-6 w-6 rounded-full"
-                          onClick={() => moveItem(index, 'up')}
-                          disabled={index === 0}
-                        >
-                          <ArrowUp className="h-3 w-3" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-6 w-6 rounded-full"
-                          onClick={() => moveItem(index, 'down')}
-                          disabled={index === draggableItems.length - 1}
-                        >
-                          <ArrowDown className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                  <div className={isReorderMode ? 'pt-8' : ''}>
-                    {typeof item.content === 'string' || item.text ? (
-                      <InlineEdit
-                        table={table}
-                        id={item.id}
-                        field="content"
-                        value={item.text || (typeof item.content === 'string' ? item.content : '')}
-                        multiline={true}
-                        className="w-full"
-                      />
-                    ) : (
-                      item.content
                     )}
+                    <div className={isReorderMode ? 'pt-8' : ''}>
+                      {typeof item.content === 'string' || item.text ? (
+                        <InlineEdit
+                          table={table}
+                          id={item.id}
+                          field="content"
+                          value={item.text || (typeof item.content === 'string' ? item.content : '')}
+                          multiline={true}
+                          className="w-full"
+                        />
+                      ) : (
+                        item.content
+                      )}
+                    </div>
                   </div>
+                </ResizablePanel>
+                {index < draggableItems.length - 1 && (
+                  <ResizableHandle withHandle />
+                )}
+                
+                {/* Insert Section Component between panels */}
+                {isEditMode && index < draggableItems.length - 1 && (
+                  <SectionInsert onAddSection={(content) => handleAddSection(content, index + 1)} />
+                )}
+              </React.Fragment>
+            ))}
+          </ResizablePanelGroup>
+          
+          {/* Add section at the end */}
+          {isEditMode && <SectionInsert onAddSection={handleAddSection} />}
+          
+          {isEditMode && <AddItemButton />}
+          
+          <Dialog open={isAIDialogOpen} onOpenChange={setIsAIDialogOpen}>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Generar nuevo contenido con IA</DialogTitle>
+                <DialogDescription>
+                  Describe el elemento que quieres añadir y la IA te ayudará a generarlo.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="flex items-end gap-2">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Describe lo que quieres crear..."
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+                  <Button 
+                    onClick={handleAIGenerate} 
+                    disabled={isGenerating || !prompt.trim()}
+                    size="sm"
+                  >
+                    {isGenerating ? 'Generando...' : 'Generar'}
+                  </Button>
                 </div>
-              </ResizablePanel>
-              {index < draggableItems.length - 1 && (
-                <ResizableHandle withHandle />
-              )}
-              
-              {/* Insert Section Component between panels */}
-              {isEditMode && index < draggableItems.length - 1 && (
-                <SectionInsert onAddSection={(content) => handleAddSection(content, index + 1)} />
-              )}
-            </React.Fragment>
-          ))}
-        </ResizablePanelGroup>
-        
-        {/* Add section at the end */}
-        {isEditMode && <SectionInsert onAddSection={handleAddSection} />}
-        
-        {isEditMode && <AddItemButton />}
-        
-        <Dialog open={isAIDialogOpen} onOpenChange={setIsAIDialogOpen}>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              <DialogTitle>Generar nuevo contenido con IA</DialogTitle>
-              <DialogDescription>
-                Describe el elemento que quieres añadir y la IA te ayudará a generarlo.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="flex items-end gap-2">
-                <div className="flex-1">
-                  <Input
-                    placeholder="Describe lo que quieres crear..."
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-                <Button 
-                  onClick={handleAIGenerate} 
-                  disabled={isGenerating || !prompt.trim()}
-                  size="sm"
-                >
-                  {isGenerating ? 'Generando...' : 'Generar'}
-                </Button>
+                
+                {aiResult && (
+                  <div className="border rounded-md p-4 bg-muted/50">
+                    <div className="flex items-center gap-2 mb-2 text-sm font-medium">
+                      <MessageSquareText className="h-4 w-4" />
+                      <span>Resultado:</span>
+                    </div>
+                    <Textarea 
+                      value={aiResult} 
+                      onChange={(e) => setAiResult(e.target.value)}
+                      rows={5}
+                      className="w-full"
+                    />
+                  </div>
+                )}
               </div>
-              
-              {aiResult && (
-                <div className="border rounded-md p-4 bg-muted/50">
-                  <div className="flex items-center gap-2 mb-2 text-sm font-medium">
-                    <MessageSquareText className="h-4 w-4" />
-                    <span>Resultado:</span>
-                  </div>
-                  <Textarea 
-                    value={aiResult} 
-                    onChange={(e) => setAiResult(e.target.value)}
-                    rows={5}
-                    className="w-full"
-                  />
-                </div>
-              )}
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAIDialogOpen(false)}>Cancelar</Button>
-              <Button onClick={handleAddItem} disabled={!aiResult}>Añadir elemento</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsAIDialogOpen(false)}>Cancelar</Button>
+                <Button onClick={handleAddItem} disabled={!aiResult}>Añadir elemento</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      );
+    }
   }
 
   return (
-    <div className="relative space-y-2">
-      <div className={className}>
-        {draggableItems.map((item, index) => (
-          <React.Fragment key={item.id}>
-            <div
-              draggable={isReorderMode}
-              onDragStart={(e) => handleDragStart(e, item, index)}
-              onDragOver={(e) => handleDragOver(e, item, index)}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, item, index)}
-              onDragEnd={handleDragEnd}
-              className={`
-                ${itemClassName} 
-                draggable-item
-                ${isReorderMode ? 'cursor-move border border-dashed rounded-md p-2 mb-2 relative transition-colors' : ''}
-                ${hoverIndex === index ? 'bg-primary/10 border-primary' : ''}
-              `}
-            >
-              {isReorderMode && (
-                <div className="absolute left-0 top-0 w-full bg-muted/70 p-1 flex items-center justify-between z-10">
-                  <div className="flex items-center gap-1">
-                    <GripVertical className="h-4 w-4 text-primary cursor-grab" />
-                    <span className="text-xs font-medium">Elemento {index + 1}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 rounded-full"
-                      onClick={() => moveItem(index, 'up')}
-                      disabled={index === 0}
-                    >
-                      <ArrowUp className="h-3 w-3" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 rounded-full"
-                      onClick={() => moveItem(index, 'down')}
-                      disabled={index === draggableItems.length - 1}
-                    >
-                      <ArrowDown className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-              )}
-              <div className={isReorderMode ? 'pt-8' : ''}>
-                {typeof item.content === 'string' || item.text ? (
-                  <InlineEdit
-                    table={table}
-                    id={item.id}
-                    field="content"
-                    value={item.text || (typeof item.content === 'string' ? item.content : '')}
-                    multiline={true}
-                    className="w-full"
-                  />
-                ) : (
-                  item.content
-                )}
-              </div>
-            </div>
-            
-            {/* Insert Section Component between items */}
-            {isEditMode && <SectionInsert onAddSection={(content) => handleAddSection(content, index + 1)} />}
-          </React.Fragment>
-        ))}
-      </div>
-      
-      {isEditMode && <AddItemButton />}
-      
-      <Dialog open={isAIDialogOpen} onOpenChange={setIsAIDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Generar nuevo contenido con IA</DialogTitle>
-            <DialogDescription>
-              Describe el elemento que quieres añadir y la IA te ayudará a generarlo.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="flex items-end gap-2">
-              <div className="flex-1">
-                <Input
-                  placeholder="Describe lo que quieres crear..."
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              <Button 
-                onClick={handleAIGenerate} 
-                disabled={isGenerating || !prompt.trim()}
-                size="sm"
-              >
-                {isGenerating ? 'Generando...' : 'Generar'}
-              </Button>
-            </div>
-            
-            {aiResult && (
-              <div className="border rounded-md p-4 bg-muted/50">
-                <div className="flex items-center gap-2 mb-2 text-sm font-medium">
-                  <MessageSquareText className="h-4 w-4" />
-                  <span>Resultado:</span>
-                </div>
-                <Textarea 
-                  value={aiResult} 
-                  onChange={(e) => setAiResult(e.target.value)}
-                  rows={5}
-                  className="w-full"
-                />
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAIDialogOpen(false)}>Cancelar</Button>
-            <Button onClick={handleAddItem} disabled={!aiResult}>Añadir elemento</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+    <div className={className}>
+      {items.map((item) => (
+        <div key={item.id} className={itemClassName}>
+          {item.content}
+        </div>
+      ))}
     </div>
   );
 };

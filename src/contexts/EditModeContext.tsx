@@ -12,6 +12,8 @@ interface EditModeContextType {
   setEditModeEnabled: (enabled: boolean) => void;
   updateText: (table: string, id: string, field: string, value: string) => Promise<boolean>;
   reorderElements: (table: string, elements: { id: string; order: number }[]) => Promise<boolean>;
+  applyAIEdit: (element: string, prompt: string) => Promise<string>;
+  canEdit: boolean;
 }
 
 const EditModeContext = createContext<EditModeContextType>({
@@ -23,6 +25,8 @@ const EditModeContext = createContext<EditModeContextType>({
   setEditModeEnabled: () => {},
   updateText: async () => false,
   reorderElements: async () => false,
+  applyAIEdit: async () => '',
+  canEdit: false,
 });
 
 export const useEditMode = () => useContext(EditModeContext);
@@ -57,6 +61,10 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     
     // By default, we'll set it to true
     setIsEditModeEnabled(true);
+    
+    // Log the current state for debugging
+    console.log('Edit mode enabled:', isEditModeEnabled);
+    console.log('Can edit (role):', canEdit);
   }, []);
 
   const toggleEditMode = () => {
@@ -71,24 +79,41 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           "Modo edición universal activado. Ahora puedes editar, reordenar o modificar cualquier elemento.",
           { duration: 4000 }
         );
+        
+        // Log status for debugging
+        console.log('Edit mode activated, reorder mode also activated');
       } else {
         setIsReorderMode(false);
+        console.log('Edit mode deactivated, reorder mode also deactivated');
       }
     } else if (!isEditModeEnabled && canEdit) {
       toast.error("La funcionalidad de edición en línea está desactivada");
+      console.log('Edit mode activation failed: feature disabled');
+    } else if (!canEdit) {
+      toast.error("No tienes permisos para activar el modo edición");
+      console.log('Edit mode activation failed: insufficient permissions');
     }
   };
 
   // This is now just a legacy function as reorder mode is always enabled with edit mode
   const toggleReorderMode = () => {
     if (isEditMode && canEdit && isEditModeEnabled) {
-      setIsReorderMode(prev => !prev);
+      const newValue = !isReorderMode;
+      setIsReorderMode(newValue);
+      console.log('Reorder mode toggled:', newValue);
+      
+      if (newValue) {
+        toast.info("Modo reordenación activado. Puedes arrastrar los elementos para cambiar su orden.");
+      }
+    } else if (!isEditMode) {
+      console.log('Cannot toggle reorder mode: edit mode not active');
     }
   };
 
   // Wrapper for setting the edit mode enabled state
   const setEditModeEnabled = (enabled: boolean) => {
     setIsEditModeEnabled(enabled);
+    console.log('Edit mode enabled set to:', enabled);
   };
 
   // Function to update text content in the database
@@ -129,6 +154,26 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  // NEW: Function to apply AI edits to an element
+  const applyAIEdit = async (element: string, prompt: string): Promise<string> => {
+    try {
+      console.log(`Applying AI edit to element with prompt: ${prompt}`);
+      
+      // Simulate AI generation
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Just a mock response for now
+      const result = `${element} (AI enhanced: ${prompt})`;
+      
+      toast.success('Edición con IA aplicada correctamente');
+      return result;
+    } catch (error) {
+      console.error('Error applying AI edit:', error);
+      toast.error('Error al aplicar edición con IA');
+      return element; // Return original content on error
+    }
+  };
+
   return (
     <EditModeContext.Provider value={{ 
       isEditMode, 
@@ -138,7 +183,9 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       isEditModeEnabled,
       setEditModeEnabled,
       updateText,
-      reorderElements
+      reorderElements,
+      applyAIEdit,
+      canEdit
     }}>
       {children}
     </EditModeContext.Provider>

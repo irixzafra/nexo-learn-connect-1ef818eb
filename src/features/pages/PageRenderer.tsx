@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SitePage, PageBlock, PageBlockType } from '@/types/pages';
@@ -102,7 +103,7 @@ const PageRenderer: React.FC = () => {
   }
 
   // Transform content blocks to draggable items
-  const contentBlocks = page.content?.blocks || [];
+  const contentBlocks = page?.content?.blocks || [];
   const draggableItems = contentBlocks.map((block: PageBlock, index: number) => ({
     id: block.id || `block-${index}`,
     order: index + 1,
@@ -134,6 +135,7 @@ const PageRenderer: React.FC = () => {
     text: block.content
   }));
 
+  // Updated to accept position as number to fix type errors
   const handleAddBlock = (content: string, position?: number) => {
     if (!page || !page.content) return;
     
@@ -237,19 +239,19 @@ const PageRenderer: React.FC = () => {
   };
 
   return (
-    <div className={`page-container page-layout-${page.layout}`}>
+    <div className={`page-container page-layout-${page?.layout}`}>
       <div className="container mx-auto px-4">
         {isEditMode ? (
           <InlineEdit
             table="pages"
-            id={page.id}
+            id={page?.id || ''}
             field="title"
-            value={page.title}
+            value={page?.title || ''}
             className="text-3xl font-bold mb-6"
             placeholder="Título de la página"
           />
         ) : (
-          <h1 className="text-3xl font-bold mb-6">{page.title}</h1>
+          <h1 className="text-3xl font-bold mb-6">{page?.title}</h1>
         )}
         {renderPageContent()}
       </div>

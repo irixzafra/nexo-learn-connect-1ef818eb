@@ -1,24 +1,36 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
+import { Pencil, Check, X, Wand2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Pencil, Save, X, Check, Wand2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import AIElementEditor from './AIElementEditor';
+import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 interface InlineEditProps {
   table: string;
   id: string;
   field: string;
   value: string;
-  as?: keyof JSX.IntrinsicElements;
   className?: string;
   multiline?: boolean;
-  maxLength?: number;
   placeholder?: string;
-  autoSave?: boolean;
+  maxLength?: number;
+  onSave?: (value: string) => void;
 }
 
 const InlineEdit: React.FC<InlineEditProps> = ({
@@ -26,90 +38,63 @@ const InlineEdit: React.FC<InlineEditProps> = ({
   id,
   field,
   value,
-  as: Component = 'div',
   className = '',
   multiline = false,
-  maxLength,
   placeholder = 'Editar texto...',
-  autoSave = false,
+  maxLength,
+  onSave,
 }) => {
-  const { isEditMode, updateText } = useEditMode();
-  const [isEditing, setIsEditing] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const [text, setText] = useState(value);
-  const [originalText, setOriginalText] = useState(value);
+  const { isEditMode, updateText, applyAIEdit } = useEditMode();
+  const [editing, setEditing] = useState(false);
+  const [editValue, setEditValue] = useState(value);
+  const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [isApplyingAI, setIsApplyingAI] = useState(false);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isAIEditorOpen, setIsAIEditorOpen] = useState(false);
 
   useEffect(() => {
-    setText(value);
-    setOriginalText(value);
+    setEditValue(value);
   }, [value]);
 
   useEffect(() => {
-    if (isEditing && inputRef.current) {
+    if (editing && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isEditing]);
+  }, [editing]);
+
+  if (!isEditMode) {
+    return <div className={className}>{value}</div>;
+  }
 
   const handleClick = () => {
-    if (isEditMode && !isEditing) {
-      setIsEditing(true);
+    if (!editing) {
+      setEditing(true);
     }
-  };
-
-  const handleSave = async () => {
-    if (text.trim() === '') {
-      setText(originalText);
-      setIsEditing(false);
-      return;
-    }
-
-    // Si el texto no ha cambiado, no hacemos nada
-    if (text === originalText) {
-      setIsEditing(false);
-      return;
-    }
-
-    setIsSaving(true);
-    const success = await updateText(table, id, field, text);
-    setIsSaving(false);
-    
-    if (!success) {
-      setText(originalText);
-    } else {
-      setOriginalText(text);
-    }
-    
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setText(originalText);
-    setIsEditing(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setText(e.target.value);
-    
-    if (autoSave) {
-      // Implementar auto-save con debounce
-      clearTimeout(inputRef.current?.dataset.timer as any);
-      const timer = setTimeout(() => {
-        if (e.target.value !== originalText && e.target.value.trim() !== '') {
-          handleSave();
-        }
-      }, 1000); // Guardar automáticamente después de 1 segundo de inactividad
-      
-      if (inputRef.current) {
-        inputRef.current.dataset.timer = timer as any;
+    const newValue = e.target.value;
+    if (maxLength && newValue.length > maxLength) return;
+    setEditValue(newValue);
+  };
+
+  const handleSave = async () => {
+    if (editValue !== value) {
+      const success = await updateText(table, id, field, editValue);
+      if (success && onSave) {
+        onSave(editValue);
       }
     }
+    setEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditValue(value);
+    setEditing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey && !multiline) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSave();
     } else if (e.key === 'Escape') {
@@ -117,115 +102,169 @@ const InlineEdit: React.FC<InlineEditProps> = ({
     }
   };
 
-  const handleAIUpdate = async (newContent: string) => {
-    setText(newContent);
-    return await updateText(table, id, field, newContent);
+  const handleAIAssist = () => {
+    setIsAIDialogOpen(true);
   };
 
-  if (!isEditMode) {
-    return (
-      <Component className={className}>
-        {value || placeholder}
-      </Component>
-    );
-  }
+  const handleApplyAI = async () => {
+    if (!aiPrompt.trim()) return;
+    
+    setIsApplyingAI(true);
+    try {
+      const result = await applyAIEdit(editValue, aiPrompt);
+      setEditValue(result);
+      setIsAIDialogOpen(false);
+      setAiPrompt('');
+      // We don't automatically save here, user can review and save manually
+    } catch (error) {
+      console.error("Error applying AI assist:", error);
+    } finally {
+      setIsApplyingAI(false);
+    }
+  };
 
-  if (isEditing) {
-    return (
-      <div className="inline-flex flex-col gap-2 w-full">
-        {multiline ? (
-          <Textarea
-            ref={inputRef as React.RefObject<HTMLTextAreaElement>}
-            value={text}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            className="min-h-[60px] border-primary focus-visible:ring-1 focus-visible:ring-primary"
-            maxLength={maxLength}
-            placeholder={placeholder}
-            disabled={isSaving}
-          />
-        ) : (
-          <Input
-            ref={inputRef as React.RefObject<HTMLInputElement>}
-            value={text}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            maxLength={maxLength}
-            placeholder={placeholder}
-            className="border-primary focus-visible:ring-1 focus-visible:ring-primary"
-            disabled={isSaving}
-          />
-        )}
-        
-        <div className="flex gap-2 justify-end">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setIsAIEditorOpen(true)}
-            className="h-8 px-2 mr-auto"
-            disabled={isSaving}
-          >
-            <Wand2 className="h-4 w-4 mr-1" />
-            Editar con IA
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleCancel}
-            className="h-8 px-2"
-            disabled={isSaving}
-          >
-            <X className="h-4 w-4 mr-1" /> Cancelar
-          </Button>
-          <Button 
-            variant="default" 
-            size="sm" 
-            onClick={handleSave}
-            className="h-8 px-2"
-            disabled={isSaving}
-          >
-            {isSaving ? (
-              <>Guardando...</>
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-1" /> Guardar
-              </>
-            )}
-          </Button>
+  const renderContent = () => {
+    if (editing) {
+      return (
+        <div className="relative group">
+          {multiline ? (
+            <Textarea
+              ref={inputRef as React.RefObject<HTMLTextAreaElement>}
+              value={editValue}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              className={cn("min-h-[100px] p-2 border-2 border-primary focus:border-primary", className)}
+              onBlur={handleSave}
+              autoFocus
+            />
+          ) : (
+            <Input
+              ref={inputRef as React.RefObject<HTMLInputElement>}
+              type="text"
+              value={editValue}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              className={cn("border-2 border-primary", className)}
+              onBlur={handleSave}
+              autoFocus
+            />
+          )}
+          
+          <div className="absolute top-2 right-2 flex gap-1">
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-6 w-6 rounded-full bg-primary/10 hover:bg-primary/20"
+              onClick={handleAIAssist}
+            >
+              <Wand2 className="h-3 w-3 text-primary" />
+            </Button>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-6 w-6 rounded-full bg-destructive/10 hover:bg-destructive/20"
+              onClick={handleCancel}
+            >
+              <X className="h-3 w-3 text-destructive" />
+            </Button>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-6 w-6 rounded-full bg-primary/10 hover:bg-primary/20"
+              onClick={handleSave}
+            >
+              <Check className="h-3 w-3 text-primary" />
+            </Button>
+          </div>
         </div>
-      </div>
+      );
+    }
+
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div
+              className={cn(
+                "relative group cursor-pointer border border-transparent hover:border-primary/30 hover:bg-primary/5 rounded px-1 -mx-1 transition-colors",
+                "focus:outline-none focus:border-primary/30 focus:bg-primary/5",
+                className
+              )}
+              onClick={handleClick}
+              tabIndex={0}
+              role="button"
+              aria-label={`Editar ${field}`}
+              onKeyDown={(e) => e.key === 'Enter' && handleClick()}
+            >
+              <div className="break-words">
+                {value || placeholder}
+              </div>
+              <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="bg-primary text-primary-foreground rounded-full p-1">
+                  <Pencil className="h-3 w-3" />
+                </div>
+              </div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p className="text-xs">Haz clic para editar este contenido</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
-  }
+  };
 
   return (
     <>
-      <Component
-        className={`${className} group relative cursor-pointer border border-dashed border-transparent hover:border-primary/50 rounded p-1 -m-1 transition-colors`}
-        onClick={handleClick}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-      >
-        <span className={isHovering ? "text-primary" : ""}>{text || placeholder}</span>
-        <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Wand2 
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsAIEditorOpen(true);
-            }}
-            className="h-4 w-4 text-primary bg-background border border-primary/20 rounded-full p-0.5"
-          />
-          <Pencil className="h-4 w-4 text-primary" />
-        </div>
-      </Component>
+      {renderContent()}
       
-      <AIElementEditor
-        isOpen={isAIEditorOpen}
-        onOpenChange={setIsAIEditorOpen}
-        elementId={id}
-        elementType={field}
-        currentContent={text}
-        onContentUpdate={handleAIUpdate}
-      />
+      <Dialog open={isAIDialogOpen} onOpenChange={setIsAIDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Wand2 className="h-5 w-5 text-primary" />
+              Asistente de Edición con IA
+            </DialogTitle>
+            <DialogDescription>
+              Indica cómo quieres mejorar o modificar el texto actual.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="p-3 bg-muted/30 rounded border">
+              <div className="text-sm font-medium mb-1">Texto actual:</div>
+              <div className="text-sm text-muted-foreground">{editValue || "(vacío)"}</div>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Instrucción para la IA:</label>
+              <Textarea
+                placeholder="Ej: 'Haz que el texto sea más conciso', 'Revisa la gramática', 'Usa un tono más formal'"
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                rows={3}
+              />
+              <p className="text-xs text-muted-foreground">
+                Describe claramente qué cambios quieres aplicar al texto
+              </p>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAIDialogOpen(false)} disabled={isApplyingAI}>
+              Cancelar
+            </Button>
+            <Button onClick={handleApplyAI} disabled={isApplyingAI || !aiPrompt.trim()}>
+              {isApplyingAI ? 'Aplicando...' : 'Aplicar IA'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

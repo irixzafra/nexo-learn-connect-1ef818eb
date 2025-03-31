@@ -97,11 +97,21 @@ export const StyledAccordion = ({
   gap = "md",
   children
 }: StyledAccordionProps) => {
+  // Create correct props based on type to fix TypeScript errors
+  const accordionProps = type === "single" 
+    ? {
+        type: "single" as const,
+        defaultValue: typeof defaultValue === 'string' ? defaultValue : undefined,
+        collapsible,
+      }
+    : {
+        type: "multiple" as const,
+        defaultValue: Array.isArray(defaultValue) ? defaultValue : [],
+      };
+
   return (
     <Accordion
-      type={type}
-      defaultValue={defaultValue}
-      collapsible={collapsible}
+      {...accordionProps}
       className={cn(
         "w-full",
         gap === "none" && "space-y-0 [&>*:not(:first-child)]:border-t-0",
@@ -119,5 +129,5 @@ export const StyledAccordion = ({
         return child;
       })}
     </Accordion>
-  )
-}
+  );
+};
