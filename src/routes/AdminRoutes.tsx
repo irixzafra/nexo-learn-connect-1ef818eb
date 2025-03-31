@@ -17,6 +17,7 @@ import ContentManagement from '@/pages/admin/content/ContentManagement';
 import TemplatesPage from '@/pages/admin/content/TemplatesPage';
 import AuditLog from '@/pages/admin/audit/AuditLog';
 import AccessControl from '@/pages/admin/access/AccessControl';
+import AdminCourses from '@/pages/admin/courses/AdminCourses';
 
 // User management components
 import { UserManagementTabs } from '@/features/users/UserManagementTabs';
@@ -60,6 +61,7 @@ const AnalyticsPage = () => (
         activeUsers={621}
         newUsers={42}
         inactiveUsers={124}
+        loading={false}
       />
     </div>
   </AdminPageLayout>
@@ -109,7 +111,7 @@ const AdminRoutes: React.FC = () => {
         <Route path="/roles" element={<RoleManagement />} />
         
         {/* Course Management */}
-        <Route path="/courses" element={<CourseManagement />} />
+        <Route path="/courses" element={<AdminCourses />} />
         <Route path="/instructors" element={<InstructorManagement />} />
         
         {/* Analytics */}
