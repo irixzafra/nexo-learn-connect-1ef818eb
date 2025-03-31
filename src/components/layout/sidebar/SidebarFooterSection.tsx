@@ -82,8 +82,8 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
           </TooltipContent>
         </Tooltip>
         
-        {/* Role Switcher - Only for admins and instructors - Icon only */}
-        {(userRole === 'admin' || userRole === 'instructor') && (
+        {/* Role Switcher - Only for admins - Icon only */}
+        {userRole === 'admin' && (
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenu>
