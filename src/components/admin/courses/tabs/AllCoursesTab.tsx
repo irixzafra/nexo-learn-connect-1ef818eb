@@ -57,6 +57,7 @@ const AllCoursesTab: React.FC = () => {
     </div>
   );
 
+  // Define the render function for CourseForm separately to fix typing issues
   const renderCourseForm = (props: { data: Course | null; onChange: (data: Course) => void }) => (
     <CourseForm data={props.data} onChange={props.onChange} />
   );
