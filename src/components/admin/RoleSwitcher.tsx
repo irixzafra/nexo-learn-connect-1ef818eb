@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Check, UserCog, ArrowLeftRight, Shield, User, Terminal, Ghost, UserRound, SwitchCamera } from 'lucide-react';
+import { Check, UserCog, ArrowLeftRight, Shield, User, Terminal, Ghost, UserRound, GraduationCap } from 'lucide-react';
 import { RoleIndicator } from '@/components/layout/header/RoleIndicator';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -98,7 +98,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
               size="icon" 
               className="h-8 w-8 rounded-full"
             >
-              <SwitchCamera className="h-5 w-5" />
+              <GraduationCap className="h-5 w-5" />
               <span className="sr-only">Cambiar vista de rol</span>
             </Button>
           </DropdownMenuTrigger>
