@@ -1,149 +1,137 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Plus, AlignLeft, Image, LayoutGrid, Quote, List, Link, Heading } from 'lucide-react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
+import { Plus } from 'lucide-react';
 
 interface PageContentEditorProps {
   form: UseFormReturn<any>;
 }
 
 const PageContentEditor: React.FC<PageContentEditorProps> = ({ form }) => {
-  // Get current content blocks
+  // Function to add a new empty block to the content
+  const addBlock = (type: string) => {
+    const content = form.getValues('content') || { blocks: [] };
+    const newBlock = {
+      id: `block-${Date.now()}`,
+      type,
+      content: type === 'hero' ? 'Nuevo Título Destacado' : 'Nuevo contenido'
+    };
+    
+    form.setValue('content', {
+      ...content,
+      blocks: [...(content.blocks || []), newBlock]
+    });
+  };
+
+  // Get the current blocks
   const content = form.watch('content') || { blocks: [] };
   const blocks = content.blocks || [];
 
-  // Add a new block
-  const addBlock = (type: string) => {
-    const newBlock = {
-      id: `block_${Date.now()}`,
-      type,
-      content: getDefaultContentForType(type)
-    };
-    
-    const updatedBlocks = [...blocks, newBlock];
-    form.setValue('content', { blocks: updatedBlocks });
-  };
-
-  // Get default content based on block type
-  const getDefaultContentForType = (type: string) => {
-    switch (type) {
-      case 'text':
-        return { text: 'Nuevo texto aquí' };
-      case 'hero':
-        return { title: 'Título Hero', subtitle: 'Subtítulo', buttonText: 'Botón' };
-      case 'cta':
-        return { title: 'Título CTA', buttonText: 'Botón' };
-      case 'features':
-        return { title: 'Características', items: [{ title: 'Característica 1', description: 'Descripción' }] };
-      default:
-        return {};
-    }
-  };
-
-  // Remove a block
-  const removeBlock = (index: number) => {
-    const updatedBlocks = blocks.filter((_, i) => i !== index);
-    form.setValue('content', { blocks: updatedBlocks });
-  };
-
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-medium">Bloques de contenido</h2>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => addBlock('text')}
-          >
-            <AlignLeft className="h-4 w-4 mr-2" />
-            Texto
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => addBlock('hero')}
-          >
-            <Heading className="h-4 w-4 mr-2" />
-            Hero
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => addBlock('features')}
-          >
-            <LayoutGrid className="h-4 w-4 mr-2" />
-            Características
-          </Button>
+    <Form {...form}>
+      <div className="space-y-6">
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Título</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="Título de la página" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium">Bloques de Contenido</h3>
+            <div className="flex space-x-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm"
+                onClick={() => addBlock('text')}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Texto
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm"
+                onClick={() => addBlock('hero')}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Hero
+              </Button>
+            </div>
+          </div>
+          
+          {blocks.length === 0 ? (
+            <div className="text-center py-8 border rounded-md bg-muted/50">
+              <p className="text-muted-foreground">
+                No hay bloques de contenido. Añade alguno con los botones de arriba.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {blocks.map((block: any, index: number) => (
+                <div key={block.id || index} className="border rounded-md p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded">
+                      {block.type === 'text' ? 'Texto' : 'Hero'}
+                    </span>
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        const newBlocks = [...blocks];
+                        newBlocks.splice(index, 1);
+                        form.setValue('content', {
+                          ...content,
+                          blocks: newBlocks
+                        });
+                      }}
+                    >
+                      Eliminar
+                    </Button>
+                  </div>
+                  
+                  <Textarea 
+                    value={block.content}
+                    onChange={(e) => {
+                      const newBlocks = [...blocks];
+                      newBlocks[index].content = e.target.value;
+                      form.setValue('content', {
+                        ...content,
+                        blocks: newBlocks
+                      });
+                    }}
+                    placeholder={block.type === 'hero' ? "Contenido destacado" : "Contenido de texto"}
+                    className="mt-2 resize-none"
+                    rows={block.type === 'hero' ? 2 : 4}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-
-      {blocks.length === 0 ? (
-        <Card>
-          <CardContent className="py-8 text-center">
-            <p className="text-muted-foreground">
-              No hay bloques de contenido en esta página.
-            </p>
-            <Button 
-              variant="outline" 
-              className="mt-4"
-              onClick={() => addBlock('text')}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Añadir primer bloque
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {blocks.map((block, index) => (
-            <Card key={block.id || index}>
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-center">
-                  <CardTitle className="text-base capitalize">
-                    Bloque: {block.type}
-                  </CardTitle>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-destructive"
-                    onClick={() => removeBlock(index)}
-                  >
-                    Eliminar
-                  </Button>
-                </div>
-                <CardDescription>
-                  ID: {block.id}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <pre className="p-2 bg-muted rounded-md text-xs overflow-auto">
-                  {JSON.stringify(block.content, null, 2)}
-                </pre>
-              </CardContent>
-              <CardFooter>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="w-full"
-                >
-                  Editar contenido
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+    </Form>
   );
 };
 
