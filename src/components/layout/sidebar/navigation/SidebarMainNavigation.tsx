@@ -1,8 +1,6 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType } from '@/types/auth';
-import { useAuth as useFeatureFlagsContext } from '@/contexts/AuthContext';
 import { 
   Home, 
   Compass, 
@@ -41,10 +39,10 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   notificationsCount,
   getHomePath
 }) => {
-  // As a temporary solution, we'll mock the isFeatureEnabled function
-  // until we find the correct import path for the FeatureFlagsContext
+  // Como solución temporal, utilizaremos esta función mock para feature flags
+  // hasta que encontremos la ruta correcta del contexto FeatureFlagsContext
   const isFeatureEnabled = (featureName: string) => {
-    // For testing purposes, let's enable some features
+    // Habilitamos algunas features para pruebas
     const enabledFeatures = ['community', 'messages', 'instructor_analytics', 'finances', 'datos'];
     return enabledFeatures.includes(featureName);
   };
