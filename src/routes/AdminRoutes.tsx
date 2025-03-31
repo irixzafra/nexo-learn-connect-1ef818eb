@@ -50,11 +50,11 @@ const CourseManagement = () => (
   </AdminPageLayout>
 );
 
-// Analytics Page
-const AnalyticsPage = () => (
+// Analytics Overview Page
+const AnalyticsOverviewPage = () => (
   <AdminPageLayout 
-    title="Analíticas"
-    subtitle="Métricas y estadísticas de la plataforma"
+    title="Analíticas - Visión General"
+    subtitle="Panorama completo del rendimiento de la plataforma"
   >
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <UserAdminStats 
@@ -64,6 +64,46 @@ const AnalyticsPage = () => (
         inactiveUsers={124}
         loading={false}
       />
+    </div>
+  </AdminPageLayout>
+);
+
+// User Analytics Page
+const UserAnalyticsPage = () => (
+  <AdminPageLayout 
+    title="Analíticas - Usuarios"
+    subtitle="Estadísticas y tendencias de usuarios"
+  >
+    <UserAnalytics />
+  </AdminPageLayout>
+);
+
+// Course Analytics Page
+const CourseAnalyticsPage = () => (
+  <AdminPageLayout 
+    title="Analíticas - Cursos"
+    subtitle="Estadísticas y tendencias de cursos"
+  >
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold">Estadísticas de Cursos</h2>
+      <p className="text-muted-foreground">
+        Analiza el rendimiento, popularidad y engagement de los cursos.
+      </p>
+    </div>
+  </AdminPageLayout>
+);
+
+// Revenue Analytics Page
+const RevenueAnalyticsPage = () => (
+  <AdminPageLayout 
+    title="Analíticas - Ingresos"
+    subtitle="Estadísticas financieras y proyecciones"
+  >
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold">Ingresos y Finanzas</h2>
+      <p className="text-muted-foreground">
+        Analiza los ingresos, tendencias de ventas y proyecciones financieras.
+      </p>
     </div>
   </AdminPageLayout>
 );
@@ -109,18 +149,25 @@ const AdminRoutes: React.FC = () => {
         
         {/* User Management */}
         <Route path="/users" element={<UserManagement />} />
+        <Route path="/users/analytics" element={<UserAnalyticsPage />} />
         <Route path="/roles" element={<RoleManagement />} />
         
         {/* Course Management */}
         <Route path="/courses" element={<AdminCourses />} />
+        <Route path="/courses/analytics" element={<CourseAnalyticsPage />} />
         <Route path="/instructors" element={<InstructorManagement />} />
         
         {/* Finances */}
         <Route path="/finances" element={<AdminFinances />} />
         <Route path="/billing" element={<AdminFinances />} />
+        <Route path="/billing/:tab" element={<AdminFinances />} />
         
         {/* Analytics */}
-        <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/analytics" element={<AnalyticsOverviewPage />} />
+        <Route path="/analytics/users" element={<UserAnalyticsPage />} />
+        <Route path="/analytics/courses" element={<CourseAnalyticsPage />} />
+        <Route path="/analytics/revenue" element={<RevenueAnalyticsPage />} />
+        <Route path="/analytics/:tab" element={<AnalyticsOverviewPage />} />
         
         {/* Design System */}
         <Route path="/design" element={<DesignSystem />} />

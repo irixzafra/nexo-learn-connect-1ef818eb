@@ -12,6 +12,12 @@ import {
   Palette,
   LineChart,
   School,
+  BarChart3,
+  PieChart,
+  TrendingUp,
+  Users2,
+  Activity,
+  DollarSign
 } from 'lucide-react';
 import AdminSubMenu, { AdminSubMenuItem } from './AdminSubMenu';
 
@@ -85,50 +91,52 @@ const adminCategories = [
 // Sub-navigation menus for each section
 const subMenus: Record<string, AdminSubMenuItem[]> = {
   users: [
-    { id: 'list', label: 'Lista de Usuarios', path: '/admin/users' },
-    { id: 'roles', label: 'Roles y Permisos', path: '/admin/roles' },
-    { id: 'analytics', label: 'Estadísticas', path: '/admin/users/analytics' },
+    { id: 'list', icon: Users, label: 'Lista de Usuarios', path: '/admin/users' },
+    { id: 'roles', icon: Users2, label: 'Roles y Permisos', path: '/admin/roles' },
+    { id: 'analytics', icon: BarChart3, label: 'Estadísticas', path: '/admin/users/analytics' },
   ],
   courses: [
-    { id: 'list', label: 'Todos los Cursos', path: '/admin/courses' },
-    { id: 'categories', label: 'Categorías', path: '/admin/courses/categories' },
-    { id: 'learning-paths', label: 'Rutas de Aprendizaje', path: '/admin/courses/learning-paths' },
-    { id: 'certificates', label: 'Certificados', path: '/admin/courses/certificates' },
+    { id: 'list', icon: BookOpen, label: 'Todos los Cursos', path: '/admin/courses' },
+    { id: 'categories', icon: FileText, label: 'Categorías', path: '/admin/courses/categories' },
+    { id: 'learning-paths', icon: Activity, label: 'Rutas de Aprendizaje', path: '/admin/courses/learning-paths' },
+    { id: 'certificates', icon: FileText, label: 'Certificados', path: '/admin/courses/certificates' },
   ],
   settings: [
-    { id: 'general', label: 'General', path: '/admin/settings' },
-    { id: 'appearance', label: 'Apariencia', path: '/admin/settings/appearance' },
-    { id: 'security', label: 'Seguridad', path: '/admin/settings/security' },
-    { id: 'features', label: 'Funcionalidades', path: '/admin/settings/features' },
-    { id: 'notifications', label: 'Notificaciones', path: '/admin/settings/notifications' },
-    { id: 'developer', label: 'Desarrollador', path: '/admin/settings/developer' },
+    { id: 'general', icon: Settings, label: 'General', path: '/admin/settings' },
+    { id: 'appearance', icon: Palette, label: 'Apariencia', path: '/admin/settings/appearance' },
+    { id: 'security', icon: FileText, label: 'Seguridad', path: '/admin/settings/security' },
+    { id: 'features', icon: FileText, label: 'Funcionalidades', path: '/admin/settings/features' },
+    { id: 'notifications', icon: FileText, label: 'Notificaciones', path: '/admin/settings/notifications' },
+    { id: 'developer', icon: FileText, label: 'Desarrollador', path: '/admin/settings/developer' },
   ],
   design: [
-    { id: 'components', label: 'Componentes', path: '/admin/design' },
-    { id: 'themes', label: 'Temas', path: '/admin/design/themes' },
-    { id: 'templates', label: 'Plantillas', path: '/admin/design/templates' },
+    { id: 'components', icon: Palette, label: 'Componentes', path: '/admin/design' },
+    { id: 'themes', icon: Palette, label: 'Temas', path: '/admin/design/themes' },
+    { id: 'templates', icon: FileText, label: 'Plantillas', path: '/admin/design/templates' },
   ],
   analytics: [
-    { id: 'overview', label: 'Visión General', path: '/admin/analytics' },
-    { id: 'users', label: 'Usuarios', path: '/admin/analytics/users' },
-    { id: 'courses', label: 'Cursos', path: '/admin/analytics/courses' },
-    { id: 'revenue', label: 'Ingresos', path: '/admin/analytics/revenue' },
+    { id: 'overview', icon: LineChart, label: 'Visión General', path: '/admin/analytics' },
+    { id: 'users', icon: Users, label: 'Usuarios', path: '/admin/analytics/users' },
+    { id: 'courses', icon: BookOpen, label: 'Cursos', path: '/admin/analytics/courses' },
+    { id: 'revenue', icon: DollarSign, label: 'Ingresos', path: '/admin/analytics/revenue' },
+    { id: 'performance', icon: TrendingUp, label: 'Rendimiento', path: '/admin/analytics/performance' },
+    { id: 'engagement', icon: Activity, label: 'Engagement', path: '/admin/analytics/engagement' },
   ],
   finances: [
-    { id: 'overview', label: 'Resumen', path: '/admin/billing' },
-    { id: 'transactions', label: 'Transacciones', path: '/admin/billing/transactions' },
-    { id: 'subscriptions', label: 'Suscripciones', path: '/admin/billing/subscriptions' },
-    { id: 'reports', label: 'Informes', path: '/admin/billing/reports' },
+    { id: 'overview', icon: CreditCard, label: 'Resumen', path: '/admin/billing' },
+    { id: 'transactions', icon: DollarSign, label: 'Transacciones', path: '/admin/billing/transactions' },
+    { id: 'subscriptions', icon: FileText, label: 'Suscripciones', path: '/admin/billing/subscriptions' },
+    { id: 'reports', icon: PieChart, label: 'Informes', path: '/admin/billing/reports' },
   ],
   pages: [
-    { id: 'all', label: 'Todas las Páginas', path: '/admin/pages' },
-    { id: 'create', label: 'Crear Página', path: '/admin/pages/create' },
-    { id: 'templates', label: 'Plantillas', path: '/admin/pages/templates' },
+    { id: 'all', icon: FileText, label: 'Todas las Páginas', path: '/admin/pages' },
+    { id: 'create', icon: FileText, label: 'Crear Página', path: '/admin/pages/create' },
+    { id: 'templates', icon: FileText, label: 'Plantillas', path: '/admin/pages/templates' },
   ],
   instructors: [
-    { id: 'list', label: 'Instructores', path: '/admin/instructors' },
-    { id: 'applicants', label: 'Solicitudes', path: '/admin/instructors/applicants' },
-    { id: 'performance', label: 'Rendimiento', path: '/admin/instructors/performance' },
+    { id: 'list', icon: School, label: 'Instructores', path: '/admin/instructors' },
+    { id: 'applicants', icon: Users, label: 'Solicitudes', path: '/admin/instructors/applicants' },
+    { id: 'performance', icon: BarChart3, label: 'Rendimiento', path: '/admin/instructors/performance' },
   ],
 };
 
@@ -157,10 +165,10 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => 
   
   return (
     <>
-      <div className="w-full border-b mb-0 sticky top-0 bg-background z-20">
+      <div className="w-full border-b mb-0 sticky top-0 bg-background/95 backdrop-blur-sm z-20">
         <div className="container mx-auto py-2">
           {/* Main Categories Navigation */}
-          <div className="flex flex-nowrap overflow-x-auto md:overflow-visible md:flex-wrap gap-1 justify-center md:justify-start">
+          <div className="flex flex-nowrap overflow-x-auto hide-scrollbar md:overflow-visible md:flex-wrap gap-1 justify-center md:justify-start">
             {adminCategories.map((item) => (
               <Link 
                 key={item.path}
@@ -169,7 +177,9 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => 
                 className={cn(
                   "flex flex-shrink-0 items-center gap-1 px-3 py-2 rounded-md transition-colors",
                   "hover:bg-accent text-sm font-medium",
-                  path.includes(item.id) ? "bg-secondary" : ""
+                  path.includes(item.id) 
+                    ? "bg-primary/10 text-primary border-l-[3px] border-l-primary pl-[calc(0.75rem-3px)]" 
+                    : ""
                 )}
               >
                 <item.icon className="h-4 w-4" />

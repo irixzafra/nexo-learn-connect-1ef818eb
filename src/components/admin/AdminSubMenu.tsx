@@ -7,7 +7,7 @@ export interface AdminSubMenuItem {
   id: string;
   label: string;
   path: string;
-  icon?: React.ReactNode;
+  icon: React.ElementType;
 }
 
 interface AdminSubMenuProps {
@@ -34,7 +34,8 @@ const AdminSubMenu: React.FC<AdminSubMenuProps> = ({
         <div className="flex overflow-x-auto hide-scrollbar gap-1 justify-start">
           {items.map((item) => {
             const isActive = currentPath.includes(`${baseRoute}/${item.id}`);
-            const path = `${baseRoute}/${item.id}`;
+            const path = item.path;
+            const Icon = item.icon;
             
             return (
               <Link 
@@ -46,7 +47,7 @@ const AdminSubMenu: React.FC<AdminSubMenuProps> = ({
                   isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
                 )}
               >
-                {item.icon}
+                <Icon className="h-4 w-4" />
                 <span>{item.label}</span>
               </Link>
             );

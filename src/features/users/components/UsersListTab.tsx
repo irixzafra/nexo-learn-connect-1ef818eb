@@ -1,253 +1,188 @@
 
-import React, { useState, useEffect } from "react";
-import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
-import { UserProfile, UserRoleType } from "@/types/auth";
-import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
-import { UserRoleSelector } from "./UserRoleSelector";
-import { Check, X, MoreHorizontal, UserIcon, Plus, UserPlus } from "lucide-react";
-import { createColumn, createActionsColumn } from "@/components/shared/DataTableUtils";
-import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { 
-  Dialog, 
-  DialogTrigger, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogDescription,
-  DialogFooter
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { AdminDataTable } from "@/components/shared/AdminDataTable";
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableRow, 
+  TableHead, 
+  TableCell 
+} from '@/components/ui/table';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
+import { 
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle 
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { UserCircle, MoreHorizontal, Search, UserPlus, UserCheck, UserX, Filter } from 'lucide-react';
+
+// Mock data for demonstration
+const USERS_DATA = [
+  { id: 1, name: 'Carlos Rodriguez', email: 'carlos@example.com', role: 'admin', status: 'active', lastLogin: '2023-05-15' },
+  { id: 2, name: 'Maria Lopez', email: 'maria@example.com', role: 'instructor', status: 'active', lastLogin: '2023-05-10' },
+  { id: 3, name: 'Juan García', email: 'juan@example.com', role: 'student', status: 'inactive', lastLogin: '2023-04-28' },
+  { id: 4, name: 'Ana Martinez', email: 'ana@example.com', role: 'student', status: 'active', lastLogin: '2023-05-12' },
+  { id: 5, name: 'Pedro Sanchez', email: 'pedro@example.com', role: 'student', status: 'active', lastLogin: '2023-05-14' },
+];
 
 export const UsersListTab: React.FC = () => {
-  const [users, setUsers] = useState<UserProfile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isUserFormOpen, setIsUserFormOpen] = useState(false);
-  const [newUser, setNewUser] = useState<Partial<UserProfile>>({
-    full_name: "",
-    email: "",
-    phone: "",
-    role: "student" as UserRoleType
-  });
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-
-      setUsers(data as UserProfile[]);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      toast.error("Error al cargar los usuarios");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSaveUser = async (user: UserProfile) => {
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          full_name: user.full_name,
-          role: user.role,
-          email: user.email,
-          phone: user.phone
-        })
-        .eq("id", user.id);
-
-      if (error) throw error;
-
-      setUsers((prevUsers) =>
-        prevUsers.map((u) => (u.id === user.id ? user : u))
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState(USERS_DATA);
+  
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    
+    if (term.trim() === '') {
+      setFilteredUsers(USERS_DATA);
+    } else {
+      const filtered = USERS_DATA.filter(user => 
+        user.name.toLowerCase().includes(term.toLowerCase()) || 
+        user.email.toLowerCase().includes(term.toLowerCase())
       );
-      
-      return Promise.resolve();
-    } catch (error) {
-      console.error("Error updating user:", error);
-      toast.error("Error al actualizar el usuario");
-      return Promise.reject(error);
+      setFilteredUsers(filtered);
     }
   };
-
-  const handleCreateUser = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .insert({
-          full_name: newUser.full_name,
-          email: newUser.email,
-          phone: newUser.phone,
-          role: newUser.role,
-        })
-        .select();
-
-      if (error) throw error;
-
-      toast.success("Usuario creado correctamente");
-      setUsers((prevUsers) => [...prevUsers, data[0] as UserProfile]);
-      setIsUserFormOpen(false);
-      setNewUser({
-        full_name: "",
-        email: "",
-        phone: "",
-        role: "student" as UserRoleType
-      });
-    } catch (error) {
-      console.error("Error creating user:", error);
-      toast.error("Error al crear el usuario");
-    }
-  };
-
-  const getRoleBadge = (role: string) => {
-    switch (role) {
-      case "admin":
-        return <Badge variant="destructive">Administrador</Badge>;
-      case "instructor":
-        return <Badge variant="default">Instructor</Badge>;
-      case "student":
-        return <Badge variant="secondary">Estudiante</Badge>;
+  
+  const getStatusBadge = (status: string) => {
+    switch(status) {
+      case 'active':
+        return <Badge variant="success">Activo</Badge>;
+      case 'inactive':
+        return <Badge variant="secondary">Inactivo</Badge>;
       default:
-        return <Badge variant="outline">{role || 'Desconocido'}</Badge>;
+        return <Badge variant="outline">{status}</Badge>;
     }
   };
-
-  const columns: ColumnDef<UserProfile, any>[] = [
-    createColumn<UserProfile>({
-      accessorKey: "full_name",
-      header: "Nombre",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <UserIcon className="h-4 w-4 text-muted-foreground" />
-          <span>{row.getValue("full_name") || "Usuario sin nombre"}</span>
-        </div>
-      ),
-    }),
-    createColumn<UserProfile>({
-      accessorKey: "email",
-      header: "Email",
-    }),
-    createColumn<UserProfile>({
-      accessorKey: "role",
-      header: "Rol",
-      cell: ({ getValue }) => getRoleBadge(getValue() as string),
-    }),
-    createColumn<UserProfile>({
-      accessorKey: "phone",
-      header: "Teléfono",
-      cell: ({ getValue }) => getValue() || "-",
-    }),
-    createColumn<UserProfile>({
-      accessorKey: "created_at",
-      header: "Fecha de registro",
-      cell: ({ getValue }) => {
-        const date = getValue() as string;
-        return date ? format(new Date(date), "dd/MM/yyyy") : "-";
-      },
-    }),
-    createActionsColumn<UserProfile>(({ row }) => {
-      const user = row.original;
-      return (
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Editar Usuario</DialogTitle>
-              <DialogDescription>
-                Editar información del usuario
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Nombre
-                </Label>
-                <Input
-                  id="name"
-                  defaultValue={user.full_name}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="email" className="text-right">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  defaultValue={user.email}
-                  className="col-span-3"
-                  disabled
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="phone" className="text-right">
-                  Teléfono
-                </Label>
-                <Input
-                  id="phone"
-                  defaultValue={user.phone || ""}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="role" className="text-right">
-                  Rol
-                </Label>
-                <div className="col-span-3">
-                  <UserRoleSelector
-                    value={user.role as UserRoleType}
-                    onChange={() => {}}
-                  />
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit">Guardar</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      );
-    }),
-  ];
-
-  const emptyStateElement = (
-    <div className="text-center py-10">
-      <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
-      <p className="text-muted-foreground">No se encontraron usuarios</p>
+  
+  const getRoleBadge = (role: string) => {
+    switch(role) {
+      case 'admin':
+        return <Badge className="bg-blue-500">Administrador</Badge>;
+      case 'instructor':
+        return <Badge className="bg-green-500">Instructor</Badge>;
+      case 'student':
+        return <Badge className="bg-purple-500">Estudiante</Badge>;
+      default:
+        return <Badge variant="outline">{role}</Badge>;
+    }
+  };
+  
+  const emptyState = (
+    <div className="flex flex-col items-center justify-center py-12 text-center">
+      <UserCircle className="h-12 w-12 text-muted-foreground mb-4" />
+      <h3 className="text-lg font-medium mb-2">No se encontraron usuarios</h3>
+      <p className="text-muted-foreground mb-4 max-w-sm">
+        No hay usuarios que coincidan con tu búsqueda. Intenta con otros términos o crea un nuevo usuario.
+      </p>
+      <Button>
+        <UserPlus className="mr-2 h-4 w-4" />
+        Añadir Usuario
+      </Button>
     </div>
-  );
-
+  ) as React.ReactNode;
+  
   return (
-    <AdminDataTable
-      title="Usuarios"
-      description="Gestiona los usuarios registrados en la plataforma"
-      columns={columns}
-      data={users}
-      searchPlaceholder="Buscar usuario..."
-      searchColumn="full_name"
-      createButtonLabel="Nuevo Usuario"
-      createButtonIcon={<UserPlus className="h-4 w-4 mr-2" />}
-      onCreateClick={() => setIsUserFormOpen(true)}
-      emptyState={emptyStateElement}
-    />
+    <div className="space-y-4">
+      <div className="flex justify-between">
+        <div className="flex gap-2 w-full max-w-sm">
+          <div className="relative w-full">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar usuarios..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="pl-8"
+            />
+          </div>
+          <Button variant="outline" size="icon">
+            <Filter className="h-4 w-4" />
+          </Button>
+        </div>
+        <Button>
+          <UserPlus className="mr-2 h-4 w-4" />
+          Añadir Usuario
+        </Button>
+      </div>
+      
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle>Usuarios</CardTitle>
+          <CardDescription>
+            Gestiona usuarios, asigna roles y controla permisos.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          {filteredUsers.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Rol</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Último Acceso</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell className="font-medium">{user.name}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{getRoleBadge(user.role)}</TableCell>
+                    <TableCell>{getStatusBadge(user.status)}</TableCell>
+                    <TableCell>{user.lastLogin}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <UserCheck className="mr-2 h-4 w-4" />
+                            <span>Editar Usuario</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <UserCheck className="mr-2 h-4 w-4" />
+                            <span>Cambiar Rol</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive">
+                            <UserX className="mr-2 h-4 w-4" />
+                            <span>Desactivar</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            emptyState
+          )}
+        </CardContent>
+        <CardFooter className="flex justify-between py-3">
+          <div className="text-sm text-muted-foreground">
+            Mostrando {filteredUsers.length} de {USERS_DATA.length} usuarios
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
