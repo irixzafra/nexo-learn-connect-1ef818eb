@@ -69,7 +69,7 @@ export function useAuthState() {
     userPreferences.setViewAsRole(role);
   };
 
-  return {
+  const returnValue = { 
     // Status information
     isLoading,
     isAuthReady,
@@ -89,4 +89,8 @@ export function useAuthState() {
     ...authMethods,
     ...userPreferences
   };
+  
+  console.log('Keys returned by useAuthState:', Object.keys(returnValue));
+  
+  return returnValue;
 }
