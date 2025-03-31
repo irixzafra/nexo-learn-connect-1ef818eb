@@ -8,6 +8,8 @@ interface EditModeContextType {
   toggleEditMode: () => void;
   updateText: (table: string, id: string, field: string, value: string) => Promise<boolean>;
   reorderElements: (table: string, elements: Array<{ id: string, order: number }>) => Promise<boolean>;
+  addElement?: (table: string, data: Record<string, any>) => Promise<string | null>;
+  removeElement?: (table: string, id: string) => Promise<boolean>;
 }
 
 const EDIT_MODE_LOCAL_STORAGE_KEY = 'nexo_edit_mode';
@@ -31,7 +33,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const newState = !prev;
       if (newState) {
         toast.success("Modo de edición activado", {
-          description: "Ahora puedes editar los textos haciendo clic en ellos."
+          description: "Ahora puedes editar los textos haciendo clic en ellos y reordenar elementos."
         });
       } else {
         toast.success("Modo de edición desactivado", {
@@ -152,8 +154,72 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  const addElement = async (table: string, data: Record<string, any>): Promise<string | null> => {
+    try {
+      const { data: result, error } = await supabase
+        .from(table)
+        .insert(data)
+        .select('id')
+        .single();
+
+      if (error) {
+        console.error('Error adding element:', error);
+        toast.error("Error al añadir elemento", {
+          description: error.message
+        });
+        return null;
+      }
+
+      toast.success("Elemento añadido", {
+        description: "El nuevo elemento ha sido añadido correctamente."
+      });
+      return result.id;
+    } catch (error) {
+      console.error('Error adding element:', error);
+      toast.error("Error al añadir elemento", {
+        description: "Ha ocurrido un error al añadir el elemento."
+      });
+      return null;
+    }
+  };
+
+  const removeElement = async (table: string, id: string): Promise<boolean> => {
+    try {
+      const { error } = await supabase
+        .from(table)
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error removing element:', error);
+        toast.error("Error al eliminar elemento", {
+          description: error.message
+        });
+        return false;
+      }
+
+      toast.success("Elemento eliminado", {
+        description: "El elemento ha sido eliminado correctamente."
+      });
+      return true;
+    } catch (error) {
+      console.error('Error removing element:', error);
+      toast.error("Error al eliminar elemento", {
+        description: "Ha ocurrido un error al eliminar el elemento."
+      });
+      return false;
+    }
+  };
+
   return (
-    <EditModeContext.Provider value={{ isEditMode, toggleEditMode, updateText, reorderElements }}>
+    <EditModeContext.Provider value={{ 
+      isEditMode, 
+      toggleEditMode, 
+      updateText, 
+      reorderElements,
+      addElement,
+      removeElement 
+    }}>
       {children}
     </EditModeContext.Provider>
   );

@@ -84,23 +84,20 @@ function ColumnsDropdown<TData>({ table }: ColumnsDropdownProps<TData>) {
             .getAllColumns()
             .filter((column) => column.getCanHide())
             .map((column) => {
+              const headerValue = column.columnDef.header as string;
               return (
-                <DropdownMenuCheckboxItem
+                <div
                   key={column.id}
-                  className="capitalize flex items-center gap-2 cursor-pointer focus:bg-accent"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                  className="flex items-center space-x-2 py-2 px-2 hover:bg-accent rounded-md cursor-pointer"
+                  onClick={() => column.toggleVisibility(!column.getIsVisible())}
                 >
                   <Checkbox 
-                    id={`column-${column.id}`}
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                    className="mr-2 data-[state=checked]:bg-primary"
+                    onCheckedChange={(checked) => column.toggleVisibility(!!checked)}
+                    className="data-[state=checked]:bg-primary"
                   />
-                  <label htmlFor={`column-${column.id}`} className="flex-1 cursor-pointer">
-                    {column.columnDef.header as string}
-                  </label>
-                </DropdownMenuCheckboxItem>
+                  <span className="text-sm">{headerValue}</span>
+                </div>
               );
             })}
         </div>

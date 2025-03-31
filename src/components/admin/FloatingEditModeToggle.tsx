@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Edit, CheckSquare, MoveHorizontal, Pencil, X } from 'lucide-react';
+import { Edit, CheckSquare, MoveHorizontal, Pencil, X, Plus, ListReorder } from 'lucide-react';
 import { toast } from 'sonner';
 import { 
   Tooltip,
@@ -15,6 +15,7 @@ import {
 const FloatingEditModeToggle: React.FC = () => {
   const { isEditMode, toggleEditMode } = useEditMode();
   const { userRole } = useAuth();
+  const [helpVisible, setHelpVisible] = useState(true);
   
   // Only admin or sistemas roles can see this
   if (userRole !== 'admin' && userRole !== 'sistemas') {
@@ -23,6 +24,19 @@ const FloatingEditModeToggle: React.FC = () => {
 
   const handleToggle = () => {
     toggleEditMode();
+    
+    if (!isEditMode) {
+      // When activating edit mode, show a toast
+      toast.success("Modo edición activado", {
+        description: "Ahora puedes editar textos, reordenar y añadir elementos."
+      });
+      setHelpVisible(true);
+    } else {
+      toast.success("Modo edición desactivado", {
+        description: "Los cambios han sido guardados."
+      });
+      setHelpVisible(false);
+    }
   };
 
   return (
@@ -37,9 +51,9 @@ const FloatingEditModeToggle: React.FC = () => {
               className={`h-12 w-12 rounded-full shadow-lg ${isEditMode ? 'bg-primary text-primary-foreground' : 'bg-background'}`}
             >
               {isEditMode ? (
-                <CheckSquare className="h-5 w-5" />
+                <CheckSquare className="h-6 w-6" />
               ) : (
-                <Edit className="h-5 w-5" />
+                <Edit className="h-6 w-6" />
               )}
             </Button>
           </TooltipTrigger>
@@ -54,17 +68,32 @@ const FloatingEditModeToggle: React.FC = () => {
         </Tooltip>
       </TooltipProvider>
       
-      {isEditMode && (
-        <div className="absolute bottom-16 right-0 bg-card shadow-lg rounded-lg border p-3 mb-2 w-56">
-          <div className="text-sm font-medium mb-2">Modo edición activado</div>
-          <div className="space-y-2 text-xs text-muted-foreground">
+      {isEditMode && helpVisible && (
+        <div className="absolute bottom-16 right-0 bg-card shadow-lg rounded-lg border p-4 mb-2 w-64">
+          <div className="flex justify-between items-center mb-3">
+            <div className="text-sm font-medium">Modo edición activado</div>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6" 
+              onClick={() => setHelpVisible(false)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          <div className="space-y-3 text-xs text-muted-foreground">
             <div className="flex items-center">
-              <Pencil className="h-3 w-3 mr-2" />
-              <span>Clic en textos para editar</span>
+              <Pencil className="h-3.5 w-3.5 mr-2 text-primary" />
+              <span>Haz clic en textos para editarlos</span>
             </div>
             <div className="flex items-center">
-              <MoveHorizontal className="h-3 w-3 mr-2" />
-              <span>Arrastra elementos para ordenar</span>
+              <ListReorder className="h-3.5 w-3.5 mr-2 text-primary" />
+              <span>Arrastra elementos para reordenarlos</span>
+            </div>
+            <div className="flex items-center">
+              <Plus className="h-3.5 w-3.5 mr-2 text-primary" />
+              <span>Utiliza "+" para añadir elementos</span>
             </div>
           </div>
         </div>

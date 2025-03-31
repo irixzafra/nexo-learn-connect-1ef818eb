@@ -4,6 +4,8 @@ import AppLayout from './AppLayout';
 import { Card } from '@/components/ui/card';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import FloatingEditModeToggle from '@/components/admin/FloatingEditModeToggle';
+import AdminSubMenu, { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
+import { useLocation } from 'react-router-dom';
 
 interface AdminPageLayoutProps {
   title: string;
@@ -12,6 +14,8 @@ interface AdminPageLayoutProps {
   defaultTabValue?: string;
   children?: React.ReactNode;
   actions?: React.ReactNode;
+  subMenuItems?: AdminSubMenuItem[];
+  baseRoute?: string;
 }
 
 const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
@@ -20,8 +24,12 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   tabs = [],
   defaultTabValue,
   children,
-  actions
+  actions,
+  subMenuItems,
+  baseRoute
 }) => {
+  const location = useLocation();
+  
   return (
     <AppLayout>
       <div className="w-full px-0 py-6">
@@ -39,6 +47,13 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
               </div>
             )}
           </div>
+
+          {subMenuItems && subMenuItems.length > 0 && (
+            <AdminSubMenu 
+              items={subMenuItems} 
+              baseRoute={baseRoute || location.pathname}
+            />
+          )}
 
           {tabs && tabs.length > 0 ? (
             <AdminNavTabs

@@ -6,48 +6,65 @@ import { SubscriptionPlans } from '@/features/payments/components/SubscriptionPl
 import { ManageSubscription } from '@/features/payments/components/ManageSubscription';
 import { PaymentMethodList } from '@/features/payments/components/PaymentMethodList';
 import { InvoiceList } from '@/features/payments/components/InvoiceList';
-import AdminNavigation from '@/components/admin/AdminNavigation';
-import FloatingEditModeToggle from '@/components/admin/FloatingEditModeToggle';
+import AdminPageLayout from '@/layouts/AdminPageLayout';
+import { 
+  FileText, 
+  CreditCard, 
+  RefreshCw, 
+  BellDot, 
+  BarChart3 
+} from 'lucide-react';
+import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
+
+const subMenuItems: AdminSubMenuItem[] = [
+  {
+    id: 'invoices',
+    label: 'Facturas',
+    path: '/admin/billing/invoices',
+    icon: FileText
+  },
+  {
+    id: 'subscriptions',
+    label: 'Suscripciones',
+    path: '/admin/billing/subscriptions',
+    icon: RefreshCw
+  },
+  {
+    id: 'bank',
+    label: 'Movimientos Bancarios',
+    path: '/admin/billing/bank',
+    icon: BarChart3
+  },
+  {
+    id: 'alerts',
+    label: 'Alertas',
+    path: '/admin/billing/alerts',
+    icon: BellDot
+  }
+];
 
 const Billing: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="space-y-6">
-      <AdminNavigation />
-      
-      <div className="container mx-auto py-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Facturación</h1>
-          <p className="text-muted-foreground">
-            Gestiona tus suscripciones, métodos de pago y facturas
-          </p>
-        </div>
-
-        <Routes>
-          <Route path="/" element={<BillingOverview />} />
-          <Route path="/invoices" element={<InvoiceList />} />
-          <Route path="/subscriptions" element={<ManageSubscription />} />
-          <Route path="/bank" element={<BankTransactions />} />
-          <Route path="/alerts" element={<BillingAlerts />} />
-        </Routes>
-      </div>
-      
-      <FloatingEditModeToggle />
-    </div>
+    <AdminPageLayout 
+      title="Facturación"
+      subtitle="Gestiona tus suscripciones, métodos de pago y facturas"
+      subMenuItems={subMenuItems}
+      baseRoute="/admin/billing"
+    >
+      <Routes>
+        <Route path="/" element={<Navigate to="/admin/billing/invoices" replace />} />
+        <Route path="/invoices" element={<InvoiceList />} />
+        <Route path="/subscriptions" element={<ManageSubscription />} />
+        <Route path="/bank" element={<BankTransactions />} />
+        <Route path="/alerts" element={<BillingAlerts />} />
+      </Routes>
+    </AdminPageLayout>
   );
 };
 
 // Placeholder components for new routes
-const BillingOverview: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <SubscriptionPlans />
-      <PaymentMethodList />
-    </div>
-  );
-};
-
 const BankTransactions: React.FC = () => {
   return (
     <div>

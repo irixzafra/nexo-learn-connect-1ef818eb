@@ -5,6 +5,7 @@ import { AdvancedDataTable } from "./AdvancedDataTable";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useEditMode } from "@/contexts/EditModeContext";
 
 interface AdminDataTableProps<TData, TValue> {
   title: string;
@@ -33,12 +34,55 @@ export function AdminDataTable<TData, TValue>({
   emptyState,
   actionButtons
 }: AdminDataTableProps<TData, TValue>) {
+  const { isEditMode } = useEditMode();
+  const [localTitle, setLocalTitle] = React.useState(title);
+  const [localDescription, setLocalDescription] = React.useState(description || "");
+
+  // Only update local states when props change
+  React.useEffect(() => {
+    setLocalTitle(title);
+  }, [title]);
+
+  React.useEffect(() => {
+    setLocalDescription(description || "");
+  }, [description]);
+
+  const handleTitleEdit = () => {
+    if (!isEditMode) return;
+    
+    const newTitle = prompt("Editar título:", localTitle);
+    if (newTitle !== null && newTitle.trim() !== "") {
+      setLocalTitle(newTitle);
+    }
+  };
+
+  const handleDescriptionEdit = () => {
+    if (!isEditMode) return;
+    
+    const newDescription = prompt("Editar descripción:", localDescription);
+    if (newDescription !== null) {
+      setLocalDescription(newDescription);
+    }
+  };
+
   return (
     <Card className="shadow-sm">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
-          <CardTitle className="text-2xl">{title}</CardTitle>
-          {description && <CardDescription>{description}</CardDescription>}
+          <CardTitle 
+            className={`text-2xl ${isEditMode ? 'cursor-pointer hover:text-primary' : ''}`}
+            onClick={handleTitleEdit}
+          >
+            {localTitle}
+          </CardTitle>
+          {(localDescription || isEditMode) && (
+            <CardDescription 
+              className={isEditMode ? 'cursor-pointer hover:text-primary' : ''}
+              onClick={handleDescriptionEdit}
+            >
+              {localDescription || (isEditMode ? "Haz clic para añadir una descripción" : "")}
+            </CardDescription>
+          )}
         </div>
         
         {createButtonLabel && (
