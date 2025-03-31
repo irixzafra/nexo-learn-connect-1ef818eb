@@ -20,6 +20,7 @@ const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({ isCollapsed, to
       {isCollapsed ? (
         <motion.div
           whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
           transition={{ duration: 0.2 }}
           className="mx-auto"
         >
@@ -29,17 +30,21 @@ const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({ isCollapsed, to
         <div className="flex items-center justify-between w-full">
           <motion.div
             whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.2 }}
           >
             <NexoLogo className="h-8 w-auto" subtitle="ecosistema creativo" />
           </motion.div>
-          <button 
+          <motion.button 
             onClick={toggleSidebar}
-            className="p-1.5 rounded-md hover:bg-muted/40 transition-colors text-muted-foreground"
+            className="p-1.5 rounded-md hover:bg-muted/50 transition-colors text-muted-foreground"
             aria-label="Colapsar menú lateral"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ duration: 0.15 }}
           >
             <ChevronRight className="h-4 w-4" />
-          </button>
+          </motion.button>
         </div>
       )}
     </div>
