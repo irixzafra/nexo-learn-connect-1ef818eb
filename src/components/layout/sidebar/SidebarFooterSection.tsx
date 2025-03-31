@@ -57,15 +57,16 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
         <UserMenu />
       </div>
       
-      {/* Footer Actions - Single Row Layout */}
-      <div className={`flex items-center justify-between px-3 py-2 border-t`}>
-        <div className="flex items-center gap-1">
+      {/* Footer Actions - Aligned in a Single Row */}
+      <div className={`flex items-center justify-between gap-1 px-3 py-2 border-t`}>
+        {/* Left grouped buttons */}
+        <div className="flex items-center space-x-1">
           {/* Language Selector */}
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-secondary/20">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
                     <Globe className="h-4 w-4 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -97,7 +98,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      className="h-8 w-8 rounded-full hover:bg-secondary/20"
+                      className="h-8 w-8 rounded-full"
                     >
                       <GraduationCap className="h-4 w-4 text-muted-foreground" />
                     </Button>
