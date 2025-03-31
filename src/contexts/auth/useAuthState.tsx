@@ -118,6 +118,42 @@ export function useAuthState() {
     setShowAuthModal(!showAuthModal);
   };
 
+  const login = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      return { error };
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  const signup = async (email: string, password: string, userData?: any) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { 
+          data: userData 
+        }
+      });
+      return { error, user: data.user };
+    } catch (error) {
+      return { error, user: null };
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      return { error };
+    } catch (error) {
+      return { error };
+    }
+  };
+
   const logout = async () => {
     try {
       await supabase.auth.signOut();
@@ -129,10 +165,10 @@ export function useAuthState() {
     }
   };
 
-  const updateProfile = async (updates: any) => {
+  const updateUserProfile = async (updates: Partial<UserProfile>) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.from('profiles').upsert(
+      const { error, data } = await supabase.from('profiles').upsert(
         {
           id: user?.id,
           updated_at: new Date().toISOString(),
@@ -145,12 +181,18 @@ export function useAuthState() {
         throw error;
       }
       
-      setProfile((prevProfile: any) => ({
-        ...prevProfile,
-        ...updates,
-      }));
+      setProfile((prevProfile: UserProfile | null) => {
+        if (!prevProfile) return null;
+        return {
+          ...prevProfile,
+          ...updates,
+        };
+      });
+
+      return { error: null, data };
     } catch (error: any) {
       console.error('Error updating profile:', error.message);
+      return { error, data: null };
     } finally {
       setIsLoading(false);
     }
@@ -171,6 +213,11 @@ export function useAuthState() {
     localStorage.setItem('viewAsRole', newViewAsRole);
   };
 
+  // Alias for compatibility with existing code
+  const switchViewAsRole = (newViewAsRole: UserRoleType | 'current') => {
+    setViewAsRole(newViewAsRole);
+  };
+
   const saveUserPreferences = async (preferences: { theme?: string; role?: UserRoleType }) => {
     if (preferences.theme) {
       setTheme(preferences.theme);
@@ -179,6 +226,8 @@ export function useAuthState() {
     if (preferences.role) {
       setUserRole(preferences.role);
     }
+
+    return true;
   };
 
   return {
@@ -193,11 +242,15 @@ export function useAuthState() {
     theme,
     showAuthModal,
     toggleAuthModal,
+    login,
+    signup,
     logout,
-    updateProfile,
+    resetPassword,
+    updateUserProfile,
     setTheme,
     setUserRole,
     setViewAsRole,
+    switchViewAsRole,
     saveUserPreferences,
   };
 }

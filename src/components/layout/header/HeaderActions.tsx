@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { UserMenu } from './UserMenu';
-import { ContactButtons } from './ContactButtons';
+import ContactButtons from './ContactButtons';
 import { NotificationIndicator } from '@/components/notifications/NotificationIndicator';
 
 export const HeaderActions = () => {

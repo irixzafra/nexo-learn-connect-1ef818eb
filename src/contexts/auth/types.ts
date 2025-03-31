@@ -1,7 +1,7 @@
 
 import { User } from '@supabase/supabase-js';
 
-export type UserRoleType = 'admin' | 'instructor' | 'student' | 'guest';
+export type UserRoleType = 'admin' | 'instructor' | 'student' | 'guest' | 'sistemas' | 'moderator' | 'content_creator' | 'anonimo' | 'beta_tester';
 
 export interface UserProfile {
   id: string;
@@ -33,6 +33,7 @@ export interface AuthContextType {
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updateUserProfile: (data: Partial<UserProfile>) => Promise<{ error: any, data: any }>;
+  setViewAsRole: (role: UserRoleType | 'current') => void;
   switchViewAsRole: (role: UserRoleType | 'current') => void;
   saveUserPreferences: (preferences: { theme?: string; role?: UserRoleType }) => Promise<boolean>;
 }

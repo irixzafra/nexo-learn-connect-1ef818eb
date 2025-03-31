@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AppLayout from '@/layouts/AppLayout';
@@ -106,4 +105,3 @@ const AboutUs: React.FC = () => {
 };
 
 export default AboutUs;
-
