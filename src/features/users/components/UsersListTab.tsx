@@ -1,230 +1,191 @@
 
-import React, { useState } from 'react';
-import { useUsers } from '../hooks/useUsers';
-import { Search, MoreHorizontal, ChevronDown, UserCog, Trash, Eye } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { UserRoleType } from '@/types/auth';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/components/ui/use-toast';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
+import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+import { UserProfile, UserRoleType } from "@/types/auth";
+import { EditableDataTable } from "@/components/shared/EditableDataTable";
+import { ColumnDef } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
+import { UserRoleSelector } from "./UserRoleSelector";
+import { Check, X, MoreHorizontal, UserIcon } from "lucide-react";
+import { createColumn, createActionsColumn } from "@/components/shared/DataTableUtils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { format } from "date-fns";
 
 export const UsersListTab: React.FC = () => {
-  const { users, isLoading, searchQuery, setSearchQuery, updateUserRole, deactivateUser } = useUsers();
-  const { toast } = useToast();
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<string>('');
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const getRoleBadgeVariant = (role: string) => {
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      setUsers(data as UserProfile[]);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast.error("Error al cargar los usuarios");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveUser = async (user: UserProfile) => {
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          full_name: user.full_name,
+          role: user.role,
+          email: user.email,
+          phone: user.phone
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      // Update the local state
+      setUsers((prevUsers) =>
+        prevUsers.map((u) => (u.id === user.id ? user : u))
+      );
+      
+      return Promise.resolve();
+    } catch (error) {
+      console.error("Error updating user:", error);
+      toast.error("Error al actualizar el usuario");
+      return Promise.reject(error);
+    }
+  };
+
+  const getRoleBadge = (role: string) => {
     switch (role) {
-      case 'admin':
-        return 'destructive';
-      case 'instructor':
-        return 'default';
-      case 'moderator':
-        return 'warning';
-      case 'support':
-        return 'outline';
-      case 'student':
-        return 'secondary';
+      case "admin":
+        return <Badge variant="destructive">Administrador</Badge>;
+      case "instructor":
+        return <Badge variant="default">Instructor</Badge>;
+      case "student":
+        return <Badge variant="secondary">Estudiante</Badge>;
       default:
-        return 'outline';
+        return <Badge variant="outline">{role}</Badge>;
     }
   };
 
-  const getRoleDisplayName = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'Administrador';
-      case 'instructor':
-        return 'Instructor';
-      case 'moderator':
-        return 'Moderador';
-      case 'support':
-        return 'Soporte';
-      case 'student':
-        return 'Estudiante';
-      default:
-        return role;
-    }
+  const renderUserForm = ({ data, onChange }: { data: UserProfile | null; onChange: (data: UserProfile) => void }) => {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Nombre completo</label>
+          <input
+            type="text"
+            className="w-full p-2 border rounded-md"
+            value={data?.full_name || ""}
+            onChange={(e) => onChange({ ...data, full_name: e.target.value } as UserProfile)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Email</label>
+          <input
+            type="email"
+            className="w-full p-2 border rounded-md"
+            value={data?.email || ""}
+            onChange={(e) => onChange({ ...data, email: e.target.value } as UserProfile)}
+            disabled
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Teléfono</label>
+          <input
+            type="tel"
+            className="w-full p-2 border rounded-md"
+            value={data?.phone || ""}
+            onChange={(e) => onChange({ ...data, phone: e.target.value } as UserProfile)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Rol</label>
+          <UserRoleSelector
+            value={data?.role as UserRoleType}
+            onChange={(role) => onChange({ ...data, role } as UserProfile)}
+          />
+        </div>
+      </div>
+    );
   };
 
-  const handleViewUser = (userId: string) => {
-    // Placeholder for future user detail view
-    toast({
-      title: "Acción pendiente",
-      description: "La vista de detalles de usuario está en desarrollo.",
-    });
-  };
-
-  const openRoleDialog = (userId: string, currentRole: string) => {
-    setSelectedUserId(userId);
-    setSelectedRole(currentRole);
-    setIsRoleDialogOpen(true);
-  };
-
-  const confirmRoleChange = async () => {
-    if (selectedUserId && selectedRole) {
-      await updateUserRole(selectedUserId, selectedRole as UserRoleType);
-      setIsRoleDialogOpen(false);
-    }
-  };
-
-  const handleDeleteUser = (userId: string) => {
-    // Placeholder for future delete functionality
-    toast({
-      title: "Acción pendiente",
-      description: "La funcionalidad de eliminación está en desarrollo.",
-    });
-  };
+  const columns: ColumnDef<UserProfile, any>[] = [
+    createColumn<UserProfile>({
+      accessorKey: "full_name",
+      header: "Nombre",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <UserIcon className="h-4 w-4 text-muted-foreground" />
+          <span>{row.getValue("full_name") || "Usuario sin nombre"}</span>
+        </div>
+      ),
+    }),
+    createColumn<UserProfile>({
+      accessorKey: "email",
+      header: "Email",
+    }),
+    createColumn<UserProfile>({
+      accessorKey: "role",
+      header: "Rol",
+      cell: ({ getValue }) => getRoleBadge(getValue() as string),
+    }),
+    createColumn<UserProfile>({
+      accessorKey: "created_at",
+      header: "Fecha de registro",
+      cell: ({ getValue }) => format(new Date(getValue() as string), "dd/MM/yyyy"),
+    }),
+    createActionsColumn<UserProfile>(() => (
+      <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+        <MoreHorizontal className="h-4 w-4" />
+      </Button>
+    )),
+  ];
 
   return (
-    <>
-      <Card>
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Usuarios</CardTitle>
-          <CardDescription>
-            Gestiona los usuarios de la plataforma
-          </CardDescription>
-          <div className="relative w-full md:w-64 mt-4">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar usuarios..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nombre</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Rol</TableHead>
-                  <TableHead>Fecha de registro</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {isLoading ? (
-                  // Loading skeleton
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <TableRow key={`skeleton-${i}`}>
-                      <TableCell><Skeleton className="h-6 w-32" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-40" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-20" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-28" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-20 ml-auto" /></TableCell>
-                    </TableRow>
-                  ))
-                ) : users.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
-                      No se encontraron usuarios
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">
-                        {user.full_name || "Usuario sin nombre"}
-                      </TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        <Badge variant={getRoleBadgeVariant(user.role)}>
-                          {getRoleDisplayName(user.role)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(user.created_at || '').toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Acciones</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleViewUser(user.id)}>
-                              <Eye className="h-4 w-4 mr-2" />
-                              Ver detalles
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => openRoleDialog(user.id, user.role)}>
-                              <UserCog className="h-4 w-4 mr-2" />
-                              Cambiar rol
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem 
-                              className="text-destructive" 
-                              onClick={() => handleDeleteUser(user.id)}
-                            >
-                              <Trash className="h-4 w-4 mr-2" />
-                              Eliminar
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Cambiar rol de usuario</DialogTitle>
-            <DialogDescription>
-              Selecciona el nuevo rol para este usuario.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="role" className="text-right">
-                Rol
-              </Label>
-              <Select
-                value={selectedRole}
-                onValueChange={setSelectedRole}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Seleccionar rol" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">Administrador</SelectItem>
-                  <SelectItem value="instructor">Instructor</SelectItem>
-                  <SelectItem value="student">Estudiante</SelectItem>
-                  <SelectItem value="moderator">Moderador</SelectItem>
-                  <SelectItem value="support">Soporte</SelectItem>
-                </SelectContent>
-              </Select>
+    <Card>
+      <CardHeader>
+        <CardTitle>Usuarios del sistema</CardTitle>
+        <CardDescription>
+          Administra los usuarios registrados en la plataforma
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <EditableDataTable
+          columns={columns}
+          data={users}
+          title="Usuario"
+          description="Información del usuario"
+          searchPlaceholder="Buscar usuario..."
+          searchColumn="full_name"
+          exportFilename="usuarios"
+          onSave={handleSaveUser}
+          renderForm={renderUserForm}
+          emptyState={
+            <div className="text-center py-10">
+              <UserIcon className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">No se encontraron usuarios</p>
             </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsRoleDialogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={confirmRoleChange}>
-              Guardar cambios
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+          }
+        />
+      </CardContent>
+    </Card>
   );
 };
