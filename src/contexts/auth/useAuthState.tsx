@@ -35,17 +35,55 @@ export function useAuthState() {
     setShowAuthModal(!showAuthModal);
   };
 
+  // Restauramos esta función ya que parece necesaria según la interfaz AuthContextType
+  const updateUserProfile = async (updates: Partial<UserProfile>) => {
+    try {
+      if (!sessionData.user) throw new Error("No authenticated user");
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', sessionData.user.id);
+      
+      if (error) throw error;
+      
+      // Update local state
+      profileData.setProfile(prevProfile => 
+        prevProfile ? { ...prevProfile, ...updates } : null
+      );
+      
+      // Update role if changed
+      if (updates.role) {
+        profileData.setRole(updates.role);
+      }
+      
+      return { error: null, data: updates };
+    } catch (error: any) {
+      console.error('Error updating profile:', error);
+      return { error, data: null };
+    }
+  };
+
+  // Restauramos esta función ya que parece necesaria según la interfaz AuthContextType
+  const switchViewAsRole = (role: UserRoleType | 'current') => {
+    userPreferences.setViewAsRole(role);
+  };
+
   return {
     // Status information
     isLoading,
     isAuthReady,
-    isAuthenticated: !!sessionData.session, // Calculado aquí
+    isAuthenticated: !!sessionData.session,
 
-    // UI state/functions specific to useAuthState
+    // UI state/functions
     showAuthModal,
-    toggleAuthModal, // Asegúrate que toggleAuthModal esté definida arriba
+    toggleAuthModal,
+    
+    // Restauramos estas funciones en el objeto retornado
+    updateUserProfile,
+    switchViewAsRole,
 
-    // Spread results from specialized hooks - This includes all their returned values/functions
+    // Spread results from specialized hooks
     ...sessionData,
     ...profileData,
     ...authMethods,
