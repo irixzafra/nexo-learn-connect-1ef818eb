@@ -2,13 +2,12 @@
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { LucideIcon } from 'lucide-react';
 
 export interface AdminTabItem {
   value: string;
   label: string;
-  icon: React.ReactNode; // Required icon property
-  content?: React.ReactNode; // Optional content property
+  icon: React.ReactNode;
+  content: React.ReactNode;
   disabled?: boolean;
   dataTag?: string;
 }

@@ -9,5 +9,13 @@ export function DataTable({ columns, data, ...props }) {
   const safeColumns = columns || [];
   const safeData = data || [];
   
-  return <EnhancedDataTable columns={safeColumns} data={safeData} {...props} />;
+  return (
+    <EnhancedDataTable 
+      columns={safeColumns} 
+      data={safeData} 
+      searchPlaceholder="Buscar..."
+      emptyState={<div>No hay datos disponibles</div>}
+      {...props} 
+    />
+  );
 }
