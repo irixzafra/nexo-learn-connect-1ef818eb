@@ -4,7 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { BookOpen, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle 
+} from "@/components/ui/alert-dialog";
 import { EntityDrawer } from "@/components/shared/EntityDrawer";
 import { AdvancedDataTable } from "@/components/shared/AdvancedDataTable";
 import { Course, useCoursesManagement } from "@/features/admin/hooks/useCoursesManagement";
@@ -48,6 +57,10 @@ const AllCoursesTab: React.FC = () => {
     </div>
   );
 
+  const renderCourseForm = (props: { data: Course | null; onChange: (data: Course) => void }) => (
+    <CourseForm data={props.data} onChange={props.onChange} />
+  );
+
   return (
     <div className="space-y-4">
       <div className="flex justify-end mb-4">
@@ -76,9 +89,7 @@ const AllCoursesTab: React.FC = () => {
         onSave={handleSaveCourse}
         entity={selectedCourse}
       >
-        {(props) => (
-          <CourseForm data={props.data} onChange={props.onChange} />
-        )}
+        {renderCourseForm}
       </EntityDrawer>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
