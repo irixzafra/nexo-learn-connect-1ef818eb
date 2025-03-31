@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
@@ -108,21 +107,6 @@ const RevenueAnalyticsPage = () => (
   </AdminPageLayout>
 );
 
-// Instructor Management
-const InstructorManagement = () => (
-  <AdminPageLayout 
-    title="Gestión de Instructores"
-    subtitle="Administra los instructores de la plataforma"
-  >
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Administración de Instructores</h2>
-      <p className="text-muted-foreground">
-        Gestiona los perfiles, cursos y rendimiento de los instructores.
-      </p>
-    </div>
-  </AdminPageLayout>
-);
-
 // Layout component that provides the admin layout structure
 const AdminLayout = () => {
   return (
@@ -155,7 +139,6 @@ const AdminRoutes: React.FC = () => {
         {/* Course Management */}
         <Route path="/courses" element={<AdminCourses />} />
         <Route path="/courses/analytics" element={<CourseAnalyticsPage />} />
-        <Route path="/instructors" element={<InstructorManagement />} />
         
         {/* Finances */}
         <Route path="/finances" element={<AdminFinances />} />

@@ -25,25 +25,27 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const shouldShowHeader = showHeader && !isAdminPage;
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={!isAdminPage}>
       <div className="flex min-h-screen w-full">
-        <Sidebar>
-          <SidebarContent>
-            <SidebarNavigation viewAsRole="current" />
-          </SidebarContent>
-        </Sidebar>
+        {!isAdminPage && (
+          <Sidebar>
+            <SidebarContent>
+              <SidebarNavigation viewAsRole="current" />
+            </SidebarContent>
+          </Sidebar>
+        )}
         
         <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
-          {/* Show header only if shouldShowHeader is true */}
           {shouldShowHeader && <HeaderContent />}
           
-          <main className="flex-1 max-w-[1400px] mx-auto w-full">
+          <main className={`flex-1 ${isAdminPage ? 'w-full' : 'max-w-[1400px] mx-auto w-full'}`}>
             {children}
           </main>
         </div>
         
-        {/* Always include the mobile sidebar for mobile views */}
-        <MobileSidebar viewAsRole="current" />
+        {!isAdminPage && (
+          <MobileSidebar viewAsRole="current" />
+        )}
       </div>
       
       <Toaster />

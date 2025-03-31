@@ -10,7 +10,6 @@ import {
   FileText,
   Palette,
   LineChart,
-  School,
   BarChart3,
   PieChart,
   TrendingUp,
@@ -46,13 +45,6 @@ const adminCategories = [
     label: "Cursos", 
     path: "/admin/courses",
     dataTag: "admin-nav-courses"
-  },
-  { 
-    id: 'instructors',
-    icon: School, 
-    label: "Instructores", 
-    path: "/admin/instructors",
-    dataTag: "admin-nav-instructors"
   },
   { 
     id: 'finances',
@@ -107,10 +99,10 @@ const subMenus: Record<string, AdminSubMenuItem[]> = {
   settings: [
     { id: 'general', icon: Settings, label: 'General', path: '/admin/settings' },
     { id: 'appearance', icon: Palette, label: 'Apariencia', path: '/admin/settings/appearance' },
-    { id: 'security', icon: FileText, label: 'Seguridad', path: '/admin/settings/security' },
-    { id: 'features', icon: FileText, label: 'Funcionalidades', path: '/admin/settings/features' },
+    { id: 'security', icon: ShieldCheck, label: 'Seguridad', path: '/admin/settings/security' },
+    { id: 'features', icon: ToggleRight, label: 'Funcionalidades', path: '/admin/settings/features' },
     { id: 'notifications', icon: FileText, label: 'Notificaciones', path: '/admin/settings/notifications' },
-    { id: 'developer', icon: FileText, label: 'Desarrollador', path: '/admin/settings/developer' },
+    { id: 'developer', icon: Plug, label: 'Desarrollador', path: '/admin/settings/developer' },
   ],
   design: [
     { id: 'components', icon: Palette, label: 'Componentes', path: '/admin/design' },
@@ -135,11 +127,6 @@ const subMenus: Record<string, AdminSubMenuItem[]> = {
     { id: 'all', icon: FileText, label: 'Todas las Páginas', path: '/admin/pages' },
     { id: 'create', icon: FileText, label: 'Crear Página', path: '/admin/pages/create' },
     { id: 'templates', icon: FileText, label: 'Plantillas', path: '/admin/pages/templates' },
-  ],
-  instructors: [
-    { id: 'list', icon: School, label: 'Instructores', path: '/admin/instructors' },
-    { id: 'applicants', icon: Users, label: 'Solicitudes', path: '/admin/instructors/applicants' },
-    { id: 'performance', icon: BarChart3, label: 'Rendimiento', path: '/admin/instructors/performance' },
   ],
 };
 

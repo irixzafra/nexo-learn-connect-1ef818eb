@@ -7,7 +7,6 @@ import {
   Users, 
   Settings,
   BookOpen,
-  School,
   Shield,
   KeyRound,
   CreditCard,
@@ -41,7 +40,6 @@ export const AdminSection: React.FC<AdminSectionProps> = ({ expanded, onToggle }
       
       {/* Gestión educativa */}
       <MenuItem to="/admin/courses" icon={BookOpen} label="Cursos" />
-      <MenuItem to="/admin/instructors" icon={School} label="Instructores" />
       <MenuItem to="/admin/learning-paths" icon={Route} label="Rutas de Aprendizaje" />
       
       {/* Gestión de contenido */}
