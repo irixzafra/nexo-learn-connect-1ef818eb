@@ -1,73 +1,53 @@
 
-import React, { useState, useEffect } from 'react';
-import AppHeader from './AppHeader';
-import RefactoredSidebarNavigation from './sidebar/RefactoredSidebarNavigation';
-import { UserRoleType, toUserRoleType } from '@/types/auth';
-import { useAuth } from '@/contexts/AuthContext';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import RoleSwitcherReturnButton from './RoleSwitcherReturnButton';
+import React from 'react';
+import { Toaster } from "@/components/ui/toaster";
+import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
+import { Sidebar, SidebarContent } from '@/components/ui/sidebar';
+import { useLocation } from 'react-router-dom';
+import HeaderContent from '@/components/layout/HeaderContent';
+import { useAuth } from '@/hooks/useAuth';
+import RefactoredSidebar from './sidebar/RefactoredSidebar';
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  showHeader?: boolean;
 }
 
-const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { userRole, viewAsRole: contextViewAsRole, setViewAsRole } = useAuth();
+const AppLayout: React.FC<AppLayoutProps> = ({ 
+  children,
+  showHeader = true 
+}) => {
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
   
-  // View as role state (inicializada desde el contexto)
-  const [viewAsRole, setViewAsRoleState] = useState<'current' | UserRoleType>(
-    contextViewAsRole || 'current'
-  );
+  // Don't show header on admin pages
+  const isAdminPage = location.pathname.includes('/admin');
+  const shouldShowHeader = showHeader && !isAdminPage;
   
-  // Sincroniza el estado local con el contexto cuando cambia
-  useEffect(() => {
-    if (contextViewAsRole && contextViewAsRole !== viewAsRole) {
-      setViewAsRoleState(contextViewAsRole);
-    }
-  }, [contextViewAsRole]);
+  // Check if we're on the landing page
+  const isLandingPage = location.pathname === '/landing' || location.pathname === '/';
   
-  // Handler para cambios de rol
-  const handleRoleChange = (role: UserRoleType) => {
-    console.log("AppLayout: Role changed to", role);
-    setViewAsRoleState(role);
-    
-    // También actualiza el contexto global
-    if (setViewAsRole) {
-      setViewAsRole(role);
-    }
-  };
-  
-  const effectiveRole = viewAsRole === 'current' 
-    ? toUserRoleType(userRole as string) 
-    : viewAsRole;
-  
-  // Determina si estamos viendo como otro rol
-  const isViewingAsOtherRole = viewAsRole !== 'current' && effectiveRole !== toUserRoleType(userRole as string);
-  
+  // Don't show sidebar for anonymous users on landing page
+  const showSidebar = !(isLandingPage && !isAuthenticated);
+
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen">
-        <RefactoredSidebarNavigation 
-          viewAsRole={viewAsRole} 
-          onRoleChange={handleRoleChange} 
-        />
-        <div className="flex flex-col w-full">
-          <AppHeader viewAsRole={viewAsRole} />
-          <main className="flex-1 p-4 md:p-6">
-            {/* Botón de retorno al rol original - solo visible cuando se ve como otro rol */}
-            {isViewingAsOtherRole && (
-              <div className="max-w-xs mx-auto mb-4">
-                <RoleSwitcherReturnButton
-                  isViewingAsOtherRole={isViewingAsOtherRole}
-                  onRoleChange={handleRoleChange}
-                  userRole={toUserRoleType(userRole as string)}
-                />
-              </div>
-            )}
-            {children}
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex min-h-screen w-full">
+        {showSidebar && <RefactoredSidebar />}
+        
+        <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
+          {/* Show header only if shouldShowHeader is true */}
+          {shouldShowHeader && <HeaderContent />}
+          
+          <main className="flex-1 w-full">
+            <div className="max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:ml-[60px] lg:ml-0">
+              {children}
+            </div>
           </main>
         </div>
       </div>
+      
+      <Toaster />
     </SidebarProvider>
   );
 };
