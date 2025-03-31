@@ -9,17 +9,11 @@ import NotFound from '@/pages/NotFound';
 import Scholarships from '@/pages/Scholarships';
 import Unauthorized from '@/pages/Unauthorized';
 import Index from '@/pages/Index';
-import PaymentSuccess from '@/pages/payment/PaymentSuccess';
-import PaymentCancel from '@/pages/payment/PaymentCancel';
 import Courses from '@/pages/Courses';
-import CourseDetail from '@/pages/CourseDetail';
-import CourseLanding from '@/pages/CourseLanding';
 import AppLayout from '@/layouts/AppLayout';
 import CoursesCatalog from '@/pages/CoursesCatalog';
-import LessonView from '@/pages/student/LessonView';
 import PublicLayout from '@/layouts/PublicLayout';
 import CourseDetailPage from '@/pages/CourseDetailPage';
-import Community from '@/pages/Community';
 import TermsPage from '@/pages/legal/TermsPage';
 import PrivacyPage from '@/pages/legal/PrivacyPage';
 import CookiesPage from '@/pages/legal/CookiesPage';
@@ -48,27 +42,7 @@ const PublicRoutes: React.FC = () => {
       {/* Dynamic pages */}
       <Route path="/pages/:slug" element={<DynamicPage />} />
       
-      {/* Community Route */}
-      <Route path="/community" element={<Community />} />
-      
-      {/* Acceso a cursos */}
-      <Route path="/courses" element={
-        <AppLayout>
-          <CoursesCatalog />
-        </AppLayout>
-      } />
-      
-      {/* Acceso a curso por ID - usando el componente CourseDetailPage */}
-      <Route path="/courses/:courseId" element={<CourseDetailPage />} />
-      
-      {/* Ruta para acceso a curso por slug */}
-      <Route path="/cursos/:slug" element={<CourseDetailPage />} />
-      
-      <Route path="/courses/:courseId/learn/:lessonId" element={
-        <AppLayout>
-          <LessonView />
-        </AppLayout>
-      } />
+      {/* Learning paths */}
       <Route path="/learning-paths" element={
         <AppLayout>
           <CoursesCatalog />

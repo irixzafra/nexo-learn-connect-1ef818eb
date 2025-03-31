@@ -50,7 +50,14 @@ export const useInvoices = (userId?: string) => {
           throw error;
         }
         
-        setInvoices(data || []);
+        // Transform the data to conform to the Invoice type
+        const processedInvoices: Invoice[] = (data || []).map(invoice => ({
+          ...invoice,
+          date: invoice.created_at ? new Date(invoice.created_at).toISOString() : new Date().toISOString(),
+          currency: (invoice.currency as "usd" | "eur") || "usd"
+        }));
+        
+        setInvoices(processedInvoices);
       } catch (error) {
         console.error('Error fetching invoices:', error);
         toast({

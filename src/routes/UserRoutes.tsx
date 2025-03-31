@@ -8,17 +8,12 @@ import AppLayout from "@/layouts/AppLayout";
 // Student pages
 import StudentDashboard from "@/pages/student/Dashboard";
 import StudentCourses from "@/pages/student/Courses";
-import CourseLearn from "@/pages/student/CourseLearn";
-import LessonView from "@/pages/student/LessonView";
-import Checkout from "@/pages/student/Checkout";
-import CheckoutSuccess from "@/pages/student/CheckoutSuccess";
-import CheckoutCancel from "@/pages/student/CheckoutCancel";
 import Invoices from "@/pages/student/Invoices";
 import Calendar from "@/pages/placeholder/Calendar";
 import Messages from "@/pages/placeholder/Messages";
 import Settings from "@/pages/placeholder/Settings";
 
-const UserRoutes = () => {
+const UserRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={
@@ -34,31 +29,6 @@ const UserRoutes = () => {
       <Route path="/my-courses" element={
         <AppLayout>
           <StudentCourses />
-        </AppLayout>
-      } />
-      <Route path="/courses/:courseId/learn" element={
-        <AppLayout>
-          <CourseLearn />
-        </AppLayout>
-      } />
-      <Route path="/courses/:courseId/learn/:lessonId" element={
-        <AppLayout>
-          <LessonView />
-        </AppLayout>
-      } />
-      <Route path="/checkout/:courseId" element={
-        <AppLayout>
-          <Checkout />
-        </AppLayout>
-      } />
-      <Route path="/checkout/success" element={
-        <AppLayout>
-          <CheckoutSuccess />
-        </AppLayout>
-      } />
-      <Route path="/checkout/cancel" element={
-        <AppLayout>
-          <CheckoutCancel />
         </AppLayout>
       } />
       <Route path="/invoices" element={

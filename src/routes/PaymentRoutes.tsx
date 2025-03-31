@@ -1,19 +1,20 @@
 
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PaymentSuccess from "@/pages/payment/PaymentSuccess";
 import PaymentCancel from "@/pages/payment/PaymentCancel";
 
-// Change this to a component that returns its children instead of Routes
-const PaymentRoutes: React.FC<{path: string}> = ({ path }) => {
-  // Based on the path, return the appropriate component
-  if (path === 'success') {
+const PaymentRoutes: React.FC = () => {
+  const { status } = useParams<{ status: string }>();
+  
+  if (status === 'success') {
     return (
       <ProtectedRoute>
         <PaymentSuccess />
       </ProtectedRoute>
     );
-  } else if (path === 'cancel') {
+  } else if (status === 'cancel') {
     return (
       <ProtectedRoute>
         <PaymentCancel />

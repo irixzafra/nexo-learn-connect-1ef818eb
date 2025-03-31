@@ -4,7 +4,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useInvoices } from '@/features/payments/hooks/useInvoices';
 import { InvoiceHeader } from '@/features/payments/components/invoice/InvoiceHeader';
 import { InvoiceList } from '@/features/payments/components/invoice/InvoiceList';
-import AppLayout from '@/layouts/AppLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -17,36 +16,30 @@ const Invoices: React.FC = () => {
   };
 
   return (
-    <AppLayout>
-      <div className="container mx-auto p-6">
-        <div className="space-y-6">
-          <InvoiceHeader />
-          
-          <Card>
-            <CardContent className="p-6">
-              <Tabs defaultValue="all" onValueChange={handleFilterChange} value={filter}>
-                <TabsList className="mb-6">
-                  <TabsTrigger value="all">Todas</TabsTrigger>
-                  <TabsTrigger value="paid">Pagadas</TabsTrigger>
-                  <TabsTrigger value="pending">Pendientes</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value={filter}>
-                  {/* Pass proper props to InvoiceList */}
-                  <InvoiceList 
-                    invoices={invoices.map(invoice => ({
-                      ...invoice,
-                      date: new Date(invoice.created_at || Date.now()).toISOString()
-                    }))} 
-                    isLoading={isLoading} 
-                  />
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-        </div>
+    <div className="container mx-auto p-6">
+      <div className="space-y-6">
+        <InvoiceHeader />
+        
+        <Card>
+          <CardContent className="p-6">
+            <Tabs defaultValue="all" onValueChange={handleFilterChange} value={filter}>
+              <TabsList className="mb-6">
+                <TabsTrigger value="all">Todas</TabsTrigger>
+                <TabsTrigger value="paid">Pagadas</TabsTrigger>
+                <TabsTrigger value="pending">Pendientes</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value={filter}>
+                <InvoiceList 
+                  invoices={invoices} 
+                  isLoading={isLoading} 
+                />
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
       </div>
-    </AppLayout>
+    </div>
   );
 };
 

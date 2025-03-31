@@ -1,33 +1,32 @@
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 import ProtectedRoute from "@/components/ProtectedRoute";
 import NotFound from '@/pages/NotFound';
 import Profile from '@/pages/Profile';
 import AppLayout from '@/layouts/AppLayout';
-import { useAuth } from '@/contexts/AuthContext';
-import { Loader2 } from 'lucide-react';
-import AdminRoutes from './AdminRoutes';
 import PageRenderer from '@/features/pages/PageRenderer';
-import PublicRoutes from './PublicRoutes';
 
-// Lazy loading of non-critical routes
+// Lazy loading of route groups
+const PublicRoutes = React.lazy(() => import('./PublicRoutes'));
+const UserRoutes = React.lazy(() => import('./UserRoutes'));
+const InstructorRoutes = React.lazy(() => import('./InstructorRoutes'));
+const AdminRoutes = React.lazy(() => import('./AdminRoutes'));
+const PaymentRoutes = React.lazy(() => import('./PaymentRoutes'));
+
+// Lazy loading of standalone pages
 const CoursesCatalog = React.lazy(() => import('@/pages/CoursesCatalog'));
-const CourseDetail = React.lazy(() => import('@/pages/CourseDetail'));
 const CourseLanding = React.lazy(() => import('@/pages/CourseLanding'));
+const Community = React.lazy(() => import('@/pages/Community'));
 const CourseLearn = React.lazy(() => import('@/pages/student/CourseLearn'));
 const LessonView = React.lazy(() => import('@/pages/student/LessonView'));
+const Checkout = React.lazy(() => import('@/pages/student/Checkout'));
 const Notifications = React.lazy(() => import('@/pages/Notifications'));
 const Messages = React.lazy(() => import('@/pages/placeholder/Messages'));
 const Billing = React.lazy(() => import('@/pages/placeholder/Billing'));
-const Community = React.lazy(() => import('@/pages/Community'));
-const PaymentSuccess = React.lazy(() => import('@/pages/payment/PaymentSuccess'));
-const PaymentCancel = React.lazy(() => import('@/pages/payment/PaymentCancel'));
-const UserRoutes = React.lazy(() => import('./UserRoutes'));
-const InstructorRoutes = React.lazy(() => import('./InstructorRoutes'));
-const Checkout = React.lazy(() => import('@/pages/student/Checkout'));
 
-// Componente de carga para Suspense
+// Loading component for suspense
 const LoadingFallback = () => (
   <div className="flex h-[50vh] w-full items-center justify-center">
     <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -35,21 +34,16 @@ const LoadingFallback = () => (
 );
 
 const AppRouter: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/*" element={<PublicRoutes />} />
-      
-      {/* Course public landing page */}
-      <Route path="/courses/:id" element={
+      <Route path="/*" element={
         <React.Suspense fallback={<LoadingFallback />}>
-          <CourseLanding />
+          <PublicRoutes />
         </React.Suspense>
       } />
       
-      {/* User routes for standard authenticated users */}
+      {/* User routes */}
       <Route path="/home/*" element={
         <ProtectedRoute>
           <React.Suspense fallback={<LoadingFallback />}>
@@ -58,7 +52,46 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* Course learning routes (authenticated) */}
+      {/* Instructor routes */}
+      <Route path="/instructor/*" element={
+        <ProtectedRoute>
+          <React.Suspense fallback={<LoadingFallback />}>
+            <InstructorRoutes />
+          </React.Suspense>
+        </ProtectedRoute>
+      } />
+      
+      {/* Admin routes */}
+      <Route path="/admin/*" element={
+        <ProtectedRoute>
+          <React.Suspense fallback={<LoadingFallback />}>
+            <AdminRoutes />
+          </React.Suspense>
+        </ProtectedRoute>
+      } />
+      
+      {/* Payment routes */}
+      <Route path="/payment/:status" element={
+        <React.Suspense fallback={<LoadingFallback />}>
+          <PaymentRoutes />
+        </React.Suspense>
+      } />
+      
+      {/* Course related routes */}
+      <Route path="/courses/:id" element={
+        <React.Suspense fallback={<LoadingFallback />}>
+          <CourseLanding />
+        </React.Suspense>
+      } />
+      
+      <Route path="/courses" element={
+        <AppLayout>
+          <React.Suspense fallback={<LoadingFallback />}>
+            <CoursesCatalog />
+          </React.Suspense>
+        </AppLayout>
+      } />
+      
       <Route path="/courses/:courseId/learn" element={
         <ProtectedRoute>
           <React.Suspense fallback={<LoadingFallback />}>
@@ -75,7 +108,6 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* Checkout page for courses */}
       <Route path="/checkout/:courseId" element={
         <ProtectedRoute>
           <React.Suspense fallback={<LoadingFallback />}>
@@ -91,7 +123,7 @@ const AppRouter: React.FC = () => {
         </React.Suspense>
       } />
       
-      {/* Página de notificaciones */}
+      {/* Misc protected routes */}
       <Route path="/notifications" element={
         <ProtectedRoute>
           <AppLayout>
@@ -102,7 +134,6 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* Página de mensajes */}
       <Route path="/messages" element={
         <ProtectedRoute>
           <AppLayout>
@@ -113,20 +144,6 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* Payment success and cancel pages */}
-      <Route path="/payment/success" element={
-        <React.Suspense fallback={<LoadingFallback />}>
-          <PaymentSuccess />
-        </React.Suspense>
-      } />
-      
-      <Route path="/payment/cancel" element={
-        <React.Suspense fallback={<LoadingFallback />}>
-          <PaymentCancel />
-        </React.Suspense>
-      } />
-      
-      {/* Billing page */}
       <Route path="/billing" element={
         <ProtectedRoute>
           <AppLayout>
@@ -137,42 +154,7 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* Role-specific routes */}
-      <Route path="/instructor/*" element={
-        <ProtectedRoute>
-          <React.Suspense fallback={<LoadingFallback />}>
-            <InstructorRoutes />
-          </React.Suspense>
-        </ProtectedRoute>
-      } />
-      
-      {/* Admin routes */}
-      <Route path="/admin/*" element={
-        <ProtectedRoute>
-          <AdminRoutes />
-        </ProtectedRoute>
-      } />
-      
-      {/* Course catalog */}
-      <Route path="/courses" element={
-        <AppLayout>
-          <React.Suspense fallback={<LoadingFallback />}>
-            <CoursesCatalog />
-          </React.Suspense>
-        </AppLayout>
-      } />
-      
-      {/* Dynamic page route - must be after all specific routes */}
-      <Route path="/:slug" element={<PageRenderer />} />
-      
-      {/* My courses route with redirection to user routes */}
-      <Route path="/my-courses" element={
-        <ProtectedRoute>
-          <Navigate to="/home/my-courses" replace />
-        </ProtectedRoute>
-      } />
-      
-      {/* Profile with layout */}
+      {/* Profile route */}
       <Route path="/profile" element={
         <ProtectedRoute>
           <AppLayout>
@@ -183,10 +165,19 @@ const AppRouter: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      {/* Index redirect to home or landing page */}
+      {/* Redirects */}
+      <Route path="/my-courses" element={
+        <ProtectedRoute>
+          <Navigate to="/home/my-courses" replace />
+        </ProtectedRoute>
+      } />
+      
       <Route path="/index" element={<Navigate to="/" replace />} />
       
-      {/* Catch-all route for not found pages */}
+      {/* Dynamic page route - must be after all specific routes */}
+      <Route path="/:slug" element={<PageRenderer />} />
+      
+      {/* Catch-all for not found */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
