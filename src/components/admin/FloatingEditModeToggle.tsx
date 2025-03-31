@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 const FloatingEditModeToggle: React.FC = () => {
   const { isEditMode, toggleEditMode, isReorderMode, toggleReorderMode, isEditModeEnabled } = useEditMode();
 
-  // Si la funcionalidad no está habilitada, no mostrar nada
+  // If functionality is not enabled, don't show anything
   if (!isEditModeEnabled) {
     return null;
   }
@@ -25,7 +25,7 @@ const FloatingEditModeToggle: React.FC = () => {
     toggleEditMode();
   };
 
-  // Si no está en modo edición, solo mostrar el botón de activación
+  // If not in edit mode, only show the activation button
   if (!isEditMode) {
     return (
       <TooltipProvider>
@@ -41,19 +41,19 @@ const FloatingEditModeToggle: React.FC = () => {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="left">
-            <p>Activar modo edición</p>
+            <p>Activar modo edición universal</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
     );
   }
 
-  // Si está en modo edición, mostrar las herramientas de edición
+  // If in edit mode, show the editing tools
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
       <Card className="p-3 shadow-lg flex flex-col items-start gap-2">
         <div className="flex items-center justify-center w-full text-sm font-medium">
-          Modo Edición Activo
+          Modo Edición Universal
         </div>
         <Separator />
         <div className="flex flex-col gap-2 w-full">

@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -13,6 +12,7 @@ import {
 } from "./sidebar-context"
 import { ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { motion, AnimatePresence } from 'framer-motion'
 
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,
@@ -39,6 +39,8 @@ const SidebarProvider = React.forwardRef<
 
     // Try to get saved state from cookie
     const getSavedState = React.useCallback(() => {
+      if (typeof document === 'undefined') return defaultOpen;
+      
       const cookies = document.cookie.split(';')
       for (const cookie of cookies) {
         const [name, value] = cookie.trim().split('=')
@@ -63,20 +65,25 @@ const SidebarProvider = React.forwardRef<
         }
 
         // This sets the cookie to keep the sidebar state.
-        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        if (typeof document !== 'undefined') {
+          document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        }
       },
       [setOpenProp, open]
     )
 
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
+      console.log("Toggling sidebar", isMobile ? "mobile" : "desktop", "Current state:", isMobile ? openMobile : open);
       return isMobile
-        ? setOpenMobile((open) => !open)
-        : setOpen((open) => !open)
-    }, [isMobile, setOpen, setOpenMobile])
+        ? setOpenMobile((prevOpenMobile) => !prevOpenMobile)
+        : setOpen((prevOpen) => !prevOpen)
+    }, [isMobile, setOpen, open, openMobile, setOpenMobile])
 
     // Adds a keyboard shortcut to toggle the sidebar.
     React.useEffect(() => {
+      if (typeof window === 'undefined') return;
+
       const handleKeyDown = (event: KeyboardEvent) => {
         if (
           event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
@@ -95,7 +102,7 @@ const SidebarProvider = React.forwardRef<
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = open ? "expanded" : "collapsed"
 
-    const contextValue = React.useMemo<SidebarContext>(
+    const contextValue = React.useMemo<any>(
       () => ({
         state,
         open,
@@ -128,17 +135,24 @@ const SidebarProvider = React.forwardRef<
           >
             {children}
             
-            {/* Improved expand button when sidebar is collapsed */}
+            {/* Improved expand button when sidebar is collapsed with animation */}
             {!isMobile && state === "collapsed" && (
-              <Button
-                variant="primary"
-                size="icon"
-                className="absolute left-[calc(var(--sidebar-width-icon)_-_14px)] top-[50%] translate-y-[-50%] h-9 w-9 rounded-full opacity-0 shadow-md bg-blue-500 text-white hover:bg-blue-600 group-hover/sidebar-wrapper:opacity-100 transition-all duration-300"
-                onClick={toggleSidebar}
-                aria-label="Expandir menú lateral"
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="relative z-50"
               >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+                <Button
+                  variant="primary"
+                  size="icon"
+                  className="fixed left-[calc(var(--sidebar-width-icon)_-_14px)] top-[50%] translate-y-[-50%] h-9 w-9 rounded-full opacity-0 shadow-md bg-primary text-primary-foreground hover:bg-primary/90 group-hover/sidebar-wrapper:opacity-100 transition-all duration-300 z-50"
+                  onClick={toggleSidebar}
+                  aria-label="Expandir menú lateral"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </motion.div>
             )}
           </div>
         </TooltipProvider>

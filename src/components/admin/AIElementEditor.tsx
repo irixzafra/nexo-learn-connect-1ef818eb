@@ -1,17 +1,11 @@
 
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { Loader2, MessageSquareText, Sparkles, Wand2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Loader2, MessageSquare, CheckSquare, Sparkles, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AIElementEditorProps {
@@ -20,41 +14,8 @@ interface AIElementEditorProps {
   elementId: string;
   elementType: string;
   currentContent: string;
-  onContentUpdate: (newContent: string) => Promise<boolean>;
+  onContentUpdate: (content: string) => Promise<boolean>;
 }
-
-const AI_TEMPLATES = [
-  { 
-    id: 'improve', 
-    name: 'Mejorar estilo', 
-    prompt: 'Mejora el estilo y redacción de este texto, manteniendo la misma información:' 
-  },
-  { 
-    id: 'expand', 
-    name: 'Ampliar contenido', 
-    prompt: 'Desarrolla este contenido con más detalles e información relevante:' 
-  },
-  { 
-    id: 'summarize', 
-    name: 'Resumir', 
-    prompt: 'Resume este contenido de forma clara y concisa:' 
-  },
-  { 
-    id: 'professional', 
-    name: 'Tono profesional', 
-    prompt: 'Reescribe esto con un tono más profesional y formal:' 
-  },
-  { 
-    id: 'friendly', 
-    name: 'Tono amigable', 
-    prompt: 'Reescribe esto con un tono más amigable y cercano:' 
-  },
-  { 
-    id: 'convert-to-html', 
-    name: 'Convertir a HTML', 
-    prompt: 'Convierte este texto a formato HTML con etiquetas apropiadas:' 
-  },
-];
 
 const AIElementEditor: React.FC<AIElementEditorProps> = ({
   isOpen,
@@ -64,84 +25,113 @@ const AIElementEditor: React.FC<AIElementEditorProps> = ({
   currentContent,
   onContentUpdate
 }) => {
-  const [customPrompt, setCustomPrompt] = useState('');
-  const [generatedContent, setGeneratedContent] = useState('');
-  const [originalContent, setOriginalContent] = useState(currentContent);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [prompt, setPrompt] = useState('');
+  const [promptType, setPromptType] = useState('improve');
+  const [generating, setGenerating] = useState(false);
+  const [result, setResult] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  // Reset states when dialog opens/closes
+  // Reset states when dialog opens
   React.useEffect(() => {
     if (isOpen) {
-      setOriginalContent(currentContent);
-      setGeneratedContent('');
-      setCustomPrompt('');
-      setSelectedTemplate(null);
+      setResult('');
+      setPrompt('');
     }
-  }, [isOpen, currentContent]);
+  }, [isOpen]);
 
-  const handleApplyTemplate = (templateId: string) => {
-    const template = AI_TEMPLATES.find(t => t.id === templateId);
-    if (template) {
-      setSelectedTemplate(templateId);
-      generateContent(`${template.prompt} ${originalContent}`);
+  const generatePromptFromType = (type: string, customPrompt: string = '') => {
+    const content = currentContent.trim();
+    
+    switch (type) {
+      case 'improve':
+        return `Mejora el siguiente texto manteniendo su significado original: "${content}"`;
+      case 'expand':
+        return `Expande con más detalles el siguiente texto: "${content}"`;
+      case 'shorten':
+        return `Resume el siguiente texto manteniendo los puntos clave: "${content}"`;
+      case 'change-tone-professional':
+        return `Reescribe el siguiente texto en un tono más profesional: "${content}"`;
+      case 'change-tone-friendly':
+        return `Reescribe el siguiente texto en un tono más amigable y cercano: "${content}"`;
+      case 'custom':
+        return customPrompt.trim() ? `${customPrompt}: "${content}"` : `Modifica el siguiente texto: "${content}"`;
+      default:
+        return `Mejora el siguiente texto: "${content}"`;
     }
   };
 
-  const handleGenerateWithCustomPrompt = () => {
-    if (!customPrompt.trim()) {
-      toast.error('Por favor, escribe una instrucción para la IA');
+  const handleGenerate = async () => {
+    const finalPrompt = promptType === 'custom' 
+      ? prompt 
+      : generatePromptFromType(promptType);
+    
+    if (!finalPrompt) {
+      toast.error('Por favor, selecciona un tipo de mejora');
       return;
     }
-    generateContent(`${customPrompt} \n\nTexto original: ${originalContent}`);
-  };
 
-  const generateContent = async (prompt: string) => {
-    setIsGenerating(true);
+    setGenerating(true);
+
     try {
-      // In a real implementation, this would call an AI service
-      // For now, we'll simulate a response
+      // Simulate AI generation (replace with actual API call)
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      let response = '';
-      if (prompt.includes('Mejora el estilo')) {
-        response = originalContent.split(' ').map(word => 
-          word.length > 3 ? word.charAt(0).toUpperCase() + word.slice(1) : word
-        ).join(' ');
-      } else if (prompt.includes('Desarrolla este contenido')) {
-        response = `${originalContent}\n\nAdicionalmente, es importante destacar que este contenido ha sido ampliado con información relevante que ayuda a comprender mejor el contexto y proporciona más detalles sobre el tema tratado.`;
-      } else if (prompt.includes('Resume este contenido')) {
-        response = originalContent.split(' ').slice(0, originalContent.split(' ').length / 2).join(' ') + '...';
-      } else if (prompt.includes('tono más profesional')) {
-        response = `Con relación a la información proporcionada, cabe señalar que ${originalContent.toLowerCase()}`;
-      } else if (prompt.includes('tono más amigable')) {
-        response = `¡Hola! 👋 Esto es lo que debes saber: ${originalContent}`;
-      } else if (prompt.includes('Convierte este texto a formato HTML')) {
-        response = `<div><h3>Contenido principal</h3><p>${originalContent}</p></div>`;
-      } else {
-        // Custom prompt - just add some AI magic words
-        response = `${originalContent} [Contenido mejorado por IA según tus instrucciones]`;
+      // Generate a simple response based on the prompt type
+      let generatedContent = '';
+      
+      switch (promptType) {
+        case 'improve':
+          generatedContent = `${currentContent} (version mejorada)`;
+          break;
+        case 'expand':
+          generatedContent = `${currentContent}\n\nAdemás, es importante destacar que este contenido se ha expandido con información adicional relevante que complementa el texto original.`;
+          break;
+        case 'shorten':
+          generatedContent = currentContent.split(' ').slice(0, currentContent.split(' ').length / 2).join(' ') + '...';
+          break;
+        case 'change-tone-professional':
+          generatedContent = `Se considera pertinente señalar que ${currentContent.toLowerCase()}`;
+          break;
+        case 'change-tone-friendly':
+          generatedContent = `¡Hola! ${currentContent} ¿No te parece genial?`;
+          break;
+        case 'custom':
+          generatedContent = `${currentContent} (personalizado según: ${prompt})`;
+          break;
+        default:
+          generatedContent = currentContent;
       }
       
-      setGeneratedContent(response);
+      setResult(generatedContent);
+      toast.success('Contenido generado con éxito');
     } catch (error) {
       console.error('Error generating content:', error);
-      toast.error('Error al generar contenido con IA');
+      toast.error('Error al generar contenido');
     } finally {
-      setIsGenerating(false);
+      setGenerating(false);
     }
   };
 
-  const handleSaveContent = async () => {
-    if (!generatedContent.trim()) {
-      toast.error('No hay contenido generado para guardar');
+  const handleSave = async () => {
+    if (!result.trim()) {
+      toast.error('No hay contenido para guardar');
       return;
     }
-    
-    const success = await onContentUpdate(generatedContent);
-    if (success) {
-      toast.success('Contenido actualizado con IA');
-      onOpenChange(false);
+
+    setSaving(true);
+    try {
+      const success = await onContentUpdate(result);
+      if (success) {
+        toast.success('Contenido actualizado con éxito');
+        onOpenChange(false);
+      } else {
+        toast.error('Error al actualizar el contenido');
+      }
+    } catch (error) {
+      console.error('Error saving content:', error);
+      toast.error('Error al guardar el contenido');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -150,102 +140,115 @@ const AIElementEditor: React.FC<AIElementEditorProps> = ({
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Wand2 className="h-5 w-5 text-primary" />
+            <Sparkles className="h-5 w-5 text-primary" />
             Editar con IA
           </DialogTitle>
           <DialogDescription>
-            Usa la inteligencia artificial para mejorar o transformar este elemento.
+            Mejora o modifica el contenido existente con ayuda de la IA.
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="space-y-4 my-4">
-          <div>
-            <h4 className="text-sm font-medium mb-2">Contenido original:</h4>
-            <div className="bg-muted/30 p-3 rounded-md text-sm">
-              {originalContent || <span className="text-muted-foreground italic">Sin contenido</span>}
+
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              Contenido actual
+            </label>
+            <div className="p-3 rounded-md bg-muted/50 text-sm max-h-32 overflow-y-auto">
+              {currentContent || <span className="text-muted-foreground italic">Sin contenido</span>}
             </div>
           </div>
           
-          <div>
-            <h4 className="text-sm font-medium mb-2">Plantillas de edición:</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {AI_TEMPLATES.map(template => (
-                <Button
-                  key={template.id}
-                  variant={selectedTemplate === template.id ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleApplyTemplate(template.id)}
-                  disabled={isGenerating}
-                  className="justify-start text-xs"
-                >
-                  <Sparkles className="h-3 w-3 mr-1" />
-                  {template.name}
-                </Button>
-              ))}
-            </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              ¿Qué quieres hacer con este contenido?
+            </label>
+            <Select 
+              value={promptType} 
+              onValueChange={setPromptType}
+              disabled={generating}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecciona una acción" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="improve">Mejorar redacción</SelectItem>
+                <SelectItem value="expand">Expandir con más detalles</SelectItem>
+                <SelectItem value="shorten">Acortar manteniendo lo importante</SelectItem>
+                <SelectItem value="change-tone-professional">Cambiar a tono profesional</SelectItem>
+                <SelectItem value="change-tone-friendly">Cambiar a tono amigable</SelectItem>
+                <SelectItem value="custom">Instrucción personalizada</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
-          <div className="border-t pt-4">
-            <h4 className="text-sm font-medium mb-2">O personaliza la instrucción:</h4>
-            <div className="flex gap-2">
+          {promptType === 'custom' && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Instrucción personalizada
+              </label>
               <Input
-                value={customPrompt}
-                onChange={(e) => setCustomPrompt(e.target.value)}
-                placeholder="Ej: Hazlo más persuasivo, más corto, usa viñetas..."
-                className="flex-1"
-                disabled={isGenerating}
-              />
-              <Button
-                onClick={handleGenerateWithCustomPrompt}
-                disabled={isGenerating || !customPrompt.trim()}
-                size="sm"
-              >
-                {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Generar"}
-              </Button>
-            </div>
-          </div>
-          
-          {generatedContent && (
-            <div>
-              <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
-                <MessageSquareText className="h-4 w-4 text-primary" />
-                Contenido generado:
-              </h4>
-              <Textarea
-                value={generatedContent}
-                onChange={(e) => setGeneratedContent(e.target.value)}
-                className="min-h-[120px]"
-                placeholder="El contenido generado aparecerá aquí"
+                placeholder="Ej: Reescribe esto para un público infantil"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                disabled={generating}
               />
             </div>
           )}
-        </div>
-        
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isGenerating}
+          
+          <Button 
+            onClick={handleGenerate} 
+            disabled={generating || (promptType === 'custom' && !prompt.trim())}
+            className="w-full gap-2"
           >
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleSaveContent}
-            disabled={isGenerating || !generatedContent}
-          >
-            {isGenerating ? (
+            {generating ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Generando...
               </>
             ) : (
               <>
-                <Wand2 className="h-4 w-4 mr-2" />
-                Aplicar cambios
+                <Sparkles className="h-4 w-4" />
+                Generar nuevo contenido
               </>
             )}
           </Button>
-        </DialogFooter>
+          
+          {result && (
+            <div className="space-y-2 mt-4 pt-4 border-t">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <CheckSquare className="h-4 w-4 text-primary" />
+                  Resultado generado
+                </label>
+              </div>
+              <Textarea 
+                value={result} 
+                onChange={(e) => setResult(e.target.value)}
+                rows={5}
+                className="w-full"
+                disabled={saving}
+              />
+              
+              <Button 
+                onClick={handleSave} 
+                disabled={saving}
+                className="w-full gap-2"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Guardando...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Guardar cambios
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );

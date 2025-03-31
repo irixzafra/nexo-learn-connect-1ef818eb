@@ -17,7 +17,7 @@ const SectionInsert: React.FC<SectionInsertProps> = ({
   const [isAICreatorOpen, setIsAICreatorOpen] = useState(false);
 
   const handleAddTextSection = () => {
-    onAddSection('Nuevo contenido de texto');
+    onAddSection('Nuevo contenido de texto', 'text');
     setExpanded(false);
   };
 

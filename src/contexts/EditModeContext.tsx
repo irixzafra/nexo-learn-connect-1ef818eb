@@ -68,7 +68,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (newValue) {
         setIsReorderMode(true);
         toast.info(
-          "Modo edición activado. Todos los elementos son editables y reordenables.",
+          "Modo edición universal activado. Ahora puedes editar, reordenar o modificar cualquier elemento.",
           { duration: 4000 }
         );
       } else {

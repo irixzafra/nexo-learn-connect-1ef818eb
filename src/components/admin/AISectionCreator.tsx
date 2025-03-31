@@ -1,198 +1,76 @@
 
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Loader2, 
-  MessageSquareText, 
-  Sparkles, 
-  Wand2, 
-  LayoutTemplate,
-  Type,
-  Image as ImageIcon,
-  LinkIcon,
-  ListChecks,
-  CircleHelp,
-  FileText
-} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2, MessageSquare, CheckSquare, Sparkles, Plus } from 'lucide-react';
 import { toast } from 'sonner';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 interface AISectionCreatorProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddSection: (content: string, type: string) => void;
+  onAddSection: (content: string, type?: string) => void;
 }
-
-type SectionType = 'text' | 'hero' | 'features' | 'cta' | 'testimonials' | 'faq';
-
-interface SectionTemplate {
-  id: string;
-  name: string;
-  type: SectionType;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  promptTemplate: string;
-}
-
-const SECTION_TEMPLATES: SectionTemplate[] = [
-  {
-    id: 'text-paragraph',
-    name: 'Párrafo de texto',
-    type: 'text',
-    description: 'Un párrafo simple de texto informativo',
-    icon: FileText,
-    promptTemplate: 'Escribe un párrafo informativo sobre'
-  },
-  {
-    id: 'hero-section',
-    name: 'Sección Hero',
-    type: 'hero',
-    description: 'Título principal destacado para captar atención',
-    icon: Type,
-    promptTemplate: 'Crea un título impactante para una sección hero sobre'
-  },
-  {
-    id: 'features-list',
-    name: 'Lista de características',
-    type: 'features',
-    description: 'Lista de funcionalidades o beneficios destacados',
-    icon: ListChecks,
-    promptTemplate: 'Genera una lista de características principales de'
-  },
-  {
-    id: 'call-to-action',
-    name: 'Llamada a la acción',
-    type: 'cta',
-    description: 'Texto persuasivo para motivar una acción',
-    icon: LinkIcon,
-    promptTemplate: 'Escribe una llamada a la acción persuasiva para'
-  },
-  {
-    id: 'testimonial',
-    name: 'Testimonio',
-    type: 'testimonials',
-    description: 'Opinión o valoración de un cliente o usuario',
-    icon: MessageSquareText,
-    promptTemplate: 'Crea un testimonio ficticio pero realista sobre'
-  },
-  {
-    id: 'faq-item',
-    name: 'Pregunta frecuente',
-    type: 'faq',
-    description: 'Pregunta y respuesta para resolver dudas',
-    icon: CircleHelp,
-    promptTemplate: 'Genera una pregunta frecuente con su respuesta sobre'
-  }
-];
 
 const AISectionCreator: React.FC<AISectionCreatorProps> = ({
   isOpen,
   onOpenChange,
   onAddSection
 }) => {
-  const [sectionType, setSectionType] = useState<SectionType>('text');
-  const [customPrompt, setCustomPrompt] = useState('');
-  const [generatedContent, setGeneratedContent] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [prompt, setPrompt] = useState('');
+  const [generating, setGenerating] = useState(false);
+  const [result, setResult] = useState('');
+  const [activeTab, setActiveTab] = useState('prompt');
 
-  // Reset states when dialog opens/closes
-  React.useEffect(() => {
-    if (isOpen) {
-      setGeneratedContent('');
-      setCustomPrompt('');
-      setSectionType('text');
-      setSelectedTemplate(null);
-    }
-  }, [isOpen]);
-
-  const handleSelectTemplate = (templateId: string) => {
-    const template = SECTION_TEMPLATES.find(t => t.id === templateId);
-    if (template) {
-      setSelectedTemplate(templateId);
-      setSectionType(template.type);
-    }
-  };
-
-  const handleGenerateContent = () => {
-    if (!customPrompt.trim()) {
-      toast.error('Por favor, describe qué contenido quieres generar');
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast.error('Por favor, introduce una descripción');
       return;
     }
-    
-    generateContent();
-  };
 
-  const generateContent = async () => {
-    setIsGenerating(true);
+    setGenerating(true);
+    setActiveTab('result');
+
     try {
-      // In a real implementation, this would call an AI service
-      // For now, we'll simulate a response
+      // Simulate AI generation (replace with actual API call)
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      const template = SECTION_TEMPLATES.find(t => t.id === selectedTemplate);
-      const prompt = template 
-        ? `${template.promptTemplate} ${customPrompt}`
-        : `Genera contenido para una sección de tipo ${sectionType}: ${customPrompt}`;
+      // Generate a simple response based on the prompt
+      const generatedContent = `Contenido generado por IA basado en: "${prompt}"\n\nEste es un texto de ejemplo que simula el resultado de la IA. En una implementación real, aquí veríamos el contenido generado por un modelo de lenguaje.`;
       
-      let response = '';
-      
-      switch(sectionType) {
-        case 'text':
-          response = `Este es un párrafo de ejemplo generado automáticamente sobre "${customPrompt}". La IA ha creado este contenido basándose en tu solicitud para demostrar cómo funcionaría la generación de contenido en un entorno real. En una implementación completa, este texto sería mucho más elaborado y relevante al tema específico solicitado.`;
-          break;
-        case 'hero':
-          response = `${customPrompt.toUpperCase()}: DESCUBRE UN NUEVO MUNDO DE POSIBILIDADES`;
-          break;
-        case 'features':
-          response = `Características principales de ${customPrompt}:\n- Diseño intuitivo y fácil de usar\n- Integración con sistemas existentes\n- Alto rendimiento y escalabilidad\n- Soporte técnico 24/7\n- Actualizaciones automáticas`;
-          break;
-        case 'cta':
-          response = `¡No esperes más! Descubre todos los beneficios de ${customPrompt} hoy mismo y lleva tu experiencia al siguiente nivel. ¡Haz clic para comenzar!`;
-          break;
-        case 'testimonials':
-          response = `"Desde que empecé a usar ${customPrompt}, mi productividad ha aumentado un 200%. Es una herramienta imprescindible que recomendaría a cualquiera." - María G., Directora de Operaciones`;
-          break;
-        case 'faq':
-          response = `Pregunta: ¿Cuáles son los principales beneficios de ${customPrompt}?\n\nRespuesta: ${customPrompt} ofrece múltiples ventajas, incluyendo mayor eficiencia, reducción de costos operativos y una experiencia de usuario mejorada. Nuestros clientes han reportado un aumento promedio del 35% en productividad tras su implementación.`;
-          break;
-        default:
-          response = `Contenido personalizado sobre ${customPrompt} generado por IA.`;
-      }
-      
-      setGeneratedContent(response);
+      setResult(generatedContent);
+      toast.success('Contenido generado con éxito');
     } catch (error) {
       console.error('Error generating content:', error);
-      toast.error('Error al generar contenido con IA');
+      toast.error('Error al generar contenido');
     } finally {
-      setIsGenerating(false);
+      setGenerating(false);
     }
   };
 
-  const handleAddSection = () => {
-    if (!generatedContent.trim()) {
-      toast.error('No hay contenido generado para añadir');
+  const handleAddContent = () => {
+    if (!result.trim()) {
+      toast.error('No hay contenido para añadir');
       return;
     }
+
+    onAddSection(result, 'text');
+    toast.success('Sección añadida con éxito');
     
-    onAddSection(generatedContent, sectionType);
-    toast.success(`Sección de tipo "${sectionType}" añadida correctamente`);
+    // Reset state and close dialog
+    setPrompt('');
+    setResult('');
+    setActiveTab('prompt');
+    onOpenChange(false);
+  };
+
+  const handleClose = () => {
+    // Reset state and close dialog
+    setPrompt('');
+    setResult('');
+    setActiveTab('prompt');
     onOpenChange(false);
   };
 
@@ -201,105 +79,102 @@ const AISectionCreator: React.FC<AISectionCreatorProps> = ({
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Wand2 className="h-5 w-5 text-primary" />
-            Crear sección con IA
+            <Sparkles className="h-5 w-5 text-primary" />
+            Crear contenido con IA
           </DialogTitle>
           <DialogDescription>
-            Usa la inteligencia artificial para generar el contenido de una nueva sección.
+            Describe lo que quieres crear y la IA generará el contenido para ti.
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="space-y-4 my-4">
-          <div>
-            <h4 className="text-sm font-medium mb-2">Tipo de sección:</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {SECTION_TEMPLATES.map(template => (
-                <Button
-                  key={template.id}
-                  variant={selectedTemplate === template.id ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleSelectTemplate(template.id)}
-                  disabled={isGenerating}
-                  className="h-auto py-2 justify-start text-xs flex-col items-start"
-                >
-                  <div className="flex items-center w-full">
-                    <template.icon className="h-3 w-3 mr-1" />
-                    <span className="font-medium">{template.name}</span>
-                  </div>
-                  <span className="text-[10px] text-muted-foreground mt-1 text-left">
-                    {template.description}
-                  </span>
-                </Button>
-              ))}
-            </div>
-          </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
+          <TabsList className="grid grid-cols-2">
+            <TabsTrigger value="prompt" disabled={generating}>
+              Descripción
+            </TabsTrigger>
+            <TabsTrigger value="result" disabled={generating && !result}>
+              Resultado {result ? <CheckSquare className="ml-1 h-3 w-3" /> : null}
+            </TabsTrigger>
+          </TabsList>
           
-          <div>
-            <h4 className="text-sm font-medium mb-2">¿Qué quieres generar?</h4>
-            <div className="flex flex-col gap-2">
-              <Input
-                value={customPrompt}
-                onChange={(e) => setCustomPrompt(e.target.value)}
-                placeholder="Ej: beneficios de nuestro producto, servicios profesionales..."
-                className="flex-1"
-                disabled={isGenerating}
-              />
-              <Button
-                onClick={handleGenerateContent}
-                disabled={isGenerating || !customPrompt.trim() || !selectedTemplate}
+          <TabsContent value="prompt" className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Describe el contenido que quieres crear
+              </label>
+              <Textarea
+                placeholder="Ej: Un párrafo sobre la importancia de la educación online, con un tono profesional y motivador."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={5}
                 className="w-full"
+              />
+            </div>
+            
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={handleClose}>
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleGenerate} 
+                disabled={generating || !prompt.trim()}
+                className="gap-2"
               >
-                {isGenerating ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                {generating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Generando...
+                  </>
                 ) : (
-                  <Wand2 className="h-4 w-4 mr-2" />
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Generar
+                  </>
                 )}
-                {isGenerating ? "Generando contenido..." : "Generar contenido"}
               </Button>
             </div>
-          </div>
+          </TabsContent>
           
-          {generatedContent && (
-            <div>
-              <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
-                <Sparkles className="h-4 w-4 text-primary" />
-                Contenido generado:
-              </h4>
-              <Textarea
-                value={generatedContent}
-                onChange={(e) => setGeneratedContent(e.target.value)}
-                className="min-h-[120px]"
-                placeholder="El contenido generado aparecerá aquí"
-              />
-            </div>
-          )}
-        </div>
-        
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isGenerating}
-          >
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleAddSection}
-            disabled={isGenerating || !generatedContent}
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Espera...
-              </>
+          <TabsContent value="result" className="space-y-4 py-4">
+            {generating ? (
+              <div className="flex flex-col items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+                <p className="text-sm text-center text-muted-foreground">
+                  Generando contenido con IA...
+                </p>
+              </div>
+            ) : result ? (
+              <div className="space-y-4">
+                <div className="border rounded-md p-4 bg-muted/20">
+                  <div className="flex items-center gap-2 mb-2 text-sm font-medium">
+                    <MessageSquare className="h-4 w-4 text-primary" />
+                    <span>Contenido generado:</span>
+                  </div>
+                  <Textarea 
+                    value={result} 
+                    onChange={(e) => setResult(e.target.value)}
+                    rows={8}
+                    className="w-full"
+                  />
+                </div>
+                
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setActiveTab('prompt')}>
+                    Volver
+                  </Button>
+                  <Button onClick={handleAddContent} className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    Añadir sección
+                  </Button>
+                </div>
+              </div>
             ) : (
-              <>
-                <Plus className="h-4 w-4 mr-2" />
-                Añadir sección
-              </>
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Haz clic en "Generar" para crear contenido</p>
+              </div>
             )}
-          </Button>
-        </DialogFooter>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

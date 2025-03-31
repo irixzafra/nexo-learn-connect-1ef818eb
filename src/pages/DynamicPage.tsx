@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { getPageBySlug } from '@/services/pagesService';
@@ -98,22 +99,18 @@ const DynamicPage: React.FC = () => {
     text: block.content
   }));
 
-  const handleAddBlock = (content: string, position?: number) => {
+  const handleAddBlock = (content: string, type?: string) => {
     if (!page || !page.content) return;
     
     const newBlock: PageBlock = {
       id: `block-${Date.now()}`,
-      type: 'text' as PageBlockType,
+      type: (type || 'text') as PageBlockType,
       content: content
     };
     
     const blocks = [...(page.content.blocks || [])];
-    
-    if (position !== undefined) {
-      blocks.splice(position, 0, newBlock);
-    } else {
-      blocks.push(newBlock);
-    }
+    const position = blocks.length;
+    blocks.push(newBlock);
     
     setPage({
       ...page,
@@ -169,7 +166,7 @@ const DynamicPage: React.FC = () => {
               table="page_blocks"
               className="space-y-8"
               onReorder={handleReorderBlocks}
-              onAddItem={handleAddBlock}
+              onAddItem={(content, position) => handleAddBlock(content, position ? 'text' : 'text')}
             />
           )}
         </div>

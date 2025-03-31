@@ -1,5 +1,5 @@
 
-export type PageLayout = 'default' | 'landing' | 'marketing' | 'documentation' | 'course';
+export type PageLayout = 'default' | 'landing' | 'marketing' | 'documentation' | 'course' | 'sidebar' | 'full-width';
 export type PageStatus = 'draft' | 'published' | 'archived';
 export type PageBlockType = 'text' | 'hero' | 'cta' | 'features' | 'testimonials' | 'faq' | 'pricing' | 'contact' | 'custom';
 
@@ -23,4 +23,15 @@ export interface SitePage {
   created_at: string;
   updated_at: string;
   is_system_page?: boolean;
+  created_by?: string;
+}
+
+export interface PageRevision {
+  id: string;
+  page_id: string;
+  content: {
+    blocks: PageBlock[];
+  };
+  created_at: string;
+  created_by: string;
 }

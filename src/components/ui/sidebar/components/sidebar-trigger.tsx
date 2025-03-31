@@ -12,7 +12,26 @@ export const SidebarTrigger = React.forwardRef<
 >(({ className, onClick, children, ...props }, ref) => {
   const { toggleSidebar, state, openMobile, setOpenMobile } = useSidebar()
   const isCollapsed = state === "collapsed"
-  const isMobile = React.useMemo(() => window.innerWidth < 768, [])
+  const isMobile = React.useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth < 768;
+  }, [])
+
+  const handleToggleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("SidebarTrigger clicked", isMobile ? "mobile" : "desktop");
+    
+    if (onClick) {
+      onClick(e);
+    }
+
+    if (isMobile) {
+      setOpenMobile(!openMobile);
+    } else {
+      toggleSidebar();
+    }
+  }
 
   return (
     <Button
@@ -26,10 +45,7 @@ export const SidebarTrigger = React.forwardRef<
         isMobile && "z-50",
         className
       )}
-      onClick={(event) => {
-        onClick?.(event)
-        isMobile ? setOpenMobile(!openMobile) : toggleSidebar()
-      }}
+      onClick={handleToggleClick}
       aria-expanded={!isCollapsed}
       aria-label={isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}
       aria-controls="sidebar"
