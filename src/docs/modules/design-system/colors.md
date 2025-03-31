@@ -5,7 +5,7 @@ Nuestra paleta de colores combina tonos vibrantes con neutrales cuidadosamente s
 
 ## Colores Primarios
 
-### Azul Eléctrico
+### Azul Principal
 - **HSL**: `hsl(210, 100%, 50%)`
 - **HEX**: `#0078FF`
 - **Uso**: Color de acento principal para elementos interactivos clave y puntos focales.

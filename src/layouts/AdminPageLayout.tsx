@@ -23,7 +23,7 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
 }) => {
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 py-6">
+      <div className="w-full px-2 py-6">
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>

@@ -29,9 +29,9 @@ const AdminSubMenu: React.FC<AdminSubMenuProps> = ({
   }
   
   return (
-    <div className={cn("w-full border-b mb-4 bg-background/95 backdrop-blur-sm sticky top-[57px] z-30", className)}>
-      <div className="container mx-auto py-1">
-        <div className="flex overflow-x-auto hide-scrollbar gap-1 justify-start">
+    <div className={cn("w-full border-b bg-background/95 backdrop-blur-sm sticky top-[49px] z-30", className)}>
+      <div className="mx-auto">
+        <div className="flex overflow-x-auto hide-scrollbar gap-1">
           {items.map((item) => {
             const isActive = currentPath.includes(`${baseRoute}/${item.id}`);
             const path = item.path;
@@ -44,7 +44,7 @@ const AdminSubMenu: React.FC<AdminSubMenuProps> = ({
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md whitespace-nowrap",
                   "hover:bg-accent/50 transition-colors",
-                  isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
+                  isActive ? "bg-blue-600/10 text-blue-600" : "text-muted-foreground"
                 )}
               >
                 <Icon className="h-4 w-4" />

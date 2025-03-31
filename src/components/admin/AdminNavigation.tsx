@@ -165,10 +165,10 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => 
   
   return (
     <>
-      <div className="w-full border-b mb-0 sticky top-0 bg-background/95 backdrop-blur-sm z-20">
-        <div className="container mx-auto py-2">
+      <div className="w-full border-b sticky top-0 bg-background/95 backdrop-blur-sm z-20">
+        <div className="mx-auto">
           {/* Main Categories Navigation */}
-          <div className="flex flex-nowrap overflow-x-auto hide-scrollbar md:overflow-visible md:flex-wrap gap-1 justify-center md:justify-start">
+          <div className="flex flex-nowrap overflow-x-auto hide-scrollbar md:overflow-visible md:flex-wrap gap-1">
             {adminCategories.map((item) => (
               <Link 
                 key={item.path}

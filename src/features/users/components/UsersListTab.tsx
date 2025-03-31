@@ -70,7 +70,7 @@ export const UsersListTab: React.FC = () => {
   const getRoleBadge = (role: string) => {
     switch(role) {
       case 'admin':
-        return <Badge className="bg-blue-500">Administrador</Badge>;
+        return <Badge className="bg-blue-600">Administrador</Badge>;
       case 'instructor':
         return <Badge className="bg-green-500">Instructor</Badge>;
       case 'student':
@@ -80,7 +80,7 @@ export const UsersListTab: React.FC = () => {
     }
   };
   
-  const emptyState = (
+  const EmptyState = () => (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <UserCircle className="h-12 w-12 text-muted-foreground mb-4" />
       <h3 className="text-lg font-medium mb-2">No se encontraron usuarios</h3>
@@ -92,7 +92,7 @@ export const UsersListTab: React.FC = () => {
         Añadir Usuario
       </Button>
     </div>
-  ) as React.ReactNode;
+  );
   
   return (
     <div className="space-y-4">
@@ -174,7 +174,7 @@ export const UsersListTab: React.FC = () => {
               </TableBody>
             </Table>
           ) : (
-            emptyState
+            <EmptyState />
           )}
         </CardContent>
         <CardFooter className="flex justify-between py-3">
