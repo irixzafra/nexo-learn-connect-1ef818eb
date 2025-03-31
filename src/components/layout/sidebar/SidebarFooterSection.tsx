@@ -13,6 +13,7 @@ import { Globe, Users } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { UserMenu } from '../header/UserMenu';
 import { ModeToggle } from '@/components/ui/mode-toggle';
+import { Switch } from '@/components/ui/switch';
 
 // Types for SidebarFooterSection
 interface SidebarFooterSectionProps {
@@ -51,16 +52,16 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   };
 
   return (
-    <div className="mt-auto space-y-2">
-      <div className="flex items-center justify-between gap-2 px-2 py-4">
-        {/* Language Selector - Icon only */}
+    <div className="mt-auto">
+      {/* Actions Row - Contains Language, Role, Theme toggle */}
+      <div className={`flex ${isCollapsed ? 'flex-col' : 'items-center justify-around'} gap-2 p-2 mb-3 border-t pt-4`}>
+        {/* Language Selector */}
         <Tooltip>
           <TooltipTrigger asChild>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                  <Globe className="h-4 w-4" />
-                  <span className="sr-only">Cambiar idioma</span>
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-secondary/20">
+                  <Globe className="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align={isCollapsed ? "center" : "start"} side={isCollapsed ? "right" : "top"}>
@@ -78,11 +79,11 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
             </DropdownMenu>
           </TooltipTrigger>
           <TooltipContent side={isCollapsed ? "right" : "bottom"}>
-            <p>Cambiar idioma</p>
+            <p>Idioma</p>
           </TooltipContent>
         </Tooltip>
         
-        {/* Role Switcher - Only for admins - Icon only */}
+        {/* Role Switcher - Only for admins */}
         {userRole === 'admin' && (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -91,10 +92,9 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-8 w-8 rounded-full"
+                    className="h-9 w-9 rounded-full hover:bg-secondary/20"
                   >
-                    <Users className="h-4 w-4" />
-                    <span className="sr-only">Vista previa como otro rol</span>
+                    <Users className="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align={isCollapsed ? "center" : "end"} side={isCollapsed ? "right" : "top"}>
@@ -111,7 +111,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
               </DropdownMenu>
             </TooltipTrigger>
             <TooltipContent side={isCollapsed ? "right" : "bottom"}>
-              <p>Vista previa como otro rol</p>
+              <p>Cambiar rol</p>
             </TooltipContent>
           </Tooltip>
         )}
