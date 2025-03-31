@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { useFeatureFlags } from '@/contexts/features';
 import { UserRoleType } from '@/types/auth';
-import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { Separator } from '@/components/ui/separator';
 import SidebarNavItem from './SidebarNavItem';
 import SidebarNavSection from './SidebarNavSection';
