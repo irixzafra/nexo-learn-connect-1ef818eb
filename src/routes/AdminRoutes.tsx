@@ -1,167 +1,48 @@
-import React, { useState, useEffect } from 'react';
+
+import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import AppLayout from '@/layouts/AppLayout';
-import AdminDashboard from '@/pages/admin/dashboard';
-import AdminCourses from '@/pages/admin/courses/AdminCourses';
-import AdminCourseDetail from '@/pages/admin/courses/AdminCourseDetail';
-import SystemSettings from '@/pages/admin/SystemSettings';
-import CategoryManagement from '@/pages/admin/CategoryManagement';
-import UserManagement from '@/pages/admin/UserManagement';
-import RoleManagement from '@/pages/admin/RoleManagement';
-import TestDataManagement from '@/pages/admin/TestDataManagement';
-import AdminInstructors from '@/pages/admin/instructors/AdminInstructors';
-import AuditLog from '@/pages/admin/audit/AuditLog';
-import AccessControl from '@/pages/admin/access/AccessControl';
-import { Navigate } from 'react-router-dom';
-import AdminNavigation from '@/components/admin/AdminNavigation';
-import ContentManagement from '@/pages/admin/content/ContentManagement';
+import AdminLayout from '@/layouts/AdminLayout';
+import Dashboard from '@/pages/admin/Dashboard';
+import UserManagement from '@/pages/admin/users/UserManagement';
+import RoleManagement from '@/pages/admin/roles/RoleManagement';
+import CourseManagement from '@/pages/admin/courses/CourseManagement';
+import EnrollmentManagement from '@/pages/admin/enrollments/EnrollmentManagement';
+import TestDataGenerator from '@/pages/admin/data/TestDataGenerator';
 import PageManagement from '@/pages/admin/pages/PageManagement';
 import CreatePage from '@/pages/admin/pages/CreatePage';
 import EditPage from '@/pages/admin/pages/EditPage';
-
-const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [tabNavigationEnabled, setTabNavigationEnabled] = useState(true);
-  
-  useEffect(() => {
-    const checkLocalStorage = () => {
-      const storedValue = localStorage.getItem('tabNavigationEnabled');
-      if (storedValue !== null) {
-        setTabNavigationEnabled(storedValue === 'true');
-      }
-    };
-    
-    checkLocalStorage();
-    
-    window.addEventListener('storage', checkLocalStorage);
-    
-    return () => {
-      window.removeEventListener('storage', checkLocalStorage);
-    };
-  }, []);
-  
-  return (
-    <AppLayout>
-      <AdminNavigation enabled={tabNavigationEnabled} />
-      {children}
-    </AppLayout>
-  );
-};
+import AIServicesPage from '@/pages/admin/ai/AIServicesPage';
 
 const AdminRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="dashboard" element={
-        <AdminLayout>
-          <AdminDashboard />
-        </AdminLayout>
-      } />
-      
-      <Route path="users" element={
-        <AdminLayout>
-          <UserManagement />
-        </AdminLayout>
-      } />
-      <Route path="roles" element={
-        <AdminLayout>
-          <RoleManagement />
-        </AdminLayout>
-      } />
-      
-      <Route path="courses" element={
-        <AdminLayout>
-          <AdminCourses />
-        </AdminLayout>
-      } />
-      <Route path="courses/:courseId" element={
-        <AdminLayout>
-          <AdminCourseDetail />
-        </AdminLayout>
-      } />
-      <Route path="instructors" element={
-        <AdminLayout>
-          <AdminInstructors />
-        </AdminLayout>
-      } />
-      <Route path="learning-paths" element={
-        <AdminLayout>
-          <Navigate to="/admin/courses" replace />
-        </AdminLayout>
-      } />
-      
-      <Route path="content" element={
-        <AdminLayout>
-          <ContentManagement />
-        </AdminLayout>
-      } />
-      <Route path="content/categories" element={
-        <AdminLayout>
-          <CategoryManagement />
-        </AdminLayout>
-      } />
-      
-      <Route path="billing" element={
-        <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
-        </AdminLayout>
-      } />
-      <Route path="billing/payments" element={
-        <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
-        </AdminLayout>
-      } />
-      <Route path="billing/subscriptions" element={
-        <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
-        </AdminLayout>
-      } />
-      <Route path="billing/analytics" element={
-        <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
-        </AdminLayout>
-      } />
-      
-      <Route path="test-data" element={
-        <AdminLayout>
-          <TestDataManagement />
-        </AdminLayout>
-      } />
-      <Route path="audit-log" element={
-        <AdminLayout>
-          <AuditLog />
-        </AdminLayout>
-      } />
-      <Route path="data-analytics" element={
-        <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
-        </AdminLayout>
-      } />
-      
-      <Route path="settings" element={
-        <AdminLayout>
-          <SystemSettings />
-        </AdminLayout>
-      } />
-      <Route path="settings/pages" element={
-        <AdminLayout>
-          <PageManagement />
-        </AdminLayout>
-      } />
-      <Route path="settings/pages/create" element={
-        <AdminLayout>
-          <CreatePage />
-        </AdminLayout>
-      } />
-      <Route path="settings/pages/edit/:id" element={
-        <AdminLayout>
-          <EditPage />
-        </AdminLayout>
-      } />
-      
-      <Route path="*" element={
-        <AdminLayout>
-          <Navigate to="/admin/dashboard" replace />
-        </AdminLayout>
-      } />
+      <Route element={<AdminLayout />}>
+        {/* Dashboard */}
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        
+        {/* User Management */}
+        <Route path="/users" element={<UserManagement />} />
+        <Route path="/roles" element={<RoleManagement />} />
+        
+        {/* Course Management */}
+        <Route path="/courses" element={<CourseManagement />} />
+        <Route path="/enrollments" element={<EnrollmentManagement />} />
+        
+        {/* Content Management */}
+        <Route path="/settings/pages" element={<PageManagement />} />
+        <Route path="/settings/pages/create" element={<CreatePage />} />
+        <Route path="/settings/pages/:id" element={<EditPage />} />
+        
+        {/* AI Services */}
+        <Route path="/ai/services" element={<AIServicesPage />} />
+        
+        {/* Test Data */}
+        <Route path="/data/generate" element={<TestDataGenerator />} />
+        
+        {/* Default redirect */}
+        <Route path="*" element={<Dashboard />} />
+      </Route>
     </Routes>
   );
 };

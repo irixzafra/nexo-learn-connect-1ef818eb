@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,6 @@ const LandingNav: React.FC = () => {
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Get user initials for avatar fallback
   const getUserInitials = () => {
     if (!profile?.full_name) return 'U';
     
@@ -80,8 +78,15 @@ const LandingNav: React.FC = () => {
           </Link>
           
           <div className="flex items-center gap-4">
-            {/* Desktop menu */}
             <div className="hidden md:flex items-center space-x-6" role="menubar">
+              <Link 
+                to="/landing" 
+                className="text-base font-medium hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md px-2 py-1"
+                role="menuitem"
+                aria-label="Ver landing page"
+              >
+                Inicio
+              </Link>
               <Link 
                 to="/courses" 
                 className="text-base font-medium hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md px-2 py-1"
@@ -169,7 +174,6 @@ const LandingNav: React.FC = () => {
               </div>
             )}
             
-            {/* Mobile menu button */}
             <Button 
               variant="ghost" 
               size="icon" 
@@ -183,7 +187,6 @@ const LandingNav: React.FC = () => {
           </div>
         </div>
         
-        {/* Mobile menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
@@ -194,6 +197,16 @@ const LandingNav: React.FC = () => {
               className="md:hidden overflow-hidden border-t"
             >
               <div className="px-4 py-4 flex flex-col space-y-4">
+                <motion.div variants={itemVariants}>
+                  <Link 
+                    to="/landing" 
+                    className="flex w-full py-2 text-base font-medium hover:text-primary transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <BookOpen className="mr-2 h-5 w-5" />
+                    Inicio
+                  </Link>
+                </motion.div>
                 <motion.div variants={itemVariants}>
                   <Link 
                     to="/courses" 
