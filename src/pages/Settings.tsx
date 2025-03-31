@@ -49,30 +49,30 @@ const Settings: React.FC = () => {
         <p className="text-muted-foreground">Personaliza tu experiencia en la plataforma</p>
       </div>
       
-      <TabsList className="w-full justify-start mb-6 bg-muted/50 p-1 overflow-x-auto flex gap-1">
-        <TabsTrigger value="general" className="flex items-center gap-2">
-          <Monitor className="h-5 w-5" />
-          <span>General</span>
-        </TabsTrigger>
-        <TabsTrigger value="notifications" className="flex items-center gap-2">
-          <BellRing className="h-5 w-5" />
-          <span>Notificaciones</span>
-        </TabsTrigger>
-        <TabsTrigger value="account" className="flex items-center gap-2">
-          <User className="h-5 w-5" />
-          <span>Cuenta</span>
-        </TabsTrigger>
-        <TabsTrigger value="security" className="flex items-center gap-2">
-          <LockKeyhole className="h-5 w-5" />
-          <span>Seguridad</span>
-        </TabsTrigger>
-        <TabsTrigger value="language" className="flex items-center gap-2">
-          <Globe className="h-5 w-5" />
-          <span>Idioma</span>
-        </TabsTrigger>
-      </TabsList>
-      
       <Tabs defaultValue="general" className="w-full">
+        <TabsList className="w-full justify-start mb-6 bg-muted/50 p-1 overflow-x-auto flex gap-1">
+          <TabsTrigger value="general" className="flex items-center gap-2">
+            <Monitor className="h-5 w-5" />
+            <span>General</span>
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="flex items-center gap-2">
+            <BellRing className="h-5 w-5" />
+            <span>Notificaciones</span>
+          </TabsTrigger>
+          <TabsTrigger value="account" className="flex items-center gap-2">
+            <User className="h-5 w-5" />
+            <span>Cuenta</span>
+          </TabsTrigger>
+          <TabsTrigger value="security" className="flex items-center gap-2">
+            <LockKeyhole className="h-5 w-5" />
+            <span>Seguridad</span>
+          </TabsTrigger>
+          <TabsTrigger value="language" className="flex items-center gap-2">
+            <Globe className="h-5 w-5" />
+            <span>Idioma</span>
+          </TabsTrigger>
+        </TabsList>
+        
         <TabsContent value="general">
           <Card>
             <CardHeader>

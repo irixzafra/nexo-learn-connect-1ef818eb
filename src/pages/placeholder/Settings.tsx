@@ -1,8 +1,9 @@
+
 import React, { useState } from "react";
 import AppLayout from "@/layouts/AppLayout";
 import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
