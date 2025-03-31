@@ -9,10 +9,11 @@ import {
   DropdownMenuItem 
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Globe, UserRound, GraduationCap } from 'lucide-react';
+import { Globe, UserRound, GraduationCap, Bell } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { UserMenu } from '../header/UserMenu';
 import { ModeToggle } from '@/components/ui/mode-toggle';
+import { NotificationIndicator } from '@/components/notifications/NotificationIndicator';
 
 // Types for SidebarFooterSection
 interface SidebarFooterSectionProps {
@@ -121,6 +122,24 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
               </TooltipContent>
             </Tooltip>
           )}
+          
+          {/* Notifications */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full relative"
+                onClick={() => window.location.href = '/notifications'}
+              >
+                <Bell className="h-4 w-4 text-muted-foreground" />
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] flex items-center justify-center text-white">3</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side={isCollapsed ? "right" : "bottom"}>
+              <p>Notificaciones</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
         
         {/* Theme Toggle */}
