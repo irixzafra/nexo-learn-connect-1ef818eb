@@ -1,8 +1,21 @@
 
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import SectionPageLayout, { PageSection } from '@/layouts/SectionPageLayout';
-import { Settings, Shield, Bell, Palette, Database, FileText, ToggleLeft } from 'lucide-react';
+import AdminPageLayout from '@/layouts/AdminPageLayout';
+import { AdminTabItem } from '@/components/shared/AdminNavTabs';
+import { 
+  Settings, 
+  Shield, 
+  Bell, 
+  Palette, 
+  Database, 
+  FileText, 
+  ToggleLeft,
+  Server,
+  Globe,
+  Info,
+  Users,
+  Lock
+} from 'lucide-react';
 import { AppearanceSettings } from '@/features/admin/components/settings/AppearanceSettings';
 import { SecuritySettings } from '@/features/admin/components/settings/SecuritySettings';
 import { NotificationSettings } from '@/features/admin/components/settings/NotificationSettings';
@@ -10,12 +23,11 @@ import { ContentSettings } from '@/features/admin/components/settings/ContentSet
 import { TestDataSettings } from '@/features/admin/components/settings/TestDataSettings';
 import { OnboardingSettings } from '@/features/admin/components/settings/OnboardingSettings';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
-
-type SettingsTab = 'general' | 'appearance' | 'security' | 'notifications' | 'content' | 'test-data' | 'onboarding';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const SystemSettings: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<SettingsTab>('general');
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
+  const [isSaving, setIsSaving] = useState(false);
   
   const handleToggleFeature = (feature: keyof FeaturesConfig, value: boolean) => {
     setFeaturesConfig(prev => ({
@@ -23,102 +35,205 @@ const SystemSettings: React.FC = () => {
       [feature]: value
     }));
   };
+
+  // Crear las tabs para el AdminPageLayout
+  const tabs: AdminTabItem[] = [
+    {
+      value: 'general',
+      label: 'General',
+      icon: <Settings className="h-4 w-4" />,
+      content: (
+        <Card>
+          <CardHeader>
+            <CardTitle>Configuración General</CardTitle>
+            <CardDescription>
+              Configuración principal del sistema, incluida la información del sitio y preferencias globales.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="h-64 flex items-center justify-center bg-muted/40 rounded-md">
+              <div className="text-center">
+                <Server className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+                <p>Configuración general en desarrollo</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    },
+    {
+      value: 'appearance',
+      label: 'Apariencia',
+      icon: <Palette className="h-4 w-4" />,
+      content: (
+        <AppearanceSettings 
+          featuresConfig={featuresConfig}
+          onToggleFeature={handleToggleFeature}
+          isLoading={isSaving}
+        />
+      )
+    },
+    {
+      value: 'security',
+      label: 'Seguridad',
+      icon: <Shield className="h-4 w-4" />,
+      content: (
+        <SecuritySettings 
+          featuresConfig={featuresConfig}
+          onToggleFeature={handleToggleFeature}
+          isLoading={isSaving}
+        />
+      )
+    },
+    {
+      value: 'notifications',
+      label: 'Notificaciones',
+      icon: <Bell className="h-4 w-4" />,
+      content: (
+        <NotificationSettings 
+          featuresConfig={featuresConfig}
+          onToggleFeature={handleToggleFeature}
+          isLoading={isSaving}
+        />
+      )
+    },
+    {
+      value: 'content',
+      label: 'Contenido',
+      icon: <FileText className="h-4 w-4" />,
+      content: (
+        <ContentSettings 
+          featuresConfig={featuresConfig}
+          onToggleFeature={handleToggleFeature}
+          isLoading={isSaving}
+        />
+      )
+    },
+    {
+      value: 'test-data',
+      label: 'Datos de Prueba',
+      icon: <Database className="h-4 w-4" />,
+      content: (
+        <TestDataSettings 
+          featuresConfig={featuresConfig}
+          onToggleFeature={handleToggleFeature}
+          isLoading={isSaving}
+        />
+      )
+    },
+    {
+      value: 'onboarding',
+      label: 'Onboarding',
+      icon: <ToggleLeft className="h-4 w-4" />,
+      content: (
+        <OnboardingSettings 
+          featuresConfig={featuresConfig}
+          onToggleFeature={handleToggleFeature}
+          isLoading={isSaving}
+        />
+      )
+    },
+    {
+      value: 'access',
+      label: 'Acceso',
+      icon: <Lock className="h-4 w-4" />,
+      content: (
+        <Card>
+          <CardHeader>
+            <CardTitle>Control de Acceso</CardTitle>
+            <CardDescription>
+              Configuración de políticas de acceso y permisos del sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="h-64 flex items-center justify-center bg-muted/40 rounded-md">
+              <div className="text-center">
+                <Users className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+                <p>Control de acceso en desarrollo</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    },
+    {
+      value: 'localization',
+      label: 'Localización',
+      icon: <Globe className="h-4 w-4" />,
+      content: (
+        <Card>
+          <CardHeader>
+            <CardTitle>Configuración de Localización</CardTitle>
+            <CardDescription>
+              Administra idiomas, formatos regionales y traducciones
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="h-64 flex items-center justify-center bg-muted/40 rounded-md">
+              <div className="text-center">
+                <Globe className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+                <p>Configuración de localización en desarrollo</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    },
+    {
+      value: 'about',
+      label: 'Acerca de',
+      icon: <Info className="h-4 w-4" />,
+      content: (
+        <Card>
+          <CardHeader>
+            <CardTitle>Acerca del Sistema</CardTitle>
+            <CardDescription>
+              Información sobre la versión actual y licencias
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-medium mb-2">Información del Sistema</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Versión</span>
+                    <span className="font-medium">1.0.0</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Entorno</span>
+                    <span className="font-medium">Producción</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Última actualización</span>
+                    <span className="font-medium">20 Oct 2023</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-medium mb-2">Equipo de Desarrollo</h3>
+                <p className="text-muted-foreground mb-2">
+                  Desarrollado con ❤️ por el equipo de Nexo
+                </p>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Soporte</span>
+                  <span className="font-medium">soporte@nexo.com</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    }
+  ];
   
   return (
-    <SectionPageLayout
-      header={{
-        title: "Configuración del Sistema",
-        description: "Administra las configuraciones y preferencias del sistema."
-      }}
-    >
-      <PageSection variant="card">
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as SettingsTab)} className="w-full">
-          <TabsList className="mb-6 grid grid-cols-3 md:grid-cols-7">
-            <TabsTrigger value="general" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              <span className="hidden md:inline">General</span>
-            </TabsTrigger>
-            <TabsTrigger value="appearance" className="flex items-center gap-2">
-              <Palette className="h-4 w-4" />
-              <span className="hidden md:inline">Apariencia</span>
-            </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              <span className="hidden md:inline">Seguridad</span>
-            </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center gap-2">
-              <Bell className="h-4 w-4" />
-              <span className="hidden md:inline">Notificaciones</span>
-            </TabsTrigger>
-            <TabsTrigger value="content" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span className="hidden md:inline">Contenido</span>
-            </TabsTrigger>
-            <TabsTrigger value="test-data" className="flex items-center gap-2">
-              <Database className="h-4 w-4" />
-              <span className="hidden md:inline">Datos de Prueba</span>
-            </TabsTrigger>
-            <TabsTrigger value="onboarding" className="flex items-center gap-2">
-              <ToggleLeft className="h-4 w-4" />
-              <span className="hidden md:inline">Onboarding</span>
-            </TabsTrigger>
-          </TabsList>
-          
-          {/* Contenido de cada tab */}
-          <TabsContent value="general" className="space-y-4">
-            <h3 className="text-xl font-medium">Configuración General</h3>
-            <p className="text-muted-foreground">
-              Configuración principal del sistema, incluida la información del sitio y preferencias globales.
-            </p>
-            <div className="h-64 flex items-center justify-center bg-muted/40 rounded-md">
-              <p className="text-muted-foreground">Contenido de configuración general en desarrollo</p>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="appearance">
-            <AppearanceSettings 
-              featuresConfig={featuresConfig}
-              onToggleFeature={handleToggleFeature}
-            />
-          </TabsContent>
-          
-          <TabsContent value="security">
-            <SecuritySettings 
-              featuresConfig={featuresConfig}
-              onToggleFeature={handleToggleFeature}
-            />
-          </TabsContent>
-          
-          <TabsContent value="notifications">
-            <NotificationSettings 
-              featuresConfig={featuresConfig}
-              onToggleFeature={handleToggleFeature}
-            />
-          </TabsContent>
-          
-          <TabsContent value="content">
-            <ContentSettings 
-              featuresConfig={featuresConfig}
-              onToggleFeature={handleToggleFeature}
-            />
-          </TabsContent>
-          
-          <TabsContent value="test-data">
-            <TestDataSettings 
-              featuresConfig={featuresConfig}
-              onToggleFeature={handleToggleFeature}
-            />
-          </TabsContent>
-          
-          <TabsContent value="onboarding">
-            <OnboardingSettings 
-              featuresConfig={featuresConfig}
-              onToggleFeature={handleToggleFeature}
-            />
-          </TabsContent>
-        </Tabs>
-      </PageSection>
-    </SectionPageLayout>
+    <AdminPageLayout
+      title="Configuración del Sistema"
+      subtitle="Administra las configuraciones y preferencias del sistema"
+      tabs={tabs}
+      defaultTabValue="general"
+    />
   );
 };
 
