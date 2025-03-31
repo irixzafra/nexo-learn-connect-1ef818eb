@@ -13,7 +13,8 @@ import {
   History, 
   FileText,
   Route,
-  LineChart
+  LineChart,
+  Palette
 } from 'lucide-react';
 import { SidebarMenu } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
@@ -78,6 +79,14 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           to="/admin/learning-paths"
           icon={Route}
           label="Rutas de Aprendizaje"
+          isCollapsed={isCollapsed}
+        />
+        
+        {/* Design System */}
+        <MenuItem
+          to="/admin/design"
+          icon={Palette}
+          label="Diseño"
           isCollapsed={isCollapsed}
         />
         

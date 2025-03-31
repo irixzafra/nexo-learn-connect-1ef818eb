@@ -11,6 +11,7 @@ import EditPage from '@/pages/admin/pages/EditPage';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AdminNavigation from '@/components/admin/AdminNavigation';
 import AppLayout from '@/layouts/AppLayout';
+import DesignSystem from '@/pages/admin/design/DesignSystem';
 
 // User management components
 import { UserManagementTabs } from '@/features/users/UserManagementTabs';
@@ -103,6 +104,10 @@ const AdminRoutes: React.FC = () => {
         {/* Course Management */}
         <Route path="/courses" element={<CourseManagement />} />
         <Route path="/enrollments" element={<EnrollmentManagement />} />
+        
+        {/* Design System */}
+        <Route path="/design" element={<DesignSystem />} />
+        <Route path="/design/:tab" element={<DesignSystem />} />
         
         {/* Content Management */}
         <Route path="/settings/pages" element={<PageManagement />} />

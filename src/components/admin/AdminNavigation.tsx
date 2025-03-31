@@ -8,7 +8,8 @@ import {
   BookOpen, 
   CreditCard,
   Settings,
-  FileText
+  FileText,
+  Palette
 } from 'lucide-react';
 
 // Main navigation categories
@@ -40,6 +41,13 @@ const adminCategories = [
     label: "Finanzas", 
     path: "/admin/billing",
     dataTag: "admin-nav-finances"
+  },
+  { 
+    id: 'design',
+    icon: Palette,
+    label: "Diseño",
+    path: "/admin/design",
+    dataTag: "admin-nav-design"  
   },
   { 
     id: 'pages',

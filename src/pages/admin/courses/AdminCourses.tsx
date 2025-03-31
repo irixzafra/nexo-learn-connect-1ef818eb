@@ -200,7 +200,7 @@ const AllCoursesTab: React.FC = () => {
     window.open(`/courses/${course.slug || course.id}`, '_blank');
   };
 
-  // This function is typed properly as a component rather than a render function
+  // This function is typed properly as a component
   const CourseForm: React.FC<{ data: Course | null; onChange: (data: Course) => void }> = ({ data, onChange }) => {
     return (
       <div className="space-y-4">
@@ -352,7 +352,7 @@ const AllCoursesTab: React.FC = () => {
     })
   ];
 
-  // Fix for Error 1: Define emptyState as proper ReactNode
+  // Define emptyState as proper ReactNode
   const emptyStateComponent: ReactNode = (
     <div className="flex flex-col items-center justify-center text-muted-foreground py-8">
       <BookOpen className="h-8 w-8 mb-2" />
@@ -386,7 +386,7 @@ const AllCoursesTab: React.FC = () => {
         />
       </Card>
 
-      {/* Fix for Error 2: Provide the component directly as children */}
+      {/* Pass the CourseForm component with the required props */}
       <EntityDrawer<Course>
         title="Editar Curso"
         description="Modifica los detalles del curso"
@@ -395,7 +395,7 @@ const AllCoursesTab: React.FC = () => {
         onSave={handleSaveCourse}
         entity={selectedCourse}
       >
-        <CourseForm />
+        {(props) => <CourseForm {...props} />}
       </EntityDrawer>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
