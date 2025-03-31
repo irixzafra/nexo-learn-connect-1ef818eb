@@ -55,10 +55,6 @@ const SystemSettings: React.FC = () => {
     }));
   };
 
-  const goToPageManagement = () => {
-    navigate('/admin/settings/pages');
-  };
-
   const tabs: AdminTabItem[] = [
     {
       value: 'general',
@@ -106,36 +102,8 @@ const SystemSettings: React.FC = () => {
         onToggleFeature={handleToggleFeature}
         isLoading={isSaving}
       />
-    },
-    {
-      value: 'pages',
-      label: 'Páginas',
-      icon: <FileText className="h-4 w-4" />,
-      dataTag: "settings-tab-pages",
-      content: (
-        <Card>
-          <CardHeader>
-            <CardTitle>Gestión de Páginas</CardTitle>
-            <CardDescription>
-              Administra las páginas públicas del sitio
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground mb-4">
-              Crea, edita y organiza todas las páginas del sitio. Puedes gestionar cualquier página incluyendo
-              la página de inicio, páginas legales y páginas personalizadas.
-            </p>
-            
-            <div className="flex justify-end">
-              <Button onClick={goToPageManagement}>
-                <FileUp className="mr-2 h-4 w-4" />
-                Administrar Páginas
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )
     }
+    // "Páginas" tab removed as requested
   ];
   
   return (

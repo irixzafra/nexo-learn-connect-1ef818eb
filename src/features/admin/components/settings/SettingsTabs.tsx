@@ -20,7 +20,6 @@ import {
   Users,
   Code,
   LayoutDashboard,
-  FileText,
   Globe,
   ToggleLeft,
   Wrench,
@@ -87,7 +86,7 @@ const SettingsTabs: React.FC = () => {
     {
       label: 'Contenido',
       value: 'content',
-      icon: <FileText className="h-4 w-4" />,
+      icon: <PaintBucket className="h-4 w-4" />,
       content: <ContentSettings 
         featuresConfig={featuresConfig}
         onToggleFeature={handleToggleFeature}

@@ -47,10 +47,7 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ userRole, className }) =>
     { icon: CreditCard, label: 'Facturación', href: '/admin/billing' },
     { icon: Folder, label: 'Contenido', href: '/admin/content' },
     { icon: Database, label: 'Datos', href: '/admin/test-data' },
-    { icon: History, label: 'Auditoría', href: '/admin/audit-log' },
-    { icon: Shield, label: 'Roles', href: '/admin/roles' },
-    { icon: Route, label: 'Rutas', href: '/admin/learning-paths' },
-    { icon: LineChart, label: 'Analíticas', href: '/admin/analytics' },
+    { icon: FileText, label: 'Páginas', href: '/admin/settings/pages' },
     { icon: Settings, label: 'Config', href: '/admin/settings' }
   ];
   

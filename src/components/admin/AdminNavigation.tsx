@@ -81,19 +81,19 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => 
     <div className="w-full border-b mb-6 sticky top-0 bg-background z-10">
       <div className="container mx-auto py-2">
         {/* Main Categories Navigation */}
-        <div className="flex flex-wrap gap-1 justify-center md:justify-start">
+        <div className="flex flex-nowrap overflow-x-auto md:overflow-visible md:flex-wrap gap-1 justify-center md:justify-start">
           {adminCategories.map((item) => (
             <Link 
               key={item.path}
               to={item.path}
               data-tag={item.dataTag}
               className={cn(
-                "flex items-center gap-1 px-3 py-2 rounded-md transition-colors",
+                "flex flex-shrink-0 items-center gap-1 px-3 py-2 rounded-md transition-colors",
                 "hover:bg-accent text-sm font-medium",
                 path.includes(item.id) ? "bg-secondary" : ""
               )}
             >
-              <item.icon className="h-4 w-4 md:mr-1" />
+              <item.icon className="h-4 w-4" />
               <span className="hidden sm:inline">{item.label}</span>
             </Link>
           ))}
