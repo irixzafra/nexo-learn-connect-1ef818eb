@@ -6,12 +6,10 @@ import {
   TooltipContent,
   TooltipTrigger 
 } from '@/components/ui/tooltip';
-import { UserRoleType, toUserRoleType } from '@/types/auth';
-import { AdminMenuItem } from '@/components/ui/admin-menu/AdminMenu';
+import { UserRoleType } from '@/types/auth';
 import { 
   Home, 
   Compass, 
-  Users, 
   MessageSquare, 
   User, 
   Phone,
@@ -20,7 +18,7 @@ import {
   GraduationCap,
   ExternalLink
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 interface SidebarMainNavigationProps {
   effectiveRole: UserRoleType;
@@ -136,17 +134,20 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, badge, isColla
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <Link 
+          <NavLink 
             to={to}
-            className="flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent transition-colors mx-auto"
+            className={({ isActive }) => cn(
+              "flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent transition-colors mx-auto relative",
+              isActive && "bg-accent text-accent-foreground"
+            )}
           >
-            <Icon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <Icon className="h-5 w-5" />
             {badge && (
               <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-primary text-[10px] font-medium text-primary-foreground flex items-center justify-center">
                 {badge > 99 ? '99+' : badge}
               </span>
             )}
-          </Link>
+          </NavLink>
         </TooltipTrigger>
         <TooltipContent side="right">
           <p>{label}</p>
@@ -156,18 +157,21 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, badge, isColla
   }
 
   return (
-    <Link
+    <NavLink
       to={to}
-      className="flex items-center py-2 px-3 rounded-md text-sm hover:bg-accent transition-colors"
+      className={({ isActive }) => cn(
+        "flex items-center py-2 px-3 rounded-md text-sm hover:bg-accent transition-colors",
+        isActive && "bg-accent text-accent-foreground"
+      )}
     >
-      <Icon className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" />
+      <Icon className="mr-2 h-5 w-5" />
       <span>{label}</span>
       {badge && (
         <span className="ml-auto bg-primary text-primary-foreground text-xs rounded-full h-5 min-w-5 px-1 flex items-center justify-center">
           {badge > 99 ? '99+' : badge}
         </span>
       )}
-    </Link>
+    </NavLink>
   );
 };
 
