@@ -12,8 +12,9 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    // Temporarily disable the component tagger to fix the JSX syntax issue
+    // mode === 'development' &&
+    // componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {

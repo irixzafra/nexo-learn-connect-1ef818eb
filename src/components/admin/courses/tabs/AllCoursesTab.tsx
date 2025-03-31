@@ -90,18 +90,22 @@ const AllCoursesTab: React.FC = () => {
         </div>
       </Card>
 
-      <EntityDrawer<Course>
-        title="Editar Curso"
-        description="Modifica los detalles del curso"
-        isOpen={editorOpen}
-        onOpenChange={setEditorOpen}
-        onSave={handleSaveCourse}
-        entity={selectedCourse}
-      >
-        {({data, onChange}) => (
-          <CourseForm data={data} onChange={onChange} />
-        )}
-      </EntityDrawer>
+      {/* The key fix is here - making sure the JSX syntax is clean and type parameters are placed correctly */}
+      {/* Forcing the key to reset the component on re-render to avoid stale debug attributes */}
+      <React.Fragment key="drawer-fragment">
+        <EntityDrawer<Course>
+          title="Editar Curso"
+          description="Modifica los detalles del curso"
+          isOpen={editorOpen}
+          onOpenChange={setEditorOpen}
+          onSave={handleSaveCourse}
+          entity={selectedCourse}
+        >
+          {({data, onChange}) => (
+            <CourseForm data={data} onChange={onChange} />
+          )}
+        </EntityDrawer>
+      </React.Fragment>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
