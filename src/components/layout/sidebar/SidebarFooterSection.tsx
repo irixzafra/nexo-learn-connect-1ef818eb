@@ -58,9 +58,9 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
         <UserMenu />
       </div>
       
-      {/* Footer Actions - Aligned in a Single Row */}
-      <div className={`flex items-center justify-between gap-1 px-3 py-2 border-t`}>
-        {/* Left grouped buttons */}
+      {/* Footer Actions - Aligned in a Single Row with proper spacing */}
+      <div className={`flex items-center justify-between px-3 py-2 border-t`}>
+        {/* Group left side buttons with consistent spacing */}
         <div className="flex items-center space-x-1">
           {/* Language Selector */}
           <Tooltip>
@@ -85,7 +85,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
                 </DropdownMenuContent>
               </DropdownMenu>
             </TooltipTrigger>
-            <TooltipContent side={isCollapsed ? "right" : "bottom"}>
+            <TooltipContent side={isCollapsed ? "right" : "top"}>
               <p>Idioma</p>
             </TooltipContent>
           </Tooltip>
@@ -104,7 +104,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
                       <GraduationCap className="h-4 w-4 text-muted-foreground" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align={isCollapsed ? "center" : "end"} side={isCollapsed ? "right" : "top"}>
+                  <DropdownMenuContent align={isCollapsed ? "center" : "start"} side={isCollapsed ? "right" : "top"}>
                     {(['admin', 'instructor', 'student', 'sistemas', 'anonimo'] as UserRoleType[]).map((role) => (
                       <DropdownMenuItem 
                         key={role}
@@ -117,7 +117,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TooltipTrigger>
-              <TooltipContent side={isCollapsed ? "right" : "bottom"}>
+              <TooltipContent side={isCollapsed ? "right" : "top"}>
                 <p>Vista como otro rol</p>
               </TooltipContent>
             </Tooltip>
@@ -136,13 +136,13 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
                 <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] flex items-center justify-center text-white">3</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent side={isCollapsed ? "right" : "bottom"}>
+            <TooltipContent side={isCollapsed ? "right" : "top"}>
               <p>Notificaciones</p>
             </TooltipContent>
           </Tooltip>
         </div>
         
-        {/* Theme Toggle */}
+        {/* Theme Toggle - Right side */}
         <ModeToggle />
       </div>
     </div>

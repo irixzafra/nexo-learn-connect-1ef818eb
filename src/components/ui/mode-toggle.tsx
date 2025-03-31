@@ -28,7 +28,7 @@ export function ModeToggle() {
               <span className="sr-only">Cambiar tema</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" side="top">
             <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer">
               <Sun className="mr-2 h-4 w-4" />
               <span>Claro</span>
@@ -43,7 +43,7 @@ export function ModeToggle() {
           </DropdownMenuContent>
         </DropdownMenu>
       </TooltipTrigger>
-      <TooltipContent>
+      <TooltipContent side="top">
         <p>Tema</p>
       </TooltipContent>
     </Tooltip>

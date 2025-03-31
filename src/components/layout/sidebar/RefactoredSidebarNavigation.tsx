@@ -44,7 +44,7 @@ const RefactoredSidebarNavigation: React.FC<SidebarNavigationProps> = ({
   ];
 
   return (
-    <div className="h-full flex flex-col py-4">
+    <div className="h-full flex flex-col py-4 bg-background border-r border-border">
       {/* Logo at the top with full title and subtitle */}
       <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
 

@@ -44,11 +44,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({
         <Link 
           to={disabled ? "#" : to} 
           className={cn(
-            "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-gray-600 dark:text-gray-300 font-medium text-[15px] font-inter transition-all duration-200",
+            "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-gray-500 dark:text-gray-400 font-medium text-[15px] transition-all duration-200",
             isActive ? 
-              "bg-[#E5E7EB] text-gray-900 dark:bg-gray-700 dark:text-white border-l-[3px] border-l-[#0E90F9] pl-[calc(0.75rem-3px)]" : 
-              "hover:bg-[#F3F4F6] dark:hover:bg-gray-800",
-            disabled && "opacity-60 cursor-not-allowed text-[#9CA3AF] dark:text-gray-500 hover:bg-transparent dark:hover:bg-transparent",
+              "bg-primary/10 text-primary border-l-[3px] border-l-primary pl-[calc(0.75rem-3px)]" : 
+              "hover:bg-muted/40 hover:text-foreground",
+            disabled && "opacity-60 cursor-not-allowed hover:bg-transparent",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           )}
           onClick={(e) => {
@@ -67,9 +67,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({
               className={cn(
                 "h-5 w-5 flex-shrink-0", 
                 isActive ? 
-                  "text-gray-900 dark:text-white" : 
-                  "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white",
-                disabled && "text-[#9CA3AF] dark:text-gray-500"
+                  "text-primary" : 
+                  "text-muted-foreground group-hover:text-foreground",
+                disabled && "text-muted-foreground/60"
               )} 
               aria-hidden="true" 
             />
@@ -81,7 +81,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
             </Badge>
           )}
           {!isCollapsed && disabled && (
-            <span className="ml-auto text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">
+            <span className="ml-auto text-xs bg-muted/30 text-muted-foreground px-1.5 py-0.5 rounded">
               Próximamente
             </span>
           )}
