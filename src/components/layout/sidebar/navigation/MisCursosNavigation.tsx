@@ -9,11 +9,11 @@ const MisCursosNavigation: React.FC = () => {
     <NavLink 
       to="/my-courses" 
       className={({ isActive }) => cn(
-        "flex items-center py-2 px-3 rounded-md text-sm hover:bg-accent transition-colors",
-        isActive && "bg-accent text-accent-foreground"
+        "flex items-center py-2 text-sm hover:text-blue-500 transition-colors",
+        isActive ? "text-blue-500" : "text-gray-700"
       )}
     >
-      <BookOpen className="mr-2 h-5 w-5" />
+      <BookOpen className="mr-3 h-5 w-5 text-blue-500" />
       <span>Mis cursos</span>
     </NavLink>
   );

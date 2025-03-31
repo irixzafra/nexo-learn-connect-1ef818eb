@@ -16,7 +16,8 @@ import {
   Shield,
   BookOpen,
   GraduationCap,
-  ExternalLink
+  ExternalLink,
+  Users
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -45,7 +46,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
       "flex-1 overflow-auto",
       isCollapsed ? "px-2" : "px-4"
     )}>
-      <div className="space-y-1 pt-4">
+      <div className="space-y-4 py-4">
         <NavItem 
           to={getHomePath()} 
           icon={Home} 
@@ -61,12 +62,28 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         />
         
         <NavItem 
+          to="/community" 
+          icon={Users} 
+          label="Comunidad" 
+          isCollapsed={isCollapsed} 
+        />
+        
+        <NavItem 
           to="/messages" 
           icon={MessageSquare} 
           label="Mensajes" 
           badge={messagesCount > 0 ? messagesCount : undefined} 
           isCollapsed={isCollapsed} 
         />
+        
+        {effectiveRole === 'admin' && (
+          <NavItem 
+            to="/admin/dashboard" 
+            icon={Shield} 
+            label="Administración" 
+            isCollapsed={isCollapsed} 
+          />
+        )}
         
         {!isAnonymous && (
           <NavItem 
@@ -82,15 +99,6 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             to="/instructor/dashboard" 
             icon={GraduationCap} 
             label="Profesor" 
-            isCollapsed={isCollapsed} 
-          />
-        )}
-        
-        {effectiveRole === 'admin' && (
-          <NavItem 
-            to="/admin/dashboard" 
-            icon={Shield} 
-            label="Administración" 
             isCollapsed={isCollapsed} 
           />
         )}
@@ -137,13 +145,13 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, badge, isColla
           <NavLink 
             to={to}
             className={({ isActive }) => cn(
-              "flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent transition-colors mx-auto relative",
-              isActive && "bg-accent text-accent-foreground"
+              "flex h-10 w-10 items-center justify-center rounded-md relative",
+              isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500"
             )}
           >
             <Icon className="h-5 w-5" />
             {badge && (
-              <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-primary text-[10px] font-medium text-primary-foreground flex items-center justify-center">
+              <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-blue-500 text-[10px] font-medium text-white flex items-center justify-center">
                 {badge > 99 ? '99+' : badge}
               </span>
             )}
@@ -160,14 +168,14 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, badge, isColla
     <NavLink
       to={to}
       className={({ isActive }) => cn(
-        "flex items-center py-2 px-3 rounded-md text-sm hover:bg-accent transition-colors",
-        isActive && "bg-accent text-accent-foreground"
+        "flex items-center py-2 text-sm transition-colors",
+        isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500"
       )}
     >
-      <Icon className="mr-2 h-5 w-5" />
+      <Icon className="mr-3 h-5 w-5 text-blue-500" />
       <span>{label}</span>
       {badge && (
-        <span className="ml-auto bg-primary text-primary-foreground text-xs rounded-full h-5 min-w-5 px-1 flex items-center justify-center">
+        <span className="ml-auto bg-blue-500 text-xs rounded-full h-5 min-w-5 px-1 flex items-center justify-center text-white">
           {badge > 99 ? '99+' : badge}
         </span>
       )}
