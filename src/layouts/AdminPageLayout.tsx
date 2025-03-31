@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import AppLayout from './AppLayout';
 import { Card } from '@/components/ui/card';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import FloatingEditModeToggle from '@/components/admin/FloatingEditModeToggle';
 import AdminSubMenu, { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
 import { useLocation } from 'react-router-dom';
+import { useDesignSystem } from '@/contexts/DesignSystemContext';
 
 interface AdminPageLayoutProps {
   title: string;
@@ -29,6 +30,17 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   baseRoute
 }) => {
   const location = useLocation();
+  const { designFeatureEnabled } = useDesignSystem();
+  
+  // Filtrar submenú según funcionalidades activadas
+  const filteredSubMenuItems = subMenuItems?.filter(item => {
+    // Si el elemento tiene la property designSystem, solo mostrarlo si el designFeatureEnabled está activo
+    if (item.requiresFeature === 'designSystem') {
+      return designFeatureEnabled;
+    }
+    // Por defecto, mostrar todos los elementos que no tienen restricciones
+    return true;
+  });
   
   return (
     <AppLayout>
@@ -48,9 +60,9 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
             )}
           </div>
 
-          {subMenuItems && subMenuItems.length > 0 && (
+          {filteredSubMenuItems && filteredSubMenuItems.length > 0 && (
             <AdminSubMenu 
-              items={subMenuItems} 
+              items={filteredSubMenuItems} 
               baseRoute={baseRoute || location.pathname}
             />
           )}

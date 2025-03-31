@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
@@ -27,69 +27,79 @@ import {
   CreditCard as CreditCardIcon
 } from 'lucide-react';
 import AdminSubMenu, { AdminSubMenuItem } from './AdminSubMenu';
+import { useDesignSystem } from '@/contexts/DesignSystemContext';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
 
 // Main navigation categories
-const adminCategories = [
+const getAllAdminCategories = (designFeatureEnabled: boolean) => [
   { 
     id: 'dashboard',
     icon: LayoutDashboard, 
     label: "Dashboard", 
     path: "/admin/dashboard",
-    dataTag: "admin-nav-dashboard"
+    dataTag: "admin-nav-dashboard",
+    hidden: false
   },
   { 
     id: 'users',
     icon: Users, 
     label: "Usuarios", 
     path: "/admin/users",
-    dataTag: "admin-nav-users"
+    dataTag: "admin-nav-users",
+    hidden: false
   },
   { 
     id: 'courses',
     icon: BookOpen, 
     label: "Cursos", 
     path: "/admin/courses",
-    dataTag: "admin-nav-courses"
+    dataTag: "admin-nav-courses",
+    hidden: false
   },
   { 
     id: 'finances',
     icon: CreditCard, 
     label: "Finanzas", 
     path: "/admin/billing",
-    dataTag: "admin-nav-finances"
+    dataTag: "admin-nav-finances",
+    hidden: false
   },
   { 
     id: 'design',
     icon: Palette,
     label: "Diseño",
     path: "/admin/design",
-    dataTag: "admin-nav-design"  
+    dataTag: "admin-nav-design",
+    hidden: !designFeatureEnabled
   },
   { 
     id: 'pages',
     icon: FileText,
     label: "Páginas",
     path: "/admin/pages",
-    dataTag: "admin-nav-pages"  
+    dataTag: "admin-nav-pages",
+    hidden: false
   },
   { 
     id: 'analytics',
     icon: LineChart,
     label: "Analíticas",
     path: "/admin/analytics",
-    dataTag: "admin-nav-analytics"  
+    dataTag: "admin-nav-analytics",
+    hidden: false
   },
   { 
     id: 'config',
     icon: Settings, 
     label: "Config", 
     path: "/admin/settings",
-    dataTag: "admin-nav-settings"
+    dataTag: "admin-nav-settings",
+    hidden: false
   }
 ];
 
 // Sub-navigation menus for each section
-const subMenus: Record<string, AdminSubMenuItem[]> = {
+const getSubMenus = (designFeatureEnabled: boolean): Record<string, AdminSubMenuItem[]> => ({
   users: [
     { id: 'list', icon: Users, label: 'Lista de Usuarios', path: '/admin/users' },
     { id: 'roles', icon: Users2, label: 'Roles y Permisos', path: '/admin/roles' },
@@ -106,11 +116,11 @@ const subMenus: Record<string, AdminSubMenuItem[]> = {
     { id: 'integrations', icon: Plug, label: 'Integraciones', path: '/admin/settings/integrations' },
     { id: 'database', icon: DatabaseZap, label: 'Base de Datos', path: '/admin/settings/database' },
   ],
-  design: [
+  design: designFeatureEnabled ? [
     { id: 'components', icon: Palette, label: 'Componentes', path: '/admin/design' },
     { id: 'themes', icon: Palette, label: 'Temas', path: '/admin/design/themes' },
     { id: 'templates', icon: FileText, label: 'Plantillas', path: '/admin/design/templates' },
-  ],
+  ] : [],
   analytics: [
     { id: 'overview', icon: LineChart, label: 'Visión General', path: '/admin/analytics' },
     { id: 'users', icon: Users, label: 'Usuarios', path: '/admin/analytics/users' },
@@ -131,7 +141,7 @@ const subMenus: Record<string, AdminSubMenuItem[]> = {
     { id: 'create', icon: FileText, label: 'Crear Página', path: '/admin/pages/create' },
     { id: 'templates', icon: FileText, label: 'Plantillas', path: '/admin/pages/templates' },
   ],
-};
+});
 
 interface AdminNavigationProps {
   enabled?: boolean;
@@ -140,6 +150,17 @@ interface AdminNavigationProps {
 const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => {
   const location = useLocation();
   const path = location.pathname;
+  const { designFeatureEnabled } = useDesignSystem();
+  
+  // Determinar los elementos visibles del menú según las funcionalidades activadas
+  const adminCategories = useMemo(() => {
+    return getAllAdminCategories(designFeatureEnabled).filter(item => !item.hidden);
+  }, [designFeatureEnabled]);
+  
+  // Menús secundarios según funcionalidades habilitadas
+  const subMenus = useMemo(() => {
+    return getSubMenus(designFeatureEnabled);
+  }, [designFeatureEnabled]);
   
   // Determine active section and submenu
   const activeSection = useMemo(() => {
@@ -147,7 +168,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => 
       path.includes(item.id)
     );
     return activeCategory?.id || '';
-  }, [path]);
+  }, [path, adminCategories]);
   
   // Get current submenu items based on active section
   const currentSubmenu = activeSection ? subMenus[activeSection] : null;

@@ -83,7 +83,8 @@ const SystemSettings: React.FC = () => {
       id: 'appearance',
       label: 'Apariencia',
       path: '/admin/settings/appearance',
-      icon: Palette
+      icon: Palette,
+      requiresFeature: 'designSystem'
     },
     {
       id: 'localization',
