@@ -34,7 +34,7 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   
   // Filtrar submenú según funcionalidades activadas
   const filteredSubMenuItems = subMenuItems?.filter(item => {
-    // Si el elemento tiene la property designSystem, solo mostrarlo si el designFeatureEnabled está activo
+    // Si el elemento tiene la property requiresFeature, solo mostrarlo si la correspondiente feature está activa
     if (item.requiresFeature === 'designSystem') {
       return designFeatureEnabled;
     }

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -9,9 +8,10 @@ import { toast } from 'sonner';
 
 export interface AdminSubMenuItem {
   id: string;
+  icon: React.ElementType;
   label: string;
   path: string;
-  icon: React.ElementType;
+  requiresFeature?: string;
 }
 
 interface AdminSubMenuProps {
@@ -30,7 +30,6 @@ const AdminSubMenu: React.FC<AdminSubMenuProps> = ({
   const { isEditMode, isReorderMode } = useEditMode();
   const [menuItems, setMenuItems] = useState<AdminSubMenuItem[]>(items);
   
-  // Update menu items when props change
   useEffect(() => {
     setMenuItems(items);
   }, [items]);

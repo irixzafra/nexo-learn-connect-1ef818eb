@@ -1,12 +1,11 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { ShieldCheck, Lock, KeyRound, Fingerprint, Loader2 } from 'lucide-react';
+import { ShieldCheck, Loader2 } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { CheckboxWithLabel } from '@/components/ui/checkbox';
 
 interface SecuritySettingsProps {
   featuresConfig: FeaturesConfig;
@@ -21,21 +20,20 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
 }) => {
   return (
     <Card className="shadow-sm">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <ShieldCheck className="h-4 w-4 text-green-500" />
-          Seguridad
-        </CardTitle>
-        <CardDescription className="text-xs">
+      <CardContent className="p-6 space-y-4">
+        <div className="flex items-center mb-2">
+          <ShieldCheck className="h-5 w-5 text-green-500 mr-2" />
+          <h2 className="text-xl font-semibold">Seguridad</h2>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
           Configura las opciones de seguridad y autenticación
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between py-1">
+        </p>
+
+        <div className="space-y-6">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <h3 className="text-sm font-medium">Autenticación de múltiples factores</h3>
-              <p className="text-xs text-muted-foreground">
+              <h3 className="text-base font-medium">Autenticación de múltiples factores</h3>
+              <p className="text-sm text-muted-foreground">
                 Requiere verificación adicional durante el inicio de sesión
               </p>
               <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
@@ -54,10 +52,10 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
           
           <Separator />
           
-          <div className="flex items-center justify-between py-1">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <h3 className="text-sm font-medium">Registro con redes sociales</h3>
-              <p className="text-xs text-muted-foreground">
+              <h3 className="text-base font-medium">Registro con redes sociales</h3>
+              <p className="text-sm text-muted-foreground">
                 Permite iniciar sesión con Google, Facebook, etc.
               </p>
             </div>
@@ -76,10 +74,10 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
           
           <Separator />
           
-          <div className="flex items-center justify-between py-1">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <h3 className="text-sm font-medium">Bloqueo de cuentas</h3>
-              <p className="text-xs text-muted-foreground">
+              <h3 className="text-base font-medium">Bloqueo de cuentas</h3>
+              <p className="text-sm text-muted-foreground">
                 Bloquea la cuenta después de varios intentos fallidos
               </p>
               <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
@@ -98,10 +96,10 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
           
           <Separator />
           
-          <div className="flex items-center justify-between py-1">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <h3 className="text-sm font-medium">Políticas de contraseñas</h3>
-              <p className="text-xs text-muted-foreground">
+              <h3 className="text-base font-medium">Políticas de contraseñas</h3>
+              <p className="text-sm text-muted-foreground">
                 Establece requisitos mínimos para contraseñas seguras
               </p>
             </div>
