@@ -35,6 +35,46 @@ export function useAuthState() {
     setShowAuthModal(!showAuthModal);
   };
 
+  const updateUserProfile = async (updates: Partial<UserProfile>) => {
+    try {
+      if (!sessionData.user) throw new Error("No authenticated user");
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', sessionData.user.id);
+      
+      if (error) throw error;
+      
+      // Update local state
+      profileData.setProfile(prevProfile => 
+        prevProfile ? { ...prevProfile, ...updates } : null
+      );
+      
+      // Update role if changed
+      if (updates.role) {
+        profileData.setRole(updates.role);
+      }
+      
+      return { error: null };
+    } catch (error: any) {
+      console.error('Error updating profile:', error);
+      return { error };
+    }
+  };
+
+  const switchViewAsRole = () => {
+    const currentRole = userPreferences.viewAs;
+    // If currently viewing as a specific role, switch back to 'current'
+    if (currentRole !== 'current') {
+      userPreferences.setViewAsRole('current');
+    } 
+    // If viewing as 'current', switch to the actual role
+    else if (profileData.role) {
+      userPreferences.setViewAsRole(profileData.role);
+    }
+  };
+
   return {
     // Status information
     isLoading,
@@ -47,7 +87,7 @@ export function useAuthState() {
     // Profile management
     profile: profileData.profile,
     userRole: profileData.role,
-    updateUserProfile: profileData.updateUserProfile,
+    updateUserProfile,
     
     // Authentication methods
     login: authMethods.login,
@@ -65,7 +105,7 @@ export function useAuthState() {
     setTheme: userPreferences.setTheme,
     setUserRole: userPreferences.setUserRole,
     setViewAsRole: userPreferences.setViewAsRole,
-    switchViewAsRole: userPreferences.switchViewAsRole,
+    switchViewAsRole,
     saveUserPreferences: userPreferences.saveUserPreferences
   };
 }
