@@ -7,10 +7,6 @@ import {
   TooltipTrigger 
 } from '@/components/ui/tooltip';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
-import { Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import AdminMenu from '@/components/ui/admin-menu/AdminMenu';
-import { adminMobileMenuItems } from '@/components/ui/admin-menu/AdminMenuPresets';
 import { AdminMenuItem } from '@/components/ui/admin-menu/AdminMenu';
 import { 
   Home, 
@@ -22,8 +18,9 @@ import {
   Shield,
   BookOpen,
   GraduationCap,
-  School
+  ExternalLink
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface SidebarMainNavigationProps {
   effectiveRole: UserRoleType;
@@ -45,151 +42,132 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   const canSeeInstructor = effectiveRole === 'admin' || effectiveRole === 'instructor';
   const isAnonymous = effectiveRole === 'anonimo';
 
-  // Navigation items - only main categories
-  const getNavigationItems = (): AdminMenuItem[] => {
-    const baseItems = [
-      {
-        icon: Home,
-        label: "Inicio",
-        href: getHomePath(),
-      },
-      {
-        icon: Compass,
-        label: "Explorar",
-        href: "/courses",
-      },
-      {
-        icon: Users,
-        label: "Comunidad",
-        href: "/community",
-      },
-      {
-        icon: MessageSquare,
-        label: "Mensajes",
-        href: "/messages",
-        badge: messagesCount,
-      }
-    ];
-
-    // Items for all authenticated users except anonymous
-    const authenticatedItems = !isAnonymous ? [
-      {
-        icon: BookOpen,
-        label: "Mis Cursos",
-        href: "/my-courses",
-      },
-    ] : [];
-
-    // Add instructor section for admin and instructor roles
-    const instructorItems = canSeeInstructor ? [
-      {
-        icon: GraduationCap,
-        label: "Profesor",
-        href: "/instructor/dashboard",
-      },
-    ] : [];
-
-    // Admin section for admin role
-    const adminItems = effectiveRole === 'admin' ? [
-      {
-        icon: Shield,
-        label: "Administración",
-        href: "/admin/dashboard",
-      },
-    ] : [];
-
-    // Profile and contact items for all users
-    const profileItems = [
-      {
-        icon: User,
-        label: "Perfil",
-        href: "/profile",
-        badge: notificationsCount,
-      },
-      {
-        icon: Phone,
-        label: "Contacto",
-        href: "/contact",
-      }
-    ];
-
-    return [
-      ...baseItems,
-      ...authenticatedItems,
-      ...instructorItems,
-      ...adminItems,
-      ...profileItems
-    ];
-  };
-
-  // For administrators in mobile version (collapsed)
-  const getMobileAdminItems = (): AdminMenuItem[] => {
-    if (effectiveRole === 'admin') {
-      return adminMobileMenuItems;
-    }
-    
-    // For non-admin roles, simply adapt normal items
-    return getNavigationItems();
-  };
-
   return (
     <div className={cn(
       "flex-1 overflow-auto",
       isCollapsed ? "px-2" : "px-4"
     )}>
-      {isCollapsed ? (
-        <>
-          {/* Menú colapsado usando tooltips */}
-          <div className="space-y-4 pt-4">
-            {getMobileAdminItems().map((item) => (
-              <Tooltip key={item.href}>
-                <TooltipTrigger asChild>
-                  <div>
-                    <AdminMenu 
-                      items={[item]} 
-                      variant="sidebar"
-                      className="!space-y-0"
-                    />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>{item.label}</p>
-                </TooltipContent>
-              </Tooltip>
-            ))}
-          </div>
-
-          {/* Search button for collapsed sidebar - only for admins */}
-          {effectiveRole === 'admin' && (
-            <div className="px-2 mt-6 flex justify-center">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-9 w-9"
-                    onClick={() => window.location.href = '/admin/users'}
-                  >
-                    <Search className="h-5 w-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>Buscar usuarios</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          )}
-        </>
-      ) : (
-        // Menú expandido con AdminMenu
-        <div className="space-y-1 pt-4">
-          <AdminMenu 
-            items={getNavigationItems()}
-            variant="default"
+      <div className="space-y-1 pt-4">
+        <NavItem 
+          to={getHomePath()} 
+          icon={Home} 
+          label="Inicio" 
+          isCollapsed={isCollapsed} 
+        />
+        
+        <NavItem 
+          to="/courses" 
+          icon={Compass} 
+          label="Explorar" 
+          isCollapsed={isCollapsed} 
+        />
+        
+        <NavItem 
+          to="/messages" 
+          icon={MessageSquare} 
+          label="Mensajes" 
+          badge={messagesCount > 0 ? messagesCount : undefined} 
+          isCollapsed={isCollapsed} 
+        />
+        
+        {!isAnonymous && (
+          <NavItem 
+            to="/my-courses" 
+            icon={BookOpen} 
+            label="Mis Cursos" 
+            isCollapsed={isCollapsed} 
           />
-        </div>
-      )}
+        )}
+        
+        {canSeeInstructor && (
+          <NavItem 
+            to="/instructor/dashboard" 
+            icon={GraduationCap} 
+            label="Profesor" 
+            isCollapsed={isCollapsed} 
+          />
+        )}
+        
+        {effectiveRole === 'admin' && (
+          <NavItem 
+            to="/admin/dashboard" 
+            icon={Shield} 
+            label="Administración" 
+            isCollapsed={isCollapsed} 
+          />
+        )}
+        
+        <NavItem 
+          to="/profile" 
+          icon={User} 
+          label="Perfil" 
+          badge={notificationsCount > 0 ? notificationsCount : undefined} 
+          isCollapsed={isCollapsed} 
+        />
+        
+        <NavItem 
+          to="/contact" 
+          icon={Phone} 
+          label="Contacto" 
+          isCollapsed={isCollapsed} 
+        />
+
+        <NavItem 
+          to="/landing" 
+          icon={ExternalLink} 
+          label="Landing Page" 
+          isCollapsed={isCollapsed} 
+        />
+      </div>
     </div>
+  );
+};
+
+interface NavItemProps {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+  badge?: number;
+  isCollapsed: boolean;
+}
+
+const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, badge, isCollapsed }) => {
+  if (isCollapsed) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link 
+            to={to}
+            className="flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent transition-colors mx-auto"
+          >
+            <Icon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            {badge && (
+              <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-primary text-[10px] font-medium text-primary-foreground flex items-center justify-center">
+                {badge > 99 ? '99+' : badge}
+              </span>
+            )}
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          <p>{label}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <Link
+      to={to}
+      className="flex items-center py-2 px-3 rounded-md text-sm hover:bg-accent transition-colors"
+    >
+      <Icon className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" />
+      <span>{label}</span>
+      {badge && (
+        <span className="ml-auto bg-primary text-primary-foreground text-xs rounded-full h-5 min-w-5 px-1 flex items-center justify-center">
+          {badge > 99 ? '99+' : badge}
+        </span>
+      )}
+    </Link>
   );
 };
 

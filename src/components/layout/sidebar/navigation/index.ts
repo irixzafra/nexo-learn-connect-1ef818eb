@@ -7,3 +7,4 @@ export { default as PerfilNavigation } from './PerfilNavigation';
 export { default as ConfiguracionNavigation } from './ConfiguracionNavigation';
 export { default as ProfesorNavigation } from './ProfesorNavigation';
 export { default as MisCursosNavigation } from './MisCursosNavigation';
+export { default as SidebarMainNavigation } from './SidebarMainNavigation';
