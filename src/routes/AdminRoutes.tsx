@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AppLayout from '@/layouts/AppLayout';
@@ -157,32 +156,7 @@ const AdminRoutes: React.FC = () => {
           <EditPage />
         </AdminLayout>
       } />
-      <Route path="settings/security" element={
-        <AdminLayout>
-          <Navigate to="/admin/settings" replace />
-        </AdminLayout>
-      } />
-      <Route path="settings/appearance" element={
-        <AdminLayout>
-          <Navigate to="/admin/settings" replace />
-        </AdminLayout>
-      } />
-      <Route path="settings/content" element={
-        <AdminLayout>
-          <Navigate to="/admin/settings" replace />
-        </AdminLayout>
-      } />
-      <Route path="settings/analytics" element={
-        <AdminLayout>
-          <Navigate to="/admin/settings" replace />
-        </AdminLayout>
-      } />
       
-      <Route path="access" element={
-        <AdminLayout>
-          <AccessControl />
-        </AdminLayout>
-      } />
       <Route path="*" element={
         <AdminLayout>
           <Navigate to="/admin/dashboard" replace />

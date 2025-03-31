@@ -9,6 +9,7 @@ import {
   CreditCard, 
   Database,
   Settings,
+  FileText
 } from 'lucide-react';
 
 // Main navigation categories
@@ -47,6 +48,13 @@ const adminCategories = [
     label: "Datos", 
     path: "/admin/test-data",
     dataTag: "admin-nav-data"
+  },
+  { 
+    id: 'pages',
+    icon: FileText,
+    label: "Páginas",
+    path: "/admin/settings/pages",
+    dataTag: "admin-nav-pages"  
   },
   { 
     id: 'config',
