@@ -48,7 +48,7 @@ export function useAuthState() {
     setUserRole,
     setViewAs, 
     setViewAsRole,
-    switchViewAsRole, // Properly including switchViewAsRole from useUserPreferences
+    switchViewAsRole,
     saveUserPreferences 
   } = useUserPreferences({ setRole });
 
@@ -57,9 +57,12 @@ export function useAuthState() {
   };
 
   return {
+    // Status information
     isLoading,
     isAuthReady,
     isAuthenticated: !!session,
+    
+    // User and session data
     user,
     session,
     profile,
@@ -67,16 +70,24 @@ export function useAuthState() {
     viewAsRole: viewAs,
     theme,
     showAuthModal,
+    
+    // UI functions
     toggleAuthModal,
-    login,                // Including login from useAuthMethods
-    signup,               // Including signup from useAuthMethods
+    
+    // Authentication methods
+    login,
+    signup,
     logout,
-    resetPassword,        // Including resetPassword from useAuthMethods
-    updateUserProfile,    // Including updateUserProfile from useAuthProfile
+    resetPassword,
+    
+    // Profile management
+    updateUserProfile,
+    
+    // Preferences management
     setTheme,
     setUserRole,
     setViewAsRole,
-    switchViewAsRole,     // Including switchViewAsRole from useUserPreferences
+    switchViewAsRole,
     saveUserPreferences,
   };
 }
