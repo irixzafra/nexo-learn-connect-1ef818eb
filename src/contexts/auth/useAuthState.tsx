@@ -29,7 +29,7 @@ export function useAuthState() {
     role, 
     setProfile, 
     setRole, 
-    updateUserProfile
+    updateUserProfile 
   } = useAuthProfile({ user, setIsLoading });
 
   // Authentication methods
@@ -48,7 +48,7 @@ export function useAuthState() {
     setUserRole,
     setViewAs, 
     setViewAsRole,
-    switchViewAsRole,
+    switchViewAsRole, // Make sure this is properly included
     saveUserPreferences 
   } = useUserPreferences({ setRole });
 
@@ -76,7 +76,7 @@ export function useAuthState() {
     setTheme,
     setUserRole,
     setViewAsRole,
-    switchViewAsRole,
+    switchViewAsRole, // This is critical for fixing the error
     saveUserPreferences,
   };
 }
