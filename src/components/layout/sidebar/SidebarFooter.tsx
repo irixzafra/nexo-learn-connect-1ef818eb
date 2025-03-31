@@ -11,6 +11,7 @@ import {
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
+  DropdownMenuSeparator,
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -61,7 +62,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
   
   return (
     <div className="border-t p-3">
-      {/* Control de tema */}
+      {/* Control de tema y selector de roles */}
       <div className={`mb-3 flex ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Tooltip>
@@ -90,35 +91,55 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
       {/* Información del usuario y botón de logout */}
       <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
         {isCollapsed ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <Button variant="ghost" className="h-9 w-9 rounded-full p-0">
-                      <Avatar className="h-9 w-9">
-                        <AvatarFallback>{getInitials(profile?.full_name)}</AvatarFallback>
-                        <AvatarImage src={profile?.avatar_url || undefined} />
-                      </Avatar>
-                    </Button>
-                  </motion.div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" side="right">
-                  <DropdownMenuItem onClick={() => navigate('/profile')}>
-                    <UserIcon className="mr-2 h-4 w-4" />
-                    <span>Mi Perfil</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Cerrar Sesión</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Mi Perfil</p>
-            </TooltipContent>
-          </Tooltip>
+          <div className="flex flex-col gap-2 items-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                      <Button variant="ghost" className="h-9 w-9 rounded-full p-0">
+                        <Avatar className="h-9 w-9">
+                          <AvatarFallback>{getInitials(profile?.full_name)}</AvatarFallback>
+                          <AvatarImage src={profile?.avatar_url || undefined} />
+                        </Avatar>
+                      </Button>
+                    </motion.div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="center" side="right">
+                    <DropdownMenuItem onClick={() => navigate('/profile')}>
+                      <UserIcon className="mr-2 h-4 w-4" />
+                      <span>Mi Perfil</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Cerrar Sesión</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Mi Perfil</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            {/* Botón de cerrar sesión independiente y claramente visible */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="destructive" 
+                  size="icon" 
+                  className="h-9 w-9 rounded-full"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Cerrar sesión</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         ) : (
           <>
             <div className="flex items-center gap-2">
@@ -135,13 +156,16 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
                 </p>
               </div>
             </div>
+            
+            {/* Botón de cerrar sesión claramente visible */}
             <Button 
-              variant="ghost" 
-              size="icon" 
+              variant="destructive" 
+              size="sm" 
               onClick={handleLogout}
-              className="text-red-500 hover:bg-red-50 hover:text-red-600"
+              className="flex items-center gap-1"
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4 w-4" />
+              <span>Salir</span>
             </Button>
           </>
         )}

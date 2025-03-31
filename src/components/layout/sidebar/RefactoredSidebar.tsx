@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -8,6 +7,7 @@ import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { useModeToggle } from '@/hooks/useModeToggle';
 import { useFeatureFlags } from '@/contexts/features/FeatureFlagsContext';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useNavigate } from 'react-router-dom';
 
 // Importamos componentes auxiliares
 import SidebarLogo from './SidebarLogo';
@@ -33,8 +33,11 @@ import {
   Database,
   Shield,
   PlusCircle,
-  BarChart
+  BarChart,
+  LogOut
 } from 'lucide-react';
+import { MenuItem } from './MenuItems';
+import { toast } from 'sonner';
 
 interface SidebarProps {
   className?: string;
@@ -54,10 +57,11 @@ interface NavSection {
 }
 
 export const RefactoredSidebar: React.FC<SidebarProps> = ({ className }) => {
-  const { user, profile, userRole } = useAuth();
+  const { user, profile, userRole, logout } = useAuth();
   const { isFeatureEnabled } = useFeatureFlags();
   const { state, toggleSidebar } = useSidebar();
   const location = useLocation();
+  const navigate = useNavigate();
   const { unreadCount: notificationsCount } = useNotifications();
   
   // Estado para el conteo de mensajes (simulado)
@@ -69,6 +73,18 @@ export const RefactoredSidebar: React.FC<SidebarProps> = ({ className }) => {
   // Detectar si el usuario está en la página de login
   const isLoginPage = location.pathname.includes('/auth/login') || location.pathname.includes('/auth/register');
 
+  // Función para cerrar sesión
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success('Sesión cerrada exitosamente');
+      navigate('/auth/login');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      toast.error('No se pudo cerrar sesión');
+    }
+  };
+
   // No mostrar sidebar en la página de login
   if (isLoginPage) return null;
   
@@ -78,7 +94,7 @@ export const RefactoredSidebar: React.FC<SidebarProps> = ({ className }) => {
     const commonNavigation: NavSection = {
       items: [
         { path: '/', label: 'Inicio', icon: Home },
-        { path: '/my-courses', label: 'Mis Cursos', icon: BookOpen },
+        { path: '/courses', label: 'Cursos', icon: BookOpen },
         { path: '/community', label: 'Comunidad', icon: Users, featureFlag: 'community_section' },
         { path: '/messages', label: 'Mensajes', icon: MessageSquare, badge: messagesCount },
         { path: '/calendar', label: 'Calendario', icon: Calendar },
@@ -106,7 +122,7 @@ export const RefactoredSidebar: React.FC<SidebarProps> = ({ className }) => {
         { path: '/admin/users', label: 'Usuarios', icon: Users },
         { path: '/admin/courses', label: 'Cursos (Admin)', icon: BookOpen },
         { path: '/admin/finanzas', label: 'Finanzas', icon: CreditCard },
-        { path: '/admin/datos', label: 'Datos', icon: Database },
+        { path: '/admin/test-data', label: 'Datos', icon: Database },
         { path: '/admin/settings', label: 'Configuración Sistema', icon: Settings },
       ]
     };
@@ -149,6 +165,16 @@ export const RefactoredSidebar: React.FC<SidebarProps> = ({ className }) => {
           </motion.div>
         </button>
       </div>
+
+      {/* Indicador de rol */}
+      {!isCollapsed && userRole && (
+        <div className="px-3 py-1 mb-2">
+          <div className="text-xs font-medium text-muted-foreground bg-muted/50 px-2 py-1 rounded text-center">
+            {userRole === 'admin' ? 'Administrador' : 
+             userRole === 'instructor' ? 'Instructor' : 'Estudiante'}
+          </div>
+        </div>
+      )}
       
       {/* Navegación principal - scrollable */}
       <div className="flex-1 overflow-y-auto px-3 py-2">
@@ -164,6 +190,27 @@ export const RefactoredSidebar: React.FC<SidebarProps> = ({ className }) => {
             />
           </SidebarSection>
         ))}
+
+        {/* Botón de cerrar sesión - Siempre visible */}
+        <div className="mt-6 px-3">
+          {isCollapsed ? (
+            <MenuItem 
+              icon={LogOut} 
+              label="Cerrar Sesión" 
+              onClick={handleLogout}
+              isCollapsed={isCollapsed}
+              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+            />
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-red-500 hover:bg-red-50 hover:text-red-600 font-medium"
+            >
+              <LogOut className="h-5 w-5" />
+              <span>Cerrar Sesión</span>
+            </button>
+          )}
+        </div>
       </div>
       
       {/* Footer con controles */}
