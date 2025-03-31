@@ -7,8 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
-import { ShieldCheck, Users, CheckCircle, KeyRound, Fingerprint, AlertCircle, UserCog, Link, LogOut } from 'lucide-react';
+import { ShieldCheck, Users, CheckCircle, KeyRound, Fingerprint, AlertCircle, UserCog, Link, LogOut, Clock, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 
 interface SecuritySettingsProps {
   featuresConfig: FeaturesConfig;
@@ -23,6 +24,92 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
 }) => {
   return (
     <div className="space-y-6">
+      {/* Roadmap de Seguridad desde Auditoría */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-primary" />
+            Roadmap de Seguridad
+          </CardTitle>
+          <CardDescription>
+            Basado en la auditoría técnica, estas son las áreas de mejora para reforzar la seguridad
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="rounded-md border p-4">
+            <h3 className="font-medium mb-2">Mejoras Identificadas en la Auditoría Técnica</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              La auditoría técnica evidencia que la plataforma Nexo Learn sigue buenas prácticas de desarrollo, 
+              seguridad y rendimiento. Sin embargo, se identifican las siguientes áreas de mejora:
+            </p>
+            
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="bg-blue-100 p-1.5 rounded-full mt-0.5">
+                  <Fingerprint className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium">Implementar MFA para todos los usuarios</h4>
+                  <p className="text-xs text-muted-foreground">Aumentar la seguridad de las cuentas con autenticación multi-factor</p>
+                </div>
+                <Badge variant="outline" className="ml-auto">Q3 2025</Badge>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="bg-blue-100 p-1.5 rounded-full mt-0.5">
+                  <ShieldCheck className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium">Configurar cabeceras HTTP de seguridad y protección contra DDoS</h4>
+                  <p className="text-xs text-muted-foreground">Mejorar la seguridad de la capa de transporte y la resistencia a ataques</p>
+                </div>
+                <Badge variant="outline" className="ml-auto">Q2 2025</Badge>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="bg-blue-100 p-1.5 rounded-full mt-0.5">
+                  <CheckCircle className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium">Incrementar cobertura de pruebas automatizadas</h4>
+                  <p className="text-xs text-muted-foreground">Realizar pruebas de penetración de forma periódica</p>
+                </div>
+                <Badge variant="outline" className="ml-auto">En curso</Badge>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="bg-blue-100 p-1.5 rounded-full mt-0.5">
+                  <Clock className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium">Mejorar la monitorización en tiempo real</h4>
+                  <p className="text-xs text-muted-foreground">Optimizar la gestión de caché y el rendimiento</p>
+                </div>
+                <Badge variant="outline" className="ml-auto">Q2 2025</Badge>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="bg-blue-100 p-1.5 rounded-full mt-0.5">
+                  <FileText className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium">Fortalecer la documentación técnica interna</h4>
+                  <p className="text-xs text-muted-foreground">Mejorar los procesos de actualización de dependencias</p>
+                </div>
+                <Badge variant="outline" className="ml-auto">Continuo</Badge>
+              </div>
+            </div>
+            
+            <div className="mt-4 flex justify-end">
+              <Button variant="outline" size="sm">
+                <Link className="h-4 w-4 mr-2" />
+                Ver Informe Completo
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
       {/* Gestión de Roles */}
       <Card>
         <CardHeader>

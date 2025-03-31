@@ -16,6 +16,8 @@ import SystemSettings from '@/pages/admin/SystemSettings';
 import AdminDashboard from '@/pages/admin/dashboard';
 import ContentManagement from '@/pages/admin/content/ContentManagement';
 import TemplatesPage from '@/pages/admin/content/TemplatesPage';
+import AuditLog from '@/pages/admin/audit/AuditLog';
+import AccessControl from '@/pages/admin/access/AccessControl';
 
 // User management components
 import { UserManagementTabs } from '@/features/users/UserManagementTabs';
@@ -126,6 +128,10 @@ const AdminRoutes: React.FC = () => {
         {/* System Settings */}
         <Route path="/settings" element={<SystemSettings />} />
         <Route path="/settings/:tab" element={<SystemSettings />} />
+        
+        {/* Security & Audit */}
+        <Route path="/audit" element={<AuditLog />} />
+        <Route path="/access" element={<AccessControl />} />
         
         {/* AI Services */}
         <Route path="/ai/services" element={<AIServicesPage />} />
