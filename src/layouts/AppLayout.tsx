@@ -6,6 +6,7 @@ import SidebarNavigation from '@/components/layout/SidebarNavigation';
 import { Sidebar, SidebarContent } from '@/components/ui/sidebar';
 import { useLocation } from 'react-router-dom';
 import HeaderContent from '@/components/layout/HeaderContent';
+import { MobileSidebar } from '@/components/layout/header/MobileSidebar';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -39,6 +40,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             {children}
           </main>
         </div>
+        
+        {/* Always include the mobile sidebar for mobile views */}
+        <MobileSidebar viewAsRole="current" />
       </div>
       
       <Toaster />
