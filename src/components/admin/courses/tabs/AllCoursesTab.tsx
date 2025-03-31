@@ -76,7 +76,7 @@ const AllCoursesTab: React.FC = () => {
         onSave={handleSaveCourse}
         entity={selectedCourse}
       >
-        {(props) => <CourseForm data={props.data} onChange={props.onChange} />}
+        {({ data, onChange }) => <CourseForm data={data} onChange={onChange} />}
       </EntityDrawer>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
