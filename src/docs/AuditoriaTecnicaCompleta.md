@@ -172,6 +172,12 @@ Las principales políticas de Row Level Security implementadas son:
 - ✅ Estadísticas de uso
 - ⚠️ Informes avanzados (pendiente)
 
+### Sistema de Navegación y Rutas
+- ✅ Sistema de rutas públicas y protegidas
+- ✅ Navegación basada en roles
+- ✅ Redirecciones inteligentes basadas en estado de autenticación
+- ✅ Página de inicio configurable para usuarios no autenticados
+
 ## 5. Elementos Pendientes
 
 ### Desarrollo Técnico

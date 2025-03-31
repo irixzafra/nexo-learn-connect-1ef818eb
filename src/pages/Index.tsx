@@ -24,8 +24,21 @@ const Index = () => {
             navigate('/home');
         }
       } else {
-        // Si no está autenticado, redirigir a la página de landing
-        navigate('/landing');
+        // Si no está autenticado, redirigir a la página configurada
+        // Obtener configuración desde localStorage o usar valor por defecto
+        const settings = localStorage.getItem('nexo_settings');
+        let defaultLandingUrl = '/landing'; // Valor por defecto
+        
+        if (settings) {
+          try {
+            const parsedSettings = JSON.parse(settings);
+            defaultLandingUrl = parsedSettings.default_landing_url || defaultLandingUrl;
+          } catch (error) {
+            console.error('Error parsing settings:', error);
+          }
+        }
+        
+        navigate(defaultLandingUrl);
       }
     }
   }, [navigate, isAuthenticated, isLoading, userRole]);

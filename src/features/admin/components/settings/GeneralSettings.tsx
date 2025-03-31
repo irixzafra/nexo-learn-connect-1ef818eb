@@ -23,6 +23,7 @@ const generalSettingsSchema = z.object({
   default_timezone: z.string().min(1, "La zona horaria es requerida"),
   support_email: z.string().email("Email inválido").optional(),
   default_theme: z.string().min(1, "El tema es requerido"),
+  default_landing_url: z.string().default("/landing"),
   allow_user_theme_selection: z.boolean().default(true),
   multilanguage_enabled: z.boolean().default(false),
   available_languages: z.array(z.string()).optional(),
@@ -43,6 +44,7 @@ const GeneralSettings: React.FC = () => {
       default_timezone: "Europe/Madrid",
       support_email: "soporte@nexo.com",
       default_theme: "light",
+      default_landing_url: "/landing",
       allow_user_theme_selection: true,
       multilanguage_enabled: false,
       available_languages: ["es"],
@@ -51,6 +53,10 @@ const GeneralSettings: React.FC = () => {
 
   const onSubmit = (data: GeneralSettingsValues) => {
     console.log("Form submitted:", data);
+    
+    // Guardamos la configuración en localStorage para demo
+    localStorage.setItem('nexo_settings', JSON.stringify(data));
+    
     toast.success("Configuración guardada correctamente");
   };
 
@@ -158,6 +164,50 @@ const GeneralSettings: React.FC = () => {
                 )}
               />
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Navegación y Acceso */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Navegación y Acceso</CardTitle>
+            <CardDescription>
+              Configura cómo los usuarios acceden a tu plataforma
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="default_landing_url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>URL de inicio para usuarios no autenticados</FormLabel>
+                  <FormControl>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar página de inicio" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="/landing">Página de Landing</SelectItem>
+                        <SelectItem value="/auth/login">Página de Login</SelectItem>
+                        <SelectItem value="/courses">Catálogo de Cursos</SelectItem>
+                        <SelectItem value="/about-us">Sobre Nosotros</SelectItem>
+                        <SelectItem value="/community">Comunidad</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormDescription>
+                    Esta será la página principal a la que se dirigirán los usuarios no autenticados
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
         </Card>
 
