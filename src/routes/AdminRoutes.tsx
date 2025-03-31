@@ -14,6 +14,8 @@ import AppLayout from '@/layouts/AppLayout';
 import DesignSystem from '@/pages/admin/design/DesignSystem';
 import SystemSettings from '@/pages/admin/SystemSettings';
 import AdminDashboard from '@/pages/admin/dashboard';
+import ContentManagement from '@/pages/admin/content/ContentManagement';
+import TemplatesPage from '@/pages/admin/content/TemplatesPage';
 
 // User management components
 import { UserManagementTabs } from '@/features/users/UserManagementTabs';
@@ -115,6 +117,8 @@ const AdminRoutes: React.FC = () => {
         <Route path="/design/:tab" element={<DesignSystem />} />
         
         {/* Content Management */}
+        <Route path="/content" element={<ContentManagement />} />
+        <Route path="/content/templates" element={<TemplatesPage />} />
         <Route path="/pages" element={<PageManagement />} />
         <Route path="/pages/create" element={<CreatePage />} />
         <Route path="/pages/:id" element={<EditPage />} />

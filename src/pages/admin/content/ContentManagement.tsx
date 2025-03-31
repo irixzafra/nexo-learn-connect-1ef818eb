@@ -7,6 +7,7 @@ import CategoryManagement from '@/pages/admin/CategoryManagement';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
+import TemplatesPage from './TemplatesPage';
 
 const ContentManagement: React.FC = () => {
   const navigate = useNavigate();
@@ -111,6 +112,8 @@ const ContentManagement: React.FC = () => {
                         setActiveTab('categories');
                       } else if (section.id === 'learning-paths') {
                         setActiveTab('learning-paths');
+                      } else if (section.id === 'templates') {
+                        setActiveTab('templates');
                       } else {
                         navigate(section.path);
                       }
@@ -147,17 +150,7 @@ const ContentManagement: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="templates">
-          <Card>
-            <CardHeader>
-              <CardTitle>Plantillas de Contenido</CardTitle>
-              <CardDescription>
-                Esta función estará disponible próximamente.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Las plantillas de contenido te permitirán crear nuevos contenidos rápidamente basados en estructuras predefinidas.</p>
-            </CardContent>
-          </Card>
+          <TemplatesPage />
         </TabsContent>
         
         <TabsContent value="editor">
