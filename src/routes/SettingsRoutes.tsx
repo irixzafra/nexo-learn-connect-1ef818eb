@@ -3,17 +3,20 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import PagesManagement from '@/pages/admin/settings/pages';
+import { useFeatures } from '@/hooks/useFeatures';
+import DataSettings from '@/features/admin/components/settings/DataSettings';
+import IntegrationsPage from '@/pages/admin/settings/integrations';
 
 // Placeholder components until actual ones are created
 const GeneralSettings = () => <div>Configuración General</div>;
 const FeatureSettings = () => <div>Funcionalidades</div>;
 const DesignSettings = () => <div>Diseño</div>;
-const IntegrationsSettings = () => <div>Integraciones</div>;
-const DataSettings = () => <div>Datos</div>;
 const AnalyticsSettings = () => <div>Analíticas</div>;
 const RolesSettings = () => <div>Roles y Permisos</div>;
 
 const SettingsRoutes: React.FC = () => {
+  const { featuresConfig, toggleFeature, isLoading } = useFeatures();
+
   return (
     <Routes>
       <Route 
@@ -44,7 +47,7 @@ const SettingsRoutes: React.FC = () => {
         path="/integrations"
         element={
           <AdminPageLayout title="Integraciones">
-            <IntegrationsSettings />
+            <IntegrationsPage />
           </AdminPageLayout>
         }
       />
@@ -52,7 +55,11 @@ const SettingsRoutes: React.FC = () => {
         path="/data"
         element={
           <AdminPageLayout title="Datos">
-            <DataSettings />
+            <DataSettings 
+              featuresConfig={featuresConfig} 
+              onToggleFeature={toggleFeature} 
+              isLoading={isLoading} 
+            />
           </AdminPageLayout>
         }
       />

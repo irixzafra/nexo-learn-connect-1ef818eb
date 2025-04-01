@@ -1,11 +1,23 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Database, Server, Shield, AlertCircle } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
+import { 
+  Database, 
+  Server,
+  Shield,
+  AlertCircle,
+  RefreshCw, 
+  Download,
+  Upload,
+  KeyRound
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import SupabaseConnectionTest from './SupabaseConnectionTest';
 
 interface DatabaseSettingsProps {
   isLoading?: boolean;
@@ -40,6 +52,9 @@ const DatabaseSettings: React.FC<DatabaseSettingsProps> = ({ isLoading = false }
 
   return (
     <div className="space-y-6">
+      {/* Database connection status card */}
+      <SupabaseConnectionTest showCard autoTest />
+      
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -108,37 +123,57 @@ const DatabaseSettings: React.FC<DatabaseSettingsProps> = ({ isLoading = false }
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <Server className="h-5 w-5 text-primary" />
-              Estado de la Base de Datos
+              <KeyRound className="h-5 w-5 text-primary" />
+              Opciones de Desarrollo
             </CardTitle>
-            <Badge variant="outline" className="font-normal">En línea</Badge>
+            <Badge variant="outline" className="font-normal">Desarrollo</Badge>
           </div>
           <CardDescription>
-            Información sobre el estado actual de la base de datos
+            Configuración para desarrolladores
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3 text-sm">
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Tipo:</span>
-              <span className="font-medium">PostgreSQL</span>
+          <div className="space-y-3 divide-y">
+            <div className="flex items-center justify-between py-2">
+              <div className="space-y-0.5">
+                <Label htmlFor="devMode">Modo Desarrollo DB</Label>
+                <p className="text-sm text-muted-foreground">
+                  Habilitar herramientas de desarrollo para la base de datos
+                </p>
+              </div>
+              <Switch id="devMode" />
             </div>
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Versión:</span>
-              <span className="font-medium">14.5</span>
+            
+            <div className="flex items-center justify-between py-2 pt-4">
+              <div className="space-y-0.5">
+                <Label htmlFor="logQueries">Registro de consultas</Label>
+                <p className="text-sm text-muted-foreground">
+                  Registrar consultas SQL en la consola
+                </p>
+              </div>
+              <Switch id="logQueries" />
             </div>
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Tamaño total:</span>
-              <span className="font-medium">238 MB</span>
+            
+            <div className="flex items-center justify-between py-2 pt-4">
+              <div className="space-y-0.5">
+                <Label htmlFor="debugMode">Modo depuración</Label>
+                <p className="text-sm text-muted-foreground">
+                  Mostrar información detallada de depuración
+                </p>
+              </div>
+              <Switch id="debugMode" />
             </div>
-            <div className="flex justify-between border-b pb-2">
-              <span className="text-muted-foreground">Última copia de seguridad:</span>
-              <span className="font-medium">Hace 3 días</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Estado:</span>
-              <span className="font-medium text-green-600">Saludable</span>
-            </div>
+          </div>
+          
+          <div className="flex gap-2 mt-4">
+            <Button variant="outline" size="sm" className="gap-1">
+              <RefreshCw className="h-4 w-4" />
+              Limpiar caché
+            </Button>
+            <Button variant="outline" size="sm" className="gap-1">
+              <Download className="h-4 w-4" />
+              Exportar esquema
+            </Button>
           </div>
         </CardContent>
       </Card>

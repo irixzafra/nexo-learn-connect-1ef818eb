@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -14,10 +14,12 @@ import {
   Download,
   Upload,
   KeyRound,
-  AlertTriangle
+  AlertTriangle,
+  Shield
 } from 'lucide-react';
-import { FeaturesConfig } from '@/contexts/features/types';
 import SettingsAccordion from '@/components/admin/settings/SettingsAccordion';
+import SupabaseConnectionTest from './SupabaseConnectionTest';
+import { FeaturesConfig } from '@/contexts/features/types';
 
 interface DataSettingsProps {
   featuresConfig: FeaturesConfig;
@@ -50,11 +52,14 @@ export const DataSettings: React.FC<DataSettingsProps> = ({
         </p>
       </div>
 
+      {/* Supabase connection status */}
+      <SupabaseConnectionTest showCard />
+
       <div className="grid gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Database className="h-5 w-5" />
+              <Shield className="h-5 w-5" />
               Respaldos y Recuperación
             </CardTitle>
             <CardDescription>Configuración para respaldos automáticos</CardDescription>
@@ -191,7 +196,7 @@ export const DataSettings: React.FC<DataSettingsProps> = ({
                 <p className="text-sm text-muted-foreground">
                   Configuración de conexiones a bases de datos
                 </p>
-                {/* Aquí iría el contenido de conexiones */}
+                <SupabaseConnectionTest />
               </div>
             ),
             iconColor: "text-blue-600"
@@ -205,7 +210,24 @@ export const DataSettings: React.FC<DataSettingsProps> = ({
                 <p className="text-sm text-muted-foreground">
                   Ajustes para optimizar el rendimiento de consultas
                 </p>
-                {/* Aquí iría el contenido de optimización */}
+                <div className="flex items-center justify-between py-2">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="queryLog">Registro de consultas</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Registrar consultas lentas para análisis
+                    </p>
+                  </div>
+                  <Switch id="queryLog" />
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="queryTimeout">Tiempo de espera</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Timeout para consultas largas (30 segundos)
+                    </p>
+                  </div>
+                  <Switch id="queryTimeout" />
+                </div>
               </div>
             ),
             iconColor: "text-green-600"
