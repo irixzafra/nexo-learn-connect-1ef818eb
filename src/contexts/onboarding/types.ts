@@ -1,16 +1,18 @@
 
-import { ReactNode } from 'react';
-
-// Definición de los pasos del onboarding
 export enum OnboardingStep {
   WELCOME = 'welcome',
   PROFILE = 'profile',
-  EXPLORE_COURSES = 'explore_courses',
-  PLATFORM_TOUR = 'platform_tour',
-  COMPLETE = 'complete'
+  EXPLORE = 'explore',
+  TOUR = 'tour'
 }
 
-// Tipo para el contexto de onboarding
+export interface OnboardingStepConfig {
+  id: OnboardingStep;
+  title: string;
+  component: React.ReactNode;
+  description: string;
+}
+
 export interface OnboardingContextValue {
   isActive: boolean;
   isOpen: boolean;
@@ -27,12 +29,4 @@ export interface OnboardingContextValue {
   restartOnboarding: () => void;
   completeOnboarding: () => void;
   isOnboardingComplete: boolean;
-}
-
-// Tipo para los pasos de onboarding
-export interface OnboardingStepConfig {
-  id: OnboardingStep;
-  title: string;
-  component: ReactNode;
-  description?: string;
 }
