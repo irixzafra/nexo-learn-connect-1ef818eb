@@ -25,7 +25,12 @@ import {
   ArrowRight,
   PanelLeft,
   PanelTop,
-  PanelBottom
+  PanelBottom,
+  Home,
+  GraduationCap,
+  CreditCard,
+  Settings,
+  Shield
 } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
 import { 
@@ -37,6 +42,7 @@ import {
   settingsNavigation,
   gamificationNavigation
 } from '@/config/navigation';
+import { SidebarContent } from '@/components/layout/sidebar/SidebarContent';
 
 const NavigationDiagram: React.FC = () => {
   const [activeTab, setActiveTab] = useState('diagram');
@@ -249,7 +255,7 @@ const NavigationDiagram: React.FC = () => {
       </div>
       
       <Tabs defaultValue="diagram" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="menus">
             <Menu className="h-4 w-4 mr-2" />
             Menús
@@ -265,6 +271,10 @@ const NavigationDiagram: React.FC = () => {
           <TabsTrigger value="files">
             <FileText className="h-4 w-4 mr-2" />
             Archivos
+          </TabsTrigger>
+          <TabsTrigger value="sidebar">
+            <PanelLeft className="h-4 w-4 mr-2" />
+            Sidebar Preview
           </TabsTrigger>
         </TabsList>
         
@@ -666,6 +676,178 @@ const NavigationDiagram: React.FC = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="sidebar" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PanelLeft className="h-5 w-5 text-primary" />
+                Vista Previa del Sidebar
+              </CardTitle>
+              <CardDescription>
+                Visualización real del sidebar con sus menús principales
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-6">
+                <div className="w-64 border rounded-lg overflow-hidden shadow-sm">
+                  <div className="bg-background h-[600px] overflow-auto">
+                    <SidebarContent />
+                  </div>
+                </div>
+                
+                <div className="flex-1 space-y-6">
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">Estructura de los grupos de navegación</h3>
+                    <div className="space-y-4">
+                      <div className="flex gap-2">
+                        <div className="flex flex-col items-center">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <LayoutDashboard className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="text-xs text-center mt-1">Dashboard</div>
+                        </div>
+                        <ArrowRight className="h-4 w-4 self-center text-muted-foreground" />
+                        <div className="flex flex-col items-center">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <BookOpen className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="text-xs text-center mt-1">Cursos</div>
+                        </div>
+                        <ArrowRight className="h-4 w-4 self-center text-muted-foreground" />
+                        <div className="flex flex-col items-center">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <User className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="text-xs text-center mt-1">Comunidad</div>
+                        </div>
+                        <ArrowRight className="h-4 w-4 self-center text-muted-foreground" />
+                        <div className="flex flex-col items-center">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Shield className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="text-xs text-center mt-1">Admin</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <h3 className="text-lg font-medium mb-2">Correspondencia con archivos de configuración</h3>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Grupo en Sidebar</TableHead>
+                          <TableHead>Archivo de configuración</TableHead>
+                          <TableHead>Elementos</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell className="font-medium flex items-center gap-2">
+                            <Home className="h-4 w-4 text-primary" />
+                            Principal
+                          </TableCell>
+                          <TableCell className="font-mono text-xs">mainNavigation.ts</TableCell>
+                          <TableCell>{mainNavigation.length}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium flex items-center gap-2">
+                            <Compass className="h-4 w-4 text-green-500" />
+                            Explorar
+                          </TableCell>
+                          <TableCell className="font-mono text-xs">exploreNavigation.ts</TableCell>
+                          <TableCell>{exploreNavigation.length}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium flex items-center gap-2">
+                            <GraduationCap className="h-4 w-4 text-purple-500" />
+                            Instructor
+                          </TableCell>
+                          <TableCell className="font-mono text-xs">instructorNavigation.ts</TableCell>
+                          <TableCell>{instructorNavigation.length}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium flex items-center gap-2">
+                            <BookOpen className="h-4 w-4 text-amber-500" />
+                            Académico
+                          </TableCell>
+                          <TableCell className="font-mono text-xs">academicNavigation.ts</TableCell>
+                          <TableCell>{academicNavigation.length}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium flex items-center gap-2">
+                            <CreditCard className="h-4 w-4 text-emerald-500" />
+                            Finanzas
+                          </TableCell>
+                          <TableCell className="font-mono text-xs">financeNavigation.ts</TableCell>
+                          <TableCell>{financeNavigation.length}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium flex items-center gap-2">
+                            <Settings className="h-4 w-4 text-gray-500" />
+                            Configuración
+                          </TableCell>
+                          <TableCell className="font-mono text-xs">settingsNavigation.ts</TableCell>
+                          <TableCell>{settingsNavigation.length}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <LayoutGrid className="h-5 w-5 text-primary" />
+                Componentes del Sidebar
+              </CardTitle>
+              <CardDescription>
+                Estructura de componentes que conforman la barra lateral
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <div className="min-w-[600px]">
+                  <div className="flex flex-col items-center">
+                    <div className="p-3 rounded-lg border-2 border-blue-500 bg-white dark:bg-card mb-4 shadow-md w-64 text-center">
+                      <div className="font-medium">SidebarContent</div>
+                      <div className="text-xs text-muted-foreground">Componente principal</div>
+                    </div>
+                    
+                    <div className="w-px h-6 bg-gray-300"></div>
+                    
+                    <div className="grid grid-cols-3 gap-8">
+                      <div className="flex flex-col items-center">
+                        <div className="p-2 rounded-lg border border-blue-200 bg-white dark:bg-card shadow-sm w-48 text-center">
+                          <div className="font-medium">Dashboard Group</div>
+                          <div className="text-xs text-muted-foreground">Principal</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-col items-center">
+                        <div className="p-2 rounded-lg border border-blue-200 bg-white dark:bg-card shadow-sm w-48 text-center">
+                          <div className="font-medium">Courses Group</div>
+                          <div className="text-xs text-muted-foreground">Cursos</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-col items-center">
+                        <div className="p-2 rounded-lg border border-blue-200 bg-white dark:bg-card shadow-sm w-48 text-center">
+                          <div className="font-medium">Community Group</div>
+                          <div className="text-xs text-muted-foreground">Comunidad</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
