@@ -49,7 +49,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
   tags = [],
   onTagsChange,
 }) => {
-  const { isEditMode, updateText, applyAIEdit } = useEditMode();
+  const { isEditMode, updateText, applyAIEdit, selectedElementId, setSelectedElementId } = useEditMode();
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
   const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
@@ -58,6 +58,8 @@ const InlineEdit: React.FC<InlineEditProps> = ({
   const [isTaggingOpen, setIsTaggingOpen] = useState(false);
   const [elementTags, setElementTags] = useState<string[]>(tags);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const elementRef = useRef<HTMLDivElement>(null);
+  const isSelected = selectedElementId === id;
 
   // Update local state when props change
   useEffect(() => {
@@ -80,7 +82,13 @@ const InlineEdit: React.FC<InlineEditProps> = ({
     return <div className={className}>{value || placeholder}</div>;
   }
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (selectedElementId !== id) {
+      setSelectedElementId(id);
+    }
+    
     if (!editing) {
       setEditing(true);
       console.log(`Started editing ${field} in ${table} with ID ${id}`);
@@ -119,7 +127,8 @@ const InlineEdit: React.FC<InlineEditProps> = ({
     }
   };
 
-  const handleAIAssist = () => {
+  const handleAIAssist = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     setIsAIDialogOpen(true);
   };
 
@@ -219,49 +228,57 @@ const InlineEdit: React.FC<InlineEditProps> = ({
 
     // Display the value with edit UI when not editing
     return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div
-              className={cn(
-                "relative group cursor-pointer border border-transparent hover:border-primary/30 hover:bg-primary/5 rounded px-1 -mx-1 transition-colors",
-                "focus:outline-none focus:border-primary/30 focus:bg-primary/5",
-                className
-              )}
-              onClick={handleClick}
-              tabIndex={0}
-              role="button"
-              aria-label={`Editar ${field}`}
-              onKeyDown={(e) => e.key === 'Enter' && handleClick()}
-            >
-              <div className="break-words">
-                {value || placeholder}
-              </div>
-              {elementTags && elementTags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {elementTags.map(tag => (
-                    <span 
-                      key={tag} 
-                      className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-primary/10 text-primary"
-                    >
-                      <TagIcon className="h-2.5 w-2.5 mr-0.5" />
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="bg-primary text-primary-foreground rounded-full p-1">
-                  <Pencil className="h-3 w-3" />
-                </div>
-              </div>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p className="text-xs">Haz clic para editar este contenido</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <div
+        ref={elementRef}
+        className={cn(
+          "relative group cursor-pointer transition-all duration-200",
+          "border border-transparent hover:border-primary/50 hover:bg-primary/5 rounded px-1 -mx-1",
+          "focus:outline-none focus:border-primary/50 focus:bg-primary/5",
+          isSelected ? "ring-2 ring-primary/60 ring-offset-1 bg-primary/5" : "",
+          className
+        )}
+        onClick={handleClick}
+        tabIndex={0}
+        role="button"
+        aria-label={`Editar ${field}`}
+        onKeyDown={(e) => e.key === 'Enter' && handleClick(e as any)}
+      >
+        <div className="break-words">
+          {value || placeholder}
+        </div>
+        {elementTags && elementTags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1">
+            {elementTags.map(tag => (
+              <span 
+                key={tag} 
+                className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-primary/10 text-primary"
+              >
+                <TagIcon className="h-2.5 w-2.5 mr-0.5" />
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+        <div className={cn(
+          "absolute -top-2 -right-2 transition-all duration-200",
+          isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+        )}>
+          <div className="bg-primary text-primary-foreground rounded-full p-1">
+            <Pencil className="h-3 w-3" />
+          </div>
+        </div>
+        {isSelected && (
+          <Button
+            type="button"
+            size="icon"
+            variant="outline"
+            className="absolute bottom-1 right-1 h-6 w-6 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            onClick={(e) => handleAIAssist(e)}
+          >
+            <Wand2 className="h-3 w-3" />
+          </Button>
+        )}
+      </div>
     );
   };
 

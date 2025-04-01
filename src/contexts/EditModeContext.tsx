@@ -14,6 +14,8 @@ interface EditModeContextType {
   reorderElements: (table: string, elements: { id: string; order: number }[]) => Promise<boolean>;
   applyAIEdit: (element: string, prompt: string) => Promise<string>;
   canEdit: boolean;
+  selectedElementId: string | null;
+  setSelectedElementId: (id: string | null) => void;
 }
 
 // Create the context with default values
@@ -28,6 +30,8 @@ const EditModeContext = createContext<EditModeContextType>({
   reorderElements: async () => false,
   applyAIEdit: async () => '',
   canEdit: false,
+  selectedElementId: null,
+  setSelectedElementId: () => {},
 });
 
 export const useEditMode = () => useContext(EditModeContext);
@@ -55,6 +59,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isEditMode, setIsEditMode] = useState(getInitialEditMode());
   const [isReorderMode, setIsReorderMode] = useState(getInitialReorderMode());
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(true);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const { userRole } = useAuth();
 
   const canEdit = userRole === 'admin' || userRole === 'sistemas';
@@ -84,6 +89,13 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [isEditModeEnabled, isEditMode]);
 
+  // Clear selected element when edit mode is toggled off
+  useEffect(() => {
+    if (!isEditMode) {
+      setSelectedElementId(null);
+    }
+  }, [isEditMode]);
+
   // Check for feature configuration on mount
   useEffect(() => {
     // By default, we'll set it to true
@@ -111,6 +123,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         console.log('Edit mode activated, reorder mode also activated');
       } else {
         setIsReorderMode(false);
+        setSelectedElementId(null);
         console.log('Edit mode deactivated, reorder mode also deactivated');
       }
     } else if (!isEditModeEnabled && canEdit) {
@@ -122,7 +135,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // This is now just a legacy function as reorder mode is always enabled with edit mode
+  // Toggle reorder mode (can only be true if edit mode is also true)
   const toggleReorderMode = () => {
     if (isEditMode && canEdit && isEditModeEnabled) {
       const newValue = !isReorderMode;
@@ -212,7 +225,9 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       updateText,
       reorderElements,
       applyAIEdit,
-      canEdit
+      canEdit,
+      selectedElementId,
+      setSelectedElementId
     }}>
       {children}
     </EditModeContext.Provider>

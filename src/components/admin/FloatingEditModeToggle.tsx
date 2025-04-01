@@ -37,8 +37,8 @@ const FloatingEditModeToggle: React.FC = () => {
   const handleToggleEditMode = () => {
     toggleEditMode();
     if (!isEditMode) {
-      toast.success('Modo edición universal activado en todas las páginas', {
-        description: 'Puedes navegar entre páginas manteniendo el modo edición activo.'
+      toast.success('Modo edición universal activado', {
+        description: 'Selecciona cualquier elemento para editarlo. Puedes navegar entre páginas manteniendo el modo activo.'
       });
     }
   };
@@ -145,12 +145,12 @@ const FloatingEditModeToggle: React.FC = () => {
             <div className="flex flex-col items-center gap-1 p-2 bg-primary/10 rounded-lg">
               <LayoutGrid className="h-5 w-5 text-primary" />
               <span className="text-xs font-medium">Secciones</span>
-              <span className="text-[10px] text-muted-foreground">Click para añadir</span>
+              <span className="text-[10px] text-muted-foreground">Click para seleccionar</span>
             </div>
           </div>
           
           <p className="text-xs text-muted-foreground italic mb-2">
-            Puedes navegar entre páginas manteniendo el modo edición activo
+            Haz click en cualquier elemento para seleccionarlo. El modo edición permanece activo al navegar entre páginas.
           </p>
         </Card>
         
