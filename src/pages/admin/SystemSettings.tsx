@@ -14,7 +14,8 @@ import {
   ShieldCheck,
   DatabaseZap,
   Globe,
-  Layout
+  Layout,
+  Book
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import GeneralSettings from '@/features/admin/components/settings/GeneralSettings';
@@ -22,7 +23,10 @@ import FeaturesSettings from '@/features/admin/components/settings/FeaturesSetti
 import ConnectionsSettings from '@/features/admin/components/settings/ConnectionsSettings';
 import SecuritySettings from '@/features/admin/components/settings/SecuritySettings';
 import DataSettings from '@/features/admin/components/settings/DataSettings';
-import { FeaturesConfig, defaultFeaturesConfig } from '@/contexts/OnboardingContext';
+import AppearanceSettings from '@/features/admin/components/settings/AppearanceSettings';
+import ContentSettings from '@/features/admin/components/settings/ContentSettings';
+import OnboardingSettings from '@/features/admin/components/settings/OnboardingSettings';
+import { FeaturesConfig, useOnboarding, defaultFeaturesConfig } from '@/contexts/OnboardingContext';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { toast } from 'sonner';
@@ -49,7 +53,10 @@ const SystemSettings: React.FC = () => {
     enableDatabaseDevMode: false,
     enableAutoBackups: true,
     enableQueryCache: true,
-    enableMaintenanceMode: false
+    enableMaintenanceMode: false,
+    enableCategoryManagement: false,
+    enableLeaderboard: false,
+    enableOnboardingSystem: true
   });
   
   const [isSaving, setIsSaving] = useState(false);
@@ -115,6 +122,39 @@ const SystemSettings: React.FC = () => {
       icon: <ToggleRight className="h-4 w-4" />,
       dataTag: "settings-tab-features",
       content: <FeaturesSettings 
+        featuresConfig={featuresConfig}
+        onToggleFeature={handleToggleFeature}
+        isLoading={isSaving}
+      />
+    },
+    {
+      value: 'appearance',
+      label: 'Apariencia',
+      icon: <Palette className="h-4 w-4" />,
+      dataTag: "settings-tab-appearance",
+      content: <AppearanceSettings
+        featuresConfig={featuresConfig}
+        onToggleFeature={handleToggleFeature}
+        isLoading={isSaving}
+      />
+    },
+    {
+      value: 'content',
+      label: 'Contenido',
+      icon: <Layout className="h-4 w-4" />,
+      dataTag: "settings-tab-content",
+      content: <ContentSettings
+        featuresConfig={featuresConfig}
+        onToggleFeature={handleToggleFeature}
+        isLoading={isSaving}
+      />
+    },
+    {
+      value: 'onboarding',
+      label: 'Onboarding',
+      icon: <Book className="h-4 w-4" />,
+      dataTag: "settings-tab-onboarding",
+      content: <OnboardingSettings
         featuresConfig={featuresConfig}
         onToggleFeature={handleToggleFeature}
         isLoading={isSaving}

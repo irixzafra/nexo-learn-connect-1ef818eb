@@ -22,11 +22,15 @@ export interface SettingsSection {
 interface SettingsAccordionProps {
   sections: SettingsSection[];
   className?: string;
+  title?: string;
+  description?: string;
 }
 
 const SettingsAccordion: React.FC<SettingsAccordionProps> = ({ 
   sections,
-  className 
+  className,
+  title,
+  description
 }) => {
   const [openSections, setOpenSections] = useState<string[]>([sections[0]?.id]);
 
@@ -44,24 +48,59 @@ const SettingsAccordion: React.FC<SettingsAccordionProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end space-x-2">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={expandAll}
-          className="text-xs"
-        >
-          Expandir todo
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={collapseAll}
-          className="text-xs"
-        >
-          Colapsar todo
-        </Button>
-      </div>
+      {(title || description) && (
+        <div className="mb-6">
+          <div className="flex items-start justify-between">
+            <div>
+              {title && (
+                <h1 className="text-2xl font-bold flex items-center gap-2 text-primary">
+                  {sections[0]?.icon && <span className={cn(sections[0]?.iconColor || "text-primary")}>{sections[0]?.icon}</span>}
+                  {title}
+                </h1>
+              )}
+              {description && <p className="text-muted-foreground mt-1">{description}</p>}
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={expandAll}
+                className="text-xs"
+              >
+                Expandir todo
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={collapseAll}
+                className="text-xs"
+              >
+                Colapsar todo
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {!title && !description && (
+        <div className="flex justify-end space-x-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={expandAll}
+            className="text-xs"
+          >
+            Expandir todo
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={collapseAll}
+            className="text-xs"
+          >
+            Colapsar todo
+          </Button>
+        </div>
+      )}
 
       <Accordion 
         type="multiple" 

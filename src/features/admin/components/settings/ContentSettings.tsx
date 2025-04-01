@@ -1,45 +1,69 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { FileText, Trophy, Loader2, Construction } from 'lucide-react';
-import { FeaturesConfig } from '@/contexts/OnboardingContext';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { 
+  FileText, 
+  Image, 
+  Layers,
+  Upload,
+  FileCode,
+  Trophy,
+  PenSquare,
+  Loader2,
+  Construction
+} from 'lucide-react';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
+import SettingsAccordion, { SettingsSection } from '@/components/admin/settings/SettingsAccordion';
+import { Badge } from '@/components/ui/badge';
 
-export interface ContentSettingsProps {
+interface ContentSettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
   isLoading?: boolean;
 }
 
-export const ContentSettings: React.FC<ContentSettingsProps> = ({ 
-  featuresConfig, 
+const ContentSettings: React.FC<ContentSettingsProps> = ({ 
+  featuresConfig,
   onToggleFeature,
   isLoading = false
 }) => {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <FileText className="h-4 w-4 text-orange-500" />
-          Contenido
-        </CardTitle>
-        <CardDescription className="text-xs">
-          Configura cómo se gestiona el contenido en la plataforma
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-3">
+  const contentSections: SettingsSection[] = [
+    {
+      id: "editor",
+      title: "Editor de Contenido",
+      icon: <PenSquare className="h-5 w-5" />,
+      iconColor: "text-blue-500",
+      content: (
+        <div className="space-y-4">
           <div className="flex items-center justify-between py-1">
             <div>
-              <h3 className="text-sm font-medium">Gestión de categorías</h3>
+              <h3 className="text-sm font-medium">Editor Avanzado</h3>
               <p className="text-xs text-muted-foreground">
-                Habilita la gestión de categorías para cursos y contenidos
+                Habilita opciones avanzadas de edición
               </p>
-              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
-                En desarrollo
-              </Badge>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableAdvancedEditor"
+                checked={featuresConfig.enableAdvancedEditor}
+                onCheckedChange={(value) => onToggleFeature('enableAdvancedEditor', value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Gestión de Categorías</h3>
+              <p className="text-xs text-muted-foreground">
+                Permite la creación y edición de categorías
+              </p>
             </div>
             <div className="flex items-center">
               {isLoading && (
@@ -53,26 +77,29 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
               />
             </div>
           </div>
-          
-          <Separator />
-          
+        </div>
+      )
+    },
+    {
+      id: "media",
+      title: "Gestión de Archivos",
+      icon: <Image className="h-5 w-5" />,
+      iconColor: "text-green-500",
+      content: (
+        <div className="space-y-4">
           <div className="flex items-center justify-between py-1">
             <div>
-              <h3 className="text-sm font-medium">Edición y ordenación en línea</h3>
+              <h3 className="text-sm font-medium">Optimización de Imágenes</h3>
               <p className="text-xs text-muted-foreground">
-                Permite editar contenido y reordenar elementos directamente en la interfaz
+                Comprime automáticamente las imágenes subidas
               </p>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+                <Construction className="h-3 w-3 mr-1" />
+                En desarrollo
+              </Badge>
             </div>
             <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableEditMode"
-                checked={featuresConfig.enableEditMode}
-                onCheckedChange={(value) => onToggleFeature('enableEditMode', value)}
-                disabled={isLoading}
-              />
+              <Switch id="imageOptimization" disabled />
             </div>
           </div>
           
@@ -80,14 +107,31 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
           
           <div className="flex items-center justify-between py-1">
             <div>
-              <h3 className="text-sm font-medium">Leaderboard de gamificación</h3>
+              <h3 className="text-sm font-medium">Límite de Subida</h3>
               <p className="text-xs text-muted-foreground">
-                Activa el sistema de clasificaciones y puntos para estudiantes
+                Tamaño máximo para archivos subidos: 10MB
               </p>
-              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
-                <Construction className="h-3 w-3 mr-1" />
-                En desarrollo
-              </Badge>
+            </div>
+            <div className="flex items-center">
+              <Switch id="uploadLimit" defaultChecked disabled />
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "community",
+      title: "Comunidad",
+      icon: <Trophy className="h-5 w-5" />,
+      iconColor: "text-orange-500",
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Tabla de Clasificación</h3>
+              <p className="text-xs text-muted-foreground">
+                Muestra tabla de clasificación de usuarios
+              </p>
             </div>
             <div className="flex items-center">
               {isLoading && (
@@ -97,7 +141,7 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
                 id="enableLeaderboard"
                 checked={featuresConfig.enableLeaderboard}
                 onCheckedChange={(value) => onToggleFeature('enableLeaderboard', value)}
-                disabled={true}
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -106,9 +150,9 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
           
           <div className="flex items-center justify-between py-1">
             <div>
-              <h3 className="text-sm font-medium">Contenidos interactivos</h3>
+              <h3 className="text-sm font-medium">Moderación Automática</h3>
               <p className="text-xs text-muted-foreground">
-                Permite crear cuestionarios, encuestas y ejercicios interactivos
+                Modera automáticamente el contenido generado por usuarios
               </p>
               <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
                 <Construction className="h-3 w-3 mr-1" />
@@ -116,18 +160,21 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
               </Badge>
             </div>
             <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableInteractiveContent"
-                checked={false}
-                disabled={true}
-              />
+              <Switch id="autoModeration" disabled />
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      )
+    }
+  ];
+
+  return (
+    <SettingsAccordion 
+      sections={contentSections}
+      title="Contenido"
+      description="Configuración relacionada con la gestión de contenido"
+    />
   );
 };
+
+export default ContentSettings;

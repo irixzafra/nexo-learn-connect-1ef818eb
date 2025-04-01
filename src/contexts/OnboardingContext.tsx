@@ -5,6 +5,7 @@ export interface FeaturesConfig {
   // Onboarding features
   autoStartOnboarding: boolean;
   showOnboardingTrigger: boolean;
+  enableOnboardingSystem: boolean;
   
   // UI Features
   enableEditMode: boolean;
@@ -43,6 +44,10 @@ export interface FeaturesConfig {
   enableQueryCache: boolean;
   enableMaintenanceMode: boolean;
   
+  // Content Management
+  enableCategoryManagement: boolean;
+  enableLeaderboard: boolean;
+  
   // AI Features
   enableAI: boolean;
 }
@@ -52,6 +57,7 @@ interface OnboardingState {
   completed: boolean;
   currentStep: number;
   featuresConfig: FeaturesConfig;
+  isOnboardingActive: boolean;
 }
 
 interface OnboardingContextType {
@@ -61,13 +67,18 @@ interface OnboardingContextType {
   completeOnboarding: () => void;
   nextStep: () => void;
   prevStep: () => void;
+  previousStep: () => void;
   goToStep: (step: number) => void;
   toggleFeature: (feature: keyof FeaturesConfig, enabled: boolean) => void;
+  featuresConfig: FeaturesConfig;
+  isOnboardingActive: boolean;
+  currentStep: number;
 }
 
-const defaultFeaturesConfig: FeaturesConfig = {
+export const defaultFeaturesConfig: FeaturesConfig = {
   autoStartOnboarding: true,
   showOnboardingTrigger: true,
+  enableOnboardingSystem: true,
   enableEditMode: false,
   enableContentReordering: false,
   enableThemeSwitcher: true,
@@ -91,7 +102,9 @@ const defaultFeaturesConfig: FeaturesConfig = {
   enableAutoBackups: true,
   enableQueryCache: true,
   enableMaintenanceMode: false,
-  enableAI: true
+  enableAI: true,
+  enableCategoryManagement: false,
+  enableLeaderboard: false
 };
 
 const defaultOnboardingState: OnboardingState = {
@@ -99,6 +112,7 @@ const defaultOnboardingState: OnboardingState = {
   completed: false,
   currentStep: 0,
   featuresConfig: defaultFeaturesConfig,
+  isOnboardingActive: false
 };
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
@@ -110,6 +124,7 @@ export const OnboardingProvider: React.FC<{children: ReactNode}> = ({ children }
     setState(prev => ({
       ...prev,
       showWelcome: false,
+      isOnboardingActive: true
     }));
   };
 
@@ -117,6 +132,7 @@ export const OnboardingProvider: React.FC<{children: ReactNode}> = ({ children }
     setState(prev => ({
       ...prev,
       completed: true,
+      isOnboardingActive: false
     }));
   };
 
@@ -125,6 +141,7 @@ export const OnboardingProvider: React.FC<{children: ReactNode}> = ({ children }
       ...prev,
       completed: true,
       currentStep: 0,
+      isOnboardingActive: false
     }));
   };
 
@@ -141,6 +158,9 @@ export const OnboardingProvider: React.FC<{children: ReactNode}> = ({ children }
       currentStep: Math.max(0, prev.currentStep - 1),
     }));
   };
+
+  // Alias for backward compatibility
+  const previousStep = prevStep;
 
   const goToStep = (step: number) => {
     setState(prev => ({
@@ -159,17 +179,25 @@ export const OnboardingProvider: React.FC<{children: ReactNode}> = ({ children }
     }));
   };
 
+  // Create extended context with shorthand access to commonly used values
+  const contextValue: OnboardingContextType = {
+    state,
+    startOnboarding,
+    skipOnboarding,
+    completeOnboarding,
+    nextStep,
+    prevStep,
+    previousStep,
+    goToStep,
+    toggleFeature,
+    // These properties are added for easier access
+    featuresConfig: state.featuresConfig,
+    isOnboardingActive: state.isOnboardingActive,
+    currentStep: state.currentStep
+  };
+
   return (
-    <OnboardingContext.Provider value={{
-      state,
-      startOnboarding,
-      skipOnboarding,
-      completeOnboarding,
-      nextStep,
-      prevStep,
-      goToStep,
-      toggleFeature,
-    }}>
+    <OnboardingContext.Provider value={contextValue}>
       {children}
     </OnboardingContext.Provider>
   );
