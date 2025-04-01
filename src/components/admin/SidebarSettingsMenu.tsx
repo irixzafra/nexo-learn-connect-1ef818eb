@@ -13,7 +13,6 @@ import {
   Code
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { settingsNavigation } from '@/config/navigation/settingsNavigation';
 
 const SidebarSettingsMenu: React.FC = () => {
   return (

@@ -1,178 +1,188 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plug, Server, LucideIcon, Search, Mail, CreditCard, MessageSquare, Github } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Plug, Globe, ShieldCheck, Blocks, Check, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
 interface Integration {
   id: string;
   name: string;
   description: string;
-  icon: LucideIcon;
-  enabled: boolean;
-  status: 'connected' | 'not_connected' | 'error';
-  category: 'analytics' | 'communication' | 'payment' | 'developer' | 'ai';
+  icon: React.ReactNode;
+  status: 'active' | 'inactive' | 'pending';
+  isConfigured: boolean;
 }
 
 const IntegrationsPage: React.FC = () => {
-  const [integrations, setIntegrations] = React.useState<Integration[]>([
-    {
-      id: 'google_analytics',
-      name: 'Google Analytics',
-      description: 'Integra analíticas de tráfico y comportamiento de usuarios',
-      icon: Search,
-      enabled: true,
-      status: 'connected',
-      category: 'analytics'
-    },
-    {
-      id: 'mailchimp',
-      name: 'Mailchimp',
-      description: 'Integración para gestión de campañas de email marketing',
-      icon: Mail,
-      enabled: false,
-      status: 'not_connected',
-      category: 'communication'
-    },
+  const [integrations, setIntegrations] = useState<Integration[]>([
     {
       id: 'stripe',
       name: 'Stripe',
-      description: 'Procesa pagos y suscripciones en tu plataforma',
-      icon: CreditCard,
-      enabled: true,
-      status: 'connected',
-      category: 'payment'
+      description: 'Procesador de pagos para suscripciones y compras únicas',
+      icon: <ShieldCheck className="h-8 w-8 text-purple-500" />,
+      status: 'active',
+      isConfigured: true
+    },
+    {
+      id: 'google',
+      name: 'Google Workspace',
+      description: 'Integración con Gmail, Calendar y otros servicios de Google',
+      icon: <Globe className="h-8 w-8 text-blue-500" />,
+      status: 'active',
+      isConfigured: true
+    },
+    {
+      id: 'zapier',
+      name: 'Zapier',
+      description: 'Automatización con más de 3,000 aplicaciones',
+      icon: <Blocks className="h-8 w-8 text-orange-500" />,
+      status: 'inactive',
+      isConfigured: false
     },
     {
       id: 'slack',
       name: 'Slack',
-      description: 'Conecta notificaciones y alertas con canales de Slack',
-      icon: MessageSquare,
-      enabled: false,
-      status: 'not_connected',
-      category: 'communication'
-    },
-    {
-      id: 'github',
-      name: 'GitHub',
-      description: 'Integración con repositorios y automatización de CI/CD',
-      icon: Github,
-      enabled: true,
-      status: 'connected',
-      category: 'developer'
-    },
-    {
-      id: 'openai',
-      name: 'OpenAI',
-      description: 'Integra funcionalidades de IA para generación de contenido',
-      icon: Server,
-      enabled: true,
-      status: 'connected',
-      category: 'ai'
+      description: 'Notificaciones y comandos desde Slack',
+      icon: <Plug className="h-8 w-8 text-green-500" />,
+      status: 'pending',
+      isConfigured: true
     }
   ]);
 
   const toggleIntegration = (id: string) => {
     setIntegrations(prev => 
       prev.map(integration => 
-        integration.id === id 
-          ? { 
-              ...integration, 
-              enabled: !integration.enabled,
-              status: !integration.enabled ? 'connected' : 'not_connected'
-            } 
-          : integration
+        integration.id === id ? {
+          ...integration,
+          status: integration.status === 'active' ? 'inactive' : 'active'
+        } : integration
       )
     );
     
     const integration = integrations.find(i => i.id === id);
-    const action = integration?.enabled ? 'desactivada' : 'activada';
-    toast.success(`Integración ${integration?.name} ${action} correctamente`);
+    if (integration) {
+      const newStatus = integration.status === 'active' ? 'desactivada' : 'activada';
+      toast.success(`Integración ${integration.name} ${newStatus}`);
+    }
   };
-
-  const categories = [
-    { id: 'all', name: 'Todas' },
-    { id: 'analytics', name: 'Analíticas' },
-    { id: 'communication', name: 'Comunicación' },
-    { id: 'payment', name: 'Pagos' },
-    { id: 'developer', name: 'Desarrollo' },
-    { id: 'ai', name: 'Inteligencia Artificial' }
-  ];
-
-  const [activeCategory, setActiveCategory] = React.useState('all');
-
-  const filteredIntegrations = activeCategory === 'all' 
-    ? integrations 
-    : integrations.filter(integration => integration.category === activeCategory);
 
   return (
     <AdminPageLayout 
       title="Integraciones" 
-      subtitle="Gestiona las conexiones con servicios externos"
+      subtitle="Conecta la plataforma con servicios externos"
     >
       <div className="space-y-6">
         <Card>
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
               <Plug className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>Servicios Conectados</CardTitle>
+              <CardTitle>Integraciones Activas</CardTitle>
             </div>
             <CardDescription>
-              Administra las integraciones con servicios y aplicaciones de terceros
+              Gestiona las conexiones con servicios externos
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {categories.map(category => (
-                <Badge 
-                  key={category.id} 
-                  variant={activeCategory === category.id ? "default" : "outline"}
-                  className="cursor-pointer"
-                  onClick={() => setActiveCategory(category.id)}
+            <div className="space-y-4">
+              {integrations.map((integration) => (
+                <div 
+                  key={integration.id} 
+                  className="flex items-center justify-between p-4 border rounded-md"
                 >
-                  {category.name}
-                </Badge>
+                  <div className="flex items-center gap-4">
+                    <div className="bg-muted rounded-md p-2">
+                      {integration.icon}
+                    </div>
+                    <div>
+                      <h3 className="font-medium flex items-center gap-2">
+                        {integration.name}
+                        {integration.status === 'active' && (
+                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                            Activa
+                          </Badge>
+                        )}
+                        {integration.status === 'pending' && (
+                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                            Pendiente
+                          </Badge>
+                        )}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">{integration.description}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={integration.status === 'active'}
+                      onCheckedChange={() => toggleIntegration(integration.id)}
+                      disabled={integration.status === 'pending' || !integration.isConfigured}
+                    />
+                    <Button variant="outline" size="sm">
+                      Configurar
+                    </Button>
+                  </div>
+                </div>
               ))}
             </div>
-            
-            <Separator className="my-4" />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredIntegrations.map(integration => {
-                const Icon = integration.icon;
-                return (
-                  <Card key={integration.id}>
-                    <CardHeader className="p-4">
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-2">
-                          <div className="p-2 bg-primary/10 rounded-md">
-                            <Icon className="h-5 w-5 text-primary" />
-                          </div>
-                          <CardTitle className="text-base">{integration.name}</CardTitle>
-                        </div>
-                        <Badge variant={integration.status === 'connected' ? "outline" : "secondary"}>
-                          {integration.status === 'connected' ? 'Conectado' : 'No conectado'}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0">
-                      <p className="text-sm text-muted-foreground mb-4">{integration.description}</p>
-                      <Button
-                        variant={integration.enabled ? "outline" : "default"}
-                        size="sm"
-                        className="w-full"
-                        onClick={() => toggleIntegration(integration.id)}
-                      >
-                        {integration.enabled ? 'Desactivar' : 'Activar'}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+          </CardContent>
+          <CardFooter>
+            <Button className="ml-auto" variant="outline">
+              <Plus className="h-4 w-4 mr-2" />
+              Añadir integración
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Check className="h-5 w-5 text-muted-foreground" />
+                <CardTitle>Estado de servicios</CardTitle>
+              </div>
+              <Button variant="ghost" size="sm">Actualizar</Button>
+            </div>
+            <CardDescription>
+              Verifica el estado de los servicios conectados
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between py-2 border-b">
+                <span className="text-sm">API REST</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <span className="text-sm text-muted-foreground">Operativa</span>
+                </div>
+              </div>
+              
+              <div className="flex justify-between py-2 border-b">
+                <span className="text-sm">Procesamiento de pagos</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <span className="text-sm text-muted-foreground">Operativo</span>
+                </div>
+              </div>
+              
+              <div className="flex justify-between py-2 border-b">
+                <span className="text-sm">Servicio de autenticación</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <span className="text-sm text-muted-foreground">Operativo</span>
+                </div>
+              </div>
+              
+              <div className="flex justify-between py-2">
+                <span className="text-sm">Notificaciones push</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                  <span className="text-sm text-muted-foreground">Degradado</span>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
