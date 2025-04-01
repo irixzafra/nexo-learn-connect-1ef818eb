@@ -10,7 +10,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Loader2 } from 'lucide-react';
-import type { FeaturesConfig, ExtendedFeatureId } from '@/contexts/features/types';
+import type { ExtendedFeatureId } from '@/contexts/features/types';
 
 export interface FeatureAccordionGroupProps {
   title: string;
@@ -26,31 +26,10 @@ export const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({
   title,
   features,
 }) => {
-  const { featuresConfig, toggleFeature, isLoading } = useFeatures();
+  const { isEnabled, toggleFeature, isLoading } = useFeatures();
 
   const handleToggle = async (featureId: ExtendedFeatureId, newValue: boolean) => {
     await toggleFeature(featureId, newValue);
-  };
-
-  const isFeatureEnabled = (featureId: ExtendedFeatureId): boolean => {
-    // Check if featuresConfig exists before attempting to access properties
-    if (!featuresConfig) {
-      return false;
-    }
-    
-    // For core features, check the features object
-    if (featuresConfig.features && typeof featureId === 'string' && 
-        Object.keys(featuresConfig.features).includes(featureId)) {
-      return !!featuresConfig.features[featureId as any]?.enabled;
-    } 
-    
-    // For extended features, check the direct property
-    if (featuresConfig.hasOwnProperty(featureId)) {
-      return !!featuresConfig[featureId as keyof FeaturesConfig];
-    }
-    
-    // Default to false if the feature is not found
-    return false;
   };
 
   return (
@@ -79,7 +58,7 @@ export const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({
                   {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                   <Switch
                     id={String(feature.id)}
-                    checked={isFeatureEnabled(feature.id)}
+                    checked={isEnabled(feature.id)}
                     onCheckedChange={(checked) => handleToggle(feature.id, checked)}
                     disabled={isLoading}
                   />

@@ -14,9 +14,9 @@ import { useFeatures } from '@/hooks/useFeatures';
 import { ExtendedFeatureId } from '@/contexts/features/types';
 
 export const SettingsTabs: React.FC = () => {
-  const { featuresConfig, toggleFeature, isLoading } = useFeatures();
+  const { isEnabled, toggleFeature, isLoading, featuresConfig } = useFeatures();
 
-  // Create a wrapper function that ensures the correct type signature
+  // Pass the features config and toggle function to children
   const handleToggleFeature = (featureId: ExtendedFeatureId, value?: boolean) => {
     return toggleFeature(featureId, value);
   };

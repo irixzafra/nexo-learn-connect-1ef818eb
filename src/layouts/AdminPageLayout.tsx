@@ -6,7 +6,7 @@ import { ChevronLeft } from 'lucide-react';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 
 interface AdminPageLayoutProps {
-  children: ReactNode;
+  children?: ReactNode;
   title: string;
   subtitle?: string;
   backAction?: {

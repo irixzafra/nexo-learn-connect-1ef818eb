@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
@@ -16,11 +15,11 @@ const DesignSettings = () => <div>Diseño</div>;
 const RolesSettings = () => <div>Roles y Permisos</div>;
 
 const SettingsRoutes: React.FC = () => {
-  const { featuresConfig, toggleFeature, isLoading } = useFeatures();
+  const { isEnabled, toggleFeature, featuresConfig } = useFeatures();
 
   // Create a type-safe wrapper for toggleFeature
-  const handleToggleFeature = (feature: keyof typeof featuresConfig, value: boolean) => {
-    toggleFeature(feature as FeatureId, value);
+  const handleToggleFeature = (feature: string) => {
+    toggleFeature(feature as FeatureId);
   };
 
   return (
@@ -64,7 +63,7 @@ const SettingsRoutes: React.FC = () => {
             <DataSettings 
               featuresConfig={featuresConfig} 
               onToggleFeature={handleToggleFeature} 
-              isLoading={isLoading} 
+              isLoading={false} 
             />
           </AdminPageLayout>
         }

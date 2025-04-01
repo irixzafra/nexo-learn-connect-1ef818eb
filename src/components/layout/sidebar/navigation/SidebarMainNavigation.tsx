@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavSection from './SidebarNavSection';
@@ -90,6 +89,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   // Get sidebar state from localStorage
   const { expanded } = useSidebarState();
   const location = useLocation();
+  const validateRoutes = useValidateRoutes();
   
   // Check if we're on an admin page
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -148,13 +148,24 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
     for (const key in menus) {
       if (Object.prototype.hasOwnProperty.call(menus, key)) {
         const items = menus[key as keyof typeof menus] || [];
-        const validatedItems = useValidateRoutes(items);
-        result[key] = enhanceItemsWithBadges(validatedItems);
+        // Call validate with the items array
+        const validatedItems = validateRoutes.validate(items.map((item: any) => item.path || ''));
+        
+        // Map the validation results back to the original items
+        const enhancedItems = items.map((item: any, index: number) => {
+          const validationResult = validatedItems[index];
+          return {
+            ...item,
+            isValid: validationResult ? validationResult.isValid : true
+          };
+        });
+        
+        result[key] = enhanceItemsWithBadges(enhancedItems);
       }
     }
     
     return result;
-  }, [menus, location.pathname, messagesCount, notificationsCount]);
+  }, [menus, location.pathname, messagesCount, notificationsCount, validateRoutes]);
 
   // If no groups after filtering, render nothing
   if (filteredGroups.length === 0) {

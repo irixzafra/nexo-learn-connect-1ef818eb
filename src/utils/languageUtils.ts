@@ -34,24 +34,17 @@ export function extractLanguageFromPath(path: string): SupportedLanguage | undef
 }
 
 /**
- * Ensure a path has a language prefix
+ * Get a localized URL with language prefix
  * @param path The URL path
- * @param language The language to ensure
+ * @param language The language to use
  * @returns Path with language prefix
  */
-export function ensureLanguagePrefix(path: string, language: SupportedLanguage): string {
-  // If already has language prefix, replace it
-  const existingLang = extractLanguageFromPath(path);
+export function getLocalizedUrl(path: string, language: SupportedLanguage): string {
+  // Remove language prefix if exists
+  const pathWithoutLang = getPathWithoutLanguage(path);
   
-  if (existingLang) {
-    return path.replace(`/${existingLang}`, `/${language}`);
-  }
-  
-  // Remove leading slash if present for consistent handling
-  const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
-  
-  // Add language prefix
-  return `/${language}/${normalizedPath}`;
+  // Add the language prefix
+  return `/${language}${pathWithoutLang}`;
 }
 
 /**
@@ -59,7 +52,7 @@ export function ensureLanguagePrefix(path: string, language: SupportedLanguage):
  * @param path The URL path
  * @returns Path without language prefix
  */
-export function removeLanguagePrefix(path: string): string {
+export function getPathWithoutLanguage(path: string): string {
   const lang = extractLanguageFromPath(path);
   
   if (lang) {
