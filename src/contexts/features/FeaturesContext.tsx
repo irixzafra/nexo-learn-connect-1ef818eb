@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { CoreFeatureId, ExtendedFeatureId, Feature, FeatureId, FeaturesConfig, FeaturesContextProps } from './types';
@@ -58,6 +59,7 @@ const initialFeaturesConfig: FeaturesConfig = {
   requireOnboarding: false,
   autoStartOnboarding: true,
   showOnboardingTrigger: true,
+  enableContextualHelp: true,
 };
 
 // Create context
@@ -209,8 +211,8 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Check if a feature is enabled
   const isEnabled = (featureId: FeatureId): boolean => {
     // For core features, check the features object
-    if (Object.keys(featuresConfig.features).includes(featureId as string)) {
-      return featuresConfig.features[featureId as CoreFeatureId]?.enabled;
+    if (featuresConfig.features && Object.keys(featuresConfig.features).includes(featureId as string)) {
+      return !!featuresConfig.features[featureId as CoreFeatureId]?.enabled;
     } 
     
     // For extended features, check the direct property
@@ -224,79 +226,37 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Get a feature by its ID
   const getFeature = (featureId: FeatureId): Feature | undefined => {
-    if (Object.keys(featuresConfig.features).includes(featureId as string)) {
+    if (featuresConfig.features && Object.keys(featuresConfig.features).includes(featureId as string)) {
       return featuresConfig.features[featureId as CoreFeatureId];
     }
     return undefined;
   };
 
-  // Enable a feature
-  const enableFeature = (featureId: FeatureId): void => {
-    if (Object.keys(featuresConfig.features).includes(featureId as string)) {
-      // It's a core feature
-      setFeaturesConfig(prev => ({
-        ...prev,
-        features: {
-          ...prev.features,
-          [featureId]: {
-            ...prev.features[featureId as CoreFeatureId],
-            enabled: true
-          }
-        }
-      }));
-    } else {
-      // It's an extended feature
-      setFeaturesConfig(prev => ({
-        ...prev,
-        [featureId]: true
-      }));
-    }
-  };
-
-  // Disable a feature
-  const disableFeature = (featureId: FeatureId): void => {
-    if (Object.keys(featuresConfig.features).includes(featureId as string)) {
-      // It's a core feature
-      setFeaturesConfig(prev => ({
-        ...prev,
-        features: {
-          ...prev.features,
-          [featureId]: {
-            ...prev.features[featureId as CoreFeatureId],
-            enabled: false
-          }
-        }
-      }));
-    } else {
-      // It's an extended feature
-      setFeaturesConfig(prev => ({
-        ...prev,
-        [featureId]: false
-      }));
-    }
-  };
-
   // Toggle a feature
-  const toggleFeature = (featureId: FeatureId): void => {
-    if (Object.keys(featuresConfig.features).includes(featureId as string)) {
+  const toggleFeature = (featureId: FeatureId, value?: boolean): void => {
+    if (featuresConfig.features && Object.keys(featuresConfig.features).includes(featureId as string)) {
       // It's a core feature
-      const isCurrentlyEnabled = featuresConfig.features[featureId as CoreFeatureId].enabled;
+      const isCurrentlyEnabled = featuresConfig.features[featureId as CoreFeatureId]?.enabled;
+      const newValue = typeof value === 'boolean' ? value : !isCurrentlyEnabled;
+      
       setFeaturesConfig(prev => ({
         ...prev,
         features: {
           ...prev.features,
           [featureId]: {
             ...prev.features[featureId as CoreFeatureId],
-            enabled: !isCurrentlyEnabled
+            enabled: newValue
           }
         }
       }));
     } else {
       // It's an extended feature
       const isCurrentlyEnabled = !!featuresConfig[featureId as keyof FeaturesConfig];
+      const newValue = typeof value === 'boolean' ? value : !isCurrentlyEnabled;
+      
       setFeaturesConfig(prev => ({
         ...prev,
-        [featureId]: !isCurrentlyEnabled
+        [featureId]: newValue
       }));
     }
   };
@@ -363,8 +323,8 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const value: FeaturesContextProps = {
     features: featuresConfig.features,
     isEnabled,
-    enableFeature,
-    disableFeature,
+    enableFeature: (featureId) => toggleFeature(featureId, true),
+    disableFeature: (featureId) => toggleFeature(featureId, false),
     toggleFeature,
     getFeature,
     featuresConfig,

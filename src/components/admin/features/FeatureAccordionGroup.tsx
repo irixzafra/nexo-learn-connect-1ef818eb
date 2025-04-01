@@ -32,6 +32,15 @@ export const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({
     await toggleFeature(featureId, newValue);
   };
 
+  const isFeatureEnabled = (featureId: keyof FeaturesConfig): boolean => {
+    // Comprobamos si la propiedad existe antes de intentar leerla
+    if (featuresConfig && featuresConfig.hasOwnProperty(featureId)) {
+      return !!featuresConfig[featureId];
+    }
+    // Si la propiedad no existe, asumimos que está desactivada
+    return false;
+  };
+
   return (
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem value={title}>
@@ -58,7 +67,7 @@ export const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({
                   {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                   <Switch
                     id={String(feature.id)}
-                    checked={!!featuresConfig[feature.id]}
+                    checked={isFeatureEnabled(feature.id)}
                     onCheckedChange={(checked) => handleToggle(feature.id, checked)}
                     disabled={isLoading}
                   />
