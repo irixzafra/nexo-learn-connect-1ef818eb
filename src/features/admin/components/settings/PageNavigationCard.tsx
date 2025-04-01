@@ -1,70 +1,22 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ExternalLink, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export type PageStatus = 'active' | 'development' | 'not-implemented' | 'duplicate' | 'deprecated';
 
-export interface PageNavigationCardProps {
+interface PageNavigationCardProps {
   title: string;
   path: string;
   description?: string;
-  status: PageStatus;
-  category: string;
+  status: string;
+  category?: string;
   importance?: 'high' | 'medium' | 'low';
-  image?: string;
 }
-
-const getStatusStyle = (status: PageStatus) => {
-  switch (status) {
-    case 'active':
-      return 'bg-green-100 text-green-800 border-green-200';
-    case 'development':
-      return 'bg-amber-100 text-amber-800 border-amber-200';
-    case 'not-implemented':
-      return 'bg-red-100 text-red-800 border-red-200';
-    case 'duplicate':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    case 'deprecated':
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-    default:
-      return 'bg-slate-100 text-slate-800 border-slate-200';
-  }
-};
-
-const getStatusLabel = (status: PageStatus) => {
-  switch (status) {
-    case 'active':
-      return '✅ Activa';
-    case 'development':
-      return '🚧 En desarrollo';
-    case 'not-implemented':
-      return '❌ No implementada';
-    case 'duplicate':
-      return '🔄 Duplicada';
-    case 'deprecated':
-      return '⚠️ Deprecada';
-    default:
-      return status;
-  }
-};
-
-const getImportanceStyle = (importance?: 'high' | 'medium' | 'low') => {
-  switch (importance) {
-    case 'high':
-      return 'border-l-4 border-l-primary';
-    case 'medium':
-      return 'border-l-4 border-l-orange-400';
-    case 'low':
-      return 'border-l-4 border-l-muted';
-    default:
-      return '';
-  }
-};
 
 export const PageNavigationCard: React.FC<PageNavigationCardProps> = ({
   title,
@@ -72,50 +24,57 @@ export const PageNavigationCard: React.FC<PageNavigationCardProps> = ({
   description,
   status,
   category,
-  importance,
-  image
+  importance = 'medium'
 }) => {
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <Badge variant="default" className="bg-green-500 hover:bg-green-600">Activo</Badge>;
+      case 'development':
+        return <Badge variant="secondary" className="bg-amber-500 text-black hover:bg-amber-600">En Desarrollo</Badge>;
+      case 'not-implemented':
+        return <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-200">No Implementado</Badge>;
+      case 'duplicate':
+        return <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-200">Duplicado</Badge>;
+      case 'deprecated':
+        return <Badge variant="destructive">Deprecado</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const getImportanceClass = () => {
+    switch (importance) {
+      case 'high':
+        return 'border-l-4 border-primary';
+      case 'medium':
+        return 'border-l-2 border-primary/50';
+      default:
+        return '';
+    }
+  };
+
   return (
-    <Card className={cn("overflow-hidden hover:shadow-md transition-shadow", getImportanceStyle(importance))}>
-      {image && (
-        <div className="relative h-32 overflow-hidden">
-          <img
-            src={image}
-            alt={title}
-            className="object-cover w-full h-full"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
-            <Badge variant="outline" className={cn("text-white border-white/20 bg-black/40")}>
-              {category}
-            </Badge>
-          </div>
+    <Card className={cn("transition-shadow hover:shadow-md", getImportanceClass())}>
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base font-medium">{title}</CardTitle>
+          {getStatusBadge(status)}
         </div>
-      )}
-      <CardHeader className={!image ? "pb-2" : "pb-2 pt-3"}>
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-base">{title}</CardTitle>
-          <Badge variant="outline" className={cn(getStatusStyle(status))}>
-            {getStatusLabel(status)}
-          </Badge>
-        </div>
-        {!image && (
-          <Badge variant="outline" className="w-fit">
-            {category}
-          </Badge>
-        )}
+        {category && <div className="text-xs text-muted-foreground">Categoría: {category}</div>}
       </CardHeader>
-      <CardContent className="pb-2">
-        {description && (
-          <CardDescription className="text-xs">{description}</CardDescription>
-        )}
+      <CardContent>
+        {description && <p className="text-sm text-muted-foreground mb-3">{description}</p>}
+        <div className="flex items-center justify-between">
+          <div className="text-xs font-mono text-muted-foreground overflow-hidden text-ellipsis">{path}</div>
+          <Button variant="outline" size="sm" asChild>
+            <Link to={path} target="_blank" className="flex items-center gap-1">
+              <ExternalLink className="h-3 w-3" />
+              <span>Visitar</span>
+            </Link>
+          </Button>
+        </div>
       </CardContent>
-      <CardFooter className="pt-0 px-4 pb-3">
-        <Button variant="ghost" size="sm" className="ml-auto gap-1" asChild>
-          <Link to={path}>
-            Visitar <ExternalLink className="h-3 w-3 ml-1" />
-          </Link>
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

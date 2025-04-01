@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Grid, LayoutList, Search, Filter, X, Database, Info } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -704,7 +705,7 @@ export const SystemPagesNavigation: React.FC = () => {
             <Search className="h-5 w-5 text-muted-foreground" />
             <Input type="search" placeholder="Buscar página..." className="max-w-sm" onChange={(e) => handleSearch(e.target.value)} />
           </div>
-          <ToggleGroup defaultValue={isGridView ? "grid" : "list"} onValueChange={(value) => setIsGridView(value === "grid")}>
+          <ToggleGroup type="single" defaultValue={isGridView ? "grid" : "list"} onValueChange={(value) => setIsGridView(value === "grid")}>
             <ToggleGroupItem value="grid" aria-label="Grid">
               <Grid className="h-4 w-4" />
             </ToggleGroupItem>

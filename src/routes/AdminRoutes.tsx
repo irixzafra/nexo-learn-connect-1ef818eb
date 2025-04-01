@@ -11,6 +11,7 @@ import UserManagement from '@/pages/admin/UserManagement';
 import SettingsRoutes from './SettingsRoutes';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
+import PagesManagement from '@/pages/admin/settings/pages';
 
 // Placeholder components until actual ones are created
 const Dashboard = () => <div>Dashboard Content</div>;
@@ -64,6 +65,14 @@ const AdminRoutes: React.FC = () => {
         }
       />
       <Route path="/settings/*" element={<SettingsRoutes />} />
+      <Route
+        path="/pages"
+        element={
+          <AdminPageLayout title="Gestión de Páginas" subtitle="Administra las páginas y la navegación del sistema">
+            <PagesManagement />
+          </AdminPageLayout>
+        }
+      />
       <Route
         path="/analytics/*"
         element={
