@@ -3,18 +3,20 @@ import React from 'react';
 import { 
   DatabaseZap, 
   Database, 
-  HardDrive, 
-  Trash2, 
-  RefreshCw
+  Server, 
+  Archive, 
+  Clock,
+  BarChart3,
+  Loader2,
+  Construction
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import SettingsAccordion, { SettingsSection } from '@/components/admin/settings/SettingsAccordion';
-import { toast } from 'sonner';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 
 interface DataSettingsProps {
   featuresConfig: FeaturesConfig;
@@ -27,24 +29,6 @@ const DataSettings: React.FC<DataSettingsProps> = ({
   onToggleFeature,
   isLoading = false
 }) => {
-  const handleBackupNow = () => {
-    toast.loading("Creando copia de seguridad...");
-    
-    // Simulate API call
-    setTimeout(() => {
-      toast.success("Copia de seguridad creada correctamente");
-    }, 2000);
-  };
-  
-  const handleClearCache = () => {
-    toast.loading("Limpiando caché...");
-    
-    // Simulate API call
-    setTimeout(() => {
-      toast.success("Caché limpiada correctamente");
-    }, 1500);
-  };
-
   const dataSections: SettingsSection[] = [
     {
       id: "database",
@@ -53,164 +37,218 @@ const DataSettings: React.FC<DataSettingsProps> = ({
       iconColor: "text-blue-500",
       content: (
         <div className="space-y-4">
-          <div>
-            <Label htmlFor="db_connection">Conexión a la base de datos</Label>
-            <Input id="db_connection" defaultValue="postgresql://localhost:5432/nexo" />
-            <p className="text-xs text-muted-foreground mt-1">
-              URL de conexión a la base de datos
-            </p>
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Modo desarrollador de base de datos</h3>
+              <p className="text-xs text-muted-foreground">
+                Habilita herramientas de diagnóstico para la base de datos
+              </p>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+                Solo para desarrollo
+              </Badge>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableDatabaseDevMode"
+                checked={featuresConfig.enableDatabaseDevMode}
+                onCheckedChange={(value) => onToggleFeature('enableDatabaseDevMode', value)}
+                disabled={isLoading}
+              />
+            </div>
           </div>
           
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-medium">Modo de desarrollo</h3>
-              <p className="text-xs text-muted-foreground">
-                Habilita el modo de desarrollo para la base de datos
-              </p>
-            </div>
-            <Switch
-              id="enableDevMode"
-              checked={featuresConfig.enableDatabaseDevMode}
-              onCheckedChange={(value) => onToggleFeature('enableDatabaseDevMode', value)}
-              disabled={isLoading}
-            />
+          <Separator className="my-2" />
+          
+          <div>
+            <Label htmlFor="dbConnectionMode" className="text-left block mb-1">Modo de conexión</Label>
+            <Select defaultValue="pool">
+              <SelectTrigger id="dbConnectionMode">
+                <SelectValue placeholder="Seleccionar modo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="simple">Simple</SelectItem>
+                <SelectItem value="pool">Pool de conexiones</SelectItem>
+                <SelectItem value="advanced">Avanzado</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Define el método de conexión a la base de datos
+            </p>
           </div>
         </div>
       )
     },
     {
-      id: "backup",
+      id: "backups",
       title: "Copias de Seguridad",
-      icon: <HardDrive className="h-5 w-5" />,
+      icon: <Archive className="h-5 w-5" />,
       iconColor: "text-green-500",
       content: (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
               <h3 className="text-sm font-medium">Copias de seguridad automáticas</h3>
               <p className="text-xs text-muted-foreground">
-                Realiza copias de seguridad automáticas periódicamente
+                Programa copias de seguridad automáticas de la base de datos
               </p>
             </div>
-            <Switch
-              id="enableAutoBackups"
-              checked={featuresConfig.enableAutoBackups}
-              onCheckedChange={(value) => onToggleFeature('enableAutoBackups', value)}
-              disabled={isLoading}
-            />
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableAutoBackups"
+                checked={featuresConfig.enableAutoBackups}
+                onCheckedChange={(value) => onToggleFeature('enableAutoBackups', value)}
+                disabled={isLoading}
+              />
+            </div>
           </div>
           
+          <Separator className="my-2" />
+          
           <div>
-            <Label htmlFor="backup_frequency">Frecuencia de copia de seguridad</Label>
+            <Label htmlFor="backupFrequency" className="text-left block mb-1">Frecuencia de copias</Label>
             <Select defaultValue="daily">
-              <SelectTrigger id="backup_frequency">
+              <SelectTrigger id="backupFrequency">
                 <SelectValue placeholder="Seleccionar frecuencia" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="hourly">Cada hora</SelectItem>
                 <SelectItem value="daily">Diaria</SelectItem>
                 <SelectItem value="weekly">Semanal</SelectItem>
+                <SelectItem value="monthly">Mensual</SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Frecuencia con la que se realizan las copias de seguridad
+            </p>
           </div>
           
+          <Separator className="my-2" />
+          
           <div>
-            <Label htmlFor="backup_retention">Retención de copias de seguridad</Label>
+            <Label htmlFor="backupRetention" className="text-left block mb-1">Retención de copias</Label>
             <Select defaultValue="30">
-              <SelectTrigger id="backup_retention">
+              <SelectTrigger id="backupRetention">
                 <SelectValue placeholder="Seleccionar periodo" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="7">7 días</SelectItem>
                 <SelectItem value="30">30 días</SelectItem>
                 <SelectItem value="90">90 días</SelectItem>
+                <SelectItem value="365">1 año</SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Tiempo que se mantienen las copias de seguridad
+            </p>
           </div>
-          
-          <Button onClick={handleBackupNow} variant="outline" size="sm">
-            <HardDrive className="h-4 w-4 mr-2" />
-            Crear copia de seguridad ahora
-          </Button>
         </div>
       )
     },
     {
       id: "cache",
       title: "Caché",
-      icon: <RefreshCw className="h-5 w-5" />,
-      iconColor: "text-orange-500",
+      icon: <BarChart3 className="h-5 w-5" />,
+      iconColor: "text-purple-500",
       content: (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
               <h3 className="text-sm font-medium">Caché de consultas</h3>
               <p className="text-xs text-muted-foreground">
-                Almacena en caché las consultas frecuentes
+                Activa el almacenamiento en caché de consultas frecuentes
               </p>
             </div>
-            <Switch
-              id="enableQueryCache"
-              checked={featuresConfig.enableQueryCache}
-              onCheckedChange={(value) => onToggleFeature('enableQueryCache', value)}
-              disabled={isLoading}
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="cache_ttl">Tiempo de vida del caché</Label>
-            <div className="flex items-center gap-2">
-              <Input id="cache_ttl" type="number" defaultValue="60" />
-              <span className="text-sm text-muted-foreground">minutos</span>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableQueryCache"
+                checked={featuresConfig.enableQueryCache}
+                onCheckedChange={(value) => onToggleFeature('enableQueryCache', value)}
+                disabled={isLoading}
+              />
             </div>
           </div>
           
-          <Button onClick={handleClearCache} variant="outline" size="sm">
-            <Trash2 className="h-4 w-4 mr-2" />
-            Limpiar caché
-          </Button>
+          <Separator className="my-2" />
+          
+          <div>
+            <Label htmlFor="cacheTTL" className="text-left block mb-1">Tiempo de vida del caché</Label>
+            <Select defaultValue="300">
+              <SelectTrigger id="cacheTTL">
+                <SelectValue placeholder="Seleccionar tiempo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="60">1 minuto</SelectItem>
+                <SelectItem value="300">5 minutos</SelectItem>
+                <SelectItem value="600">10 minutos</SelectItem>
+                <SelectItem value="3600">1 hora</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Tiempo que permanecen las consultas en caché
+            </p>
+          </div>
         </div>
       )
     },
     {
-      id: "maintenance",
-      title: "Mantenimiento",
-      icon: <Trash2 className="h-5 w-5" />,
+      id: "server",
+      title: "Servidor",
+      icon: <Server className="h-5 w-5" />,
       iconColor: "text-red-500",
       content: (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-medium">Modo de mantenimiento</h3>
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Modo mantenimiento</h3>
               <p className="text-xs text-muted-foreground">
-                Activa el modo de mantenimiento para la plataforma
+                Activa el modo mantenimiento para realizar actualizaciones
               </p>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+                <Construction className="h-3 w-3 mr-1" />
+                En desarrollo
+              </Badge>
             </div>
-            <Switch
-              id="enableMaintenanceMode"
-              checked={featuresConfig.enableMaintenanceMode}
-              onCheckedChange={(value) => onToggleFeature('enableMaintenanceMode', value)}
-              disabled={isLoading}
-            />
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableMaintenanceMode"
+                checked={featuresConfig.enableMaintenanceMode}
+                onCheckedChange={(value) => onToggleFeature('enableMaintenanceMode', value)}
+                disabled={isLoading}
+              />
+            </div>
           </div>
           
-          <div className="bg-yellow-50 border border-yellow-100 p-3 rounded-md">
-            <h3 className="text-sm font-medium text-yellow-800">Operaciones destructivas</h3>
-            <p className="text-xs text-yellow-700 mt-1 mb-3">
-              Estas operaciones pueden causar pérdida de datos. Procede con precaución.
+          <Separator className="my-2" />
+          
+          <div>
+            <Label htmlFor="serverRegion" className="text-left block mb-1">Región del servidor</Label>
+            <Select defaultValue="eu-west">
+              <SelectTrigger id="serverRegion">
+                <SelectValue placeholder="Seleccionar región" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="us-east">US Este</SelectItem>
+                <SelectItem value="us-west">US Oeste</SelectItem>
+                <SelectItem value="eu-west">Europa Oeste</SelectItem>
+                <SelectItem value="eu-central">Europa Central</SelectItem>
+                <SelectItem value="asia">Asia Pacífico</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Localización geográfica del servidor principal
             </p>
-            
-            <div className="flex flex-col gap-2">
-              <Button variant="destructive" size="sm">
-                <Trash2 className="h-4 w-4 mr-2" />
-                Vaciar base de datos
-              </Button>
-              
-              <Button variant="destructive" size="sm">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Reiniciar a valores de fábrica
-              </Button>
-            </div>
           </div>
         </div>
       )
@@ -225,7 +263,7 @@ const DataSettings: React.FC<DataSettingsProps> = ({
           Datos
         </h1>
         <p className="text-muted-foreground">
-          Administra la configuración de datos y respaldos
+          Configura las opciones relacionadas con la base de datos y almacenamiento
         </p>
       </div>
 

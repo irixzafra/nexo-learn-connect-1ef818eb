@@ -15,8 +15,9 @@ export interface DraggableContentProps {
   items: DraggableItem[];
   table: string;
   className?: string;
-  itemClassName?: string; // Added itemClassName prop
+  itemClassName?: string;
   onReorder?: (items: DraggableItem[]) => void;
+  onAddItem?: (content: string, type?: string) => void;
 }
 
 const DraggableContent: React.FC<DraggableContentProps> = ({
@@ -24,7 +25,8 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
   table,
   className,
   itemClassName,
-  onReorder
+  onReorder,
+  onAddItem
 }) => {
   const [elements, setElements] = useState<DraggableItem[]>(
     [...items].sort((a, b) => a.order - b.order)
@@ -59,6 +61,12 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
       }));
       
       await reorderElements(table, reorderData);
+    }
+  };
+
+  const handleAddItem = (content: string, type?: string) => {
+    if (onAddItem) {
+      onAddItem(content, type);
     }
   };
   

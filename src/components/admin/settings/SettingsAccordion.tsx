@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Settings, Navigation, Globe, Palette, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 export interface SettingsSection {
   id: string;
@@ -75,11 +76,11 @@ const SettingsAccordion: React.FC<SettingsAccordionProps> = ({
             className="px-0 border-b last:border-b-0"
           >
             <AccordionTrigger className="flex items-center px-4 py-3 hover:bg-muted/30 data-[state=open]:bg-muted/20">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 text-left w-full">
                 <div className={cn("flex items-center justify-center", section.iconColor || "text-primary")}>
                   {section.icon}
                 </div>
-                <span className="text-base font-medium">{section.title}</span>
+                <span className="text-base font-medium text-left">{section.title}</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-4 pt-2 pb-4">

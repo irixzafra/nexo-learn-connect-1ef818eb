@@ -22,14 +22,15 @@ import FeaturesSettings from '@/features/admin/components/settings/FeaturesSetti
 import ConnectionsSettings from '@/features/admin/components/settings/ConnectionsSettings';
 import SecuritySettings from '@/features/admin/components/settings/SecuritySettings';
 import DataSettings from '@/features/admin/components/settings/DataSettings';
-import { FeaturesConfig } from '@/contexts/OnboardingContext';
+import { FeaturesConfig, defaultFeaturesConfig } from '@/contexts/OnboardingContext';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { toast } from 'sonner';
 
 const SystemSettings: React.FC = () => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({
-    enableEditMode: false, // Configuración inicial para edición en línea
+    ...defaultFeaturesConfig,
+    enableEditMode: false,
     enableContentReordering: false,
     enableThemeSwitcher: true,
     enableMultiLanguage: false,
@@ -49,7 +50,7 @@ const SystemSettings: React.FC = () => {
     enableAutoBackups: true,
     enableQueryCache: true,
     enableMaintenanceMode: false
-  } as FeaturesConfig);
+  });
   
   const [isSaving, setIsSaving] = useState(false);
   const { tab } = useParams<{ tab?: string }>();

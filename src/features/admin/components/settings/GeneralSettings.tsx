@@ -2,242 +2,181 @@
 import React from 'react';
 import { 
   Settings, 
+  Database, 
+  FileText, 
   Globe, 
-  Upload, 
-  Navigation, 
-  Compass, 
-  Clock, 
-  Mail, 
-  Monitor, 
-  Palette, 
-  Info 
+  Clock,
+  Server,
+  HardDrive,
+  BookOpen,
+  Languages,
+  Loader2,
+  Construction
 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import SettingsAccordion, { SettingsSection } from '@/components/admin/settings/SettingsAccordion';
+import { Separator } from '@/components/ui/separator';
 
 const GeneralSettings: React.FC = () => {
-  // Handler for form submission
-  const handleSave = () => {
-    toast.success("Configuración guardada correctamente");
-  };
-
-  // Define the accordion sections
-  const settingsSections: SettingsSection[] = [
+  const generalSections: SettingsSection[] = [
     {
-      id: "identidad",
-      title: "Identidad del Sitio",
-      icon: <Settings className="h-5 w-5" />,
+      id: "site",
+      title: "Configuración del Sitio",
+      icon: <Globe className="h-5 w-5" />,
       iconColor: "text-blue-500",
       content: (
         <div className="space-y-4">
           <div>
-            <Label htmlFor="site_name">Nombre del Sitio</Label>
-            <Input id="site_name" defaultValue="Nexo" />
-            <p className="text-sm text-muted-foreground mt-1">
-              Nombre principal de la plataforma
+            <Label htmlFor="siteTitle" className="text-left block mb-1">Título del Sitio</Label>
+            <Input id="siteTitle" defaultValue="Mi Plataforma" />
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Nombre principal que aparecerá en el navegador y SEO
             </p>
           </div>
           
+          <Separator className="my-2" />
+          
           <div>
-            <Label htmlFor="site_description">Descripción / Lema</Label>
-            <Input id="site_description" defaultValue="Plataforma de aprendizaje online" />
-            <p className="text-sm text-muted-foreground mt-1">
-              Breve descripción de la plataforma (aparecerá en SEO y cabeceras)
+            <Label htmlFor="siteDescription" className="text-left block mb-1">Descripción</Label>
+            <Input id="siteDescription" defaultValue="Plataforma de aprendizaje online" />
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Descripción corta utilizada para SEO y redes sociales
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="logo_light">Logo (Modo Claro)</Label>
-              <div className="flex gap-2">
-                <Input id="logo_light" />
-                <Button type="button" size="icon" variant="outline">
-                  <Upload className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            
-            <div>
-              <Label htmlFor="logo_dark">Logo (Modo Oscuro)</Label>
-              <div className="flex gap-2">
-                <Input id="logo_dark" />
-                <Button type="button" size="icon" variant="outline">
-                  <Upload className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
+          <Separator className="my-2" />
           
           <div>
-            <Label htmlFor="favicon">Favicon</Label>
-            <div className="flex gap-2">
-              <Input id="favicon" />
-              <Button type="button" size="icon" variant="outline">
-                <Upload className="h-4 w-4" />
-              </Button>
-            </div>
+            <Label htmlFor="siteLanguage" className="text-left block mb-1">Idioma Predeterminado</Label>
+            <Select defaultValue="es">
+              <SelectTrigger id="siteLanguage">
+                <SelectValue placeholder="Seleccionar idioma" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="es">Español</SelectItem>
+                <SelectItem value="en">Inglés</SelectItem>
+                <SelectItem value="fr">Francés</SelectItem>
+                <SelectItem value="de">Alemán</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Idioma principal del sitio
+            </p>
           </div>
         </div>
       )
     },
     {
-      id: "navegacion",
-      title: "Navegación y Acceso",
-      icon: <Navigation className="h-5 w-5" />,
-      iconColor: "text-orange-500",
-      content: (
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="default_landing">Página de inicio</Label>
-            <Input id="default_landing" defaultValue="/landing" />
-            <p className="text-sm text-muted-foreground mt-1">
-              Ruta de la página principal de la plataforma
-            </p>
-          </div>
-          
-          <div>
-            <Label htmlFor="login_url">URL de inicio de sesión</Label>
-            <Input id="login_url" defaultValue="/login" />
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="auth_provider">Proveedor de autenticación</Label>
-              <Select defaultValue="local">
-                <SelectTrigger id="auth_provider">
-                  <SelectValue placeholder="Seleccionar proveedor" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="local">Local</SelectItem>
-                  <SelectItem value="google">Google</SelectItem>
-                  <SelectItem value="microsoft">Microsoft</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <Label htmlFor="auth_method">Método de autenticación</Label>
-              <Select defaultValue="email">
-                <SelectTrigger id="auth_method">
-                  <SelectValue placeholder="Seleccionar método" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="email">Email y contraseña</SelectItem>
-                  <SelectItem value="passwordless">Sin contraseña</SelectItem>
-                  <SelectItem value="sso">SSO</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: "regional",
-      title: "Configuración Regional y de Contacto",
-      icon: <Globe className="h-5 w-5" />,
+      id: "localization",
+      title: "Localización",
+      icon: <Languages className="h-5 w-5" />,
       iconColor: "text-green-500",
       content: (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="default_language">Idioma predeterminado</Label>
-              <Select defaultValue="es">
-                <SelectTrigger id="default_language">
-                  <SelectValue placeholder="Seleccionar idioma" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="es">Español</SelectItem>
-                  <SelectItem value="en">Inglés</SelectItem>
-                  <SelectItem value="fr">Francés</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <Label htmlFor="default_timezone">Zona horaria</Label>
-              <Select defaultValue="Europe/Madrid">
-                <SelectTrigger id="default_timezone">
-                  <SelectValue placeholder="Seleccionar zona horaria" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Europe/Madrid">Europe/Madrid</SelectItem>
-                  <SelectItem value="America/New_York">America/New York</SelectItem>
-                  <SelectItem value="Asia/Tokyo">Asia/Tokyo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div>
+            <Label htmlFor="timezone" className="text-left block mb-1">Zona Horaria</Label>
+            <Select defaultValue="europe-madrid">
+              <SelectTrigger id="timezone">
+                <SelectValue placeholder="Seleccionar zona horaria" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="europe-madrid">Europa/Madrid (UTC+1)</SelectItem>
+                <SelectItem value="america-new_york">América/Nueva York (UTC-5)</SelectItem>
+                <SelectItem value="america-los_angeles">América/Los Ángeles (UTC-8)</SelectItem>
+                <SelectItem value="asia-tokyo">Asia/Tokio (UTC+9)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Zona horaria usada para mostrar fechas y horas
+            </p>
           </div>
           
-          <div>
-            <Label htmlFor="support_email">Email de soporte</Label>
-            <Input id="support_email" defaultValue="soporte@nexo.com" type="email" />
-          </div>
+          <Separator className="my-2" />
           
           <div>
-            <Label htmlFor="contact_phone">Teléfono de contacto</Label>
-            <Input id="contact_phone" defaultValue="+34 91 123 45 67" />
+            <Label htmlFor="dateFormat" className="text-left block mb-1">Formato de Fecha</Label>
+            <Select defaultValue="dd-mm-yyyy">
+              <SelectTrigger id="dateFormat">
+                <SelectValue placeholder="Seleccionar formato" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="dd-mm-yyyy">DD-MM-YYYY</SelectItem>
+                <SelectItem value="mm-dd-yyyy">MM-DD-YYYY</SelectItem>
+                <SelectItem value="yyyy-mm-dd">YYYY-MM-DD</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Formato para mostrar fechas en la plataforma
+            </p>
           </div>
         </div>
       )
     },
     {
-      id: "apariencia",
-      title: "Apariencia Básica",
-      icon: <Palette className="h-5 w-5" />,
+      id: "analytics",
+      title: "Analítica",
+      icon: <FileText className="h-5 w-5" />,
       iconColor: "text-purple-500",
       content: (
         <div className="space-y-4">
-          <div>
-            <Label htmlFor="default_theme">Tema predeterminado</Label>
-            <Select defaultValue="light">
-              <SelectTrigger id="default_theme">
-                <SelectValue placeholder="Seleccionar tema" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="light">Claro</SelectItem>
-                <SelectItem value="dark">Oscuro</SelectItem>
-                <SelectItem value="system">Sistema</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Google Analytics</h3>
+              <p className="text-xs text-muted-foreground">
+                Habilitar seguimiento con Google Analytics
+              </p>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+                <Construction className="h-3 w-3 mr-1" />
+                En desarrollo
+              </Badge>
+            </div>
+            <Switch id="googleAnalytics" />
           </div>
           
-          <div>
-            <Label htmlFor="primary_color">Color primario</Label>
-            <Input id="primary_color" defaultValue="#6366f1" type="color" />
-          </div>
+          <Separator className="my-2" />
           
           <div>
-            <Label htmlFor="accent_color">Color de acento</Label>
-            <Input id="accent_color" defaultValue="#8b5cf6" type="color" />
+            <Label htmlFor="trackingId" className="text-left block mb-1">ID de Seguimiento</Label>
+            <Input id="trackingId" placeholder="UA-XXXXXXXXX-X o G-XXXXXXXXXX" />
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              ID de Google Analytics para el seguimiento
+            </p>
           </div>
         </div>
       )
     },
     {
-      id: "about",
-      title: "Acerca del Sistema",
-      icon: <Info className="h-5 w-5" />,
-      iconColor: "text-blue-500",
+      id: "performance",
+      title: "Rendimiento",
+      icon: <HardDrive className="h-5 w-5" />,
+      iconColor: "text-orange-500",
       content: (
         <div className="space-y-4">
-          <div>
-            <p className="text-sm text-muted-foreground">Versión</p>
-            <p className="font-medium">1.0.0</p>
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Compresión de imágenes</h3>
+              <p className="text-xs text-muted-foreground">
+                Optimiza automáticamente las imágenes subidas
+              </p>
+            </div>
+            <Switch id="imageCompression" defaultChecked />
           </div>
           
-          <div>
-            <p className="text-sm text-muted-foreground">Fecha de liberación</p>
-            <p className="font-medium">22/06/2023</p>
-          </div>
+          <Separator className="my-2" />
           
-          <div>
-            <p className="text-sm text-muted-foreground">Licencia</p>
-            <p className="font-medium">Profesional</p>
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Caché del navegador</h3>
+              <p className="text-xs text-muted-foreground">
+                Habilita el almacenamiento en caché de activos estáticos
+              </p>
+            </div>
+            <Switch id="browserCache" defaultChecked />
           </div>
         </div>
       )
@@ -247,22 +186,16 @@ const GeneralSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold flex items-center gap-2 text-blue-600">
+        <h1 className="text-xl font-semibold flex items-center gap-2 text-primary">
           <Settings className="h-5 w-5" />
           Configuración General
         </h1>
         <p className="text-muted-foreground">
-          Administra la configuración general de la plataforma
+          Ajusta las configuraciones básicas de la plataforma
         </p>
       </div>
 
-      <SettingsAccordion sections={settingsSections} />
-      
-      <div className="flex justify-end">
-        <Button onClick={handleSave}>
-          Guardar cambios
-        </Button>
-      </div>
+      <SettingsAccordion sections={generalSections} />
     </div>
   );
 };
