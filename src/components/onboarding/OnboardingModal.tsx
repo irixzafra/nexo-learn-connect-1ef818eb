@@ -4,10 +4,10 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, X } from 'lucide-react';
 import { useOnboarding, OnboardingStep } from '@/contexts/OnboardingContext';
-import WelcomeStep from './steps/WelcomeStep';
-import ProfileStep from './steps/ProfileStep';
-import ExploreCoursesStep from './steps/ExploreCoursesStep';
-import PlatformTourStep from './steps/PlatformTourStep';
+import { WelcomeStep } from './steps/WelcomeStep';
+import { ProfileStep } from './steps/ProfileStep';
+import { ExploreCoursesStep } from './steps/ExploreCoursesStep';
+import { PlatformTourStep } from './steps/PlatformTourStep';
 
 export const OnboardingModal: React.FC = () => {
   const { 

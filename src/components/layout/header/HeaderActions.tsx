@@ -2,12 +2,12 @@
 import React from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
-import ModeToggle from '@/components/ui/mode-toggle';
+import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import OnboardingTrigger from '@/components/onboarding/OnboardingTrigger';
+import { OnboardingTrigger } from '@/components/onboarding/OnboardingTrigger';
 import { useFeatures } from '@/contexts/features/FeaturesContext';
-import UserMenu from './UserMenu';
-import NotificationPanel from '@/components/notifications/NotificationPanel';
+import { UserMenu } from './UserMenu';
+import { NotificationPanel } from '@/components/notifications/NotificationPanel';
 import { NotificationIndicator } from '@/components/notifications/NotificationIndicator';
 
 const HeaderActions: React.FC = () => {

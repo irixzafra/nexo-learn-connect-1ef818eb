@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { FeaturesConfig } from '../features/types';
 import { OnboardingStep } from '../OnboardingContext';
@@ -22,14 +21,6 @@ interface OnboardingActions {
 
 type UseOnboardingState = OnboardingState & OnboardingActions;
 
-const allSteps: OnboardingStep[] = [
-  OnboardingStep.WELCOME,
-  OnboardingStep.PROFILE,
-  OnboardingStep.EXPLORE,
-  OnboardingStep.TOUR,
-  OnboardingStep.COMPLETE
-];
-
 /**
  * Custom hook to manage onboarding state and actions
  */
@@ -39,6 +30,15 @@ export const useOnboardingState = (): UseOnboardingState => {
     const saved = localStorage.getItem('onboardingComplete');
     return saved ? JSON.parse(saved) : false;
   };
+
+  // Define allSteps for use throughout the hook
+  const allSteps: OnboardingStep[] = [
+    OnboardingStep.WELCOME,
+    OnboardingStep.PROFILE, 
+    OnboardingStep.EXPLORE,
+    OnboardingStep.TOUR,
+    OnboardingStep.COMPLETE
+  ];
 
   // State management
   const [isOpen, setIsOpen] = useState<boolean>(false);

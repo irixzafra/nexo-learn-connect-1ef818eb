@@ -134,3 +134,5 @@ export const ProfileStep: React.FC = () => {
     </motion.div>
   );
 };
+
+export default ProfileStep;

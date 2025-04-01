@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -67,3 +66,5 @@ export const WelcomeStep: React.FC = () => {
     </div>
   );
 };
+
+export default WelcomeStep;

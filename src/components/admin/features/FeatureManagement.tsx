@@ -17,8 +17,8 @@ import {
   Book,
   Database
 } from 'lucide-react';
-import { FeatureAccordionGroup } from './FeatureAccordionGroup';
-import { PlatformFeaturesAccordion } from './PlatformFeaturesAccordion';
+import FeatureAccordionGroup from './FeatureAccordionGroup';
+import PlatformFeaturesAccordion from './PlatformFeaturesAccordion';
 import { useFeatures } from '@/contexts/features/FeaturesContext';
 import { defaultFeaturesConfig } from '@/contexts/features/types';
 

@@ -9,14 +9,16 @@ import { motion } from 'framer-motion';
 
 interface OnboardingTriggerProps {
   autoStart?: boolean;
+  onClick?: () => void;
 }
 
 export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({ 
-  autoStart = false 
+  autoStart = false,
+  onClick 
 }) => {
   const { isEnabled: onboardingEnabled } = useFeature('enableOnboardingSystem');
   const { isEnabled: triggerEnabled } = useFeature('showOnboardingTrigger');
-  const { startOnboarding, isOnboardingActive } = useOnboarding();
+  const { startOnboarding, isOnboardingActive, openOnboarding } = useOnboarding();
   
   useEffect(() => {
     if (autoStart && onboardingEnabled) {
@@ -26,6 +28,14 @@ export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({
       return () => clearTimeout(timer);
     }
   }, [autoStart, onboardingEnabled, startOnboarding]);
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      startOnboarding();
+    }
+  };
 
   // No render anything if the onboarding system is completely disabled
   if (!onboardingEnabled) {
@@ -46,7 +56,7 @@ export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({
         <Button 
           variant="outline"
           size="icon"
-          onClick={startOnboarding}
+          onClick={handleClick}
           title="Iniciar tutorial"
           className="bg-white/80 backdrop-blur-sm shadow-sm border-primary/20 hover:bg-primary/10 hover:border-primary/30 transition-all"
         >
@@ -57,3 +67,5 @@ export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({
     </>
   );
 };
+
+export default OnboardingTrigger;

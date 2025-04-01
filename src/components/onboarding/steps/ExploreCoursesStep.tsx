@@ -97,3 +97,5 @@ export const ExploreCoursesStep: React.FC = () => {
     </div>
   );
 };
+
+export default ExploreCoursesStep;

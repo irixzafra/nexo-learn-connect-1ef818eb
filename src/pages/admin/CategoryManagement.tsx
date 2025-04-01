@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import AppLayout from '@/layouts/AppLayout';
+import React from 'react';
+import { useFeatures } from '@/contexts/features/FeaturesContext';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { Folders, Plus, Edit, Trash2, ArrowUp, ArrowDown, Save, X, Folder } from 'lucide-react';
 import { toast } from 'sonner';
@@ -13,7 +12,6 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-// Mock data - en una implementación real, esto vendría de Supabase
 const MOCK_CATEGORIES = [
   { id: '1', name: 'Programación', slug: 'programacion', description: 'Cursos de programación' },
   { id: '2', name: 'Diseño', slug: 'diseno', description: 'Cursos de diseño gráfico y UX/UI' },
@@ -25,7 +23,7 @@ interface CategoryManagementProps {
 }
 
 const CategoryManagement: React.FC<CategoryManagementProps> = ({ embeddedView = false }) => {
-  const { featuresConfig } = useOnboarding();
+  const { featuresConfig } = useFeatures();
   const { userRole } = useAuth();
   const navigate = useNavigate();
   const [categories, setCategories] = useState(MOCK_CATEGORIES);
@@ -33,7 +31,6 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({ embeddedView = 
   const [isAdding, setIsAdding] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: '', slug: '', description: '' });
 
-  // Verificar si el usuario tiene permiso para acceder a esta página
   if (!embeddedView && (!featuresConfig.enableCategoryManagement || userRole !== 'admin')) {
     return (
       <AppLayout>
@@ -51,14 +48,12 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({ embeddedView = 
     );
   }
 
-  // Funciones para gestionar categorías
   const handleAddCategory = () => {
     if (!newCategory.name || !newCategory.slug) {
       toast.error('El nombre y el slug son obligatorios');
       return;
     }
     
-    // En una implementación real, esto sería una llamada a Supabase
     setCategories([...categories, { ...newCategory, id: `new-${Date.now()}` }]);
     setNewCategory({ name: '', slug: '', description: '' });
     setIsAdding(false);
@@ -68,7 +63,6 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({ embeddedView = 
   const handleUpdateCategory = () => {
     if (!editingCategory) return;
     
-    // En una implementación real, esto sería una llamada a Supabase
     const updatedCategories = categories.map(cat => 
       cat.id === editingCategory.id ? editingCategory : cat
     );
@@ -78,7 +72,6 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({ embeddedView = 
   };
 
   const handleDeleteCategory = (id: string) => {
-    // En una implementación real, esto sería una llamada a Supabase con verificación
     if (confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
       setCategories(categories.filter(cat => cat.id !== id));
       toast.success('Categoría eliminada correctamente');
@@ -86,7 +79,6 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({ embeddedView = 
   };
 
   const handleMoveCategory = (id: string, direction: 'up' | 'down') => {
-    // En una implementación real, esto actualizaría los campos de orden en Supabase
     const index = categories.findIndex(c => c.id === id);
     if (
       (direction === 'up' && index > 0) || 
@@ -117,7 +109,6 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({ embeddedView = 
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Lista de categorías */}
           <div className="space-y-4 mb-6">
             {categories.map((category) => (
               <div key={category.id} className="flex items-center justify-between border p-3 rounded-md">
@@ -211,7 +202,6 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({ embeddedView = 
             ))}
           </div>
 
-          {/* Formulario de nueva categoría */}
           {isAdding ? (
             <div className="border p-4 rounded-md space-y-3">
               <h3 className="font-medium">Nueva Categoría</h3>

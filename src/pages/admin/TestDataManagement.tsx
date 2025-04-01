@@ -1,7 +1,6 @@
-
 import React from 'react';
+import { useFeatures } from '@/contexts/features/FeaturesContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { useOnboarding } from '@/contexts/OnboardingContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { TestDataGenerator } from '@/components/admin/test-data';
@@ -10,9 +9,9 @@ import { ArrowLeft, Database, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-const TestDataManagement: React.FC = () => {
+const TestDataManagement = () => {
   const { userRole } = useAuth();
-  const { featuresConfig } = useOnboarding();
+  const { featuresConfig } = useFeatures();
   const navigate = useNavigate();
 
   useEffect(() => {

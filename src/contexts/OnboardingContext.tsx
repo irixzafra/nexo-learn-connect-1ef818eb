@@ -1,7 +1,8 @@
+
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { type FeaturesConfig } from './features/types';
 
-// Define step types
+// Define step enum (not type)
 export enum OnboardingStep {
   WELCOME = 'welcome',
   PROFILE = 'profile',
@@ -23,6 +24,10 @@ export interface OnboardingContextValue {
   skipOnboarding: () => void;
   isOnboardingComplete: boolean;
   markOnboardingComplete: () => void;
+  // Add missing properties reported in errors
+  startOnboarding: () => void;
+  isOnboardingActive: boolean;
+  featuresConfig: FeaturesConfig;
 }
 
 // Create context with default value
@@ -36,10 +41,21 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return saved ? JSON.parse(saved) : false;
   };
 
+  // Define allSteps for use throughout the component
+  const allSteps: OnboardingStep[] = [
+    OnboardingStep.WELCOME,
+    OnboardingStep.PROFILE, 
+    OnboardingStep.EXPLORE,
+    OnboardingStep.TOUR,
+    OnboardingStep.COMPLETE
+  ];
+
   // State management
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(OnboardingStep.WELCOME);
   const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean>(getInitialOnboardingComplete());
+  const [isOnboardingActive, setIsOnboardingActive] = useState<boolean>(false);
+  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
 
   // Open/close the onboarding modal
   const openOnboarding = useCallback(() => {
@@ -51,6 +67,12 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setIsOpen(false);
   }, []);
 
+  // Define startOnboarding to fix the error in OnboardingTrigger
+  const startOnboarding = useCallback(() => {
+    setIsOnboardingActive(true);
+    openOnboarding();
+  }, [openOnboarding]);
+
   // Step navigation
   const nextStep = useCallback(() => {
     const currentIndex = allSteps.indexOf(currentStep);
@@ -61,14 +83,14 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       markOnboardingComplete();
       closeOnboarding();
     }
-  }, [currentStep]);
+  }, [currentStep, allSteps]);
 
   const previousStep = useCallback(() => {
     const currentIndex = allSteps.indexOf(currentStep);
     if (currentIndex > 0) {
       setCurrentStep(allSteps[currentIndex - 1]);
     }
-  }, [currentStep]);
+  }, [currentStep, allSteps]);
 
   const goToStep = useCallback((step: OnboardingStep) => {
     setCurrentStep(step);
@@ -85,37 +107,6 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setIsOnboardingComplete(true);
   }, []);
 
-  // Generate recommended feature configuration based on user role and preferences
-  const getRecommendedFeatures = (userRole: string, userLevel: string): Partial<FeaturesConfig> => {
-    // Base configuration common for all
-    const baseConfig: Partial<FeaturesConfig> = {
-      designSystemEnabled: true,
-      enableThemeSwitcher: true,
-      enableOnboardingSystem: true,
-      enableNotifications: true,
-    };
-
-    // Role-specific configurations
-    switch (userRole) {
-      case 'admin':
-        return {
-          ...baseConfig,
-          enableRoleSwitcher: true,
-          enableRoleManagement: true,
-          enableTestDataGenerator: true,
-          enableContentReordering: true,
-          enableCategoryManagement: true,
-        };
-      case 'instructor':
-        return {
-          ...baseConfig,
-          enableContentReordering: true,
-        };
-      default: // student, guest, etc.
-        return baseConfig;
-    }
-  };
-
   // Context value
   const value: OnboardingContextValue = {
     isOpen,
@@ -129,6 +120,10 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     skipOnboarding,
     isOnboardingComplete,
     markOnboardingComplete,
+    // Add the missing properties
+    startOnboarding,
+    isOnboardingActive,
+    featuresConfig
   };
 
   return (
@@ -141,6 +136,5 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 // Custom hook to use the onboarding context
 export const useOnboarding = () => useContext(OnboardingContext);
 
-// Re-export the types for use elsewhere
-export type { OnboardingContextValue, OnboardingStep };
-export type { FeaturesConfig };
+// Do not re-export types that would conflict
+export { OnboardingStep };
