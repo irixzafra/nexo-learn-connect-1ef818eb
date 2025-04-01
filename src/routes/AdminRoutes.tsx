@@ -3,20 +3,33 @@ import React, { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import LoadingScreen from '@/components/LoadingScreen';
 import AdminLayout from '@/layouts/AdminLayout';
-import AdminDashboard from '@/pages/admin/Dashboard';
-import AdminUsers from '@/pages/admin/Users';
-import AdminCourses from '@/pages/admin/Courses';
-import AdminSettings from '@/pages/admin/Settings';
-import AdminNotFound from '@/pages/admin/NotFound';
-import DatabaseSettings from '@/pages/admin/settings/DatabaseSettings';
-import TestDataDashboard from '@/pages/admin/TestDataDashboard';
-import NavigationDiagram from '@/pages/admin/NavigationDiagram';
+import { LoadingPage } from '@/components/ui/loading-page';
+
+// Use existing components for admin pages
+import Settings from '@/pages/admin/Settings';
+import AdminCourses from '@/pages/admin/courses/AdminCourses';
+
+// Create a placeholder component for missing pages
+const PlaceholderPage = ({ title }: { title: string }) => (
+  <div className="container py-8">
+    <h1 className="text-2xl font-bold mb-4">{title}</h1>
+    <p className="text-muted-foreground">Esta página está en desarrollo.</p>
+  </div>
+);
+
+// Admin dashboard placeholders
+const AdminDashboard = () => <PlaceholderPage title="Dashboard de Administración" />;
+const AdminUsers = () => <PlaceholderPage title="Gestión de Usuarios" />;
+const AdminNotFound = () => <PlaceholderPage title="Página no encontrada" />;
+const TestDataDashboard = () => <PlaceholderPage title="Datos de Prueba" />;
+const NavigationDiagram = () => <PlaceholderPage title="Diagrama de Navegación" />;
+const DatabaseSettings = () => <PlaceholderPage title="Configuración de Base de Datos" />;
 
 // Lazy-loaded settings pages
-const FeaturesSettings = lazy(() => import('@/pages/admin/settings/FeaturesSettings'));
-const ThemeSettings = lazy(() => import('@/pages/admin/settings/ThemeSettings'));
-const IntegrationsSettings = lazy(() => import('@/pages/admin/settings/IntegrationsSettings'));
-const RolesSettings = lazy(() => import('@/pages/admin/settings/RolesSettings'));
+const FeaturesSettings = lazy(() => import('@/features/admin/components/settings/FeaturesSettings'));
+const ThemeSettings = lazy(() => import('../pages/admin/settings/ThemeSettings'));
+const IntegrationsSettings = lazy(() => import('../pages/admin/settings/IntegrationsSettings'));
+const RolesSettings = lazy(() => import('../pages/admin/settings/RolesSettings'));
 
 const AdminRoutes: React.FC = () => {
   return (
@@ -29,7 +42,7 @@ const AdminRoutes: React.FC = () => {
         <Route path="navigation-diagram" element={<NavigationDiagram />} />
         
         {/* Settings Routes */}
-        <Route path="settings" element={<AdminSettings />} />
+        <Route path="settings" element={<Settings />} />
         <Route
           path="settings/features"
           element={
