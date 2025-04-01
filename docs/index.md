@@ -10,6 +10,8 @@ La documentación está organizada en las siguientes secciones principales:
 - [**Arquitectura del Sistema**](./arquitectura-del-sistema.md): Diseño general y estructura de la plataforma
 - [**Componentes**](#componentes): Descripción de los principales componentes de la aplicación
 - [**Guías de Desarrollo**](#guias): Guías y mejores prácticas para desarrollo
+- [**Módulos**](./modules/): Documentación específica por módulo funcional
+- [**Registro de Cambios**](./modules/changelog.md): Historial de versiones y actualizaciones
 
 ## <a name="componentes"></a>Componentes Principales
 
@@ -18,6 +20,7 @@ La plataforma está construida con componentes reutilizables que siguen patrones
 - [Componentes de UI](./components/ui.md)
 - [Layouts](./components/layouts.md)
 - [Formularios](./components/forms.md)
+- [Sistema de Diseño](./modules/design-system/index.md)
 
 ## <a name="guias"></a>Guías de Desarrollo
 
