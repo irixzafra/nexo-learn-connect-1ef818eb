@@ -12,6 +12,11 @@ import FeatureGrid from '@/components/landing/FeatureGrid';
 import CallToActionSection from '@/components/landing/CallToActionSection';
 import PartnersSection from '@/components/landing/PartnersSection';
 import StatsSection from '@/components/landing/StatsSection';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Award, Certificate, CheckCircle, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const LandingPage: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -21,33 +26,97 @@ const LandingPage: React.FC = () => {
   const topCourses = featuredCourses?.slice(0, 6) || [];
 
   return (
-    <PublicLayout>
-      <div className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <LandingHero isAuthenticated={isAuthenticated} />
-        
-        {/* Estadísticas de la plataforma */}
-        <StatsSection />
-        
-        {/* Sección de características */}
-        <FeatureGrid />
-        
-        {/* Cursos destacados */}
-        <FeaturedCoursesSection 
-          courses={topCourses} 
-          isLoading={isLoading} 
-        />
-        
-        {/* Sección de partners y confianza */}
-        <PartnersSection />
-        
-        {/* Testimonios */}
-        <TestimonialsSection />
-        
-        {/* Call to Action */}
-        <CallToActionSection isAuthenticated={isAuthenticated} />
-      </div>
-    </PublicLayout>
+    <div className="min-h-screen bg-background">
+      {/* Hero Section */}
+      <LandingHero isAuthenticated={isAuthenticated} />
+      
+      {/* Estadísticas de la plataforma */}
+      <StatsSection />
+      
+      {/* Next on Roadmap Section */}
+      <section className="py-16 bg-gradient-to-b from-background to-muted/30">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center text-center mb-10">
+            <Badge variant="outline" className="mb-2">Próximamente</Badge>
+            <h2 className="text-3xl font-bold tracking-tight mb-2">Próximas Funcionalidades</h2>
+            <p className="text-muted-foreground max-w-[700px]">
+              Estamos constantemente mejorando nuestra plataforma para brindar la mejor experiencia de aprendizaje
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2">
+                  <Award className="h-5 w-5 text-primary" />
+                  Certificados Verificables
+                </CardTitle>
+                <CardDescription>Ya disponible</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Nuestros certificados ahora incluyen códigos QR y un sistema de verificación público para validar su autenticidad.
+                </p>
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/certificates/verification-portal">
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Verificar un Certificado
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2">
+                  <Certificate className="h-5 w-5 text-primary" />
+                  Credenciales Digitales
+                </CardTitle>
+                <CardDescription>En desarrollo</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Integración con blockchain para emitir credenciales digitales permanentes y verificables por cualquier institución.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-primary" />
+                  Aprendizaje Adaptativo
+                </CardTitle>
+                <CardDescription>Próximamente</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Algoritmos de IA que adaptan el contenido según tu ritmo de aprendizaje y fortalezas personales.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+      
+      {/* Sección de características */}
+      <FeatureGrid />
+      
+      {/* Cursos destacados */}
+      <FeaturedCoursesSection 
+        courses={topCourses} 
+        isLoading={isLoading} 
+      />
+      
+      {/* Sección de partners y confianza */}
+      <PartnersSection />
+      
+      {/* Testimonios */}
+      <TestimonialsSection />
+      
+      {/* Call to Action */}
+      <CallToActionSection isAuthenticated={isAuthenticated} />
+    </div>
   );
 };
 

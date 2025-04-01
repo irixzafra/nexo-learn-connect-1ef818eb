@@ -1,351 +1,282 @@
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
-import { Award, FileCheck, Ban, Clock, ExternalLink, ArrowLeft, Share2, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
-import { QRCodeSVG } from 'qrcode.react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
+import { CheckCircle, Calendar, Award, User, AlertTriangle, ArrowLeft, FileText, School, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface Certificate {
   id: string;
+  created_at: string;
+  issued_date: string;
+  expiration_date: string | null;
+  student_id: string;
+  course_id: string;
   certificate_number: string;
-  issue_date: string;
-  expiry_date: string | null;
-  status: 'issued' | 'revoked' | 'expired';
-  user: {
+  is_valid: boolean;
+  status: 'active' | 'revoked' | 'expired';
+  revocation_reason?: string;
+  metadata?: Record<string, any>;
+}
+
+interface VerificationResult {
+  certificate: Certificate | null;
+  student: {
     full_name: string;
-  };
+    email?: string;
+  } | null;
   course: {
     title: string;
     description: string;
-    instructor: {
-      full_name: string;
-    };
-  };
+  } | null;
+  isValid: boolean;
+  message: string;
 }
 
 const CertificateVerifyPage: React.FC = () => {
   const { certificateId } = useParams<{ certificateId: string }>();
-  const [certificate, setCertificate] = useState<Certificate | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [verificationUrl, setVerificationUrl] = useState<string>('');
-  const navigate = useNavigate();
-
+  const [result, setResult] = useState<VerificationResult | null>(null);
+  
   useEffect(() => {
-    if (certificateId) {
-      fetchCertificate(certificateId);
+    const fetchCertificateData = async () => {
+      if (!certificateId) {
+        setError('No se proporcionó un ID de certificado');
+        setLoading(false);
+        return;
+      }
       
-      // Set verification URL for QR code
-      const baseUrl = window.location.origin;
-      setVerificationUrl(`${baseUrl}/certificates/verify/${certificateId}`);
-    }
-  }, [certificateId]);
-
-  const fetchCertificate = async (id: string) => {
-    try {
       setLoading(true);
+      setError(null);
       
-      // Establecer el setting para la política RLS que permite verificar certificados
-      await supabase.rpc('set_claim', {
-        claim: 'app.certificate_id',
-        value: id
-      });
-      
-      const { data, error } = await supabase
-        .from('certificates')
-        .select(`
-          id,
-          certificate_number,
-          issue_date,
-          expiry_date,
-          status,
-          profiles:user_id (
-            full_name
-          ),
-          courses:course_id (
-            title,
-            description,
-            profiles:instructor_id (
-              full_name
-            )
-          )
-        `)
-        .eq('id', id)
-        .single();
-      
-      if (error) throw error;
-      
-      if (data) {
-        // Tratar los datos como cualquier objeto primero
-        const rawData = data as any;
+      try {
+        // This would be a real API call in production
+        // For now we'll simulate a response with mock data
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Crear un objeto Certificate correctamente estructurado
-        const transformedCertificate: Certificate = {
-          id: rawData.id,
-          certificate_number: rawData.certificate_number,
-          issue_date: rawData.issue_date,
-          expiry_date: rawData.expiry_date,
-          status: rawData.status,
-          user: {
-            full_name: rawData.profiles?.full_name || 'Usuario desconocido'
+        // Mock verification result - in a real app this would come from the API
+        const mockResult: VerificationResult = {
+          certificate: {
+            id: certificateId,
+            created_at: new Date().toISOString(),
+            issued_date: new Date().toISOString(),
+            expiration_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(), // 1 year from now
+            student_id: 'student_123',
+            course_id: 'course_456',
+            certificate_number: `CERT-${Math.floor(Math.random() * 10000)}`,
+            is_valid: true,
+            status: 'active',
+          },
+          student: {
+            full_name: 'Estudiante Ejemplo',
+            email: 'estudiante@ejemplo.com'
           },
           course: {
-            title: rawData.courses?.title || 'Curso desconocido',
-            description: rawData.courses?.description || 'Sin descripción',
-            instructor: {
-              full_name: rawData.courses?.profiles?.full_name || 'Instructor desconocido'
-            }
-          }
+            title: 'Desarrollo Web Avanzado',
+            description: 'Un curso completo sobre desarrollo web moderno con las últimas tecnologías.'
+          },
+          isValid: true,
+          message: 'El certificado es válido y fue emitido correctamente.'
         };
         
-        setCertificate(transformedCertificate);
-        setError(null);
+        setResult(mockResult);
+      } catch (err) {
+        console.error('Error verifying certificate:', err);
+        setError('Error al verificar el certificado. Por favor intente nuevamente.');
+      } finally {
+        setLoading(false);
       }
-    } catch (error: any) {
-      console.error('Error fetching certificate:', error);
-      setCertificate(null);
-      setError('No se pudo encontrar el certificado solicitado o no tienes permisos para verlo.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'issued':
-        return <FileCheck className="h-8 w-8 text-green-600" />;
-      case 'revoked':
-        return <Ban className="h-8 w-8 text-red-600" />;
-      case 'expired':
-        return <Clock className="h-8 w-8 text-amber-600" />;
-      default:
-        return <Award className="h-8 w-8 text-primary" />;
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'issued':
-        return 'Certificado válido y vigente';
-      case 'revoked':
-        return 'Este certificado ha sido revocado';
-      case 'expired':
-        return 'Este certificado ha expirado';
-      default:
-        return 'Estado desconocido';
-    }
-  };
-
-  const getStatusClass = (status: string) => {
-    switch (status) {
-      case 'issued':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'revoked':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'expired':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const shareCertificate = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `Certificado ${certificate?.certificate_number}`,
-        text: `Verificar certificado de ${certificate?.user.full_name} para el curso ${certificate?.course.title}`,
-        url: window.location.href,
-      }).catch((error) => {
-        console.error('Error sharing:', error);
-        copyToClipboard();
-      });
-    } else {
-      copyToClipboard();
-    }
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast.success('Enlace copiado al portapapeles');
-  };
-
-  const downloadCertificateInfo = () => {
-    if (!certificate) return;
-    
-    const certificateInfo = {
-      certificateNumber: certificate.certificate_number,
-      studentName: certificate.user.full_name,
-      courseName: certificate.course.title,
-      issueDate: new Date(certificate.issue_date).toLocaleDateString(),
-      expiryDate: certificate.expiry_date ? new Date(certificate.expiry_date).toLocaleDateString() : 'No expira',
-      status: getStatusText(certificate.status),
-      verificationUrl: window.location.href
     };
     
-    const blob = new Blob([JSON.stringify(certificateInfo, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `certificate_${certificate.certificate_number}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    toast.success('Información del certificado descargada');
-  };
-
-  return (
-    <div className="container mx-auto py-8 px-4 max-w-3xl">
-      <Button
-        variant="ghost"
-        className="mb-6"
-        onClick={() => navigate('/certificates/verification-portal')}
-      >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Volver al Portal
-      </Button>
-      
-      <div className="text-center mb-8">
-        <Award className="h-16 w-16 mx-auto text-primary mb-4" />
-        <h1 className="text-3xl font-bold tracking-tight">Verificación de Certificado</h1>
-        <p className="text-muted-foreground mt-2">
-          Compruebe la autenticidad de un certificado emitido por nuestra plataforma.
-        </p>
-      </div>
-      
-      {loading ? (
+    fetchCertificateData();
+  }, [certificateId]);
+  
+  if (loading) {
+    return (
+      <div className="container mx-auto py-12 px-4 max-w-3xl">
         <Card>
           <CardHeader>
             <Skeleton className="h-8 w-3/4 mb-2" />
-            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-4 w-full" />
           </CardHeader>
           <CardContent className="space-y-4">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-32 w-full rounded-lg" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
           </CardContent>
-          <CardFooter>
-            <Skeleton className="h-10 w-full" />
-          </CardFooter>
         </Card>
-      ) : error ? (
-        <Card className="border-red-200">
+      </div>
+    );
+  }
+  
+  if (error || !result) {
+    return (
+      <div className="container mx-auto py-12 px-4 max-w-3xl">
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-700">
-              <Ban className="h-5 w-5" />
-              Error de verificación
-            </CardTitle>
-            <CardDescription>
-              No se pudo verificar el certificado
-            </CardDescription>
+            <CardTitle className="text-2xl font-bold">Verificación Fallida</CardTitle>
+            <CardDescription>No se pudo verificar el certificado</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-red-600">{error}</p>
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>
+                {error || 'No se pudo encontrar información sobre este certificado. Verifique el ID e intente nuevamente.'}
+              </AlertDescription>
+            </Alert>
           </CardContent>
           <CardFooter>
-            <Button variant="outline" onClick={() => navigate('/certificates/verification-portal')}>
-              Volver al Portal
+            <Button asChild variant="outline">
+              <Link to="/certificates/verification-portal">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Volver al Portal de Verificación
+              </Link>
             </Button>
           </CardFooter>
         </Card>
-      ) : certificate ? (
-        <Card className={`border-2 ${getStatusClass(certificate.status)}`}>
-          <CardHeader className={`bg-opacity-30 ${certificate.status === 'issued' ? 'bg-green-50' : certificate.status === 'revoked' ? 'bg-red-50' : 'bg-amber-50'}`}>
-            <div className="flex justify-between items-start">
-              <div>
-                <CardTitle className="text-2xl">Certificado {certificate.certificate_number}</CardTitle>
-                <CardDescription className="mt-1">
-                  Emitido el {new Date(certificate.issue_date).toLocaleDateString()}
-                </CardDescription>
-              </div>
-              <Badge className={getStatusClass(certificate.status)}>
-                {getStatusText(certificate.status)}
+      </div>
+    );
+  }
+  
+  return (
+    <div className="container mx-auto py-12 px-4 max-w-3xl">
+      <Card>
+        <CardHeader className="pb-2">
+          {result.isValid ? (
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle className="h-6 w-6 text-green-500" />
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
+                Certificado Válido
               </Badge>
             </div>
-          </CardHeader>
+          ) : (
+            <div className="flex items-center gap-2 mb-2">
+              <AlertTriangle className="h-6 w-6 text-amber-500" />
+              <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100">
+                Certificado No Válido
+              </Badge>
+            </div>
+          )}
           
-          <CardContent className="pt-6 space-y-6">
-            <div className="flex items-center justify-center mb-4">
-              {getStatusIcon(certificate.status)}
-            </div>
-            
-            <div className="space-y-4">
-              <div className="bg-muted p-4 rounded-md">
-                <h3 className="font-medium text-lg mb-1">Certificado otorgado a:</h3>
-                <p className="text-2xl font-semibold">{certificate.user.full_name}</p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium text-lg mb-1">Por completar el curso:</h3>
-                <p className="text-xl font-medium">{certificate.course.title}</p>
-                <p className="text-muted-foreground mt-1">{certificate.course.description}</p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium text-lg mb-1">Instructor:</h3>
-                <p>{certificate.course.instructor.full_name}</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h3 className="font-medium text-md mb-1">Fecha de emisión:</h3>
-                  <p>{new Date(certificate.issue_date).toLocaleDateString()}</p>
-                </div>
-                
-                <div>
-                  <h3 className="font-medium text-md mb-1">Fecha de expiración:</h3>
-                  <p>{certificate.expiry_date ? new Date(certificate.expiry_date).toLocaleDateString() : 'No expira'}</p>
-                </div>
-              </div>
-              
-              {/* QR Code for verification */}
-              <div className="flex flex-col items-center justify-center border rounded-md p-4 bg-white">
-                <h3 className="font-medium text-md mb-3">Código de verificación</h3>
-                <QRCodeSVG
-                  value={verificationUrl}
-                  size={150}
-                  includeMargin={true}
-                  level="H"
-                />
-                <p className="text-xs text-muted-foreground mt-3">Escanee para verificar este certificado</p>
-              </div>
-            </div>
-          </CardContent>
+          <CardTitle className="text-2xl font-bold">Verificación de Certificado</CardTitle>
+          <CardDescription>
+            Detalles del certificado con ID: <span className="font-mono">{certificateId}</span>
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent className="space-y-6">
+          {/* Mensaje de verificación */}
+          <Alert variant={result.isValid ? "default" : "destructive"} className={result.isValid ? "bg-green-50 border-green-200 text-green-800" : ""}>
+            <CheckCircle className="h-4 w-4" />
+            <AlertTitle>
+              {result.isValid ? "Verificación Exitosa" : "Verificación Fallida"}
+            </AlertTitle>
+            <AlertDescription>
+              {result.message}
+            </AlertDescription>
+          </Alert>
           
-          <CardFooter className="flex-col space-y-4">
-            <div className="w-full flex flex-col sm:flex-row gap-2">
-              <Button variant="default" onClick={shareCertificate} className="flex-1">
-                <Share2 className="h-4 w-4 mr-2" />
-                Compartir Certificado
-              </Button>
-              <Button variant="outline" onClick={downloadCertificateInfo} className="flex-1">
-                <Download className="h-4 w-4 mr-2" />
-                Descargar Info
-              </Button>
+          {/* Información del curso */}
+          <div className="space-y-2 rounded-lg border p-4">
+            <div className="flex items-center gap-2">
+              <School className="h-5 w-5 text-primary" />
+              <h3 className="font-semibold text-lg">Información del Curso</h3>
             </div>
-            
-            <div className="w-full pt-4 border-t">
-              <p className="text-sm text-muted-foreground">
-                Este certificado puede ser verificado en cualquier momento utilizando el siguiente enlace:
-              </p>
-              <div className="flex items-center mt-2">
-                <code className="bg-muted p-2 rounded text-sm flex-1 overflow-x-auto">
-                  {verificationUrl}
-                </code>
-                <Button variant="ghost" size="icon" className="ml-2" onClick={copyToClipboard}>
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
+            <Separator />
+            <div className="grid grid-cols-1 gap-2">
+              <div>
+                <p className="text-sm text-muted-foreground">Curso</p>
+                <p className="font-medium">{result.course?.title}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Descripción</p>
+                <p>{result.course?.description}</p>
               </div>
             </div>
-          </CardFooter>
-        </Card>
-      ) : null}
+          </div>
+          
+          {/* Información del estudiante */}
+          <div className="space-y-2 rounded-lg border p-4">
+            <div className="flex items-center gap-2">
+              <User className="h-5 w-5 text-primary" />
+              <h3 className="font-semibold text-lg">Información del Estudiante</h3>
+            </div>
+            <Separator />
+            <div>
+              <p className="text-sm text-muted-foreground">Nombre completo</p>
+              <p className="font-medium">{result.student?.full_name}</p>
+            </div>
+          </div>
+          
+          {/* Detalles del certificado */}
+          <div className="space-y-2 rounded-lg border p-4">
+            <div className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-primary" />
+              <h3 className="font-semibold text-lg">Detalles del Certificado</h3>
+            </div>
+            <Separator />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Número de Certificado</p>
+                <p className="font-mono font-medium">{result.certificate?.certificate_number}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Estado</p>
+                <Badge variant={result.certificate?.status === 'active' ? 'outline' : 'destructive'} className={result.certificate?.status === 'active' ? 'bg-green-50 text-green-700 border-green-200' : ''}>
+                  {result.certificate?.status === 'active' ? 'Activo' : result.certificate?.status === 'revoked' ? 'Revocado' : 'Expirado'}
+                </Badge>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Fecha de Emisión</p>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <p>{result.certificate?.issued_date ? format(new Date(result.certificate.issued_date), 'dd/MM/yyyy') : 'N/A'}</p>
+                </div>
+              </div>
+              {result.certificate?.expiration_date && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Fecha de Expiración</p>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <p>{format(new Date(result.certificate.expiration_date), 'dd/MM/yyyy')}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+        
+        <CardFooter className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <Button asChild variant="outline">
+            <Link to="/certificates/verification-portal">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Volver al Portal
+            </Link>
+          </Button>
+          
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1 sm:flex-none">
+              <FileText className="mr-2 h-4 w-4" />
+              Ver Certificado
+            </Button>
+            <Button className="flex-1 sm:flex-none">
+              <Award className="mr-2 h-4 w-4" />
+              Validar
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

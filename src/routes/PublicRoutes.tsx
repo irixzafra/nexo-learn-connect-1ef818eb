@@ -24,6 +24,7 @@ import Careers from '@/pages/Careers';
 import LeaderBoard from '@/pages/LeaderBoard';
 import CertificateVerifyPage from '@/pages/public/CertificateVerifyPage';
 import CertificateVerificationPortal from '@/pages/public/CertificateVerificationPortal';
+import PlaceholderPage from '@/pages/placeholder/PlaceholderPage';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -69,10 +70,10 @@ const PublicRoutes: React.FC = () => {
       } />
       <Route path="/learning-paths/:pathId" element={
         <AppLayout>
-          <div className="container mx-auto p-8">
-            <h1 className="text-3xl font-bold mb-4">Detalles de la Ruta de Aprendizaje</h1>
-            <p>Esta página está en desarrollo</p>
-          </div>
+          <PlaceholderPage 
+            title="Detalles de la Ruta de Aprendizaje" 
+            subtitle="Esta página está en desarrollo"
+          />
         </AppLayout>
       } />
       
