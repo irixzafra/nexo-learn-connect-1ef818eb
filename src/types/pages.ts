@@ -11,18 +11,18 @@ export type PageBlockType =
   | 'custom';
 
 export type PageLayout = 
-  | 'column'
-  | 'row'
-  | 'grid-2'
-  | 'grid-3'
-  | 'grid-4'
   | 'default'
   | 'landing'
   | 'marketing'
   | 'documentation'
   | 'course'
   | 'sidebar'
-  | 'full-width';
+  | 'full-width'
+  | 'column'
+  | 'row'
+  | 'grid-2'
+  | 'grid-3'
+  | 'grid-4';
 
 export type ContainerLayout = PageLayout;
 

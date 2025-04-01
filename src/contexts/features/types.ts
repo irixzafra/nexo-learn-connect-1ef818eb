@@ -141,6 +141,7 @@ export interface FeaturesConfig {
 
 export interface FeaturesContextProps {
   featuresConfig: FeaturesConfig;
+  features?: Record<string, Feature>;
   isEnabled: (featureName: FeatureId) => boolean;
   enableFeature: (featureId: FeatureId) => Promise<void>;
   disableFeature: (featureId: FeatureId) => Promise<void>;

@@ -1,7 +1,6 @@
 
 import { useFeatures } from '@/contexts/features/FeaturesContext';
 import { ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
-import { getFeatureDependencies, getFeatureDependents } from '@/contexts/features/dependencies';
 
 /**
  * Custom hook to access and manage a specific feature flag
@@ -9,7 +8,6 @@ import { getFeatureDependencies, getFeatureDependents } from '@/contexts/feature
  */
 export const useFeature = (featureId?: FeatureId) => {
   const { 
-    features,
     featuresConfig, 
     isEnabled,
     toggleFeature,
@@ -22,7 +20,6 @@ export const useFeature = (featureId?: FeatureId) => {
   // If no feature name is provided, return the context data
   if (!featureId) {
     return {
-      features,
       featuresConfig,
       updateFeatures,
       isLoading
@@ -38,9 +35,9 @@ export const useFeature = (featureId?: FeatureId) => {
       if (Object.keys(featuresConfig.features).includes(featureId as string)) {
         // It's a core feature
         if (value) {
-          return Promise.resolve(toggleFeature(featureId));
+          return toggleFeature(featureId, true);
         } else {
-          return Promise.resolve(toggleFeature(featureId));
+          return toggleFeature(featureId, false);
         }
       } else {
         // It's an extended feature
@@ -48,14 +45,13 @@ export const useFeature = (featureId?: FeatureId) => {
       }
     } else {
       // Simple toggle
-      toggleFeature(featureId);
-      return Promise.resolve();
+      return toggleFeature(featureId);
     }
   };
 
-  // Check dependencies
-  const dependencies = getFeatureDependencies(featureId);
-  const dependents = getFeatureDependents(featureId);
+  // Check dependencies (placeholder for future implementation)
+  const dependencies: string[] = [];
+  const dependents: string[] = [];
 
   return {
     isEnabled: isFeatureActive,

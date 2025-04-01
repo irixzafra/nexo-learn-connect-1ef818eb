@@ -62,6 +62,62 @@ const initialFeaturesConfig: FeaturesConfig = {
       enabled: true,
       description: 'Content backup and restoration',
       isCore: true
+    },
+    'user-management': {
+      id: 'user-management',
+      name: 'User Management',
+      enabled: true,
+      description: 'User management and permissions',
+      isCore: true
+    },
+    'courses': {
+      id: 'courses',
+      name: 'Courses',
+      enabled: true,
+      description: 'Course management',
+      isCore: true
+    },
+    'gamification': {
+      id: 'gamification',
+      name: 'Gamification',
+      enabled: false,
+      description: 'Gamification features',
+      isCore: true
+    },
+    'payment-system': {
+      id: 'payment-system',
+      name: 'Payment System',
+      enabled: false,
+      description: 'Payment processing',
+      isCore: true
+    },
+    'certificates': {
+      id: 'certificates',
+      name: 'Certificates',
+      enabled: true,
+      description: 'Certificate generation',
+      isCore: true
+    },
+    'analytics': {
+      id: 'analytics',
+      name: 'Analytics',
+      enabled: true,
+      description: 'Analytics and reporting',
+      isCore: true
+    },
+    'community': {
+      id: 'community',
+      name: 'Community',
+      enabled: true,
+      description: 'Community features',
+      isCore: true
+    },
+    'theming': {
+      id: 'theming',
+      name: 'Theming',
+      enabled: true,
+      description: 'Theme customization',
+      isCore: true
     }
   },
   // Extended features
@@ -100,7 +156,7 @@ const initialFeaturesConfig: FeaturesConfig = {
   enableMentoring: false,
   enableSubscriptionPause: false,
   enableGiftSubscriptions: false,
-  enableInlineEditing: true, // Enabled by default
+  enableInlineEditing: true,
   // Settings features
   designSystemEnabled: true,
   enableThemeSwitcher: true,
@@ -111,7 +167,13 @@ const initialFeaturesConfig: FeaturesConfig = {
   enable2FA: false,
   enableMultipleSessions: true,
   enablePublicRegistration: true,
-  requireEmailVerification: false
+  requireEmailVerification: false,
+  enableActivityLog: true,
+  enableOnboarding: true,
+  requireOnboarding: false,
+  autoStartOnboarding: true,
+  showOnboardingTrigger: true,
+  enableContextualHelp: true
 };
 
 export const FeaturesContext = createContext<FeaturesContextProps>({
@@ -155,6 +217,11 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             }));
           } catch (err) {
             console.error('Error parsing stored features:', err);
+            if (err instanceof Error) {
+              setError(err);
+            } else {
+              setError(new Error('Error parsing stored features'));
+            }
           }
         }
       } catch (err) {
@@ -240,6 +307,7 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     });
     
     toast.success(`Feature ${featureId} enabled`);
+    return Promise.resolve();
   };
 
   // Disable a feature
@@ -274,6 +342,7 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     });
     
     toast.success(`Feature ${featureId} disabled`);
+    return Promise.resolve();
   };
 
   // Toggle a feature on/off
@@ -286,11 +355,14 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } else {
       await disableFeature(featureId);
     }
+    
+    return Promise.resolve();
   };
 
   // Toggle an extended feature specifically
   const toggleExtendedFeature = async (featureId: ExtendedFeatureId, value?: boolean): Promise<void> => {
     await toggleFeature(featureId, value);
+    return Promise.resolve();
   };
 
   // Update multiple features at once
@@ -312,6 +384,7 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     });
     
     toast.success('Features configuration updated');
+    return Promise.resolve();
   };
 
   return (
