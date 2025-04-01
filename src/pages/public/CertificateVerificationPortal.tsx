@@ -1,14 +1,17 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Award, Search, ArrowRight } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Award, Search, Info } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const CertificateVerificationPortal: React.FC = () => {
   const [certificateId, setCertificateId] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleVerify = (e: React.FormEvent) => {
@@ -19,61 +22,66 @@ const CertificateVerificationPortal: React.FC = () => {
       return;
     }
     
-    // Clear any previous errors
-    setError('');
+    // Limpiar cualquier error previo
+    setError(null);
     
-    // Navigate to certificate verification page
-    navigate(`/admin/certificates/verify/${certificateId}`);
+    // Navegar a la página de verificación con el ID proporcionado
+    navigate(`/certificates/verify/${certificateId.trim()}`);
   };
 
   return (
-    <div className="container mx-auto py-12 px-4 max-w-lg">
+    <div className="container mx-auto py-12 px-4 max-w-3xl">
       <div className="text-center mb-8">
         <Award className="h-16 w-16 mx-auto text-primary mb-4" />
-        <h1 className="text-3xl font-bold tracking-tight">Verificación de Certificados</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Portal de Verificación de Certificados</h1>
         <p className="text-muted-foreground mt-2">
-          Ingrese el ID del certificado para verificar su autenticidad
+          Compruebe la autenticidad de los certificados emitidos por nuestra plataforma
         </p>
       </div>
       
-      <Card>
+      <Card className="w-full">
         <CardHeader>
-          <CardTitle>Verificar certificado</CardTitle>
+          <CardTitle>Verificar un Certificado</CardTitle>
           <CardDescription>
-            Ingrese el ID o número del certificado para verificar su autenticidad.
+            Ingrese el ID del certificado que desea verificar
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleVerify}>
-            <div className="space-y-4">
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="certificate-id" className="text-sm font-medium">
-                  ID o Número de Certificado
-                </label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="certificate-id"
-                    placeholder="Ej: c7f9e9e0-1b5a-4b0f-8b0a-7b0b0b0b0b0b"
-                    className="pl-9"
-                    value={certificateId}
-                    onChange={(e) => setCertificateId(e.target.value)}
-                  />
-                </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
+            <div className="grid gap-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              
+              <div className="grid gap-2">
+                <Label htmlFor="certificate-id">ID del Certificado</Label>
+                <Input
+                  id="certificate-id"
+                  placeholder="Ejemplo: cert_123abc456def"
+                  value={certificateId}
+                  onChange={(e) => setCertificateId(e.target.value)}
+                />
               </div>
               
               <Button type="submit" className="w-full">
-                Verificar
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <Search className="h-4 w-4 mr-2" />
+                Verificar Certificado
               </Button>
             </div>
           </form>
         </CardContent>
-        <CardFooter className="flex-col text-center text-sm text-muted-foreground">
-          <p>
-            Todos los certificados incluyen un código QR para una verificación rápida.
-          </p>
+        <CardFooter className="flex-col items-start gap-2 border-t pt-4">
+          <Alert variant="default" className="bg-muted/50 border-muted">
+            <Info className="h-4 w-4" />
+            <AlertTitle>¿Cómo verificar un certificado?</AlertTitle>
+            <AlertDescription>
+              Puede verificar un certificado escaneando el código QR en el certificado físico o ingresando el ID del certificado que aparece en la parte inferior del mismo.
+            </AlertDescription>
+          </Alert>
         </CardFooter>
       </Card>
     </div>

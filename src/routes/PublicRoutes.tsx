@@ -22,6 +22,8 @@ import ContactPage from '@/pages/ContactPage';
 import DynamicPage from '@/pages/DynamicPage';
 import Careers from '@/pages/Careers';
 import LeaderBoard from '@/pages/LeaderBoard';
+import CertificateVerifyPage from '@/pages/public/CertificateVerifyPage';
+import CertificateVerificationPortal from '@/pages/public/CertificateVerificationPortal';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -45,6 +47,10 @@ const PublicRoutes: React.FC = () => {
       {/* Course related */}
       <Route path="/courses" element={<PublicLayout><CoursesCatalog /></PublicLayout>} />
       <Route path="/courses/:courseId" element={<PublicLayout><CourseDetailPage /></PublicLayout>} />
+      
+      {/* Certificate routes */}
+      <Route path="/certificates/verify/:certificateId" element={<PublicLayout><CertificateVerifyPage /></PublicLayout>} />
+      <Route path="/certificates/verification-portal" element={<PublicLayout><CertificateVerificationPortal /></PublicLayout>} />
       
       {/* Legal pages */}
       <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />

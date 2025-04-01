@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -27,25 +28,6 @@ interface Certificate {
   };
 }
 
-// This interface represents the raw data structure we get from Supabase
-interface CertificateData {
-  id: string;
-  certificate_number: string;
-  issue_date: string;
-  expiry_date: string | null;
-  status: 'issued' | 'revoked' | 'expired';
-  profiles: {
-    full_name: string;
-  };
-  courses: {
-    title: string;
-    description: string;
-    profiles: {
-      full_name: string;
-    };
-  };
-}
-
 const CertificateVerifyPage: React.FC = () => {
   const { certificateId } = useParams<{ certificateId: string }>();
   const [certificate, setCertificate] = useState<Certificate | null>(null);
@@ -60,7 +42,7 @@ const CertificateVerifyPage: React.FC = () => {
       
       // Set verification URL for QR code
       const baseUrl = window.location.origin;
-      setVerificationUrl(`${baseUrl}/admin/certificates/verify/${certificateId}`);
+      setVerificationUrl(`${baseUrl}/certificates/verify/${certificateId}`);
     }
   }, [certificateId]);
 
@@ -223,10 +205,10 @@ const CertificateVerifyPage: React.FC = () => {
       <Button
         variant="ghost"
         className="mb-6"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate('/certificates/verification-portal')}
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
-        Volver
+        Volver al Portal
       </Button>
       
       <div className="text-center mb-8">
@@ -267,8 +249,8 @@ const CertificateVerifyPage: React.FC = () => {
             <p className="text-red-600">{error}</p>
           </CardContent>
           <CardFooter>
-            <Button variant="outline" onClick={() => navigate('/admin/certificates')}>
-              Volver al listado de certificados
+            <Button variant="outline" onClick={() => navigate('/certificates/verification-portal')}>
+              Volver al Portal
             </Button>
           </CardFooter>
         </Card>

@@ -21,6 +21,8 @@ export const routeMap = {
   cookies: '/cookies',
   accessibility: '/accessibility',
   dynamicPage: (slug: string) => `/pages/${slug}`,
+  certificateVerify: (certificateId: string) => `/certificates/verify/${certificateId}`,
+  certificateVerificationPortal: '/certificates/verification-portal',
   
   // Rutas de usuario autenticado
   dashboard: '/home',
@@ -38,6 +40,7 @@ export const routeMap = {
   notifications: '/notifications',
   community: '/community',
   settings: '/settings',
+  userCertificates: '/certificates',
   
   // Rutas de instructor
   instructorDashboard: '/instructor/dashboard',
@@ -57,6 +60,8 @@ export const routeMap = {
   adminCategories: '/admin/categories',
   adminLearning: '/admin/learning',
   adminCertificates: '/admin/certificates',
+  adminCertificateVerify: (certificateId: string) => `/admin/certificates/verify/${certificateId}`,
+  adminCertificateVerificationPortal: '/admin/certificates/verification-portal',
   adminActivity: '/admin/activity',
   adminInvoices: '/admin/invoices',
   adminSubscriptions: '/admin/subscriptions',
@@ -76,7 +81,10 @@ export const routeMap = {
   adminAccess: '/admin/access',
   adminAI: '/admin/ai',
   adminDesign: '/admin/design',
-  adminNavigation: '/admin/navigation'
+  adminNavigation: '/admin/navigation',
+  adminNavigationDiagram: '/admin/navigation-diagram',
+  adminRouteValidator: '/admin/route-validator',
+  adminResources: '/admin/resources'
 };
 
 /**
