@@ -1,57 +1,103 @@
 
 import React, { useState } from 'react';
-import { useFeatures } from '@/contexts/features/FeaturesContext';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { FeaturesConfig, defaultFeaturesConfig } from '@/contexts/features/types';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, AlertTriangle } from 'lucide-react';
-import { FeatureAccordionGroup } from './FeatureAccordionGroup';
+import { Undo2, Save } from 'lucide-react';
 import { toast } from 'sonner';
+import FeatureAccordionGroup from './FeatureAccordionGroup';
+import { useFeature } from '@/hooks/useFeature';
 
-export const FeatureManagement: React.FC = () => {
-  const { features, isLoading, updateFeatures, reloadFeatures } = useFeatures();
-  const [isReloading, setIsReloading] = useState(false);
+const FeatureManagement: React.FC = () => {
+  const { features, updateFeatures } = useFeature();
+  const [localFeatures, setLocalFeatures] = useState<FeaturesConfig>({...features});
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleReload = async () => {
-    setIsReloading(true);
+  const handleToggleFeature = (key: keyof FeaturesConfig, value: boolean) => {
+    setLocalFeatures(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const handleReset = () => {
+    setLocalFeatures({...features});
+    toast.info('Cambios descartados', {
+      description: 'Los cambios han sido restaurados al estado actual.'
+    });
+  };
+
+  const handleSave = async () => {
     try {
-      await reloadFeatures();
-      toast.success('Configuración de características recargada');
-    } catch (err) {
-      toast.error('Error al recargar la configuración');
-      console.error(err);
+      setIsLoading(true);
+      await updateFeatures(localFeatures);
+      toast.success('Configuración guardada', {
+        description: 'Los cambios han sido aplicados correctamente.'
+      });
+    } catch (error) {
+      toast.error('Error al guardar', {
+        description: 'No se pudieron guardar los cambios. Inténtalo de nuevo.'
+      });
+      console.error('Error saving features:', error);
     } finally {
-      setIsReloading(false);
+      setIsLoading(false);
     }
   };
 
-  if (isLoading) {
-    return <div className="py-6">Cargando configuración de características...</div>;
-  }
+  const handleRestoreDefaults = () => {
+    setLocalFeatures({...defaultFeaturesConfig});
+    toast.info('Valores predeterminados', {
+      description: 'Se han restaurado los valores predeterminados. Guarda para aplicar los cambios.'
+    });
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Gestión de Características</h2>
-        <Button 
-          variant="outline" 
-          onClick={handleReload}
-          disabled={isReloading}
-        >
-          <RefreshCw className={`mr-2 h-4 w-4 ${isReloading ? 'animate-spin' : ''}`} />
-          Recargar
-        </Button>
-      </div>
-      
-      <Alert>
-        <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Precaución</AlertTitle>
-        <AlertDescription>
-          Modificar estas configuraciones puede afectar la funcionalidad de la plataforma.
-          Algunos cambios pueden requerir reiniciar la aplicación.
-        </AlertDescription>
-      </Alert>
-      
-      <FeatureAccordionGroup />
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Gestión de Funcionalidades</CardTitle>
+        <CardDescription>
+          Activa o desactiva funcionalidades específicas de la plataforma
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          <FeatureAccordionGroup 
+            features={localFeatures} 
+            onToggleFeature={handleToggleFeature} 
+          />
+          
+          <div className="flex justify-between mt-6">
+            <Button
+              variant="outline"
+              onClick={handleRestoreDefaults}
+              disabled={isLoading}
+            >
+              Restaurar predeterminados
+            </Button>
+            
+            <div className="space-x-2">
+              <Button
+                variant="outline"
+                onClick={handleReset}
+                disabled={isLoading}
+              >
+                <Undo2 className="mr-2 h-4 w-4" />
+                Descartar
+              </Button>
+              
+              <Button
+                onClick={handleSave}
+                disabled={isLoading}
+              >
+                <Save className="mr-2 h-4 w-4" />
+                Guardar Cambios
+              </Button>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
+
+export default FeatureManagement;

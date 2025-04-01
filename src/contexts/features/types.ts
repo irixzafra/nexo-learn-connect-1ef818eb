@@ -1,6 +1,6 @@
 
 export interface FeaturesConfig {
-  // General features
+  // Interface features
   enableDarkMode: boolean;
   enableNotifications: boolean;
   enableAnalytics: boolean;
@@ -10,107 +10,93 @@ export interface FeaturesConfig {
   enableUserRegistration: boolean;
   enableSocialLogin: boolean;
   enablePublicProfiles: boolean;
-
-  // Design system features
+  
+  // Design system
   designSystemEnabled: boolean;
   enableThemeSwitcher: boolean;
   enableMultiLanguage: boolean;
-
+  
   // Content features
   enableAdvancedEditor: boolean;
   enableContentReordering: boolean;
   enableCategoryManagement: boolean;
   enableLeaderboard: boolean;
-
-  // Data features
+  
+  // Technical features
   enableAutoBackups: boolean;
   enableQueryCache: boolean;
   enableMaintenanceMode: boolean;
   enableDatabaseDevMode: boolean;
-
+  
   // Security features
   enable2FA: boolean;
   enableMultipleSessions: boolean;
   enablePublicRegistration: boolean;
   requireEmailVerification: boolean;
   enableActivityLog: boolean;
-
-  // Test features
+  
+  // Development features
   enableTestDataGenerator: boolean;
   
   // Onboarding features
   enableOnboarding: boolean;
   enableContextualHelp: boolean;
   requireOnboarding: boolean;
-  
-  // Additional properties
   autoStartOnboarding: boolean;
   showOnboardingTrigger: boolean;
+  
+  // Role management
+  enableRoleManagement: boolean;
+  enableRoleSwitcher: boolean;
 }
 
-// Valores por defecto para usar en el provider
 export const defaultFeaturesConfig: FeaturesConfig = {
-  // General features
+  // Interface features
   enableDarkMode: true,
   enableNotifications: true,
-  enableAnalytics: false,
+  enableAnalytics: true,
   enableFeedback: true,
   
   // User features
   enableUserRegistration: true,
   enableSocialLogin: false,
-  enablePublicProfiles: true,
-
-  // Design system features
+  enablePublicProfiles: false,
+  
+  // Design system
   designSystemEnabled: true,
   enableThemeSwitcher: true,
-  enableMultiLanguage: true,
-
+  enableMultiLanguage: false,
+  
   // Content features
-  enableAdvancedEditor: true,
-  enableContentReordering: true,
-  enableCategoryManagement: true,
-  enableLeaderboard: true,
-
-  // Data features
-  enableAutoBackups: true,
+  enableAdvancedEditor: false,
+  enableContentReordering: false,
+  enableCategoryManagement: false,
+  enableLeaderboard: false,
+  
+  // Technical features
+  enableAutoBackups: false,
   enableQueryCache: true,
   enableMaintenanceMode: false,
   enableDatabaseDevMode: false,
-
+  
   // Security features
   enable2FA: false,
   enableMultipleSessions: true,
   enablePublicRegistration: true,
   requireEmailVerification: true,
   enableActivityLog: true,
-
-  // Test features
+  
+  // Development features
   enableTestDataGenerator: false,
   
   // Onboarding features
   enableOnboarding: true,
   enableContextualHelp: true,
   requireOnboarding: false,
+  autoStartOnboarding: true,
+  showOnboardingTrigger: true,
   
-  // Additional properties
-  autoStartOnboarding: false,
-  showOnboardingTrigger: true
+  // Role management
+  enableRoleManagement: true,
+  enableRoleSwitcher: true
 };
-
-export interface FeaturesContextProps {
-  features: FeaturesConfig;
-  isLoading: boolean;
-  error: Error | null;
-  updateFeatures: (newFeatures: FeaturesConfig) => Promise<void>;
-  reloadFeatures: () => Promise<void>;
-  
-  // Métodos adicionales para usar en componentes
-  isFeatureEnabled: (feature: keyof FeaturesConfig) => boolean;
-  toggleFeature: (feature: keyof FeaturesConfig, value: boolean) => Promise<void>;
-  featuresConfig: FeaturesConfig; // alias para features (usado en algunos componentes)
-  
-  // Métodos para manejo de dependencias
-  getFeatureDependencies: (feature: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
-  getFeatureDependents: (feature: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
-}

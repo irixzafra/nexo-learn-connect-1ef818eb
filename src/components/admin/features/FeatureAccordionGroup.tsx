@@ -1,211 +1,191 @@
 
 import React from 'react';
-import { 
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger
+  AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { FeaturesConfig } from '@/contexts/features/types';
-import { useFeatureDependencies } from '@/hooks/useFeatureDependencies';
-import { InfoTooltip } from '@/components/ui/info-tooltip';
-import { LockIcon } from 'lucide-react';
+import { getFeatureDependencies } from '@/contexts/features/dependencies';
+import { Badge } from "@/components/ui/badge";
+import InfoTooltip from '@/components/ui/info-tooltip';
 
-// Descripción de las características por grupo
-const featureDescriptions: Record<string, Record<keyof FeaturesConfig, string>> = {
-  general: {
-    enableDarkMode: "Permite cambiar entre temas claro y oscuro",
-    enableNotifications: "Habilita el sistema de notificaciones en la plataforma",
-    enableAnalytics: "Recopilación de datos de uso para análisis",
-    enableFeedback: "Permite a los usuarios enviar comentarios y sugerencias"
-  },
-  user: {
-    enableUserRegistration: "Permite que los usuarios se registren en la plataforma",
-    enableSocialLogin: "Habilita inicio de sesión con redes sociales",
-    enablePublicProfiles: "Permite perfiles públicos para los usuarios"
-  },
-  design: {
-    designSystemEnabled: "Habilita el sistema de diseño unificado",
-    enableThemeSwitcher: "Permite cambiar entre diferentes temas visuales",
-    enableMultiLanguage: "Soporte para múltiples idiomas"
-  },
-  content: {
-    enableAdvancedEditor: "Editor avanzado con más opciones de formato",
-    enableContentReordering: "Permite reordenar el contenido mediante arrastrar y soltar",
-    enableCategoryManagement: "Gestión avanzada de categorías para el contenido",
-    enableLeaderboard: "Muestra una tabla de clasificación para usuarios"
-  },
-  data: {
-    enableAutoBackups: "Copias de seguridad automáticas de los datos",
-    enableQueryCache: "Caché de consultas para mejor rendimiento",
-    enableMaintenanceMode: "Modo de mantenimiento para realizar actualizaciones",
-    enableDatabaseDevMode: "Herramientas de desarrollo para la base de datos"
-  },
-  security: {
-    enable2FA: "Autenticación de dos factores para mayor seguridad",
-    enableMultipleSessions: "Permite múltiples sesiones activas para un usuario",
-    enablePublicRegistration: "Registro público abierto (sin invitación)",
-    requireEmailVerification: "Requiere verificación de email para nuevas cuentas",
-    enableActivityLog: "Registro de actividad de los usuarios"
-  },
-  testing: {
-    enableTestDataGenerator: "Herramienta para generar datos de prueba"
-  },
-  onboarding: {
-    enableOnboarding: "Habilita el sistema de iniciación para nuevos usuarios",
-    enableContextualHelp: "Ayuda contextual en diferentes partes de la aplicación",
-    requireOnboarding: "Hace obligatorio completar el proceso de iniciación",
-    autoStartOnboarding: "Inicia automáticamente el proceso de iniciación",
-    showOnboardingTrigger: "Muestra un botón para iniciar el proceso de iniciación"
-  }
-};
-
-interface FeatureGroupConfig {
-  id: string;
-  title: string;
-  features: Array<keyof FeaturesConfig>;
-}
-
-// Grupos de características para mostrar en acordeones
-export const featureGroups: FeatureGroupConfig[] = [
-  {
-    id: "general",
-    title: "General",
-    features: ["enableDarkMode", "enableNotifications", "enableAnalytics", "enableFeedback"]
-  },
-  {
-    id: "user",
-    title: "Usuarios",
-    features: ["enableUserRegistration", "enableSocialLogin", "enablePublicProfiles"]
-  },
-  {
-    id: "design",
-    title: "Diseño",
-    features: ["designSystemEnabled", "enableThemeSwitcher", "enableMultiLanguage"]
-  },
-  {
-    id: "content",
-    title: "Contenido",
-    features: ["enableAdvancedEditor", "enableContentReordering", "enableCategoryManagement", "enableLeaderboard"]
-  },
-  {
-    id: "data",
-    title: "Datos",
-    features: ["enableAutoBackups", "enableQueryCache", "enableMaintenanceMode", "enableDatabaseDevMode"]
-  },
-  {
-    id: "security",
-    title: "Seguridad",
-    features: ["enable2FA", "enableMultipleSessions", "enablePublicRegistration", "requireEmailVerification", "enableActivityLog"]
-  },
-  {
-    id: "testing",
-    title: "Pruebas",
-    features: ["enableTestDataGenerator"]
-  },
-  {
-    id: "onboarding",
-    title: "Iniciación",
-    features: ["enableOnboarding", "enableContextualHelp", "requireOnboarding", "autoStartOnboarding", "showOnboardingTrigger"]
-  }
-];
-
-interface FeatureAccordionGroupProps {
+export interface FeatureAccordionGroupProps {
   features: FeaturesConfig;
-  onToggleFeature: (feature: keyof FeaturesConfig, enabled: boolean) => void;
-  isLoading?: boolean;
+  onToggleFeature: (key: keyof FeaturesConfig, value: boolean) => void;
 }
 
-export const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({
-  features,
-  onToggleFeature,
-  isLoading = false
-}) => {
-  const { checkIfCanDisable, checkIfCanEnable, getDependentFeatures, getDependencies } = useFeatureDependencies();
+const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({ features, onToggleFeature }) => {
+  const featureDescriptions: Partial<Record<keyof FeaturesConfig, string>> = {
+    // Interface
+    enableDarkMode: "Permite a los usuarios cambiar entre temas claro y oscuro",
+    enableNotifications: "Habilita el sistema de notificaciones en la plataforma",
+    enableAnalytics: "Recopila datos anónimos de uso para mejorar la plataforma",
+    enableFeedback: "Permite a los usuarios enviar comentarios sobre la plataforma",
+    
+    // User features
+    enableUserRegistration: "Habilita el registro de nuevos usuarios",
+    enableSocialLogin: "Permite iniciar sesión con cuentas de redes sociales",
+    enablePublicProfiles: "Hace que los perfiles de usuario sean visibles públicamente",
+    
+    // Design system
+    designSystemEnabled: "Activa el sistema de diseño personalizable",
+    enableThemeSwitcher: "Permite a los usuarios cambiar entre diferentes temas visuales",
+    enableMultiLanguage: "Habilita la funcionalidad multi-idioma en la plataforma",
+    
+    // Content features
+    enableAdvancedEditor: "Activa el editor avanzado con más opciones de formato",
+    enableContentReordering: "Permite reorganizar el contenido mediante arrastrar y soltar",
+    enableCategoryManagement: "Habilita la gestión de categorías para el contenido",
+    enableLeaderboard: "Muestra una tabla de clasificación de usuarios basada en puntos",
+    
+    // Technical features
+    enableAutoBackups: "Realiza copias de seguridad automáticas de los datos",
+    enableQueryCache: "Almacena en caché las consultas para mejorar el rendimiento",
+    enableMaintenanceMode: "Permite activar el modo de mantenimiento",
+    enableDatabaseDevMode: "Habilita herramientas avanzadas para desarrolladores de base de datos",
+    
+    // Security features
+    enable2FA: "Activa la autenticación de dos factores para mayor seguridad",
+    enableMultipleSessions: "Permite iniciar sesión en múltiples dispositivos a la vez",
+    enablePublicRegistration: "Permite que cualquier persona se registre sin invitación",
+    requireEmailVerification: "Requiere verificación de email antes de activar cuentas",
+    enableActivityLog: "Registra todas las acciones de los usuarios para auditoría",
+    
+    // Development features
+    enableTestDataGenerator: "Permite generar datos de prueba para desarrollo",
+    
+    // Onboarding features
+    enableOnboarding: "Activa el sistema de introducción para nuevos usuarios",
+    enableContextualHelp: "Muestra ayuda contextual en diferentes partes de la plataforma",
+    requireOnboarding: "Obliga a completar el proceso de introducción",
+    autoStartOnboarding: "Inicia automáticamente el proceso de introducción para nuevos usuarios",
+    showOnboardingTrigger: "Muestra un botón para volver a iniciar el proceso de introducción",
+    
+    // Role management
+    enableRoleManagement: "Habilita la gestión avanzada de roles de usuario",
+    enableRoleSwitcher: "Permite a los administradores cambiar temporalmente su rol"
+  };
 
-  const getFeatureDescription = (groupId: string, featureKey: keyof FeaturesConfig): string => {
-    return featureDescriptions[groupId]?.[featureKey] || "No hay descripción disponible";
+  // Agrupación de características por categoría
+  const interfaceFeatures: (keyof FeaturesConfig)[] = [
+    'enableDarkMode', 'enableNotifications', 'enableAnalytics', 'enableFeedback'
+  ];
+  
+  const userFeatures: (keyof FeaturesConfig)[] = [
+    'enableUserRegistration', 'enableSocialLogin', 'enablePublicProfiles'
+  ];
+  
+  const designFeatures: (keyof FeaturesConfig)[] = [
+    'designSystemEnabled', 'enableThemeSwitcher', 'enableMultiLanguage'
+  ];
+  
+  const contentFeatures: (keyof FeaturesConfig)[] = [
+    'enableAdvancedEditor', 'enableContentReordering', 'enableCategoryManagement', 'enableLeaderboard'
+  ];
+  
+  const technicalFeatures: (keyof FeaturesConfig)[] = [
+    'enableAutoBackups', 'enableQueryCache', 'enableMaintenanceMode', 'enableDatabaseDevMode'
+  ];
+  
+  const securityFeatures: (keyof FeaturesConfig)[] = [
+    'enable2FA', 'enableMultipleSessions', 'enablePublicRegistration', 
+    'requireEmailVerification', 'enableActivityLog'
+  ];
+  
+  const developmentFeatures: (keyof FeaturesConfig)[] = [
+    'enableTestDataGenerator'
+  ];
+  
+  const onboardingFeatures: (keyof FeaturesConfig)[] = [
+    'enableOnboarding', 'enableContextualHelp', 'requireOnboarding', 
+    'autoStartOnboarding', 'showOnboardingTrigger'
+  ];
+  
+  const roleFeatures: (keyof FeaturesConfig)[] = [
+    'enableRoleManagement', 'enableRoleSwitcher'
+  ];
+
+  // Verificar si una funcionalidad puede ser habilitada basado en sus dependencias
+  const canBeEnabled = (featureKey: keyof FeaturesConfig): boolean => {
+    const dependencies = getFeatureDependencies(featureKey);
+    return dependencies.every(dep => features[dep]);
+  };
+
+  // Renderizar un grupo de características
+  const renderFeatureGroup = (
+    groupTitle: string, 
+    featureKeys: (keyof FeaturesConfig)[]
+  ) => {
+    return (
+      <AccordionItem value={groupTitle.toLowerCase().replace(/\s/g, '-')}>
+        <AccordionTrigger className="hover:bg-muted/50 px-4 py-2 rounded-md">
+          {groupTitle}
+        </AccordionTrigger>
+        <AccordionContent className="px-2">
+          <div className="space-y-4 py-2">
+            {featureKeys.map(key => {
+              const isDisabled = !canBeEnabled(key);
+              const dependencies = getFeatureDependencies(key);
+              
+              return (
+                <div key={key} className="flex items-center justify-between py-1">
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">
+                        {key}
+                      </span>
+                      {dependencies.length > 0 && (
+                        <InfoTooltip content={
+                          <div className="text-xs">
+                            <p className="font-medium mb-1">Dependencias:</p>
+                            <ul className="list-disc pl-4">
+                              {dependencies.map(dep => (
+                                <li key={dep}>{dep}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        } />
+                      )}
+                      {isDisabled && (
+                        <Badge variant="outline" className="text-xs text-muted-foreground">
+                          Requiere dependencias
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {featureDescriptions[key] || ""}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={features[key]}
+                    onCheckedChange={(checked) => onToggleFeature(key, checked)}
+                    disabled={isDisabled}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    );
   };
 
   return (
-    <Accordion type="multiple" className="w-full" defaultValue={["general"]}>
-      {featureGroups.map((group) => (
-        <AccordionItem key={group.id} value={group.id}>
-          <AccordionTrigger className="text-lg font-medium py-4">
-            {group.title}
-          </AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-4 pt-2">
-              {group.features.map((featureKey) => {
-                // Verificar dependencias
-                const canDisable = checkIfCanDisable(featureKey);
-                const canEnable = checkIfCanEnable(featureKey);
-                const isEnabled = features[featureKey];
-                const dependencies = getDependencies(featureKey);
-                const dependents = getDependentFeatures(featureKey);
-                
-                let disabledReason = "";
-                
-                if (!canEnable && !isEnabled) {
-                  disabledReason = "No se puede activar: requiere activar otras características primero";
-                } else if (!canDisable && isEnabled) {
-                  disabledReason = "No se puede desactivar: otras características dependen de esta";
-                }
-                
-                return (
-                  <div key={String(featureKey)} className="flex flex-col space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor={`switch-${featureKey}`} className="text-base font-medium">
-                            {String(featureKey).replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                          </Label>
-                          
-                          {disabledReason && (
-                            <InfoTooltip content={disabledReason}>
-                              <LockIcon className="h-4 w-4 text-muted-foreground" />
-                            </InfoTooltip>
-                          )}
-                          
-                          {dependencies.length > 0 && (
-                            <Badge variant="outline" className="text-xs">
-                              Requiere: {dependencies.join(', ')}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {getFeatureDescription(group.id, featureKey)}
-                        </p>
-                      </div>
-                      <Switch
-                        id={`switch-${featureKey}`}
-                        checked={isEnabled}
-                        onCheckedChange={(checked) => onToggleFeature(featureKey, checked)}
-                        disabled={
-                          isLoading || 
-                          (!canEnable && !isEnabled) || 
-                          (!canDisable && isEnabled)
-                        }
-                      />
-                    </div>
-                    
-                    {dependents.length > 0 && isEnabled && (
-                      <div className="ml-6 mt-1">
-                        <p className="text-xs text-muted-foreground">
-                          Características que dependen de esta: {dependents.join(', ')}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
+    <Accordion type="multiple" className="w-full" defaultValue={["interface"]}>
+      {renderFeatureGroup("Interfaz", interfaceFeatures)}
+      {renderFeatureGroup("Usuarios", userFeatures)}
+      {renderFeatureGroup("Diseño", designFeatures)}
+      {renderFeatureGroup("Contenido", contentFeatures)}
+      {renderFeatureGroup("Técnico", technicalFeatures)}
+      {renderFeatureGroup("Seguridad", securityFeatures)}
+      {renderFeatureGroup("Desarrollo", developmentFeatures)}
+      {renderFeatureGroup("Onboarding", onboardingFeatures)}
+      {renderFeatureGroup("Roles", roleFeatures)}
     </Accordion>
   );
 };
+
+export default FeatureAccordionGroup;

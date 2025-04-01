@@ -1,39 +1,67 @@
 
-# Nexo Learning - Documentación Principal
+# Documentación de Nexo Learning
 
-Bienvenido a la documentación oficial de Nexo Learning Platform. Esta documentación proporciona información detallada sobre la arquitectura, componentes, y funcionamiento de la plataforma.
+Bienvenido a la documentación de Nexo Learning, una plataforma educativa en línea diseñada para facilitar el aprendizaje continuo y el desarrollo profesional.
 
-## Estructura de la Documentación
+## Secciones Principales
 
-La documentación está organizada en las siguientes secciones principales:
+### Para Desarrolladores
 
-- [**Arquitectura del Sistema**](./arquitectura-del-sistema.md): Diseño general y estructura de la plataforma
-- [**Componentes**](#componentes): Descripción de los principales componentes de la aplicación
-- [**Guías de Desarrollo**](#guias): Guías y mejores prácticas para desarrollo
-- [**Módulos**](./modules/): Documentación específica por módulo funcional
-- [**Registro de Cambios**](./modules/changelog.md): Historial de versiones y actualizaciones
+- [Arquitectura del Sistema](arquitectura-del-sistema.md)
+- [Estructura del Proyecto](project-structure.md)
+- [Estructura de Navegación](estructura-navegacion.md)
+- [Estándares de Código](coding/code_standards.md)
 
-## <a name="componentes"></a>Componentes Principales
+### Para Administradores
 
-La plataforma está construida con componentes reutilizables que siguen patrones consistentes.
+- [Panel de Administración](admin/administracion.md)
+- [Gestión de Usuarios](features/admin_users.md)
+- [Gestión de Cursos](features/courses.md)
+- [Configuración del Sistema](admin/system-settings.md)
 
-- [Componentes de UI](./components/ui.md)
-- [Layouts](./components/layouts.md)
-- [Formularios](./components/forms.md)
-- [Sistema de Diseño](./modules/design-system/index.md)
+### Componentes y UI
 
-## <a name="guias"></a>Guías de Desarrollo
+- [Sistema de Diseño](modules/design-system/index.md)
+- [Componentes UI](modules/design-system/components/index.md)
+- [Formularios](components/forms.md)
+- [Tablas de Datos](components/tables.md)
 
-Estas guías proporcionan instrucciones para el desarrollo y mantenimiento de la plataforma.
+### Características
 
-- [Convenciones de Código](./guides/code-conventions.md)
-- [Flujo de Trabajo](./guides/workflow.md)
-- [Control de Calidad](./guides/quality-control.md)
+- [Autenticación](features/authentication.md)
+- [Cursos y Lecciones](features/courses.md)
+- [Comunidad](features/community.md)
+- [Gamificación](features/gamification.md)
 
-## Contribuciones
+### API y Base de Datos
 
-Para contribuir a esta documentación, siga las [guías de contribución](./guides/contributing.md).
+- [Estructura de Base de Datos](database/database_documentation.md)
+- [Migración y Seeding](database/migrations.md)
+- [Integración con Supabase](integrations/supabase.md)
+
+### Despliegue y CI/CD
+
+- [Procedimientos de Despliegue](deployment/deployment_procedures.md)
+- [CI/CD](ci_cd/ci_cd_documentation.md)
+- [Monitoreo](monitoring/monitoring_documentation.md)
+
+## Herramientas de Desarrollo
+
+- [Instalación](01_getting_started.md)
+- [Pruebas](testing/testing_documentation.md)
+- [Seguridad](security/security_documentation.md)
+
+## Recursos Adicionales
+
+- [Preguntas Frecuentes](faq.md)
+- [Glosario](glossary.md)
+- [Changelog](modules/changelog.md)
+- [Roadmap](roadmap.md)
+
+## Estándares de Documentación
+
+Para contribuir a la documentación, por favor sigue los [estándares de documentación](DOCUMENTACION.md) para mantener la coherencia en todo el proyecto.
 
 ---
 
-Última actualización: Julio 2024
+Última actualización: 2024-07-31
