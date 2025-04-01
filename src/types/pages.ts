@@ -6,7 +6,7 @@ export type PageBlockType = 'text' | 'hero' | 'cta' | 'features' | 'testimonials
 export interface PageBlock {
   id: string;
   type: PageBlockType;
-  content: string;
+  content: string | Record<string, any>;
   order?: number;
 }
 

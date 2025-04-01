@@ -114,7 +114,7 @@ const PageRenderer: React.FC = () => {
             table="page_blocks"
             id={block.id || `block-${index}`}
             field="content"
-            value={block.content}
+            value={typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}
             multiline={true}
             className="prose max-w-none"
           />
@@ -125,23 +125,27 @@ const PageRenderer: React.FC = () => {
               table="page_blocks"
               id={block.id || `block-${index}`}
               field="content"
-              value={block.content}
+              value={typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}
               className="text-2xl font-bold"
             />
           </div>
         )}
       </div>
     ),
-    text: block.content
+    text: typeof block.content === 'string' ? block.content : JSON.stringify(block.content)
   }));
 
-  // Updated to accept position as number to fix type errors
-  const handleAddBlock = (content: string, position?: number) => {
+  // Updated to align with SectionInsert component
+  const handleAddBlock = (content: string, type?: string) => {
     if (!page || !page.content) return;
+    
+    // Convert position from string to number if it's a valid number
+    const position = type && !isNaN(parseInt(type)) ? parseInt(type) : undefined;
+    const blockType = (position === undefined && type) ? type as PageBlockType : 'text';
     
     const newBlock: PageBlock = {
       id: `block-${Date.now()}`,
-      type: 'text' as PageBlockType,
+      type: blockType,
       content: content
     };
     
@@ -224,10 +228,10 @@ const PageRenderer: React.FC = () => {
           <div className="blocks-container space-y-8">
             {contentBlocks.map((block: any, index: number) => (
               <div key={block.id || index} className="block">
-                {block.type === 'text' && <p>{block.content}</p>}
+                {block.type === 'text' && <p>{typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}</p>}
                 {block.type === 'hero' && (
                   <div className="bg-primary/10 p-8 rounded-lg text-center mb-8">
-                    <h2 className="text-2xl font-bold">{block.content}</h2>
+                    <h2 className="text-2xl font-bold">{typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}</h2>
                   </div>
                 )}
               </div>

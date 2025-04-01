@@ -182,6 +182,13 @@ const AIPageCreator: React.FC<AIPageCreatorProps> = ({ formData, onContentGenera
     return { blocks, description };
   };
 
+  // Helper function to get values from complex content objects
+  const getContentValue = (content: any, key: string, defaultValue: string = '') => {
+    if (!content) return defaultValue;
+    if (typeof content === 'string') return content;
+    return content[key] || defaultValue;
+  };
+
   // Renderizar la vista previa del contenido generado
   const renderContentPreview = () => {
     if (!generatedContent) {
@@ -201,21 +208,23 @@ const AIPageCreator: React.FC<AIPageCreatorProps> = ({ formData, onContentGenera
         <div className="space-y-6">
           {generatedContent.blocks.map(block => {
             if (block.type === 'hero') {
+              const content = block.content as Record<string, any>;
               return (
                 <div key={block.id} className="text-center py-12 px-4 space-y-4 border-b">
-                  <h1 className="text-3xl font-bold">{block.content.title}</h1>
-                  <p className="text-xl text-muted-foreground">{block.content.subtitle}</p>
-                  {block.content.cta && (
-                    <Button className="mt-4">{block.content.cta}</Button>
+                  <h1 className="text-3xl font-bold">{getContentValue(content, 'title')}</h1>
+                  <p className="text-xl text-muted-foreground">{getContentValue(content, 'subtitle')}</p>
+                  {content.cta && (
+                    <Button className="mt-4">{getContentValue(content, 'cta')}</Button>
                   )}
                 </div>
               );
             } else if (block.type === 'features') {
+              const content = block.content as Record<string, any>;
               return (
                 <div key={block.id} className="py-8 px-4">
-                  <h2 className="text-2xl font-bold text-center mb-6">{block.content.title}</h2>
+                  <h2 className="text-2xl font-bold text-center mb-6">{getContentValue(content, 'title')}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {block.content.items.map((item, i) => (
+                    {content.items && Array.isArray(content.items) && content.items.map((item: any, i: number) => (
                       <div key={i} className="p-4 border rounded-md">
                         <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
                         <p className="text-muted-foreground">{item.description}</p>
@@ -225,11 +234,12 @@ const AIPageCreator: React.FC<AIPageCreatorProps> = ({ formData, onContentGenera
                 </div>
               );
             } else if (block.type === 'testimonials') {
+              const content = block.content as Record<string, any>;
               return (
                 <div key={block.id} className="py-8 px-4 bg-secondary/20">
-                  <h2 className="text-2xl font-bold text-center mb-6">{block.content.title}</h2>
+                  <h2 className="text-2xl font-bold text-center mb-6">{getContentValue(content, 'title')}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {block.content.items.map((item, i) => (
+                    {content.items && Array.isArray(content.items) && content.items.map((item: any, i: number) => (
                       <div key={i} className="p-6 border rounded-md bg-background">
                         <p className="text-muted-foreground mb-4">"{item.comment}"</p>
                         <p className="font-semibold">{item.name}</p>
@@ -240,22 +250,25 @@ const AIPageCreator: React.FC<AIPageCreatorProps> = ({ formData, onContentGenera
                 </div>
               );
             } else if (block.type === 'cta') {
+              const content = block.content as Record<string, any>;
               return (
                 <div key={block.id} className="text-center py-12 px-4 space-y-4 bg-primary/5 rounded-lg">
-                  <h2 className="text-2xl font-bold">{block.content.title}</h2>
-                  <p className="text-muted-foreground">{block.content.subtitle}</p>
-                  <Button className="mt-4">{block.content.buttonText}</Button>
+                  <h2 className="text-2xl font-bold">{getContentValue(content, 'title')}</h2>
+                  <p className="text-muted-foreground">{getContentValue(content, 'subtitle')}</p>
+                  <Button className="mt-4">{getContentValue(content, 'buttonText')}</Button>
                 </div>
               );
             } else if (block.type === 'text') {
+              const content = block.content as Record<string, any>;
               return (
                 <div key={block.id} className="py-4">
-                  <p>{block.content.text}</p>
+                  <p>{getContentValue(content, 'text')}</p>
                 </div>
               );
             } else if (block.type === 'custom') {
+              const content = block.content as Record<string, any>;
               return (
-                <div key={block.id} className="py-4" dangerouslySetInnerHTML={{ __html: block.content.html }} />
+                <div key={block.id} className="py-4" dangerouslySetInnerHTML={{ __html: getContentValue(content, 'html') }} />
               );
             }
             return null;

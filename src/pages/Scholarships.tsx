@@ -22,7 +22,6 @@ const Scholarships: React.FC = () => {
                 id="scholarship-1-title" 
                 field="text" 
                 value="Beca de Excelencia Académica" 
-                as="span"
               />
             </CardTitle>
             <CardDescription>
@@ -31,7 +30,6 @@ const Scholarships: React.FC = () => {
                 id="scholarship-1-category" 
                 field="text" 
                 value="Programa de Becas 2023" 
-                as="span"
               />
             </CardDescription>
           </CardHeader>
@@ -46,7 +44,6 @@ const Scholarships: React.FC = () => {
                     id="scholarship-1-deadline" 
                     field="text" 
                     value="30 de Junio, 2023" 
-                    as="p"
                     className="text-sm text-muted-foreground"
                   />
                 </div>
@@ -60,7 +57,6 @@ const Scholarships: React.FC = () => {
                     id="scholarship-1-description" 
                     field="text" 
                     value="Beca completa para estudiantes con excelente rendimiento académico en programas de desarrollo web y programación." 
-                    as="p"
                     className="text-sm text-muted-foreground"
                     multiline
                   />
@@ -84,7 +80,6 @@ const Scholarships: React.FC = () => {
                 id="scholarship-2-title" 
                 field="text" 
                 value="Beca para Nuevos Talentos" 
-                as="span"
               />
             </CardTitle>
             <CardDescription>
@@ -93,7 +88,6 @@ const Scholarships: React.FC = () => {
                 id="scholarship-2-category" 
                 field="text" 
                 value="Programa de Becas 2023" 
-                as="span"
               />
             </CardDescription>
           </CardHeader>
@@ -108,7 +102,6 @@ const Scholarships: React.FC = () => {
                     id="scholarship-2-deadline" 
                     field="text" 
                     value="15 de Julio, 2023" 
-                    as="p"
                     className="text-sm text-muted-foreground"
                   />
                 </div>
@@ -122,7 +115,6 @@ const Scholarships: React.FC = () => {
                     id="scholarship-2-description" 
                     field="text" 
                     value="Programa dirigido a jóvenes talentos que buscan formarse en el ámbito de la tecnología y desarrollo de software." 
-                    as="p"
                     className="text-sm text-muted-foreground"
                     multiline
                   />
@@ -146,7 +138,6 @@ const Scholarships: React.FC = () => {
                 id="scholarship-3-title" 
                 field="text" 
                 value="Beca de Diversidad en Tech" 
-                as="span"
               />
             </CardTitle>
             <CardDescription>
@@ -155,7 +146,6 @@ const Scholarships: React.FC = () => {
                 id="scholarship-3-category" 
                 field="text" 
                 value="Programa de Becas 2023" 
-                as="span"
               />
             </CardDescription>
           </CardHeader>
@@ -170,7 +160,6 @@ const Scholarships: React.FC = () => {
                     id="scholarship-3-deadline" 
                     field="text" 
                     value="30 de Julio, 2023" 
-                    as="p"
                     className="text-sm text-muted-foreground"
                   />
                 </div>
@@ -184,7 +173,6 @@ const Scholarships: React.FC = () => {
                     id="scholarship-3-description" 
                     field="text" 
                     value="Programa dirigido a promover la diversidad en el mundo tecnológico, ofreciendo oportunidades de formación en desarrollo de software." 
-                    as="p"
                     className="text-sm text-muted-foreground"
                     multiline
                   />
@@ -201,23 +189,25 @@ const Scholarships: React.FC = () => {
     <AppLayout>
       <div className="container mx-auto py-8 px-4 md:px-6">
         <div className="mb-8 text-center">
-          <InlineEdit 
-            table="content" 
-            id="scholarships-title" 
-            field="text" 
-            value="Becas Disponibles" 
-            as="h1"
-            className="text-3xl font-bold mb-3"
-          />
-          <InlineEdit 
-            table="content" 
-            id="scholarships-subtitle" 
-            field="text" 
-            value="Descubre nuestras oportunidades de becas para impulsar tu carrera en tecnología" 
-            as="p"
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
-            multiline
-          />
+          <h1 className="text-3xl font-bold mb-3">
+            <InlineEdit 
+              table="content" 
+              id="scholarships-title" 
+              field="text" 
+              value="Becas Disponibles" 
+              className="text-3xl font-bold" 
+            />
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <InlineEdit 
+              table="content" 
+              id="scholarships-subtitle" 
+              field="text" 
+              value="Descubre nuestras oportunidades de becas para impulsar tu carrera en tecnología" 
+              className="text-lg text-muted-foreground"
+              multiline
+            />
+          </p>
         </div>
 
         <DraggableContent 
@@ -229,23 +219,25 @@ const Scholarships: React.FC = () => {
 
         <div className="text-center mt-12">
           <GraduationCap className="h-12 w-12 mx-auto text-primary mb-4" />
-          <InlineEdit 
-            table="content" 
-            id="scholarships-cta-title" 
-            field="text" 
-            value="¿Quieres solicitar una beca?" 
-            as="h2"
-            className="text-2xl font-bold mb-3"
-          />
-          <InlineEdit 
-            table="content" 
-            id="scholarships-cta-description" 
-            field="text" 
-            value="Completa el formulario de solicitud y nuestro equipo se pondrá en contacto contigo para ofrecerte más información." 
-            as="p"
-            className="text-muted-foreground max-w-xl mx-auto mb-6"
-            multiline
-          />
+          <h2 className="text-2xl font-bold mb-3">
+            <InlineEdit 
+              table="content" 
+              id="scholarships-cta-title" 
+              field="text" 
+              value="¿Quieres solicitar una beca?" 
+              className="text-2xl font-bold"
+            />
+          </h2>
+          <p className="text-muted-foreground max-w-xl mx-auto mb-6">
+            <InlineEdit 
+              table="content" 
+              id="scholarships-cta-description" 
+              field="text" 
+              value="Completa el formulario de solicitud y nuestro equipo se pondrá en contacto contigo para ofrecerte más información." 
+              className="text-muted-foreground"
+              multiline
+            />
+          </p>
         </div>
       </div>
     </AppLayout>

@@ -57,69 +57,26 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
-  // Updated to accept position as number to fix type errors
-  const handleAddSection = (content: string, position?: number) => {
+  // Adapter function to convert position number to type string for SectionInsert
+  const handleAddSection = (content: string, type?: string) => {
     if (onAddItem) {
+      const position = type ? undefined : parseInt(type || '');
       onAddItem(content, position);
     } else {
       // Si no hay una función personalizada, agregamos el elemento al estado local
       const newItem: DraggableItem = {
         id: `item-${Date.now()}`,
-        order: position !== undefined ? position : draggableItems.length + 1,
+        order: draggableItems.length + 1,
         content: <div>{content}</div>,
         text: content
       };
       
       const newItems = [...draggableItems];
-      if (position !== undefined) {
-        newItems.splice(position, 0, newItem);
-        // Actualizar el orden de los elementos siguientes
-        for (let i = position + 1; i < newItems.length; i++) {
-          newItems[i].order = i + 1;
-        }
-      } else {
-        newItems.push(newItem);
-      }
+      newItems.push(newItem);
       
       setDraggableItems(newItems);
     }
   };
-
-  if (!isEditMode) {
-    if (resizable) {
-      return (
-        <ResizablePanelGroup 
-          direction={layout === 'vertical' ? 'vertical' : 'horizontal'}
-          className={className}
-        >
-          {items.map((item, index) => (
-            <React.Fragment key={item.id}>
-              <ResizablePanel 
-                defaultSize={item.width || 100 / items.length} 
-                minSize={minSize}
-                className={itemClassName}
-              >
-                {item.content}
-              </ResizablePanel>
-              {index < items.length - 1 && (
-                <ResizableHandle />
-              )}
-            </React.Fragment>
-          ))}
-        </ResizablePanelGroup>
-      );
-    }
-    
-    return (
-      <div className={className}>
-        {items.map((item) => (
-          <div key={item.id} className={itemClassName}>
-            {item.content}
-          </div>
-        ))}
-      </div>
-    );
-  }
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, item: DraggableItem, index: number) => {
     if (!isReorderMode) return;
@@ -305,6 +262,42 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     </Button>
   );
 
+  if (!isEditMode) {
+    if (resizable) {
+      return (
+        <ResizablePanelGroup 
+          direction={layout === 'vertical' ? 'vertical' : 'horizontal'}
+          className={className}
+        >
+          {items.map((item, index) => (
+            <React.Fragment key={item.id}>
+              <ResizablePanel 
+                defaultSize={item.width || 100 / items.length} 
+                minSize={minSize}
+                className={itemClassName}
+              >
+                {item.content}
+              </ResizablePanel>
+              {index < items.length - 1 && (
+                <ResizableHandle />
+              )}
+            </React.Fragment>
+          ))}
+        </ResizablePanelGroup>
+      );
+    }
+    
+    return (
+      <div className={className}>
+        {items.map((item) => (
+          <div key={item.id} className={itemClassName}>
+            {item.content}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   if (isEditMode) {
     if (resizable) {
       return (
@@ -379,7 +372,7 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
                 
                 {/* Insert Section Component between panels */}
                 {isEditMode && index < draggableItems.length - 1 && (
-                  <SectionInsert onAddSection={(content) => handleAddSection(content, index + 1)} />
+                  <SectionInsert onAddSection={handleAddSection} />
                 )}
               </React.Fragment>
             ))}
