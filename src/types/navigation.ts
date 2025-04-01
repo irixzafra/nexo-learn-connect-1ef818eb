@@ -1,15 +1,16 @@
 
-import type { MenuItem } from "@/config/navigation/types";
-
-export interface NavigationMenus {
-  main: MenuItem[];
-  admin: MenuItem[];
-  explore: MenuItem[];
-  instructor: MenuItem[];
-  academic: MenuItem[];
-  finance: MenuItem[];
-  settings: MenuItem[];
-  gamification: MenuItem[];
+export interface MenuItem {
+  id?: string;
+  label: string;
+  icon?: React.ReactNode;
+  url?: string;
+  onClick?: () => void;
+  items?: MenuItem[];
+  badge?: string | number;
+  roles?: string[];
+  requiredFeature?: string;
+  external?: boolean;
+  active?: boolean;
 }
 
-export type { MenuItem };
+export type { NavigationMenus } from "@/config/navigation";

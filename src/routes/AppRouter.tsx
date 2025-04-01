@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -38,6 +37,7 @@ const CertificateDetail = React.lazy(() => import('@/pages/user/CertificateDetai
 const CertificateVerify = React.lazy(() => import('@/pages/CertificateVerify'));
 const Recommendations = React.lazy(() => import('@/pages/Recommendations'));
 const Preferences = React.lazy(() => import('@/pages/user/Preferences'));
+const UserAnalytics = React.lazy(() => import('@/pages/admin/UserAnalytics'));
 
 // Loading component for suspense
 const LoadingFallback = () => (
@@ -188,6 +188,17 @@ const AppRouter: React.FC = () => {
                 <AdminRoutes />
               </FeaturesProvider>
             </React.Suspense>
+          </ProtectedRoute>
+        } />
+        
+        {/* Analytics routes */}
+        <Route path="/admin/analytics/users" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <UserAnalytics />
+              </React.Suspense>
+            </AppLayout>
           </ProtectedRoute>
         } />
         

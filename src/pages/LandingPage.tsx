@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCoursesCatalog } from '@/features/courses/hooks/useCoursesCatalog';
 
@@ -12,7 +11,6 @@ import FeatureGrid from '@/components/landing/FeatureGrid';
 import CallToActionSection from '@/components/landing/CallToActionSection';
 import PartnersSection from '@/components/landing/PartnersSection';
 import StatsSection from '@/components/landing/StatsSection';
-import PublicLayout from '@/layouts/PublicLayout';
 
 const LandingPage: React.FC = () => {
   const { user, isAuthenticated } = useAuth();

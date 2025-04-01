@@ -1,25 +1,78 @@
 
--- Añadir columna para features_config si no existe
-DO $$
+-- Create get_user_role_distribution RPC function
+CREATE OR REPLACE FUNCTION get_user_role_distribution()
+RETURNS TABLE(role TEXT, count BIGINT) SECURITY INVOKER AS $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT FROM information_schema.columns 
-    WHERE table_name = 'features_config' AND column_name = 'enable_test_data_generator'
-  ) THEN
-    ALTER TABLE features_config ADD COLUMN enable_test_data_generator boolean DEFAULT false;
-  END IF;
-END $$;
+  RETURN QUERY
+  SELECT 
+    u.role::TEXT, 
+    COUNT(u.id)::BIGINT
+  FROM 
+    users u
+  GROUP BY 
+    u.role
+  ORDER BY 
+    COUNT(u.id) DESC;
+END;
+$$ LANGUAGE plpgsql;
 
--- Añadir columna para habilitar/deshabilitar completamente el sistema de onboarding
-DO $$
+-- Create get_user_registrations_by_day RPC function
+CREATE OR REPLACE FUNCTION get_user_registrations_by_day(days_back INT DEFAULT 30)
+RETURNS TABLE(date TEXT, count BIGINT) SECURITY INVOKER AS $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT FROM information_schema.columns 
-    WHERE table_name = 'features_config' AND column_name = 'enable_onboarding_system'
-  ) THEN
-    ALTER TABLE features_config ADD COLUMN enable_onboarding_system boolean DEFAULT true;
-  END IF;
-END $$;
+  RETURN QUERY
+  SELECT 
+    TO_CHAR(DATE_TRUNC('day', p.created_at), 'YYYY-MM-DD') as date,
+    COUNT(p.id)::BIGINT as count
+  FROM 
+    profiles p
+  WHERE 
+    p.created_at >= CURRENT_DATE - days_back
+  GROUP BY 
+    DATE_TRUNC('day', p.created_at)
+  ORDER BY 
+    date ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create get_dashboard_stats RPC function
+CREATE OR REPLACE FUNCTION get_dashboard_stats()
+RETURNS JSON SECURITY INVOKER AS $$
+DECLARE
+  total_users_count INT;
+  new_users_count INT;
+  active_courses_count INT;
+  total_enrollments_count INT;
+  result JSON;
+BEGIN
+  -- Count total users
+  SELECT COUNT(*) INTO total_users_count FROM profiles;
+  
+  -- Count new users in last 7 days
+  SELECT COUNT(*) INTO new_users_count 
+  FROM profiles 
+  WHERE created_at >= CURRENT_DATE - 7;
+  
+  -- Count active courses
+  SELECT COUNT(*) INTO active_courses_count 
+  FROM courses 
+  WHERE status = 'published';
+  
+  -- Count total enrollments
+  SELECT COUNT(*) INTO total_enrollments_count 
+  FROM enrollments;
+  
+  -- Build JSON result
+  result := json_build_object(
+    'total_users', total_users_count,
+    'new_users_last_7_days', new_users_count,
+    'active_courses', active_courses_count,
+    'total_enrollments', total_enrollments_count
+  );
+  
+  RETURN result;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Add additional notification fields to user_preferences
 DO $$

@@ -53,7 +53,7 @@ export const AdminSection: React.FC<AdminSectionProps> = ({ expanded, onToggle }
       <MenuItem to="/admin/audit-log" icon={History} label="Auditoría" />
       
       {/* Análiticas */}
-      <MenuItem to="/admin/analytics" icon={LineChart} label="Analíticas" />
+      <MenuItem to="/admin/analytics/users" icon={LineChart} label="Analíticas de Usuarios" />
       
       {/* Configuración */}
       <MenuItem to="/admin/settings" icon={Settings} label="Configuración" />

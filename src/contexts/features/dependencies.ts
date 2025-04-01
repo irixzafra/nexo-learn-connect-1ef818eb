@@ -1,4 +1,3 @@
-
 import { FeatureId } from './types';
 
 /**
@@ -21,7 +20,7 @@ export const featureDependencies: Record<string, FeatureId[]> = {
   'enableNotifications': [],
   'enableAnalytics': ['enableAnalytics'],
   'enableFeedback': [],
-  'enableUserRegistration': ['enableAdminTools'],
+  'enablePublicRegistration': ['enableAdminTools'],
   'enableSocialLogin': ['enableAdminTools'],
   'enablePublicProfiles': ['enableAdminTools'],
   'designSystemEnabled': ['enableThemingOptions'],
@@ -46,8 +45,7 @@ export const featureDependencies: Record<string, FeatureId[]> = {
   'requireOnboarding': ['enableOnboarding'],
   'autoStartOnboarding': ['enableOnboarding'],
   'showOnboardingTrigger': ['enableOnboarding'],
-  'enableRoleManagement': ['enableAdminTools'],
-  'enableRoleSwitcher': ['enableRoleManagement']
+  'enableAdminTools': ['enableAdminTools']
 };
 
 /**

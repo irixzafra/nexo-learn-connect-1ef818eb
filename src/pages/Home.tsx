@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
 
-  if (loading) {
+  if (isLoading) {
     return <div>Cargando...</div>;
   }
 
