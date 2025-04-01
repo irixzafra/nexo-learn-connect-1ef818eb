@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
+import NavigationDiagram from '@/pages/admin/NavigationDiagram';
+import NavigationExplorer from '@/pages/admin/navigation/NavigationExplorer';
 
 // Componente de página no encontrada
 const AdminNotFound = () => (
@@ -13,6 +15,11 @@ const AdminNotFound = () => (
 const AdminRoutes: React.FC = () => {
   return (
     <Routes>
+      {/* Rutas específicas que queremos mantener */}
+      <Route path="navigation-diagram" element={<NavigationDiagram />} />
+      <Route path="navigation" element={<NavigationExplorer />} />
+      
+      {/* Ruta por defecto para todas las demás rutas de administración */}
       <Route path="*" element={<AdminNotFound />} />
     </Routes>
   );
