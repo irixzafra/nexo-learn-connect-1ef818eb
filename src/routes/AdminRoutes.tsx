@@ -8,6 +8,7 @@ import { LoadingPage } from '@/components/ui/loading-page';
 // Use existing components for admin pages
 import Settings from '@/pages/admin/Settings';
 import AdminCourses from '@/pages/admin/courses/AdminCourses';
+import NavigationDiagram from '@/pages/admin/NavigationDiagram';
 
 // Create a placeholder component for missing pages
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -22,7 +23,6 @@ const AdminDashboard = () => <PlaceholderPage title="Dashboard de Administració
 const AdminUsers = () => <PlaceholderPage title="Gestión de Usuarios" />;
 const AdminNotFound = () => <PlaceholderPage title="Página no encontrada" />;
 const TestDataDashboard = () => <PlaceholderPage title="Datos de Prueba" />;
-const NavigationDiagram = () => <PlaceholderPage title="Diagrama de Navegación" />;
 const DatabaseSettings = () => <PlaceholderPage title="Configuración de Base de Datos" />;
 
 // Lazy-loaded settings pages
