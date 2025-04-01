@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { CoreFeatureId, ExtendedFeatureId, Feature, FeatureId, FeaturesConfig, FeaturesContextProps } from './types';
@@ -174,6 +173,10 @@ const initialFeaturesConfig: FeaturesConfig = {
   showOnboardingTrigger: true,
   enableContextualHelp: true,
   enableInlineEditing: true,
+  // Internationalization features
+  enableHreflangTags: true,
+  enableRegionalContent: false,
+  enableLangPrefixUrls: true
 };
 
 // Create context
