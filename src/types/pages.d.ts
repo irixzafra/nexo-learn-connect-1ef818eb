@@ -8,19 +8,13 @@ export type PageLayout =
   | "marketing" 
   | "documentation" 
   | "course"
-  | "row"
-  | "column"
-  | "grid"
-  | "grid-2"
-  | "grid-3"
-  | "grid-4";
+  | "grid";
 
 // Define possible page status values
 export type PageStatus = 
   | "draft" 
   | "published" 
-  | "archived"
-  | "scheduled";
+  | "archived";
 
 // Define page access types
 export type PageAccessType = 
@@ -33,10 +27,7 @@ export type PageAccessType =
 export type ContainerLayout = 
   | "row" 
   | "column" 
-  | "grid"
-  | "grid-2"
-  | "grid-3"
-  | "grid-4";
+  | "grid";
 
 // Define available block types
 export type PageBlockType = 
@@ -49,9 +40,7 @@ export type PageBlockType =
   | "pricing" 
   | "contact" 
   | "container" 
-  | "custom"
-  | "features"
-  | "testimonials";
+  | "custom";
 
 // Define a page block structure
 export interface PageBlock {
@@ -78,8 +67,6 @@ export interface SitePage {
   status: PageStatus;
   meta_title?: string;
   meta_description?: string;
-  accessType?: PageAccessType;
-  required_roles?: string[];
   created_by?: string;
   created_at: string;
   updated_at: string;

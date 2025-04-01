@@ -1,5 +1,5 @@
 
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -12,14 +12,11 @@ import LandingPage from './pages/LandingPage';
 import { useTheme } from './contexts/ThemeContext';
 import LoadingScreen from './components/LoadingScreen';
 import AdminRoutes from './routes/AdminRoutes';
-import './styles/edit-mode.css'; // Import the edit mode styles
+import PlaceholderPage from './pages/placeholder/PlaceholderPage';
 
-// Lazy-loaded pages - Using placeholder pages until real ones are developed
+// Lazy-loaded pages
 const ProfilePage = lazy(() => import('./pages/Profile'));
 const DynamicPage = lazy(() => import('./pages/DynamicPage'));
-
-// Temporary placeholder components for missing pages
-const PlaceholderPage = lazy(() => import('./pages/placeholder/PlaceholderPage'));
 
 function App() {
   const { theme } = useTheme();

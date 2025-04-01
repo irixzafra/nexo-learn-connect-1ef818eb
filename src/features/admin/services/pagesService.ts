@@ -1,5 +1,5 @@
 
-import { SitePage } from "@/types/pages";
+import { SitePage, PageStatus } from "@/types/pages";
 
 // Check if a slug is unique
 export const isSlugUnique = async (slug: string, pageId?: string): Promise<boolean> => {
@@ -35,7 +35,7 @@ export const updatePage = async (id: string, pageData: Partial<SitePage>): Promi
   };
 };
 
-// Add missing methods referenced in error messages
+// Create a page
 export const createPage = async (pageData: Omit<SitePage, "id" | "created_at" | "updated_at">): Promise<SitePage> => {
   // Simulate creating a page
   console.log('Creating new page:', pageData);
@@ -47,7 +47,8 @@ export const createPage = async (pageData: Omit<SitePage, "id" | "created_at" | 
   };
 };
 
-export const updatePageStatus = async (id: string, status: string): Promise<SitePage> => {
+// Update page status
+export const updatePageStatus = async (id: string, status: PageStatus): Promise<SitePage> => {
   // Simulate updating a page status
   console.log(`Updating page status for ID: ${id} to: ${status}`);
   const page = await getPageById(id);
@@ -55,17 +56,19 @@ export const updatePageStatus = async (id: string, status: string): Promise<Site
   
   return {
     ...page,
-    status: status as any,
+    status,
     updated_at: new Date().toISOString()
   };
 };
 
+// Delete a page
 export const deletePage = async (id: string): Promise<void> => {
   // Simulate deleting a page
   console.log(`Deleting page with ID: ${id}`);
   // In a real implementation, this would delete from the database
 };
 
+// Get all pages
 export const getAllPages = async (): Promise<SitePage[]> => {
   // Simulate getting all pages
   return [

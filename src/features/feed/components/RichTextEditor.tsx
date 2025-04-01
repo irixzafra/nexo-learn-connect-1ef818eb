@@ -69,7 +69,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         }}
         readOnly={submitting}
       />
-      {/* Custom inline styles - these are now in the quill-custom.css file */}
     </div>
   );
 };
