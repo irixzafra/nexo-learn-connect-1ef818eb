@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { 
   Sheet, 
-  SheetContent,
-  TabsContent 
-} from '@/components/ui/tabs';
+  SheetContent
+} from '@/components/ui/sheet';
+import { TabsContent } from '@/components/ui/tabs';
 import { PageData } from './types';
 import { getStatusBadge } from './utils/statusBadge';
 import PageDrawerHeader from './drawer-parts/PageDrawerHeader';
