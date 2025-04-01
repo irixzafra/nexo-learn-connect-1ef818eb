@@ -79,14 +79,14 @@ const FloatingEditModeToggle: React.FC = () => {
           <TooltipTrigger asChild>
             <Button
               onClick={handleToggleEditMode}
-              className="fixed bottom-6 left-6 shadow-lg z-50 rounded-full h-16 w-16 p-0"
+              className="fixed bottom-6 right-6 shadow-lg z-50 rounded-full h-16 w-16 p-0"
               size="icon"
               variant="default"
             >
               <Pencil className="h-8 w-8" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="right" className="font-medium">
+          <TooltipContent side="left" className="font-medium">
             <p>Activar modo edición universal</p>
             <p className="text-xs text-muted-foreground">Edita elementos en cualquier página del sitio</p>
           </TooltipContent>
@@ -98,7 +98,7 @@ const FloatingEditModeToggle: React.FC = () => {
   // If in edit mode, show the editing tools
   return (
     <>
-      <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-3">
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
         <Card className="p-4 shadow-lg max-w-xs">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
@@ -166,7 +166,7 @@ const FloatingEditModeToggle: React.FC = () => {
                 <X className="h-6 w-6" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="right">
+            <TooltipContent side="left">
               <p>Desactivar modo edición</p>
             </TooltipContent>
           </Tooltip>
