@@ -51,15 +51,24 @@ export const createPageColumns = (handleRowClick: (page: PageData) => void) => [
   }),
   createActionsColumn<PageData>(({ row }) => (
     <div className="flex items-center gap-2">
-      <Button variant="ghost" size="sm" onClick={(e) => {
-        e.stopPropagation();
-        handleRowClick(row.original);
-      }}>
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        onClick={(e) => {
+          e.stopPropagation();
+          handleRowClick(row.original);
+        }}
+      >
         <Edit className="h-4 w-4 mr-1" />
         Editar
       </Button>
-      <Button variant="ghost" size="sm" asChild>
-        <Link to={row.getValue('path') as string} target="_blank" onClick={(e) => e.stopPropagation()}>
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        asChild
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Link to={row.getValue('path') as string} target="_blank">
           <Eye className="h-4 w-4 mr-1" />
           Ver
         </Link>

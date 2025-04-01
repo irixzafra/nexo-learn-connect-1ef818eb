@@ -4,7 +4,7 @@ import {
   Sheet, 
   SheetContent
 } from '@/components/ui/sheet';
-import { TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { PageData } from './types';
 import { getStatusBadge } from './utils/statusBadge';
 import PageDrawerHeader from './drawer-parts/PageDrawerHeader';
@@ -36,26 +36,28 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
           getStatusBadge={getStatusBadge} 
         />
         
-        <PageTabsNavigation 
-          activeTab={activeTab} 
-          onTabChange={setActiveTab} 
-        />
-        
-        <TabsContent value="preview">
-          <PagePreviewTab page={page} />
-        </TabsContent>
-        
-        <TabsContent value="edit">
-          <PageEditTab page={page} />
-        </TabsContent>
-        
-        <TabsContent value="code">
-          <PageCodeTab page={page} />
-        </TabsContent>
-        
-        <TabsContent value="settings">
-          <PageSettingsTab page={page} />
-        </TabsContent>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <PageTabsNavigation 
+            activeTab={activeTab} 
+            onTabChange={setActiveTab} 
+          />
+          
+          <TabsContent value="preview">
+            <PagePreviewTab page={page} />
+          </TabsContent>
+          
+          <TabsContent value="edit">
+            <PageEditTab page={page} />
+          </TabsContent>
+          
+          <TabsContent value="code">
+            <PageCodeTab page={page} />
+          </TabsContent>
+          
+          <TabsContent value="settings">
+            <PageSettingsTab page={page} />
+          </TabsContent>
+        </Tabs>
         
         <PageDrawerFooter onClose={() => onOpenChange(false)} />
       </SheetContent>
