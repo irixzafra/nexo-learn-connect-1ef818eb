@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useFeature } from '@/hooks/useFeatures';
+import { useFeature } from '@/hooks/useFeature';
 import { useAccessibility } from '@/hooks/useAccessibility';
 
 interface ShortcutDefinition {

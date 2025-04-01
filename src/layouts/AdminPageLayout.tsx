@@ -5,6 +5,13 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 
+// Add AdminSubMenuItem interface for the navigationItems prop
+export interface AdminSubMenuItem {
+  title: string;
+  path: string;
+  icon?: React.ReactNode;
+}
+
 interface AdminPageLayoutProps {
   children?: ReactNode;
   title: string;
@@ -17,6 +24,9 @@ interface AdminPageLayoutProps {
   // Add support for tabs
   tabs?: AdminTabItem[];
   defaultTabValue?: string;
+  // Add support for navigation items
+  navigationItems?: AdminSubMenuItem[];
+  baseRoute?: string;
 }
 
 const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
@@ -26,7 +36,9 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   backAction,
   actions,
   tabs,
-  defaultTabValue
+  defaultTabValue,
+  navigationItems,
+  baseRoute
 }) => {
   return (
     <AppLayout>
@@ -57,6 +69,25 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
             </div>
           )}
         </div>
+        
+        {/* Render sub navigation if navigationItems are provided */}
+        {navigationItems && navigationItems.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {navigationItems.map((item) => (
+              <Button 
+                key={item.title} 
+                variant="outline" 
+                size="sm"
+                asChild
+              >
+                <a href={`${baseRoute || ''}${item.path}`}>
+                  {item.icon && <span className="mr-2">{item.icon}</span>}
+                  {item.title}
+                </a>
+              </Button>
+            ))}
+          </div>
+        )}
         
         {tabs ? (
           <AdminNavTabs 

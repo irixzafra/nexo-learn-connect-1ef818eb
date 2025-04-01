@@ -1,7 +1,7 @@
 
 import React from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
-import { useFeature } from '@/hooks/useFeatures';
+import { useFeature } from '@/hooks/useFeature';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart3, DollarSign, AlertTriangle, CreditCard, TrendingUp, PiggyBank } from 'lucide-react';

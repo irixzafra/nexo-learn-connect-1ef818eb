@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
@@ -10,7 +9,7 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useFeature } from '@/hooks/useFeatures';
+import { useFeature } from '@/hooks/useFeature';
 import { 
   BarChart3, 
   LineChart,
@@ -23,8 +22,6 @@ import {
   ArrowUpRight, 
   ArrowDownRight 
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { PlatformStats } from '@/features/admin/analytics/types';
 
 // Importamos las secciones principales de cada área de analytics
 import PlatformOverviewSection from './sections/PlatformOverviewSection';

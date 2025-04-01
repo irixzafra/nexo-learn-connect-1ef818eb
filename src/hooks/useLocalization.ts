@@ -3,34 +3,34 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { getLocalizedUrl, getPathWithoutLanguage } from '@/utils/languageUtils';
 
 /**
- * Hook for simplified access to localization utilities
+ * Hook for handling localization and translation of routes and content
  */
 export const useLocalization = () => {
-  const language = useLanguage();
-  
+  const { currentLanguage, t } = useLanguage();
+
+  /**
+   * Localizes a URL with the current language
+   * @param path The URL path to localize
+   * @returns The localized URL
+   */
+  const localizeUrl = (path: string): string => {
+    return getLocalizedUrl(path, currentLanguage);
+  };
+
+  /**
+   * Removes the language prefix from a path
+   * @param path The URL path
+   * @returns The path without language prefix
+   */
+  const removeLanguagePrefix = (path: string): string => {
+    return getPathWithoutLanguage(path);
+  };
+
   return {
-    // Access to all language context properties
-    ...language,
-    
-    // Is the current language RTL
-    isRtl: language.getMetadata().dir === 'rtl',
-    
-    // Helper to get text direction-aware margins
-    getDirectionalSpacing: (start: string, end: string) => {
-      return language.isRtl 
-        ? { marginRight: start, marginLeft: end }
-        : { marginLeft: start, marginRight: end };
-    },
-    
-    // Generate a URL with language prefix
-    localizeUrl: (path: string, lang = language.currentLanguage) => {
-      return getLocalizedUrl(path, lang);
-    },
-    
-    // Remove language prefix from a URL
-    stripLanguage: (url: string) => {
-      return getPathWithoutLanguage(url);
-    }
+    currentLanguage,
+    localizeUrl,
+    removeLanguagePrefix,
+    t,
   };
 };
 

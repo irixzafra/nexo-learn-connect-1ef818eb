@@ -1,7 +1,7 @@
 
 import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { LoadingScreen } from '@/components/LoadingScreen';
+import LoadingScreen from '@/components/LoadingScreen';
 
 // Directly imported components (non-lazy)
 import NavigationDiagram from '@/pages/admin/NavigationDiagram';

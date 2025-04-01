@@ -1,7 +1,7 @@
 
 import { useContext, useState, useCallback } from 'react';
-import { FeaturesContext } from '@/contexts/FeaturesContext';
-import type { ExtendedFeatureId } from '@/contexts/features/types';
+import { FeaturesContext } from '@/contexts/features/FeaturesContext';
+import type { ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
 
 /**
  * Hook to access and manage feature flags
@@ -18,7 +18,7 @@ export const useFeatures = () => {
   const toggleFeature = useCallback(async (featureId: ExtendedFeatureId, value?: boolean) => {
     setIsLoading(true);
     try {
-      context.toggleFeature(featureId);
+      await context.toggleFeature(featureId, value);
       // If there was additional async logic needed, it would go here
       return Promise.resolve();
     } catch (error) {
@@ -33,14 +33,14 @@ export const useFeatures = () => {
     ...context,
     isLoading,
     toggleFeature,
-    featuresConfig: {
-      // This is a mock until we have actual feature config data
-      isLoading,
-      enabledFeatures: Object.entries(context.features)
-        .filter(([_, enabled]) => enabled)
-        .map(([key]) => key),
-    },
+    featuresConfig: context.featuresConfig,
   };
+};
+
+// Create a useFeature hook specifically for accessing single features
+export const useFeature = (featureId: FeatureId) => {
+  const { isEnabled } = useFeatures();
+  return isEnabled(featureId);
 };
 
 // Export the hook as default

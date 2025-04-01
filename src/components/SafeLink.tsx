@@ -4,7 +4,7 @@ import { Link, LinkProps } from 'react-router-dom';
 import { isValidPath, normalizePath } from '@/utils/routeValidation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ensureLanguagePrefix } from '@/utils/languageUtils';
-import { useFeature } from '@/hooks/useFeatures';
+import { useFeature } from '@/hooks/useFeature';
 import { toast } from 'sonner';
 
 interface SafeLinkProps extends Omit<LinkProps, 'to'> {
