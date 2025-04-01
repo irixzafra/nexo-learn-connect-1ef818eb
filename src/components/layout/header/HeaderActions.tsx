@@ -7,12 +7,14 @@ import { Button } from '@/components/ui/button';
 import { SunIcon, MoonIcon, PlusCircle } from 'lucide-react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { OnboardingTrigger } from '@/components/onboarding/OnboardingTrigger';
-import { useFeatures } from '@/contexts/features/FeaturesContext';
+import { useFeature } from '@/hooks/useFeature';
 
 export const HeaderActions: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { isCompleted } = useOnboarding();
-  const { featuresConfig } = useFeatures();
+  const { isEnabled: enableThemeSwitcher } = useFeature('enableThemeSwitcher');
+  const { isEnabled: enableNotifications } = useFeature('enableNotifications');
+  const { isEnabled: showOnboardingTrigger } = useFeature('showOnboardingTrigger');
   
   // Create new content modal
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -24,7 +26,7 @@ export const HeaderActions: React.FC = () => {
   return (
     <div className="flex items-center gap-3">
       {/* Only show theme toggle if theme switcher is enabled */}
-      {featuresConfig.enableThemeSwitcher && (
+      {enableThemeSwitcher && (
         <Button
           variant="ghost"
           size="icon"
@@ -52,10 +54,10 @@ export const HeaderActions: React.FC = () => {
       </Button>
 
       {/* Show notifications if enabled */}
-      {featuresConfig.enableNotifications && <NotificationIndicator />}
+      {enableNotifications && <NotificationIndicator />}
 
       {/* Show onboarding trigger if enabled and not completed */}
-      {!isCompleted && featuresConfig.showOnboardingTrigger && <OnboardingTrigger />}
+      {!isCompleted && showOnboardingTrigger && <OnboardingTrigger onActivate={() => {}} />}
 
       {/* User menu is always shown */}
       <UserMenu />

@@ -35,6 +35,7 @@ export const mainNavigation: MenuItem[] = [
     label: 'Mis Cursos',
     path: '/my-courses',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester'],
+    highlighted: true
   },
   {
     icon: Award,
