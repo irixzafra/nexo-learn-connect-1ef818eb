@@ -9,6 +9,7 @@ Este documento proporciona un mapeo exhaustivo de la estructura de carpetas y ar
 2. [Estructura de Directorios Raíz](#estructura-de-directorios-raíz)
 3. [Directorio `/src`](#directorio-src)
    - [Componentes](#componentes)
+   - [Configuración](#configuración)
    - [Contextos](#contextos)
    - [Features](#features)
    - [Hooks](#hooks)
@@ -82,10 +83,22 @@ Componentes estructurales para la interfaz de usuario.
 | `AppHeader.tsx` | Encabezado principal | Parte de AppLayout |
 | `AppSidebar.tsx` | Barra lateral de la aplicación | Parte de AppLayout |
 | `HeaderContent.tsx` | Contenido del encabezado | Utilizado en AppHeader |
+| `MobileSidebar.tsx` | Sidebar móvil adaptado | Utilizado en vistas móviles |
 | `sidebar/` | Componentes de la barra lateral | Estructura completa del sidebar |
 | `header/` | Componentes del encabezado | Estructura del header |
 | `page/` | Componentes base de página | Utilizados para estructura de páginas |
 | `admin/` | Layouts específicos de admin | Utilizado en rutas /admin/* |
+
+### Configuración
+
+El directorio `/src/config` contiene archivos de configuración centralizada.
+
+| Archivo/Carpeta | Descripción | Relaciones |
+|-----------------|-------------|------------|
+| `menuConfig.ts` | Configuración centralizada de menús | Utilizado por componentes de navegación |
+| `routeConfig.ts` | Configuración de rutas | Utilizado por AppRouter |
+| `featureFlags.ts` | Flags de características | Controla funcionalidades disponibles |
+| `constants.ts` | Constantes globales | Utilizado en toda la aplicación |
 
 ### Contextos
 
@@ -129,6 +142,7 @@ El directorio `/src/hooks` contiene hooks personalizados para lógica reutilizab
 | `useNotifications.ts` | Hook para sistema de notificaciones | Gestiona notificaciones |
 | `useSidebar.ts` | Hook para control de sidebar | Controla estado de barra lateral |
 | `useOnboarding.ts` | Hook para proceso de onboarding | Utilizado en componentes de onboarding |
+| `use-mobile.ts` | Hook para detectar dispositivo móvil | Utilizado en componentes responsivos |
 
 ### Layouts
 
@@ -184,6 +198,7 @@ El directorio `/src/types` contiene definiciones de tipos TypeScript.
 | `auth.ts` | Tipos relacionados con autenticación | Utilizados en componentes de auth |
 | `courses.ts` | Tipos para sistema de cursos | Utilizados en componentes de cursos |
 | `user.ts` | Definiciones para usuarios | Utilizados para perfiles y roles |
+| `navigation.ts` | Tipos para navegación | Utilizados en configuración de menús |
 
 ## Directorio `/public`
 
@@ -201,9 +216,10 @@ El directorio `/src/types` contiene definiciones de tipos TypeScript.
 | `01_getting_started.md` | Guía de inicio | Introducción al proyecto |
 | `02_architecture.md` | Arquitectura técnica | Visión general técnica |
 | `03_features/` | Documentación de características | Detalla cada módulo funcional |
-| `project-structure.md` | Estructura del proyecto | Este documento |
+| `estructura-completa-del-proyecto.md` | Estructura del proyecto | Este documento |
 | `sistema-caracteristicas-modular.md` | Sistema modular | Detalla arquitectura modular |
 | `modules/` | Documentación por módulos | Organizada por funcionalidades |
+| `ESTRUCTURA_NAVEGACION_ACTUALIZADA.md` | Estructura de navegación | Documentación de rutas y menús |
 
 ## Principales Flujos de Datos
 
@@ -219,8 +235,9 @@ El directorio `/src/types` contiene definiciones de tipos TypeScript.
 
 1. `AppRouter.tsx` define todas las rutas disponibles
 2. Según la ruta, se carga el layout correspondiente (`AppLayout` o `AdminPageLayout`)
-3. `RefactoredSidebarNavigation` muestra opciones según el rol del usuario
-4. Al hacer clic en un ítem de navegación, se carga el componente de página correspondiente
+3. `menuConfig.ts` proporciona la configuración centralizada de menús según el rol
+4. Los componentes de navegación como `SidebarMainNavigation` y `AdministracionNavigation` consumen la configuración
+5. La interfaz se adapta automáticamente a móvil o desktop según el dispositivo
 
 ### Flujo de Edición de Contenido
 
@@ -246,53 +263,45 @@ AppRouter
 │   │   ├── HeaderActions  
 │   │   └── UserMenu      
 │   │
-│   └── SidebarProvider   # Gestión de la barra lateral
-│       ├── AppSidebar
-│       └── RefactoredSidebarNavigation
+│   ├── SidebarProvider   # Gestión de la barra lateral
+│   │   ├── AppSidebar
+│   │   └── RefactoredSidebarNavigation
+│   │
+│   └── MobileSidebar     # Navegación específica para móviles
 │
 └── AdminPageLayout       # Layout específico para administración
     ├── AppLayout         # Hereda del layout principal
     └── AdminNavigation   # Navegación específica de administración
 ```
 
-### Estructura de Navegación Lateral
+### Estructura de Navegación Centralizada
 
 ```
-RefactoredSidebarNavigation
-├── SidebarLogoSection    # Logo y título en la barra
-├── SidebarMainNavigation # Navegación principal
-│   ├── HomeNavigation    # Navegación de inicio
-│   ├── CursosNavigation  # Navegación de cursos
-│   ├── ComunidadNavigation # Navegación de comunidad
-│   ├── PerfilNavigation  # Navegación de perfil
-│   ├── ConfiguracionNavigation # Navegación de configuración
-│   └── [Según rol] AdministracionNavigation # Solo para admin/instructor
+menuConfig.ts            # Configuración centralizada
+├── mainNavigation       # Menú principal para todos los roles
+├── adminNavigation      # Menú administrativo para roles específicos
+└── gamificationNavigation # Menú de gamificación
+    
+SidebarMainNavigation    # Componente consumidor
+├── getNavigationByRole  # Filtrado de menús según rol
+│   └── filterMenuItemsByRole # Función de filtrado
 │
-└── SidebarFooterSection  # Sección inferior con controles de usuario
-    ├── RoleSwitcher      # Cambio de rol (si aplica)
-    └── LanguageSelector  # Selección de idioma
+└── Secciones Renderizadas
+    ├── Navegación Principal
+    ├── Administración (si aplica)
+    └── Gamificación (si aplica)
 ```
 
-### Sistema de Pestañas Admin
+### Sistema de Navegación Móvil-Desktop
 
 ```
-AdminTabs
-├── UserManagementTabs    # Pestañas de gestión de usuarios
-│   ├── UsersListTab
-│   ├── RolesManagementTab
-│   └── UserPermissionsTab
+AppLayout
+├── RefactoredSidebarNavigation  # Navegación desktop
+│   └── menuConfig.ts            # Configuración común
 │
-├── CourseManagementTabs  # Pestañas de gestión de cursos
-│   ├── AllCoursesTab
-│   ├── DraftCoursesTab
-│   ├── PublishedCoursesTab
-│   └── CategoriesTab
-│
-└── SystemSettingsTabs    # Pestañas de configuración
-    ├── GeneralSettings
-    ├── AppearanceSettings
-    ├── SecuritySettings
-    └── IntegrationsSettings
+└── MobileSidebar                # Navegación móvil adaptativa
+    └── RefactoredSidebarNavigation  # Reutiliza mismo componente
+        └── menuConfig.ts            # Misma configuración
 ```
 
 ---
