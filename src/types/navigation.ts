@@ -6,23 +6,22 @@ import { UserRoleType } from './auth';
 export interface MenuItem {
   id?: string;
   label: string;
-  icon?: ReactNode;
+  icon?: ReactNode | LucideIcon;
   url?: string;
-  path?: string; // Added to support both naming conventions
+  path?: string;
   onClick?: () => void;
   items?: MenuItem[];
   badge?: string | number;
   roles?: string[];
-  requiredRole?: UserRoleType | UserRoleType[]; // Added to match config navigation
+  requiredRole?: UserRoleType | UserRoleType[];
   requiredFeature?: string;
   external?: boolean;
   active?: boolean;
-  disabled?: boolean; // Added to support disabled property
-  isHighlighted?: boolean; // Added to support highlighted menu items
-  description?: string; // Added to support descriptions
+  disabled?: boolean;
+  isHighlighted?: boolean;
+  description?: string;
 }
 
-// Define a new interface for NavigationMenus without circular dependencies
 export interface NavigationMenus {
   main: MenuItem[];
   admin: MenuItem[];

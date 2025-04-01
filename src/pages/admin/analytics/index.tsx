@@ -24,6 +24,7 @@ import {
   ArrowDownRight 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PlatformStats } from '@/features/admin/analytics/types';
 
 // Importamos las secciones principales de cada área de analytics
 import PlatformOverviewSection from './sections/PlatformOverviewSection';
@@ -48,12 +49,15 @@ const AnalyticsOverview: React.FC = () => {
   const [activeTab, setActiveTab] = useState(getDefaultTab());
   
   // Actualizamos los datos simulados para las tarjetas principales
-  const stats = {
+  const stats: PlatformStats = {
     total_users: 5842,
     active_users: 2731,
+    new_users: 847,
     total_courses: 124,
     active_courses: 87,
-    total_enrollments: 3542
+    total_enrollments: 3542,
+    completion_rate: 68,
+    average_rating: 4.2
   };
   
   // Actualiza la URL cuando cambia la pestaña

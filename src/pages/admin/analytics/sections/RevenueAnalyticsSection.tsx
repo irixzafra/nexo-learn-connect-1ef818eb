@@ -1,255 +1,185 @@
 
 import React from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription 
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   BarChart, 
   Bar, 
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
   Legend, 
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area
+  ResponsiveContainer, 
+  PieChart, 
+  Pie, 
+  Cell 
 } from 'recharts';
-import { useRevenueStatistics } from '@/features/finances/hooks/useRevenueStatistics';
-import { DollarSign, TrendingUp, CreditCard, Users, PercentIcon } from 'lucide-react';
+
+const revenueByMonthData = [
+  { month: 'Ene', revenue: 15420 },
+  { month: 'Feb', revenue: 18250 },
+  { month: 'Mar', revenue: 22130 },
+  { month: 'Abr', revenue: 19845 },
+  { month: 'May', revenue: 24680 },
+  { month: 'Jun', revenue: 28750 },
+];
+
+const revenueSourcesData = [
+  { name: 'Cursos Individuales', value: 65 },
+  { name: 'Suscripciones', value: 25 },
+  { name: 'Bundles', value: 10 },
+];
+
+const topSellingCourses = [
+  { course: 'Máster en React', revenue: 12500 },
+  { course: 'UX/UI Completo', revenue: 9800 },
+  { course: 'Machine Learning', revenue: 8600 },
+  { course: 'Data Science', revenue: 7200 },
+  { course: 'Python Avanzado', revenue: 6500 },
+];
+
+const COLORS = ['#8884d8', '#83a6ed', '#8dd1e1'];
+
+const revenueMetrics = [
+  { label: 'Revenue Total YTD', value: '€162,075.00', change: '+24%', positive: true },
+  { label: 'Ingresos Mensuales', value: '€28,750.00', change: '+17%', positive: true },
+  { label: 'Valor Promedio Compra', value: '€89.50', change: '+5%', positive: true },
+  { label: 'Tasa de Conversión', value: '4.2%', change: '-0.5%', positive: false },
+];
 
 const RevenueAnalyticsSection: React.FC = () => {
-  const { 
-    revenueStats, 
-    revenueByMonth, 
-    revenueByCourse, 
-    isLoading 
-  } = useRevenueStatistics();
-  
-  // Colores para el gráfico de categorías
-  const COLORS = ['#8884d8', '#82ca9d', '#FFBB28', '#FF8042', '#0088FE', '#00C49F'];
-  
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-  
   return (
     <div className="space-y-6">
-      {/* Métricas principales */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Ingresos Totales</p>
-                <p className="text-2xl font-bold">€{revenueStats.totalRevenue.toLocaleString()}</p>
+      {/* Revenue Metrics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {revenueMetrics.map((metric, index) => (
+          <Card key={index}>
+            <CardContent className="p-6">
+              <div className="flex flex-col">
+                <span className="text-sm text-muted-foreground">{metric.label}</span>
+                <span className="text-2xl font-bold mt-2">{metric.value}</span>
+                <span className={`text-sm mt-1 ${metric.positive ? 'text-green-500' : 'text-red-500'}`}>
+                  {metric.change} vs. mes anterior
+                </span>
               </div>
-              <div className="p-2 bg-primary/10 rounded-full">
-                <DollarSign className="h-5 w-5 text-primary" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Ingreso Mensual</p>
-                <p className="text-2xl font-bold">€{revenueStats.monthlyRevenue.toLocaleString()}</p>
-              </div>
-              <div className="p-2 bg-green-500/10 rounded-full">
-                <TrendingUp className="h-5 w-5 text-green-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Valor Promedio Cliente</p>
-                <p className="text-2xl font-bold">€{revenueStats.averageLifetimeValue.toFixed(2)}</p>
-              </div>
-              <div className="p-2 bg-blue-500/10 rounded-full">
-                <Users className="h-5 w-5 text-blue-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Tasa de Conversión</p>
-                <p className="text-2xl font-bold">{revenueStats.conversionRate}%</p>
-              </div>
-              <div className="p-2 bg-amber-500/10 rounded-full">
-                <PercentIcon className="h-5 w-5 text-amber-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-      
-      {/* Gráfico de ingresos mensuales */}
+
+      {/* Monthly Revenue Trend */}
       <Card>
         <CardHeader>
-          <CardTitle>Ingresos Mensuales</CardTitle>
-          <CardDescription>Evolución en los últimos 12 meses</CardDescription>
+          <CardTitle>Tendencia de Ingresos</CardTitle>
+          <CardDescription>Últimos 6 meses</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px]">
+          <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
-                data={revenueByMonth}
-                margin={{ top: 10, right: 30, left: 0, bottom: 30 }}
+                data={revenueByMonthData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
               >
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="month" 
-                  angle={-45} 
-                  textAnchor="end" 
-                  tick={{ fontSize: 12 }}
-                  height={60}
-                />
-                <YAxis 
-                  tickFormatter={(value) => `€${value.toLocaleString()}`}
-                />
-                <Tooltip 
-                  formatter={(value) => [`€${value.toLocaleString()}`, 'Ingresos']}
-                />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip formatter={(value) => [`€${value.toLocaleString()}`, 'Ingresos']} />
                 <Legend />
                 <Area 
                   type="monotone" 
                   dataKey="revenue" 
-                  stroke="#82ca9d" 
+                  name="Ingresos" 
+                  stroke="#8884d8" 
                   fillOpacity={1} 
                   fill="url(#colorRevenue)" 
-                  name="Ingresos"
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
-      
-      {/* Cursos más rentables e ingresos por categoría */}
-      <div className="grid gap-6 md:grid-cols-2">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Revenue Sources */}
         <Card>
           <CardHeader>
-            <CardTitle>Cursos Más Rentables</CardTitle>
-            <CardDescription>Ingresos totales generados por curso</CardDescription>
+            <CardTitle>Fuentes de Ingresos</CardTitle>
+            <CardDescription>Distribución por tipo de venta</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={revenueStats.topCoursesByRevenue}
-                  layout="vertical"
-                  margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" tickFormatter={(value) => `€${value.toLocaleString()}`} />
-                  <YAxis 
-                    dataKey="title" 
-                    type="category" 
-                    tick={{ fontSize: 12 }}
-                    width={120}
-                  />
-                  <Tooltip 
-                    formatter={(value) => [`€${value.toLocaleString()}`, 'Ingresos']}
-                  />
-                  <Bar dataKey="revenue" fill="#8884d8" name="Ingresos" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Distribución de Ingresos</CardTitle>
-            <CardDescription>Por categoría de curso</CardDescription>
-          </CardHeader>
-          <CardContent className="flex justify-center">
-            <div className="h-[300px] w-full">
+            <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={revenueByCourse}
+                    data={revenueSourcesData}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    outerRadius={100}
+                    outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    nameKey="name"
                     label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   >
-                    {revenueByCourse.map((entry, index) => (
+                    {revenueSourcesData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`€${value.toLocaleString()}`, 'Ingresos']} />
+                  <Tooltip formatter={(value) => [`${value}%`, 'Porcentaje']} />
+                  <Legend />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
+
+        {/* Top Selling Courses */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Cursos con Mayores Ingresos</CardTitle>
+            <CardDescription>Top 5 por ingresos generados</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={topSellingCourses}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  layout="vertical"
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" />
+                  <YAxis dataKey="course" type="category" width={120} />
+                  <Tooltip formatter={(value) => [`€${value.toLocaleString()}`, 'Ingresos']} />
+                  <Legend />
+                  <Bar dataKey="revenue" name="Ingresos" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-      
-      {/* Tabla de detalles */}
+
+      {/* Future Revenue Projection - Placeholder */}
       <Card>
         <CardHeader>
-          <CardTitle>Resumen de Ventas por Curso</CardTitle>
-          <CardDescription>Desglose detallado de ingresos y ventas</CardDescription>
+          <CardTitle>Proyección de Ingresos</CardTitle>
+          <CardDescription>Próximos 6 meses basado en tendencias actuales</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="relative overflow-x-auto rounded-md">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-muted-foreground uppercase bg-muted">
-                <tr>
-                  <th className="px-6 py-3">Curso</th>
-                  <th className="px-6 py-3">Categoría</th>
-                  <th className="px-6 py-3">Ventas</th>
-                  <th className="px-6 py-3">Ingresos</th>
-                  <th className="px-6 py-3">Precio</th>
-                </tr>
-              </thead>
-              <tbody>
-                {revenueStats.topCoursesByRevenue.map((course, index) => (
-                  <tr key={index} className="bg-background border-b hover:bg-muted/50">
-                    <td className="px-6 py-4 font-medium">{course.title}</td>
-                    <td className="px-6 py-4">{course.category}</td>
-                    <td className="px-6 py-4">{course.sales}</td>
-                    <td className="px-6 py-4">€{course.revenue.toLocaleString()}</td>
-                    <td className="px-6 py-4">€{(course.revenue / course.sales).toFixed(2)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="p-8 text-center">
+            <p className="text-muted-foreground">
+              Funcionalidad en desarrollo. La proyección de ingresos estará disponible próximamente.
+            </p>
           </div>
         </CardContent>
       </Card>

@@ -7,282 +7,232 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import {
-  BarChart as BarChartIcon,
-  BookOpen,
-  Users,
-  UserPlus,
-  ArrowUpRight,
-  Clock
-} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BarChart, XAxis, YAxis, Bar, ResponsiveContainer, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
-
-export interface PlatformStats {
-  total_users: number;
-  active_users: number;
-  new_users: number;
-  total_courses: number;
-  active_courses: number;
-  total_enrollments: number;
-  completion_rate: number;
-  average_rating: number;
-}
+import { 
+  BarChart, 
+  LineChart, 
+  PieChart,
+  AreaChart,
+  Cell,
+  Bar,
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  Line,
+  Area,
+  Pie 
+} from 'recharts';
+import { PlatformStats } from '@/features/admin/analytics/types';
 
 interface PlatformOverviewSectionProps {
   stats: PlatformStats;
   isLoading: boolean;
 }
 
+// Sample data
+const last30DaysData = [
+  { date: '01/06', users: 42, courses: 3 },
+  { date: '05/06', users: 51, courses: 3 },
+  { date: '10/06', users: 63, courses: 4 },
+  { date: '15/06', users: 75, courses: 5 },
+  { date: '20/06', users: 92, courses: 5 },
+  { date: '25/06', users: 105, courses: 7 },
+  { date: '30/06', users: 121, courses: 8 },
+];
+
+const courseDistributionData = [
+  { name: 'Programación', value: 35 },
+  { name: 'Diseño', value: 25 },
+  { name: 'Marketing', value: 20 },
+  { name: 'Negocios', value: 15 },
+  { name: 'Idiomas', value: 5 },
+];
+
+const COLORS = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c'];
+
 const PlatformOverviewSection: React.FC<PlatformOverviewSectionProps> = ({ stats, isLoading }) => {
-  // Example data for charts
-  const userActivityData = [
-    { name: 'Lun', activos: 150, nuevos: 20 },
-    { name: 'Mar', activos: 180, nuevos: 25 },
-    { name: 'Mié', activos: 220, nuevos: 30 },
-    { name: 'Jue', activos: 250, nuevos: 15 },
-    { name: 'Vie', activos: 280, nuevos: 40 },
-    { name: 'Sáb', activos: 150, nuevos: 10 },
-    { name: 'Dom', activos: 120, nuevos: 5 },
-  ];
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-8 w-48" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-80 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-  const courseCompletionData = [
-    { name: 'Completados', value: stats.completion_rate },
-    { name: 'En progreso', value: 100 - stats.completion_rate }
-  ];
+  const userActivityData = {
+    totalUsers: stats.total_users,
+    activeUsers: stats.active_users,
+    newUsers: stats.new_users,
+    completionRate: stats.completion_rate,
+    averageRating: stats.average_rating,
+  };
 
-  // Color scales
-  const COLORS = ['#8B5CF6', '#C4B5FD'];
+  const courseData = {
+    totalCourses: stats.total_courses,
+    activeCourses: stats.active_courses,
+    totalEnrollments: stats.total_enrollments,
+  };
 
-  // Calculate percentage increases (example data)
-  const userIncrease = "+12%";
-  const courseIncrease = "+8%";
-  const enrollmentIncrease = "+15%";
-  
   return (
     <div className="space-y-6">
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Users Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Growth Overview Card */}
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Usuarios</CardTitle>
-            <CardDescription>Actividad de usuarios en la plataforma</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Usuarios</p>
-                  <h3 className="text-2xl font-bold mt-1">
-                    {isLoading ? <Skeleton className="h-8 w-20" /> : stats.total_users.toLocaleString()}
-                  </h3>
-                </div>
-                <div className="bg-primary/10 p-2 rounded-full">
-                  <Users className="h-5 w-5 text-primary" />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Usuarios Activos</p>
-                  <div className="flex items-center mt-1">
-                    <span className="text-xl font-bold mr-2">
-                      {isLoading ? <Skeleton className="h-6 w-14" /> : stats.active_users.toLocaleString()}
-                    </span>
-                    <span className="text-xs text-green-500 flex items-center">
-                      <ArrowUpRight className="h-3 w-3 mr-0.5" />
-                      {userIncrease}
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Nuevos Usuarios</p>
-                  <div className="flex items-center mt-1">
-                    <span className="text-xl font-bold mr-2">
-                      {isLoading ? <Skeleton className="h-6 w-14" /> : stats.new_users.toLocaleString()}
-                    </span>
-                    <span className="text-xs text-green-500 flex items-center">
-                      <ArrowUpRight className="h-3 w-3 mr-0.5" />
-                      +24%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Courses Stats */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Cursos</CardTitle>
-            <CardDescription>Actividad en cursos y lecciones</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Cursos</p>
-                  <h3 className="text-2xl font-bold mt-1">
-                    {isLoading ? <Skeleton className="h-8 w-20" /> : stats.total_courses.toLocaleString()}
-                  </h3>
-                </div>
-                <div className="bg-primary/10 p-2 rounded-full">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Cursos Activos</p>
-                  <div className="flex items-center mt-1">
-                    <span className="text-xl font-bold mr-2">
-                      {isLoading ? <Skeleton className="h-6 w-14" /> : stats.active_courses.toLocaleString()}
-                    </span>
-                    <span className="text-xs text-green-500 flex items-center">
-                      <ArrowUpRight className="h-3 w-3 mr-0.5" />
-                      {courseIncrease}
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Inscripciones</p>
-                  <div className="flex items-center mt-1">
-                    <span className="text-xl font-bold mr-2">
-                      {isLoading ? <Skeleton className="h-6 w-14" /> : stats.total_enrollments.toLocaleString()}
-                    </span>
-                    <span className="text-xs text-green-500 flex items-center">
-                      <ArrowUpRight className="h-3 w-3 mr-0.5" />
-                      {enrollmentIncrease}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Engagement Stats */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Engagement</CardTitle>
-            <CardDescription>Métricas de participación y complección</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Tasa de Complección</p>
-                  <h3 className="text-2xl font-bold mt-1">
-                    {isLoading ? <Skeleton className="h-8 w-20" /> : `${stats.completion_rate}%`}
-                  </h3>
-                </div>
-                <div className="bg-primary/10 p-2 rounded-full">
-                  <Clock className="h-5 w-5 text-primary" />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Calificación Promedio</p>
-                  <div className="flex items-center mt-1">
-                    <span className="text-xl font-bold mr-2">
-                      {isLoading ? <Skeleton className="h-6 w-14" /> : stats.average_rating.toFixed(1)}
-                    </span>
-                    <span className="text-xs">/ 5.0</span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Nuevas inscripciones</p>
-                  <div className="flex items-center mt-1">
-                    <span className="text-xl font-bold mr-2">
-                      {isLoading ? <Skeleton className="h-6 w-14" /> : "127"}
-                    </span>
-                    <span className="text-xs text-green-500 flex items-center">
-                      <ArrowUpRight className="h-3 w-3 mr-0.5" />
-                      +18%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* User Activity Chart */}
-        <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-lg font-medium">Actividad de Usuarios</CardTitle>
-            <CardDescription>
-              Usuarios activos y nuevos registros en la última semana
-            </CardDescription>
+            <CardTitle>Crecimiento</CardTitle>
+            <CardDescription>Usuarios y cursos en los últimos 30 días</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
-              {isLoading ? (
-                <div className="flex items-center justify-center h-full">
-                  <Skeleton className="w-full h-[250px]" />
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={userActivityData}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={last30DaysData}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorCourses" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Area 
+                    type="monotone" 
+                    dataKey="users" 
+                    stroke="#8884d8" 
+                    fillOpacity={1} 
+                    fill="url(#colorUsers)" 
+                    name="Usuarios"
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="courses" 
+                    stroke="#82ca9d" 
+                    fillOpacity={1} 
+                    fill="url(#colorCourses)" 
+                    name="Cursos"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Course Distribution Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Distribución de Cursos</CardTitle>
+            <CardDescription>Por categoría</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80 flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={courseDistributionData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   >
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="activos" fill="#8B5CF6" name="Usuarios Activos" />
-                    <Bar dataKey="nuevos" fill="#EC4899" name="Nuevos Usuarios" />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Course Completion Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-medium">Complección de Cursos</CardTitle>
-            <CardDescription>
-              Porcentaje de cursos completados vs en progreso
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px] flex items-center justify-center">
-              {isLoading ? (
-                <Skeleton className="w-[200px] h-[200px] rounded-full" />
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={courseCompletionData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {courseCompletionData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value) => `${value}%`} />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
+                    {courseDistributionData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value} cursos`, 'Cantidad']} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* User Activity Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Estadísticas de Plataforma</CardTitle>
+          <CardDescription>Resumen global de actividad</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="users">
+            <TabsList className="mb-4">
+              <TabsTrigger value="users">Usuarios</TabsTrigger>
+              <TabsTrigger value="courses">Cursos</TabsTrigger>
+            </TabsList>
+            <TabsContent value="users">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-sm font-medium text-muted-foreground">Usuarios Totales</div>
+                    <div className="text-2xl font-bold">{userActivityData.totalUsers}</div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-muted-foreground">Usuarios Activos</div>
+                    <div className="text-2xl font-bold">{userActivityData.activeUsers}</div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-muted-foreground">Usuarios Nuevos (último mes)</div>
+                    <div className="text-2xl font-bold">{userActivityData.newUsers}</div>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-sm font-medium text-muted-foreground">Tasa de Finalización</div>
+                    <div className="text-2xl font-bold">{userActivityData.completionRate}%</div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-muted-foreground">Calificación Promedio</div>
+                    <div className="text-2xl font-bold">{userActivityData.averageRating}/5</div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            <TabsContent value="courses">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-sm font-medium text-muted-foreground">Cursos Totales</div>
+                    <div className="text-2xl font-bold">{courseData.totalCourses}</div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-muted-foreground">Cursos Activos</div>
+                    <div className="text-2xl font-bold">{courseData.activeCourses}</div>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-sm font-medium text-muted-foreground">Inscripciones Totales</div>
+                    <div className="text-2xl font-bold">{courseData.totalEnrollments}</div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 };

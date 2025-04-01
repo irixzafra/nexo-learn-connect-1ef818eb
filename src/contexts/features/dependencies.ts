@@ -1,3 +1,4 @@
+
 export const featureDependencies = {
   // Core features
   authentication: ['database', 'email'],
@@ -73,6 +74,23 @@ export const featureDependencies = {
   devTools: [],
   testData: ['database'],
   documentation: []
+};
+
+// Helper functions to get dependencies and dependents
+export const getFeatureDependencies = (feature: string): string[] => {
+  return featureDependencies[feature as keyof typeof featureDependencies] || [];
+};
+
+export const getFeatureDependents = (feature: string): string[] => {
+  const dependents: string[] = [];
+  
+  Object.entries(featureDependencies).forEach(([key, dependencies]) => {
+    if (dependencies.includes(feature)) {
+      dependents.push(key);
+    }
+  });
+  
+  return dependents;
 };
 
 export default featureDependencies;

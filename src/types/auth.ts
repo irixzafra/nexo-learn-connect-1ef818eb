@@ -1,3 +1,4 @@
+
 export type UserRoleType = 
   | 'admin' 
   | 'guest' 
@@ -8,6 +9,33 @@ export type UserRoleType =
   | 'sistemas' 
   | 'beta_tester'
   | 'anonimo';
+
+export interface UserRole {
+  id: string;
+  name: string;
+  description?: string;
+  isDefault?: boolean;
+  permissions?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface UserProfile {
+  id: string;
+  userId: string;
+  fullName?: string;
+  email?: string;
+  avatarUrl?: string;
+  bio?: string;
+  role: UserRoleType;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  lastLogin?: string;
+  preferences?: Record<string, any>;
+  verified?: boolean;
+  phone?: string;
+}
 
 export function toUserRoleType(role: string): UserRoleType {
   switch (role) {
