@@ -2,13 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -25,13 +18,10 @@ import {
   FileText,
   Plus,
   Eye,
-  EyeOff,
   PenSquare,
   Trash2,
-  FileArchive,
   Clock,
-  Layout,
-  Tag
+  Layout
 } from 'lucide-react';
 import { SitePage, PageStatus } from '@/types/pages'; 
 import { getAllPages, updatePageStatus, deletePage } from '@/features/admin/services/pagesService';
@@ -223,43 +213,42 @@ const PageManagement: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-          <div>
-            <CardTitle className="text-2xl">Gestión de Páginas</CardTitle>
-            <CardDescription>
-              Administra todas las páginas del sitio web
-            </CardDescription>
-          </div>
-          <div>
-            <Button onClick={() => navigate('/admin/settings/pages/create')}>
-              <Plus className="h-4 w-4 mr-2" />
-              Nueva Página
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <AdvancedDataTable
-            columns={columns}
-            data={pages}
-            searchPlaceholder="Buscar por título, slug o estado..."
-            exportFilename="paginas-sitio"
-            emptyState={
-              <div className="flex flex-col items-center justify-center text-muted-foreground py-8">
-                <FileText className="h-8 w-8 mb-2" />
-                <p className="mb-2">No hay páginas disponibles</p>
-                <Button 
-                  variant="link" 
-                  onClick={() => navigate('/admin/settings/pages/create')}
-                >
-                  Crear primera página
-                </Button>
-              </div>
-            }
-            onRowClick={(page) => handleEditPage(page as SitePage)}
-          />
-        </CardContent>
-      </Card>
+      <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Gestión de Páginas</h2>
+          <p className="text-muted-foreground">
+            Administra todas las páginas del sitio web
+          </p>
+        </div>
+        <div>
+          <Button onClick={() => navigate('/admin/settings/pages/create')}>
+            <Plus className="h-4 w-4 mr-2" />
+            Nueva Página
+          </Button>
+        </div>
+      </div>
+
+      <div className="bg-background">
+        <AdvancedDataTable
+          columns={columns}
+          data={pages}
+          searchPlaceholder="Buscar por título, slug o estado..."
+          exportFilename="paginas-sitio"
+          emptyState={
+            <div className="flex flex-col items-center justify-center text-muted-foreground py-8">
+              <FileText className="h-8 w-8 mb-2" />
+              <p className="mb-2">No hay páginas disponibles</p>
+              <Button 
+                variant="link" 
+                onClick={() => navigate('/admin/settings/pages/create')}
+              >
+                Crear primera página
+              </Button>
+            </div>
+          }
+          onRowClick={(page) => handleEditPage(page as SitePage)}
+        />
+      </div>
 
       <PageEditorDialog
         pageId={selectedPageId}

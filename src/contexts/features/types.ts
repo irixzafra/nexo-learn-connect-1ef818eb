@@ -1,4 +1,3 @@
-
 export interface Feature {
   id: CoreFeatureId | ExtendedFeatureId;
   name: string;
@@ -137,6 +136,7 @@ export interface FeaturesConfig {
   autoStartOnboarding: boolean;
   showOnboardingTrigger: boolean;
   enableContextualHelp: boolean;
+  [key: string]: boolean | undefined;
 }
 
 export interface FeaturesContextProps {

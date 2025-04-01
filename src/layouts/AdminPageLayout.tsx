@@ -1,7 +1,6 @@
 
 import React from 'react';
 import AppLayout from './AppLayout';
-import { Card } from '@/components/ui/card';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import FloatingEditModeToggle from '@/components/admin/FloatingEditModeToggle';
 import { useLocation } from 'react-router-dom';
@@ -34,8 +33,8 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   
   return (
     <AppLayout showHeader={false} showAdminNavigation={true}>
-      <div className="flex-1 max-w-full p-6">
-        <div className="container mx-auto space-y-6">
+      <div className="flex-1 w-full">
+        <div className="container max-w-full mx-auto space-y-4 p-4 md:p-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
@@ -51,18 +50,18 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
           
           {tabs && tabs.length > 0 ? (
             <>
-              <div className="bg-muted/30 px-0 py-1 border-b">
+              <div className="bg-muted/30 py-1 border-b">
                 <AdminNavTabs
                   tabs={tabs}
                   defaultValue={defaultTabValue || tabs[0]?.value}
                 />
               </div>
-              <div className="px-4">
+              <div>
                 {children}
               </div>
             </>
           ) : (
-            <Card className="p-6 shadow-sm">{children}</Card>
+            <div className="w-full">{children}</div>
           )}
         </div>
       </div>

@@ -2,7 +2,6 @@
 import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { AdvancedDataTable } from "./AdvancedDataTable";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useEditMode } from "@/contexts/EditModeContext";
@@ -66,22 +65,22 @@ export function AdminDataTable<TData, TValue>({
   };
 
   return (
-    <Card className="shadow-sm">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+    <div className="w-full space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
-          <CardTitle 
-            className={`text-2xl ${isEditMode ? 'cursor-pointer hover:text-primary' : ''}`}
+          <h2 
+            className={`text-2xl font-semibold ${isEditMode ? 'cursor-pointer hover:text-primary' : ''}`}
             onClick={handleTitleEdit}
           >
             {localTitle}
-          </CardTitle>
+          </h2>
           {(localDescription || isEditMode) && (
-            <CardDescription 
-              className={isEditMode ? 'cursor-pointer hover:text-primary' : ''}
+            <p 
+              className={`text-muted-foreground ${isEditMode ? 'cursor-pointer hover:text-primary' : ''}`}
               onClick={handleDescriptionEdit}
             >
               {localDescription || (isEditMode ? "Haz clic para añadir una descripción" : "")}
-            </CardDescription>
+            </p>
           )}
         </div>
         
@@ -95,23 +94,21 @@ export function AdminDataTable<TData, TValue>({
             {createButtonLabel}
           </Button>
         )}
-      </CardHeader>
+      </div>
       
-      <CardContent>
-        {actionButtons && (
-          <div className="flex items-center justify-end gap-2 mb-4">
-            {actionButtons}
-          </div>
-        )}
-        
-        <AdvancedDataTable
-          columns={columns}
-          data={data}
-          searchPlaceholder={searchPlaceholder}
-          searchColumn={searchColumn}
-          emptyState={emptyState}
-        />
-      </CardContent>
-    </Card>
+      {actionButtons && (
+        <div className="flex items-center justify-end gap-2 mb-4">
+          {actionButtons}
+        </div>
+      )}
+      
+      <AdvancedDataTable
+        columns={columns}
+        data={data}
+        searchPlaceholder={searchPlaceholder}
+        searchColumn={searchColumn}
+        emptyState={emptyState}
+      />
+    </div>
   );
 }

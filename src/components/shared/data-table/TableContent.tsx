@@ -10,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
 
 interface TableContentProps<TData> {
@@ -44,15 +43,15 @@ export function TableContent<TData>({
   };
 
   return (
-    <div className="rounded-md border overflow-hidden">
+    <div className="w-full overflow-hidden">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} className="bg-muted/30 hover:bg-muted/40">
               {headerGroup.headers.map((header, index) => (
                 <TableHead 
                   key={header.id}
-                  className="relative"
+                  className="relative font-medium"
                   style={{ 
                     width: `${columnSizes[header.id] || 100 / columns.length}%`
                   }}
@@ -105,8 +104,8 @@ export function TableContent<TData>({
                 data-state={row.getIsSelected() && "selected"}
                 onClick={() => onRowClick && onRowClick(row.original)}
                 className={cn(
-                  onRowClick ? "cursor-pointer hover:bg-muted" : "",
-                  "transition-colors"
+                  onRowClick ? "cursor-pointer hover:bg-muted/10" : "",
+                  "border-b border-muted/20 transition-colors"
                 )}
               >
                 {row.getVisibleCells().map((cell, index) => (
