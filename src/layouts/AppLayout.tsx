@@ -7,6 +7,8 @@ import { useLocation } from 'react-router-dom';
 import HeaderContent from '@/components/layout/HeaderContent';
 import { MobileSidebar } from '@/components/layout/header/MobileSidebar';
 import RefactoredSidebarNavigation from '@/components/layout/sidebar/RefactoredSidebarNavigation';
+import { useEditMode } from '@/contexts/EditModeContext';
+import { cn } from '@/lib/utils';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -19,6 +21,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   showHeader = true,
 }) => {
   const location = useLocation();
+  const { isSidebarOpen, toggleSidebar } = useEditMode();
   
   // Check if current page is an admin page
   const isAdminPage = location.pathname.includes('/admin');
@@ -28,13 +31,17 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   useEffect(() => {
     console.log("Current route:", location.pathname);
     console.log("Is admin page:", isAdminPage);
-  }, [location.pathname, isAdminPage]);
+    console.log("Sidebar is open:", isSidebarOpen);
+  }, [location.pathname, isAdminPage, isSidebarOpen]);
 
   return (
-    <SidebarProvider defaultOpen={!isAdminPage}>
-      <div className="flex min-h-screen w-full bg-background">
+    <SidebarProvider defaultOpen={isSidebarOpen}>
+      <div className={cn(
+        "flex min-h-screen w-full bg-background transition-all duration-300",
+        !isSidebarOpen && "sidebar-collapsed"
+      )}>
         {!isAdminPage && (
-          <Sidebar variant="sidebar" collapsible="icon">
+          <Sidebar variant="sidebar" collapsible={isSidebarOpen ? "none" : "icon"}>
             <SidebarContent>
               <RefactoredSidebarNavigation viewAsRole="current" />
             </SidebarContent>
@@ -54,7 +61,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             <MobileSidebar viewAsRole="current" />
             {/* Botón flotante para alternar sidebar */}
             <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 md:block">
-              <SidebarTrigger className="shadow-lg" />
+              <SidebarTrigger 
+                className="shadow-lg" 
+                onClick={() => toggleSidebar()}
+              />
             </div>
           </>
         )}

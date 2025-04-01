@@ -17,6 +17,8 @@ interface EditModeContextType {
   canEdit: boolean;
   selectedElementId: string | null;
   setSelectedElementId: (id: string | null) => void;
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
 }
 
 // Create the context with default values
@@ -33,6 +35,8 @@ const EditModeContext = createContext<EditModeContextType>({
   canEdit: false,
   selectedElementId: null,
   setSelectedElementId: () => {},
+  isSidebarOpen: true,
+  toggleSidebar: () => {},
 });
 
 export const useEditMode = () => useContext(EditModeContext);
@@ -57,10 +61,20 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  const getInitialSidebarState = () => {
+    try {
+      const storedValue = localStorage.getItem('isSidebarOpen');
+      return storedValue !== 'false'; // Default to true if not set
+    } catch (e) {
+      return true;
+    }
+  };
+
   const [isEditMode, setIsEditMode] = useState(getInitialEditMode());
   const [isReorderMode, setIsReorderMode] = useState(getInitialReorderMode());
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(true);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(getInitialSidebarState());
   const { userRole } = useAuth();
   const location = useLocation();
 
@@ -75,6 +89,15 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       console.error('Could not save edit mode state to sessionStorage:', e);
     }
   }, [isEditMode, isReorderMode]);
+
+  // Update localStorage when sidebar state changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('isSidebarOpen', isSidebarOpen.toString());
+    } catch (e) {
+      console.error('Could not save sidebar state to localStorage:', e);
+    }
+  }, [isSidebarOpen]);
 
   // Disable edit mode for non-admin/non-sistemas users
   useEffect(() => {
@@ -115,6 +138,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // Log the current state for debugging
     console.log('Edit mode enabled:', isEditModeEnabled);
     console.log('Can edit (role):', canEdit);
+    console.log('Sidebar open:', isSidebarOpen);
     
     // Add a CSS class to the body when in edit mode for global styling
     if (isEditMode) {
@@ -169,6 +193,22 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     } else if (!isEditMode) {
       console.log('Cannot toggle reorder mode: edit mode not active');
+    }
+  };
+
+  // Toggle sidebar visibility
+  const toggleSidebar = () => {
+    const newValue = !isSidebarOpen;
+    setIsSidebarOpen(newValue);
+    console.log('Sidebar toggled:', newValue ? 'open' : 'closed');
+    
+    // Apply a CSS class to the body for responsive layout adjustments
+    if (newValue) {
+      document.body.classList.add('sidebar-open');
+      document.body.classList.remove('sidebar-closed');
+    } else {
+      document.body.classList.add('sidebar-closed');
+      document.body.classList.remove('sidebar-open');
     }
   };
 
@@ -249,7 +289,9 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       applyAIEdit,
       canEdit,
       selectedElementId,
-      setSelectedElementId
+      setSelectedElementId,
+      isSidebarOpen,
+      toggleSidebar
     }}>
       {children}
     </EditModeContext.Provider>
