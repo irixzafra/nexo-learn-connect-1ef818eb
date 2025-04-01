@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -16,12 +15,13 @@ import {
   Navigation, 
   Navigation2,
   Menu,
-  LayoutSidebar,
   FileText,
   LayoutDashboard,
   User,
   BookOpen,
-  Compass
+  Compass,
+  AlertTriangle,
+  LayoutGrid
 } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
 import { 
@@ -113,7 +113,7 @@ const NavigationDiagram: React.FC = () => {
         
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="px-3 py-1 text-sm">
-            <LayoutSidebar className="h-3.5 w-3.5 mr-1" />
+            <LayoutGrid className="h-3.5 w-3.5 mr-1" />
             Componentes: {sidebarComponents.length}
           </Badge>
           <Badge variant="outline" className="px-3 py-1 text-sm">
@@ -134,7 +134,7 @@ const NavigationDiagram: React.FC = () => {
             Menús
           </TabsTrigger>
           <TabsTrigger value="components">
-            <LayoutSidebar className="h-4 w-4 mr-2" />
+            <LayoutGrid className="h-4 w-4 mr-2" />
             Componentes
           </TabsTrigger>
           <TabsTrigger value="files">
@@ -226,7 +226,7 @@ const NavigationDiagram: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <LayoutSidebar className="h-5 w-5 text-primary" />
+                <LayoutGrid className="h-5 w-5 text-primary" />
                 Componentes de Navegación
               </CardTitle>
               <CardDescription>
