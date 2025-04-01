@@ -10,6 +10,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { OnboardingProvider } from '@/contexts/OnboardingContext';
 import { KeyboardShortcuts } from '@/components/accessibility/KeyboardShortcuts';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { FeaturesProvider } from '@/contexts/features/FeaturesContext';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -28,15 +29,17 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         <ThemeProvider>
           <TooltipProvider delayDuration={300}>
             <AuthProvider>
-              <EditModeProvider>
-                <TestDataProvider>
-                  <OnboardingProvider>
-                    <KeyboardShortcuts />
-                    {children}
-                    <Toaster position="top-right" />
-                  </OnboardingProvider>
-                </TestDataProvider>
-              </EditModeProvider>
+              <FeaturesProvider>
+                <EditModeProvider>
+                  <TestDataProvider>
+                    <OnboardingProvider>
+                      <KeyboardShortcuts />
+                      {children}
+                      <Toaster position="top-right" />
+                    </OnboardingProvider>
+                  </TestDataProvider>
+                </EditModeProvider>
+              </FeaturesProvider>
             </AuthProvider>
           </TooltipProvider>
         </ThemeProvider>

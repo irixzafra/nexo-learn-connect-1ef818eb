@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -12,6 +11,7 @@ import { EditModeProvider } from './contexts/EditModeContext';
 import CacheManager from './components/CacheManager';
 import { registerServiceWorker } from './lib/cache/serviceWorkerRegistration';
 import { DesignSystemProvider } from './contexts/DesignSystemContext';
+import { FeaturesProvider } from './contexts/features/FeaturesContext';
 
 // Importar estilos explícitamente
 import './index.css';
@@ -54,12 +54,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <ThemeProvider>
           <DesignSystemProvider>
             <AuthProvider>
-              <EditModeProvider>
-                <App />
-                <CacheManager />
-                <Toaster />
-                <SonnerToaster position="top-right" closeButton richColors />
-              </EditModeProvider>
+              <FeaturesProvider>
+                <EditModeProvider>
+                  <App />
+                  <CacheManager />
+                  <Toaster />
+                  <SonnerToaster position="top-right" closeButton richColors />
+                </EditModeProvider>
+              </FeaturesProvider>
             </AuthProvider>
           </DesignSystemProvider>
         </ThemeProvider>

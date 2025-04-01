@@ -1,9 +1,8 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 import { useLocation } from 'react-router-dom';
-import { useFeatures } from './features/FeaturesContext';
+import { useFeatures } from '@/hooks/useFeatures';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -25,7 +24,6 @@ interface EditModeContextType {
   cancelEditing: () => void;
 }
 
-// Create the context with default values
 const EditModeContext = createContext<EditModeContextType>({
   isEditMode: false,
   toggleEditMode: () => {},
@@ -49,7 +47,6 @@ const EditModeContext = createContext<EditModeContextType>({
 export const useEditMode = () => useContext(EditModeContext);
 
 export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Persist edit mode state in sessionStorage to maintain it during navigation
   const getInitialEditMode = () => {
     try {
       const storedValue = sessionStorage.getItem('isEditMode');
@@ -86,20 +83,17 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { userRole } = useAuth();
   const location = useLocation();
-  const { featuresConfig } = useFeatures();
+  const { featuresConfig = {} } = useFeatures();
 
   const canEdit = userRole === 'admin' || userRole === 'sistemas';
 
-  // Update sessionStorage when edit mode changes
   useEffect(() => {
     try {
       sessionStorage.setItem('isEditMode', isEditMode.toString());
       sessionStorage.setItem('isReorderMode', isReorderMode.toString());
       
-      // Bloquear navegación cuando el modo edición está activo
       setIsNavigationBlocked(isEditMode);
       
-      // Establecer que hay cambios no guardados cuando se activa el modo edición
       if (isEditMode) {
         setHasUnsavedChanges(true);
       }
@@ -108,7 +102,6 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [isEditMode, isReorderMode]);
 
-  // Advertencia de navegación cuando hay cambios no guardados
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges && isEditMode) {
@@ -124,7 +117,6 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
   }, [hasUnsavedChanges, isEditMode]);
 
-  // Update localStorage when sidebar state changes
   useEffect(() => {
     try {
       localStorage.setItem('isSidebarOpen', isSidebarOpen.toString());
@@ -133,32 +125,28 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [isSidebarOpen]);
 
-  // Disable edit mode for non-admin/non-sistemas users
   useEffect(() => {
     if (!canEdit && isEditMode) {
       setIsEditMode(false);
     }
   }, [userRole, canEdit, isEditMode]);
 
-  // Disable edit mode if the feature is disabled
   useEffect(() => {
-    const isFeatureEnabled = featuresConfig.enableInlineEditing;
+    const isFeatureEnabled = featuresConfig?.enableInlineEditing ?? true;
     setIsEditModeEnabled(isFeatureEnabled);
     
     if (!isFeatureEnabled && isEditMode) {
       setIsEditMode(false);
       setIsReorderMode(false);
     }
-  }, [featuresConfig.enableInlineEditing, isEditMode]);
+  }, [featuresConfig?.enableInlineEditing, isEditMode]);
 
-  // Clear selected element when edit mode is toggled off
   useEffect(() => {
     if (!isEditMode) {
       setSelectedElementId(null);
     }
   }, [isEditMode]);
 
-  // Automatically disable edit mode when the user navigates to a different page
   useEffect(() => {
     if (isEditMode) {
       setIsEditMode(false);
@@ -167,14 +155,11 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [location.pathname]);
 
-  // Check for feature configuration on mount
   useEffect(() => {
-    // Log the current state for debugging
     console.log('Edit mode enabled:', isEditModeEnabled);
     console.log('Can edit (role):', canEdit);
     console.log('Sidebar open:', isSidebarOpen);
     
-    // Add a CSS class to the body when in edit mode for global styling
     if (isEditMode) {
       document.body.classList.add('edit-mode-active');
     } else {
@@ -191,7 +176,6 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const newValue = !isEditMode;
       setIsEditMode(newValue);
       
-      // Always enable reorder mode when edit mode is enabled
       if (newValue) {
         setIsReorderMode(true);
         toast.info(
@@ -199,7 +183,6 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           { duration: 4000 }
         );
         
-        // Log status for debugging
         console.log('Edit mode activated, reorder mode also activated');
       } else {
         setIsReorderMode(false);
@@ -216,7 +199,6 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // Toggle reorder mode (can only be true if edit mode is also true)
   const toggleReorderMode = () => {
     if (isEditMode && canEdit && isEditModeEnabled) {
       const newValue = !isReorderMode;
@@ -231,13 +213,11 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // Toggle sidebar visibility
   const toggleSidebar = () => {
     const newValue = !isSidebarOpen;
     setIsSidebarOpen(newValue);
     console.log('Sidebar toggled:', newValue ? 'open' : 'closed');
     
-    // Apply a CSS class to the body for responsive layout adjustments
     if (newValue) {
       document.body.classList.add('sidebar-open');
       document.body.classList.remove('sidebar-closed');
@@ -247,10 +227,8 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // Función para guardar borradores
   const saveDraft = async (): Promise<boolean> => {
     try {
-      // Simulamos guardar los cambios como borrador
       await new Promise(resolve => setTimeout(resolve, 800));
       
       toast.success('Borrador guardado correctamente');
@@ -263,7 +241,6 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // Función para cancelar la edición
   const cancelEditing = () => {
     if (hasUnsavedChanges) {
       if (window.confirm('¿Estás seguro de que quieres cancelar la edición? Perderás todos los cambios no guardados.')) {
@@ -278,22 +255,17 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // Wrapper for setting the edit mode enabled state
   const setEditModeEnabled = (enabled: boolean) => {
     setIsEditModeEnabled(enabled);
     console.log('Edit mode enabled set to:', enabled);
   };
 
-  // Function to update text content in the database
   const updateText = async (table: string, id: string, field: string, value: string): Promise<boolean> => {
     try {
-      // In a real application, this would update the database
       console.log(`Updating ${field} in ${table} with ID ${id} to: ${value}`);
       
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Show success toast
       toast.success('Contenido actualizado correctamente');
       return true;
     } catch (error) {
@@ -303,16 +275,12 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // Function to reorder elements in the database - improved for better reliability
   const reorderElements = async (table: string, elements: { id: string; order: number }[]): Promise<boolean> => {
     try {
-      // In a real application, this would update the database
       console.log(`Reordering elements in ${table}:`, elements);
       
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Show success toast
       toast.success('Orden actualizado correctamente');
       return true;
     } catch (error) {
@@ -322,15 +290,12 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // Function to apply AI edits to only visible elements
   const applyAIEdit = async (element: string, prompt: string): Promise<string> => {
     try {
       console.log(`Applying AI edit to visible element with prompt: ${prompt}`);
       
-      // Simulate AI generation
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Just a mock response for now
       const result = `${element} (AI enhanced: ${prompt})`;
       
       toast.success('Edición con IA aplicada correctamente');
@@ -338,7 +303,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } catch (error) {
       console.error('Error applying AI edit:', error);
       toast.error('Error al aplicar edición con IA');
-      return element; // Return original content on error
+      return element;
     }
   };
 

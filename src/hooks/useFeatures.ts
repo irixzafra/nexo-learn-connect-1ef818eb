@@ -10,7 +10,25 @@ export const useFeatures = () => {
   const context = useContext(FeaturesContext);
   
   if (!context) {
-    throw new Error('useFeatures must be used within a FeaturesProvider');
+    console.warn('useFeatures must be used within a FeaturesProvider');
+    // Return a default context to prevent crashes when FeaturesProvider is not available
+    return {
+      features: {},
+      featuresConfig: {
+        features: {},
+        enableInlineEditing: true, // Default to enabled to prevent crashes
+      } as FeaturesConfig,
+      isEnabled: () => true,
+      enableFeature: async () => {},
+      disableFeature: async () => {},
+      toggleFeature: async () => {},
+      getFeature: () => undefined,
+      isFeatureEnabled: () => true,
+      toggleExtendedFeature: async () => {},
+      updateFeatures: async () => {},
+      isLoading: false,
+      error: null
+    };
   }
   
   return context;
@@ -28,5 +46,14 @@ export const useFeature = (featureName: FeatureId): boolean => {
     return isEnabled(featureName);
   }
   
-  return !!featuresConfig?.[featureName as keyof FeaturesConfig];
+  if (!featuresConfig) {
+    return false;
+  }
+
+  // Safe check if it's a core feature
+  if (featureName.includes('-') && featuresConfig.features) {
+    return !!featuresConfig.features[featureName as keyof typeof featuresConfig.features]?.enabled;
+  }
+  
+  return !!featuresConfig[featureName as keyof FeaturesConfig];
 };
