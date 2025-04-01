@@ -1,44 +1,44 @@
 
-import { CoreFeatureId, ExtendedFeatureId, FeatureId } from './types';
+import { FeatureId } from './types';
 
 /**
  * Define dependencies between features
  * The key is the feature that depends on the values
  */
-export const featureDependencies: Record<FeatureId, FeatureId[]> = {
+export const featureDependencies: Record<string, FeatureId[]> = {
   // Core features
   'user-management': [],
-  'courses': ['user-management'],
-  'gamification': ['courses'],
-  'payment-system': ['user-management'],
-  'certificates': ['courses'],
-  'analytics': ['courses'],
-  'community': ['user-management'],
+  'courses': ['user-management' as FeatureId],
+  'gamification': ['courses' as FeatureId],
+  'payment-system': ['user-management' as FeatureId],
+  'certificates': ['courses' as FeatureId],
+  'analytics': ['courses' as FeatureId],
+  'community': ['user-management' as FeatureId],
   'theming': [],
   
   // Extended features
-  'enableDarkMode': ['theming'],
+  'enableDarkMode': ['enableThemingOptions'],
   'enableNotifications': [],
-  'enableAnalytics': ['analytics'],
+  'enableAnalytics': ['enableAnalytics'],
   'enableFeedback': [],
-  'enableUserRegistration': ['user-management'],
-  'enableSocialLogin': ['user-management'],
-  'enablePublicProfiles': ['user-management'],
-  'designSystemEnabled': ['theming'],
-  'enableThemeSwitcher': ['theming'],
+  'enableUserRegistration': ['enableAdminTools'],
+  'enableSocialLogin': ['enableAdminTools'],
+  'enablePublicProfiles': ['enableAdminTools'],
+  'designSystemEnabled': ['enableThemingOptions'],
+  'enableThemeSwitcher': ['enableThemingOptions'],
   'enableMultiLanguage': [],
-  'enableAdvancedEditor': ['courses'],
-  'enableContentReordering': ['courses'],
-  'enableCategoryManagement': ['courses'],
-  'enableLeaderboard': ['gamification'],
+  'enableAdvancedEditor': ['enableCategoryManagement'],
+  'enableContentReordering': ['enableCategoryManagement'],
+  'enableCategoryManagement': [],
+  'enableLeaderboards': ['enableGamification'],
   'enableAutoBackups': [],
   'enableQueryCache': [],
   'enableMaintenanceMode': [],
   'enableDatabaseDevMode': [],
-  'enable2FA': ['user-management'],
-  'enableMultipleSessions': ['user-management'],
-  'enablePublicRegistration': ['user-management'],
-  'requireEmailVerification': ['user-management'],
+  'enable2FA': ['enableAdminTools'],
+  'enableMultipleSessions': ['enableAdminTools'],
+  'enablePublicRegistration': ['enableAdminTools'],
+  'requireEmailVerification': ['enableAdminTools'],
   'enableActivityLog': [],
   'enableTestDataGenerator': [],
   'enableOnboarding': [],
@@ -46,7 +46,7 @@ export const featureDependencies: Record<FeatureId, FeatureId[]> = {
   'requireOnboarding': ['enableOnboarding'],
   'autoStartOnboarding': ['enableOnboarding'],
   'showOnboardingTrigger': ['enableOnboarding'],
-  'enableRoleManagement': ['user-management'],
+  'enableRoleManagement': ['enableAdminTools'],
   'enableRoleSwitcher': ['enableRoleManagement']
 };
 
@@ -56,7 +56,7 @@ export const featureDependencies: Record<FeatureId, FeatureId[]> = {
  * @returns Array of feature IDs that are required
  */
 export const getFeatureDependencies = (featureId: FeatureId): FeatureId[] => {
-  return featureDependencies[featureId] || [];
+  return featureDependencies[featureId as string] || [];
 };
 
 /**
@@ -79,4 +79,3 @@ export const getFeatureDependents = (featureId: FeatureId): FeatureId[] => {
 export const getDependencyDescription = (featureId: FeatureId, dependencyId: FeatureId): string => {
   return `Para activar "${featureId}" primero debe activar "${dependencyId}"`;
 };
-

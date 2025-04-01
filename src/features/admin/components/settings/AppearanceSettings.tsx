@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Card, 
@@ -27,7 +28,7 @@ interface AppearanceSettingsProps {
   isLoading: boolean;
 }
 
-const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
+export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
   featuresConfig,
   onToggleFeature,
   isLoading

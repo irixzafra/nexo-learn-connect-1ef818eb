@@ -1,5 +1,5 @@
 
-import { MenuItem } from "@/config/navigation/types";
+import type { MenuItem } from "@/config/navigation/types";
 
 export interface NavigationMenus {
   main: MenuItem[];
@@ -11,3 +11,5 @@ export interface NavigationMenus {
   settings: MenuItem[];
   gamification: MenuItem[];
 }
+
+export type { MenuItem };

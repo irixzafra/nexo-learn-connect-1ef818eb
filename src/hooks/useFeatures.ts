@@ -1,6 +1,6 @@
 
 import { useContext } from 'react';
-import { FeatureContext, useFeatureContext } from '@/contexts/features/FeatureContext';
+import { FeatureContext } from '@/contexts/features/FeatureContext';
 import type { FeaturesConfig } from '@/contexts/features/types';
 
 /**

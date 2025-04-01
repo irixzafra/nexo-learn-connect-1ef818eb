@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { FileText, Loader2 } from 'lucide-react';
-import { useFeatureContext } from '@/contexts/features/FeatureContext';
 import type { FeaturesConfig } from '@/contexts/features/types';
 
 interface ContentSettingsProps {
@@ -93,3 +92,5 @@ export const ContentSettings: React.FC<ContentSettingsProps> = ({
     </Card>
   );
 };
+
+export default ContentSettings;

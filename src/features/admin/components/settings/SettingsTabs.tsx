@@ -2,8 +2,8 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Settings, Code, Database, Globe, Palette, Bell, BarChart, Users } from 'lucide-react';
-import { AppearanceSettings } from './AppearanceSettings';
-import { ContentSettings } from './ContentSettings';
+import AppearanceSettings from './AppearanceSettings';
+import ContentSettings from './ContentSettings';
 import AnalyticsSettings from './AnalyticsSettings';
 import DatabaseSettings from './DatabaseSettings';
 import UserManagementSettings from './UserManagementSettings';
