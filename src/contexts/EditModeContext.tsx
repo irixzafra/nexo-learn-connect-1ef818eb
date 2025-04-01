@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
+import { useLocation } from 'react-router-dom';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -61,6 +62,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(true);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const { userRole } = useAuth();
+  const location = useLocation();
 
   const canEdit = userRole === 'admin' || userRole === 'sistemas';
 
@@ -96,6 +98,15 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [isEditMode]);
 
+  // Automatically disable edit mode when the user navigates to a different page
+  useEffect(() => {
+    if (isEditMode) {
+      setIsEditMode(false);
+      setIsReorderMode(false);
+      console.log('Edit mode automatically disabled due to navigation');
+    }
+  }, [location.pathname]);
+
   // Check for feature configuration on mount
   useEffect(() => {
     // By default, we'll set it to true
@@ -126,7 +137,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (newValue) {
         setIsReorderMode(true);
         toast.info(
-          "Modo edición universal activado. Ahora puedes editar, reordenar o modificar cualquier elemento visible.",
+          "Modo edición universal activado. Ahora puedes editar o modificar cualquier elemento visible.",
           { duration: 4000 }
         );
         

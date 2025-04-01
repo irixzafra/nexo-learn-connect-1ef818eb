@@ -29,7 +29,7 @@ const FloatingEditModeToggle: React.FC = () => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [isApplyingAI, setIsApplyingAI] = useState(false);
 
-  // If functionality is not enabled or user can't edit, don't show anything
+  // No mostrar el botón si no es admin/sistemas o si la funcionalidad está desactivada
   if (!isEditModeEnabled || !canEdit) {
     return null;
   }
@@ -38,7 +38,7 @@ const FloatingEditModeToggle: React.FC = () => {
     toggleEditMode();
     if (!isEditMode) {
       toast.success('Modo edición universal activado', {
-        description: 'Selecciona cualquier elemento para editarlo. Puedes navegar entre páginas manteniendo el modo activo.'
+        description: 'Selecciona cualquier elemento para editarlo.'
       });
     }
   };
@@ -150,7 +150,7 @@ const FloatingEditModeToggle: React.FC = () => {
           </div>
           
           <p className="text-xs text-muted-foreground italic mb-2">
-            Haz click en cualquier elemento para seleccionarlo. El modo edición permanece activo al navegar entre páginas.
+            Haz click en cualquier elemento para seleccionarlo. Recuerda desactivar el modo edición antes de navegar a otra página.
           </p>
         </Card>
         
