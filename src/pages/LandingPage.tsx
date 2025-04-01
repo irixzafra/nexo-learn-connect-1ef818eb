@@ -12,13 +12,14 @@ import FeatureGrid from '@/components/landing/FeatureGrid';
 import CallToActionSection from '@/components/landing/CallToActionSection';
 import PartnersSection from '@/components/landing/PartnersSection';
 import StatsSection from '@/components/landing/StatsSection';
+import PublicLayout from '@/layouts/PublicLayout';
 
 const LandingPage: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const { courses: featuredCourses, isLoading } = useCoursesCatalog();
   
   // Obtener solo los primeros 6 cursos para mostrar en la sección destacada
-  const topCourses = featuredCourses.slice(0, 6);
+  const topCourses = featuredCourses?.slice(0, 6) || [];
 
   return (
     <div className="min-h-screen bg-background">

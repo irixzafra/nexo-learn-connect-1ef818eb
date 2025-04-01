@@ -136,3 +136,14 @@ export const FeatureProvider: React.FC<{children: React.ReactNode}> = ({ childre
     </FeatureContext.Provider>
   );
 };
+
+// Export the hook to use features
+export const useFeatures = () => {
+  const context = useContext(FeatureContext);
+  
+  if (!context) {
+    throw new Error('useFeatures must be used within a FeatureProvider');
+  }
+  
+  return context;
+};

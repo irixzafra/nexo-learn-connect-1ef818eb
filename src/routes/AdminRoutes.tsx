@@ -19,11 +19,12 @@ import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminCourses from '@/pages/admin/courses/AdminCourses';
 import AdminFinances from '@/pages/admin/finances/AdminFinances';
 import AnalyticsOverview from '@/pages/admin/analytics/AnalyticsOverview';
+import UserAnalytics from '@/pages/admin/analytics/UserAnalytics';
 
 // User management components
 import { UserManagementTabs } from '@/features/users/UserManagementTabs';
 import { RoleManagement } from '@/features/users/RoleManagement';
-import { UserAnalytics } from '@/features/users/UserAnalytics';
+import { UserAnalytics as UserAnalyticsComponent } from '@/features/users/UserAnalytics';
 import { PermissionsManagement } from '@/features/users/PermissionsManagement';
 import { UserAdminStats } from '@/features/users/UserAdminStats';
 import AllCoursesTab from '@/components/admin/courses/tabs/AllCoursesTab';
@@ -98,6 +99,10 @@ const AdminRoutes: React.FC = () => {
         
         {/* Analytics */}
         <Route path="/analytics" element={<AnalyticsOverview />} />
+        <Route path="/analytics/overview" element={<AnalyticsOverview />} />
+        <Route path="/analytics/users" element={<UserAnalytics />} />
+        <Route path="/analytics/courses" element={<AnalyticsOverview />} />
+        <Route path="/analytics/revenue" element={<AnalyticsOverview />} />
         
         {/* Design System */}
         <Route path="/design" element={<DesignSystem />} />

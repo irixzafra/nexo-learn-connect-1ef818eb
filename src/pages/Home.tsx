@@ -6,8 +6,10 @@ import { StatsSection } from '@/components/dashboard/StatsSection';
 import { CoursesWidget } from '@/components/dashboard/CoursesWidget';
 import { WelcomeSection } from '@/components/dashboard/WelcomeSection';
 import { HelpSection } from '@/components/dashboard/HelpSection';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Home: React.FC = () => {
+  const { user } = useAuth();
   // These are examples of stats that might be shown to a student
   const studentStats = [
     { label: "Cursos Inscritos", value: "4", icon: <div>📚</div>, color: "blue-500" },
@@ -20,7 +22,7 @@ const Home: React.FC = () => {
     <SectionPageLayout className="container px-4 py-8">
       <WelcomeSection 
         title="Panel de Control"
-        description="Bienvenido a tu espacio personal de aprendizaje"
+        description={`Bienvenido a tu espacio personal de aprendizaje${user?.full_name ? `, ${user.full_name}` : ''}`}
       />
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">

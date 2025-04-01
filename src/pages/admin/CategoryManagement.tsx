@@ -1,14 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+
+import React, { useState } from 'react';
+import { 
+  Check, 
+  Pencil, 
+  Plus, 
+  Trash, 
+  ChevronDown, 
+  Search,
+  BookOpen, 
+  X,
+  Command,
+  Loader2
+} from 'lucide-react';
+import AdminPageLayout from '@/layouts/AdminPageLayout';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,549 +47,554 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { useFeatures } from '@/contexts/features/FeatureContext';
-import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Textarea } from '@/components/ui/textarea';
+import { 
+  Form, 
+  FormControl, 
+  FormDescription, 
+  FormField, 
+  FormItem, 
+  FormLabel, 
+  FormMessage 
+} from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
-import { Plus, MoreVertical, Trash2, Edit, Filter, FolderTree, Grid3X3, List, FileText } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useFeatures } from '@/hooks/useFeatures';
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  parent_id?: string;
-  is_active: boolean;
-  sort_order: number;
-  created_at: string;
-  updated_at: string;
-}
-
-const sampleCategories: Category[] = [
-  {
-    id: '1',
-    name: 'Programación',
-    slug: 'programacion',
-    description: 'Cursos de programación y desarrollo de software',
-    is_active: true,
-    sort_order: 1,
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z'
+// Definir datos de ejemplo
+const categories = [
+  { 
+    id: 1, 
+    name: 'Programación', 
+    slug: 'programacion', 
+    description: 'Cursos de programación y desarrollo de software', 
+    coursesCount: 24,
+    status: 'active' 
   },
-  {
-    id: '2',
-    name: 'Diseño Gráfico',
-    slug: 'diseno-grafico',
-    description: 'Cursos de diseño gráfico, UI/UX y artes visuales',
-    is_active: true,
-    sort_order: 2,
-    created_at: '2024-01-02T00:00:00Z',
-    updated_at: '2024-01-02T00:00:00Z'
+  { 
+    id: 2, 
+    name: 'Diseño', 
+    slug: 'diseno', 
+    description: 'Cursos de diseño gráfico y web', 
+    coursesCount: 18,
+    status: 'active' 
   },
-  {
-    id: '3',
-    name: 'Marketing Digital',
-    slug: 'marketing-digital',
-    description: 'Estrategias y técnicas de marketing online',
-    is_active: true,
-    sort_order: 3,
-    created_at: '2024-01-03T00:00:00Z',
-    updated_at: '2024-01-03T00:00:00Z'
+  { 
+    id: 3, 
+    name: 'Marketing', 
+    slug: 'marketing', 
+    description: 'Cursos de marketing digital y tradicional', 
+    coursesCount: 15,
+    status: 'active' 
   },
-  {
-    id: '4',
-    name: 'Desarrollo Web',
-    slug: 'desarrollo-web',
-    description: 'Cursos de HTML, CSS, JavaScript y frameworks web',
-    parent_id: '1',
-    is_active: true,
-    sort_order: 1,
-    created_at: '2024-01-04T00:00:00Z',
-    updated_at: '2024-01-04T00:00:00Z'
+  { 
+    id: 4, 
+    name: 'Negocios', 
+    slug: 'negocios', 
+    description: 'Cursos de administración y emprendimiento', 
+    coursesCount: 12,
+    status: 'active' 
   },
-  {
-    id: '5',
-    name: 'Desarrollo Móvil',
-    slug: 'desarrollo-movil',
-    description: 'Desarrollo de aplicaciones para iOS y Android',
-    parent_id: '1',
-    is_active: true,
-    sort_order: 2,
-    created_at: '2024-01-05T00:00:00Z',
-    updated_at: '2024-01-05T00:00:00Z'
-  }
+  { 
+    id: 5, 
+    name: 'Ciencia de Datos', 
+    slug: 'data-science', 
+    description: 'Cursos de análisis de datos y machine learning', 
+    coursesCount: 8,
+    status: 'active' 
+  },
+  { 
+    id: 6, 
+    name: 'Idiomas', 
+    slug: 'idiomas', 
+    description: 'Cursos para aprender diferentes idiomas', 
+    coursesCount: 22,
+    status: 'inactive' 
+  },
+  { 
+    id: 7, 
+    name: 'Fotografía', 
+    slug: 'fotografia', 
+    description: 'Cursos de fotografía y edición', 
+    coursesCount: 10,
+    status: 'active' 
+  },
+  { 
+    id: 8, 
+    name: 'Música', 
+    slug: 'musica', 
+    description: 'Cursos de teoría musical e instrumentos', 
+    coursesCount: 14,
+    status: 'active' 
+  },
+  { 
+    id: 9, 
+    name: 'Cocina', 
+    slug: 'cocina', 
+    description: 'Cursos de gastronomía y repostería', 
+    coursesCount: 9,
+    status: 'inactive' 
+  },
+  { 
+    id: 10, 
+    name: 'Salud y Bienestar', 
+    slug: 'salud-bienestar', 
+    description: 'Cursos de nutrición, fitness y meditación', 
+    coursesCount: 16,
+    status: 'active' 
+  },
 ];
 
-const checkFeatureEnabled = (features: any) => {
-  // Check if the enableCategoryManagement is defined in the FeaturesConfig
-  return features.enableCategoryManagement === true;
-};
+// Esquema de validación para categorías
+const formSchema = z.object({
+  name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres').max(50, 'El nombre no debe exceder 50 caracteres'),
+  slug: z.string().min(3, 'El slug debe tener al menos 3 caracteres').max(50, 'El slug no debe exceder 50 caracteres'),
+  description: z.string().max(200, 'La descripción no debe exceder 200 caracteres').optional(),
+  status: z.enum(['active', 'inactive']),
+});
+
+type CategoryFormValues = z.infer<typeof formSchema>;
 
 const CategoryManagement: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>(sampleCategories);
-  const [view, setView] = useState<'grid' | 'list' | 'tree'>('grid');
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const { features } = useFeatures();
-  
-  const form = useForm<Category>({
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const { featuresConfig } = useFeatures();
+
+  // Formulario de categoría
+  const form = useForm<CategoryFormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       slug: '',
       description: '',
-      parent_id: undefined,
-      is_active: true,
-      sort_order: 0
-    }
+      status: 'active',
+    },
   });
 
-  // Fetch categories
-  useEffect(() => {
-    // This would be an API call in a real application
-    // setCategories(fetchedCategories);
-  }, []);
-
-  const handleCreateCategory = () => {
-    // Reset form and open dialog
+  const resetForm = () => {
     form.reset({
       name: '',
       slug: '',
       description: '',
-      parent_id: undefined,
-      is_active: true,
-      sort_order: categories.length + 1
+      status: 'active',
     });
-    setCreateDialogOpen(true);
   };
 
-  const handleEditCategory = (category: Category) => {
+  // Manejadores para los diálogos
+  const handleEditCategory = (category: any) => {
     setSelectedCategory(category);
     form.reset({
-      ...category
+      name: category.name,
+      slug: category.slug,
+      description: category.description,
+      status: category.status,
     });
-    setEditDialogOpen(true);
+    setIsEditDialogOpen(true);
   };
 
-  const handleDeleteCategory = (category: Category) => {
+  const handleDeleteCategory = (category: any) => {
     setSelectedCategory(category);
-    setDeleteDialogOpen(true);
+    setIsDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
-    if (!selectedCategory) return;
-    
-    setIsLoading(true);
-    
-    // Simulating API request
-    setTimeout(() => {
-      setCategories(categories.filter(cat => cat.id !== selectedCategory.id));
-      toast.success('Categoría eliminada correctamente');
-      setDeleteDialogOpen(false);
-      setSelectedCategory(null);
-      setIsLoading(false);
-    }, 500);
-  };
-
-  const onSubmitForm = (data: Category) => {
-    setIsLoading(true);
-    
-    // Generate slug if not provided
-    if (!data.slug) {
-      data.slug = data.name
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w-]+/g, '');
+  const onSubmit = (values: CategoryFormValues) => {
+    console.log('Form Values:', values);
+    if (selectedCategory) {
+      // Lógica para actualizar categoría
+      console.log('Updating category:', selectedCategory.id, values);
+      setIsEditDialogOpen(false);
+    } else {
+      // Lógica para crear categoría
+      console.log('Creating category:', values);
+      setIsCreateDialogOpen(false);
     }
-    
-    // Simulating API request
-    setTimeout(() => {
-      if (editDialogOpen && selectedCategory) {
-        // Update existing category
-        setCategories(categories.map(cat => 
-          cat.id === selectedCategory.id ? { ...data, id: cat.id, updated_at: new Date().toISOString() } : cat
-        ));
-        toast.success('Categoría actualizada correctamente');
-        setEditDialogOpen(false);
-      } else {
-        // Create new category
-        const newCategory: Category = {
-          ...data,
-          id: `${Date.now()}`,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        setCategories([...categories, newCategory]);
-        toast.success('Categoría creada correctamente');
-        setCreateDialogOpen(false);
-      }
-      
-      setSelectedCategory(null);
-      setIsLoading(false);
-    }, 500);
+    resetForm();
   };
 
-  const getParentName = (parentId?: string) => {
-    if (!parentId) return 'Ninguna';
-    const parent = categories.find(cat => cat.id === parentId);
-    return parent ? parent.name : 'Desconocida';
-  };
+  // Filtrar categorías según término de búsqueda
+  const filteredCategories = categories.filter(
+    category => category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               category.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const renderCategoryGrid = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {categories.map(category => (
-        <Card key={category.id} className={`overflow-hidden ${!category.is_active ? 'opacity-70' : ''}`}>
-          <CardHeader className="p-4 pb-0 flex justify-between items-start">
-            <div>
-              <CardTitle className="text-lg">{category.name}</CardTitle>
-              <CardDescription>
-                {category.parent_id && (
-                  <span className="text-xs block">En: {getParentName(category.parent_id)}</span>
-                )}
-                <span className="text-xs">{category.slug}</span>
-              </CardDescription>
-            </div>
+  const isCategoryManagementEnabled = featuresConfig.enableCategoryManagement;
+
+  if (!isCategoryManagementEnabled) {
+    return (
+      <AdminPageLayout 
+        title="Gestión de Categorías" 
+        subtitle="Administra las categorías de cursos"
+      >
+        <div className="flex flex-col items-center justify-center h-96">
+          <BookOpen className="h-16 w-16 text-muted-foreground mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Función no disponible</h2>
+          <p className="text-muted-foreground text-center max-w-md mb-6">
+            La gestión de categorías está desactivada actualmente. 
+            Contacta con el administrador para habilitar esta función.
+          </p>
+          <Button asChild variant="outline">
+            <a href="/admin/settings">Ir a configuración</a>
+          </Button>
+        </div>
+      </AdminPageLayout>
+    );
+  }
+
+  return (
+    <AdminPageLayout 
+      title="Gestión de Categorías" 
+      subtitle="Administra las categorías de cursos"
+    >
+      <div className="space-y-6">
+        {/* Barra de herramientas */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-between">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar categorías..."
+              className="pl-8 w-full"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+              <Button
+                variant="ghost"
+                className="absolute right-0 top-0 h-9 w-9 p-0"
+                onClick={() => setSearchTerm('')}
+              >
+                <X className="h-4 w-4" />
+                <span className="sr-only">Limpiar</span>
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MoreVertical className="h-4 w-4" />
-                  <span className="sr-only">Acciones</span>
+                <Button variant="outline" className="min-w-[7rem]">
+                  Estado
+                  <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleEditCategory(category)}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  <span>Editar</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleDeleteCategory(category)}
-                  className="text-destructive focus:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  <span>Eliminar</span>
-                </DropdownMenuItem>
+                <DropdownMenuItem>Todos</DropdownMenuItem>
+                <DropdownMenuItem>Activos</DropdownMenuItem>
+                <DropdownMenuItem>Inactivos</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </CardHeader>
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {category.description || 'Sin descripción'}
-            </p>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-
-  const renderCategoryList = () => (
-    <div className="overflow-hidden rounded-md border">
-      <table className="w-full caption-bottom text-sm">
-        <thead className="border-b bg-muted/50">
-          <tr>
-            <th className="h-10 px-4 text-left font-medium">Nombre</th>
-            <th className="h-10 px-4 text-left font-medium">Slug</th>
-            <th className="h-10 px-4 text-left font-medium">Categoría padre</th>
-            <th className="h-10 px-4 text-left font-medium">Activa</th>
-            <th className="h-10 px-4 text-left font-medium">Acciones</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y">
-          {categories.map(category => (
-            <tr key={category.id} className={`${!category.is_active ? 'opacity-70' : ''}`}>
-              <td className="p-4">{category.name}</td>
-              <td className="p-4 text-muted-foreground">{category.slug}</td>
-              <td className="p-4">{getParentName(category.parent_id)}</td>
-              <td className="p-4">{category.is_active ? 'Sí' : 'No'}</td>
-              <td className="p-4">
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="icon" onClick={() => handleEditCategory(category)}>
-                    <Edit className="h-4 w-4" />
-                    <span className="sr-only">Editar</span>
-                  </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDeleteCategory(category)}>
-                    <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">Eliminar</span>
-                  </Button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-
-  const renderCategoryTree = () => {
-    // Simple implementation of tree view - a more sophisticated one would handle deeper nesting
-    const rootCategories = categories.filter(cat => !cat.parent_id);
-    
-    const renderCategory = (category: Category) => {
-      const children = categories.filter(cat => cat.parent_id === category.id);
-      
-      return (
-        <div key={category.id} className="border-l pl-4 my-2">
-          <div className="flex justify-between items-center py-2">
-            <div className="flex-1">
-              <div className="font-medium">{category.name}</div>
-              <div className="text-sm text-muted-foreground">{category.slug}</div>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="icon" onClick={() => handleEditCategory(category)}>
-                <Edit className="h-4 w-4" />
-                <span className="sr-only">Editar</span>
-              </Button>
-              <Button variant="ghost" size="icon" onClick={() => handleDeleteCategory(category)}>
-                <Trash2 className="h-4 w-4" />
-                <span className="sr-only">Eliminar</span>
-              </Button>
-            </div>
+            
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => {
+                  setSelectedCategory(null);
+                  resetForm();
+                }}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Nueva Categoría
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Crear Nueva Categoría</DialogTitle>
+                  <DialogDescription>
+                    Añade una nueva categoría para organizar los cursos
+                  </DialogDescription>
+                </DialogHeader>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nombre</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Nombre de la categoría" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="slug"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Slug</FormLabel>
+                          <FormControl>
+                            <Input placeholder="slug-de-la-categoria" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Identificador único para URLs
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Descripción</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Descripción breve de la categoría" 
+                              className="resize-none" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Estado</FormLabel>
+                          <div className="flex items-center gap-4">
+                            <FormControl>
+                              <div className="flex items-center space-x-2">
+                                <input
+                                  type="radio"
+                                  id="active"
+                                  value="active"
+                                  checked={field.value === 'active'}
+                                  onChange={() => field.onChange('active')}
+                                  className="h-4 w-4"
+                                />
+                                <Label htmlFor="active">Activo</Label>
+                              </div>
+                            </FormControl>
+                            <FormControl>
+                              <div className="flex items-center space-x-2">
+                                <input
+                                  type="radio"
+                                  id="inactive"
+                                  value="inactive"
+                                  checked={field.value === 'inactive'}
+                                  onChange={() => field.onChange('inactive')}
+                                  className="h-4 w-4"
+                                />
+                                <Label htmlFor="inactive">Inactivo</Label>
+                              </div>
+                            </FormControl>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <DialogFooter className="pt-4">
+                      <Button type="submit">Crear Categoría</Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
           </div>
-          {children.length > 0 && (
-            <div className="ml-2">
-              {children.map(renderCategory)}
-            </div>
-          )}
         </div>
-      );
-    };
-    
-    return (
-      <div className="space-y-2 p-2">
-        {rootCategories.map(renderCategory)}
-      </div>
-    );
-  };
 
-  // Esta función se usará cuando se cree la implementación real
-  const supportsNestedCategories = () => {
-    // En una implementación real, esto verificaría si la característica existe en features
-    // Por ahora, para pasar la compilación, verificamos una propiedad estándar
-    return checkFeatureEnabled(features);
-  };
+        {/* Tabla de categorías */}
+        <div className="border rounded-md">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead className="hidden md:table-cell">Descripción</TableHead>
+                <TableHead className="text-center">Cursos</TableHead>
+                <TableHead className="text-center">Estado</TableHead>
+                <TableHead className="text-right">Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredCategories.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    No se encontraron categorías.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredCategories.map((category) => (
+                  <TableRow key={category.id}>
+                    <TableCell className="font-medium">{category.name}</TableCell>
+                    <TableCell className="text-muted-foreground">{category.slug}</TableCell>
+                    <TableCell className="hidden md:table-cell max-w-xs truncate">
+                      {category.description}
+                    </TableCell>
+                    <TableCell className="text-center">{category.coursesCount}</TableCell>
+                    <TableCell className="text-center">
+                      {category.status === 'active' ? (
+                        <Badge variant="default" className="bg-green-500">Activo</Badge>
+                      ) : (
+                        <Badge variant="secondary">Inactivo</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => handleEditCategory(category)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                          <span className="sr-only">Editar</span>
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => handleDeleteCategory(category)}
+                        >
+                          <Trash className="h-4 w-4" />
+                          <span className="sr-only">Eliminar</span>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
 
-  return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-2xl">Gestión de Categorías</CardTitle>
-            <CardDescription>
-              Organiza el contenido en categorías para una mejor navegación
-            </CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={handleCreateCategory}>
-              <Plus className="h-4 w-4 mr-2" />
-              Nueva Categoría
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-between items-center mb-4">
-            <Tabs defaultValue="all" className="w-auto">
-              <TabsList>
-                <TabsTrigger value="all">Todas</TabsTrigger>
-                <TabsTrigger value="active">Activas</TabsTrigger>
-                <TabsTrigger value="inactive">Inactivas</TabsTrigger>
-              </TabsList>
-            </Tabs>
-            
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtrar
-              </Button>
-              
-              <div className="flex border rounded-md">
-                <Button 
-                  variant={view === 'grid' ? 'secondary' : 'ghost'} 
-                  size="sm" 
-                  className="rounded-r-none"
-                  onClick={() => setView('grid')}
-                >
-                  <Grid3X3 className="h-4 w-4" />
-                  <span className="sr-only">Vista de cuadrícula</span>
-                </Button>
-                <Button 
-                  variant={view === 'list' ? 'secondary' : 'ghost'} 
-                  size="sm"
-                  className="rounded-none"
-                  onClick={() => setView('list')}
-                >
-                  <List className="h-4 w-4" />
-                  <span className="sr-only">Vista de lista</span>
-                </Button>
-                <Button 
-                  variant={view === 'tree' ? 'secondary' : 'ghost'} 
-                  size="sm"
-                  className="rounded-l-none"
-                  onClick={() => setView('tree')}
-                  disabled={!supportsNestedCategories()}
-                >
-                  <FolderTree className="h-4 w-4" />
-                  <span className="sr-only">Vista de árbol</span>
-                </Button>
-              </div>
-            </div>
-          </div>
-          
-          {view === 'grid' && renderCategoryGrid()}
-          {view === 'list' && renderCategoryList()}
-          {view === 'tree' && renderCategoryTree()}
-          
-          {categories.length === 0 && (
-            <div className="text-center py-12 border rounded-lg border-dashed">
-              <FileText className="mx-auto h-12 w-12 text-muted-foreground opacity-50" />
-              <h3 className="mt-4 text-lg font-semibold">No hay categorías</h3>
-              <p className="mt-2 text-sm text-muted-foreground max-w-xs mx-auto">
-                No se han creado categorías todavía. Crea una categoría para organizar el contenido.
-              </p>
-              <Button className="mt-4" onClick={handleCreateCategory}>
-                <Plus className="h-4 w-4 mr-2" />
-                Nueva Categoría
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      
-      {/* Create/Edit Dialog */}
-      <Dialog open={createDialogOpen || editDialogOpen} onOpenChange={(open) => {
-        if (!open) {
-          setCreateDialogOpen(false);
-          setEditDialogOpen(false);
-        }
-      }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editDialogOpen ? 'Editar Categoría' : 'Crear Nueva Categoría'}
-            </DialogTitle>
-            <DialogDescription>
-              {editDialogOpen 
-                ? 'Actualiza los detalles de la categoría existente' 
-                : 'Completa la información para crear una nueva categoría'}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <form onSubmit={form.handleSubmit(onSubmitForm)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Nombre</Label>
-              <Input 
-                id="name" 
-                placeholder="Nombre de la categoría" 
-                {...form.register('name', { required: true })} 
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="slug">Slug (URL)</Label>
-              <Input 
-                id="slug" 
-                placeholder="nombre-categoria" 
-                {...form.register('slug')} 
-              />
-              <p className="text-xs text-muted-foreground">
-                Déjalo en blanco para generarlo automáticamente
-              </p>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="description">Descripción</Label>
-              <Input 
-                id="description" 
-                placeholder="Breve descripción de la categoría" 
-                {...form.register('description')} 
-              />
-            </div>
-            
-            {supportsNestedCategories() && (
-              <div className="space-y-2">
-                <Label htmlFor="parent_id">Categoría Padre</Label>
-                <select 
-                  id="parent_id"
-                  className="w-full flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
-                  {...form.register('parent_id')}
-                >
-                  <option value="">Ninguna (Categoría raíz)</option>
-                  {categories
-                    .filter(cat => !selectedCategory || cat.id !== selectedCategory.id)
-                    .map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))
-                  }
-                </select>
-              </div>
-            )}
-            
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="is_active" 
-                checked={form.watch('is_active')}
-                onCheckedChange={(checked) => 
-                  form.setValue('is_active', checked as boolean)
-                }
-              />
-              <Label htmlFor="is_active" className="text-sm font-normal">
-                Categoría activa
-              </Label>
-            </div>
-            
-            <DialogFooter>
-              <Button 
-                type="button"
-                variant="outline" 
+        {/* Diálogo de Edición */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Editar Categoría</DialogTitle>
+              <DialogDescription>
+                Modifica los detalles de la categoría seleccionada
+              </DialogDescription>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nombre</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Nombre de la categoría" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input placeholder="slug-de-la-categoria" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Identificador único para URLs
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Descripción</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Descripción breve de la categoría" 
+                          className="resize-none" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Estado</FormLabel>
+                      <div className="flex items-center gap-4">
+                        <FormControl>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="edit-active"
+                              value="active"
+                              checked={field.value === 'active'}
+                              onChange={() => field.onChange('active')}
+                              className="h-4 w-4"
+                            />
+                            <Label htmlFor="edit-active">Activo</Label>
+                          </div>
+                        </FormControl>
+                        <FormControl>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="edit-inactive"
+                              value="inactive"
+                              checked={field.value === 'inactive'}
+                              onChange={() => field.onChange('inactive')}
+                              className="h-4 w-4"
+                            />
+                            <Label htmlFor="edit-inactive">Inactivo</Label>
+                          </div>
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter className="pt-4">
+                  <Button type="submit">Guardar Cambios</Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Diálogo de Confirmación de Eliminación */}
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta acción eliminará la categoría "{selectedCategory?.name}" y no puede deshacerse.
+                Los cursos asociados a esta categoría no se eliminarán, pero perderán esta categorización.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction 
                 onClick={() => {
-                  setCreateDialogOpen(false);
-                  setEditDialogOpen(false);
+                  console.log('Deleting category:', selectedCategory?.id);
+                  setIsDeleteDialogOpen(false);
                 }}
+                className="bg-red-500 hover:bg-red-600"
               >
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Guardando...' : editDialogOpen ? 'Actualizar' : 'Crear'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar categoría?</AlertDialogTitle>
-            <AlertDialogDescription>
-              ¿Estás seguro de que deseas eliminar la categoría "{selectedCategory?.name}"?
-              Esta acción no se puede deshacer.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={confirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Eliminando...' : 'Eliminar'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+                Eliminar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </AdminPageLayout>
   );
 };
 
