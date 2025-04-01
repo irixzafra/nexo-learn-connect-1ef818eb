@@ -20,6 +20,8 @@ import CookiesPage from '@/pages/legal/CookiesPage';
 import AccessibilityPage from '@/pages/legal/AccessibilityPage';
 import ContactPage from '@/pages/ContactPage';
 import DynamicPage from '@/pages/DynamicPage';
+import Careers from '@/pages/Careers';
+import LeaderBoard from '@/pages/LeaderBoard';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -37,6 +39,8 @@ const PublicRoutes: React.FC = () => {
       <Route path="/scholarships" element={<PublicLayout><Scholarships /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
       <Route path="/unauthorized" element={<PublicLayout><Unauthorized /></PublicLayout>} />
+      <Route path="/careers" element={<PublicLayout><Careers /></PublicLayout>} />
+      <Route path="/leaderboard" element={<LeaderBoard />} />
       
       {/* Course related */}
       <Route path="/courses" element={<PublicLayout><CoursesCatalog /></PublicLayout>} />

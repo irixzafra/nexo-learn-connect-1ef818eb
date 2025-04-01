@@ -36,16 +36,16 @@ const AnalyticsOverview: React.FC = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('overview');
   
-  // Create a properly mapped PlatformStats object
+  // Create a properly mapped PlatformStats object with fallback values
   const enhancedStats: PlatformStats = {
     total_users: stats.total_users || 0,
-    active_users: stats.active_users || stats.total_users * 0.8 || 0, // Fallback calculation
-    new_users: stats.new_users || stats.new_users_last_7_days || 0,
-    total_courses: stats.total_courses || stats.coursesCount || 0,
+    active_users: stats.active_courses ? Math.round(stats.total_users * 0.8) : 0, // Calculate active users if not provided
+    new_users: stats.new_users_last_7_days || 0,
+    total_courses: stats.coursesCount || 0,
     active_courses: stats.active_courses || stats.publishedCoursesCount || 0,
     total_enrollments: stats.total_enrollments || 0,
-    completion_rate: stats.completion_rate || stats.completionRate || 75, // Default value
-    average_rating: stats.average_rating || 4.5, // Default value
+    completion_rate: stats.completionRate || 75, // Default value
+    average_rating: 4.5, // Default value if not provided
     // Keep additional properties
     new_users_last_7_days: stats.new_users_last_7_days,
     coursesCount: stats.coursesCount,

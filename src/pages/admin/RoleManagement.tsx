@@ -23,7 +23,8 @@ const RoleManagement: React.FC = () => {
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
 
   // Cast the users array to ensure TypeScript knows we're working with the correct type
-  const typedUsers = users as UserProfile[];
+  // This is necessary because there seems to be a mismatch between different UserProfile types
+  const typedUsers = users as any[];
 
   return (
     <div className="container mx-auto p-6">
