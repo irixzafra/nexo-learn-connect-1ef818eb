@@ -7,7 +7,7 @@ import { DesignSystemProvider, useDesignSystem } from '@/contexts/DesignSystemCo
 import { Button } from '@/components/ui/button';
 import { Undo2, Save, Eye, Paintbrush, PowerOff, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { FeaturesConfig } from '@/contexts/OnboardingContext';
+import type { FeaturesConfig } from '@/contexts/features/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';

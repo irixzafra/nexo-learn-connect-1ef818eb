@@ -294,8 +294,7 @@ const DynamicPage: React.FC = () => {
               table="page_blocks"
               className="space-y-8"
               onReorder={handleReorderBlocks}
-              onAddItem={(content, position) => handleAddBlock(content, position ? 'text' : 'text')}
-              resizable={true}
+              onAddItem={(content, position) => handleAddBlock(content, position)}
             />
           )}
         </div>

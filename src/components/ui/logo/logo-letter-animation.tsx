@@ -1,45 +1,44 @@
 
-
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 interface LogoLetterAnimationProps {
   text: string;
+  className?: string;
 }
 
-export const LogoLetterAnimation: React.FC<LogoLetterAnimationProps> = ({ text }) => {
-  const [hovered, setHovered] = useState(false);
-  
+export const LogoLetterAnimation: React.FC<LogoLetterAnimationProps> = ({ 
+  text, 
+  className 
+}) => {
   const letterVariants = {
     initial: { y: 0 },
     hover: (i: number) => ({
-      y: [-1, -4, -1],
+      y: [0, -5, 0],
       transition: {
-        duration: 0.3,
         delay: i * 0.05,
-        repeat: 0
+        duration: 0.5,
+        ease: "easeInOut"
       }
     })
   };
-  
+
   return (
-    <div 
-      className="flex" 
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+    <motion.div 
+      className={`flex text-2xl font-bold ${className || ''}`}
+      initial="initial"
+      whileHover="hover"
     >
       {text.split('').map((letter, i) => (
         <motion.span
-          key={i}
-          className="text-3xl font-bold text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-600"
-          custom={i}
+          key={`${letter}-${i}`}
           variants={letterVariants}
-          initial="initial"
-          animate={hovered ? "hover" : "initial"}
+          custom={i}
+          className="inline-block"
         >
           {letter}
         </motion.span>
       ))}
-    </div>
+    </motion.div>
   );
 };

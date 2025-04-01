@@ -3,8 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import SidebarNavigation from '../SidebarNavigation';
-import { useIsMobile } from '@/hooks/use-mobile';
+import RefactoredSidebarNavigation from '../sidebar/RefactoredSidebarNavigation';
 import { UserRoleType } from '@/types/auth';
 
 interface MobileSidebarProps {
@@ -39,7 +38,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ viewAsRole, trigge
         </SheetTrigger>
         <SheetContent side="left" className="w-[80%] sm:w-[350px] p-0">
           <div className="flex flex-col h-full">
-            <SidebarNavigation viewAsRole={viewAsRole} />
+            <RefactoredSidebarNavigation viewAsRole={viewAsRole} />
           </div>
         </SheetContent>
       </Sheet>

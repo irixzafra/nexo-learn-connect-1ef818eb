@@ -1,65 +1,61 @@
 
-import React, { useEffect } from 'react';
-import { Toaster } from "@/components/ui/toaster";
-import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
-import SidebarNavigation from '@/components/layout/SidebarNavigation';
-import { Sidebar, SidebarContent, SidebarTrigger } from '@/components/ui/sidebar';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { Toaster } from '@/components/ui/toaster';
+import AppHeader from '@/components/layout/AppHeader';
 import HeaderContent from '@/components/layout/HeaderContent';
-import { MobileSidebar } from '@/components/layout/header/MobileSidebar';
+import { UserRoleType } from '@/types/auth';
+import { SidebarProvider, Sidebar, SidebarContent } from '@/components/ui/sidebar';
+import SidebarNavigation from '@/components/layout/SidebarNavigation';
 
 interface AppLayoutProps {
   children: React.ReactNode;
   showHeader?: boolean;
   showAdminNavigation?: boolean;
+  viewAsRole?: UserRoleType | 'current';
+  onRoleChange?: (role: UserRoleType) => void;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ 
-  children,
+  children, 
   showHeader = true,
+  showAdminNavigation = false,
+  viewAsRole = 'current',
+  onRoleChange 
 }) => {
   const location = useLocation();
+  const isAdminPage = location.pathname.startsWith('/admin');
   
-  // Check if current page is an admin page
-  const isAdminPage = location.pathname.includes('/admin');
-  const shouldShowHeader = showHeader && !isAdminPage;
-
-  // Log toggle state for debugging
-  useEffect(() => {
-    console.log("Current route:", location.pathname);
-    console.log("Is admin page:", isAdminPage);
-  }, [location.pathname, isAdminPage]);
+  // Determine if we should show the main sidebar based on the route and props
+  const shouldShowMainSidebar = !isAdminPage || showAdminNavigation;
 
   return (
-    <SidebarProvider defaultOpen={!isAdminPage}>
-      <div className="flex min-h-screen w-full bg-background">
-        {!isAdminPage && (
-          <Sidebar variant="sidebar" collapsible="icon">
-            <SidebarContent>
-              <SidebarNavigation viewAsRole="current" />
+    <SidebarProvider>
+      <div className="flex min-h-screen bg-background">
+        {shouldShowMainSidebar && (
+          <Sidebar className="border-r bg-sidebar">
+            <SidebarContent className="p-0">
+              <SidebarNavigation 
+                viewAsRole={viewAsRole} 
+                onRoleChange={onRoleChange} 
+              />
             </SidebarContent>
           </Sidebar>
         )}
         
-        <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
-          {shouldShowHeader && <HeaderContent />}
+        <div className="flex flex-col flex-1">
+          {showHeader && (
+            <AppHeader
+              viewAsRole={viewAsRole}
+              onRoleChange={onRoleChange}
+            />
+          )}
           
-          <main className="flex-1 w-full">
+          <main className="flex-1">
             {children}
           </main>
         </div>
-        
-        {!isAdminPage && (
-          <>
-            <MobileSidebar viewAsRole="current" />
-            {/* Botón visible para alternar sidebar en escritorio */}
-            <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 md:block">
-              <SidebarTrigger className="shadow-lg" />
-            </div>
-          </>
-        )}
       </div>
-      
       <Toaster />
     </SidebarProvider>
   );

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -8,12 +7,14 @@ import { GripVertical, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 export interface AdminTabItem {
-  value: string;
   label: string;
-  icon: React.ReactNode;
+  value: string;
+  icon?: React.ReactNode;
   content: React.ReactNode;
-  disabled?: boolean;
   dataTag?: string;
+  route?: string;
+  className?: string;
+  disabled?: boolean;
 }
 
 interface AdminNavTabsProps {
@@ -42,7 +43,6 @@ const AdminNavTabs: React.FC<AdminNavTabsProps> = ({
   const { isEditMode, isReorderMode } = useEditMode();
   const [tabs, setTabs] = React.useState<AdminTabItem[]>(initialTabs);
 
-  // Update tabs when props change
   React.useEffect(() => {
     setTabs(initialTabs);
   }, [initialTabs]);

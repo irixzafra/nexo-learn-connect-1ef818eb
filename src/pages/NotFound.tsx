@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Home, BookOpen, User, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import PublicLayout from '@/layouts/PublicLayout';
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
@@ -55,8 +56,8 @@ const NotFound: React.FC = () => {
     }
   };
 
-  return (
-    <div className="container mx-auto flex items-center justify-center min-h-[80vh] p-6">
+  const notFoundContent = (
+    <div className="w-full flex items-center justify-center min-h-[80vh] p-6">
       <div className="text-center">
         <h1 className="text-9xl font-bold text-primary mb-4">404</h1>
         <h2 className="text-3xl font-bold mb-2">Página no encontrada</h2>
@@ -98,6 +99,12 @@ const NotFound: React.FC = () => {
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <PublicLayout>
+      {notFoundContent}
+    </PublicLayout>
   );
 };
 

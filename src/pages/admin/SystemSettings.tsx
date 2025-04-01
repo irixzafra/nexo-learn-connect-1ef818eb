@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import { 
@@ -14,53 +14,34 @@ import {
   ShieldCheck,
   DatabaseZap,
   Globe,
-  Layout
+  Layout,
+  Book
 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
 import GeneralSettings from '@/features/admin/components/settings/GeneralSettings';
 import FeaturesSettings from '@/features/admin/components/settings/FeaturesSettings';
 import ConnectionsSettings from '@/features/admin/components/settings/ConnectionsSettings';
 import SecuritySettings from '@/features/admin/components/settings/SecuritySettings';
 import DataSettings from '@/features/admin/components/settings/DataSettings';
-import { FeaturesConfig } from '@/contexts/OnboardingContext';
+import AppearanceSettings from '@/features/admin/components/settings/AppearanceSettings';
+import ContentSettings from '@/features/admin/components/settings/ContentSettings';
+import OnboardingSettings from '@/features/admin/components/settings/OnboardingSettings';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { useEditMode } from '@/contexts/EditModeContext';
+import { toast } from 'sonner';
+import { useFeatures } from '@/contexts/features/FeaturesContext';
 
+/**
+ * Página de configuración del sistema para administradores
+ */
 const SystemSettings: React.FC = () => {
-  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({
-    enableEditMode: false, // Configuración inicial para edición en línea
-    enableContentReordering: false // Ya no necesitamos esta propiedad separada
-  } as FeaturesConfig);
   const [isSaving, setIsSaving] = useState(false);
   const { tab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
   const { designFeatureEnabled, toggleDesignFeature } = useDesignSystem();
   const { setEditModeEnabled } = useEditMode();
+  const { featuresConfig, toggleFeature, isLoading } = useFeatures();
   
-  useEffect(() => {
-    // Sincronizar el estado de EditMode con el featuresConfig
-    setEditModeEnabled(featuresConfig.enableEditMode || false);
-  }, [featuresConfig.enableEditMode, setEditModeEnabled]);
-  
-  const handleToggleFeature = (feature: keyof FeaturesConfig, value: boolean) => {
-    setFeaturesConfig(prev => ({
-      ...prev,
-      [feature]: value
-    }));
-    
-    // Actualizar el estado de edición en línea si es esa característica
-    if (feature === 'enableEditMode') {
-      setEditModeEnabled(value);
-    }
-    
-    // Show toast for feedback
-    toast.success(`Configuración actualizada: ${feature} ${value ? 'activado' : 'desactivado'}`);
-  };
-
   const handleToggleDesignSystem = async () => {
     try {
       await toggleDesignFeature(!designFeatureEnabled);
@@ -78,52 +59,61 @@ const SystemSettings: React.FC = () => {
     }
   };
 
+  // Create wrapper function to convert Promise-based toggleFeature to sync function
+  const handleToggleFeature = (feature: keyof typeof featuresConfig, value: boolean) => {
+    toggleFeature(feature, value).catch(err => {
+      console.error('Error toggling feature', err);
+      toast.error('Error al cambiar característica');
+    });
+  };
+
   const tabs: AdminTabItem[] = [
     {
       value: 'general',
       label: 'General',
       icon: <Settings className="h-4 w-4" />,
       dataTag: "settings-tab-general",
-      content: (
-        <div className="space-y-6">
-          <GeneralSettings />
-          
-          {/* Design System Switch */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <h3 className="text-lg font-medium">Sistema de Diseño</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Activa o desactiva el sistema de diseño personalizado
-                  </p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Label htmlFor="design-system-toggle">
-                    {designFeatureEnabled ? 'Activado' : 'Desactivado'}
-                  </Label>
-                  <Switch
-                    id="design-system-toggle"
-                    checked={designFeatureEnabled}
-                    onCheckedChange={handleToggleDesignSystem}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )
+      content: <GeneralSettings />
     },
     {
       value: 'features',
       label: 'Funcionalidades',
       icon: <ToggleRight className="h-4 w-4" />,
       dataTag: "settings-tab-features",
-      content: <FeaturesSettings 
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
+      content: <FeaturesSettings />
+    },
+    {
+      value: 'appearance',
+      label: 'Apariencia',
+      icon: <Palette className="h-4 w-4" />,
+      dataTag: "settings-tab-appearance",
+      content: <AppearanceSettings 
+                featuresConfig={featuresConfig} 
+                onToggleFeature={handleToggleFeature} 
+                isLoading={isLoading} 
+              />
+    },
+    {
+      value: 'content',
+      label: 'Contenido',
+      icon: <Layout className="h-4 w-4" />,
+      dataTag: "settings-tab-content",
+      content: <ContentSettings 
+                featuresConfig={featuresConfig} 
+                onToggleFeature={handleToggleFeature} 
+                isLoading={isLoading} 
+              />
+    },
+    {
+      value: 'onboarding',
+      label: 'Onboarding',
+      icon: <Book className="h-4 w-4" />,
+      dataTag: "settings-tab-onboarding",
+      content: <OnboardingSettings 
+                featuresConfig={featuresConfig} 
+                onToggleFeature={handleToggleFeature} 
+                isLoading={isLoading} 
+              />
     },
     {
       value: 'connections',
@@ -138,10 +128,10 @@ const SystemSettings: React.FC = () => {
       icon: <ShieldCheck className="h-4 w-4" />,
       dataTag: "settings-tab-security",
       content: <SecuritySettings 
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
+                featuresConfig={featuresConfig} 
+                onToggleFeature={handleToggleFeature} 
+                isLoading={isLoading} 
+              />
     },
     {
       value: 'data',
@@ -149,10 +139,10 @@ const SystemSettings: React.FC = () => {
       icon: <DatabaseZap className="h-4 w-4" />,
       dataTag: "settings-tab-data",
       content: <DataSettings 
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
+                featuresConfig={featuresConfig}
+                onToggleFeature={handleToggleFeature}
+                isLoading={isLoading}
+              />
     }
   ];
   
