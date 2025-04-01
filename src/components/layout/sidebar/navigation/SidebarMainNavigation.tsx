@@ -103,6 +103,7 @@ interface SidebarMainNavigationProps {
   messagesCount: number;
   notificationsCount: number;
   getHomePath: () => string;
+  hideOnAdminPages?: boolean;
 }
 
 const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
@@ -110,7 +111,8 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   isCollapsed,
   messagesCount,
   notificationsCount,
-  getHomePath
+  getHomePath,
+  hideOnAdminPages = false
 }) => {
   // Obtener menús filtrados por rol
   const menus = getNavigationByRole(effectiveRole);

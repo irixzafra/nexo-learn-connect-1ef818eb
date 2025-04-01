@@ -33,7 +33,7 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   const { designFeatureEnabled } = useDesignSystem();
   
   return (
-    <AppLayout showHeader={false} showAdminNavigation={false}>
+    <AppLayout showHeader={false} showAdminNavigation={true}>
       <div className="flex-1 max-w-full p-6">
         <div className="container mx-auto space-y-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

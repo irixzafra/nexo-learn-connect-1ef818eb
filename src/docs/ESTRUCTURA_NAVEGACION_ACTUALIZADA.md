@@ -1,5 +1,5 @@
 
-# ESTRUCTURA DE NAVEGACIÓN - NEXO LEARNING (ACTUALIZADO)
+# ESTRUCTURA DE NAVEGACIÓN - NEXO LEARNING (ACTUALIZADA)
 
 Este documento mantiene un registro actualizado de la estructura de navegación del sistema, para facilitar decisiones sobre dónde ubicar nuevos elementos o modificar los existentes.
 
@@ -7,12 +7,26 @@ Este documento mantiene un registro actualizado de la estructura de navegación 
 
 La navegación se compone de los siguientes elementos principales:
 
-1. **Configuración Centralizada** - `/src/config/navigation/` define todos los menús del sistema 
-2. **Sidebar Principal** - Menú lateral que varía según el rol del usuario
-3. **MobileSidebar** - Versión adaptada para dispositivos móviles
-4. **Barra Superior** - Con acciones rápidas y perfil de usuario
-5. **Breadcrumbs** - En páginas internas para facilitar la navegación
-6. **Footer** - Con enlaces complementarios y legales
+1. **Configuración Centralizada** - `/src/config/navigation` define todos los menús del sistema 
+2. **Sidebar Principal** - Menú lateral que varía según el rol del usuario y tipo de página (admin vs user)
+3. **Nivel 1 (Categorías)** - Grupos principales de navegación en la barra lateral
+4. **Nivel 2 (Subcategorías)** - Elementos dentro de cada grupo, expandibles/colapsables
+5. **Nivel 3 (Tabs)** - Tabs contextuales dentro de cada página para opciones específicas
+
+## Tipos de Navegación
+
+El sistema ahora distingue claramente entre dos modos de navegación:
+
+1. **Navegación General** - Presente en la mayoría de las páginas del usuario
+2. **Navegación Administrativa** - Específica para las páginas bajo `/admin/*`
+
+## Arquitectura de Navegación
+
+La solución implementada para evitar la duplicidad de menús en las páginas de administración:
+
+1. `ConditionalSidebar` - Componente que decide qué tipo de navegación mostrar basado en la ruta actual
+2. `showAdminNavigation` - Prop en AppLayout que controla explícitamente si mostrar o no la barra de administración
+3. `AdminLayout` - Componente específico para las páginas de administración que configura correctamente la navegación
 
 ## Estado de Implementación
 
@@ -22,135 +36,135 @@ Para mantener claridad sobre el estado de desarrollo:
 - 🚧 **Planificado** - Definido pero no implementado
 - ❌ **Descartado** - Ya no forma parte del diseño actual
 
-## Configuración Centralizada de Menús
+## Estructura de Navegación
 
-La configuración de todos los menús del sistema se encuentra centralizada en `/src/config/navigation/`.
+### Navegación General (Nivel 1 y 2)
 
-### Principales elementos:
+1. **Inicio** ✅
+   - Dashboard
+   - Notificaciones
 
-- **mainNavigation** - Menú principal accesible para todos los roles
-- **adminNavigation** - Menú administrativo específico para roles autorizados
-- **gamificationNavigation** - Menú de gamificación para estudiantes
+2. **Mis Cursos** ✅
+   - En Progreso
+   - Completados
 
-### Estructura de configuración:
+3. **Comunidad** ✅
+   - Foros
+   - Mensajes
 
-```typescript
-export interface MenuItem {
-  icon: React.ElementType;   // Icono del elemento (Lucide Icons)
-  label: string;             // Texto visible
-  path: string;              // Ruta de navegación 
-  badge?: number | string;   // Opcional: Insignia numérica o texto
-  disabled?: boolean;        // Opcional: Estado deshabilitado
-  description?: string;      // Opcional: Descripción para tooltip
-  requiredRole?: UserRoleType | UserRoleType[]; // Roles que pueden ver este ítem
-  children?: MenuItem[];     // Opcional: Submenús
-}
-```
+4. **Explorar** ✅
+   - Catálogo
+   - Rutas de Aprendizaje
 
-### Helpers disponibles:
+5. **Profesor** (roles Profesor y Admin) ✅
+   - Mis Cursos
+   - Estudiantes
 
-- **filterMenuItemsByRole** - Filtra ítems según el rol del usuario
-- **getNavigationByRole** - Obtiene todos los menús filtrados por rol
-- **getHomePathByRole** - Determina la ruta de inicio según el rol
+6. **Gestión Académica** (rol Admin) ✅
+   - Cursos
+   - Usuarios
+   - Certificaciones
 
-## Navegación por Rol
+7. **Finanzas** (rol Admin) ✅
+   - Transacciones
+   - Informes
+   - Facturación
+
+8. **Configuración** ✅
+   - General
+   - Seguridad
+   - Notificaciones
+   - Personalización
+
+### Navegación Administrativa (Específica para `/admin/*`)
+
+1. **Dashboard** ✅
+2. **Usuarios** ✅
+   - Lista de Usuarios
+   - Roles y Permisos
+3. **Cursos** ✅
+   - Todos los Cursos
+   - Categorías
+   - Rutas de Aprendizaje
+   - Certificados
+4. **Finanzas** ✅
+   - Resumen
+   - Facturas
+   - Suscripciones
+   - Movimientos Bancarios
+   - Alertas
+5. **Diseño** ✅
+   - Componentes
+   - Temas
+   - Plantillas
+6. **Páginas** ✅
+   - Todas las Páginas
+   - Crear Página
+   - Plantillas
+7. **Analíticas** ✅
+   - Visión General
+   - Usuarios
+   - Cursos
+   - Ingresos
+   - Rendimiento
+   - Engagement
+8. **Configuración** ✅
+   - General
+   - Seguridad
+   - Integraciones
+   - Base de Datos
+
+### Nivel 3 (Tabs contextuales)
+
+Las tabs son específicas para cada página y se implementan a través de los componentes:
+- `AdminNavTabs`: Para secciones administrativas
+- `AdminTabs`: Para representaciones alternativas de tabs
+
+## Componentes Clave de Navegación
+
+- **SidebarMainNavigation**: Navegación principal para usuarios
+- **AdminNavigation**: Navegación específica para administración
+- **ConditionalSidebar**: Determina qué navegación mostrar basado en la ruta
+- **SidebarNavGroup**: Grupos expandibles de navegación (Nivel 1)
+- **SidebarNavItem**: Elementos individuales de navegación (Nivel 2)
+- **AdminNavTabs/AdminTabs**: Tabs para navegación contextual (Nivel 3)
+
+## Solución de Problemas Comunes
+
+1. **Duplicidad de menús**: Resuelta mediante ConditionalSidebar que cambia la navegación según la ruta
+2. **Permisos y visibilidad**: Cada elemento tiene definido `requiredRole` para filtrar por rol de usuario
+3. **Mostrar/ocultar elementos**: Props como `showAdminNavigation` controlan la visibilidad explícitamente
+4. **Navegación anidada**: Estructura clara de nivel 1 > nivel 2 > nivel 3 con separación de responsabilidades
+
+## Estructura por Rol
 
 ### Estudiante (student)
-- **Inicio** - `/home`
-- **Explorar Cursos** - `/courses`
-- **Mis Cursos** - `/home/my-courses`
-- **Comunidad** - `/community`
-- **Mensajes** - `/messages`
-- **Notificaciones** - `/notifications`
-- **Perfil** - `/profile`
-- **Logros** (Gamificación) - `/gamification/achievements`
+- Inicio (Dashboard, Notificaciones)
+- Mis Cursos (En Progreso, Completados)
+- Comunidad (Foros, Mensajes)
+- Explorar (Catálogo, Rutas de Aprendizaje)
+- Configuración (General, Seguridad, Notificaciones)
 
 ### Instructor
-- **Inicio** - `/instructor/dashboard`
-- **Explorar Cursos** - `/courses`
-- **Mis Cursos** (como instructor) - `/instructor/courses`
-- **Comunidad** - `/community`
-- **Mensajes** - `/messages`
-- **Notificaciones** - `/notifications`
-- **Administración** (Limitada) - `/admin/dashboard`
-- **Perfil** - `/profile`
+- Todo lo de estudiante
+- Profesor (Mis Cursos, Estudiantes)
 
 ### Administrador
-- **Inicio** - `/admin/dashboard`
-- **Usuarios** - `/admin/users`
-- **Cursos** - `/admin/courses`
-- **Rutas de Aprendizaje** - `/admin/learning-paths`
-- **Facturación** - `/admin/billing`
-- **Datos de Prueba** - `/admin/test-data`
-- **Páginas** - `/admin/pages`
-- **Analíticas** - `/admin/analytics`
-- **Configuración** - `/admin/settings`
-- **Perfil** - `/profile`
-
-## Componentes de Navegación
-
-### Desktop
-
-- **SidebarMainNavigation** - Navegación principal en la barra lateral
-- **AdministracionNavigation** - Sección de administración en la barra lateral
-- **GamificationNavigation** - Sección de gamificación en la barra lateral
-
-### Mobile
-
-- **MobileSidebar** - Componente específico para navegación en dispositivos móviles
-  - Utiliza la misma configuración que el sidebar desktop
-  - Se activa mediante un botón flotante en la esquina inferior izquierda
-  - Implementa un patrón drawer (deslizante) para mostrar el menú
-
-## Estructura de Rutas
-
-Las rutas están organizadas en diferentes archivos según su propósito:
-
-- **AppRouter.tsx** - Router principal, punto de entrada
-- **AdminRoutes.tsx** - Rutas administrativas (/admin/*)
-- **UserRoutes.tsx** - Rutas para estudiantes (/home/*)
-- **InstructorRoutes.tsx** - Rutas para instructores (/instructor/*)
-- **PublicRoutes.tsx** - Rutas públicas accesibles sin autenticación
-
-### Layouts asociados a rutas
-
-- **PublicLayout** - Para rutas públicas
-- **AppLayout** - Layout general para usuarios autenticados
-- **AdminPageLayout** - Layout específico para sección administrativa
-
-## Patrón de Navegación Mobile-First
-
-La navegación ha sido diseñada siguiendo un patrón mobile-first:
-
-1. Los componentes usan clases responsivas de Tailwind (md:hidden, lg:flex, etc.)
-2. MobileSidebar proporciona una experiencia optimizada para dispositivos pequeños
-3. La configuración centralizada permite adaptarse a diferentes tamaños de pantalla sin duplicar lógica
-4. La detección de dispositivo móvil se realiza mediante el hook `use-mobile.ts`
-
-## Configuración de Breakpoints
-
-Los breakpoints principales definidos en tailwind.config.ts:
-
-- **sm**: 640px - Teléfonos en modo paisaje
-- **md**: 768px - Tablets
-- **lg**: 1024px - Laptops
-- **xl**: 1280px - Desktops
-- **2xl**: 1536px - Pantallas grandes
+- Todo lo anterior
+- Gestión Académica (Cursos, Usuarios, Certificaciones)
+- Finanzas (Transacciones, Informes, Facturación)
+- Configuración (opciones extendidas)
+- Acceso a la navegación administrativa específica
 
 ## Notas de Implementación
 
-1. Todos los ítems de menú deben definirse en `navigation/mainNavigation.ts`, `navigation/adminNavigation.ts` o `navigation/gamificationNavigation.ts`
-2. Para añadir un nuevo ítem de navegación, actualice el archivo de configuración correspondiente
-3. Para modificar permisos, ajuste la propiedad `requiredRole` en el ítem correspondiente
-4. El sistema de navegación adapta automáticamente los menús según el rol del usuario y el tamaño de pantalla
-
-## Mejoras Planificadas
-
-- 🚧 Submenús anidados en menús principales
-- 🚧 Sistema de favoritos en la navegación
-- 🚧 Menú contextual basado en la ruta actual
-- 🚧 Persistencia de estado de navegación entre sesiones
+1. La navegación se basa en configuración centralizada en `/src/config/navigation`
+2. Los grupos y elementos se filtran automáticamente según el rol del usuario
+3. El sistema ahora detecta automáticamente páginas de administración y ajusta la navegación
+4. Se implementan badges para notificaciones y mensajes no leídos
+5. La arquitectura garantiza que no haya duplicación de menús ni elementos de navegación
 
 ---
 
-Documento actualizado: [Fecha actual]
+Documento actualizado: Junio 2024
+

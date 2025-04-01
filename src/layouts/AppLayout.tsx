@@ -1,47 +1,61 @@
 
 import React from 'react';
-import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
-import { Outlet } from 'react-router-dom';
-import { UserRoleType } from '@/types/auth';
-import SidebarNavigation from '@/components/layout/SidebarNavigation';
+import { useLocation } from 'react-router-dom';
+import { Toaster } from '@/components/ui/toaster';
 import AppHeader from '@/components/layout/AppHeader';
-import { cn } from '@/lib/utils';
+import HeaderContent from '@/components/layout/HeaderContent';
+import { UserRoleType } from '@/types/auth';
+import { SidebarProvider, Sidebar, SidebarContent } from '@/components/ui/sidebar';
+import SidebarNavigation from '@/components/layout/SidebarNavigation';
 
 interface AppLayoutProps {
-  children?: React.ReactNode;
+  children: React.ReactNode;
   showHeader?: boolean;
   showAdminNavigation?: boolean;
   viewAsRole?: UserRoleType | 'current';
   onRoleChange?: (role: UserRoleType) => void;
 }
 
-const AppLayout: React.FC<AppLayoutProps> = ({
-  children,
+const AppLayout: React.FC<AppLayoutProps> = ({ 
+  children, 
   showHeader = true,
   showAdminNavigation = false,
   viewAsRole = 'current',
-  onRoleChange
+  onRoleChange 
 }) => {
+  const location = useLocation();
+  const isAdminPage = location.pathname.startsWith('/admin');
+  
+  // Determine if we should show the main sidebar based on the route and props
+  const shouldShowMainSidebar = !isAdminPage || showAdminNavigation;
+
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <SidebarNavigation 
-          viewAsRole={viewAsRole} 
-          onRoleChange={onRoleChange} 
-        />
+      <div className="flex min-h-screen bg-background">
+        {shouldShowMainSidebar && (
+          <Sidebar className="border-r bg-sidebar">
+            <SidebarContent className="p-0">
+              <SidebarNavigation 
+                viewAsRole={viewAsRole} 
+                onRoleChange={onRoleChange} 
+              />
+            </SidebarContent>
+          </Sidebar>
+        )}
         
-        <div className="flex-1 flex flex-col">
-          {showHeader && <AppHeader />}
+        <div className="flex flex-col flex-1">
+          {showHeader && (
+            <AppHeader>
+              <HeaderContent onRoleChange={onRoleChange} />
+            </AppHeader>
+          )}
           
-          <main className={cn(
-            "flex-1 flex flex-col",
-            showAdminNavigation ? "pt-0" : "pt-0"
-          )}>
-            {/* The main content - either passed children or outlet from router */}
-            {children || <Outlet />}
+          <main className="flex-1">
+            {children}
           </main>
         </div>
       </div>
+      <Toaster />
     </SidebarProvider>
   );
 };
