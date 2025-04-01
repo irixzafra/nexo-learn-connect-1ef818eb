@@ -37,8 +37,8 @@ const FloatingEditModeToggle: React.FC = () => {
   const handleToggleEditMode = () => {
     toggleEditMode();
     if (!isEditMode) {
-      toast.success('Modo edición universal activado. ¡Edita todo lo que quieras!', {
-        description: 'Puedes editar textos, reordenar elementos y más.'
+      toast.success('Modo edición universal activado en todas las páginas', {
+        description: 'Puedes navegar entre páginas manteniendo el modo edición activo.'
       });
     }
   };
@@ -88,7 +88,7 @@ const FloatingEditModeToggle: React.FC = () => {
           </TooltipTrigger>
           <TooltipContent side="left" className="font-medium">
             <p>Activar modo edición universal</p>
-            <p className="text-xs text-muted-foreground">Edita cualquier elemento de la página</p>
+            <p className="text-xs text-muted-foreground">Edita elementos en cualquier página del sitio</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -150,7 +150,7 @@ const FloatingEditModeToggle: React.FC = () => {
           </div>
           
           <p className="text-xs text-muted-foreground italic mb-2">
-            Todos los cambios se guardan automáticamente
+            Puedes navegar entre páginas manteniendo el modo edición activo
           </p>
         </Card>
         
@@ -173,6 +173,7 @@ const FloatingEditModeToggle: React.FC = () => {
         </TooltipProvider>
       </div>
 
+      {/* Dialog for AI assistance */}
       <Dialog open={isAIHelpOpen} onOpenChange={setIsAIHelpOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -181,20 +182,20 @@ const FloatingEditModeToggle: React.FC = () => {
               Asistente de Edición con IA
             </DialogTitle>
             <DialogDescription>
-              Indica qué elemento quieres modificar y qué cambios deseas aplicar.
+              Indica qué elemento visible quieres modificar y qué cambios deseas aplicar.
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Selector del elemento:</label>
+              <label className="text-sm font-medium">Selector del elemento visible:</label>
               <Input
-                placeholder="Nombre o ID del elemento (ej: 'menú principal', 'banner de inicio')"
+                placeholder="Nombre o ID del elemento visible (ej: 'menú principal', 'banner de inicio')"
                 value={elementSelector}
                 onChange={(e) => setElementSelector(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                Describe el elemento que quieres modificar de forma clara
+                Describe el elemento visible que quieres modificar de forma clara
               </p>
             </div>
             

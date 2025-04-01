@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { Pencil, Check, X, Wand2, TagIcon } from 'lucide-react';
@@ -58,6 +59,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
   const [elementTags, setElementTags] = useState<string[]>(tags);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
+  // Update local state when props change
   useEffect(() => {
     setEditValue(value);
   }, [value]);
@@ -66,19 +68,22 @@ const InlineEdit: React.FC<InlineEditProps> = ({
     setElementTags(tags);
   }, [tags]);
 
+  // Focus the input when entering edit mode
   useEffect(() => {
     if (editing && inputRef.current) {
       inputRef.current.focus();
     }
   }, [editing]);
 
+  // If not in edit mode, just render the text
   if (!isEditMode) {
-    return <div className={className}>{value}</div>;
+    return <div className={className}>{value || placeholder}</div>;
   }
 
   const handleClick = () => {
     if (!editing) {
       setEditing(true);
+      console.log(`Started editing ${field} in ${table} with ID ${id}`);
     }
   };
 
@@ -90,6 +95,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
 
   const handleSave = async () => {
     if (editValue !== value) {
+      console.log(`Saving changes to ${field} in ${table} with ID ${id}`);
       const success = await updateText(table, id, field, editValue);
       if (success && onSave) {
         onSave(editValue);
@@ -101,10 +107,11 @@ const InlineEdit: React.FC<InlineEditProps> = ({
   const handleCancel = () => {
     setEditValue(value);
     setEditing(false);
+    console.log(`Cancelled editing ${field} in ${table} with ID ${id}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !multiline) {
       e.preventDefault();
       handleSave();
     } else if (e.key === 'Escape') {
@@ -140,6 +147,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
     }
   };
 
+  // Render the appropriate content based on editing state
   const renderContent = () => {
     if (editing) {
       return (
@@ -152,7 +160,6 @@ const InlineEdit: React.FC<InlineEditProps> = ({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               className={cn("min-h-[100px] p-2 border-2 border-primary focus:border-primary", className)}
-              onBlur={handleSave}
               autoFocus
             />
           ) : (
@@ -164,7 +171,6 @@ const InlineEdit: React.FC<InlineEditProps> = ({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               className={cn("border-2 border-primary", className)}
-              onBlur={handleSave}
               autoFocus
             />
           )}
@@ -211,6 +217,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
       );
     }
 
+    // Display the value with edit UI when not editing
     return (
       <TooltipProvider>
         <Tooltip>
@@ -262,6 +269,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
     <>
       {renderContent()}
       
+      {/* AI Dialog */}
       <Dialog open={isAIDialogOpen} onOpenChange={setIsAIDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -305,6 +313,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
         </DialogContent>
       </Dialog>
 
+      {/* Tagging Dialog */}
       <Dialog open={isTaggingOpen} onOpenChange={setIsTaggingOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>

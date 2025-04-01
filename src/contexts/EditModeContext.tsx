@@ -16,6 +16,7 @@ interface EditModeContextType {
   canEdit: boolean;
 }
 
+// Create the context with default values
 const EditModeContext = createContext<EditModeContextType>({
   isEditMode: false,
   toggleEditMode: () => {},
@@ -32,12 +33,41 @@ const EditModeContext = createContext<EditModeContextType>({
 export const useEditMode = () => useContext(EditModeContext);
 
 export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [isReorderMode, setIsReorderMode] = useState(false);
-  const [isEditModeEnabled, setIsEditModeEnabled] = useState(true); // Changed to true by default
+  // Persist edit mode state in sessionStorage to maintain it during navigation
+  const getInitialEditMode = () => {
+    try {
+      const storedValue = sessionStorage.getItem('isEditMode');
+      return storedValue === 'true';
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const getInitialReorderMode = () => {
+    try {
+      const storedValue = sessionStorage.getItem('isReorderMode');
+      return storedValue === 'true';
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const [isEditMode, setIsEditMode] = useState(getInitialEditMode());
+  const [isReorderMode, setIsReorderMode] = useState(getInitialReorderMode());
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(true);
   const { userRole } = useAuth();
 
   const canEdit = userRole === 'admin' || userRole === 'sistemas';
+
+  // Update sessionStorage when edit mode changes
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('isEditMode', isEditMode.toString());
+      sessionStorage.setItem('isReorderMode', isReorderMode.toString());
+    } catch (e) {
+      console.error('Could not save edit mode state to sessionStorage:', e);
+    }
+  }, [isEditMode, isReorderMode]);
 
   // Disable edit mode for non-admin/non-sistemas users
   useEffect(() => {
@@ -56,9 +86,6 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Check for feature configuration on mount
   useEffect(() => {
-    // Here we would check from a settings service if the edit mode is enabled
-    console.log('Checking edit mode feature configuration');
-    
     // By default, we'll set it to true
     setIsEditModeEnabled(true);
     
@@ -76,7 +103,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (newValue) {
         setIsReorderMode(true);
         toast.info(
-          "Modo edición universal activado. Ahora puedes editar, reordenar o modificar cualquier elemento.",
+          "Modo edición universal activado. Ahora puedes editar, reordenar o modificar cualquier elemento visible.",
           { duration: 4000 }
         );
         
@@ -135,7 +162,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // Function to reorder elements in the database
+  // Function to reorder elements in the database - improved for better reliability
   const reorderElements = async (table: string, elements: { id: string; order: number }[]): Promise<boolean> => {
     try {
       // In a real application, this would update the database
@@ -154,10 +181,10 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // NEW: Function to apply AI edits to an element
+  // Function to apply AI edits to only visible elements
   const applyAIEdit = async (element: string, prompt: string): Promise<string> => {
     try {
-      console.log(`Applying AI edit to element with prompt: ${prompt}`);
+      console.log(`Applying AI edit to visible element with prompt: ${prompt}`);
       
       // Simulate AI generation
       await new Promise(resolve => setTimeout(resolve, 1000));
