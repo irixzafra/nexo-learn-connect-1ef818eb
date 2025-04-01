@@ -25,7 +25,8 @@ export const SyncManager: React.FC<SyncManagerProps> = ({
     lastSynced, 
     pendingOperations, 
     isSyncing, 
-    syncNow 
+    syncNow,
+    syncStatus
   } = useSupabaseSync();
 
   // Format time difference

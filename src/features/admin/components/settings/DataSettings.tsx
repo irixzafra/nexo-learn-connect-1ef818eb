@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Database, Server, Shield, AlertTriangle } from 'lucide-react';
-import SettingsAccordion from '@/components/admin/SettingsAccordion';
+import SettingsAccordion from '@/components/admin/settings/SettingsAccordion';
 import { FeaturesConfig, FeatureId } from '@/contexts/features/types';
 import SupabaseConnectionTest from './SupabaseConnectionTest';
 import SyncManager from './SyncManager';

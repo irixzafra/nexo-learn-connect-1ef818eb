@@ -21,16 +21,16 @@ interface SettingsAccordionProps {
   sections: SettingsSection[];
   defaultValue?: string;
   className?: string;
-  title?: string;            // Added this property
-  description?: string;      // Added this property
+  title?: string;
+  description?: string;
 }
 
 const SettingsAccordion: React.FC<SettingsAccordionProps> = ({
   sections,
   defaultValue,
   className,
-  title,              // Added this property to the destructuring
-  description         // Added this property to the destructuring
+  title,
+  description
 }) => {
   return (
     <div className="space-y-3">
