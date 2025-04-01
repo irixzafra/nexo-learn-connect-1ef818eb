@@ -5,12 +5,15 @@ import { isValidPath, normalizePath } from '@/utils/routeValidation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ensureLanguagePrefix } from '@/utils/languageUtils';
 import { useFeature } from '@/hooks/useFeatures';
+import { toast } from 'sonner';
 
 interface SafeLinkProps extends Omit<LinkProps, 'to'> {
   to: string;
   fallbackUrl?: string;
   trackBrokenLink?: boolean;
   preserveLanguage?: boolean;
+  showWarning?: boolean;
+  className?: string;
 }
 
 /**
@@ -22,6 +25,8 @@ const SafeLink: React.FC<SafeLinkProps> = ({
   fallbackUrl = '/',
   trackBrokenLink = true,
   preserveLanguage = true,
+  showWarning = false,
+  className = '',
   children,
   ...props
 }) => {
@@ -33,7 +38,7 @@ const SafeLink: React.FC<SafeLinkProps> = ({
   
   // If we should preserve language and language prefixes are enabled, ensure the path has the current language
   if (preserveLanguage && enableLangPrefixUrls && !to.startsWith('http')) {
-    normalizedPath = ensureLanguagePrefix(normalizedPath);
+    normalizedPath = ensureLanguagePrefix(normalizedPath, currentLanguage);
   }
   
   // Check if the path is valid
@@ -41,7 +46,14 @@ const SafeLink: React.FC<SafeLinkProps> = ({
   
   // If not valid and we want to track broken links, log it
   if (!isValid && trackBrokenLink) {
-    console.warn(`Broken link detected: ${normalizedPath}`);
+    console.warn(`[SafeLink] Broken link detected: ${normalizedPath}`);
+    // Show a warning toast if enabled
+    if (showWarning) {
+      toast.warning('Navigation issue', {
+        description: `The link to "${normalizedPath}" might not work correctly.`,
+        duration: 3000,
+      });
+    }
     // In a real implementation, we could send this to an analytics service
   }
   
@@ -50,20 +62,26 @@ const SafeLink: React.FC<SafeLinkProps> = ({
   
   // Apply language prefix to fallback path if needed
   if (!isValid && preserveLanguage && enableLangPrefixUrls && !fallbackUrl.startsWith('http')) {
-    effectivePath = ensureLanguagePrefix(fallbackUrl);
+    effectivePath = ensureLanguagePrefix(fallbackUrl, currentLanguage);
   }
   
   // If the path is an external URL, use a regular anchor tag
   if (effectivePath.startsWith('http')) {
     return (
-      <a href={effectivePath} target="_blank" rel="noopener noreferrer" {...props}>
+      <a 
+        href={effectivePath} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className={className}
+        {...props}
+      >
         {children}
       </a>
     );
   }
   
   return (
-    <Link to={effectivePath} {...props}>
+    <Link to={effectivePath} className={className} {...props}>
       {children}
     </Link>
   );
