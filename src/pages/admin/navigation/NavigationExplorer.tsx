@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Navigation, ExternalLink, Map } from 'lucide-react';
+import { Navigation, ExternalLink, Map, Link2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,7 +19,7 @@ const NavigationExplorer: React.FC = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -34,6 +34,32 @@ const NavigationExplorer: React.FC = () => {
             <p className="mb-4">Ver un diagrama interactivo de la estructura de navegación del sistema, incluyendo menús y sus relaciones.</p>
             <Button onClick={() => navigate('/admin/navigation-diagram')}>
               Ver Diagrama
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Link2 className="h-5 w-5 text-primary" />
+              Validador de Rutas
+            </CardTitle>
+            <CardDescription>
+              Valida las rutas del sistema y detecta problemas
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4">Detecta enlaces rotos, rutas duplicadas y otros problemas de navegación en el sistema.</p>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/admin/route-validator')}
+              className="relative"
+            >
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+              </span>
+              Validar Rutas
             </Button>
           </CardContent>
         </Card>

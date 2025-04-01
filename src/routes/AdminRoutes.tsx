@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import NavigationDiagram from '@/pages/admin/NavigationDiagram';
 import NavigationExplorer from '@/pages/admin/navigation/NavigationExplorer';
 import AdminLessonEdit from '@/pages/admin/courses/AdminLessonEdit';
+import RouteValidator from '@/pages/admin/RouteValidator';
 
 // Componente de página no encontrada
 const AdminNotFound = () => (
@@ -19,6 +20,7 @@ const AdminRoutes: React.FC = () => {
       {/* Rutas específicas que queremos mantener */}
       <Route path="navigation-diagram" element={<NavigationDiagram />} />
       <Route path="navigation" element={<NavigationExplorer />} />
+      <Route path="route-validator" element={<RouteValidator />} />
       <Route path="courses/:courseId/lessons/:lessonId/edit" element={<AdminLessonEdit />} />
       
       {/* Ruta de inicio para admin */}
