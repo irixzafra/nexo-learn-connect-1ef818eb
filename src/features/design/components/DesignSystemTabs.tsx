@@ -6,7 +6,7 @@ import { ColorPaletteTab } from './tabs/ColorPaletteTab';
 import { TypographyTab } from './tabs/TypographyTab';
 import { SpacingTab } from './tabs/SpacingTab';
 import { CustomCSSTab } from './tabs/CustomCSSTab';
-import { AIDesignAssistantTab } from './tabs/AIDesignAssistantTab';
+import AIDesignAssistantTab from './tabs/AIDesignAssistantTab';
 import { ThemeOverviewTab } from './tabs/ThemeOverviewTab';
 import { ThemePresetsTab } from './tabs/ThemePresetsTab';
 import { ComponentAccordionTab } from './tabs/ComponentAccordionTab';

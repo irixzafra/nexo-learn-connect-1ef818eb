@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
-import { MenuItem } from './common/MenuItem';
+import MenuItem from './common/MenuItem';
 
 interface PerfilNavigationProps {
   isOpen: boolean;
@@ -41,7 +41,7 @@ const PerfilNavigation: React.FC<PerfilNavigationProps> = ({
           to="/notifications"
           icon={Bell}
           label="Notificaciones"
-          badge={notificationsCount}
+          badge={notificationsCount > 0 ? notificationsCount.toString() : undefined}
           isCollapsed={isCollapsed}
         />
         

@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
-import { MenuItem } from './common/MenuItem';
+import MenuItem from './common/MenuItem';
 import { Badge } from '@/components/ui/badge';
 
 interface ConfiguracionNavigationProps {

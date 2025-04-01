@@ -5,11 +5,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import InlineEditingSettings from '@/components/admin/settings/InlineEditingSettings';
+import { ExtendedFeatureId } from '@/contexts/features/types';
 
-// Simplified ContentSettings component
-const ContentSettings = () => {
-  const isLoading = false;
+// Simplified ContentSettings component with added props
+interface ContentSettingsProps {
+  featuresConfig?: any;
+  onToggleFeature?: (featureId: ExtendedFeatureId, value?: boolean) => Promise<void>;
+  isLoading?: boolean;
+}
 
+const ContentSettings: React.FC<ContentSettingsProps> = ({ 
+  featuresConfig, 
+  onToggleFeature, 
+  isLoading = false 
+}) => {
   return (
     <div className="space-y-6">
       <div>
