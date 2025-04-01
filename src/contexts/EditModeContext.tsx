@@ -1,197 +1,125 @@
 
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
-import { UserRoleType } from '@/types/auth';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { useAuth } from './AuthContext';
 
-export interface EditHistoryItem {
-  id: string;
-  timestamp: number;
-  element: {
-    id: string;
-    type: string;
-    content: string;
-  };
-  before: string;
-  after: string;
-  user: {
-    id: string;
-    name: string;
-  };
-}
-
+// Define context type with all properties
 export interface EditModeContextProps {
-  isEditModeEnabled: boolean;
+  isEditMode: boolean;
   toggleEditMode: () => void;
-  setIsEditModeEnabled: (enabled: boolean) => void;
-  editHistory: EditHistoryItem[];
-  addToHistory: (historyItem: Omit<EditHistoryItem, 'timestamp'>) => void;
-  clearHistory: () => void;
-  isNavigationBlocked: boolean;
-  setNavigationBlocked: (blocked: boolean) => void;
-  updateText: (elementId: string, newText: string) => Promise<boolean>;
-  applyAIEdit: (elementId: string, prompt: string) => Promise<boolean>;
-  isReorderMode: boolean;
-  toggleReorderMode: () => void;
-  selectedElementId: string | null;
-  setSelectedElementId: (id: string | null) => void;
-  reorderElements: (elementIds: string[]) => void;
+  updateText: (id: string, value: string) => void;
+  canEdit: boolean;
+  saveDraft: () => void;
+  cancelEditing: () => void;
+  undoChange: () => void;
+  redoChange: () => void;
+  hasUndoHistory: boolean;
+  hasRedoHistory: boolean;
 }
 
-const EditModeContext = createContext<EditModeContextProps | undefined>(undefined);
+// Create context with default values
+const EditModeContext = createContext<EditModeContextProps>({
+  isEditMode: false,
+  toggleEditMode: () => {},
+  updateText: () => {},
+  canEdit: false,
+  saveDraft: () => {},
+  cancelEditing: () => {},
+  undoChange: () => {},
+  redoChange: () => {},
+  hasUndoHistory: false,
+  hasRedoHistory: false,
+});
 
 interface EditModeProviderProps {
   children: ReactNode;
-  userRole?: UserRoleType;
 }
 
-export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children, userRole = 'student' }) => {
-  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
-  const [isReorderMode, setIsReorderMode] = useState(false);
-  const [editHistory, setEditHistory] = useState<EditHistoryItem[]>([]);
-  const [isNavigationBlocked, setNavigationBlocked] = useState(false);
-  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
-  
+export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) => {
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editHistory, setEditHistory] = useState<Array<Record<string, string>>>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const { userRole } = useAuth();
+
+  // Check if user has edit permissions
+  const canEdit = userRole === 'admin' || userRole === 'instructor' || userRole === 'sistemas';
+
   // Toggle edit mode
   const toggleEditMode = useCallback(() => {
-    if (userRole === 'admin' || userRole === 'instructor' || userRole === 'content_creator') {
-      setIsEditModeEnabled(prev => !prev);
-      // When disabling edit mode, also disable reorder mode
-      if (isEditModeEnabled) {
-        setIsReorderMode(false);
-        setSelectedElementId(null);
-      }
-    }
-  }, [isEditModeEnabled, userRole]);
-  
-  // Toggle reorder mode
-  const toggleReorderMode = useCallback(() => {
-    if (isEditModeEnabled) {
-      setIsReorderMode(prev => !prev);
-      if (!isReorderMode) {
-        // When enabling reorder mode, clear selection
-        setSelectedElementId(null);
-      }
-    }
-  }, [isEditModeEnabled, isReorderMode]);
-  
-  // Add item to edit history
-  const addToHistory = useCallback((historyItem: Omit<EditHistoryItem, 'timestamp'>) => {
-    const newItem = {
-      ...historyItem,
-      timestamp: Date.now()
-    };
-    setEditHistory(prev => [newItem, ...prev]);
-  }, []);
-  
-  // Clear edit history
-  const clearHistory = useCallback(() => {
-    setEditHistory([]);
-  }, []);
-  
-  // Update text element
-  const updateText = useCallback(async (elementId: string, newText: string): Promise<boolean> => {
-    // Implementation would connect to API to save changes
-    console.log(`Updated element ${elementId} with text: ${newText}`);
+    if (!canEdit) return;
+    setIsEditMode(prev => !prev);
+  }, [canEdit]);
+
+  // Update text function - for editing content
+  const updateText = useCallback((id: string, value: string) => {
+    if (!isEditMode) return;
     
-    // Add to history
-    addToHistory({
-      id: `edit-${Date.now()}`,
-      element: {
-        id: elementId,
-        type: 'text',
-        content: newText
-      },
-      before: 'Previous content',
-      after: newText,
-      user: {
-        id: '1',
-        name: 'Current User'
-      }
+    // Add the change to history
+    setEditHistory(prevHistory => {
+      const newHistory = prevHistory.slice(0, historyIndex + 1);
+      newHistory.push({ [id]: value });
+      return newHistory;
     });
     
-    return true;
-  }, [addToHistory]);
-  
-  // Apply AI edit
-  const applyAIEdit = useCallback(async (elementId: string, prompt: string): Promise<boolean> => {
-    // Implementation would call AI service
-    console.log(`Applied AI edit to element ${elementId} with prompt: ${prompt}`);
+    setHistoryIndex(prevIndex => prevIndex + 1);
     
-    // Mock implementation
-    const aiResponse = `AI-improved content for "${prompt}"`;
-    
-    // Add to history
-    addToHistory({
-      id: `ai-edit-${Date.now()}`,
-      element: {
-        id: elementId,
-        type: 'text',
-        content: aiResponse
-      },
-      before: 'Previous content',
-      after: aiResponse,
-      user: {
-        id: '1',
-        name: 'AI Assistant'
-      }
-    });
-    
-    return true;
-  }, [addToHistory]);
-  
-  // Reorder elements
-  const reorderElements = useCallback((elementIds: string[]) => {
-    console.log('Reordering elements:', elementIds);
-    // Implementation would update element order in database
-  }, []);
-  
-  // Check permissions when user role changes
-  useEffect(() => {
-    if (userRole !== 'admin' && userRole !== 'instructor' && userRole !== 'content_creator' && userRole !== 'editor') {
-      setIsEditModeEnabled(false);
-      setIsReorderMode(false);
+    // In a real implementation, this would update a state or dispatch to a store
+    console.log(`Updated: ${id} with value: ${value}`);
+  }, [isEditMode, historyIndex]);
+
+  // Save draft - would normally save to database
+  const saveDraft = useCallback(() => {
+    if (!isEditMode) return;
+    console.log('Saving draft...');
+    // Implement actual saving logic
+  }, [isEditMode]);
+
+  // Cancel editing - revert changes
+  const cancelEditing = useCallback(() => {
+    if (!isEditMode) return;
+    setIsEditMode(false);
+    console.log('Canceling edit mode...');
+    // Implement actual cancel logic - e.g. revert to original content
+  }, [isEditMode]);
+
+  // Undo last change
+  const undoChange = useCallback(() => {
+    if (historyIndex > 0) {
+      setHistoryIndex(prevIndex => prevIndex - 1);
+      console.log('Undoing last change...');
     }
-  }, [userRole]);
-  
-  const contextValue: EditModeContextProps = {
-    isEditModeEnabled,
+  }, [historyIndex]);
+
+  // Redo previously undone change
+  const redoChange = useCallback(() => {
+    if (historyIndex < editHistory.length - 1) {
+      setHistoryIndex(prevIndex => prevIndex + 1);
+      console.log('Redoing change...');
+    }
+  }, [historyIndex, editHistory.length]);
+
+  // Check if there's history to undo/redo
+  const hasUndoHistory = historyIndex > 0;
+  const hasRedoHistory = historyIndex < editHistory.length - 1;
+
+  const value = {
+    isEditMode,
     toggleEditMode,
-    setIsEditModeEnabled,
-    editHistory,
-    addToHistory,
-    clearHistory,
-    isNavigationBlocked,
-    setNavigationBlocked,
     updateText,
-    applyAIEdit,
-    isReorderMode,
-    toggleReorderMode,
-    selectedElementId,
-    setSelectedElementId,
-    reorderElements
+    canEdit,
+    saveDraft,
+    cancelEditing,
+    undoChange,
+    redoChange,
+    hasUndoHistory,
+    hasRedoHistory,
   };
-  
+
   return (
-    <EditModeContext.Provider value={contextValue}>
+    <EditModeContext.Provider value={value}>
       {children}
     </EditModeContext.Provider>
   );
 };
 
-export const useEditMode = (): EditModeContextProps => {
-  const context = useContext(EditModeContext);
-  if (context === undefined) {
-    throw new Error('useEditMode must be used within an EditModeProvider');
-  }
-  return context;
-};
-
-// Hook to check if elements are editable
-export const useCanEdit = (elementType?: string): boolean => {
-  const { isEditModeEnabled } = useEditMode();
-  
-  // Logic to determine if the current user can edit this specific element type
-  // This can be expanded based on user roles, permissions, etc.
-  return isEditModeEnabled;
-};
-
-export default EditModeContext;
+// Hook for using edit mode context
+export const useEditMode = () => useContext(EditModeContext);

@@ -14,15 +14,12 @@ import LoadingScreen from './components/LoadingScreen';
 import AdminRoutes from './routes/AdminRoutes';
 import './styles/edit-mode.css'; // Import the edit mode styles
 
-// Lazy-loaded pages
-const ForoPage = lazy(() => import('./pages/ForoPage'));
-const BlogPage = lazy(() => import('./pages/BlogPage'));
-const CourseList = lazy(() => import('./pages/courses/CourseList'));
-const CourseDetail = lazy(() => import('./pages/courses/CourseDetail'));
-const LessonDetail = lazy(() => import('./pages/courses/LessonDetail'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+// Lazy-loaded pages - Using placeholder pages until real ones are developed
+const ProfilePage = lazy(() => import('./pages/Profile'));
 const DynamicPage = lazy(() => import('./pages/DynamicPage'));
-const MyLearningPage = lazy(() => import('./pages/MyLearningPage'));
+
+// Temporary placeholder components for missing pages
+const PlaceholderPage = lazy(() => import('./pages/placeholder/PlaceholderPage'));
 
 function App() {
   const { theme } = useTheme();
@@ -38,32 +35,32 @@ function App() {
           
           <Route path="/foro" element={
             <Suspense fallback={<LoadingScreen />}>
-              <ForoPage />
+              <PlaceholderPage title="Foro" />
             </Suspense>
           } />
           
           <Route path="/blog" element={
             <Suspense fallback={<LoadingScreen />}>
-              <BlogPage />
+              <PlaceholderPage title="Blog" />
             </Suspense>
           } />
           
           <Route path="/cursos" element={
             <Suspense fallback={<LoadingScreen />}>
-              <CourseList />
+              <PlaceholderPage title="Cursos" />
             </Suspense>
           } />
           
           <Route path="/cursos/:id" element={
             <Suspense fallback={<LoadingScreen />}>
-              <CourseDetail />
+              <PlaceholderPage title="Detalle de Curso" />
             </Suspense>
           } />
           
           <Route path="/leccion/:id" element={
             <Suspense fallback={<LoadingScreen />}>
               <ProtectedRoute>
-                <LessonDetail />
+                <PlaceholderPage title="Lección" />
               </ProtectedRoute>
             </Suspense>
           } />
@@ -79,7 +76,7 @@ function App() {
           <Route path="/mi-aprendizaje" element={
             <Suspense fallback={<LoadingScreen />}>
               <ProtectedRoute>
-                <MyLearningPage />
+                <PlaceholderPage title="Mi Aprendizaje" />
               </ProtectedRoute>
             </Suspense>
           } />
@@ -93,7 +90,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
         
-        {/* Admin routes - Usando AdminRoutes componente */}
+        {/* Admin routes */}
         <Route path="/admin/*" element={
           <ProtectedRoute requiredRole="admin">
             <AdminLayout>
