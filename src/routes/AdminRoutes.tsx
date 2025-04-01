@@ -8,12 +8,12 @@ import Features from '@/pages/admin/Features';
 import Analytics from '@/pages/admin/analytics';
 import NavigationExplorer from '@/pages/admin/navigation/NavigationExplorer';
 import UserManagement from '@/pages/admin/UserManagement';
+import SettingsRoutes from './SettingsRoutes';
 
 // Placeholder components until actual ones are created
 const Dashboard = () => <div>Dashboard Content</div>;
 const Courses = () => <div>Courses Content</div>;
 const CourseDetail = () => <div>Course Detail Content</div>;
-const SystemSettings = () => <div>System Settings Content</div>;
 
 const AdminRoutes: React.FC = () => {
   return (
@@ -59,14 +59,7 @@ const AdminRoutes: React.FC = () => {
           </AdminPageLayout>
         }
       />
-      <Route
-        path="/settings"
-        element={
-          <AdminPageLayout title="Configuración">
-            <SystemSettings />
-          </AdminPageLayout>
-        }
-      />
+      <Route path="/settings/*" element={<SettingsRoutes />} />
       <Route
         path="/analytics/*"
         element={
