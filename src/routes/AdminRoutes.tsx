@@ -8,6 +8,7 @@ import PageManagement from '@/pages/admin/pages/PageManagement';
 import CreatePage from '@/pages/admin/pages/CreatePage';
 import EditPage from '@/pages/admin/pages/EditPage';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import AdminNavigation from '@/components/admin/AdminNavigation';
 import AppLayout from '@/layouts/AppLayout';
 import DesignSystem from '@/pages/admin/design/DesignSystem';
 import SystemSettings from '@/pages/admin/SystemSettings';
@@ -53,7 +54,8 @@ const CourseManagement = () => (
 // Layout component that provides the admin layout structure
 const AdminLayout = () => {
   return (
-    <AppLayout showHeader={false} showAdminNavigation={true}>
+    <AppLayout showHeader={false}>
+      <AdminNavigation />
       <main className="flex-1">
         <Outlet />
       </main>

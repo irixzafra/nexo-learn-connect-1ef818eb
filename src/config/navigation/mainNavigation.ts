@@ -6,74 +6,77 @@ import {
   MessageSquare, 
   Bell, 
   User,
-  Calendar,
-  Settings,
-  CreditCard
+  Phone,
+  AppWindow
 } from 'lucide-react';
 import { MenuItem } from './types';
 
 /**
- * Menú principal de navegación
+ * Configuración principal del menú de navegación
+ * Organizado por secciones y adaptado para todos los roles
  */
 export const mainNavigation: MenuItem[] = [
   {
     icon: Home,
     label: 'Inicio',
     path: '/home',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']
+    description: 'Panel principal',
   },
   {
     icon: BookOpen,
     label: 'Explorar Cursos',
     path: '/courses',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']
+    description: 'Catálogo de cursos disponibles',
   },
   {
     icon: BookOpen,
     label: 'Mis Cursos',
     path: '/home/my-courses',
-    requiredRole: ['student', 'instructor']
+    description: 'Cursos en los que estás inscrito',
+    requiredRole: 'student',
+  },
+  {
+    icon: BookOpen,
+    label: 'Mis Cursos',
+    path: '/instructor/courses',
+    description: 'Cursos que impartes',
+    requiredRole: 'instructor',
   },
   {
     icon: Users,
     label: 'Comunidad',
     path: '/community',
-    requiredRole: ['student', 'instructor', 'moderator']
+    description: 'Conecta con otros estudiantes',
   },
   {
     icon: MessageSquare,
     label: 'Mensajes',
     path: '/messages',
-    requiredRole: ['student', 'instructor', 'admin', 'moderator']
+    description: 'Centro de mensajes',
+    badge: 3, // Este valor debería venir de un hook
   },
   {
     icon: Bell,
     label: 'Notificaciones',
     path: '/notifications',
-    requiredRole: ['student', 'instructor', 'admin', 'moderator']
-  },
-  {
-    icon: Calendar,
-    label: 'Calendario',
-    path: '/calendar',
-    requiredRole: ['student', 'instructor']
-  },
-  {
-    icon: CreditCard,
-    label: 'Pagos',
-    path: '/billing',
-    requiredRole: ['student', 'instructor']
+    description: 'Centro de notificaciones',
   },
   {
     icon: User,
     label: 'Perfil',
     path: '/profile',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
+    description: 'Tu perfil de usuario',
   },
   {
-    icon: Settings,
-    label: 'Configuración',
-    path: '/settings',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
+    icon: Phone,
+    label: 'Contacto',
+    path: '/contact',
+    description: 'Contacta con nosotros',
+  },
+  {
+    icon: AppWindow,
+    label: 'Landing Page',
+    path: '/landing',
+    description: 'Página principal',
   }
 ];

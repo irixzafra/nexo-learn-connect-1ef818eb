@@ -1,12 +1,11 @@
 
 import { UserRoleType } from '@/types/auth';
-import { MenuItem } from './types';
+import { MenuItem, NavigationMenus } from './types';
 
 /**
- * Filtra un array de ítems de menú según el rol del usuario
- * @param items Array de ítems de menú
+ * Filtra ítems de menú según el rol del usuario
+ * @param items Lista de ítems de menú
  * @param role Rol del usuario actual
- * @returns Array de ítems filtrados que el usuario puede ver
  */
 export const filterMenuItemsByRole = (items: MenuItem[], role: UserRoleType): MenuItem[] => {
   return items.filter(item => {
@@ -14,14 +13,14 @@ export const filterMenuItemsByRole = (items: MenuItem[], role: UserRoleType): Me
     
     if (Array.isArray(item.requiredRole)) {
       return item.requiredRole.includes(role);
+    } else {
+      return item.requiredRole === role;
     }
-    
-    return item.requiredRole === role;
   });
 };
 
 /**
- * Obtiene la ruta de inicio según el rol del usuario
+ * Determina la ruta de inicio según el rol
  * @param role Rol del usuario
  */
 export const getHomePathByRole = (role: UserRoleType): string => {
@@ -30,14 +29,7 @@ export const getHomePathByRole = (role: UserRoleType): string => {
       return '/admin/dashboard';
     case 'instructor':
       return '/instructor/dashboard';
-    case 'sistemas':
-      return '/admin/systems';
-    case 'moderator':
-      return '/moderation/dashboard';
-    case 'content_creator':
-      return '/content/dashboard';
-    case 'beta_tester':
-      return '/beta/dashboard';
+    case 'student':
     default:
       return '/home';
   }

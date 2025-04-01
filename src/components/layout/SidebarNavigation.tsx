@@ -4,8 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { useNotifications } from '@/hooks/useNotifications';
+import SidebarMainNavigation from '@/components/layout/sidebar/navigation/SidebarMainNavigation';
 import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
-import ConditionalSidebar from './ConditionalSidebar';
+import SidebarLogoSection from '@/components/layout/sidebar/SidebarLogoSection';
+import SidebarFooterSection from '@/components/layout/sidebar/SidebarFooterSection';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRoleType;
@@ -17,7 +19,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   onRoleChange 
 }) => {
   const { userRole } = useAuth();
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
   
@@ -40,20 +42,32 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   ];
 
   return (
-    <ConditionalSidebar
-      userRole={toUserRoleType(userRole as string)}
-      effectiveRole={effectiveRole}
-      messagesCount={messagesCount}
-      notificationsCount={notificationsCount}
-      isCollapsed={isCollapsed}
-      currentViewRole={currentViewRole}
-      currentLanguage={currentLanguage}
-      languages={languages}
-      handleRoleChange={handleRoleChange}
-      getRoleName={getRoleName}
-      getHomePath={getHomePath}
-      changeLanguage={changeLanguage}
-    />
+    <div className="h-full flex flex-col py-4 bg-background border-r border-border">
+      {/* Logo at the top with full title and subtitle */}
+      <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
+
+      {/* Main Navigation Section */}
+      <SidebarMainNavigation 
+        effectiveRole={effectiveRole}
+        isCollapsed={isCollapsed}
+        messagesCount={messagesCount}
+        notificationsCount={notificationsCount}
+        getHomePath={() => getHomePath(effectiveRole)}
+      />
+      
+      {/* Footer Section with Role Switcher and Language Selector */}
+      <SidebarFooterSection 
+        userRole={toUserRoleType(userRole as string)}
+        isCollapsed={isCollapsed}
+        effectiveRole={effectiveRole}
+        currentViewRole={currentViewRole}
+        handleRoleChange={handleRoleChange}
+        getRoleName={getRoleName}
+        currentLanguage={currentLanguage}
+        languages={languages}
+        changeLanguage={changeLanguage}
+      />
+    </div>
   );
 };
 

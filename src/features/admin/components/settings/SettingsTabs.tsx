@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import AppearanceSettings from './AppearanceSettings';
-import { SecuritySettings } from './SecuritySettings';
+import SecuritySettings from './SecuritySettings';
 import { NotificationSettings } from './NotificationSettings';
 import ContentSettings from './ContentSettings';
-import { OnboardingSettings } from './OnboardingSettings';
+import OnboardingSettings from './OnboardingSettings';
 import { TestDataSettings } from './TestDataSettings';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import DeveloperSettings from '@/components/admin/settings/DeveloperSettings';
@@ -25,7 +24,7 @@ import {
   Wrench,
   Palette
 } from 'lucide-react';
-import type { FeaturesConfig } from '@/contexts/features/types';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
 
 const SettingsTabs: React.FC = () => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);

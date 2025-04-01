@@ -10,9 +10,7 @@ interface AppHeaderProps {
 
 const AppHeader: React.FC<AppHeaderProps> = ({ viewAsRole, onRoleChange }) => {
   return (
-    <div className="border-b bg-background">
-      <HeaderContent onRoleChange={onRoleChange} />
-    </div>
+    <HeaderContent onRoleChange={onRoleChange} />
   );
 };
 

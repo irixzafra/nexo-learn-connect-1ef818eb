@@ -1,113 +1,99 @@
 
 import { 
-  LayoutDashboard, 
+  LayoutDashboard,
   Users, 
-  BookOpen, 
-  CreditCard, 
-  Settings, 
-  Database, 
-  History, 
-  FileText, 
-  Route, 
-  LineChart,
-  Shield,
-  Bell,
-  PieChart
+  Settings,
+  BookOpen,
+  Route,
+  Palette,
+  CreditCard,
+  Database,
+  History,
+  FileText,
+  LineChart
 } from 'lucide-react';
 import { MenuItem } from './types';
 
 /**
- * Menú de administración
+ * Configuración del menú de administración
+ * Solo visible para roles admin e instructor (según permisos)
  */
 export const adminNavigation: MenuItem[] = [
   {
     icon: LayoutDashboard,
-    label: 'Dashboard',
+    label: 'Panel Admin',
     path: '/admin/dashboard',
-    requiredRole: ['admin', 'sistemas']
+    description: 'Panel de control administrativo',
+    requiredRole: ['admin', 'instructor'],
   },
   {
     icon: Users,
     label: 'Usuarios',
     path: '/admin/users',
-    requiredRole: ['admin', 'sistemas'],
-    description: 'Gestión de usuarios y roles del sistema'
-  },
-  {
-    icon: Shield,
-    label: 'Roles y Permisos',
-    path: '/admin/roles',
-    requiredRole: ['admin', 'sistemas'],
-    description: 'Configuración de roles y permisos'
+    description: 'Gestión de usuarios',
+    requiredRole: 'admin',
   },
   {
     icon: BookOpen,
     label: 'Cursos',
     path: '/admin/courses',
-    requiredRole: ['admin', 'instructor', 'sistemas'],
-    description: 'Gestión del catálogo de cursos'
+    description: 'Gestión de cursos',
+    requiredRole: ['admin', 'instructor'],
   },
   {
     icon: Route,
     label: 'Rutas de Aprendizaje',
     path: '/admin/learning-paths',
-    requiredRole: ['admin', 'instructor', 'sistemas'],
-    description: 'Gestión de rutas de aprendizaje'
+    description: 'Gestión de rutas de aprendizaje',
+    requiredRole: ['admin', 'instructor'],
+  },
+  {
+    icon: Palette,
+    label: 'Diseño',
+    path: '/admin/design',
+    description: 'Sistema de diseño',
+    requiredRole: 'admin',
   },
   {
     icon: CreditCard,
     label: 'Facturación',
     path: '/admin/billing',
-    requiredRole: ['admin', 'sistemas'],
-    description: 'Gestión de pagos y facturación'
-  },
-  {
-    icon: Bell,
-    label: 'Alertas',
-    path: '/admin/alerts',
-    requiredRole: ['admin', 'sistemas'],
-    description: 'Gestión de alertas del sistema'
-  },
-  {
-    icon: FileText,
-    label: 'Páginas',
-    path: '/admin/pages',
-    requiredRole: ['admin', 'sistemas', 'content_creator'],
-    description: 'Editor y gestión de páginas'
-  },
-  {
-    icon: LineChart,
-    label: 'Analíticas',
-    path: '/admin/analytics',
-    requiredRole: ['admin', 'sistemas'],
-    description: 'Estadísticas y análisis'
-  },
-  {
-    icon: PieChart,
-    label: 'Reportes',
-    path: '/admin/reports',
-    requiredRole: ['admin', 'sistemas'],
-    description: 'Generación de reportes'
+    description: 'Gestión de pagos',
+    requiredRole: 'admin',
   },
   {
     icon: Database,
     label: 'Datos de Prueba',
     path: '/admin/test-data',
-    requiredRole: ['admin', 'sistemas'],
-    description: 'Herramientas para desarrollo'
+    description: 'Herramientas para datos de prueba',
+    requiredRole: 'admin',
+  },
+  {
+    icon: FileText,
+    label: 'Páginas',
+    path: '/admin/pages',
+    description: 'Gestión de páginas',
+    requiredRole: 'admin',
+  },
+  {
+    icon: LineChart,
+    label: 'Analíticas',
+    path: '/admin/analytics',
+    description: 'Análisis de datos',
+    requiredRole: 'admin',
   },
   {
     icon: History,
     label: 'Auditoría',
     path: '/admin/audit-log',
-    requiredRole: ['admin', 'sistemas'],
-    description: 'Registro de actividades'
+    description: 'Registros de actividad',
+    requiredRole: 'admin',
   },
   {
     icon: Settings,
     label: 'Configuración',
     path: '/admin/settings',
-    requiredRole: ['admin', 'sistemas'],
-    description: 'Configuración del sistema'
+    description: 'Configuración del sistema',
+    requiredRole: 'admin',
   }
 ];

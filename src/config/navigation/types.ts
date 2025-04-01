@@ -14,7 +14,7 @@ export interface MenuItem {
   /** Ruta de navegación */
   path: string;
   
-  /** Opcional: Insignia numérica o texto */
+  /** Opcional: Insignia numérica */
   badge?: number;
   
   /** Opcional: Estado deshabilitado */
@@ -42,24 +42,4 @@ export interface NavigationMenus {
   
   /** Menú de gamificación */
   gamification: MenuItem[];
-}
-
-/**
- * Define un grupo de navegación (nivel 1)
- */
-export interface NavGroup {
-  /** Identificador único del grupo */
-  id: string;
-  
-  /** Título del grupo */
-  title: string;
-  
-  /** Icono del grupo */
-  icon: React.ElementType;
-  
-  /** Opcional: Roles que pueden ver este grupo */
-  requiredRole?: UserRoleType | UserRoleType[];
-  
-  /** Elementos del grupo (nivel 2) */
-  items: MenuItem[];
 }

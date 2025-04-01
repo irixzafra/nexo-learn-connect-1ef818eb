@@ -1,104 +1,156 @@
+
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, BookOpen, Info, Play, Target } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { 
+  Book, 
+  Sparkles, 
+  Info,
+  HelpCircle,
+  Loader2,
+  Construction
+} from 'lucide-react';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import type { FeaturesConfig } from '@/contexts/features/types';
+import SettingsAccordion, { SettingsSection } from '@/components/admin/settings/SettingsAccordion';
 
-export interface OnboardingSettingsProps {
+interface OnboardingSettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
   isLoading?: boolean;
 }
 
-export const OnboardingSettings: React.FC<OnboardingSettingsProps> = ({ 
-  featuresConfig, 
+const OnboardingSettings: React.FC<OnboardingSettingsProps> = ({ 
+  featuresConfig,
   onToggleFeature,
   isLoading = false
 }) => {
-  const navigate = useNavigate();
+  const onboardingSections: SettingsSection[] = [
+    {
+      id: "general",
+      title: "Configuración General",
+      icon: <Sparkles className="h-5 w-5" />,
+      iconColor: "text-indigo-500",
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Sistema de Onboarding</h3>
+              <p className="text-xs text-muted-foreground">
+                Habilita el sistema de onboarding para nuevos usuarios
+              </p>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableOnboardingSystem"
+                checked={featuresConfig.enableOnboardingSystem}
+                onCheckedChange={(value) => onToggleFeature('enableOnboardingSystem', value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Inicio Automático</h3>
+              <p className="text-xs text-muted-foreground">
+                Inicia el proceso de onboarding automáticamente
+              </p>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="autoStartOnboarding"
+                checked={featuresConfig.autoStartOnboarding}
+                onCheckedChange={(value) => onToggleFeature('autoStartOnboarding', value)}
+                disabled={isLoading || !featuresConfig.enableOnboardingSystem}
+              />
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Mostrar Botón de Onboarding</h3>
+              <p className="text-xs text-muted-foreground">
+                Muestra el botón para iniciar el onboarding manualmente
+              </p>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="showOnboardingTrigger"
+                checked={featuresConfig.showOnboardingTrigger}
+                onCheckedChange={(value) => onToggleFeature('showOnboardingTrigger', value)}
+                disabled={isLoading || !featuresConfig.enableOnboardingSystem}
+              />
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "help",
+      title: "Ayuda y Soporte",
+      icon: <HelpCircle className="h-5 w-5" />,
+      iconColor: "text-cyan-500",
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Documentación Contextual</h3>
+              <p className="text-xs text-muted-foreground">
+                Muestra documentación basada en el contexto actual
+              </p>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+                <Construction className="h-3 w-3 mr-1" />
+                En desarrollo
+              </Badge>
+            </div>
+            <div className="flex items-center">
+              <Switch id="contextualDocs" disabled />
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="flex items-center justify-between py-1">
+            <div>
+              <h3 className="text-sm font-medium">Asistente IA</h3>
+              <p className="text-xs text-muted-foreground">
+                Habilita un asistente con IA para ayudar a los usuarios
+              </p>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+                <Construction className="h-3 w-3 mr-1" />
+                En desarrollo
+              </Badge>
+            </div>
+            <div className="flex items-center">
+              <Switch id="aiAssistant" disabled />
+            </div>
+          </div>
+        </div>
+      )
+    }
+  ];
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <BookOpen className="h-4 w-4 text-orange-500" />
-          Onboarding
-        </CardTitle>
-        <CardDescription className="text-xs">
-          Configura el sistema de onboarding y los asistentes
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3 pt-0">
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Sistema de Onboarding</h3>
-            <p className="text-xs text-muted-foreground">
-              Habilita todo el sistema de asistentes y guías de inicio
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableOnboardingSystem"
-              checked={featuresConfig.enableOnboardingSystem}
-              onCheckedChange={(value) => onToggleFeature('enableOnboardingSystem', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Inicio automático</h3>
-            <p className="text-xs text-muted-foreground">
-              Lanzar onboarding automáticamente para nuevos usuarios
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="autoStartOnboarding"
-              checked={featuresConfig.autoStartOnboarding}
-              onCheckedChange={(value) => onToggleFeature('autoStartOnboarding', value)}
-              disabled={isLoading || !featuresConfig.enableOnboardingSystem}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Botón de inicio</h3>
-            <p className="text-xs text-muted-foreground">
-              Mostrar botón para iniciar el tutorial manualmente
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="showOnboardingTrigger"
-              checked={featuresConfig.showOnboardingTrigger}
-              onCheckedChange={(value) => onToggleFeature('showOnboardingTrigger', value)}
-              disabled={isLoading || !featuresConfig.enableOnboardingSystem}
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <SettingsAccordion 
+      sections={onboardingSections}
+      title="Onboarding"
+      description="Configura las opciones de bienvenida y asistencia a usuarios"
+    />
   );
 };
+
+export default OnboardingSettings;

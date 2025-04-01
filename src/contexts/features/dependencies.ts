@@ -20,7 +20,7 @@ export const featureDependencies: Partial<Record<keyof FeaturesConfig, Array<key
   enableRoleSwitcher: ['enableRoleManagement'],
 
   // Otros sistemas dependen de características base
-  enableCategoryManagement: ['enableAdvancedEditor']
+  enableCategoryManagement: ['enableContentManagement']
 };
 
 /**

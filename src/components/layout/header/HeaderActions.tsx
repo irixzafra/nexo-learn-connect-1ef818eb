@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { NotificationIndicator } from '@/components/notifications/NotificationIndicator';
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { OnboardingTrigger } from '@/components/onboarding/OnboardingTrigger';
-import { useOnboarding } from '@/hooks/useOnboarding';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 import { BookOpen, Bell, User, Settings, Info, Phone } from 'lucide-react';
 
 export const HeaderActions: React.FC = () => {
@@ -20,12 +20,12 @@ export const HeaderActions: React.FC = () => {
   return (
     <div className="ml-auto flex items-center space-x-2">
       {/* Notification indicator - only if enabled */}
-      {featuresConfig?.enableNotifications && (
+      {featuresConfig.enableNotifications && (
         <NotificationIndicator />
       )}
       
       {/* Theme Selector - only if enabled */}
-      {featuresConfig?.enableThemeSwitcher && (
+      {featuresConfig.enableThemeSwitcher && (
         <ThemeSelector />
       )}
       
@@ -57,7 +57,7 @@ export const HeaderActions: React.FC = () => {
       </Button>
       
       {/* Onboarding Trigger - only if enabled */}
-      {featuresConfig?.enableOnboardingSystem && featuresConfig?.showOnboardingTrigger && (
+      {featuresConfig.enableOnboardingSystem && featuresConfig.showOnboardingTrigger && (
         <div className="hidden md:block">
           <OnboardingTrigger />
         </div>

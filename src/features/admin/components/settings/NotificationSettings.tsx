@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Bell, Loader2 } from 'lucide-react';
-import type { FeaturesConfig } from '@/contexts/features/types';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
 
 interface NotificationSettingsProps {
   featuresConfig: FeaturesConfig;

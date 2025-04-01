@@ -1,62 +1,27 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Loader2, 
-  Database, 
-  Save, 
-  Construction, 
-  LayoutList, 
-  Server, 
-  AlertTriangle,
-  Download,
-  Upload,
-  RefreshCw,
-  HardDrive,
-  KeyRound
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Switch } from '@/components/ui/switch';
+import { 
+  DatabaseZap, 
+  Database, 
+  RefreshCw, 
+  Clock, 
+  HardDrive,
+  KeyRound,
+  Lock,
+  CheckCircle,
+  Server,
+  Download,
+  Upload
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import type { FeaturesConfig } from '@/contexts/features/types';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-
-interface SettingsAccordionProps {
-  title: string;
-  description: string;
-  sections: any[];
-  className?: string;
-}
-
-const SettingsAccordion: React.FC<SettingsAccordionProps> = ({ title, description, sections, className }) => {
-  return (
-    <Card className={className}>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Accordion type="single" collapsible className="space-y-4">
-          {sections.map((section) => (
-            <AccordionItem key={section.id} value={section.id}>
-              <AccordionTrigger className="flex items-center">
-                {section.icon}
-                <span className="ml-2">{section.title}</span>
-              </AccordionTrigger>
-              <AccordionContent className="pt-4">
-                {section.content}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </CardContent>
-    </Card>
-  );
-};
+import { Button } from '@/components/ui/button';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
+import { Separator } from '@/components/ui/separator';
+import SettingsAccordion from '@/components/admin/settings/SettingsAccordion';
+import { cn } from '@/lib/utils';
 
 interface DataSettingsProps {
   featuresConfig?: FeaturesConfig;

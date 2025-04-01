@@ -7,7 +7,6 @@ import NotFound from '@/pages/NotFound';
 import Profile from '@/pages/Profile';
 import AppLayout from '@/layouts/AppLayout';
 import PageRenderer from '@/features/pages/PageRenderer';
-import { FeaturesProvider } from '@/contexts/features/FeaturesContext';
 
 // Lazy loading of route groups
 const PublicRoutes = React.lazy(() => import('./PublicRoutes'));
@@ -67,9 +66,7 @@ const AppRouter: React.FC = () => {
       <Route path="/admin/*" element={
         <ProtectedRoute>
           <React.Suspense fallback={<LoadingFallback />}>
-            <FeaturesProvider>
-              <AdminRoutes />
-            </FeaturesProvider>
+            <AdminRoutes />
           </React.Suspense>
         </ProtectedRoute>
       } />

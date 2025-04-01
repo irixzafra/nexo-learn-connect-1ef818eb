@@ -1,152 +1,247 @@
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { Loader2, Shield, Users, Mail, Construction, Activity, KeyRound } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { AlertTriangle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import type { FeaturesConfig } from '@/contexts/features/types';
 
-export interface SecuritySettingsProps {
+import React from 'react';
+import { 
+  ShieldCheck, 
+  Key, 
+  Lock, 
+  Users, 
+  AlertTriangle,
+  Clock,
+  Loader2,
+  Construction
+} from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
+import SettingsAccordion, { SettingsSection } from '@/components/admin/settings/SettingsAccordion';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+
+interface SecuritySettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
   isLoading?: boolean;
 }
 
-export const SecuritySettings: React.FC<SecuritySettingsProps> = ({ 
-  featuresConfig, 
+const SecuritySettings: React.FC<SecuritySettingsProps> = ({
+  featuresConfig,
   onToggleFeature,
   isLoading = false
 }) => {
-  const navigate = useNavigate();
+  const securitySections: SettingsSection[] = [
+    {
+      id: "authentication",
+      title: "Autenticación",
+      icon: <Key className="h-5 w-5" />,
+      iconColor: "text-green-500",
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Autenticación de dos factores</h3>
+              <p className="text-xs text-muted-foreground">
+                Requiere autenticación de dos factores para todos los usuarios
+              </p>
+              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+                <Construction className="h-3 w-3 mr-1" />
+                En desarrollo
+              </Badge>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enable2FA"
+                checked={featuresConfig.enable2FA}
+                onCheckedChange={(value) => onToggleFeature('enable2FA', value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+          
+          <Separator className="my-2" />
+          
+          <div>
+            <Label htmlFor="passwordPolicy" className="text-left block mb-1">Política de contraseñas</Label>
+            <Select defaultValue="strong">
+              <SelectTrigger id="passwordPolicy">
+                <SelectValue placeholder="Seleccionar política" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="basic">Básica</SelectItem>
+                <SelectItem value="medium">Media</SelectItem>
+                <SelectItem value="strong">Fuerte</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Define la complejidad requerida para las contraseñas
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "sessions",
+      title: "Sesiones",
+      icon: <Clock className="h-5 w-5" />,
+      iconColor: "text-blue-500",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="sessionTimeout" className="text-left block mb-1">Tiempo de expiración de sesión</Label>
+            <div className="flex items-center gap-2">
+              <Input id="sessionTimeout" type="number" defaultValue="60" />
+              <span className="text-sm text-muted-foreground">minutos</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Tiempo de inactividad antes de cerrar la sesión
+            </p>
+          </div>
+          
+          <Separator className="my-2" />
+          
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Sesiones múltiples</h3>
+              <p className="text-xs text-muted-foreground">
+                Permite múltiples sesiones activas para un mismo usuario
+              </p>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableMultipleSessions"
+                checked={featuresConfig.enableMultipleSessions}
+                onCheckedChange={(value) => onToggleFeature('enableMultipleSessions', value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "permissions",
+      title: "Permisos",
+      icon: <Lock className="h-5 w-5" />,
+      iconColor: "text-orange-500",
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Registro público</h3>
+              <p className="text-xs text-muted-foreground">
+                Permite que cualquier persona se registre en la plataforma
+              </p>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enablePublicRegistration"
+                checked={featuresConfig.enablePublicRegistration}
+                onCheckedChange={(value) => onToggleFeature('enablePublicRegistration', value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+          
+          <Separator className="my-2" />
+          
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Verificación de email</h3>
+              <p className="text-xs text-muted-foreground">
+                Requiere verificación de email para nuevas cuentas
+              </p>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="requireEmailVerification"
+                checked={featuresConfig.requireEmailVerification}
+                onCheckedChange={(value) => onToggleFeature('requireEmailVerification', value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: "audit",
+      title: "Auditoría",
+      icon: <AlertTriangle className="h-5 w-5" />,
+      iconColor: "text-red-500",
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Registro de actividad</h3>
+              <p className="text-xs text-muted-foreground">
+                Mantiene un registro de todas las acciones de los usuarios
+              </p>
+            </div>
+            <div className="flex items-center">
+              {isLoading && (
+                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+              )}
+              <Switch
+                id="enableActivityLog"
+                checked={featuresConfig.enableActivityLog}
+                onCheckedChange={(value) => onToggleFeature('enableActivityLog', value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+          
+          <Separator className="my-2" />
+          
+          <div>
+            <Label htmlFor="logRetention" className="text-left block mb-1">Retención de registros</Label>
+            <Select defaultValue="90">
+              <SelectTrigger id="logRetention">
+                <SelectValue placeholder="Seleccionar periodo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="30">30 días</SelectItem>
+                <SelectItem value="90">90 días</SelectItem>
+                <SelectItem value="365">1 año</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1 text-left">
+              Tiempo de retención de los registros de actividad
+            </p>
+          </div>
+        </div>
+      )
+    }
+  ];
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Shield className="h-4 w-4 text-red-500" />
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-semibold flex items-center gap-2 text-green-600">
+          <ShieldCheck className="h-5 w-5" />
           Seguridad
-        </CardTitle>
-        <CardDescription className="text-xs">
+        </h1>
+        <p className="text-muted-foreground">
           Configura las opciones de seguridad del sistema
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3 pt-0">
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Autenticación de dos factores</h3>
-            <p className="text-xs text-muted-foreground">
-              Habilita 2FA para mayor seguridad
-            </p>
-            <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
-              <Construction className="h-3 w-3 mr-1" />
-              En desarrollo
-            </Badge>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enable2FA"
-              checked={featuresConfig.enable2FA}
-              onCheckedChange={(value) => onToggleFeature('enable2FA', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Sesiones múltiples</h3>
-            <p className="text-xs text-muted-foreground">
-              Permite iniciar sesión desde múltiples dispositivos
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableMultipleSessions"
-              checked={featuresConfig.enableMultipleSessions}
-              onCheckedChange={(value) => onToggleFeature('enableMultipleSessions', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Registro público</h3>
-            <p className="text-xs text-muted-foreground">
-              Permite que cualquier persona se registre
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enablePublicRegistration"
-              checked={featuresConfig.enablePublicRegistration}
-              onCheckedChange={(value) => onToggleFeature('enablePublicRegistration', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Verificación de correo</h3>
-            <p className="text-xs text-muted-foreground">
-              Requiere verificar el email al registrarse
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="requireEmailVerification"
-              checked={featuresConfig.requireEmailVerification}
-              onCheckedChange={(value) => onToggleFeature('requireEmailVerification', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Registro de actividad</h3>
-            <p className="text-xs text-muted-foreground">
-              Guarda un historial de acciones de usuarios
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableActivityLog"
-              checked={featuresConfig.enableActivityLog}
-              onCheckedChange={(value) => onToggleFeature('enableActivityLog', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </p>
+      </div>
+
+      <SettingsAccordion sections={securitySections} />
+    </div>
   );
 };
+
+export default SecuritySettings;
