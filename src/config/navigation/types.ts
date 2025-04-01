@@ -16,5 +16,5 @@ export type NavigationGroup = {
   [key: string]: MenuItem[];
 };
 
-// Use 'export type' for re-exporting types when isolatedModules is enabled
+// Import the NavigationMenus type from its new location
 export type { NavigationMenus } from '@/types/navigation';

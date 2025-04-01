@@ -1,28 +1,43 @@
 
-import React, { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
+import React from 'react';
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription 
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area
+} from 'recharts';
 import { useRevenueStatistics } from '@/features/finances/hooks/useRevenueStatistics';
-import { LineChart, ResponsiveContainer, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
-import { Download, Filter, RefreshCw, DollarSign, ArrowUpRight, ArrowDownRight, Calendar } from 'lucide-react';
-
-// Colores para los gráficos
-const COLORS = ['#8B5CF6', '#3B82F6', '#10B981', '#F97316', '#EC4899'];
+import { DollarSign, TrendingUp, CreditCard, Users, PercentIcon } from 'lucide-react';
 
 const RevenueAnalyticsSection: React.FC = () => {
-  const { revenueStats, revenueByMonth, revenueByCourse, isLoading, refetchAll } = useRevenueStatistics();
-  const [period, setPeriod] = useState("6m"); // 1m, 3m, 6m, 1y
-
-  const handleRefresh = () => {
-    refetchAll();
-  };
-
+  const { 
+    revenueStats, 
+    revenueByMonth, 
+    revenueByCourse, 
+    isLoading 
+  } = useRevenueStatistics();
+  
+  // Colores para el gráfico de categorías
+  const COLORS = ['#8884d8', '#82ca9d', '#FFBB28', '#FF8042', '#0088FE', '#00C49F'];
+  
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -30,136 +45,156 @@ const RevenueAnalyticsSection: React.FC = () => {
       </div>
     );
   }
-
-  // Datos para las tarjetas de KPI
-  const kpiCards = [
-    {
-      title: "Ingresos Totales",
-      value: `€${revenueStats.totalRevenue.toLocaleString()}`,
-      change: "+12.5%",
-      isPositive: true,
-      icon: <DollarSign className="h-5 w-5" />,
-      period: "vs. mes anterior"
-    },
-    {
-      title: "Valor Medio (LTV)",
-      value: `€${revenueStats.averageLifetimeValue.toLocaleString()}`,
-      change: "+8.3%",
-      isPositive: true,
-      icon: <DollarSign className="h-5 w-5" />,
-      period: "vs. mes anterior"
-    },
-    {
-      title: "Ingresos Mensuales",
-      value: `€${revenueStats.monthlyRevenue.toLocaleString()}`,
-      change: "+15.2%",
-      isPositive: true,
-      icon: <DollarSign className="h-5 w-5" />,
-      period: "vs. mes anterior"
-    },
-    {
-      title: "Tasa de Conversión",
-      value: `${revenueStats.conversionRate.toFixed(1)}%`,
-      change: "-2.1%",
-      isPositive: false,
-      icon: <DollarSign className="h-5 w-5" />,
-      period: "vs. mes anterior"
-    }
-  ];
-
+  
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Resumen de Ingresos</h2>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            Filtrar
-          </Button>
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Exportar
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleRefresh}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Actualizar
-          </Button>
-        </div>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpiCards.map((card, idx) => (
-          <Card key={idx} className="shadow-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="bg-primary/10 p-2 rounded-full">
-                  {card.icon}
-                </div>
-                <div className={`flex items-center ${card.isPositive ? 'text-green-500' : 'text-red-500'}`}>
-                  {card.isPositive ? <ArrowUpRight className="h-4 w-4 mr-1" /> : <ArrowDownRight className="h-4 w-4 mr-1" />}
-                  <span className="text-sm font-medium">{card.change}</span>
-                </div>
+      {/* Métricas principales */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Ingresos Totales</p>
+                <p className="text-2xl font-bold">€{revenueStats.totalRevenue.toLocaleString()}</p>
               </div>
-              <div className="mt-4">
-                <h3 className="text-sm font-medium text-muted-foreground">{card.title}</h3>
-                <div className="text-2xl font-bold mt-1">{card.value}</div>
-                <p className="text-xs text-muted-foreground mt-1">{card.period}</p>
+              <div className="p-2 bg-primary/10 rounded-full">
+                <DollarSign className="h-5 w-5 text-primary" />
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Ingreso Mensual</p>
+                <p className="text-2xl font-bold">€{revenueStats.monthlyRevenue.toLocaleString()}</p>
+              </div>
+              <div className="p-2 bg-green-500/10 rounded-full">
+                <TrendingUp className="h-5 w-5 text-green-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Valor Promedio Cliente</p>
+                <p className="text-2xl font-bold">€{revenueStats.averageLifetimeValue.toFixed(2)}</p>
+              </div>
+              <div className="p-2 bg-blue-500/10 rounded-full">
+                <Users className="h-5 w-5 text-blue-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Tasa de Conversión</p>
+                <p className="text-2xl font-bold">{revenueStats.conversionRate}%</p>
+              </div>
+              <div className="p-2 bg-amber-500/10 rounded-full">
+                <PercentIcon className="h-5 w-5 text-amber-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Revenue by Month Chart */}
+      
+      {/* Gráfico de ingresos mensuales */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <div>
-            <CardTitle>Tendencia de Ingresos</CardTitle>
-            <CardDescription>Ingresos mensuales durante el último año</CardDescription>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm">
-              <Calendar className="h-4 w-4 mr-2" />
-              <span>Este año</span>
-            </Button>
-          </div>
+        <CardHeader>
+          <CardTitle>Ingresos Mensuales</CardTitle>
+          <CardDescription>Evolución en los últimos 12 meses</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-80">
+          <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart
+              <AreaChart
                 data={revenueByMonth}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                margin={{ top: 10, right: 30, left: 0, bottom: 30 }}
               >
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value) => [`€${value}`, 'Ingresos']} />
+                <XAxis 
+                  dataKey="month" 
+                  angle={-45} 
+                  textAnchor="end" 
+                  tick={{ fontSize: 12 }}
+                  height={60}
+                />
+                <YAxis 
+                  tickFormatter={(value) => `€${value.toLocaleString()}`}
+                />
+                <Tooltip 
+                  formatter={(value) => [`€${value.toLocaleString()}`, 'Ingresos']}
+                />
                 <Legend />
-                <Line 
+                <Area 
                   type="monotone" 
                   dataKey="revenue" 
-                  name="Ingresos" 
-                  stroke="#8B5CF6" 
-                  activeDot={{ r: 8 }} 
-                  strokeWidth={2}
+                  stroke="#82ca9d" 
+                  fillOpacity={1} 
+                  fill="url(#colorRevenue)" 
+                  name="Ingresos"
                 />
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
-
-      {/* Revenue by Course Category */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      {/* Cursos más rentables e ingresos por categoría */}
+      <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Ingresos por Categoría de Curso</CardTitle>
-            <CardDescription>Distribución de ingresos por categoría</CardDescription>
+            <CardTitle>Cursos Más Rentables</CardTitle>
+            <CardDescription>Ingresos totales generados por curso</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-80">
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={revenueStats.topCoursesByRevenue}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" tickFormatter={(value) => `€${value.toLocaleString()}`} />
+                  <YAxis 
+                    dataKey="title" 
+                    type="category" 
+                    tick={{ fontSize: 12 }}
+                    width={120}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [`€${value.toLocaleString()}`, 'Ingresos']}
+                  />
+                  <Bar dataKey="revenue" fill="#8884d8" name="Ingresos" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Distribución de Ingresos</CardTitle>
+            <CardDescription>Por categoría de curso</CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -167,53 +202,57 @@ const RevenueAnalyticsSection: React.FC = () => {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
+                    outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
+                    nameKey="name"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   >
                     {revenueByCourse.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`€${value}`, 'Ingresos']} />
+                  <Tooltip formatter={(value) => [`€${value.toLocaleString()}`, 'Ingresos']} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
-
-        {/* Top Courses by Revenue */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Cursos con Mayores Ingresos</CardTitle>
-            <CardDescription>Los 5 cursos que generan más ingresos</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {revenueStats.topCoursesByRevenue.map((course, idx) => (
-                <div key={idx} className="flex items-center justify-between border-b pb-3 last:border-0">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary">
-                      {idx + 1}
-                    </div>
-                    <div>
-                      <h4 className="font-medium">{course.title}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {course.category}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="font-bold">€{course.revenue.toLocaleString()}</span>
-                    <p className="text-sm text-muted-foreground">{course.sales} ventas</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
+      
+      {/* Tabla de detalles */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Resumen de Ventas por Curso</CardTitle>
+          <CardDescription>Desglose detallado de ingresos y ventas</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="relative overflow-x-auto rounded-md">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-muted-foreground uppercase bg-muted">
+                <tr>
+                  <th className="px-6 py-3">Curso</th>
+                  <th className="px-6 py-3">Categoría</th>
+                  <th className="px-6 py-3">Ventas</th>
+                  <th className="px-6 py-3">Ingresos</th>
+                  <th className="px-6 py-3">Precio</th>
+                </tr>
+              </thead>
+              <tbody>
+                {revenueStats.topCoursesByRevenue.map((course, index) => (
+                  <tr key={index} className="bg-background border-b hover:bg-muted/50">
+                    <td className="px-6 py-4 font-medium">{course.title}</td>
+                    <td className="px-6 py-4">{course.category}</td>
+                    <td className="px-6 py-4">{course.sales}</td>
+                    <td className="px-6 py-4">€{course.revenue.toLocaleString()}</td>
+                    <td className="px-6 py-4">€{(course.revenue / course.sales).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

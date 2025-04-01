@@ -13,4 +13,14 @@ export interface MenuItem {
   active?: boolean;
 }
 
-export type { NavigationMenus } from "@/config/navigation";
+// Define a new interface for NavigationMenus without circular dependencies
+export interface NavigationMenus {
+  main: MenuItem[];
+  admin: MenuItem[];
+  explore: MenuItem[];
+  instructor: MenuItem[];
+  academic: MenuItem[];
+  finance: MenuItem[];
+  settings: MenuItem[];
+  gamification: MenuItem[];
+}

@@ -1,26 +1,54 @@
 
-import React, { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
+import React from 'react';
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription 
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts';
 import { useCoursesStatistics } from '@/features/courses/hooks/useCoursesStatistics';
-import { BarChart, ResponsiveContainer, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Download, Filter, RefreshCw, Clock, BookOpen, Users, Star } from 'lucide-react';
+import { BookOpen, Users, Clock, Award, TrendingUp } from 'lucide-react';
 
 const CoursesAnalyticsSection: React.FC = () => {
   const { courseStats, enrollmentTrends, isLoading, refetchAll } = useCoursesStatistics();
-  const [activeTab, setActiveTab] = useState('overview');
-
-  const handleRefresh = () => {
-    refetchAll();
-  };
-
+  
+  // Datos para el gráfico de categorías
+  const categoryData = [
+    { name: "Desarrollo Web", value: 32 },
+    { name: "Programación", value: 28 },
+    { name: "Diseño UX/UI", value: 18 },
+    { name: "Marketing Digital", value: 14 },
+    { name: "Ciencia de Datos", value: 8 }
+  ];
+  
+  // Colores para el gráfico de categorías
+  const COLORS = ['#8884d8', '#82ca9d', '#FFBB28', '#FF8042', '#0088FE', '#00C49F'];
+  
+  // Datos para el gráfico de duración promedio
+  const durationData = [
+    { name: "< 5h", courses: 12 },
+    { name: "5-10h", courses: 24 },
+    { name: "10-20h", courses: 36 },
+    { name: "20-40h", courses: 28 },
+    { name: "40h+", courses: 16 }
+  ];
+  
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -28,133 +56,203 @@ const CoursesAnalyticsSection: React.FC = () => {
       </div>
     );
   }
-
-  // Datos de métricas clave
-  const metricsCards = [
-    {
-      title: "Total Cursos",
-      value: courseStats.totalCourses,
-      icon: <BookOpen className="h-5 w-5" />,
-      color: "bg-primary/10",
-      textColor: "text-primary"
-    },
-    {
-      title: "Cursos Activos",
-      value: courseStats.activeCourses,
-      icon: <Star className="h-5 w-5" />,
-      color: "bg-green-500/10",
-      textColor: "text-green-500"
-    },
-    {
-      title: "Inscripciones Totales",
-      value: courseStats.totalEnrollments,
-      icon: <Users className="h-5 w-5" />,
-      color: "bg-blue-500/10",
-      textColor: "text-blue-500"
-    },
-    {
-      title: "Duración Promedio",
-      value: `${courseStats.avgDurationHours}h`,
-      icon: <Clock className="h-5 w-5" />,
-      color: "bg-amber-500/10",
-      textColor: "text-amber-500"
-    }
-  ];
-
+  
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Analíticas de Cursos</h2>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            Filtrar
-          </Button>
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Exportar
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleRefresh}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Actualizar
-          </Button>
-        </div>
+      {/* Métricas principales */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Cursos</p>
+                <p className="text-2xl font-bold">{courseStats.totalCourses}</p>
+              </div>
+              <div className="p-2 bg-primary/10 rounded-full">
+                <BookOpen className="h-5 w-5 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Cursos Activos</p>
+                <p className="text-2xl font-bold">{courseStats.activeCourses}</p>
+              </div>
+              <div className="p-2 bg-green-500/10 rounded-full">
+                <TrendingUp className="h-5 w-5 text-green-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Inscripciones</p>
+                <p className="text-2xl font-bold">{courseStats.totalEnrollments}</p>
+              </div>
+              <div className="p-2 bg-blue-500/10 rounded-full">
+                <Users className="h-5 w-5 text-blue-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Duración Promedio</p>
+                <p className="text-2xl font-bold">{courseStats.avgDurationHours}h</p>
+              </div>
+              <div className="p-2 bg-amber-500/10 rounded-full">
+                <Clock className="h-5 w-5 text-amber-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Métricas clave */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metricsCards.map((card, idx) => (
-          <Card key={idx} className="shadow-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className={`${card.color} p-2 rounded-full`}>
-                  <div className={card.textColor}>{card.icon}</div>
-                </div>
-              </div>
-              <div className="mt-4">
-                <h3 className="text-sm font-medium text-muted-foreground">{card.title}</h3>
-                <div className="text-2xl font-bold mt-1">{card.value}</div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      
+      {/* Tendencias de inscripción e información de cursos */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Tendencia de Inscripciones</CardTitle>
+            <CardDescription>Últimos 30 días</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={enrollmentTrends}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 25 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date" 
+                    angle={-45} 
+                    textAnchor="end"
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(date) => {
+                      const d = new Date(date);
+                      return `${d.getDate()}/${d.getMonth() + 1}`;
+                    }}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value) => [`${value} inscripciones`, 'Inscripciones']}
+                    labelFormatter={(date) => {
+                      const d = new Date(date);
+                      return `${d.toLocaleDateString()}`;
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="count" 
+                    stroke="#8884d8" 
+                    name="Inscripciones" 
+                    strokeWidth={2} 
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Distribución por Categoría</CardTitle>
+            <CardDescription>Porcentaje de cursos por categoría</CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={categoryData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {categoryData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value} cursos`, 'Cantidad']} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Gráfica de tendencias de inscripción */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Tendencias de Inscripción</CardTitle>
-          <CardDescription>Número de inscripciones en los últimos 30 días</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={enrollmentTrends}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="count" name="Inscripciones" fill="#8B5CF6" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Top Cursos */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Cursos más Populares</CardTitle>
-          <CardDescription>Los cursos con mayor número de inscripciones</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {courseStats.topCourses.map((course, idx) => (
-              <div key={idx} className="flex items-center justify-between border-b pb-3 last:border-0">
-                <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary">
-                    {idx + 1}
-                  </div>
-                  <div>
-                    <h4 className="font-medium">{course.title}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {course.categoryName}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="font-bold">{course.enrollments}</span>
-                  <p className="text-sm text-muted-foreground">inscripciones</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      
+      {/* Cursos más populares y distribución de duración */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Cursos Más Populares</CardTitle>
+            <CardDescription>Por número de inscripciones</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={courseStats.topCourses}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" />
+                  <YAxis 
+                    dataKey="title" 
+                    type="category" 
+                    tick={{ fontSize: 12 }}
+                    width={120}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [`${value} estudiantes`, 'Inscripciones']}
+                  />
+                  <Bar dataKey="enrollments" fill="#8884d8" name="Inscripciones" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Distribución por Duración</CardTitle>
+            <CardDescription>Cantidad de cursos según duración</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={durationData}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value) => [`${value} cursos`, 'Cantidad']}
+                  />
+                  <Bar dataKey="courses" fill="#82ca9d" name="Cursos" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
