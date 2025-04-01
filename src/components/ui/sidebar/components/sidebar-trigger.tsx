@@ -12,21 +12,37 @@ export const SidebarTrigger = React.forwardRef<
 >(({ className, onClick, children, ...props }, ref) => {
   const { toggleSidebar, state, openMobile, setOpenMobile } = useSidebar()
   const isCollapsed = state === "collapsed"
-  const isMobile = React.useMemo(() => {
-    if (typeof window === 'undefined') return false;
-    return window.innerWidth < 768;
-  }, [])
+  
+  // Use a ref for this value to avoid re-renders
+  const isMobile = React.useRef(false);
+  
+  // Set the isMobile value once on mount, or when window is resized
+  React.useEffect(() => {
+    const handleResize = () => {
+      isMobile.current = window.innerWidth < 768;
+    };
+    
+    // Initial call
+    handleResize();
+    
+    // Add event listener for resize
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleToggleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("SidebarTrigger clicked", isMobile ? "mobile" : "desktop", "Current state:", isCollapsed ? "collapsed" : "expanded");
     
     if (onClick) {
       onClick(e);
     }
 
-    if (isMobile) {
+    if (isMobile.current) {
       setOpenMobile(!openMobile);
     } else {
       toggleSidebar();
@@ -51,50 +67,36 @@ export const SidebarTrigger = React.forwardRef<
       {...props}
     >
       <AnimatePresence mode="wait" initial={false}>
-        {isMobile ? (
-          openMobile ? (
-            <motion.div
-              key="close"
-              initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <X className="h-5 w-5" aria-hidden="true" />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="menu"
-              initial={{ opacity: 0, rotate: 90, scale: 0.5 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: -90, scale: 0.5 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <Menu className="h-5 w-5" aria-hidden="true" />
-            </motion.div>
-          )
+        {openMobile ? (
+          <motion.div
+            key="close"
+            initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </motion.div>
+        ) : isCollapsed ? (
+          <motion.div
+            key="logo-icon"
+            initial={{ opacity: 0, rotate: 180, scale: 0.5 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: -180, scale: 0.5 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <ChevronRight className="h-5 w-5" aria-hidden="true" />
+          </motion.div>
         ) : (
-          isCollapsed ? (
-            <motion.div
-              key="logo-icon"
-              initial={{ opacity: 0, rotate: 180, scale: 0.5 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: -180, scale: 0.5 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <ChevronRight className="h-5 w-5" aria-hidden="true" />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="menu-icon"
-              initial={{ opacity: 0, rotate: -180, scale: 0.5 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: 180, scale: 0.5 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-            </motion.div>
-          )
+          <motion.div
+            key="menu-icon"
+            initial={{ opacity: 0, rotate: -180, scale: 0.5 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: 180, scale: 0.5 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+          </motion.div>
         )}
       </AnimatePresence>
       <span className="sr-only">{isCollapsed ? "Expandir menú lateral" : "Colapsar menú lateral"}</span>

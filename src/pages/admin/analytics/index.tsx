@@ -68,8 +68,11 @@ const AnalyticsOverview: React.FC = () => {
   
   useEffect(() => {
     // Actualiza la pestaña activa si la URL cambia (por ejemplo, a través de navegación)
-    setActiveTab(getDefaultTab());
-  }, [location]);
+    const newActiveTab = getDefaultTab();
+    if (newActiveTab !== activeTab) {
+      setActiveTab(newActiveTab);
+    }
+  }, [location.pathname]);
   
   if (!analyticsEnabled) {
     return (

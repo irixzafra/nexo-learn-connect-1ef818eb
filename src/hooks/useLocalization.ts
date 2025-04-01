@@ -1,6 +1,7 @@
 
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getLocalizedUrl, getPathWithoutLanguage } from '@/utils/languageUtils';
+import { Language } from '@/types/language';
 
 /**
  * Hook for handling localization and translation of routes and content
@@ -14,7 +15,7 @@ export const useLocalization = () => {
    * @returns The localized URL
    */
   const localizeUrl = (path: string): string => {
-    return getLocalizedUrl(path, currentLanguage);
+    return getLocalizedUrl(path, currentLanguage as Language);
   };
 
   /**

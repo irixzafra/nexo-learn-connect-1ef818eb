@@ -6,6 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ensureLanguagePrefix } from '@/utils/languageUtils';
 import { useFeature } from '@/hooks/useFeature';
 import { toast } from 'sonner';
+import { Language } from '@/types/language';
 
 interface SafeLinkProps extends Omit<LinkProps, 'to'> {
   to: string;
@@ -38,7 +39,7 @@ const SafeLink: React.FC<SafeLinkProps> = ({
   
   // If we should preserve language and language prefixes are enabled, ensure the path has the current language
   if (preserveLanguage && enableLangPrefixUrls && !to.startsWith('http')) {
-    normalizedPath = ensureLanguagePrefix(normalizedPath, currentLanguage);
+    normalizedPath = ensureLanguagePrefix(normalizedPath, currentLanguage as Language);
   }
   
   // Check if the path is valid
@@ -61,7 +62,7 @@ const SafeLink: React.FC<SafeLinkProps> = ({
   
   // Apply language prefix to fallback path if needed
   if (!isValid && preserveLanguage && enableLangPrefixUrls && !fallbackUrl.startsWith('http')) {
-    effectivePath = ensureLanguagePrefix(fallbackUrl, currentLanguage);
+    effectivePath = ensureLanguagePrefix(fallbackUrl, currentLanguage as Language);
   }
   
   // If the path is an external URL, use a regular anchor tag
