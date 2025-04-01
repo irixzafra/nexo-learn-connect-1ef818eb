@@ -5,6 +5,7 @@ import SidebarNavSection from './SidebarNavSection';
 import SidebarNavGroup from './SidebarNavGroup';
 import { getNavigationByRole } from '@/config/navigation';
 import { useSidebarState } from '@/components/layout/sidebar/useSidebarState';
+import { useValidateRoutes } from '@/hooks/useValidateRoutes';
 import {
   Home,
   BookOpen,
@@ -57,6 +58,13 @@ const navigationGroups = [
     title: 'Configuración',
     icon: Settings,
     navKey: 'settings',
+    requiredRole: ['admin', 'sistemas']
+  },
+  {
+    id: 'admin',
+    title: 'Administración',
+    icon: Shield,
+    navKey: 'admin',
     requiredRole: ['admin', 'sistemas']
   }
 ];
@@ -141,8 +149,11 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
     <div className={`flex-1 overflow-auto ${isCollapsed ? "px-2" : "px-4"}`}>
       <div className="space-y-4 py-4">
         {filteredGroups.map(group => {
-          const groupItems = menus[group.navKey as keyof typeof menus];
-          const enhancedItems = enhanceItemsWithBadges(groupItems);
+          // Obtener elementos de menú para este grupo
+          const groupItems = menus[group.navKey as keyof typeof menus] || [];
+          // Aplicar validación de rutas y mejorar con badges
+          const validatedItems = useValidateRoutes(groupItems);
+          const enhancedItems = enhanceItemsWithBadges(validatedItems);
           
           // No mostrar grupos sin elementos
           if (!enhancedItems || enhancedItems.length === 0) {

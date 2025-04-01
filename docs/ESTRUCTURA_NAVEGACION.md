@@ -23,66 +23,85 @@ La navegación se compone de un sistema unificado que muestra diferentes element
 3. Se filtran los elementos según los permisos del usuario
 4. Se muestra la navegación correspondiente manteniendo una experiencia coherente
 
-## Componentes Clave
+## Componentes de Navegación
 
-- **ConditionalSidebar**: Determina qué navegación mostrar basado en la ruta actual
-- **SidebarMainNavigation**: Componente base de navegación utilizado por todos los usuarios
-- **AdminNavigation**: Utilizado exclusivamente en secciones administrativas
-- **SidebarFooterSection**: Controles de usuario en la parte inferior de la barra lateral
+### Barra Lateral (Sidebar)
+- **SidebarMainNavigation**: Componente principal que contiene grupos de navegación
+- **SidebarNavGroup**: Grupos colapsables de elementos (Mis Cursos, Explorar, etc.)
+- **SidebarNavItem**: Elementos individuales de navegación
+- **SidebarFooterSection**: Controles de usuario en la parte inferior
 
-## Arquitectura de Archivos
+### Cabecera (Header)
+- **MainHeader**: Barra superior con logo, búsqueda y acciones rápidas
+- **Breadcrumbs**: Navegación de ruta actual
+- **QuickActions**: Botones de acción rápida (notificaciones, mensajes, etc.)
 
-La estructura de navegación se gestiona en:
+### Pie de Página (Footer)
+- **MainFooter**: Enlaces legales, información de contacto y redes sociales
+- **Copyright**: Información legal y de derechos de autor
+
+## Gestión del Estado
+
+- **useSidebarState**: Hook para gestionar el estado de los grupos expandidos/colapsados
+- **useValidateRoutes**: Hook para validar y mejorar las rutas de navegación
+
+## Roadmap de Implementación
+
+### Fase 1: Estructura Base ✅
+- Sistema de navegación lateral básico
+- Filtrado por roles
+- Persistencia del estado de expansión
+
+### Fase 2: Mejoras de UX ✅
+- Iconos y badges de notificación
+- Animaciones de transición
+- Adaptación responsive
+
+### Fase 3: Herramientas de Gestión ✅
+- Diagrama de navegación
+- Documentación de estructura
+- Vista de exploración de páginas
+
+### Fase 4: Optimización (En Progreso 🚧)
+- Validación de rutas
+- Prevención de enlaces rotos
+- Mejor adaptación a dispositivos móviles
+
+### Fase 5: Expansión (Planificado ⏳)
+- Integración con sistema de permisos avanzado
+- Personalización por usuario
+- Analíticas de uso de navegación
+
+## Mejores Prácticas
+
+1. **Uso de Configuración Centralizada**: Todos los elementos de navegación deben definirse en `/src/config/navigation/`
+2. **Filtrado por Rol**: Utilizar `requiredRole` para mostrar/ocultar elementos según el rol
+3. **Enlaces Dinámicos**: Usar funciones para generar rutas con parámetros
+4. **Validación de Rutas**: Utilizar `useValidateRoutes` para verificar rutas antes de mostrarlas
+5. **Persistencia de Estado**: Aprovechar `useSidebarState` para mantener la experiencia del usuario
+
+## Ubicación de Componentes
 
 ```
 /src
-  /config
-    /navigation        # Configuración centralizada de navegación
   /components
-    /layout            # Componentes estructurales
-    /navigation        # Componentes de navegación
-  /layouts             # Layouts principales
-  /routes              # Definición de rutas
+    /layout
+      /sidebar         # Componentes de la barra lateral
+        /navigation    # Elementos específicos de navegación
+      /header          # Componentes de la cabecera
+      /footer          # Componentes del pie de página
+  /config
+    /navigation        # Configuración de menús por sección
+  /hooks               # Hooks de navegación (useSidebarState, etc.)
 ```
 
-## Estructura Específica por Rol
+## Próximos Pasos
 
-### Estudiante (student)
-- Inicio (Dashboard, Notificaciones)
-- Mis Cursos (En Progreso, Completados)
-- Comunidad (Foros, Mensajes)
-- Explorar (Catálogo, Rutas de Aprendizaje)
-- Configuración (General, Seguridad, Notificaciones)
-
-### Instructor
-- Todo lo de estudiante
-- Profesor (Mis Cursos, Estudiantes)
-
-### Administrador
-- Todo lo anterior
-- Gestión Académica (Cursos, Usuarios, Certificaciones)
-- Finanzas (Transacciones, Informes, Facturación)
-- Configuración (opciones extendidas)
-
-## Adaptación Móvil
-
-En dispositivos móviles:
-- La barra lateral se colapsa automáticamente
-- Se muestra un menú inferior para navegación principal
-- Se ajustan los componentes para optimizar el espacio
-
-## Mejores Prácticas para Desarrollo
-
-1. Usar siempre componentes existentes de navegación
-2. Añadir nuevos elementos en el nivel apropiado
-3. Mantener la consistencia visual
-4. Considerar la experiencia en dispositivos móviles
-5. Documentar cambios significativos en este documento
-
-## Documentación Relacionada
-
-- [Documentación de Administración](./admin/ADMINISTRACION.md)
-- [Arquitectura de Componentes](./architecture/components.md)
+1. Mejorar la validación de rutas para evitar enlaces rotos
+2. Implementar sistema de breadcrumbs contextuales
+3. Añadir capacidades de personalización de navegación por usuario
+4. Desarrollar menú de favoritos personalizable
+5. Integrar análisis de uso para optimizar la navegación
 
 ---
 
