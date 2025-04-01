@@ -1,104 +1,138 @@
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { toast } from 'sonner';
-import { FeaturesConfig, defaultFeaturesConfig, FeaturesContextProps } from './types';
-import { 
-  getFeatureDependencies, 
-  getFeatureDependents 
-} from './dependencies';
+import { FeaturesConfig } from './types';
 
-// Create context with default empty values
-const FeaturesContext = createContext<FeaturesContextProps>({} as FeaturesContextProps);
+// Define the shape of our context
+interface FeatureContextType {
+  featuresConfig: FeaturesConfig;
+  toggleFeature: (featureName: keyof FeaturesConfig, value: boolean) => Promise<void>;
+  isLoading: boolean;
+  error: string | null;
+}
 
-// Custom hook to use the features context
-export const useFeatures = () => useContext(FeaturesContext);
+// Create context with default values
+export const FeatureContext = createContext<FeatureContextType>({
+  featuresConfig: {
+    enableDarkMode: true,
+    enableNotifications: false,
+    enableAnalytics: true,
+    enableFeedback: true,
+    enableBetaFeatures: false,
+    enableOfflineMode: false,
+    enableDebugMode: false,
+    enableTestDataGenerator: false,
+    enableAdvancedFilters: true,
+    enableCategoryManagement: true,
+    enableAIFeatures: false,
+    enableMultiLanguage: true,
+    enableGamification: false,
+    enableCommunityFeatures: true,
+    enablePaymentSystem: false,
+    enableThemingOptions: true,
+    enableAdminTools: true,
+    enableLiveChat: false,
+    enableVideoLessons: true,
+    enableCertificates: true,
+    enableCustomBranding: false,
+    enableMobileApp: false,
+    enableEmailNotifications: true,
+    enableProgressTracking: true,
+    enableSocialSharing: true,
+    enableUserFeedback: true,
+    enableLeaderboards: false,
+    enableBadges: false,
+    enableDashboardCustomization: false,
+    enableCodeEditor: false,
+    enableWhiteboardFeature: false,
+    enableGroupClasses: true,
+    enableMentoring: false,
+    enableSubscriptionPause: false,
+    enableGiftSubscriptions: false,
+  },
+  toggleFeature: async () => {},
+  isLoading: false,
+  error: null
+});
 
-export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [features, setFeatures] = useState<FeaturesConfig>(defaultFeaturesConfig);
+export const useFeatureContext = () => useContext(FeatureContext);
+
+// Provider component
+export const FeatureProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({
+    enableDarkMode: true,
+    enableNotifications: false,
+    enableAnalytics: true,
+    enableFeedback: true,
+    enableBetaFeatures: false,
+    enableOfflineMode: false,
+    enableDebugMode: false,
+    enableTestDataGenerator: false,
+    enableAdvancedFilters: true,
+    enableCategoryManagement: true,
+    enableAIFeatures: false,
+    enableMultiLanguage: true,
+    enableGamification: false,
+    enableCommunityFeatures: true,
+    enablePaymentSystem: false,
+    enableThemingOptions: true,
+    enableAdminTools: true,
+    enableLiveChat: false,
+    enableVideoLessons: true,
+    enableCertificates: true,
+    enableCustomBranding: false,
+    enableMobileApp: false,
+    enableEmailNotifications: true,
+    enableProgressTracking: true,
+    enableSocialSharing: true,
+    enableUserFeedback: true,
+    enableLeaderboards: false,
+    enableBadges: false,
+    enableDashboardCustomization: false,
+    enableCodeEditor: false,
+    enableWhiteboardFeature: false,
+    enableGroupClasses: true,
+    enableMentoring: false,
+    enableSubscriptionPause: false,
+    enableGiftSubscriptions: false,
+  });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Check if a feature is enabled
-  const isFeatureEnabled = useCallback(
-    (featureName: keyof FeaturesConfig) => {
-      return !!features[featureName];
-    },
-    [features]
-  );
+  // Fetch features config when component mounts
+  useEffect(() => {
+    // This would normally be a fetch to your backend
+    // For now, we just use the default state
+  }, []);
 
-  // Toggle a feature on/off
-  const toggleFeature = useCallback(
-    async (featureName: keyof FeaturesConfig, value: boolean): Promise<void> => {
-      try {
-        setIsLoading(true);
-        
-        // Simulate API call with timeout
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        setFeatures(prev => ({
-          ...prev,
-          [featureName]: value
-        }));
-        
-        toast.success(`Característica "${String(featureName)}" ${value ? 'activada' : 'desactivada'}`);
-        return Promise.resolve();
-      } catch (error) {
-        console.error('Error toggling feature:', error);
-        toast.error(`Error al cambiar el estado de "${String(featureName)}"`);
-        return Promise.reject(error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
-
-  // Update multiple features at once
-  const updateFeatures = useCallback(
-    async (newConfig: FeaturesConfig): Promise<void> => {
-      try {
-        setIsLoading(true);
-        
-        // Simulate API call with timeout
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        setFeatures(prev => ({
-          ...prev,
-          ...newConfig
-        }));
-        
-        toast.success("Configuración actualizada correctamente");
-        return Promise.resolve();
-      } catch (error) {
-        console.error('Error updating features:', error);
-        toast.error("Error al actualizar la configuración");
-        return Promise.reject(error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
-
-  // Provide the context value
-  const contextValue: FeaturesContextProps = {
-    features,
-    featuresConfig: features,
-    isLoading,
-    error: null,
-    toggleFeature,
-    updateFeatures,
-    isFeatureEnabled,
-    getFeatureDependencies,
-    getFeatureDependents
+  // Toggle feature function
+  const toggleFeature = async (featureName: keyof FeaturesConfig, value: boolean) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // This would normally be an API call to update the feature in the backend
+      // For demo purposes, we'll just update the local state
+      setFeaturesConfig(prevConfig => ({
+        ...prevConfig,
+        [featureName]: value
+      }));
+      
+      toast.success(`Feature "${featureName}" ${value ? 'enabled' : 'disabled'}`);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(errorMessage);
+      toast.error(`Error toggling feature: ${errorMessage}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <FeaturesContext.Provider value={contextValue}>
+    <FeatureContext.Provider 
+      value={{ featuresConfig, toggleFeature, isLoading, error }}
+    >
       {children}
-    </FeaturesContext.Provider>
+    </FeatureContext.Provider>
   );
 };
-
-// Re-export for simplicity
-export type { FeaturesConfig };
-export { defaultFeaturesConfig };
