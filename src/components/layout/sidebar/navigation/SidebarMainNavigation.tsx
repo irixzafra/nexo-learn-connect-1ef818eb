@@ -13,7 +13,8 @@ import {
   GraduationCap,
   CreditCard,
   Settings,
-  Navigation
+  Navigation,
+  Shield
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
