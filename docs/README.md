@@ -1,41 +1,39 @@
 
-# Documentación de Nexo Learning
+# Documentación del Proyecto
 
-Este directorio contiene toda la documentación técnica del proyecto Nexo Learning, una plataforma educativa en línea.
+Este directorio contiene toda la documentación técnica del proyecto. Para mantener la coherencia,
+seguimos estas convenciones:
 
-## Estructura
+## Estructura de Archivos
+
+- Todos los nombres de archivo están en minúsculas
+- Se usa guión medio (`-`) para separar palabras
+- Se organizan en subdirectorios temáticos
+
+## Convenciones de Nombres
+
+Utiliza estas convenciones para nombrar los archivos de documentación:
+
+| Categoría | Prefijo | Ejemplo |
+|-----------|---------|---------|
+| Guías | `guia-` | `guia-instalacion.md` |
+| Referencias | `ref-` | `ref-api.md` |
+| Tutoriales | `tutorial-` | `tutorial-autenticacion.md` |
+| Arquitectura | `arq-` | `arq-componentes.md` |
+
+## Navegación
 
 La documentación está organizada en las siguientes secciones:
 
-- [Arquitectura del Sistema](arquitectura-del-sistema.md)
-- [Estructura de Navegación](estructura-navegacion.md)
-- [Mapa de Rutas](MAPA_DE_RUTAS.md)
-- [Administración](admin/administracion.md)
-- [Componentes](components/README.md)
-- [Base de Datos](database/README.md)
-- [Seguridad](security/README.md)
+- `/docs/admin/` - Documentación para administradores
+- `/docs/dev/` - Documentación para desarrolladores
+- `/docs/arquitectura/` - Documentación de arquitectura
+- `/docs/api/` - Documentación de APIs
 
-## Estándares
+## Enlaces
 
-La documentación sigue los [estándares definidos](DOCUMENTACION.md) para mantener la consistencia y facilitar el mantenimiento.
+- [Documentación de administración](./admin/administracion.md)
+- [Arquitectura de componentes](./arquitectura/componentes.md)
+- [Mapa de rutas](./mapa-de-rutas.md)
+- [Estructura de navegación](./estructura-navegacion.md)
 
-## Herramientas
-
-Para gestionar la documentación, disponemos de las siguientes herramientas:
-
-- `npm run normalize-docs` - Normaliza archivos, elimina duplicados y actualiza índices
-- `npm run check-docs` - Verifica documentos obsoletos
-- `npm run docs-index` - Genera un índice de la documentación
-
-## Para Desarrolladores
-
-Al actualizar o crear documentación:
-
-1. Seguir las [convenciones de nomenclatura](DOCUMENTACION.md#convenciones-de-nomenclatura)
-2. Actualizar la fecha al final del documento
-3. Utilizar las plantillas disponibles en `docs/templates/`
-4. Ejecutar `npm run normalize-docs` para asegurar la consistencia
-
-## Índice Completo
-
-Para un índice completo y actualizado de toda la documentación, consultar el archivo [docs-index.json](docs-index.json) generado automáticamente.

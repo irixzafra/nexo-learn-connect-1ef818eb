@@ -18,6 +18,7 @@ const AdminRoutes = React.lazy(() => import('./AdminRoutes'));
 const PaymentRoutes = React.lazy(() => import('./PaymentRoutes'));
 
 // Lazy loading of standalone pages
+const Dashboard = React.lazy(() => import('@/pages/student/Dashboard'));
 const CoursesCatalog = React.lazy(() => import('@/pages/CoursesCatalog'));
 const CourseLanding = React.lazy(() => import('@/pages/CourseLanding'));
 const Community = React.lazy(() => import('@/pages/Community'));
@@ -28,6 +29,10 @@ const Checkout = React.lazy(() => import('@/pages/student/Checkout'));
 const Notifications = React.lazy(() => import('@/pages/Notifications'));
 const Messages = React.lazy(() => import('@/pages/placeholder/Messages'));
 const Billing = React.lazy(() => import('@/pages/placeholder/Billing'));
+const Features = React.lazy(() => import('@/pages/admin/Features'));
+const MyCourses = React.lazy(() => import('@/pages/student/MyCourses'));
+const Calendar = React.lazy(() => import('@/pages/placeholder/Calendar'));
+const Invoices = React.lazy(() => import('@/pages/placeholder/Invoices'));
 
 // Loading component for suspense
 const LoadingFallback = () => (
@@ -47,38 +52,62 @@ const AppRouter: React.FC = () => {
           </React.Suspense>
         } />
         
-        {/* User routes - cambiado de /home/* a / para simplificar */}
-        <Route path="/home/*" element={
-          <ProtectedRoute>
-            <React.Suspense fallback={<LoadingFallback />}>
-              <UserRoutes />
-            </React.Suspense>
-          </ProtectedRoute>
-        } />
-        
-        {/* Profile route */}
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <AppLayout>
-              <div className="container mx-auto px-4 py-6">
-                <Profile />
-              </div>
-            </AppLayout>
-          </ProtectedRoute>
-        } />
-        
-        {/* My courses - simplificado */}
-        <Route path="/my-courses" element={
+        {/* User routes */}
+        <Route path="/home" element={
           <ProtectedRoute>
             <AppLayout>
               <React.Suspense fallback={<LoadingFallback />}>
-                <UserRoutes />
+                <Dashboard />
               </React.Suspense>
             </AppLayout>
           </ProtectedRoute>
         } />
         
-        {/* Instructor routes - mantenido como estaba */}
+        <Route path="/dashboard" element={<Navigate to="/home" replace />} />
+        
+        {/* Profile route */}
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Profile />
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* My courses route */}
+        <Route path="/my-courses" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <MyCourses />
+              </React.Suspense>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Calendar route */}
+        <Route path="/calendar" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <Calendar />
+              </React.Suspense>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Invoices route */}
+        <Route path="/invoices" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <Invoices />
+              </React.Suspense>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Instructor routes */}
         <Route path="/instructor/*" element={
           <ProtectedRoute>
             <React.Suspense fallback={<LoadingFallback />}>
@@ -87,7 +116,7 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         } />
         
-        {/* Admin routes - simplificado a dos niveles */}
+        {/* Admin routes */}
         <Route path="/admin/*" element={
           <ProtectedRoute>
             <React.Suspense fallback={<LoadingFallback />}>
@@ -95,6 +124,17 @@ const AppRouter: React.FC = () => {
                 <AdminRoutes />
               </FeaturesProvider>
             </React.Suspense>
+          </ProtectedRoute>
+        } />
+        
+        {/* Features page */}
+        <Route path="/features" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <Features />
+              </React.Suspense>
+            </AppLayout>
           </ProtectedRoute>
         } />
         
@@ -167,7 +207,7 @@ const AppRouter: React.FC = () => {
             <AppLayout>
               <React.Suspense fallback={<LoadingFallback />}>
                 <Notifications />
-            </React.Suspense>
+              </React.Suspense>
             </AppLayout>
           </ProtectedRoute>
         } />
@@ -195,10 +235,10 @@ const AppRouter: React.FC = () => {
         {/* Redirects */}
         <Route path="/index" element={<Navigate to="/" replace />} />
         
-        {/* Dynamic page route - debe ser después de todas las rutas específicas y antes del catch-all */}
+        {/* Dynamic page route - must be after all specific routes and before the catch-all */}
         <Route path="/:slug" element={<PageRenderer />} />
         
-        {/* Catch-all para rutas no encontradas - debe ser la última ruta */}
+        {/* Catch-all for routes not found - must be the last route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </RouteRedirector>

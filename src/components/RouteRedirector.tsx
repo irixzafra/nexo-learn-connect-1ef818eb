@@ -11,7 +11,7 @@ const redirectMap: Record<string, string> = {
   '/admin/finance/cash-flow': '/admin/cashflow',
   '/admin/finance/alerts': '/admin/alerts',
   '/admin/finance/analytics': '/admin/analytics',
-  '/admin/settings/features': '/admin/features',
+  '/admin/settings/features': '/features',
   '/admin/settings/integrations': '/admin/integrations',
   '/admin/settings/data': '/admin/data',
   '/admin/student-activity': '/admin/activity',
@@ -19,6 +19,13 @@ const redirectMap: Record<string, string> = {
   '/analytics/personal': '/analytics',
   '/job-board': '/jobs',
   '/home/my-courses': '/my-courses',
+  '/dashboard': '/home',
+  '/payment/success': '/payment/success',
+  '/payment/cancel': '/payment/cancel',
+  '/admin/billing/invoices': '/invoices',
+  '/admin/billing/subscriptions': '/admin/subscriptions',
+  '/admin/billing/bank': '/admin/banks',
+  '/admin/billing/alerts': '/admin/alerts',
   // Agrega más redirecciones según sea necesario
 };
 

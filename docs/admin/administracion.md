@@ -1,76 +1,104 @@
 
-# Documentación de Administración
+# Administración del Sistema
 
-## Panel de Administración
+Este documento describe las funcionalidades administrativas del sistema y sirve como guía para los usuarios con rol de administrador.
 
-El Panel de Administración es el centro de control unificado para la gestión de la plataforma. Permite gestionar usuarios, cursos, configuraciones del sistema y monitorizar actividades.
+## Áreas de Administración
 
-## Principios de Diseño
+El sistema cuenta con distintas áreas de administración, cada una con propósitos específicos:
 
-La interfaz administrativa se rige por estos principios:
+### 1. Dashboard Administrativo
 
-1. **Unificación**: Un sistema de navegación único para todos los usuarios
-2. **Simplicidad**: Máximo de 2 niveles de navegación
-3. **Contextualidad**: Elementos específicos según contexto
-4. **Consistencia**: Diseño uniforme en todas las secciones
-5. **Escalabilidad**: Fácil extensión para nuevas funcionalidades
+- **Ruta**: `/admin/dashboard`
+- **Propósito**: Vista general del estado del sistema
+- **Métricas clave**:
+  - Usuarios activos
+  - Cursos publicados
+  - Ingresos generados
+  - Actividad reciente
 
-## Navegación Administrativa
+### 2. Gestión de Usuarios
 
-La navegación administrativa se implementa mediante:
+- **Ruta**: `/admin/users`
+- **Propósito**: Administrar usuarios del sistema
+- **Funcionalidades**:
+  - Crear, editar y desactivar usuarios
+  - Asignar roles y permisos
+  - Visualizar actividad de usuarios
+  - Gestionar credenciales
 
-1. **ConditionalSidebar**: Componente único que determina qué elementos mostrar según:
-   - La ruta actual (automáticamente detecta rutas administrativas)
-   - El rol del usuario (filtra elementos según permisos)
+### 3. Gestión de Cursos
 
-2. **Estructura de Menús**:
-   - **Dashboard**: Visión general del sistema
-   - **Usuarios**: Gestión de usuarios y roles
-   - **Cursos**: Administración de contenido educativo
-   - **Finanzas**: Gestión financiera
-   - **Configuración**: Ajustes del sistema
+- **Ruta**: `/admin/courses`
+- **Propósito**: Administrar el catálogo de cursos
+- **Funcionalidades**:
+  - Aprobar nuevos cursos
+  - Gestionar categorías
+  - Revisar contenido
+  - Gestionar rutas de aprendizaje
 
-## Implementación Técnica
+### 4. Gestión Financiera
 
-### Funcionamiento Interno
+- **Ruta**: `/admin/billing`
+- **Propósito**: Administrar aspectos financieros
+- **Funcionalidades**:
+  - Facturación
+  - Suscripciones
+  - Transacciones bancarias
+  - Reportes financieros
 
-1. El sistema detecta automáticamente las rutas que comienzan con `/admin/`
-2. Para estas rutas, muestra la navegación administrativa específica
-3. La navegación se filtra según el rol del usuario
-4. Se mantiene una experiencia coherente y unificada
+### 5. Configuración del Sistema
 
-### Componentes Principales
+- **Ruta**: `/admin/settings` y `/features`
+- **Propósito**: Configurar aspectos globales
+- **Funcionalidades**:
+  - Configuración general
+  - Activar/desactivar funcionalidades
+  - Integraciones con servicios externos
+  - Gestión de datos
 
-- **ConditionalSidebar**: Componente principal de navegación condicional
-- **AdminNavigation**: Navegación específica para rutas administrativas
-- **AdminNavTabs**: Pestañas contextuales dentro de páginas administrativas
-- **AdminHeader**: Encabezado específico para secciones administrativas
+## Flujos de Trabajo Comunes
 
-## Visibilidad según Roles
+### Aprobar un Nuevo Curso
 
-Los elementos del panel administrativo se filtran automáticamente por rol:
+1. Navegar a `/admin/courses`
+2. Identificar cursos con estado "Pendiente de Revisión"
+3. Revisar el contenido y material del curso
+4. Aprobar o rechazar el curso
+5. Notificar al instructor
 
-- **Administradores**: Acceso completo a todas las secciones
-- **Instructores**: Acceso limitado a gestión de cursos propios
-- **Moderadores**: Acceso a herramientas de moderación
-- **Estudiantes**: Sin acceso a funciones administrativas
+### Gestionar Permisos de Usuario
+
+1. Navegar a `/admin/users`
+2. Buscar al usuario por nombre o email
+3. Acceder a su perfil
+4. Modificar roles y permisos
+5. Guardar cambios
 
 ## Mejores Prácticas
 
-Al desarrollar nuevas funcionalidades administrativas:
+- Revisar regularmente el dashboard para estar atento a anomalías
+- Mantener un registro de cambios importantes en la configuración
+- Realizar copias de seguridad antes de hacer cambios masivos
+- Utilizar la función de vista previa para verificar cambios antes de aplicarlos
 
-1. Utilizar los componentes de navegación existentes
-2. Seguir la estructura de dos niveles de navegación
-3. Implementar filtrado adecuado por rol de usuario
-4. Mantener la coherencia visual con el resto del sistema
-5. Documentar claramente los permisos necesarios para cada funcionalidad
+## Solución de Problemas Comunes
 
-## Documentación Relacionada
+### Error en la Generación de Facturas
 
+- Verificar la configuración fiscal en `/admin/billing/settings`
+- Comprobar la conexión con el proveedor de facturación
+- Revisar los logs de errores en `/admin/logs`
+
+### Problemas con Permisos de Usuario
+
+- Verificar la jerarquía de roles en `/admin/roles`
+- Comprobar los permisos específicos asignados
+- Revisar los grupos a los que pertenece el usuario
+
+## Referencias Relacionadas
+
+- [Mapa de Rutas](../mapa-de-rutas.md)
 - [Estructura de Navegación](../estructura-navegacion.md)
-- [Roles y Permisos](../security/roles-permissions.md)
-- [Componentes Administrativos](../components/admin.md)
+- [Roles y Permisos](./roles-permisos.md)
 
----
-
-Última actualización: Julio 2024
