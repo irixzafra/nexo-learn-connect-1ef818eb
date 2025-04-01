@@ -1,123 +1,224 @@
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { FeatureId, Feature, FeaturesContextProps } from './types';
+import { getFeatureDependencies, getFeatureDependents } from './dependencies';
+import { toast } from 'sonner';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { FeaturesConfig, FeaturesContextProps, defaultFeaturesConfig } from './types';
-import { 
-  getFeatureDependencies, 
-  getFeatureDependents 
-} from './dependencies';
+// Default features configuration
+const defaultFeatures: Record<FeatureId, Feature> = {
+  'user-management': {
+    id: 'user-management',
+    name: 'Gestión de Usuarios',
+    description: 'Sistema de registro, autenticación y gestión de usuarios',
+    enabled: true,
+    isCore: true
+  },
+  'courses': {
+    id: 'courses',
+    name: 'Cursos',
+    description: 'Funcionalidades para crear y gestionar cursos en la plataforma',
+    enabled: true,
+    isCore: true
+  },
+  'gamification': {
+    id: 'gamification',
+    name: 'Gamificación',
+    description: 'Sistema de puntos, logros y recompensas para aumentar la motivación',
+    enabled: false
+  },
+  'payment-system': {
+    id: 'payment-system',
+    name: 'Sistema de Pagos',
+    description: 'Procesamiento de pagos y suscripciones',
+    enabled: false
+  },
+  'certificates': {
+    id: 'certificates',
+    name: 'Certificados',
+    description: 'Generación y verificación de certificados para cursos completados',
+    enabled: true
+  },
+  'analytics': {
+    id: 'analytics',
+    name: 'Analítica',
+    description: 'Análisis de rendimiento y comportamiento de usuarios',
+    enabled: false
+  },
+  'community': {
+    id: 'community',
+    name: 'Comunidad',
+    description: 'Foros, grupos y mensajería entre usuarios',
+    enabled: false
+  },
+  'theming': {
+    id: 'theming',
+    name: 'Temas y Personalización',
+    description: 'Personalización avanzada de la apariencia de la plataforma',
+    enabled: false
+  }
+};
 
-// Crear contexto con valor por defecto
 export const FeaturesContext = createContext<FeaturesContextProps | undefined>(undefined);
 
 interface FeaturesProviderProps {
   children: React.ReactNode;
-  initialFeatures?: Partial<FeaturesConfig>;
+  initialFeatures?: Partial<Record<FeatureId, Feature>>;
 }
 
 export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ 
   children, 
-  initialFeatures 
+  initialFeatures = {} 
 }) => {
-  const [features, setFeatures] = useState<FeaturesConfig>({
-    ...defaultFeaturesConfig,
-    ...initialFeatures
+  // Merge default features with any provided initial features
+  const [features, setFeatures] = useState<Record<FeatureId, Feature>>(() => {
+    const merged = { ...defaultFeatures };
+    
+    Object.entries(initialFeatures).forEach(([id, feature]) => {
+      if (id in merged) {
+        merged[id as FeatureId] = { ...merged[id as FeatureId], ...feature };
+      }
+    });
+    
+    return merged;
   });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  // Cargar configuración inicial
+  
+  // Load features from localStorage on mount
   useEffect(() => {
-    reloadFeatures();
-  }, []);
-
-  // Verificar si una característica está habilitada
-  const isFeatureEnabled = (feature: keyof FeaturesConfig): boolean => {
-    return features[feature] === true;
-  };
-
-  // Activar/desactivar una característica
-  const toggleFeature = async (feature: keyof FeaturesConfig, value: boolean): Promise<void> => {
     try {
-      await updateFeatures({
-        ...features,
-        [feature]: value
-      });
-    } catch (err) {
-      console.error('Error toggling feature:', err);
-      throw err;
-    }
-  };
-
-  // Actualizar todas las características
-  const updateFeatures = async (newFeatures: FeaturesConfig): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Aquí iría una llamada a la API para guardar las características
-      // Por ahora solo simulamos una espera
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Actualizar estado local
-      setFeatures(newFeatures);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Error desconocido al actualizar características'));
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Recargar configuración desde el servidor
-  const reloadFeatures = async (): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Aquí iría una llamada a la API para obtener las características
-      // Por ahora solo simulamos una espera y usamos valores por defecto
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      if (initialFeatures) {
-        setFeatures({
-          ...defaultFeaturesConfig,
-          ...initialFeatures
+      const savedFeatures = localStorage.getItem('app_features');
+      if (savedFeatures) {
+        const parsedFeatures = JSON.parse(savedFeatures);
+        setFeatures(currentFeatures => {
+          const updatedFeatures = { ...currentFeatures };
+          
+          // Only update enabled status, keep other properties from default
+          Object.keys(parsedFeatures).forEach(key => {
+            if (key in updatedFeatures) {
+              updatedFeatures[key as FeatureId].enabled = parsedFeatures[key].enabled;
+            }
+          });
+          
+          return updatedFeatures;
         });
       }
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Error desconocido al cargar características'));
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      console.error('Error loading features from localStorage:', error);
+    }
+  }, []);
+  
+  // Save features to localStorage whenever they change
+  useEffect(() => {
+    try {
+      // Only save the id and enabled status to keep localStorage size small
+      const featuresToSave = Object.entries(features).reduce((acc, [id, feature]) => {
+        acc[id] = { enabled: feature.enabled };
+        return acc;
+      }, {} as Record<string, { enabled: boolean }>);
+      
+      localStorage.setItem('app_features', JSON.stringify(featuresToSave));
+    } catch (error) {
+      console.error('Error saving features to localStorage:', error);
+    }
+  }, [features]);
+  
+  // Utility function to check if a feature is enabled
+  const isEnabled = (featureId: FeatureId): boolean => {
+    return features[featureId]?.enabled || false;
+  };
+  
+  // Get a feature by ID
+  const getFeature = (featureId: FeatureId): Feature | undefined => {
+    return features[featureId];
+  };
+  
+  // Enable a feature and its dependencies
+  const enableFeature = (featureId: FeatureId) => {
+    setFeatures(prev => {
+      // If already enabled, no change needed
+      if (prev[featureId]?.enabled) return prev;
+      
+      const updated = { ...prev };
+      
+      // Get all dependencies
+      const dependencies = getFeatureDependencies(featureId);
+      
+      // Check if all dependencies are enabled
+      const missingDeps = dependencies.filter(depId => !prev[depId]?.enabled);
+      
+      if (missingDeps.length > 0) {
+        // Also enable dependencies
+        missingDeps.forEach(depId => {
+          updated[depId] = { ...updated[depId], enabled: true };
+        });
+        
+        const depNames = missingDeps.map(depId => prev[depId]?.name || depId).join(', ');
+        toast.info(`También se activaron las dependencias: ${depNames}`);
+      }
+      
+      // Enable the feature itself
+      updated[featureId] = { ...updated[featureId], enabled: true };
+      
+      return updated;
+    });
+  };
+  
+  // Disable a feature (if possible)
+  const disableFeature = (featureId: FeatureId) => {
+    setFeatures(prev => {
+      // If already disabled or is a core feature, no change needed
+      if (!prev[featureId]?.enabled || prev[featureId]?.isCore) return prev;
+      
+      const updated = { ...prev };
+      
+      // Get all dependents
+      const dependents = getFeatureDependents(featureId);
+      
+      // Check if any enabled features depend on this one
+      const activeDependents = dependents.filter(depId => prev[depId]?.enabled);
+      
+      if (activeDependents.length > 0) {
+        // Cannot disable because others depend on it
+        const depNames = activeDependents.map(depId => prev[depId]?.name || depId).join(', ');
+        toast.error(`No se puede desactivar. Primero desactive: ${depNames}`);
+        return prev;
+      }
+      
+      // If we got here, it's safe to disable
+      updated[featureId] = { ...updated[featureId], enabled: false };
+      
+      return updated;
+    });
+  };
+  
+  // Toggle a feature
+  const toggleFeature = (featureId: FeatureId) => {
+    if (isEnabled(featureId)) {
+      disableFeature(featureId);
+    } else {
+      enableFeature(featureId);
     }
   };
-
-  const value: FeaturesContextProps = {
+  
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
     features,
-    featuresConfig: features, // Alias para mantener compatibilidad
-    isLoading,
-    error,
-    updateFeatures,
-    reloadFeatures,
-    isFeatureEnabled,
+    isEnabled,
+    enableFeature,
+    disableFeature,
     toggleFeature,
-    getFeatureDependencies,
-    getFeatureDependents
-  };
-
+    getFeature
+  }), [features]);
+  
   return (
-    <FeaturesContext.Provider value={value}>
+    <FeaturesContext.Provider value={contextValue}>
       {children}
     </FeaturesContext.Provider>
   );
 };
 
-// Hook para usar el contexto de características
-export const useFeatures = (): FeaturesContextProps => {
+export const useFeatures = () => {
   const context = useContext(FeaturesContext);
-  
   if (context === undefined) {
-    throw new Error('useFeatures debe ser usado dentro de un FeaturesProvider');
+    throw new Error('useFeatures must be used within a FeaturesProvider');
   }
-  
   return context;
 };

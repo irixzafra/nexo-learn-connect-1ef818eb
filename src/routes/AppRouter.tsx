@@ -33,6 +33,9 @@ const Features = React.lazy(() => import('@/pages/admin/Features'));
 const MyCourses = React.lazy(() => import('@/pages/student/MyCourses'));
 const Calendar = React.lazy(() => import('@/pages/placeholder/Calendar'));
 const Invoices = React.lazy(() => import('@/pages/placeholder/Invoices'));
+const Certificates = React.lazy(() => import('@/pages/user/Certificates'));
+const CertificateDetail = React.lazy(() => import('@/pages/user/CertificateDetail'));
+const CertificateVerify = React.lazy(() => import('@/pages/CertificateVerify'));
 
 // Loading component for suspense
 const LoadingFallback = () => (
@@ -105,6 +108,35 @@ const AppRouter: React.FC = () => {
               </React.Suspense>
             </AppLayout>
           </ProtectedRoute>
+        } />
+        
+        {/* Certificates routes */}
+        <Route path="/certificates" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <Certificates />
+              </React.Suspense>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/certificates/:id" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <CertificateDetail />
+              </React.Suspense>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/certificates/verify" element={
+          <AppLayout>
+            <React.Suspense fallback={<LoadingFallback />}>
+              <CertificateVerify />
+            </React.Suspense>
+          </AppLayout>
         } />
         
         {/* Instructor routes */}

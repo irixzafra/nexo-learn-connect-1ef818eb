@@ -1,115 +1,37 @@
 
+export type FeatureId = 
+  | 'user-management' 
+  | 'courses' 
+  | 'gamification' 
+  | 'payment-system' 
+  | 'certificates' 
+  | 'analytics' 
+  | 'community' 
+  | 'theming';
+
+export interface Feature {
+  id: FeatureId;
+  name: string;
+  description: string;
+  enabled: boolean;
+  isCore?: boolean;
+}
+
 export interface FeaturesConfig {
-  // Interface features
-  enableDarkMode: boolean;
-  enableNotifications: boolean;
-  enableAnalytics: boolean;
-  enableFeedback: boolean;
-  
-  // User features
-  enableUserRegistration: boolean;
-  enableSocialLogin: boolean;
-  enablePublicProfiles: boolean;
-  
-  // Design system
-  designSystemEnabled: boolean;
-  enableThemeSwitcher: boolean;
-  enableMultiLanguage: boolean;
-  
-  // Content features
-  enableAdvancedEditor: boolean;
-  enableContentReordering: boolean;
-  enableCategoryManagement: boolean;
-  enableLeaderboard: boolean;
-  
-  // Technical features
-  enableAutoBackups: boolean;
-  enableQueryCache: boolean;
-  enableMaintenanceMode: boolean;
-  enableDatabaseDevMode: boolean;
-  
-  // Security features
-  enable2FA: boolean;
-  enableMultipleSessions: boolean;
-  enablePublicRegistration: boolean;
-  requireEmailVerification: boolean;
-  enableActivityLog: boolean;
-  
-  // Development features
-  enableTestDataGenerator: boolean;
-  
-  // Onboarding features
-  enableOnboarding: boolean;
-  enableContextualHelp: boolean;
-  requireOnboarding: boolean;
-  autoStartOnboarding: boolean;
-  showOnboardingTrigger: boolean;
-  
-  // Role management
-  enableRoleManagement: boolean;
-  enableRoleSwitcher: boolean;
+  features: Record<FeatureId, Feature>;
 }
 
 export interface FeaturesContextProps {
-  features: FeaturesConfig;
-  featuresConfig: FeaturesConfig;  // Alias for backward compatibility
-  isLoading: boolean;
-  error?: Error | null;
-  updateFeatures: (newConfig: FeaturesConfig) => Promise<void>;
-  reloadFeatures?: () => Promise<void>;
-  isFeatureEnabled: (featureName: keyof FeaturesConfig) => boolean;
-  toggleFeature: (featureName: keyof FeaturesConfig, value: boolean) => Promise<void>;
-  getFeatureDependencies: (feature: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
-  getFeatureDependents: (feature: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
+  features: Record<FeatureId, Feature>;
+  isEnabled: (featureId: FeatureId) => boolean;
+  enableFeature: (featureId: FeatureId) => void;
+  disableFeature: (featureId: FeatureId) => void;
+  toggleFeature: (featureId: FeatureId) => void;
+  getFeature: (featureId: FeatureId) => Feature | undefined;
 }
 
-export const defaultFeaturesConfig: FeaturesConfig = {
-  // Interface features
-  enableDarkMode: true,
-  enableNotifications: true,
-  enableAnalytics: true,
-  enableFeedback: true,
-  
-  // User features
-  enableUserRegistration: true,
-  enableSocialLogin: false,
-  enablePublicProfiles: false,
-  
-  // Design system
-  designSystemEnabled: true,
-  enableThemeSwitcher: true,
-  enableMultiLanguage: false,
-  
-  // Content features
-  enableAdvancedEditor: false,
-  enableContentReordering: false,
-  enableCategoryManagement: false,
-  enableLeaderboard: false,
-  
-  // Technical features
-  enableAutoBackups: false,
-  enableQueryCache: true,
-  enableMaintenanceMode: false,
-  enableDatabaseDevMode: false,
-  
-  // Security features
-  enable2FA: false,
-  enableMultipleSessions: true,
-  enablePublicRegistration: true,
-  requireEmailVerification: true,
-  enableActivityLog: true,
-  
-  // Development features
-  enableTestDataGenerator: false,
-  
-  // Onboarding features
-  enableOnboarding: true,
-  enableContextualHelp: true,
-  requireOnboarding: false,
-  autoStartOnboarding: true,
-  showOnboardingTrigger: true,
-  
-  // Role management
-  enableRoleManagement: true,
-  enableRoleSwitcher: true
+export type FeatureGroup = {
+  title: string;
+  description: string;
+  features: FeatureId[];
 };
