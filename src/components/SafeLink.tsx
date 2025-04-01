@@ -2,11 +2,15 @@
 import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 import { isValidPath, normalizePath } from '@/utils/routeValidation';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { ensureLanguagePrefix } from '@/utils/languageUtils';
+import { useFeature } from '@/hooks/useFeatures';
 
 interface SafeLinkProps extends Omit<LinkProps, 'to'> {
   to: string;
   fallbackUrl?: string;
   trackBrokenLink?: boolean;
+  preserveLanguage?: boolean;
 }
 
 /**
@@ -17,11 +21,20 @@ const SafeLink: React.FC<SafeLinkProps> = ({
   to,
   fallbackUrl = '/',
   trackBrokenLink = true,
+  preserveLanguage = true,
   children,
   ...props
 }) => {
+  const { currentLanguage } = useLanguage();
+  const enableLangPrefixUrls = useFeature('enableLangPrefixUrls');
+  
   // Normalize the path
-  const normalizedPath = normalizePath(to);
+  let normalizedPath = normalizePath(to);
+  
+  // If we should preserve language and language prefixes are enabled, ensure the path has the current language
+  if (preserveLanguage && enableLangPrefixUrls && !to.startsWith('http')) {
+    normalizedPath = ensureLanguagePrefix(normalizedPath);
+  }
   
   // Check if the path is valid
   const isValid = isValidPath(normalizedPath);
@@ -33,7 +46,21 @@ const SafeLink: React.FC<SafeLinkProps> = ({
   }
   
   // If the path is not valid, use the fallback or return null
-  const effectivePath = isValid ? normalizedPath : fallbackUrl;
+  let effectivePath = isValid ? normalizedPath : fallbackUrl;
+  
+  // Apply language prefix to fallback path if needed
+  if (!isValid && preserveLanguage && enableLangPrefixUrls && !fallbackUrl.startsWith('http')) {
+    effectivePath = ensureLanguagePrefix(fallbackUrl);
+  }
+  
+  // If the path is an external URL, use a regular anchor tag
+  if (effectivePath.startsWith('http')) {
+    return (
+      <a href={effectivePath} target="_blank" rel="noopener noreferrer" {...props}>
+        {children}
+      </a>
+    );
+  }
   
   return (
     <Link to={effectivePath} {...props}>

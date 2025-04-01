@@ -3,6 +3,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useLocation } from 'react-router-dom';
+import { useFeature } from '@/hooks/useFeatures';
 
 interface SEOProps {
   title?: string;
@@ -14,6 +15,8 @@ interface SEOProps {
   nofollow?: boolean;
   canonical?: string;
   children?: React.ReactNode;
+  translatedTitle?: string;
+  translatedDescription?: string;
 }
 
 const SEO: React.FC<SEOProps> = ({
@@ -25,17 +28,27 @@ const SEO: React.FC<SEOProps> = ({
   noindex = false,
   nofollow = false,
   canonical,
-  children
+  children,
+  translatedTitle,
+  translatedDescription
 }) => {
-  const { currentLanguage, getMetadata, getSeoAlternates } = useLanguage();
+  const { currentLanguage, getMetadata, getSeoAlternates, t } = useLanguage();
   const location = useLocation();
   const metadata = getMetadata();
   
+  // Enable feature flags
+  const enableHreflangTags = useFeature('enableHreflangTags');
+  const enableRegionalContent = useFeature('enableRegionalContent');
+  
   // Default site name
-  const siteName = 'Nexo Learning';
+  const siteName = t('app.name', { default: 'Nexo Learning' });
+  
+  // Use translated title and description if provided, otherwise use the title and description
+  const finalTitle = translatedTitle || title;
+  const finalDescription = translatedDescription || description;
   
   // Full title with site name
-  const fullTitle = title ? `${title} | ${siteName}` : siteName;
+  const fullTitle = finalTitle ? `${finalTitle} | ${siteName}` : siteName;
   
   // Base URL
   const baseUrl = window.location.origin;
@@ -60,7 +73,7 @@ const SEO: React.FC<SEOProps> = ({
       {/* Basic Metadata */}
       <html lang={metadata.htmlLang} dir={metadata.dir} />
       <title>{fullTitle}</title>
-      <meta name="description" content={description} />
+      <meta name="description" content={finalDescription} />
       {keywords && <meta name="keywords" content={keywords.join(', ')} />}
       
       {/* Canonical URL */}
@@ -72,7 +85,7 @@ const SEO: React.FC<SEOProps> = ({
       {/* Open Graph */}
       <meta property="og:site_name" content={siteName} />
       <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
+      <meta property="og:description" content={finalDescription} />
       <meta property="og:url" content={currentUrl} />
       <meta property="og:type" content={type} />
       <meta property="og:locale" content={metadata.locale} />
@@ -81,11 +94,11 @@ const SEO: React.FC<SEOProps> = ({
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
+      <meta name="twitter:description" content={finalDescription} />
       {image && <meta name="twitter:image" content={image} />}
       
-      {/* Alternate language versions */}
-      {alternates.map(alt => (
+      {/* Alternate language versions - only if the feature is enabled */}
+      {enableHreflangTags && alternates.map(alt => (
         <link 
           key={alt.lang} 
           rel="alternate" 
@@ -94,12 +107,19 @@ const SEO: React.FC<SEOProps> = ({
         />
       ))}
       
-      {/* x-default for language negotiation */}
-      <link 
-        rel="alternate" 
-        hrefLang="x-default" 
-        href={`${baseUrl}/en/${location.pathname.split('/').slice(2).join('/')}`} 
-      />
+      {/* x-default for language negotiation - only if the feature is enabled */}
+      {enableHreflangTags && (
+        <link 
+          rel="alternate" 
+          hrefLang="x-default" 
+          href={`${baseUrl}/en/${location.pathname.split('/').slice(2).join('/')}`} 
+        />
+      )}
+      
+      {/* Regional content information - only if the feature is enabled */}
+      {enableRegionalContent && (
+        <meta name="geo.region" content={metadata.locale.split('-')[1]} />
+      )}
       
       {children}
     </Helmet>

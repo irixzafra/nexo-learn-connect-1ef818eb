@@ -1,10 +1,11 @@
 
+// Core feature IDs with specific names for type safety
 export type CoreFeatureId = 
   | 'core-editing'
   | 'core-publishing'
   | 'core-templates'
   | 'core-media'
-  | 'core-users' 
+  | 'core-users'
   | 'core-settings'
   | 'core-analytics'
   | 'core-backup'
@@ -17,7 +18,8 @@ export type CoreFeatureId =
   | 'community'
   | 'theming';
 
-export type ExtendedFeatureId =
+// Extended feature IDs that are boolean flags
+export type ExtendedFeatureId = 
   | 'enableDarkMode'
   | 'enableNotifications'
   | 'enableAnalytics'
@@ -69,22 +71,30 @@ export type ExtendedFeatureId =
   | 'requireOnboarding'
   | 'autoStartOnboarding'
   | 'showOnboardingTrigger'
-  | 'enableContextualHelp';
+  | 'enableContextualHelp'
+  | 'enableHreflangTags'
+  | 'enableRegionalContent'
+  | 'enableLangPrefixUrls';
 
+// Union type for all feature IDs
 export type FeatureId = CoreFeatureId | ExtendedFeatureId;
 
+// Feature object interface
 export interface Feature {
-  id: string;
+  id: FeatureId;
   name: string;
   enabled: boolean;
-  description: string;
+  description?: string;
   isCore?: boolean;
-  category?: string;
-  dependencies?: string[];
+  dependencies?: FeatureId[];
+  incompatibleWith?: FeatureId[];
 }
 
+// Features configuration
 export interface FeaturesConfig {
   features: Record<CoreFeatureId, Feature>;
+  
+  // Extended features as boolean flags
   enableDarkMode: boolean;
   enableNotifications: boolean;
   enableAnalytics: boolean;
@@ -121,6 +131,8 @@ export interface FeaturesConfig {
   enableSubscriptionPause: boolean;
   enableGiftSubscriptions: boolean;
   enableInlineEditing: boolean;
+  
+  // Settings features
   designSystemEnabled: boolean;
   enableThemeSwitcher: boolean;
   enableAutoBackups: boolean;
@@ -137,8 +149,14 @@ export interface FeaturesConfig {
   autoStartOnboarding: boolean;
   showOnboardingTrigger: boolean;
   enableContextualHelp: boolean;
+  
+  // Internationalization features
+  enableHreflangTags: boolean;
+  enableRegionalContent: boolean;
+  enableLangPrefixUrls: boolean;
 }
 
+// Context interface for Features
 export interface FeaturesContextProps {
   featuresConfig: FeaturesConfig;
   isEnabled: (featureName: FeatureId) => boolean;

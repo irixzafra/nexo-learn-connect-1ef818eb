@@ -1,5 +1,8 @@
+
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getTranslation } from '@/services/i18n/translationService';
+import { toast } from 'sonner';
 
 // Supported languages
 export type SupportedLanguage = 'es' | 'en' | 'pt' | 'fr' | 'de';
@@ -41,6 +44,11 @@ interface LanguageContextType {
   t: (key: string, params?: Record<string, string>) => string;
   getMetadata: () => LanguageMetadata;
   getSeoAlternates: (path: string) => { lang: string, url: string }[];
+  isRtl: boolean;
+  formatDate: (date: Date | string, options?: Intl.DateTimeFormatOptions) => string;
+  formatNumber: (num: number, options?: Intl.NumberFormatOptions) => string;
+  formatCurrency: (amount: number, currency?: string) => string;
+  supportedLanguages: SupportedLanguage[];
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -53,6 +61,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>(DEFAULT_LANGUAGE);
   const location = useLocation();
   const navigate = useNavigate();
+  const isRtl = LANGUAGE_METADATA[currentLanguage].dir === 'rtl';
+  const supportedLanguages: SupportedLanguage[] = Object.keys(LANGUAGE_NAMES) as SupportedLanguage[];
 
   // Update language based on URL path
   useEffect(() => {
@@ -63,14 +73,20 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       
       // Check if the first part of the path is a supported language
       if (Object.keys(LANGUAGE_NAMES).includes(firstPart)) {
-        setCurrentLanguage(firstPart as SupportedLanguage);
+        if (firstPart !== currentLanguage) {
+          setCurrentLanguage(firstPart as SupportedLanguage);
+          
+          // Update html lang attribute
+          document.documentElement.lang = LANGUAGE_METADATA[firstPart as SupportedLanguage].htmlLang;
+          document.documentElement.dir = LANGUAGE_METADATA[firstPart as SupportedLanguage].dir;
+        }
       } else if (!location.pathname.includes('/admin/')) {
         // If no language in URL and not an admin page, redirect to default language
         const newPath = `/${DEFAULT_LANGUAGE}${location.pathname}`;
         navigate(newPath, { replace: true });
       }
     }
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, currentLanguage]);
 
   // Function to change language
   const changeLanguage = (lang: SupportedLanguage) => {
@@ -89,19 +105,21 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     // Construct new path with the selected language
     const newPath = `/${pathParts.join('/')}${location.search}`;
     navigate(newPath);
+    
+    // Update language state
     setCurrentLanguage(lang);
     
     // Update html lang attribute
     document.documentElement.lang = LANGUAGE_METADATA[lang].htmlLang;
     document.documentElement.dir = LANGUAGE_METADATA[lang].dir;
+    
+    // Show toast notification
+    toast.success(`${getTranslation('language.change', lang)}: ${LANGUAGE_NAMES[lang]}`);
   };
 
-  // Simple translation function
-  // In a real implementation, this would use a proper i18n library
+  // Translation function
   const t = (key: string, params?: Record<string, string>): string => {
-    // For now, just return the key
-    // In a real implementation, this would look up translations
-    return key;
+    return getTranslation(key, currentLanguage, params);
   };
 
   // Get language metadata for the current language
@@ -120,12 +138,42 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     }));
   };
 
+  // Format date according to the current locale
+  const formatDate = (date: Date | string, options?: Intl.DateTimeFormatOptions): string => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return new Intl.DateTimeFormat(
+      LANGUAGE_METADATA[currentLanguage].locale, 
+      options || { dateStyle: 'medium' }
+    ).format(dateObj);
+  };
+
+  // Format number according to the current locale
+  const formatNumber = (num: number, options?: Intl.NumberFormatOptions): string => {
+    return new Intl.NumberFormat(
+      LANGUAGE_METADATA[currentLanguage].locale, 
+      options
+    ).format(num);
+  };
+
+  // Format currency according to the current locale
+  const formatCurrency = (amount: number, currency: string = 'USD'): string => {
+    return new Intl.NumberFormat(
+      LANGUAGE_METADATA[currentLanguage].locale, 
+      { style: 'currency', currency }
+    ).format(amount);
+  };
+
   const value = {
     currentLanguage,
     changeLanguage,
     t,
     getMetadata,
-    getSeoAlternates
+    getSeoAlternates,
+    isRtl,
+    formatDate,
+    formatNumber,
+    formatCurrency,
+    supportedLanguages
   };
 
   return (

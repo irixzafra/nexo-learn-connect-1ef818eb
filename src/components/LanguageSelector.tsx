@@ -20,7 +20,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   variant = 'icon',
   align = 'end'
 }) => {
-  const { currentLanguage, changeLanguage } = useLanguage();
+  const { currentLanguage, changeLanguage, t } = useLanguage();
 
   // Get language flag emoji based on language code
   const getLanguageFlag = (code: SupportedLanguage): string => {
@@ -42,12 +42,12 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             {variant === 'icon' ? (
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
                 <Globe className="h-4 w-4" />
-                <span className="sr-only">Cambiar idioma</span>
+                <span className="sr-only">{t('tooltip.change_language')}</span>
               </Button>
             ) : variant === 'minimal' ? (
               <Button variant="ghost" size="sm" className="px-2 h-8">
                 {getLanguageFlag(currentLanguage)}
-                <span className="sr-only">Cambiar idioma</span>
+                <span className="sr-only">{t('tooltip.change_language')}</span>
               </Button>
             ) : (
               <Button variant="outline" size="sm" className="gap-2">
@@ -66,14 +66,14 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 }`}
               >
                 <span>{getLanguageFlag(lang)}</span>
-                <span>{LANGUAGE_NAMES[lang]}</span>
+                <span>{t(`language.${lang}`)}</span>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </TooltipTrigger>
       <TooltipContent side="right">
-        <p>Cambiar idioma</p>
+        <p>{t('tooltip.change_language')}</p>
       </TooltipContent>
     </Tooltip>
   );

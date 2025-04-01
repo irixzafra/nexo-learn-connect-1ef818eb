@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import type { FeaturesConfig } from '@/contexts/features/types';
+import { useLanguage, DEFAULT_LANGUAGE, FALLBACK_LANGUAGE, SupportedLanguage } from '@/contexts/LanguageContext';
 
 interface LocalizationSettingsProps {
   featuresConfig: FeaturesConfig;
@@ -27,29 +28,31 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
   onToggleFeature,
   isLoading = false
 }) => {
+  const { t, supportedLanguages } = useLanguage();
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Globe className="h-5 w-5 text-indigo-500" />
-          Localización
+          {t('settings.language')}
         </CardTitle>
         <CardDescription>
-          Configura las opciones de idioma, zona horaria y formato
+          {t('settings.language.description', { default: 'Configura las opciones de idioma, zona horaria y formato' })}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
           <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
             <Languages className="h-4 w-4 text-blue-500" />
-            Idioma
+            {t('settings.language')}
           </h3>
           <div className="space-y-4 ml-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="multiLanguage">Soporte multilingüe</Label>
+                <Label htmlFor="multiLanguage">{t('settings.multilanguage')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Habilitar soporte para múltiples idiomas
+                  {t('settings.multilanguage.description', { default: 'Habilitar soporte para múltiples idiomas' })}
                 </p>
               </div>
               <div className="flex items-center">
@@ -67,38 +70,42 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="defaultLanguage" className="mb-2 block">Idioma predeterminado</Label>
-                <Select defaultValue="es">
+                <Label htmlFor="defaultLanguage" className="mb-2 block">
+                  {t('settings.defaultLanguage', { default: 'Idioma predeterminado' })}
+                </Label>
+                <Select defaultValue={DEFAULT_LANGUAGE}>
                   <SelectTrigger id="defaultLanguage">
-                    <SelectValue placeholder="Seleccionar idioma" />
+                    <SelectValue placeholder={t('settings.selectLanguage', { default: 'Seleccionar idioma' })} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Idiomas</SelectLabel>
-                      <SelectItem value="es">Español</SelectItem>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="fr">Français</SelectItem>
-                      <SelectItem value="pt">Português</SelectItem>
-                      <SelectItem value="de">Deutsch</SelectItem>
+                      <SelectLabel>{t('settings.languages', { default: 'Idiomas' })}</SelectLabel>
+                      {supportedLanguages.map(lang => (
+                        <SelectItem key={lang} value={lang}>
+                          {t(`language.${lang}`, { default: lang })}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
               
               <div>
-                <Label htmlFor="fallbackLanguage" className="mb-2 block">Idioma de respaldo</Label>
-                <Select defaultValue="en">
+                <Label htmlFor="fallbackLanguage" className="mb-2 block">
+                  {t('settings.fallbackLanguage', { default: 'Idioma de respaldo' })}
+                </Label>
+                <Select defaultValue={FALLBACK_LANGUAGE}>
                   <SelectTrigger id="fallbackLanguage">
-                    <SelectValue placeholder="Seleccionar idioma de respaldo" />
+                    <SelectValue placeholder={t('settings.selectFallbackLanguage', { default: 'Seleccionar idioma de respaldo' })} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Idiomas</SelectLabel>
-                      <SelectItem value="es">Español</SelectItem>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="fr">Français</SelectItem>
-                      <SelectItem value="pt">Português</SelectItem>
-                      <SelectItem value="de">Deutsch</SelectItem>
+                      <SelectLabel>{t('settings.languages', { default: 'Idiomas' })}</SelectLabel>
+                      {supportedLanguages.map(lang => (
+                        <SelectItem key={lang} value={lang}>
+                          {t(`language.${lang}`, { default: lang })}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -112,26 +119,28 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
         <div>
           <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
             <Clock className="h-4 w-4 text-blue-500" />
-            Zona horaria y formato
+            {t('settings.timezone', { default: 'Zona horaria y formato' })}
           </h3>
           <div className="space-y-4 ml-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="timezone" className="mb-2 block">Zona horaria predeterminada</Label>
+                <Label htmlFor="timezone" className="mb-2 block">
+                  {t('settings.defaultTimezone', { default: 'Zona horaria predeterminada' })}
+                </Label>
                 <Select defaultValue="america-mexico_city">
                   <SelectTrigger id="timezone">
-                    <SelectValue placeholder="Seleccionar zona horaria" />
+                    <SelectValue placeholder={t('settings.selectTimezone', { default: 'Seleccionar zona horaria' })} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>América</SelectLabel>
+                      <SelectLabel>{t('settings.america', { default: 'América' })}</SelectLabel>
                       <SelectItem value="america-mexico_city">Ciudad de México (GMT-6)</SelectItem>
                       <SelectItem value="america-bogota">Bogotá (GMT-5)</SelectItem>
                       <SelectItem value="america-buenos_aires">Buenos Aires (GMT-3)</SelectItem>
                       <SelectItem value="america-santiago">Santiago (GMT-4)</SelectItem>
                     </SelectGroup>
                     <SelectGroup>
-                      <SelectLabel>Europa</SelectLabel>
+                      <SelectLabel>{t('settings.europe', { default: 'Europa' })}</SelectLabel>
                       <SelectItem value="europe-madrid">Madrid (GMT+1)</SelectItem>
                       <SelectItem value="europe-london">Londres (GMT+0)</SelectItem>
                     </SelectGroup>
@@ -140,10 +149,12 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
               </div>
               
               <div>
-                <Label htmlFor="dateFormat" className="mb-2 block">Formato de fecha</Label>
+                <Label htmlFor="dateFormat" className="mb-2 block">
+                  {t('settings.dateFormat', { default: 'Formato de fecha' })}
+                </Label>
                 <Select defaultValue="dd-mm-yyyy">
                   <SelectTrigger id="dateFormat">
-                    <SelectValue placeholder="Seleccionar formato de fecha" />
+                    <SelectValue placeholder={t('settings.selectDateFormat', { default: 'Seleccionar formato de fecha' })} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -163,21 +174,23 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
         <div>
           <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
             <Calendar className="h-4 w-4 text-blue-500" />
-            Calendario
+            {t('settings.calendar', { default: 'Calendario' })}
           </h3>
           <div className="space-y-4 ml-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="firstDayOfWeek" className="mb-2 block">Primer día de la semana</Label>
+                <Label htmlFor="firstDayOfWeek" className="mb-2 block">
+                  {t('settings.firstDayOfWeek', { default: 'Primer día de la semana' })}
+                </Label>
                 <Select defaultValue="monday">
                   <SelectTrigger id="firstDayOfWeek">
-                    <SelectValue placeholder="Seleccionar primer día" />
+                    <SelectValue placeholder={t('settings.selectFirstDay', { default: 'Seleccionar primer día' })} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="monday">Lunes</SelectItem>
-                      <SelectItem value="sunday">Domingo</SelectItem>
-                      <SelectItem value="saturday">Sábado</SelectItem>
+                      <SelectItem value="monday">{t('settings.monday', { default: 'Lunes' })}</SelectItem>
+                      <SelectItem value="sunday">{t('settings.sunday', { default: 'Domingo' })}</SelectItem>
+                      <SelectItem value="saturday">{t('settings.saturday', { default: 'Sábado' })}</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -191,14 +204,14 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
         <div>
           <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
             <Shield className="h-4 w-4 text-blue-500" />
-            SEO Internacional
+            {t('settings.seo.international', { default: 'SEO Internacional' })}
           </h3>
           <div className="space-y-4 ml-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="hreflangTags">Etiquetas hreflang</Label>
+                <Label htmlFor="hreflangTags">{t('settings.hreflangTags', { default: 'Etiquetas hreflang' })}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Generar automáticamente etiquetas hreflang para SEO internacional
+                  {t('settings.hreflangTags.description', { default: 'Generar automáticamente etiquetas hreflang para SEO internacional' })}
                 </p>
               </div>
               <div className="flex items-center">
@@ -216,9 +229,9 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
             
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="multiRegionSeo">Contenido regional</Label>
+                <Label htmlFor="multiRegionSeo">{t('settings.regionalContent', { default: 'Contenido regional' })}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Optimizar contenido según región geográfica
+                  {t('settings.regionalContent.description', { default: 'Optimizar contenido según región geográfica' })}
                 </p>
               </div>
               <div className="flex items-center">
@@ -236,9 +249,9 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
             
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="langURLs">URLs con prefijo de idioma</Label>
+                <Label htmlFor="langURLs">{t('settings.langPrefixUrls', { default: 'URLs con prefijo de idioma' })}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Usar prefijos (/es/, /en/) en las URLs para mejor SEO
+                  {t('settings.langPrefixUrls.description', { default: 'Usar prefijos (/es/, /en/) en las URLs para mejor SEO' })}
                 </p>
               </div>
               <div className="flex items-center">
