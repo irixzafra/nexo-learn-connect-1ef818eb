@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Navigation, ExternalLink, Map, Link2, Database } from 'lucide-react';
+import { Navigation, ExternalLink, Map, Link2, Database, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -86,6 +86,32 @@ const NavigationExplorer: React.FC = () => {
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
               </span>
               Repositorio
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-primary" />
+              Certificados
+            </CardTitle>
+            <CardDescription>
+              Gestión de certificados verificables
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4">Administra la emisión y verificación de certificados para los estudiantes de la plataforma.</p>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/admin/certificates')}
+              className="relative"
+            >
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+              </span>
+              Gestionar Certificados
             </Button>
           </CardContent>
         </Card>

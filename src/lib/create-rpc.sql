@@ -126,3 +126,11 @@ BEGIN
     ALTER TABLE user_preferences ADD COLUMN promotional_notifications boolean DEFAULT false;
   END IF;
 END $$;
+
+-- Create certificate verification RPC function
+CREATE OR REPLACE FUNCTION set_claim(claim TEXT, value TEXT)
+RETURNS void AS $$
+BEGIN
+  PERFORM set_config('app.' || claim, value, false);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

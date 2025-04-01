@@ -6,6 +6,8 @@ import NavigationExplorer from '@/pages/admin/navigation/NavigationExplorer';
 import AdminLessonEdit from '@/pages/admin/courses/AdminLessonEdit';
 import RouteValidator from '@/pages/admin/RouteValidator';
 import ResourceRepository from '@/pages/admin/resources/ResourceRepository';
+import CertificateManagement from '@/pages/admin/certificates/CertificateManagement';
+import CertificateVerifyPage from '@/pages/admin/certificates/CertificateVerifyPage';
 
 // Componente de página no encontrada
 const AdminNotFound = () => (
@@ -24,6 +26,8 @@ const AdminRoutes: React.FC = () => {
       <Route path="route-validator" element={<RouteValidator />} />
       <Route path="courses/:courseId/lessons/:lessonId/edit" element={<AdminLessonEdit />} />
       <Route path="resources" element={<ResourceRepository />} />
+      <Route path="certificates" element={<CertificateManagement />} />
+      <Route path="certificates/verify/:certificateId" element={<CertificateVerifyPage />} />
       
       {/* Ruta de inicio para admin */}
       <Route index element={<NavigationDiagram />} />
