@@ -68,7 +68,7 @@ export const useFeatures = () => {
         autoStartOnboarding: true,
         showOnboardingTrigger: true,
         enableContextualHelp: true
-      } as FeaturesConfig,
+      } as unknown as FeaturesConfig,
       isEnabled: () => true,
       enableFeature: async () => {},
       disableFeature: async () => {},
