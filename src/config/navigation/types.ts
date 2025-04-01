@@ -40,8 +40,20 @@ export interface NavigationMenus {
   /** Menú de administración */
   admin: MenuItem[];
   
-  /** Menú de gamificación */
-  gamification: MenuItem[];
+  /** Menú de exploración */
+  explore: MenuItem[];
+  
+  /** Menú de profesores */
+  instructor: MenuItem[];
+  
+  /** Menú de gestión académica */
+  academic: MenuItem[];
+  
+  /** Menú de finanzas */
+  finance: MenuItem[];
+  
+  /** Menú de configuración */
+  settings: MenuItem[];
 }
 
 /**

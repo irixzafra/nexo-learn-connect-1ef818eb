@@ -5,7 +5,11 @@ import {
   NavigationMenus,
   mainNavigation,
   adminNavigation,
-  gamificationNavigation,
+  exploreNavigation,
+  instructorNavigation,
+  academicNavigation,
+  financeNavigation,
+  settingsNavigation,
   filterMenuItemsByRole,
   getHomePathByRole,
   getNavigationByRole
@@ -15,7 +19,11 @@ import {
 export {
   mainNavigation,
   adminNavigation,
-  gamificationNavigation,
+  exploreNavigation,
+  instructorNavigation,
+  academicNavigation,
+  financeNavigation,
+  settingsNavigation,
   filterMenuItemsByRole,
   getHomePathByRole,
   getNavigationByRole

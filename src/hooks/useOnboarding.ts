@@ -1,8 +1,8 @@
 
-import { useOnboarding as useOnboardingContext } from '@/contexts/OnboardingContext';
+import { useOnboarding as useOnboardingHook } from '@/contexts/OnboardingContext';
 
 export const useOnboarding = () => {
-  return useOnboardingContext();
+  return useOnboardingHook();
 };
 
 export default useOnboarding;

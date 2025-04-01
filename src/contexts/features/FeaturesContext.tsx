@@ -1,137 +1,153 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { FeaturesConfig, defaultFeaturesConfig, FeaturesContextValue } from './types';
-import { applyDependencyRules, getAllDependencies, getAllDependents } from './dependencies';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+import { FeaturesConfig } from './types';
 
-const FeaturesContext = createContext<FeaturesContextValue | undefined>(undefined);
-
+// Re-export the type
 export type { FeaturesConfig } from './types';
-export { defaultFeaturesConfig } from './types';
 
+// Context interface
+interface FeaturesContextProps {
+  features: FeaturesConfig;
+  updateFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  isLoading: boolean;
+  error: string | null;
+}
+
+// Default context
+const defaultContext: FeaturesContextProps = {
+  features: {
+    designSystemEnabled: true,
+    enableContentReordering: false,
+    enableCategoryManagement: false,
+    enableThemeSwitcher: true,
+    enableRoleSwitcher: true,
+    enableRoleManagement: true,
+    enableOnboardingSystem: true,
+    enableTestDataGenerator: false,
+    enableNotifications: true,
+    showOnboardingTrigger: true,
+    autoStartOnboarding: true,
+  },
+  updateFeature: () => {},
+  isLoading: true,
+  error: null
+};
+
+// Create context
+const FeaturesContext = createContext<FeaturesContextProps>(defaultContext);
+
+// Provider component
 export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(defaultFeaturesConfig);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const { user } = useAuth();
+  const [features, setFeatures] = useState<FeaturesConfig>(defaultContext.features);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock loading features from API on mount
+  // Load features from database
   useEffect(() => {
     const loadFeatures = async () => {
+      if (!user?.id) return;
+
       try {
         setIsLoading(true);
-        setError(null);
-        // In a real implementation, this would be an API call
-        // For now, we'll just simulate a delay and use default values
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Try to load from localStorage if available
-        const savedFeatures = localStorage.getItem('features');
-        if (savedFeatures) {
-          setFeaturesConfig(JSON.parse(savedFeatures));
+        const { data, error } = await supabase
+          .from('features_config')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          setFeatures({
+            designSystemEnabled: data.design_system_enabled ?? true,
+            enableContentReordering: data.enable_content_reordering ?? false,
+            enableCategoryManagement: data.enable_category_management ?? false,
+            enableThemeSwitcher: data.enable_theme_switcher ?? true,
+            enableRoleSwitcher: data.enable_role_switcher ?? true,
+            enableRoleManagement: data.enable_role_management ?? true,
+            enableOnboardingSystem: data.enable_onboarding_system ?? true,
+            enableTestDataGenerator: data.enable_test_data_generator ?? false,
+            enableNotifications: data.enable_notifications ?? true,
+            showOnboardingTrigger: data.show_onboarding_trigger ?? true,
+            autoStartOnboarding: data.auto_start_onboarding ?? true,
+          });
         }
-      } catch (error) {
-        console.error('Error loading features:', error);
-        setError(error instanceof Error ? error : new Error('Unknown error loading features'));
+
+      } catch (err) {
+        console.error('Error loading features:', err);
+        setError('Failed to load features configuration');
       } finally {
         setIsLoading(false);
       }
     };
 
     loadFeatures();
-  }, []);
+  }, [user?.id]);
 
-  // Check if a feature is enabled
-  const isFeatureEnabled = (feature: keyof FeaturesConfig): boolean => {
-    return !!featuresConfig[feature];
-  };
+  // Update a feature
+  const updateFeature = async (feature: keyof FeaturesConfig, value: boolean) => {
+    if (!user?.id) return;
 
-  // Get all direct and indirect dependencies of a feature
-  const getFeatureDependencies = (feature: keyof FeaturesConfig): Array<keyof FeaturesConfig> => {
-    return getAllDependencies(feature);
-  };
-
-  // Get all features that depend on this feature
-  const getFeatureDependents = (feature: keyof FeaturesConfig): Array<keyof FeaturesConfig> => {
-    return getAllDependents(feature);
-  };
-
-  // Toggle a feature and handle dependencies
-  const toggleFeature = async (feature: keyof FeaturesConfig, value: boolean): Promise<void> => {
     try {
-      setIsLoading(true);
-      setError(null);
-      
-      // Simulate API call with delay
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Apply dependency rules
-      const updatedFeatures = applyDependencyRules(feature, value, featuresConfig);
-      
-      // Save to localStorage for persistence
-      localStorage.setItem('features', JSON.stringify(updatedFeatures));
-      
-      // Update state
-      setFeaturesConfig(updatedFeatures);
-      
-      return Promise.resolve();
-    } catch (error) {
-      console.error('Error toggling feature:', error);
-      setError(error instanceof Error ? error : new Error('Error toggling feature'));
-      return Promise.reject(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      // Update local state immediately for responsive UI
+      setFeatures(prev => ({ ...prev, [feature]: value }));
 
-  // Update multiple features at once
-  const updateFeatures = async (updates: Partial<FeaturesConfig>): Promise<void> => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      // Simulate API call with delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const updatedFeatures = {
-        ...featuresConfig,
-        ...updates
+      // Map the feature key to database column name
+      const featureColumnMapping: Record<keyof FeaturesConfig, string> = {
+        designSystemEnabled: 'design_system_enabled',
+        enableContentReordering: 'enable_content_reordering',
+        enableCategoryManagement: 'enable_category_management',
+        enableThemeSwitcher: 'enable_theme_switcher', 
+        enableRoleSwitcher: 'enable_role_switcher',
+        enableRoleManagement: 'enable_role_management',
+        enableOnboardingSystem: 'enable_onboarding_system',
+        enableTestDataGenerator: 'enable_test_data_generator',
+        enableNotifications: 'enable_notifications',
+        showOnboardingTrigger: 'show_onboarding_trigger',
+        autoStartOnboarding: 'auto_start_onboarding',
       };
+
+      const column = featureColumnMapping[feature];
       
-      // Save to localStorage for persistence
-      localStorage.setItem('features', JSON.stringify(updatedFeatures));
+      // Update database
+      const { error } = await supabase
+        .from('features_config')
+        .upsert({ 
+          user_id: user.id, 
+          [column]: value,
+          updated_at: new Date().toISOString()
+        }, { 
+          onConflict: 'user_id'
+        });
+
+      if (error) throw error;
+      toast.success(`Feature "${feature}" updated successfully`);
+
+    } catch (err) {
+      console.error('Error updating feature:', err);
+      toast.error(`Failed to update feature "${feature}"`);
       
-      // Update state
-      setFeaturesConfig(updatedFeatures);
-      
-      return Promise.resolve();
-    } catch (error) {
-      console.error('Error updating features:', error);
-      setError(error instanceof Error ? error : new Error('Error updating features'));
-      return Promise.reject(error);
-    } finally {
-      setIsLoading(false);
+      // Revert local state on error
+      setFeatures(prev => ({ ...prev, [feature]: !value }));
     }
   };
 
   return (
-    <FeaturesContext.Provider value={{ 
-      featuresConfig, 
-      isLoading, 
-      error,
-      toggleFeature, 
-      isFeatureEnabled,
-      updateFeatures,
-      getFeatureDependencies,
-      getFeatureDependents
-    }}>
+    <FeaturesContext.Provider value={{ features, updateFeature, isLoading, error }}>
       {children}
     </FeaturesContext.Provider>
   );
 };
 
+// Hook for using the features context
 export const useFeatures = () => {
   const context = useContext(FeaturesContext);
-  if (context === undefined) {
-    throw new Error('useFeatures debe ser usado dentro de un FeaturesProvider');
+  if (!context) {
+    throw new Error('useFeatures must be used within a FeaturesProvider');
   }
   return context;
 };

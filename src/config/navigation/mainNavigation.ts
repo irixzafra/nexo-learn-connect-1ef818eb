@@ -2,43 +2,51 @@
 import { 
   Home, 
   BookOpen, 
-  Users, 
+  User, 
   MessageSquare, 
   Bell, 
-  User,
   Calendar,
   Settings,
-  CreditCard
+  CreditCard,
+  Award,
+  Lightbulb,
+  BarChart,
 } from 'lucide-react';
 import { MenuItem } from './types';
 
 /**
- * Menú principal de navegación
+ * Menú principal de navegación (Mis cursos)
  */
 export const mainNavigation: MenuItem[] = [
   {
     icon: Home,
-    label: 'Inicio',
+    label: 'Dashboard',
     path: '/home',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']
   },
   {
-    icon: BookOpen,
-    label: 'Explorar Cursos',
-    path: '/courses',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']
+    icon: User,
+    label: 'Mi Perfil',
+    path: '/profile',
+    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
   },
   {
     icon: BookOpen,
     label: 'Mis Cursos',
     path: '/home/my-courses',
-    requiredRole: ['student', 'instructor']
+    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester'],
   },
   {
-    icon: Users,
-    label: 'Comunidad',
-    path: '/community',
-    requiredRole: ['student', 'instructor', 'moderator']
+    icon: Award,
+    label: 'Certificados',
+    path: '/certificates',
+    requiredRole: ['student', 'instructor', 'admin', 'sistemas']
+  },
+  {
+    icon: Lightbulb,
+    label: 'Recomendaciones',
+    path: '/recommendations',
+    requiredRole: ['student', 'instructor', 'admin']
   },
   {
     icon: MessageSquare,
@@ -47,33 +55,21 @@ export const mainNavigation: MenuItem[] = [
     requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
-    icon: Bell,
-    label: 'Notificaciones',
-    path: '/notifications',
-    requiredRole: ['student', 'instructor', 'admin', 'moderator']
-  },
-  {
     icon: Calendar,
     label: 'Calendario',
     path: '/calendar',
-    requiredRole: ['student', 'instructor']
-  },
-  {
-    icon: CreditCard,
-    label: 'Pagos',
-    path: '/billing',
-    requiredRole: ['student', 'instructor']
-  },
-  {
-    icon: User,
-    label: 'Perfil',
-    path: '/profile',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin']
   },
   {
     icon: Settings,
-    label: 'Configuración',
-    path: '/settings',
+    label: 'Preferencias',
+    path: '/preferences',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
+  },
+  {
+    icon: BarChart,
+    label: 'Analíticas',
+    path: '/analytics/personal',
+    requiredRole: ['student', 'instructor', 'admin', 'sistemas']
   }
 ];

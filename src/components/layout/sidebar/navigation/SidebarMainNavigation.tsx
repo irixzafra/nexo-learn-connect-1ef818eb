@@ -7,93 +7,54 @@ import { getNavigationByRole } from '@/config/navigation';
 import {
   Home,
   BookOpen,
-  Users,
-  Search,
+  Compass,
   GraduationCap,
-  Building2,
   CreditCard,
   Settings
 } from 'lucide-react';
 
 // Definir la estructura de navegación principal con jerarquía
-const navigationStructure = [
+const navigationGroups = [
   {
-    id: 'inicio',
-    title: 'Inicio',
-    icon: Home,
-    items: [
-      { path: '/home', label: 'Dashboard', icon: Home },
-      { path: '/notifications', label: 'Notificaciones', icon: Home }
-    ]
-  },
-  {
-    id: 'mis-cursos',
+    id: 'main',
     title: 'Mis Cursos',
     icon: BookOpen,
-    items: [
-      { path: '/home/my-courses', label: 'En Progreso', icon: BookOpen },
-      { path: '/home/completed-courses', label: 'Completados', icon: BookOpen }
-    ]
+    navKey: 'main'
   },
   {
-    id: 'comunidad',
-    title: 'Comunidad',
-    icon: Users,
-    items: [
-      { path: '/community', label: 'Foros', icon: Users },
-      { path: '/messages', label: 'Mensajes', icon: Users }
-    ]
-  },
-  {
-    id: 'explorar',
+    id: 'explore',
     title: 'Explorar',
-    icon: Search,
-    items: [
-      { path: '/courses', label: 'Catálogo', icon: Search },
-      { path: '/learning-paths', label: 'Rutas de Aprendizaje', icon: Search }
-    ]
+    icon: Compass,
+    navKey: 'explore',
+    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']
   },
   {
-    id: 'profesor',
-    title: 'Profesor',
+    id: 'instructor',
+    title: 'Profesores',
     icon: GraduationCap,
-    requiredRole: ['instructor', 'admin'],
-    items: [
-      { path: '/instructor/courses', label: 'Mis Cursos', icon: GraduationCap },
-      { path: '/instructor/students', label: 'Estudiantes', icon: GraduationCap }
-    ]
+    navKey: 'instructor',
+    requiredRole: ['instructor', 'admin', 'sistemas']
   },
   {
-    id: 'gestion',
+    id: 'academic',
     title: 'Gestión Académica',
-    icon: Building2,
-    requiredRole: ['admin', 'sistemas'],
-    items: [
-      { path: '/admin/courses', label: 'Cursos', icon: Building2 },
-      { path: '/admin/users', label: 'Usuarios', icon: Building2 },
-      { path: '/admin/certificates', label: 'Certificaciones', icon: Building2 }
-    ]
+    icon: BookOpen,
+    navKey: 'academic',
+    requiredRole: ['admin', 'sistemas']
   },
   {
-    id: 'finanzas',
+    id: 'finance',
     title: 'Finanzas',
     icon: CreditCard,
-    requiredRole: ['admin', 'sistemas'],
-    items: [
-      { path: '/admin/billing', label: 'Transacciones', icon: CreditCard },
-      { path: '/admin/billing/reports', label: 'Informes', icon: CreditCard },
-      { path: '/admin/billing/invoices', label: 'Facturación', icon: CreditCard }
-    ]
+    navKey: 'finance',
+    requiredRole: ['admin', 'sistemas']
   },
   {
-    id: 'configuracion',
+    id: 'settings',
     title: 'Configuración',
     icon: Settings,
-    items: [
-      { path: '/settings', label: 'General', icon: Settings },
-      { path: '/settings/security', label: 'Seguridad', icon: Settings },
-      { path: '/settings/notifications', label: 'Notificaciones', icon: Settings }
-    ]
+    navKey: 'settings',
+    requiredRole: ['admin', 'sistemas']
   }
 ];
 
@@ -117,23 +78,23 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   // Obtener menús filtrados por rol
   const menus = getNavigationByRole(effectiveRole);
 
-  // Actualizar badges para mensajes y notificaciones en la estructura
-  const enhancedStructure = navigationStructure.map(group => {
-    // Filtrar por rol del grupo
-    if (group.requiredRole) {
-      if (Array.isArray(group.requiredRole) && !group.requiredRole.includes(effectiveRole)) {
-        return null;
-      }
-      if (!Array.isArray(group.requiredRole) && group.requiredRole !== effectiveRole) {
-        return null;
-      }
+  // Filtrar grupos por rol
+  const filteredGroups = navigationGroups.filter(group => {
+    if (!group.requiredRole) return true;
+    
+    if (Array.isArray(group.requiredRole)) {
+      return group.requiredRole.includes(effectiveRole);
     }
+    
+    return group.requiredRole === effectiveRole;
+  });
 
-    // Actualizar items con badges si corresponde
-    const updatedItems = group.items.map(item => {
+  // Actualizar badges para mensajes y notificaciones
+  const enhanceItemsWithBadges = (items: any[]) => {
+    return items.map(item => {
       let badge = undefined;
       
-      if (item.path === '/messages') {
+      if (item.path === '/messages' || item.path === '/instructor/messages') {
         badge = messagesCount > 0 ? messagesCount : undefined;
       }
       
@@ -141,35 +102,32 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         badge = notificationsCount > 0 ? notificationsCount : undefined;
       }
       
-      // Devolver el item con badge actualizado si corresponde
       return {
         ...item,
         badge
       };
     });
-
-    return {
-      ...group,
-      items: updatedItems
-    };
-  }).filter(Boolean);
+  };
 
   return (
     <div className={`flex-1 overflow-auto ${isCollapsed ? "px-2" : "px-4"}`}>
       <div className="space-y-4 py-4">
-        {enhancedStructure.map(group => (
-          group && (
+        {filteredGroups.map(group => {
+          const groupItems = menus[group.navKey as keyof typeof menus];
+          const enhancedItems = enhanceItemsWithBadges(groupItems);
+          
+          return (
             <SidebarNavGroup
               key={group.id}
               title={group.title}
               icon={group.icon}
-              items={group.items}
+              items={enhancedItems}
               isCollapsed={isCollapsed}
               effectiveRole={effectiveRole}
-              defaultOpen={group.id === 'inicio'}
+              defaultOpen={group.id === 'main'}
             />
-          )
-        ))}
+          );
+        })}
       </div>
     </div>
   );
