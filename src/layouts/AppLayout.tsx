@@ -19,6 +19,7 @@ interface AppLayoutProps {
 const AppLayout: React.FC<AppLayoutProps> = ({ 
   children,
   showHeader = true,
+  showAdminNavigation = false,
 }) => {
   const location = useLocation();
   const { isSidebarOpen, toggleSidebar } = useEditMode();
@@ -26,13 +27,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   // Check if current page is an admin page
   const isAdminPage = location.pathname.includes('/admin');
   const shouldShowHeader = showHeader && !isAdminPage;
+  const shouldShowSidebar = !isAdminPage || showAdminNavigation;
 
   // Log toggle state for debugging
   useEffect(() => {
     console.log("Current route:", location.pathname);
     console.log("Is admin page:", isAdminPage);
     console.log("Sidebar is open:", isSidebarOpen);
-  }, [location.pathname, isAdminPage, isSidebarOpen]);
+    console.log("Show admin navigation:", showAdminNavigation);
+  }, [location.pathname, isAdminPage, isSidebarOpen, showAdminNavigation]);
 
   return (
     <SidebarProvider defaultOpen={isSidebarOpen}>
@@ -40,7 +43,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         "flex min-h-screen w-full bg-background transition-all duration-300",
         !isSidebarOpen && "sidebar-collapsed"
       )}>
-        {!isAdminPage && (
+        {shouldShowSidebar && (
           <Sidebar variant="sidebar" collapsible={isSidebarOpen ? "none" : "icon"}>
             <SidebarContent>
               <RefactoredSidebarNavigation viewAsRole="current" />
@@ -56,7 +59,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           </main>
         </div>
         
-        {!isAdminPage && (
+        {shouldShowSidebar && (
           <>
             <MobileSidebar viewAsRole="current" />
             {/* Botón flotante para alternar sidebar */}

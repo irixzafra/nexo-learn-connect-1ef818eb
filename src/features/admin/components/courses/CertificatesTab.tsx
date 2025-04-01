@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   ColumnDef,
@@ -52,21 +53,17 @@ const CertificatesTab: React.FC = () => {
   const columns: ColumnDef<Certificate>[] = [
     {
       accessorKey: 'name',
-      header: ({ column }) => (
-        <AdminTableHead>{column.columnDef.header}</AdminTableHead>
-      ),
+      header: "Nombre",
+      cell: info => info.getValue(),
     },
     {
       accessorKey: 'description',
-      header: ({ column }) => (
-        <AdminTableHead>{column.columnDef.header}</AdminTableHead>
-      ),
+      header: "Descripción",
+      cell: info => info.getValue(),
     },
     {
       accessorKey: 'createdAt',
-      header: ({ column }) => (
-        <AdminTableHead>{column.columnDef.header}</AdminTableHead>
-      ),
+      header: "Fecha de Creación",
       cell: ({ row }) => {
         const date = new Date(row.getValue('createdAt') as Date);
         return date.toLocaleDateString();

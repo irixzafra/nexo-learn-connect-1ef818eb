@@ -57,9 +57,9 @@ const SettingsAccordion: React.FC<SettingsAccordionProps> = ({
                 {title}
               </h1>
             )}
-            {description && <p className="text-muted-foreground mt-2 text-sm">{description}</p>}
+            {description && <p className="text-muted-foreground mt-1 text-sm max-w-2xl">{description}</p>}
           </div>
-          <div className="flex justify-end space-x-2 mt-4">
+          <div className="flex justify-end space-x-2 mt-6">
             <Button 
               variant="outline" 
               size="sm" 
