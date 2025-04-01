@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Toaster } from 'sonner';
-import { AdminTabItem } from '@/components/shared/AdminNavTabs';
-import AdminNavTabs from '@/components/shared/AdminNavTabs';
+import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
+import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 
 interface AdminPageLayoutProps {
   title: string;
@@ -11,6 +11,8 @@ interface AdminPageLayoutProps {
   defaultTabValue?: string;
   children?: React.ReactNode;
   actions?: React.ReactNode;
+  navigationItems?: AdminSubMenuItem[];
+  baseRoute?: string;
 }
 
 const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
@@ -20,6 +22,8 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   defaultTabValue,
   children,
   actions,
+  navigationItems = [],
+  baseRoute,
 }) => {
   return (
     <div className="flex-1 w-full">
@@ -36,6 +40,22 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
             </div>
           )}
         </header>
+        
+        {navigationItems && navigationItems.length > 0 && baseRoute && (
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2">
+              {navigationItems.map((item, index) => (
+                <a 
+                  key={index}
+                  href={`${baseRoute}${item.path}`}
+                  className="px-4 py-2 rounded-md bg-muted hover:bg-muted/80 transition-colors"
+                >
+                  {item.title}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
         
         {tabs.length > 0 ? (
           <>

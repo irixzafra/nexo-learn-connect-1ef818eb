@@ -1,5 +1,5 @@
 
-import { SitePage, PageContent } from '@/types/pages';
+import { SitePage, PageContent, PageStatus } from '@/types/pages';
 
 // Mock data for simulating API calls
 const MOCK_PAGES: SitePage[] = [
@@ -108,6 +108,29 @@ export const updatePage = async (id: string, pageData: Partial<SitePage>): Promi
     ...pageData,
     updated_at: new Date().toISOString(),
   } as SitePage;
+};
+
+// Update page status - added to fix error
+export const updatePageStatus = async (id: string, status: PageStatus): Promise<SitePage> => {
+  await delay(300);
+  
+  const page = MOCK_PAGES.find(p => p.id === id);
+  if (!page) {
+    throw new Error('Page not found');
+  }
+  
+  return {
+    ...page,
+    status,
+    updated_at: new Date().toISOString()
+  };
+};
+
+// Delete a page - added to fix error
+export const deletePage = async (id: string): Promise<void> => {
+  await delay(300);
+  console.log(`Deleting page with ID ${id}`);
+  // In a real app, this would make an API call to delete the page
 };
 
 // Check if a slug is unique

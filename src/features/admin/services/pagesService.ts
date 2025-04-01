@@ -20,7 +20,8 @@ export const getPageById = async (id: string): Promise<SitePage | null> => {
     is_system_page: false,
     status: "published",
     created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
+    content: { blocks: [] }
   };
 };
 
@@ -81,7 +82,8 @@ export const getAllPages = async (): Promise<SitePage[]> => {
       is_system_page: true,
       status: "published",
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      content: { blocks: [] }
     },
     {
       id: '2',
@@ -92,7 +94,8 @@ export const getAllPages = async (): Promise<SitePage[]> => {
       is_system_page: false,
       status: "published",
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      content: { blocks: [] }
     }
   ];
 };
