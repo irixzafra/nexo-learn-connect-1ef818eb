@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Card,
@@ -21,7 +22,9 @@ import {
   ResponsiveContainer, 
   PieChart, 
   Pie, 
-  Cell 
+  Cell,
+  AreaChart,
+  Area
 } from 'recharts';
 import { PlatformStats } from '@/features/admin/analytics/types';
 

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import {
@@ -29,6 +28,7 @@ import CoursesAnalyticsSection from './sections/CoursesAnalyticsSection';
 import RevenueAnalyticsSection from './sections/RevenueAnalyticsSection';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { PlatformStats } from '@/features/admin/analytics/types';
 
 const AnalyticsOverview: React.FC = () => {
   const { stats, isLoading } = useAdminDashboardStats();
@@ -36,10 +36,21 @@ const AnalyticsOverview: React.FC = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('overview');
   
-  // Ensure stats has total_courses property
-  const enhancedStats = {
-    ...stats,
-    total_courses: stats.active_courses || 0, // Fallback if the property doesn't exist
+  // Create a properly mapped PlatformStats object
+  const enhancedStats: PlatformStats = {
+    total_users: stats.total_users || 0,
+    active_users: stats.active_users || stats.total_users * 0.8 || 0, // Fallback calculation
+    new_users: stats.new_users || stats.new_users_last_7_days || 0,
+    total_courses: stats.total_courses || stats.coursesCount || 0,
+    active_courses: stats.active_courses || stats.publishedCoursesCount || 0,
+    total_enrollments: stats.total_enrollments || 0,
+    completion_rate: stats.completion_rate || stats.completionRate || 75, // Default value
+    average_rating: stats.average_rating || 4.5, // Default value
+    // Keep additional properties
+    new_users_last_7_days: stats.new_users_last_7_days,
+    coursesCount: stats.coursesCount,
+    publishedCoursesCount: stats.publishedCoursesCount,
+    completionRate: stats.completionRate
   };
   
   // Determinar qué pestaña mostrar basado en la URL

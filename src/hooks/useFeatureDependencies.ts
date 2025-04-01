@@ -1,13 +1,16 @@
 
 import { useContext } from 'react';
-import { FeaturesContext, FeaturesContextProps, FeatureId } from '@/contexts/features/types';
+import { FeaturesContextProps, FeatureId } from '@/contexts/features/types';
 import { featureDependencies, getFeatureDependencies, getFeatureDependents } from '@/contexts/features/dependencies';
+
+// Import FeaturesContext from the correct location
+import { FeaturesContext } from '@/contexts/features/FeaturesContext';
 
 /**
  * Hook for managing feature dependencies
  */
 export function useFeatureDependencies() {
-  const featuresContext = useContext(FeaturesContext);
+  const featuresContext = useContext(FeaturesContext) as FeaturesContextProps;
 
   if (!featuresContext) {
     throw new Error('useFeatureDependencies must be used within a FeaturesProvider');

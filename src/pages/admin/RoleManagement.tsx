@@ -16,10 +16,14 @@ import { PlusCircle, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { UserRoleSearch } from '@/components/admin/UserRoleSearch';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { UserProfile } from '@/types/auth'; // Make sure we're using the correct UserProfile type
 
 const RoleManagement: React.FC = () => {
   const { users, isLoading, searchTerm, setSearchTerm, handleRoleChange } = useRoleManagement();
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
+
+  // Cast the users array to ensure TypeScript knows we're working with the correct type
+  const typedUsers = users as UserProfile[];
 
   return (
     <div className="container mx-auto p-6">
@@ -69,7 +73,7 @@ const RoleManagement: React.FC = () => {
           />
           
           <UserRolesTable 
-            users={users} 
+            users={typedUsers} 
             isLoading={isLoading} 
             handleRoleChange={handleRoleChange} 
           />
