@@ -14,51 +14,27 @@ import {
   ShieldCheck,
   DatabaseZap,
   Globe,
-  Layout,
-  Book
+  Layout
 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
 import GeneralSettings from '@/features/admin/components/settings/GeneralSettings';
 import FeaturesSettings from '@/features/admin/components/settings/FeaturesSettings';
 import ConnectionsSettings from '@/features/admin/components/settings/ConnectionsSettings';
 import SecuritySettings from '@/features/admin/components/settings/SecuritySettings';
 import DataSettings from '@/features/admin/components/settings/DataSettings';
-import AppearanceSettings from '@/features/admin/components/settings/AppearanceSettings';
-import ContentSettings from '@/features/admin/components/settings/ContentSettings';
-import OnboardingSettings from '@/features/admin/components/settings/OnboardingSettings';
-import { FeaturesConfig, useOnboarding, defaultFeaturesConfig } from '@/contexts/OnboardingContext';
+import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { toast } from 'sonner';
 
 const SystemSettings: React.FC = () => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({
-    ...defaultFeaturesConfig,
-    enableEditMode: false,
-    enableContentReordering: false,
-    enableThemeSwitcher: true,
-    enableMultiLanguage: false,
-    enableAdvancedEditor: true,
-    enableInvitations: true,
-    enableCustomRoles: false,
-    enableRealTimeNotifications: true,
-    enableEmailNotifications: true,
-    enablePublicApi: false,
-    enableWebhooks: false,
-    enable2FA: false,
-    enableMultipleSessions: true,
-    enablePublicRegistration: false,
-    requireEmailVerification: true,
-    enableActivityLog: true,
-    enableDatabaseDevMode: false,
-    enableAutoBackups: true,
-    enableQueryCache: true,
-    enableMaintenanceMode: false,
-    enableCategoryManagement: false,
-    enableLeaderboard: false,
-    enableOnboardingSystem: true
-  });
-  
+    enableEditMode: false, // Configuración inicial para edición en línea
+    enableContentReordering: false // Ya no necesitamos esta propiedad separada
+  } as FeaturesConfig);
   const [isSaving, setIsSaving] = useState(false);
   const { tab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
@@ -71,24 +47,18 @@ const SystemSettings: React.FC = () => {
   }, [featuresConfig.enableEditMode, setEditModeEnabled]);
   
   const handleToggleFeature = (feature: keyof FeaturesConfig, value: boolean) => {
-    setIsSaving(true);
+    setFeaturesConfig(prev => ({
+      ...prev,
+      [feature]: value
+    }));
     
-    // Simulate API call delay
-    setTimeout(() => {
-      setFeaturesConfig(prev => ({
-        ...prev,
-        [feature]: value
-      }));
-      
-      // Actualizar el estado de edición en línea si es esa característica
-      if (feature === 'enableEditMode') {
-        setEditModeEnabled(value);
-      }
-      
-      setIsSaving(false);
-      // Show toast for feedback
-      toast.success(`Configuración actualizada: ${feature} ${value ? 'activado' : 'desactivado'}`);
-    }, 800);
+    // Actualizar el estado de edición en línea si es esa característica
+    if (feature === 'enableEditMode') {
+      setEditModeEnabled(value);
+    }
+    
+    // Show toast for feedback
+    toast.success(`Configuración actualizada: ${feature} ${value ? 'activado' : 'desactivado'}`);
   };
 
   const handleToggleDesignSystem = async () => {
@@ -114,7 +84,35 @@ const SystemSettings: React.FC = () => {
       label: 'General',
       icon: <Settings className="h-4 w-4" />,
       dataTag: "settings-tab-general",
-      content: <GeneralSettings />
+      content: (
+        <div className="space-y-6">
+          <GeneralSettings />
+          
+          {/* Design System Switch */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <h3 className="text-lg font-medium">Sistema de Diseño</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Activa o desactiva el sistema de diseño personalizado
+                  </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="design-system-toggle">
+                    {designFeatureEnabled ? 'Activado' : 'Desactivado'}
+                  </Label>
+                  <Switch
+                    id="design-system-toggle"
+                    checked={designFeatureEnabled}
+                    onCheckedChange={handleToggleDesignSystem}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )
     },
     {
       value: 'features',
@@ -122,39 +120,6 @@ const SystemSettings: React.FC = () => {
       icon: <ToggleRight className="h-4 w-4" />,
       dataTag: "settings-tab-features",
       content: <FeaturesSettings 
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
-    },
-    {
-      value: 'appearance',
-      label: 'Apariencia',
-      icon: <Palette className="h-4 w-4" />,
-      dataTag: "settings-tab-appearance",
-      content: <AppearanceSettings
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
-    },
-    {
-      value: 'content',
-      label: 'Contenido',
-      icon: <Layout className="h-4 w-4" />,
-      dataTag: "settings-tab-content",
-      content: <ContentSettings
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
-    },
-    {
-      value: 'onboarding',
-      label: 'Onboarding',
-      icon: <Book className="h-4 w-4" />,
-      dataTag: "settings-tab-onboarding",
-      content: <OnboardingSettings
         featuresConfig={featuresConfig}
         onToggleFeature={handleToggleFeature}
         isLoading={isSaving}

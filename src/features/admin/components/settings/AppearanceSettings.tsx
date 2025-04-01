@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Paintbrush, Globe, Loader2, Construction, Palette } from 'lucide-react';
+import { Paintbrush, Globe, Loader2, Construction } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -40,6 +40,9 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
             <p className="text-xs text-muted-foreground">
               Permite a los usuarios cambiar entre tema claro y oscuro
             </p>
+            <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
+              En desarrollo
+            </Badge>
           </div>
           <div className="flex items-center">
             {isLoading && (
@@ -58,34 +61,11 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
         
         <div className="flex items-center justify-between py-1">
           <div>
-            <h3 className="text-sm font-medium">Sistema de Diseño</h3>
-            <p className="text-xs text-muted-foreground">
-              Habilita el sistema de diseño personalizado
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableDesignSystem"
-              checked={featuresConfig.enableDesignSystem}
-              onCheckedChange={(value) => onToggleFeature('enableDesignSystem', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
             <h3 className="text-sm font-medium">Soporte multilenguaje</h3>
             <p className="text-xs text-muted-foreground">
               Habilita el soporte para múltiples idiomas
             </p>
             <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
-              <Construction className="h-3 w-3 mr-1" />
               En desarrollo
             </Badge>
           </div>
@@ -136,13 +116,11 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
             size="sm"
             onClick={() => navigate('/admin/design')}
           >
-            <Palette className="mr-2 h-4 w-4" />
-            Configurar Sistema de Diseño
+            <Paintbrush className="mr-2 h-4 w-4" />
+            Sistema de Diseño
           </Button>
         </div>
       </CardContent>
     </Card>
   );
 };
-
-export default AppearanceSettings;

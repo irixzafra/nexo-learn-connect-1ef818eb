@@ -1,148 +1,162 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Check, X, Plus, Text, Newspaper, Image } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { Plus, ChevronDown, ChevronUp, Wand2 } from 'lucide-react';
+import AISectionCreator from './AISectionCreator';
 
-export interface SectionInsertProps {
+interface SectionInsertProps {
   onAddSection: (content: string, type?: string) => void;
-  onCancel?: () => void;
-  className?: string;
+  compact?: boolean;
 }
 
 const SectionInsert: React.FC<SectionInsertProps> = ({ 
-  onAddSection, 
-  onCancel,
-  className
+  onAddSection,
+  compact = false 
 }) => {
-  const [activeTab, setActiveTab] = useState<'text' | 'component'>('text');
-  const [textContent, setTextContent] = useState('');
-  const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
-  
-  const handleAddText = () => {
-    if (!textContent.trim()) return;
-    onAddSection(textContent.trim(), 'text');
-    setTextContent('');
+  const [expanded, setExpanded] = useState(false);
+  const [isAICreatorOpen, setIsAICreatorOpen] = useState(false);
+
+  const handleAddTextSection = () => {
+    onAddSection('Nuevo contenido de texto', 'text');
+    setExpanded(false);
   };
-  
-  const handleAddComponent = () => {
-    if (!selectedComponent) return;
-    onAddSection('Nuevo componente', selectedComponent);
-    setSelectedComponent(null);
+
+  const handleAddHeroSection = () => {
+    onAddSection('Título destacado', 'hero');
+    setExpanded(false);
   };
-  
-  const handleCancel = () => {
-    setTextContent('');
-    setSelectedComponent(null);
-    if (onCancel) onCancel();
+
+  const handleOpenAICreator = () => {
+    setIsAICreatorOpen(true);
+    setExpanded(false);
   };
-  
-  return (
-    <Card className={cn("w-full max-w-md mx-auto border border-dashed border-primary/40", className)}>
-      <CardContent className="p-4">
-        <div className="flex justify-between items-center mb-3">
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant={activeTab === 'text' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setActiveTab('text')}
-              className="gap-1"
-            >
-              <Text className="h-3.5 w-3.5" />
-              <span className="text-xs">Texto</span>
-            </Button>
-            <Button
-              type="button"
-              variant={activeTab === 'component' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setActiveTab('component')}
-              className="gap-1"
-            >
-              <Newspaper className="h-3.5 w-3.5" />
-              <span className="text-xs">Componente</span>
-            </Button>
-          </div>
-          
-          {onCancel && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={handleCancel}
-              className="h-7 w-7"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+
+  const handleAddSectionWithAI = (content: string, type = 'text') => {
+    onAddSection(content, type);
+  };
+
+  if (compact) {
+    return (
+      <div className="relative group">
+        <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-full border shadow-sm z-10">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full hover:bg-primary hover:text-primary-foreground"
+            onClick={() => setExpanded(!expanded)}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+          {expanded && (
+            <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-44 bg-background rounded-lg shadow-lg border p-1 flex flex-col gap-1 z-20">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="justify-start"
+                onClick={handleAddTextSection}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Texto
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="justify-start"
+                onClick={handleAddHeroSection}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Título
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="justify-start text-primary"
+                onClick={handleOpenAICreator}
+              >
+                <Wand2 className="h-4 w-4 mr-2" />
+                Crear con IA
+              </Button>
+            </div>
           )}
         </div>
-        
-        {activeTab === 'text' && (
-          <div className="space-y-3">
-            <Textarea
-              placeholder="Ingresa el texto del nuevo elemento..."
-              value={textContent}
-              onChange={(e) => setTextContent(e.target.value)}
-              className="h-24 w-full"
-            />
-            
-            <div className="flex justify-end">
+        <div className="py-2 border-b border-dashed border-primary/20" />
+
+        <AISectionCreator
+          isOpen={isAICreatorOpen}
+          onOpenChange={setIsAICreatorOpen}
+          onAddSection={handleAddSectionWithAI}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative py-2">
+      <div 
+        className={`
+          flex flex-col items-center justify-center gap-2
+          ${expanded ? 'p-4 border border-dashed border-primary/50 rounded-lg' : ''}
+        `}
+      >
+        {!expanded ? (
+          <Button
+            variant="ghost" 
+            size="sm"
+            onClick={() => setExpanded(true)}
+            className="bg-muted/50 hover:bg-muted gap-1 text-muted-foreground"
+          >
+            <Plus className="h-4 w-4" />
+            Añadir sección
+            <ChevronDown className="h-3 w-3 ml-2" />
+          </Button>
+        ) : (
+          <>
+            <div className="text-sm font-medium mb-2">Añadir sección</div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 w-full">
               <Button
-                type="button"
-                size="sm"
-                onClick={handleAddText}
-                disabled={!textContent.trim()}
-                className="gap-1"
+                variant="outline"
+                onClick={handleAddTextSection}
+                className="justify-start"
               >
-                <Plus className="h-3.5 w-3.5" />
-                Agregar Texto
+                <Plus className="h-4 w-4 mr-2" />
+                Texto
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleAddHeroSection}
+                className="justify-start"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Título
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleOpenAICreator}
+                className="justify-start text-primary"
+              >
+                <Wand2 className="h-4 w-4 mr-2" />
+                Crear con IA
               </Button>
             </div>
-          </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setExpanded(false)}
+              className="mt-2"
+            >
+              <ChevronUp className="h-3 w-3 mr-1" />
+              Cerrar
+            </Button>
+          </>
         )}
-        
-        {activeTab === 'component' && (
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant={selectedComponent === 'hero' ? 'default' : 'outline'}
-                className="h-auto flex flex-col p-2 justify-center items-center"
-                onClick={() => setSelectedComponent('hero')}
-              >
-                <Newspaper className="h-5 w-5 mb-1" />
-                <span className="text-xs">Hero</span>
-              </Button>
-              
-              <Button
-                variant={selectedComponent === 'image' ? 'default' : 'outline'}
-                className="h-auto flex flex-col p-2 justify-center items-center"
-                onClick={() => setSelectedComponent('image')}
-              >
-                <Image className="h-5 w-5 mb-1" />
-                <span className="text-xs">Imagen</span>
-              </Button>
-            </div>
-            
-            <div className="flex justify-end">
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleAddComponent}
-                disabled={!selectedComponent}
-                className="gap-1"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Agregar Componente
-              </Button>
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+
+      <AISectionCreator
+        isOpen={isAICreatorOpen}
+        onOpenChange={setIsAICreatorOpen}
+        onAddSection={handleAddSectionWithAI}
+      />
+    </div>
   );
 };
 

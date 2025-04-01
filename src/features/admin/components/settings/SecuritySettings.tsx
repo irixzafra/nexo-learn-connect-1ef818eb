@@ -1,24 +1,12 @@
 
 import React from 'react';
-import { 
-  ShieldCheck, 
-  Key, 
-  Lock, 
-  Users, 
-  AlertTriangle,
-  Clock,
-  Loader2,
-  Construction
-} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
+import { ShieldCheck, Loader2, ChevronDown, ChevronRight } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
-import SettingsAccordion, { SettingsSection } from '@/components/admin/settings/SettingsAccordion';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface SecuritySettingsProps {
   featuresConfig: FeaturesConfig;
@@ -31,216 +19,281 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({
   onToggleFeature,
   isLoading = false
 }) => {
-  const securitySections: SettingsSection[] = [
-    {
-      id: "authentication",
-      title: "Autenticación",
-      icon: <Key className="h-5 w-5" />,
-      iconColor: "text-green-500",
-      content: (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-1">
-            <div className="text-left">
-              <h3 className="text-sm font-medium">Autenticación de dos factores</h3>
-              <p className="text-xs text-muted-foreground">
-                Requiere autenticación de dos factores para todos los usuarios
-              </p>
-              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
-                <Construction className="h-3 w-3 mr-1" />
-                En desarrollo
-              </Badge>
-            </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enable2FA"
-                checked={featuresConfig.enable2FA}
-                onCheckedChange={(value) => onToggleFeature('enable2FA', value)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
-          <Separator className="my-2" />
-          
-          <div>
-            <Label htmlFor="passwordPolicy" className="text-left block mb-1">Política de contraseñas</Label>
-            <Select defaultValue="strong">
-              <SelectTrigger id="passwordPolicy">
-                <SelectValue placeholder="Seleccionar política" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="basic">Básica</SelectItem>
-                <SelectItem value="medium">Media</SelectItem>
-                <SelectItem value="strong">Fuerte</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1 text-left">
-              Define la complejidad requerida para las contraseñas
-            </p>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: "sessions",
-      title: "Sesiones",
-      icon: <Clock className="h-5 w-5" />,
-      iconColor: "text-blue-500",
-      content: (
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="sessionTimeout" className="text-left block mb-1">Tiempo de expiración de sesión</Label>
-            <div className="flex items-center gap-2">
-              <Input id="sessionTimeout" type="number" defaultValue="60" />
-              <span className="text-sm text-muted-foreground">minutos</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1 text-left">
-              Tiempo de inactividad antes de cerrar la sesión
-            </p>
-          </div>
-          
-          <Separator className="my-2" />
-          
-          <div className="flex items-center justify-between py-1">
-            <div className="text-left">
-              <h3 className="text-sm font-medium">Sesiones múltiples</h3>
-              <p className="text-xs text-muted-foreground">
-                Permite múltiples sesiones activas para un mismo usuario
-              </p>
-            </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableMultipleSessions"
-                checked={featuresConfig.enableMultipleSessions}
-                onCheckedChange={(value) => onToggleFeature('enableMultipleSessions', value)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: "permissions",
-      title: "Permisos",
-      icon: <Lock className="h-5 w-5" />,
-      iconColor: "text-orange-500",
-      content: (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-1">
-            <div className="text-left">
-              <h3 className="text-sm font-medium">Registro público</h3>
-              <p className="text-xs text-muted-foreground">
-                Permite que cualquier persona se registre en la plataforma
-              </p>
-            </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enablePublicRegistration"
-                checked={featuresConfig.enablePublicRegistration}
-                onCheckedChange={(value) => onToggleFeature('enablePublicRegistration', value)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
-          <Separator className="my-2" />
-          
-          <div className="flex items-center justify-between py-1">
-            <div className="text-left">
-              <h3 className="text-sm font-medium">Verificación de email</h3>
-              <p className="text-xs text-muted-foreground">
-                Requiere verificación de email para nuevas cuentas
-              </p>
-            </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="requireEmailVerification"
-                checked={featuresConfig.requireEmailVerification}
-                onCheckedChange={(value) => onToggleFeature('requireEmailVerification', value)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: "audit",
-      title: "Auditoría",
-      icon: <AlertTriangle className="h-5 w-5" />,
-      iconColor: "text-red-500",
-      content: (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-1">
-            <div className="text-left">
-              <h3 className="text-sm font-medium">Registro de actividad</h3>
-              <p className="text-xs text-muted-foreground">
-                Mantiene un registro de todas las acciones de los usuarios
-              </p>
-            </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableActivityLog"
-                checked={featuresConfig.enableActivityLog}
-                onCheckedChange={(value) => onToggleFeature('enableActivityLog', value)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
-          <Separator className="my-2" />
-          
-          <div>
-            <Label htmlFor="logRetention" className="text-left block mb-1">Retención de registros</Label>
-            <Select defaultValue="90">
-              <SelectTrigger id="logRetention">
-                <SelectValue placeholder="Seleccionar periodo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="30">30 días</SelectItem>
-                <SelectItem value="90">90 días</SelectItem>
-                <SelectItem value="365">1 año</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1 text-left">
-              Tiempo de retención de los registros de actividad
-            </p>
-          </div>
-        </div>
-      )
-    }
-  ];
+  const [openSections, setOpenSections] = React.useState({
+    authentication: true,
+    privacy: true,
+    encryption: true,
+    audit: true
+  });
+
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold flex items-center gap-2 text-green-600">
-          <ShieldCheck className="h-5 w-5" />
-          Seguridad
-        </h1>
-        <p className="text-muted-foreground">
-          Configura las opciones de seguridad del sistema
+    <Card className="shadow-sm">
+      <CardContent className="p-6 space-y-4">
+        <div className="flex items-center mb-2">
+          <ShieldCheck className="h-5 w-5 text-green-500 mr-2" />
+          <h2 className="text-xl font-semibold text-left">Seguridad</h2>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4 text-left">
+          Configura las opciones de seguridad y autenticación
         </p>
-      </div>
 
-      <SettingsAccordion sections={securitySections} />
-    </div>
+        <div className="space-y-3">
+          {/* Autenticación */}
+          <Collapsible 
+            open={openSections.authentication} 
+            onOpenChange={() => toggleSection('authentication')}
+            className="border rounded-lg overflow-hidden"
+          >
+            <CollapsibleTrigger className="flex items-center w-full px-4 py-3 hover:bg-muted/50 text-left">
+              <div className="flex items-center gap-2 flex-1">
+                <ShieldCheck className="h-5 w-5 text-green-500" />
+                <span className="font-medium">Autenticación</span>
+              </div>
+              <div className="text-muted-foreground">
+                {openSections.authentication ? 
+                  <ChevronDown className="h-4 w-4" /> : 
+                  <ChevronRight className="h-4 w-4" />
+                }
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 pb-3 border-t pt-2">
+              <div className="space-y-0 divide-y">
+                <div className="flex items-center justify-between py-3">
+                  <div>
+                    <h3 className="text-sm font-medium text-left">Autenticación de múltiples factores</h3>
+                    <p className="text-xs text-muted-foreground text-left">
+                      Requiere verificación adicional durante el inicio de sesión
+                    </p>
+                    <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
+                  </div>
+                  <div className="flex items-center">
+                    {isLoading && (
+                      <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+                    )}
+                    <Switch
+                      id="enableMFA"
+                      checked={false}
+                      disabled={true}
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between py-3">
+                  <div>
+                    <h3 className="text-sm font-medium text-left">Bloqueo de cuentas</h3>
+                    <p className="text-xs text-muted-foreground text-left">
+                      Bloquea la cuenta después de varios intentos fallidos
+                    </p>
+                    <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
+                  </div>
+                  <div className="flex items-center">
+                    {isLoading && (
+                      <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+                    )}
+                    <Switch
+                      id="enableAccountLocking"
+                      checked={false}
+                      disabled={true}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+          
+          {/* Privacidad */}
+          <Collapsible 
+            open={openSections.privacy} 
+            onOpenChange={() => toggleSection('privacy')}
+            className="border rounded-lg overflow-hidden"
+          >
+            <CollapsibleTrigger className="flex items-center w-full px-4 py-3 hover:bg-muted/50 text-left">
+              <div className="flex items-center gap-2 flex-1">
+                <ShieldCheck className="h-5 w-5 text-green-500" />
+                <span className="font-medium">Privacidad</span>
+              </div>
+              <div className="text-muted-foreground">
+                {openSections.privacy ? 
+                  <ChevronDown className="h-4 w-4" /> : 
+                  <ChevronRight className="h-4 w-4" />
+                }
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 pb-3 border-t pt-2">
+              <div className="space-y-0 divide-y">
+                <div className="flex items-center justify-between py-3">
+                  <div>
+                    <h3 className="text-sm font-medium text-left">Cookies de terceros</h3>
+                    <p className="text-xs text-muted-foreground text-left">
+                      Permite el uso de cookies de terceros para análisis y publicidad
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    {isLoading && (
+                      <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+                    )}
+                    <Switch
+                      id="enableThirdPartyCookies"
+                      checked={true}
+                      onChange={() => {}}
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between py-3">
+                  <div>
+                    <h3 className="text-sm font-medium text-left">Anonimización de datos</h3>
+                    <p className="text-xs text-muted-foreground text-left">
+                      Anonimiza datos personales sensibles en informes y análisis
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    {isLoading && (
+                      <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+                    )}
+                    <Switch
+                      id="enableDataAnonymization"
+                      checked={false}
+                      onChange={() => {}}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+          
+          {/* Cifrado */}
+          <Collapsible 
+            open={openSections.encryption} 
+            onOpenChange={() => toggleSection('encryption')}
+            className="border rounded-lg overflow-hidden"
+          >
+            <CollapsibleTrigger className="flex items-center w-full px-4 py-3 hover:bg-muted/50 text-left">
+              <div className="flex items-center gap-2 flex-1">
+                <ShieldCheck className="h-5 w-5 text-green-500" />
+                <span className="font-medium">Cifrado</span>
+              </div>
+              <div className="text-muted-foreground">
+                {openSections.encryption ? 
+                  <ChevronDown className="h-4 w-4" /> : 
+                  <ChevronRight className="h-4 w-4" />
+                }
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 pb-3 border-t pt-2">
+              <div className="space-y-0 divide-y">
+                <div className="flex items-center justify-between py-3">
+                  <div>
+                    <h3 className="text-sm font-medium text-left">Cifrado de datos sensibles</h3>
+                    <p className="text-xs text-muted-foreground text-left">
+                      Protege información crítica mediante cifrado avanzado
+                    </p>
+                    <Badge variant="outline" className="bg-blue-100 text-blue-800 text-xs border-blue-200 mt-1">Próximamente</Badge>
+                  </div>
+                  <div className="flex items-center">
+                    {isLoading && (
+                      <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+                    )}
+                    <Switch
+                      id="enableDataEncryption"
+                      checked={false}
+                      disabled={true}
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between py-3">
+                  <div>
+                    <h3 className="text-sm font-medium text-left">Cifrado en tránsito</h3>
+                    <p className="text-xs text-muted-foreground text-left">
+                      Asegura que los datos se cifren durante la transferencia
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    {isLoading && (
+                      <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+                    )}
+                    <Switch
+                      id="enableTransitEncryption"
+                      checked={true}
+                      onChange={() => {}}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+          
+          {/* Auditoría */}
+          <Collapsible 
+            open={openSections.audit} 
+            onOpenChange={() => toggleSection('audit')}
+            className="border rounded-lg overflow-hidden"
+          >
+            <CollapsibleTrigger className="flex items-center w-full px-4 py-3 hover:bg-muted/50 text-left">
+              <div className="flex items-center gap-2 flex-1">
+                <ShieldCheck className="h-5 w-5 text-green-500" />
+                <span className="font-medium">Auditoría</span>
+              </div>
+              <div className="text-muted-foreground">
+                {openSections.audit ? 
+                  <ChevronDown className="h-4 w-4" /> : 
+                  <ChevronRight className="h-4 w-4" />
+                }
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 pb-3 border-t pt-2">
+              <div className="space-y-0 divide-y">
+                <div className="flex items-center justify-between py-3">
+                  <div>
+                    <h3 className="text-sm font-medium text-left">Registros de auditoría</h3>
+                    <p className="text-xs text-muted-foreground text-left">
+                      Mantiene un registro detallado de todas las actividades
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    {isLoading && (
+                      <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+                    )}
+                    <Switch
+                      id="enableAuditLog"
+                      checked={false}
+                      onChange={() => {}}
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between py-3">
+                  <div>
+                    <h3 className="text-sm font-medium text-left">Notificaciones de seguridad</h3>
+                    <p className="text-xs text-muted-foreground text-left">
+                      Envía alertas sobre inicios de sesión sospechosos y cambios importantes
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    {isLoading && (
+                      <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
+                    )}
+                    <Switch
+                      id="enableSecurityNotifications"
+                      checked={true}
+                      onChange={() => {}}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

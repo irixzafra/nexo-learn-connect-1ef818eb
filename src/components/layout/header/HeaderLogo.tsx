@@ -6,7 +6,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu, ChevronLeft } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import SidebarNavigation from '../SidebarNavigation';
 import { UserRoleType } from '@/types/auth';
 
