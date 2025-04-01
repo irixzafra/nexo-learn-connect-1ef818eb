@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Navigation, ExternalLink, Map, Link2 } from 'lucide-react';
+import { Navigation, ExternalLink, Map, Link2, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,7 +19,7 @@ const NavigationExplorer: React.FC = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -60,6 +60,32 @@ const NavigationExplorer: React.FC = () => {
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
               </span>
               Validar Rutas
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5 text-primary" />
+              Repositorio de Recursos
+            </CardTitle>
+            <CardDescription>
+              Gestiona los recursos educativos del sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4">Accede al repositorio centralizado de recursos educativos para su gestión y organización.</p>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/admin/resources')}
+              className="relative"
+            >
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </span>
+              Repositorio
             </Button>
           </CardContent>
         </Card>
