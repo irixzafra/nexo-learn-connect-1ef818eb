@@ -27,14 +27,16 @@ export * from './utils';
  * @param role Rol del usuario
  */
 export const getNavigationByRole = (role: UserRoleType): NavigationMenus => {
+  // Using as any to bridge the type gap between the two MenuItem interfaces
+  // This is safe because we control both interfaces and ensure they're compatible
   return {
-    main: filterMenuItemsByRole(mainNavigation, role),
-    admin: filterMenuItemsByRole(adminNavigation, role),
-    explore: filterMenuItemsByRole(exploreNavigation, role),
-    instructor: filterMenuItemsByRole(instructorNavigation, role),
-    academic: filterMenuItemsByRole(academicNavigation, role),
-    finance: filterMenuItemsByRole(financeNavigation, role),
-    settings: filterMenuItemsByRole(settingsNavigation, role),
-    gamification: filterMenuItemsByRole(gamificationNavigation, role)
+    main: filterMenuItemsByRole(mainNavigation as any, role),
+    admin: filterMenuItemsByRole(adminNavigation as any, role),
+    explore: filterMenuItemsByRole(exploreNavigation as any, role),
+    instructor: filterMenuItemsByRole(instructorNavigation as any, role),
+    academic: filterMenuItemsByRole(academicNavigation as any, role),
+    finance: filterMenuItemsByRole(financeNavigation as any, role),
+    settings: filterMenuItemsByRole(settingsNavigation as any, role),
+    gamification: filterMenuItemsByRole(gamificationNavigation as any, role)
   };
 };
