@@ -22,8 +22,8 @@ const navigationStructure = [
     title: 'Inicio',
     icon: Home,
     items: [
-      { path: '/home', label: 'Dashboard' },
-      { path: '/notifications', label: 'Notificaciones' }
+      { path: '/home', label: 'Dashboard', icon: Home },
+      { path: '/notifications', label: 'Notificaciones', icon: Home }
     ]
   },
   {
@@ -31,8 +31,8 @@ const navigationStructure = [
     title: 'Mis Cursos',
     icon: BookOpen,
     items: [
-      { path: '/home/my-courses', label: 'En Progreso' },
-      { path: '/home/completed-courses', label: 'Completados' }
+      { path: '/home/my-courses', label: 'En Progreso', icon: BookOpen },
+      { path: '/home/completed-courses', label: 'Completados', icon: BookOpen }
     ]
   },
   {
@@ -40,8 +40,8 @@ const navigationStructure = [
     title: 'Comunidad',
     icon: Users,
     items: [
-      { path: '/community', label: 'Foros' },
-      { path: '/messages', label: 'Mensajes' }
+      { path: '/community', label: 'Foros', icon: Users },
+      { path: '/messages', label: 'Mensajes', icon: Users }
     ]
   },
   {
@@ -49,8 +49,8 @@ const navigationStructure = [
     title: 'Explorar',
     icon: Search,
     items: [
-      { path: '/courses', label: 'Catálogo' },
-      { path: '/learning-paths', label: 'Rutas de Aprendizaje' }
+      { path: '/courses', label: 'Catálogo', icon: Search },
+      { path: '/learning-paths', label: 'Rutas de Aprendizaje', icon: Search }
     ]
   },
   {
@@ -59,8 +59,8 @@ const navigationStructure = [
     icon: GraduationCap,
     requiredRole: ['instructor', 'admin'],
     items: [
-      { path: '/instructor/courses', label: 'Mis Cursos' },
-      { path: '/instructor/students', label: 'Estudiantes' }
+      { path: '/instructor/courses', label: 'Mis Cursos', icon: GraduationCap },
+      { path: '/instructor/students', label: 'Estudiantes', icon: GraduationCap }
     ]
   },
   {
@@ -69,9 +69,9 @@ const navigationStructure = [
     icon: Building2,
     requiredRole: ['admin', 'sistemas'],
     items: [
-      { path: '/admin/courses', label: 'Cursos' },
-      { path: '/admin/users', label: 'Usuarios' },
-      { path: '/admin/certificates', label: 'Certificaciones' }
+      { path: '/admin/courses', label: 'Cursos', icon: Building2 },
+      { path: '/admin/users', label: 'Usuarios', icon: Building2 },
+      { path: '/admin/certificates', label: 'Certificaciones', icon: Building2 }
     ]
   },
   {
@@ -80,9 +80,9 @@ const navigationStructure = [
     icon: CreditCard,
     requiredRole: ['admin', 'sistemas'],
     items: [
-      { path: '/admin/billing', label: 'Transacciones' },
-      { path: '/admin/billing/reports', label: 'Informes' },
-      { path: '/admin/billing/invoices', label: 'Facturación' }
+      { path: '/admin/billing', label: 'Transacciones', icon: CreditCard },
+      { path: '/admin/billing/reports', label: 'Informes', icon: CreditCard },
+      { path: '/admin/billing/invoices', label: 'Facturación', icon: CreditCard }
     ]
   },
   {
@@ -90,9 +90,9 @@ const navigationStructure = [
     title: 'Configuración',
     icon: Settings,
     items: [
-      { path: '/settings', label: 'General' },
-      { path: '/settings/security', label: 'Seguridad' },
-      { path: '/settings/notifications', label: 'Notificaciones' }
+      { path: '/settings', label: 'General', icon: Settings },
+      { path: '/settings/security', label: 'Seguridad', icon: Settings },
+      { path: '/settings/notifications', label: 'Notificaciones', icon: Settings }
     ]
   }
 ];
@@ -129,22 +129,20 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
 
     // Actualizar items con badges si corresponde
     const updatedItems = group.items.map(item => {
-      let updatedItem = { ...item };
+      let badge = undefined;
       
       if (item.path === '/messages') {
-        updatedItem.badge = messagesCount > 0 ? messagesCount : undefined;
+        badge = messagesCount > 0 ? messagesCount : undefined;
       }
       
       if (item.path === '/notifications') {
-        updatedItem.badge = notificationsCount > 0 ? notificationsCount : undefined;
+        badge = notificationsCount > 0 ? notificationsCount : undefined;
       }
       
-      // Agregar tipos para mantener compatibilidad con MenuItem
+      // Devolver el item con badge actualizado si corresponde
       return {
-        ...updatedItem,
-        icon: updatedItem.icon || Home,
-        path: updatedItem.path,
-        label: updatedItem.label
+        ...item,
+        badge
       };
     });
 
