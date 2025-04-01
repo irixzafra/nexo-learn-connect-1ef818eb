@@ -100,7 +100,7 @@ const LandingNav: React.FC = () => {
           <div className="flex items-center gap-5">
             <div className="hidden md:flex items-center space-x-8" role="menubar">
               <Link 
-                to="/landing" 
+                to="/" 
                 className="text-base font-medium text-gray-800 hover:text-blue-600 transition-colors duration-300 after:content-[''] after:block after:w-0 after:h-0.5 after:bg-blue-600 after:transition-all hover:after:w-full"
                 role="menuitem"
                 aria-label="Ver landing page"
@@ -226,7 +226,7 @@ const LandingNav: React.FC = () => {
               <div className="px-5 py-5 flex flex-col space-y-4">
                 <motion.div variants={itemVariants}>
                   <Link 
-                    to="/landing" 
+                    to="/" 
                     className="flex w-full py-3 text-base font-medium hover:text-blue-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >

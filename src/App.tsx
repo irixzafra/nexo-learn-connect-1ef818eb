@@ -13,6 +13,8 @@ import { useTheme } from './contexts/ThemeContext';
 import LoadingScreen from './components/LoadingScreen';
 import AdminRoutes from './routes/AdminRoutes';
 import PlaceholderPage from './pages/placeholder/PlaceholderPage';
+import Home from './pages/Home';
+import PublicRoutes from './routes/PublicRoutes';
 
 // Lazy-loaded pages
 const ProfilePage = lazy(() => import('./pages/Profile'));
@@ -24,67 +26,24 @@ function App() {
   return (
     <div className={`app ${theme}`}>
       <Routes>
-        {/* Public routes */}
+        {/* Public routes through PublicRoutes component */}
+        <Route path="/*" element={<PublicRoutes />} />
+        
+        {/* Dashboard and protected routes */}
         <Route element={<AppLayout />}>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          
-          <Route path="/foro" element={
-            <Suspense fallback={<LoadingScreen />}>
-              <PlaceholderPage title="Foro" />
-            </Suspense>
+          <Route path="/home" element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
           } />
           
-          <Route path="/blog" element={
-            <Suspense fallback={<LoadingScreen />}>
-              <PlaceholderPage title="Blog" />
-            </Suspense>
-          } />
-          
-          <Route path="/cursos" element={
-            <Suspense fallback={<LoadingScreen />}>
-              <PlaceholderPage title="Cursos" />
-            </Suspense>
-          } />
-          
-          <Route path="/cursos/:id" element={
-            <Suspense fallback={<LoadingScreen />}>
-              <PlaceholderPage title="Detalle de Curso" />
-            </Suspense>
-          } />
-          
-          <Route path="/leccion/:id" element={
-            <Suspense fallback={<LoadingScreen />}>
-              <ProtectedRoute>
-                <PlaceholderPage title="Lección" />
-              </ProtectedRoute>
-            </Suspense>
-          } />
-          
-          <Route path="/perfil" element={
+          <Route path="/profile" element={
             <Suspense fallback={<LoadingScreen />}>
               <ProtectedRoute>
                 <ProfilePage />
               </ProtectedRoute>
             </Suspense>
           } />
-          
-          <Route path="/mi-aprendizaje" element={
-            <Suspense fallback={<LoadingScreen />}>
-              <ProtectedRoute>
-                <PlaceholderPage title="Mi Aprendizaje" />
-              </ProtectedRoute>
-            </Suspense>
-          } />
-          
-          <Route path="/pagina/:slug" element={
-            <Suspense fallback={<LoadingScreen />}>
-              <DynamicPage />
-            </Suspense>
-          } />
-          
-          <Route path="*" element={<NotFound />} />
         </Route>
         
         {/* Admin routes */}
@@ -100,6 +59,9 @@ function App() {
         <Route path="/redirect/:path" element={<RouteRedirector>
           <div>Redirecting...</div>
         </RouteRedirector>} />
+        
+        {/* Fallback for any unmatched routes */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
