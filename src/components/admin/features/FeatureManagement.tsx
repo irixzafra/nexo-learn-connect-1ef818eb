@@ -6,25 +6,25 @@ import FeatureAccordionGroup from './FeatureAccordionGroup';
 import PlatformFeaturesAccordion from './PlatformFeaturesAccordion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronRight, Settings, Palette, Users, BookOpen, Trophy, CreditCard, Award, BarChart, Users2, Paintbrush } from 'lucide-react';
-import { FeaturesConfig } from '@/contexts/features/types';
+import { ExtendedFeatureId } from '@/contexts/features/types';
 
 export const FeatureManagement: React.FC = () => {
   const { featuresConfig, toggleFeature, isLoading } = useFeatures();
   
-  // Feature groups by category
+  // Feature groups by category with explicitly typed ExtendedFeatureId
   const contentFeatures = [
     {
-      id: 'enableCategoryManagement' as keyof FeaturesConfig,
+      id: 'enableCategoryManagement' as ExtendedFeatureId,
       name: 'Gestión de categorías',
       description: 'Permite crear y gestionar categorías personalizadas',
     },
     {
-      id: 'enableAdvancedFilters' as keyof FeaturesConfig,
+      id: 'enableAdvancedFilters' as ExtendedFeatureId,
       name: 'Filtros avanzados',
       description: 'Habilita filtros avanzados en la búsqueda de contenido',
     },
     {
-      id: 'enableMultiLanguage' as keyof FeaturesConfig,
+      id: 'enableMultiLanguage' as ExtendedFeatureId,
       name: 'Contenido multilingüe',
       description: 'Permite localizar el contenido en múltiples idiomas',
     },
@@ -32,18 +32,18 @@ export const FeatureManagement: React.FC = () => {
   
   const gamificationFeatures = [
     {
-      id: 'enableGamification' as keyof FeaturesConfig,
+      id: 'enableGamification' as ExtendedFeatureId,
       name: 'Gamificación',
       description: 'Activa elementos de gamificación como puntos y niveles',
     },
     {
-      id: 'enableLeaderboards' as keyof FeaturesConfig,
+      id: 'enableLeaderboards' as ExtendedFeatureId,
       name: 'Tablas de clasificación',
       description: 'Muestra clasificaciones de usuarios basadas en logros',
       isExperimental: true,
     },
     {
-      id: 'enableBadges' as keyof FeaturesConfig,
+      id: 'enableBadges' as ExtendedFeatureId,
       name: 'Insignias y logros',
       description: 'Sistema de insignias por completar objetivos',
     },
@@ -51,12 +51,12 @@ export const FeatureManagement: React.FC = () => {
   
   const userManagementFeatures = [
     {
-      id: 'enableAdminTools' as keyof FeaturesConfig,
+      id: 'enableAdminTools' as ExtendedFeatureId,
       name: 'Herramientas administrativas',
       description: 'Funcionalidades avanzadas para administradores',
     },
     {
-      id: 'enableLiveChat' as keyof FeaturesConfig,
+      id: 'enableLiveChat' as ExtendedFeatureId,
       name: 'Chat en vivo',
       description: 'Soporte en tiempo real para usuarios',
       isExperimental: true,

@@ -1,13 +1,21 @@
 
+export interface Feature {
+  id: CoreFeatureId | ExtendedFeatureId;
+  name: string;
+  enabled: boolean;
+  description: string;
+  isCore?: boolean;
+}
+
 export type CoreFeatureId = 
-  | 'user-management'
-  | 'courses'
-  | 'gamification'
-  | 'payment-system'
-  | 'certificates'
-  | 'analytics'
-  | 'community'
-  | 'theming';
+  | 'core-editing'
+  | 'core-publishing'
+  | 'core-templates'
+  | 'core-media'
+  | 'core-users'
+  | 'core-settings'
+  | 'core-analytics'
+  | 'core-backup';
 
 export type ExtendedFeatureId = 
   | 'enableDarkMode'
@@ -45,8 +53,7 @@ export type ExtendedFeatureId =
   | 'enableMentoring'
   | 'enableSubscriptionPause'
   | 'enableGiftSubscriptions'
-  | 'enableInlineEditing' // Nueva opción para la edición inline
-  // Otras configuraciones para páginas de configuración
+  | 'enableInlineEditing'
   | 'designSystemEnabled'
   | 'enableThemeSwitcher'
   | 'enableAutoBackups'
@@ -56,27 +63,13 @@ export type ExtendedFeatureId =
   | 'enable2FA'
   | 'enableMultipleSessions'
   | 'enablePublicRegistration'
-  | 'requireEmailVerification'
-  | 'enableActivityLog'
-  | 'enableOnboarding'
-  | 'requireOnboarding'
-  | 'autoStartOnboarding'
-  | 'showOnboardingTrigger'
-  | 'enableContextualHelp';
+  | 'requireEmailVerification';
 
 export type FeatureId = CoreFeatureId | ExtendedFeatureId;
 
-export interface Feature {
-  id: CoreFeatureId;
-  name: string;
-  description: string;
-  enabled: boolean;
-  isCore?: boolean;
-}
-
 export interface FeaturesConfig {
   features: Record<CoreFeatureId, Feature>;
-  // Opciones extendidas
+  // Extended features
   enableDarkMode: boolean;
   enableNotifications: boolean;
   enableAnalytics: boolean;
@@ -112,8 +105,8 @@ export interface FeaturesConfig {
   enableMentoring: boolean;
   enableSubscriptionPause: boolean;
   enableGiftSubscriptions: boolean;
-  enableInlineEditing: boolean; // Nueva opción para la edición inline
-  // Opciones adicionales para páginas de configuración
+  enableInlineEditing: boolean;
+  // Additional features for Settings pages
   designSystemEnabled: boolean;
   enableThemeSwitcher: boolean;
   enableAutoBackups: boolean;
@@ -124,25 +117,18 @@ export interface FeaturesConfig {
   enableMultipleSessions: boolean;
   enablePublicRegistration: boolean;
   requireEmailVerification: boolean;
-  enableActivityLog: boolean;
-  enableOnboarding: boolean;
-  requireOnboarding: boolean;
-  autoStartOnboarding: boolean;
-  showOnboardingTrigger: boolean;
-  enableContextualHelp: boolean;
 }
 
 export interface FeaturesContextProps {
-  features: Record<CoreFeatureId, Feature>;
-  isEnabled: (featureId: FeatureId) => boolean;
+  featuresConfig: FeaturesConfig;
+  isEnabled: (featureName: FeatureId) => boolean;
   enableFeature: (featureId: FeatureId) => Promise<void>;
   disableFeature: (featureId: FeatureId) => Promise<void>;
   toggleFeature: (featureId: FeatureId, value?: boolean) => Promise<void>;
-  getFeature: (featureId: FeatureId) => Feature | undefined;
-  featuresConfig: FeaturesConfig;
-  isFeatureEnabled: (featureFlag: ExtendedFeatureId) => boolean;
-  toggleExtendedFeature: (featureId: ExtendedFeatureId, value: boolean) => Promise<void>;
-  updateFeatures: (config: Partial<FeaturesConfig>) => Promise<void>;
+  getFeature: (featureName: FeatureId) => Feature | undefined;
+  isFeatureEnabled: (featureName: FeatureId) => boolean;
+  toggleExtendedFeature: (featureId: ExtendedFeatureId, value?: boolean) => Promise<void>;
+  updateFeatures: (features: Partial<FeaturesConfig>) => Promise<void>;
   isLoading: boolean;
-  error: string | null;
+  error: Error | null;
 }

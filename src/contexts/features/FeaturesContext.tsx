@@ -1,11 +1,68 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { CoreFeatureId, ExtendedFeatureId, Feature, FeatureId, FeaturesConfig, FeaturesContextProps } from './types';
 import { toast } from 'sonner';
 
-// Default config
+// Default config with proper Feature objects
 const initialFeaturesConfig: FeaturesConfig = {
-  features: {} as Record<CoreFeatureId, Feature>,
+  features: {
+    'core-editing': {
+      id: 'core-editing',
+      name: 'Core Editing',
+      enabled: true,
+      description: 'Core content editing functionality',
+      isCore: true
+    },
+    'core-publishing': {
+      id: 'core-publishing',
+      name: 'Core Publishing',
+      enabled: true,
+      description: 'Content publishing and workflow',
+      isCore: true
+    },
+    'core-templates': {
+      id: 'core-templates',
+      name: 'Core Templates',
+      enabled: false,
+      description: 'Template-based content creation',
+      isCore: true
+    },
+    'core-media': {
+      id: 'core-media',
+      name: 'Core Media',
+      enabled: false,
+      description: 'Media library and management',
+      isCore: true
+    },
+    'core-users': {
+      id: 'core-users',
+      name: 'Core Users',
+      enabled: true,
+      description: 'User management and permissions',
+      isCore: true
+    },
+    'core-settings': {
+      id: 'core-settings',
+      name: 'Core Settings',
+      enabled: false,
+      description: 'System configuration options',
+      isCore: true
+    },
+    'core-analytics': {
+      id: 'core-analytics',
+      name: 'Core Analytics',
+      enabled: true,
+      description: 'Basic usage analytics',
+      isCore: true
+    },
+    'core-backup': {
+      id: 'core-backup',
+      name: 'Core Backup',
+      enabled: true,
+      description: 'Content backup and restoration',
+      isCore: true
+    }
+  },
   // Extended features
   enableDarkMode: true,
   enableNotifications: true,
@@ -42,8 +99,8 @@ const initialFeaturesConfig: FeaturesConfig = {
   enableMentoring: false,
   enableSubscriptionPause: false,
   enableGiftSubscriptions: false,
-  enableInlineEditing: true, // Nueva característica habilitada por defecto
-  // Additional features for Settings pages
+  enableInlineEditing: true, // Enabled by default
+  // Settings features
   designSystemEnabled: true,
   enableThemeSwitcher: true,
   enableAutoBackups: false,
@@ -53,316 +110,230 @@ const initialFeaturesConfig: FeaturesConfig = {
   enable2FA: false,
   enableMultipleSessions: true,
   enablePublicRegistration: true,
-  requireEmailVerification: false,
-  enableActivityLog: true,
-  enableOnboarding: true,
-  requireOnboarding: false,
-  autoStartOnboarding: true,
-  showOnboardingTrigger: true,
-  enableContextualHelp: true,
+  requireEmailVerification: false
 };
 
-// Create context
-export const FeaturesContext = createContext<FeaturesContextProps>({} as FeaturesContextProps);
+export const FeaturesContext = createContext<FeaturesContextProps>({
+  featuresConfig: initialFeaturesConfig,
+  isEnabled: () => false,
+  enableFeature: async () => {},
+  disableFeature: async () => {},
+  toggleFeature: async () => {},
+  getFeature: () => undefined,
+  isFeatureEnabled: () => false,
+  toggleExtendedFeature: async () => {},
+  updateFeatures: async () => {},
+  isLoading: false,
+  error: null
+});
 
-// Provider component
 export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(initialFeaturesConfig);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  // Initialize core features
+  // Load features config on component mount
   useEffect(() => {
-    initializeCoreFeatures();
-    fetchFeaturesConfig();
-  }, []);
-
-  const initializeCoreFeatures = () => {
-    const coreFeatures: Record<CoreFeatureId, Feature> = {
-      'user-management': {
-        id: 'user-management',
-        name: 'Gestión de Usuarios',
-        description: 'Sistema de gestión de usuarios y roles',
-        enabled: true,
-        isCore: true
-      },
-      'courses': {
-        id: 'courses',
-        name: 'Sistema de Cursos',
-        description: 'Funcionalidad completa de cursos y lecciones',
-        enabled: true,
-        isCore: true
-      },
-      'gamification': {
-        id: 'gamification',
-        name: 'Gamificación',
-        description: 'Sistema de puntos, logros y clasificaciones',
-        enabled: false,
-        isCore: true
-      },
-      'payment-system': {
-        id: 'payment-system',
-        name: 'Sistema de Pagos',
-        description: 'Procesamiento de pagos y suscripciones',
-        enabled: false,
-        isCore: true
-      },
-      'certificates': {
-        id: 'certificates',
-        name: 'Certificados',
-        description: 'Generación y gestión de certificados',
-        enabled: true,
-        isCore: true
-      },
-      'analytics': {
-        id: 'analytics',
-        name: 'Analíticas',
-        description: 'Seguimiento y análisis de datos',
-        enabled: false,
-        isCore: true
-      },
-      'community': {
-        id: 'community',
-        name: 'Comunidad',
-        description: 'Foros, grupos y discusiones',
-        enabled: true,
-        isCore: true
-      },
-      'theming': {
-        id: 'theming',
-        name: 'Sistema de Temas',
-        description: 'Personalización visual de la plataforma',
-        enabled: true,
-        isCore: true
-      },
-    };
-
-    setFeaturesConfig(prev => ({
-      ...prev,
-      features: coreFeatures
-    }));
-  };
-
-  // Fetch features config from the database
-  const fetchFeaturesConfig = async () => {
-    try {
+    const loadFeatures = async () => {
       setIsLoading(true);
+      setError(null);
       
-      // Get user data to check if authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        // Fetch user's features config
-        const { data, error } = await supabase
-          .from('features_config')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-          
-        if (error && error.code !== 'PGRST116') {
-          // PGRST116 is "no rows returned" error
-          console.error('Error fetching features config:', error);
-          setError(error.message);
-        } else if (data) {
-          // Update feature flags
-          const updatedConfig = {
-            ...initialFeaturesConfig,
-            ...data
-          };
-          
-          // Ensure features object is preserved
-          if (!updatedConfig.features) {
-            updatedConfig.features = initialFeaturesConfig.features;
-          }
-          
-          setFeaturesConfig(updatedConfig);
-        } else {
-          // Create new features config for this user
-          const { error: insertError } = await supabase
-            .from('features_config')
-            .insert({
-              user_id: user.id,
-              ...initialFeaturesConfig
-            });
-            
-          if (insertError) {
-            console.error('Error creating features config:', insertError);
-            setError(insertError.message);
+      try {
+        // In a real app, we would fetch from API or database
+        // For now, we'll just simulate a delay and use default config
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Get stored features from localStorage if available
+        const storedFeatures = localStorage.getItem('featuresConfig');
+        if (storedFeatures) {
+          try {
+            const parsedFeatures = JSON.parse(storedFeatures);
+            setFeaturesConfig(prevConfig => ({
+              ...prevConfig,
+              ...parsedFeatures
+            }));
+          } catch (err) {
+            console.error('Error parsing stored features:', err);
           }
         }
+      } catch (err) {
+        console.error('Error loading features:', err);
+        setError(err instanceof Error ? err : new Error('Error loading features'));
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error('Error in fetchFeaturesConfig:', err);
-      setError('Failed to fetch features configuration');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+    
+    loadFeatures();
+  }, []);
 
   // Check if a feature is enabled
-  const isEnabled = (featureId: FeatureId): boolean => {
-    // For core features, check the features object
-    if (featuresConfig.features && Object.keys(featuresConfig.features).includes(featureId as string)) {
-      return !!featuresConfig.features[featureId as CoreFeatureId]?.enabled;
-    } 
+  const isEnabled = (featureName: FeatureId): boolean => {
+    if (!featuresConfig) return false;
     
-    // For extended features, check the direct property
-    return !!featuresConfig[featureId as keyof FeaturesConfig];
-  };
-
-  // Check if an extended feature is enabled (alias for isEnabled)
-  const isFeatureEnabled = (featureFlag: ExtendedFeatureId): boolean => {
-    return isEnabled(featureFlag);
-  };
-
-  // Get a feature by its ID
-  const getFeature = (featureId: FeatureId): Feature | undefined => {
-    if (featuresConfig.features && Object.keys(featuresConfig.features).includes(featureId as string)) {
-      return featuresConfig.features[featureId as CoreFeatureId];
+    // Check if it's a core feature
+    if (featureName.includes('-') && featuresConfig.features) {
+      return !!featuresConfig.features[featureName as CoreFeatureId]?.enabled;
     }
+    
+    // Otherwise it's an extended feature
+    return !!(featuresConfig as any)[featureName];
+  };
+  
+  // Get a specific feature object
+  const getFeature = (featureName: FeatureId): Feature | undefined => {
+    if (!featuresConfig) return undefined;
+    
+    // If it's a core feature, return the feature object
+    if (featureName.includes('-') && featuresConfig.features) {
+      return featuresConfig.features[featureName as CoreFeatureId];
+    }
+    
+    // For extended features, construct a feature object
+    if ((featuresConfig as any)[featureName] !== undefined) {
+      return {
+        id: featureName,
+        name: featureName.replace(/enable|([A-Z])/g, (match, p1) => p1 ? ` ${p1}` : '').trim(),
+        enabled: !!(featuresConfig as any)[featureName],
+        description: `${featureName.replace(/enable|([A-Z])/g, (match, p1) => p1 ? ` ${p1}` : '').trim()} feature`
+      };
+    }
+    
     return undefined;
   };
+  
+  // Alternative method to check if feature is enabled
+  const isFeatureEnabled = (featureName: FeatureId): boolean => {
+    return isEnabled(featureName);
+  };
 
-  // Enable a feature - converted to return Promise
+  // Enable a feature
   const enableFeature = async (featureId: FeatureId): Promise<void> => {
-    return toggleFeature(featureId, true);
-  };
-
-  // Disable a feature - converted to return Promise
-  const disableFeature = async (featureId: FeatureId): Promise<void> => {
-    return toggleFeature(featureId, false);
-  };
-
-  // Toggle a feature - already returns Promise
-  const toggleFeature = async (featureId: FeatureId, value?: boolean): Promise<void> => {
-    try {
-      if (featuresConfig.features && Object.keys(featuresConfig.features).includes(featureId as string)) {
+    setFeaturesConfig(prev => {
+      const newConfig = { ...prev };
+      
+      if (featureId.includes('-')) {
         // It's a core feature
-        const isCurrentlyEnabled = featuresConfig.features[featureId as CoreFeatureId]?.enabled;
-        const newValue = typeof value === 'boolean' ? value : !isCurrentlyEnabled;
-        
-        const updatedFeatures = {
-          ...featuresConfig.features,
-          [featureId]: {
-            ...featuresConfig.features[featureId as CoreFeatureId],
-            enabled: newValue
-          }
-        };
-        
-        setFeaturesConfig(prev => ({
-          ...prev,
-          features: updatedFeatures
-        }));
-        
-        // Sync with database
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (user) {
-          const { error } = await supabase
-            .from('features_config')
-            .update({ features: updatedFeatures })
-            .eq('user_id', user.id);
-            
-          if (error) {
-            console.error('Error updating core feature:', error);
-            throw error;
-          }
+        if (newConfig.features[featureId as CoreFeatureId]) {
+          newConfig.features = {
+            ...newConfig.features,
+            [featureId]: {
+              ...newConfig.features[featureId as CoreFeatureId],
+              enabled: true
+            }
+          };
         }
       } else {
         // It's an extended feature
-        const isCurrentlyEnabled = !!featuresConfig[featureId as keyof FeaturesConfig];
-        const newValue = typeof value === 'boolean' ? value : !isCurrentlyEnabled;
-        
-        await toggleExtendedFeature(featureId as ExtendedFeatureId, newValue);
+        (newConfig as any)[featureId] = true;
       }
-    } catch (err) {
-      console.error('Error in toggleFeature:', err);
-      toast.error('Error al actualizar la característica');
+      
+      // Store updated config in localStorage
+      try {
+        localStorage.setItem('featuresConfig', JSON.stringify(newConfig));
+      } catch (err) {
+        console.error('Error storing features config:', err);
+      }
+      
+      return newConfig;
+    });
+    
+    toast.success(`Feature ${featureId} enabled`);
+  };
+
+  // Disable a feature
+  const disableFeature = async (featureId: FeatureId): Promise<void> => {
+    setFeaturesConfig(prev => {
+      const newConfig = { ...prev };
+      
+      if (featureId.includes('-')) {
+        // It's a core feature
+        if (newConfig.features[featureId as CoreFeatureId]) {
+          newConfig.features = {
+            ...newConfig.features,
+            [featureId]: {
+              ...newConfig.features[featureId as CoreFeatureId],
+              enabled: false
+            }
+          };
+        }
+      } else {
+        // It's an extended feature
+        (newConfig as any)[featureId] = false;
+      }
+      
+      // Store updated config in localStorage
+      try {
+        localStorage.setItem('featuresConfig', JSON.stringify(newConfig));
+      } catch (err) {
+        console.error('Error storing features config:', err);
+      }
+      
+      return newConfig;
+    });
+    
+    toast.success(`Feature ${featureId} disabled`);
+  };
+
+  // Toggle a feature on/off
+  const toggleFeature = async (featureId: FeatureId, value?: boolean): Promise<void> => {
+    const currentState = isEnabled(featureId);
+    const newState = value !== undefined ? value : !currentState;
+    
+    if (newState) {
+      await enableFeature(featureId);
+    } else {
+      await disableFeature(featureId);
     }
   };
 
-  // Toggle an extended feature with API sync
-  const toggleExtendedFeature = async (featureId: ExtendedFeatureId, value: boolean): Promise<void> => {
-    setFeaturesConfig(prev => ({
-      ...prev,
-      [featureId]: value
-    }));
-    
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        const { error } = await supabase
-          .from('features_config')
-          .update({ [featureId]: value })
-          .eq('user_id', user.id);
-          
-        if (error) {
-          console.error('Error updating feature config:', error);
-          throw error;
-        }
-      }
-    } catch (err) {
-      // Revert change if failed
-      setFeaturesConfig(prev => ({
+  // Toggle an extended feature specifically
+  const toggleExtendedFeature = async (featureId: ExtendedFeatureId, value?: boolean): Promise<void> => {
+    await toggleFeature(featureId, value);
+  };
+
+  // Update multiple features at once
+  const updateFeatures = async (features: Partial<FeaturesConfig>): Promise<void> => {
+    setFeaturesConfig(prev => {
+      const newConfig = {
         ...prev,
-        [featureId]: !value
-      }));
+        ...features
+      };
       
-      toast.error('Error al actualizar la configuración');
-    }
-  };
-
-  // Update features config
-  const updateFeatures = async (config: Partial<FeaturesConfig>): Promise<void> => {
-    // Update local state
-    setFeaturesConfig(prev => ({
-      ...prev,
-      ...config
-    }));
-    
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        const { error } = await supabase
-          .from('features_config')
-          .update(config)
-          .eq('user_id', user.id);
-          
-        if (error) {
-          console.error('Error updating features config:', error);
-          throw error;
-        }
+      // Store updated config in localStorage
+      try {
+        localStorage.setItem('featuresConfig', JSON.stringify(newConfig));
+      } catch (err) {
+        console.error('Error storing features config:', err);
       }
-    } catch (err) {
-      toast.error('Error al guardar la configuración');
-    }
-  };
-
-  const value: FeaturesContextProps = {
-    features: featuresConfig.features,
-    isEnabled,
-    enableFeature,
-    disableFeature,
-    toggleFeature,
-    getFeature,
-    featuresConfig,
-    isFeatureEnabled,
-    toggleExtendedFeature,
-    updateFeatures,
-    isLoading,
-    error
+      
+      return newConfig;
+    });
+    
+    toast.success('Features configuration updated');
   };
 
   return (
-    <FeaturesContext.Provider value={value}>
+    <FeaturesContext.Provider
+      value={{
+        featuresConfig,
+        isEnabled,
+        enableFeature,
+        disableFeature,
+        toggleFeature,
+        getFeature,
+        isFeatureEnabled,
+        toggleExtendedFeature,
+        updateFeatures,
+        isLoading,
+        error
+      }}
+    >
       {children}
     </FeaturesContext.Provider>
   );
 };
 
-// Hook to access the context
 export const useFeatures = () => {
   const context = useContext(FeaturesContext);
   if (!context) {
