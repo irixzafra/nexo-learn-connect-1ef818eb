@@ -1,19 +1,19 @@
 
-import { useFeatures } from '@/contexts/features/FeatureContext';
+import { useFeatures } from '@/contexts/features/FeaturesContext';
 import { getFeatureDependencies, getFeatureDependents } from '@/contexts/features/dependencies';
-import { FeaturesConfig } from '@/contexts/features/types';
+import { FeatureId } from '@/contexts/features/types';
 
 /**
  * Hook para manejar las dependencias entre características del sistema
  */
 export const useFeatureDependencies = () => {
-  const { features } = useFeatures();
+  const { isEnabled } = useFeatures();
   
   /**
    * Verifica si una característica puede ser desactivada
    * No se puede desactivar si hay características activas que dependen de ella
    */
-  const checkIfCanDisable = (feature: keyof FeaturesConfig): boolean => {
+  const checkIfCanDisable = (feature: FeatureId): boolean => {
     const dependents = getFeatureDependents(feature);
     
     // Si no hay dependientes, siempre se puede desactivar
@@ -23,7 +23,7 @@ export const useFeatureDependencies = () => {
     
     // Verificar si alguna de las características dependientes está activa
     for (const dependent of dependents) {
-      if (features && features[dependent]) {
+      if (isEnabled(dependent)) {
         return false;
       }
     }
@@ -34,14 +34,14 @@ export const useFeatureDependencies = () => {
   /**
    * Obtiene la lista de características que dependen de una característica dada
    */
-  const getDependentFeatures = (feature: keyof FeaturesConfig): string[] => {
+  const getDependentFeatures = (feature: FeatureId): FeatureId[] => {
     return getFeatureDependents(feature) || [];
   };
   
   /**
    * Obtiene la lista de características de las que depende una característica dada
    */
-  const getDependencies = (feature: keyof FeaturesConfig): string[] => {
+  const getDependencies = (feature: FeatureId): FeatureId[] => {
     return getFeatureDependencies(feature) || [];
   };
   
@@ -49,7 +49,7 @@ export const useFeatureDependencies = () => {
    * Verifica si una característica puede ser activada
    * No se puede activar si alguna de sus dependencias está desactivada
    */
-  const checkIfCanEnable = (feature: keyof FeaturesConfig): boolean => {
+  const checkIfCanEnable = (feature: FeatureId): boolean => {
     const dependencies = getFeatureDependencies(feature);
     
     // Si no hay dependencias, siempre se puede activar
@@ -59,7 +59,7 @@ export const useFeatureDependencies = () => {
     
     // Verificar si todas las dependencias están activas
     for (const dependency of dependencies) {
-      if (features && !features[dependency]) {
+      if (!isEnabled(dependency)) {
         return false;
       }
     }

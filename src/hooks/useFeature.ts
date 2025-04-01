@@ -1,44 +1,64 @@
 
 import { useFeatures } from '@/contexts/features/FeaturesContext';
-import { FeaturesConfig } from '@/contexts/features/types';
+import { ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
+import { getFeatureDependencies, getFeatureDependents } from '@/contexts/features/dependencies';
 
 /**
  * Custom hook to access and manage a specific feature flag
- * @param featureName - The name of the feature to manage
+ * @param featureId - The name of the feature to manage
  */
-export const useFeature = (featureName?: keyof FeaturesConfig) => {
+export const useFeature = (featureId?: FeatureId) => {
   const { 
     features,
     featuresConfig, 
+    isEnabled,
     toggleFeature,
+    toggleExtendedFeature,
     isFeatureEnabled,
     isLoading,
-    updateFeatures,
-    getFeatureDependencies,
-    getFeatureDependents
+    updateFeatures
   } = useFeatures();
 
   // If no feature name is provided, return the context data
-  if (!featureName) {
+  if (!featureId) {
     return {
       features,
+      featuresConfig,
       updateFeatures,
       isLoading
     };
   }
 
   // Get the current state of the feature
-  const isEnabled = !!featuresConfig[featureName];
+  const isFeatureActive = isEnabled(featureId);
 
   // Toggle the feature
-  const toggle = (value: boolean) => toggleFeature(featureName, value);
+  const toggle = (value?: boolean) => {
+    if (typeof value === 'boolean') {
+      if (Object.keys(featuresConfig.features).includes(featureId as string)) {
+        // It's a core feature
+        if (value) {
+          return Promise.resolve(enableFeature(featureId));
+        } else {
+          return Promise.resolve(disableFeature(featureId));
+        }
+      } else {
+        // It's an extended feature
+        return toggleExtendedFeature(featureId as ExtendedFeatureId, value);
+      }
+    } else {
+      // Simple toggle
+      toggleFeature(featureId);
+      return Promise.resolve();
+    }
+  };
 
   // Check dependencies
-  const dependencies = getFeatureDependencies(featureName);
-  const dependents = getFeatureDependents(featureName);
+  const dependencies = getFeatureDependencies(featureId);
+  const dependents = getFeatureDependents(featureId);
 
   return {
-    isEnabled,
+    isEnabled: isFeatureActive,
     toggle,
     isLoading,
     dependencies,
