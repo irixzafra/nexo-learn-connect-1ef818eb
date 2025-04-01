@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -74,6 +73,17 @@ const AppRouter: React.FC = () => {
           <ProtectedRoute>
             <AppLayout>
               <Profile />
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Preferences route */}
+        <Route path="/preferences" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <React.lazy(() => import('@/pages/user/Preferences')) />
+              </React.Suspense>
             </AppLayout>
           </ProtectedRoute>
         } />

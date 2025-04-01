@@ -12,6 +12,7 @@ import Invoices from "@/pages/student/Invoices";
 import Calendar from "@/pages/placeholder/Calendar";
 import Messages from "@/pages/placeholder/Messages";
 import Settings from "@/pages/placeholder/Settings";
+import Preferences from "@/pages/user/Preferences";
 
 const UserRoutes: React.FC = () => {
   return (
@@ -49,6 +50,11 @@ const UserRoutes: React.FC = () => {
       <Route path="/settings" element={
         <AppLayout>
           <Settings />
+        </AppLayout>
+      } />
+      <Route path="/preferences" element={
+        <AppLayout>
+          <Preferences />
         </AppLayout>
       } />
       {/* Catch-all route para rutas de usuario no encontradas */}

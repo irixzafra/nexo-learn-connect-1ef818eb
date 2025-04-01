@@ -2187,6 +2187,51 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preferences: {
+        Row: {
+          accessibility_options: Json | null
+          browser_notifications: boolean | null
+          created_at: string | null
+          daily_goal_minutes: number | null
+          email_notifications: boolean | null
+          id: string
+          language_preference: string | null
+          learning_reminder_days: Json | null
+          reminder_time: string | null
+          theme_preference: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          accessibility_options?: Json | null
+          browser_notifications?: boolean | null
+          created_at?: string | null
+          daily_goal_minutes?: number | null
+          email_notifications?: boolean | null
+          id?: string
+          language_preference?: string | null
+          learning_reminder_days?: Json | null
+          reminder_time?: string | null
+          theme_preference?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          accessibility_options?: Json | null
+          browser_notifications?: boolean | null
+          created_at?: string | null
+          daily_goal_minutes?: number | null
+          email_notifications?: boolean | null
+          id?: string
+          language_preference?: string | null
+          learning_reminder_days?: Json | null
+          reminder_time?: string | null
+          theme_preference?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

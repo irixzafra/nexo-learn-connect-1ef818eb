@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { User, LogOut, Settings } from 'lucide-react';
+import { User, LogOut, Settings, Sliders } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -67,6 +67,12 @@ export const UserMenu: React.FC = () => {
           <Link to="/profile" className="cursor-pointer flex w-full items-center">
             <User className="mr-2 h-4 w-4" />
             <span>Mi Perfil</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/preferences" className="cursor-pointer flex w-full items-center">
+            <Sliders className="mr-2 h-4 w-4" />
+            <span>Preferencias</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
