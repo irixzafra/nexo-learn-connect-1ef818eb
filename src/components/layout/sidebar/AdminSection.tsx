@@ -1,62 +1,14 @@
 
 import React from 'react';
-import { SidebarGroup } from './SidebarGroup';
-import { MenuItem } from './MenuItems';
-import { 
-  BarChart3, 
-  Users, 
-  Settings,
-  BookOpen,
-  Shield,
-  KeyRound,
-  CreditCard,
-  Database,
-  History,
-  FileText,
-  Route,
-  LineChart,
-  Palette
-} from 'lucide-react';
 
 interface AdminSectionProps {
   expanded: boolean;
   onToggle: () => void;
 }
 
-export const AdminSection: React.FC<AdminSectionProps> = ({ expanded, onToggle }) => {
-  return (
-    <SidebarGroup 
-      label="Administración" 
-      icon={Shield}
-      isExpanded={expanded} 
-      onToggle={onToggle}
-    >
-      <MenuItem to="/admin/dashboard" icon={BarChart3} label="Dashboard" />
-      
-      {/* Gestión de usuarios */}
-      <MenuItem to="/admin/users" icon={Users} label="Usuarios" />
-      <MenuItem to="/admin/roles" icon={KeyRound} label="Roles y Permisos" />
-      
-      {/* Gestión educativa */}
-      <MenuItem to="/admin/courses" icon={BookOpen} label="Cursos" />
-      <MenuItem to="/admin/learning-paths" icon={Route} label="Rutas de Aprendizaje" />
-      
-      {/* Gestión de contenido */}
-      <MenuItem to="/admin/pages" icon={FileText} label="Páginas" />
-      <MenuItem to="/admin/design" icon={Palette} label="Diseño" />
-      
-      {/* Gestión de pagos */}
-      <MenuItem to="/admin/billing" icon={CreditCard} label="Facturación" />
-      
-      {/* Datos y configuración */}
-      <MenuItem to="/admin/test-data" icon={Database} label="Datos de Prueba" />
-      <MenuItem to="/admin/audit-log" icon={History} label="Auditoría" />
-      
-      {/* Análiticas */}
-      <MenuItem to="/admin/analytics/users" icon={LineChart} label="Analíticas de Usuarios" />
-      
-      {/* Configuración */}
-      <MenuItem to="/admin/settings" icon={Settings} label="Configuración" />
-    </SidebarGroup>
-  );
+export const AdminSection: React.FC<AdminSectionProps> = () => {
+  // Este componente ha sido vaciado porque la sección de administración ha sido eliminada
+  return null;
 };
+
+export default AdminSection;

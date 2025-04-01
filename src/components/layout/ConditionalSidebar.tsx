@@ -6,7 +6,6 @@ import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import SidebarMainNavigation from './sidebar/navigation/SidebarMainNavigation';
 import SidebarLogoSection from './sidebar/SidebarLogoSection';
 import SidebarFooterSection from './sidebar/SidebarFooterSection';
-import AdminNavigation from '@/components/admin/AdminNavigation';
 
 interface ConditionalSidebarProps {
   userRole: UserRoleType;
@@ -41,29 +40,21 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   getHomePath,
   changeLanguage
 }) => {
-  const location = useLocation();
   const { toggleSidebar } = useSidebar();
-  const isAdminPage = location.pathname.startsWith('/admin');
 
   return (
     <div className="h-full flex flex-col py-4 bg-background border-r border-border">
       {/* Logo at the top with full title and subtitle */}
       <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
 
-      {/* Navegación condicional basada en la ruta actual */}
-      {isAdminPage ? (
-        // Navegación administrativa para rutas /admin/*
-        <AdminNavigation enabled={true} />
-      ) : (
-        // Navegación principal para el resto de rutas
-        <SidebarMainNavigation 
-          effectiveRole={effectiveRole}
-          isCollapsed={isCollapsed}
-          messagesCount={messagesCount}
-          notificationsCount={notificationsCount}
-          getHomePath={() => getHomePath(effectiveRole)}
-        />
-      )}
+      {/* Navegación principal para todas las rutas */}
+      <SidebarMainNavigation 
+        effectiveRole={effectiveRole}
+        isCollapsed={isCollapsed}
+        messagesCount={messagesCount}
+        notificationsCount={notificationsCount}
+        getHomePath={() => getHomePath(effectiveRole)}
+      />
       
       {/* Footer Section with Role Switcher and Language Selector */}
       <SidebarFooterSection 
