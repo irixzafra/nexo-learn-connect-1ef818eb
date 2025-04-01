@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useFeature } from '@/hooks/useFeature';
-import { FeaturesConfig, defaultFeaturesConfig } from '../features/types';
+import { useFeatures } from '@/contexts/features/FeaturesContext';
+import { FeaturesConfig } from '../features/types';
 
 interface OnboardingStep {
   id: string;
@@ -34,14 +34,14 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [steps, setSteps] = useState<OnboardingStep[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isOnboardingActive, setIsOnboardingActive] = useState(false);
-  const { isEnabled: autoStartEnabled } = useFeature('autoStartOnboarding');
-  
-  // Add featuresConfig state
-  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(defaultFeaturesConfig);
+  const { featuresConfig, isFeatureEnabled } = useFeatures();
   
   useEffect(() => {
     // Auto-start onboarding if enabled and has steps
-    if (autoStartEnabled && steps.length > 0 && !isOnboardingActive) {
+    const autoStartEnabled = isFeatureEnabled('enableOnboarding');
+    const autoStartParam = featuresConfig?.autoStartOnboarding ?? false;
+    
+    if (autoStartEnabled && autoStartParam && steps.length > 0 && !isOnboardingActive) {
       const hasSeenOnboarding = localStorage.getItem('nexo_has_seen_onboarding');
       if (hasSeenOnboarding !== 'true') {
         // Delay start to ensure DOM is ready
@@ -51,7 +51,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         return () => clearTimeout(timer);
       }
     }
-  }, [autoStartEnabled, steps]);
+  }, [featuresConfig, steps, isOnboardingActive]);
   
   const startOnboarding = () => {
     setCurrentStep(0);
@@ -118,6 +118,5 @@ export const useOnboarding = () => {
   return context;
 };
 
-// Export FeaturesConfig type for other components to import
+// Export the types from here
 export type { FeaturesConfig };
-export { defaultFeaturesConfig };

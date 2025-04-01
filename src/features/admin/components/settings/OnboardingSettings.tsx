@@ -2,94 +2,76 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { FeaturesConfig } from '@/contexts/features/types';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Info } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
+import { useFeatures } from '@/contexts/features/FeaturesContext';
+import { toast } from 'sonner';
 
-interface OnboardingSettingsProps {
-  featuresConfig: FeaturesConfig;
-  onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => Promise<void>;
-  isLoading: boolean;
-}
+const OnboardingSettings = () => {
+  const { features, toggleFeature } = useFeatures();
 
-/**
- * Componente para configurar las opciones de onboarding
- */
-const OnboardingSettings: React.FC<OnboardingSettingsProps> = ({
-  featuresConfig,
-  onToggleFeature,
-  isLoading
-}) => {
+  const handleToggleFeature = async (feature: string, enabled: boolean) => {
+    try {
+      await toggleFeature(feature as any, enabled);
+      toast.success(`Configuración actualizada: ${feature}`);
+    } catch (error) {
+      toast.error('Error al actualizar la configuración');
+      console.error(error);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <Alert variant="default" className="bg-muted">
-        <Info className="h-4 w-4" />
-        <AlertTitle>Información</AlertTitle>
-        <AlertDescription>
-          Configure las opciones del sistema de onboarding para nuevos usuarios.
-        </AlertDescription>
-      </Alert>
-      
       <Card>
         <CardHeader>
-          <CardTitle>Onboarding de Usuarios</CardTitle>
-          <CardDescription>
-            Configuración del sistema de inducción para nuevos usuarios
-          </CardDescription>
+          <CardTitle>Configuración de Incorporación</CardTitle>
+          <CardDescription>Gestionar la experiencia de onboarding de la plataforma</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Habilitar Onboarding */}
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="enable-onboarding">Sistema de Onboarding</Label>
-              <p className="text-sm text-muted-foreground">
-                Activar el sistema completo de onboarding
-              </p>
-            </div>
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="enableOnboarding">Habilitar sistema de onboarding</Label>
             <Switch
-              id="enable-onboarding"
-              checked={featuresConfig.enableOnboarding}
-              onCheckedChange={(checked) => onToggleFeature('enableOnboarding', checked)}
-              disabled={isLoading}
+              id="enableOnboarding"
+              checked={features.enableOnboarding}
+              onCheckedChange={(checked) => handleToggleFeature('enableOnboarding', checked)}
             />
           </div>
           
-          <Separator />
-          
-          {/* Mostrar el botón de ayuda contextual */}
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="contextual-help">Ayuda Contextual</Label>
-              <p className="text-sm text-muted-foreground">
-                Mostrar botones de ayuda en diferentes secciones
-              </p>
-            </div>
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="autoStartOnboarding">Iniciar automáticamente para nuevos usuarios</Label>
             <Switch
-              id="contextual-help"
-              checked={featuresConfig.enableContextualHelp}
-              onCheckedChange={(checked) => onToggleFeature('enableContextualHelp', checked)}
-              disabled={isLoading || !featuresConfig.enableOnboarding}
+              id="autoStartOnboarding"
+              checked={features.autoStartOnboarding || false}
+              onCheckedChange={(checked) => handleToggleFeature('autoStartOnboarding', checked)}
+              disabled={!features.enableOnboarding}
             />
           </div>
           
-          <Separator />
-          
-          {/* Onboarding Obligatorio */}
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="require-onboarding">Onboarding Obligatorio</Label>
-              <p className="text-sm text-muted-foreground">
-                Obligar a los nuevos usuarios a completar el proceso de inducción
-              </p>
-            </div>
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="showOnboardingTrigger">Mostrar botón de guía en la interfaz</Label>
             <Switch
-              id="require-onboarding"
-              checked={featuresConfig.requireOnboarding}
-              onCheckedChange={(checked) => onToggleFeature('requireOnboarding', checked)}
-              disabled={isLoading || !featuresConfig.enableOnboarding}
+              id="showOnboardingTrigger"
+              checked={features.showOnboardingTrigger || false}
+              onCheckedChange={(checked) => handleToggleFeature('showOnboardingTrigger', checked)}
+              disabled={!features.enableOnboarding}
             />
+          </div>
+          
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="enableContextualHelp">Habilitar ayuda contextual</Label>
+            <Switch
+              id="enableContextualHelp"
+              checked={features.enableContextualHelp}
+              onCheckedChange={(checked) => handleToggleFeature('enableContextualHelp', checked)}
+            />
+          </div>
+          
+          <div className="mt-6">
+            <Button variant="outline" className="w-full">
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Reiniciar datos de onboarding para todos los usuarios
+            </Button>
           </div>
         </CardContent>
       </Card>

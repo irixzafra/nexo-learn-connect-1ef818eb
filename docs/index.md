@@ -24,8 +24,8 @@ La arquitectura de Nexo Learning se basa en un diseño modular con componentes r
 
 Nexo Learning utiliza un sistema de navegación unificado para todos los usuarios, con contenido adaptado según el rol.
 
-- [Estructura de Navegación](./ESTRUCTURA_NAVEGACION.md)
-- [Administración](./admin/ADMINISTRACION.md)
+- [Estructura de Navegación](./estructura-navegacion.md)
+- [Administración](./admin/administracion.md)
 
 ## <a name="componentes"></a>Componentes Principales
 

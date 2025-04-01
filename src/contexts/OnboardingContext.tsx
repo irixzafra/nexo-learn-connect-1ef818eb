@@ -6,7 +6,7 @@ import { WelcomeStep } from '@/components/onboarding/steps/WelcomeStep';
 import { ProfileStep } from '@/components/onboarding/steps/ProfileStep';
 import { ExploreCoursesStep } from '@/components/onboarding/steps/ExploreCoursesStep';
 import { PlatformTourStep } from '@/components/onboarding/steps/PlatformTourStep';
-import { useFeatures } from './features/FeatureContext';
+import { useFeatures } from './features/FeaturesContext';
 
 // Configuración de los pasos de onboarding
 const onboardingSteps: OnboardingStepConfig[] = [
@@ -67,8 +67,9 @@ export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ chil
   useEffect(() => {
     const isNewUser = localStorage.getItem('is-new-user') === 'true';
     
-    if (isNewUser && features?.enableOnboardingSystem && !isOnboardingComplete) {
-      const autoStart = features?.autoStartOnboarding || false;
+    if (isNewUser && features?.enableOnboarding && !isOnboardingComplete) {
+      // Use autoStartOnboarding property with a fallback to false if it doesn't exist
+      const autoStart = features?.autoStartOnboarding ?? false;
       
       if (autoStart) {
         setIsActive(true);
@@ -78,13 +79,13 @@ export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ chil
     }
   }, [features, isOnboardingComplete]);
 
-  // Calcular el progreso actual
-  const progress = ((currentStepIndex + 1) / onboardingSteps.length) * 100;
+  // Calcular el progreso del onboarding
+  const progress = Math.round(((currentStepIndex + 1) / onboardingSteps.length) * 100);
   
-  // El paso actual
-  const currentStep = onboardingSteps[currentStepIndex]?.id || null;
+  // Obtener el paso actual
+  const currentStep = onboardingSteps[currentStepIndex];
   
-  // Verificar si es el primer o último paso
+  // Determinar si es el primer o último paso
   const isFirstStep = currentStepIndex === 0;
   const isLastStep = currentStepIndex === onboardingSteps.length - 1;
 
@@ -100,26 +101,25 @@ export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ chil
   };
 
   // Ir a un paso específico
-  const goToStep = (step: OnboardingStep) => {
-    const stepIndex = onboardingSteps.findIndex(s => s.id === step);
-    if (stepIndex !== -1) {
+  const goToStep = (stepIndex: number) => {
+    if (stepIndex >= 0 && stepIndex < onboardingSteps.length) {
       setCurrentStepIndex(stepIndex);
     }
   };
 
-  // Ir al siguiente paso
+  // Avanzar al siguiente paso
   const nextStep = () => {
-    if (!isLastStep) {
-      setCurrentStepIndex(prevIndex => prevIndex + 1);
+    if (currentStepIndex < onboardingSteps.length - 1) {
+      setCurrentStepIndex(currentStepIndex + 1);
     } else {
       completeOnboarding();
     }
   };
 
-  // Ir al paso anterior
+  // Retroceder al paso anterior
   const prevStep = () => {
-    if (!isFirstStep) {
-      setCurrentStepIndex(prevIndex => prevIndex - 1);
+    if (currentStepIndex > 0) {
+      setCurrentStepIndex(currentStepIndex - 1);
     }
   };
 
@@ -133,15 +133,13 @@ export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ chil
   // Completar el onboarding
   const completeOnboarding = () => {
     setIsOnboardingComplete(true);
-    setIsOpen(false);
-    setIsActive(false);
+    closeOnboarding();
   };
 
   // Saltar el onboarding
   const skipOnboarding = () => {
     setIsOnboardingComplete(true);
-    setIsOpen(false);
-    setIsActive(false);
+    closeOnboarding();
   };
 
   const value: OnboardingContextValue = {
