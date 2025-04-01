@@ -4,7 +4,7 @@ export * from './useOnboardingState';
 export * from './OnboardingProvider';
 
 // Explicitly re-export from types to avoid ambiguity
-export { 
+export type { 
   OnboardingStep,
   OnboardingContextValue
 } from './types';

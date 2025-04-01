@@ -1,27 +1,45 @@
 
 import { 
-  Trophy,
-  LineChart 
+  Award, 
+  Trophy, 
+  Target, 
+  Zap, 
+  Star
 } from 'lucide-react';
 import { MenuItem } from './types';
 
 /**
- * Configuración del menú de gamificación 
- * (Esta sección es un ejemplo y puede expandirse)
+ * Menú de Gamificación
  */
 export const gamificationNavigation: MenuItem[] = [
   {
-    icon: Trophy,
+    icon: Award,
     label: 'Logros',
     path: '/gamification/achievements',
-    description: 'Tus logros y medallas',
-    requiredRole: 'student',
+    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'beta_tester']
   },
   {
-    icon: LineChart,
-    label: 'Progreso',
-    path: '/gamification/progress',
-    description: 'Tu progreso y estadísticas',
-    requiredRole: 'student',
+    icon: Trophy,
+    label: 'Ranking',
+    path: '/gamification/ranking',
+    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'beta_tester']
   },
+  {
+    icon: Target,
+    label: 'Objetivos',
+    path: '/gamification/goals',
+    requiredRole: ['student', 'admin', 'sistemas', 'beta_tester']
+  },
+  {
+    icon: Zap,
+    label: 'Puntos',
+    path: '/gamification/points',
+    requiredRole: ['student', 'admin', 'sistemas', 'beta_tester']
+  },
+  {
+    icon: Star,
+    label: 'Recompensas',
+    path: '/gamification/rewards',
+    requiredRole: ['student', 'admin', 'sistemas', 'beta_tester']
+  }
 ];

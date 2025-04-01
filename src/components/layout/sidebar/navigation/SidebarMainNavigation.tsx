@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavSection from './SidebarNavSection';
 import SidebarNavItem from './SidebarNavItem';
-import { getNavigationByRole } from '@/config/menuConfig';
+import { getNavigationByRole } from '@/config/navigation';
 
 interface SidebarMainNavigationProps {
   effectiveRole: UserRoleType;

@@ -1,10 +1,10 @@
+
 import React from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
 import { Outlet } from 'react-router-dom';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavigation from '@/components/layout/SidebarNavigation';
 import AppHeader from '@/components/layout/AppHeader';
-import { SidebarContent } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
 interface AppLayoutProps {
