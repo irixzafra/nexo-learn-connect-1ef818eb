@@ -38,9 +38,9 @@ export const useFeature = (featureId?: FeatureId) => {
       if (Object.keys(featuresConfig.features).includes(featureId as string)) {
         // It's a core feature
         if (value) {
-          return Promise.resolve(enableFeature(featureId));
+          return Promise.resolve(toggleFeature(featureId));
         } else {
-          return Promise.resolve(disableFeature(featureId));
+          return Promise.resolve(toggleFeature(featureId));
         }
       } else {
         // It's an extended feature

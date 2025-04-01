@@ -3,75 +3,84 @@ import React from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useOnboarding } from '@/contexts/OnboardingContext';
-import { OnboardingStep } from '@/contexts/onboarding/types';
 import { Progress } from '@/components/ui/progress';
-import { WelcomeStep } from './steps/WelcomeStep';
-import { ProfileStep } from './steps/ProfileStep';
-import { ExploreCoursesStep } from './steps/ExploreCoursesStep';
-import { PlatformTourStep } from './steps/PlatformTourStep';
+import { useContext } from 'react';
+import { OnboardingContext, OnboardingStep } from '@/contexts/OnboardingContext';
 
-export const OnboardingModal: React.FC = () => {
-  const { 
-    isOpen, 
-    closeOnboarding, 
-    currentStep, 
-    nextStep, 
+// Step components
+import WelcomeStep from './steps/WelcomeStep';
+import ProfileStep from './steps/ProfileStep';
+import ExploreCoursesStep from './steps/ExploreCoursesStep';
+import PlatformTourStep from './steps/PlatformTourStep';
+
+const OnboardingModal: React.FC = () => {
+  const {
+    currentStep,
+    isOpen,
+    closeOnboarding,
+    nextStep,
     prevStep,
     skipOnboarding,
-    isFirstStep, 
-    isLastStep, 
-    progress 
-  } = useOnboarding();
+    isFirstStep,
+    isLastStep,
+    progress,
+  } = useContext(OnboardingContext);
 
-  // Renderizar el componente según el paso actual
-  const renderStepComponent = () => {
+  // Render the appropriate step component based on current step
+  const renderStepContent = () => {
     switch (currentStep) {
-      case OnboardingStep.WELCOME:
+      case OnboardingStep.Welcome:
         return <WelcomeStep />;
-      case OnboardingStep.PROFILE:
+      case OnboardingStep.Profile:
         return <ProfileStep />;
-      case OnboardingStep.EXPLORE:
+      case OnboardingStep.ExploreCourses:
         return <ExploreCoursesStep />;
-      case OnboardingStep.TOUR:
+      case OnboardingStep.PlatformTour:
         return <PlatformTourStep />;
       default:
-        return <div>Paso no encontrado</div>;
+        return null;
     }
   };
 
+  // Don't render if onboarding is completed
+  if (currentStep === OnboardingStep.Completed) {
+    return null;
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={closeOnboarding}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Bienvenido a Nexo</DialogTitle>
-          <DialogDescription>
-            Sigue los pasos para comenzar a usar la plataforma
-          </DialogDescription>
-        </DialogHeader>
-        
-        <Progress value={progress} className="my-2" />
-        
-        <div className="py-4">
-          {renderStepComponent()}
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
+        <div className="relative">
+          <Progress
+            value={progress}
+            className="absolute top-0 left-0 right-0 h-1 rounded-none"
+          />
         </div>
-        
-        <DialogFooter className="flex justify-between">
+        <DialogHeader className="p-6 pb-0">
+          <DialogTitle className="text-xl">
+            {currentStep === OnboardingStep.Welcome && 'Bienvenido a la plataforma'}
+            {currentStep === OnboardingStep.Profile && 'Configura tu perfil'}
+            {currentStep === OnboardingStep.ExploreCourses && 'Explora nuestros cursos'}
+            {currentStep === OnboardingStep.PlatformTour && 'Conoce la plataforma'}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="p-6 pt-2">{renderStepContent()}</div>
+
+        <DialogFooter className="flex justify-between bg-muted/50 p-4 border-t">
           <div>
-            {!isFirstStep && (
-              <Button variant="outline" onClick={prevStep} className="mr-2">
+            {!isFirstStep ? (
+              <Button variant="outline" onClick={prevStep}>
                 Anterior
               </Button>
-            )}
-            {isFirstStep && (
+            ) : (
               <Button variant="ghost" onClick={skipOnboarding}>
-                Omitir
+                Omitir guía
               </Button>
             )}
           </div>

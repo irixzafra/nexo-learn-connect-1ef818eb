@@ -79,3 +79,4 @@ export const getFeatureDependents = (featureId: FeatureId): FeatureId[] => {
 export const getDependencyDescription = (featureId: FeatureId, dependencyId: FeatureId): string => {
   return `Para activar "${featureId}" primero debe activar "${dependencyId}"`;
 };
+

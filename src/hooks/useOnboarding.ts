@@ -1,7 +1,7 @@
 
 import { useContext } from 'react';
 import { toast } from 'sonner';
-import { OnboardingContext, OnboardingStep } from '@/contexts/OnboardingContext';
+import { OnboardingContext } from '@/contexts/OnboardingContext';
 
 export const useOnboarding = () => {
   const context = useContext(OnboardingContext);
@@ -12,8 +12,8 @@ export const useOnboarding = () => {
   
   // Add a convenience method to start onboarding
   const startOnboarding = () => {
-    if (context.currentStep === -1 as OnboardingStep || !context.isActive) {
-      context.openOnboarding ? context.openOnboarding() : context.restartOnboarding();
+    if (!context.isActive) {
+      context.openOnboarding();
       toast.info('Iniciando tour de la plataforma');
     } else {
       toast.info('Ya hay un tour en progreso');
@@ -25,3 +25,5 @@ export const useOnboarding = () => {
     startOnboarding
   };
 };
+
+export default useOnboarding;

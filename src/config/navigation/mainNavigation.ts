@@ -33,7 +33,7 @@ export const mainNavigation: MenuItem[] = [
   {
     icon: BookOpen,
     label: 'Mis Cursos',
-    path: '/home/my-courses',
+    path: '/my-courses',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester'],
   },
   {

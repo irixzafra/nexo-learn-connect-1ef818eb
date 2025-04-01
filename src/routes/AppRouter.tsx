@@ -36,6 +36,7 @@ const Invoices = React.lazy(() => import('@/pages/placeholder/Invoices'));
 const Certificates = React.lazy(() => import('@/pages/user/Certificates'));
 const CertificateDetail = React.lazy(() => import('@/pages/user/CertificateDetail'));
 const CertificateVerify = React.lazy(() => import('@/pages/CertificateVerify'));
+const Recommendations = React.lazy(() => import('@/pages/Recommendations'));
 
 // Loading component for suspense
 const LoadingFallback = () => (
@@ -73,6 +74,17 @@ const AppRouter: React.FC = () => {
           <ProtectedRoute>
             <AppLayout>
               <Profile />
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Recommendations route */}
+        <Route path="/recommendations" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <Recommendations />
+              </React.Suspense>
             </AppLayout>
           </ProtectedRoute>
         } />
