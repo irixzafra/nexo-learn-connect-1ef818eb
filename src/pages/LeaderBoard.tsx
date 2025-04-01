@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import PublicLayout from '@/layouts/PublicLayout';
@@ -34,7 +33,89 @@ import {
   Zap
 } from 'lucide-react';
 
-// Datos dummy para el Leaderboard
+const Code = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <polyline points="16 18 22 12 16 6"></polyline>
+    <polyline points="8 6 2 12 8 18"></polyline>
+  </svg>
+);
+
+const BarChart2 = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <rect x="2" y="10" width="4" height="10"></rect>
+    <rect x="10" y="4" width="4" height="16"></rect>
+    <rect x="18" y="8" width="4" height="12"></rect>
+  </svg>
+);
+
+const Palette = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <circle cx="13.5" cy="6.5" r="1.5"></circle>
+    <circle cx="17.5" cy="10.5" r="1.5"></circle>
+    <circle cx="8.5" cy="7.5" r="1.5"></circle>
+    <circle cx="6.5" cy="12.5" r="1.5"></circle>
+    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+  </svg>
+);
+
+const Shield = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+  </svg>
+);
+
+const GraduationCap = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+    <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+  </svg>
+);
+
 const LEADERBOARD_USERS = [
   {
     id: 1,
@@ -188,7 +269,6 @@ const LEADERBOARD_USERS = [
   }
 ];
 
-// Datos dummy para desafíos
 const CHALLENGES = [
   {
     id: 1,
@@ -240,7 +320,6 @@ const CHALLENGES = [
   }
 ];
 
-// Datos dummy para logros
 const ACHIEVEMENTS = [
   {
     id: 1,
@@ -316,96 +395,11 @@ const ACHIEVEMENTS = [
   }
 ];
 
-// Componente de Lucide React para iconos faltantes
-const Code = ({ className }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <polyline points="16 18 22 12 16 6"></polyline>
-    <polyline points="8 6 2 12 8 18"></polyline>
-  </svg>
-);
-
-const BarChart2 = ({ className }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <rect x="2" y="10" width="4" height="10"></rect>
-    <rect x="10" y="4" width="4" height="16"></rect>
-    <rect x="18" y="8" width="4" height="12"></rect>
-  </svg>
-);
-
-const Palette = ({ className }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <circle cx="13.5" cy="6.5" r="1.5"></circle>
-    <circle cx="17.5" cy="10.5" r="1.5"></circle>
-    <circle cx="8.5" cy="7.5" r="1.5"></circle>
-    <circle cx="6.5" cy="12.5" r="1.5"></circle>
-    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
-  </svg>
-);
-
-const Shield = ({ className }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-  </svg>
-);
-
-const GraduationCap = ({ className }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-    <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-  </svg>
-);
-
 const LeaderBoard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('leaderboard');
   const [timeFilter, setTimeFilter] = useState('all-time');
   
-  // Filtrar usuarios por búsqueda
   const filteredUsers = LEADERBOARD_USERS.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -419,7 +413,6 @@ const LeaderBoard: React.FC = () => {
       </Helmet>
       
       <div className="container mx-auto px-4 py-12">
-        {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Tablero de Líderes</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -427,7 +420,6 @@ const LeaderBoard: React.FC = () => {
           </p>
         </div>
         
-        {/* Top Players Section */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold mb-6">Top Estudiantes</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -484,7 +476,6 @@ const LeaderBoard: React.FC = () => {
           </div>
         </div>
         
-        {/* Tabs for Leaderboard, Challenges, Achievements */}
         <Tabs defaultValue="leaderboard" value={activeTab} onValueChange={setActiveTab} className="mb-10">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
             <TabsList>
@@ -506,7 +497,6 @@ const LeaderBoard: React.FC = () => {
             </div>
           </div>
           
-          {/* Leaderboard Tab Content */}
           <TabsContent value="leaderboard">
             <div className="mb-6">
               <div className="relative w-full max-w-md">
@@ -617,7 +607,6 @@ const LeaderBoard: React.FC = () => {
             </Card>
           </TabsContent>
           
-          {/* Challenges Tab Content */}
           <TabsContent value="challenges">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {CHALLENGES.map(challenge => (
@@ -687,7 +676,6 @@ const LeaderBoard: React.FC = () => {
             </div>
           </TabsContent>
           
-          {/* Achievements Tab Content */}
           <TabsContent value="achievements">
             <div className="mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -728,7 +716,7 @@ const LeaderBoard: React.FC = () => {
                             achievement.rarity === 'legendary' ? 'default' : 
                             achievement.rarity === 'epic' ? 'secondary' : 
                             achievement.rarity === 'rare' ? 'outline' : 
-                            'ghost'
+                            'outline'
                           } className={
                             achievement.rarity === 'legendary' ? 'bg-yellow-600' : 
                             achievement.rarity === 'epic' ? 'bg-purple-600' : 
@@ -760,7 +748,6 @@ const LeaderBoard: React.FC = () => {
           </TabsContent>
         </Tabs>
         
-        {/* Call to Action */}
         <div className="mt-16 bg-muted rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold mb-4">¡Alcanza la cima del Ranking!</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
