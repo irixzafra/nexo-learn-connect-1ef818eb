@@ -50,8 +50,7 @@ const SafeLink: React.FC<SafeLinkProps> = ({
     // Show a warning toast if enabled
     if (showWarning) {
       toast.warning('Navigation issue', {
-        description: `The link to "${normalizedPath}" might not work correctly.`,
-        duration: 3000,
+        description: `The link to "${normalizedPath}" might not work correctly.`
       });
     }
     // In a real implementation, we could send this to an analytics service

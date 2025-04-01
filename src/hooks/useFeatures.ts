@@ -1,110 +1,101 @@
 
-import { useContext } from 'react';
-import { FeaturesContext } from '@/contexts/features/FeaturesContext';
-import type { FeaturesConfig, ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
-
 /**
- * Custom hook to access feature flags
+ * Simple feature flags hook
+ * In a real application, this would likely fetch from an API or configuration service
  */
-export const useFeatures = () => {
-  const context = useContext(FeaturesContext);
+
+import { useState, useEffect } from 'react';
+
+type FeatureFlag = 
+  | 'enableLangPrefixUrls' 
+  | 'enableDarkMode' 
+  | 'enableAnalytics' 
+  | 'enableBetaFeatures'
+  | 'enableAdvancedFilters'
+  | 'enableDebugMode';
+
+interface FeatureState {
+  [key: string]: boolean;
+}
+
+// Default feature flags
+const defaultFeatures: FeatureState = {
+  enableLangPrefixUrls: true,
+  enableDarkMode: true,
+  enableAnalytics: true,
+  enableBetaFeatures: false,
+  enableAdvancedFilters: false,
+  enableDebugMode: false
+};
+
+export function useFeature(featureName: FeatureFlag): boolean {
+  const [features, setFeatures] = useState<FeatureState>(defaultFeatures);
   
-  if (!context) {
-    console.warn('useFeatures must be used within a FeaturesProvider');
-    // Return a default context to prevent crashes when FeaturesProvider is not available
-    return {
-      features: {},
-      featuresConfig: {
-        features: {},
-        enableDarkMode: true,
-        enableNotifications: true,
-        enableAnalytics: false,
-        enableFeedback: true,
-        enableBetaFeatures: false,
-        enableOfflineMode: false,
-        enableDebugMode: false,
-        enableTestDataGenerator: false,
-        enableAdvancedFilters: false, 
-        enableCategoryManagement: true,
-        enableAIFeatures: false,
-        enableMultiLanguage: false,
-        enableGamification: false,
-        enableCommunityFeatures: false,
-        enablePaymentSystem: false,
-        enableThemingOptions: true,
-        enableAdminTools: true,
-        enableLiveChat: false,
-        enableVideoLessons: false,
-        enableCertificates: false,
-        enableCustomBranding: false,
-        enableMobileApp: false,
-        enableEmailNotifications: true,
-        enableProgressTracking: false,
-        enableSocialSharing: false,
-        enableUserFeedback: true,
-        enableLeaderboards: false,
-        enableBadges: false,
-        enableDashboardCustomization: false,
-        enableCodeEditor: false,
-        enableWhiteboardFeature: false,
-        enableGroupClasses: false,
-        enableMentoring: false,
-        enableSubscriptionPause: false,
-        enableGiftSubscriptions: false,
-        enableInlineEditing: true,
-        designSystemEnabled: true,
-        enableThemeSwitcher: true,
-        enableAutoBackups: false,
-        enableQueryCache: true,
-        enableMaintenanceMode: false,
-        enableDatabaseDevMode: false,
-        enable2FA: false,
-        enableMultipleSessions: true,
-        enablePublicRegistration: true,
-        requireEmailVerification: false,
-        enableActivityLog: true,
-        enableOnboarding: true,
-        requireOnboarding: false,
-        autoStartOnboarding: true,
-        showOnboardingTrigger: true,
-        enableContextualHelp: true
-      } as unknown as FeaturesConfig,
-      isEnabled: () => true,
-      enableFeature: async () => {},
-      disableFeature: async () => {},
-      toggleFeature: async () => {},
-      getFeature: () => undefined,
-      isFeatureEnabled: () => true,
-      toggleExtendedFeature: async () => {},
-      updateFeatures: async () => {},
-      isLoading: false,
-      error: null
+  useEffect(() => {
+    // In a real app, this might fetch from an API or local storage
+    const loadFeatureFlags = async () => {
+      try {
+        // For demo purposes, we're just using the defaults
+        // In a real app, you'd load from server/localStorage/etc.
+        
+        // Simulating localStorage check
+        const storedFeatures = localStorage.getItem('feature-flags');
+        if (storedFeatures) {
+          setFeatures(prev => ({
+            ...prev,
+            ...JSON.parse(storedFeatures)
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading feature flags:', error);
+      }
     };
-  }
+    
+    loadFeatureFlags();
+  }, []);
   
-  return context;
-};
+  return features[featureName] ?? false;
+}
 
-/**
- * Check if a specific feature is enabled
- * @param featureName The name of the feature to check
- * @returns Boolean indicating if the feature is enabled
- */
-export const useFeature = (featureName: FeatureId): boolean => {
-  const { featuresConfig, isEnabled } = useFeatures();
+export function useFeatures() {
+  const [features, setFeatures] = useState<FeatureState>(defaultFeatures);
   
-  if (typeof isEnabled === 'function') {
-    return isEnabled(featureName);
-  }
+  useEffect(() => {
+    // Similar to above, but returns all features
+    const loadFeatureFlags = async () => {
+      try {
+        const storedFeatures = localStorage.getItem('feature-flags');
+        if (storedFeatures) {
+          setFeatures(prev => ({
+            ...prev,
+            ...JSON.parse(storedFeatures)
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading feature flags:', error);
+      }
+    };
+    
+    loadFeatureFlags();
+  }, []);
   
-  if (!featuresConfig) {
-    return false;
-  }
-
-  // Safe check if it's a core feature
-  if (featureName.includes('-') && featuresConfig.features) {
-    return !!featuresConfig.features[featureName as keyof typeof featuresConfig.features]?.enabled;
-  }
+  const toggleFeature = (featureName: FeatureFlag) => {
+    setFeatures(prev => {
+      const newFeatures = {
+        ...prev,
+        [featureName]: !prev[featureName]
+      };
+      
+      // Persist to localStorage
+      localStorage.setItem('feature-flags', JSON.stringify(newFeatures));
+      
+      return newFeatures;
+    });
+  };
   
-  return !!featuresConfig[featureName as keyof FeaturesConfig];
-};
+  return {
+    features,
+    toggleFeature,
+    isEnabled: (featureName: FeatureFlag) => features[featureName] ?? false
+  };
+}

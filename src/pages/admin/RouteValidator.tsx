@@ -1,225 +1,270 @@
 
-import React, { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useCallback, useEffect } from 'react';
+import AdminPageLayout from '@/layouts/AdminPageLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Activity, 
+  CheckCircle2, 
+  XCircle, 
   AlertTriangle, 
-  Check, 
-  ExternalLink, 
-  FileQuestion, 
-  FileWarning, 
   Info, 
   RefreshCw, 
-  X 
+  Download
 } from 'lucide-react';
-import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { useRouteValidation } from '@/hooks/useRouteValidation';
-import SafeLink from '@/components/SafeLink';
-
-// Define Route Issue types for display purposes
-type RouteIssueDisplayType = 'error' | 'warning' | 'info';
-
-const getIssueIcon = (type: RouteIssueDisplayType) => {
-  switch (type) {
-    case 'error': return <X className="h-4 w-4 text-destructive" />;
-    case 'warning': return <AlertTriangle className="h-4 w-4 text-warning" />;
-    case 'info': return <Info className="h-4 w-4 text-info" />;
-    default: return <FileQuestion className="h-4 w-4" />;
-  }
-};
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 
 const RouteValidator: React.FC = () => {
   const { validationResult, isValidating, lastValidated, runValidation } = useRouteValidation();
   const [activeTab, setActiveTab] = useState('all');
-  
-  // Function to get variant for badge based on issue type
-  const getIssueVariant = (type: RouteIssueDisplayType) => {
-    switch (type) {
-      case 'error': return 'destructive';
-      case 'warning': return 'default';
-      case 'info': return 'secondary';
-      default: return 'outline';
+
+  useEffect(() => {
+    if (!validationResult) {
+      runValidation();
+    }
+  }, []);
+
+  const handleExportReport = useCallback(() => {
+    if (!validationResult) return;
+    
+    const report = {
+      timestamp: new Date().toISOString(),
+      result: validationResult
+    };
+    
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `route-validation-report-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [validationResult]);
+
+  const getSeverityIcon = (severity: string) => {
+    switch (severity) {
+      case 'error':
+        return <XCircle className="h-5 w-5 text-destructive" />;
+      case 'warning':
+        return <AlertTriangle className="h-5 w-5 text-warning" />;
+      case 'info':
+        return <Info className="h-5 w-5 text-info" />;
+      default:
+        return null;
     }
   };
-  
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'error':
+        return 'bg-destructive/10 text-destructive border-destructive/20';
+      case 'warning':
+        return 'bg-warning/10 text-warning border-warning/20';
+      case 'info':
+        return 'bg-info/10 text-info border-info/20';
+      default:
+        return 'bg-muted';
+    }
+  };
+
+  const filteredIssues = validationResult?.issues.filter(issue => {
+    if (activeTab === 'all') return true;
+    return issue.severity === activeTab;
+  }) || [];
+
   return (
     <AdminPageLayout
       title="Route Validator"
-      subtitle="Check and validate all application routes"
+      subtitle="Validate application routes and identify issues"
       actions={
-        <Button 
-          onClick={runValidation} 
-          disabled={isValidating}
-          variant="default"
-        >
-          <RefreshCw className={`mr-2 h-4 w-4 ${isValidating ? 'animate-spin' : ''}`} />
-          {isValidating ? 'Validating...' : 'Validate Routes'}
-        </Button>
+        <>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleExportReport} 
+            disabled={isValidating || !validationResult}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export Report
+          </Button>
+          <Button 
+            variant="default" 
+            size="sm" 
+            onClick={runValidation} 
+            disabled={isValidating}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isValidating ? 'animate-spin' : ''}`} />
+            {isValidating ? 'Validating...' : 'Run Validation'}
+          </Button>
+        </>
       }
     >
-      <div className="space-y-6">
-        {!validationResult && !isValidating && (
-          <Alert>
-            <AlertTitle>No validation performed yet</AlertTitle>
-            <AlertDescription>
-              Click the "Validate Routes" button to check all application routes for potential issues.
-            </AlertDescription>
-          </Alert>
-        )}
-        
-        {isValidating && (
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex flex-col items-center justify-center py-8">
-                <Activity className="h-12 w-12 animate-pulse text-primary mb-4" />
-                <h3 className="text-lg font-medium">Validating Routes...</h3>
-                <p className="text-sm text-muted-foreground mt-2">
-                  This may take a moment depending on the number of routes.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-        
-        {validationResult && !isValidating && (
-          <>
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2">
-                  {validationResult.valid ? (
-                    <>
-                      <Check className="h-5 w-5 text-success" />
-                      All Routes Valid
-                    </>
-                  ) : (
-                    <>
-                      <FileWarning className="h-5 w-5 text-warning" />
-                      Route Issues Detected
-                    </>
-                  )}
-                </CardTitle>
-                <CardDescription>
-                  {lastValidated && (
-                    <span>Last validated: {lastValidated.toLocaleString()}</span>
-                  )}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-background rounded-lg p-4 border">
-                    <div className="text-2xl font-bold">{validationResult.stats.total}</div>
-                    <div className="text-sm text-muted-foreground">Total Issues</div>
-                  </div>
-                  <div className="bg-background rounded-lg p-4 border">
-                    <div className="text-2xl font-bold text-destructive">
-                      {validationResult.stats.errors}
-                    </div>
-                    <div className="text-sm text-muted-foreground">Errors</div>
-                  </div>
-                  <div className="bg-background rounded-lg p-4 border">
-                    <div className="text-2xl font-bold text-warning">
-                      {validationResult.stats.warnings}
-                    </div>
-                    <div className="text-sm text-muted-foreground">Warnings</div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="md:col-span-1">
+          <CardHeader>
+            <CardTitle>Validation Summary</CardTitle>
+            <CardDescription>
+              {lastValidated 
+                ? `Last run: ${lastValidated.toLocaleString()}` 
+                : 'Not validated yet'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {validationResult ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Status:</span>
+                  <div className="flex items-center">
+                    {validationResult.valid ? (
+                      <>
+                        <CheckCircle2 className="h-5 w-5 text-success mr-2" />
+                        <span className="text-success font-medium">Passed</span>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="h-5 w-5 text-destructive mr-2" />
+                        <span className="text-destructive font-medium">Failed</span>
+                      </>
+                    )}
                   </div>
                 </div>
-              </CardContent>
-              <CardFooter>
-                <Button 
-                  className="w-full" 
-                  variant="outline"
-                  onClick={runValidation}
-                >
-                  Run Validation Again
-                </Button>
-              </CardFooter>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Route Issues</CardTitle>
-                <CardDescription>
-                  List of potential issues found in the application routes
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span>Errors:</span>
+                    <Badge variant="destructive">{validationResult.stats.errors}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Warnings:</span>
+                    <Badge variant="warning">{validationResult.stats.warnings}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Info:</span>
+                    <Badge variant="info">{validationResult.stats.info}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Total:</span>
+                    <Badge variant="outline">{validationResult.stats.total}</Badge>
+                  </div>
+                </div>
+                
+                <div className="pt-2">
+                  <div className="text-sm font-medium mb-1">Validation Health</div>
+                  <Progress
+                    value={validationResult.valid ? 100 : Math.max(0, 100 - (validationResult.stats.errors * 25))}
+                    className={`h-2 ${validationResult.valid ? 'bg-success' : 'bg-destructive'}`}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-8 text-center">
+                {isValidating ? (
+                  <>
+                    <RefreshCw className="animate-spin h-10 w-10 text-primary mb-4" />
+                    <p className="text-muted-foreground">
+                      Validating routes...
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <Info className="h-10 w-10 text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">
+                      Click "Run Validation" to start.
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        
+        <Card className="md:col-span-3">
+          <CardHeader>
+            <CardTitle>Route Issues</CardTitle>
+            <CardDescription>
+              Details of issues found during route validation
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {validationResult ? (
+              <>
+                <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
                   <TabsList className="mb-4">
-                    <TabsTrigger value="all">All Issues</TabsTrigger>
-                    <TabsTrigger value="errors">Errors</TabsTrigger>
-                    <TabsTrigger value="warnings">Warnings</TabsTrigger>
-                    <TabsTrigger value="info">Info</TabsTrigger>
+                    <TabsTrigger value="all">
+                      All <Badge variant="outline" className="ml-2">{validationResult.stats.total}</Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="error">
+                      Errors <Badge variant="destructive" className="ml-2">{validationResult.stats.errors}</Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="warning">
+                      Warnings <Badge variant="warning" className="ml-2">{validationResult.stats.warnings}</Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="info">
+                      Info <Badge variant="info" className="ml-2">{validationResult.stats.info}</Badge>
+                    </TabsTrigger>
                   </TabsList>
                   
-                  {['all', 'errors', 'warnings', 'info'].map((tabValue) => (
-                    <TabsContent key={tabValue} value={tabValue}>
-                      {validationResult.issues.length === 0 ? (
-                        <div className="text-center py-6">
-                          <Check className="h-12 w-12 mx-auto text-success opacity-50 mb-4" />
-                          <p className="text-lg font-medium">No issues found!</p>
-                          <p className="text-sm text-muted-foreground mt-2">
-                            All routes appear to be valid and follow best practices.
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          {validationResult.issues
-                            .filter(issue => 
-                              tabValue === 'all' || 
-                              issue.severity === (tabValue === 'errors' ? 'error' : 
-                                                 tabValue === 'warnings' ? 'warning' : 'info')
-                            )
-                            .map((issue, idx) => (
-                              <div 
-                                key={idx} 
-                                className="p-4 border rounded-lg flex flex-col gap-2"
-                              >
-                                <div className="flex items-start justify-between">
-                                  <div className="flex items-center gap-2">
-                                    {getIssueIcon(issue.severity as RouteIssueDisplayType)}
-                                    <span className="font-medium">{issue.title}</span>
-                                    <Badge variant={getIssueVariant(issue.severity as RouteIssueDisplayType)}>
-                                      {issue.severity}
-                                    </Badge>
-                                  </div>
-                                </div>
-                                <p className="text-sm text-muted-foreground ml-6">
-                                  {issue.description}
-                                </p>
+                  <TabsContent value={activeTab} className="mt-0">
+                    {filteredIssues.length > 0 ? (
+                      <div className="space-y-4">
+                        {filteredIssues.map((issue, index) => (
+                          <div key={index} className={`p-4 border rounded-lg ${getSeverityColor(issue.severity)}`}>
+                            <div className="flex items-start">
+                              <div className="mr-3 mt-0.5">
+                                {getSeverityIcon(issue.severity)}
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-medium">{issue.title}</h4>
+                                <p className="mt-1 text-sm">{issue.description}</p>
                                 {issue.path && (
-                                  <div className="ml-6 mt-1 flex items-center gap-2">
-                                    <code className="text-xs bg-muted px-1 py-0.5 rounded">
-                                      {issue.path}
-                                    </code>
-                                    <SafeLink 
-                                      to={issue.path} 
-                                      showWarning={false}
-                                      className="text-xs text-primary hover:underline"
-                                    >
-                                      <ExternalLink className="h-3 w-3 inline-block" />
-                                    </SafeLink>
+                                  <div className="mt-2 bg-background/50 rounded p-1.5 text-xs font-mono">
+                                    {issue.path}
                                   </div>
                                 )}
                                 {issue.recommendation && (
-                                  <div className="ml-6 mt-1 text-xs text-muted-foreground">
-                                    <strong>Recommendation:</strong> {issue.recommendation}
-                                  </div>
+                                  <p className="mt-2 text-sm font-medium">
+                                    Recommendation: {issue.recommendation}
+                                  </p>
                                 )}
                               </div>
-                            ))}
-                        </div>
-                      )}
-                    </TabsContent>
-                  ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center p-8 text-center">
+                        <CheckCircle2 className="h-10 w-10 text-success mb-4" />
+                        <p className="text-muted-foreground">
+                          No issues found in this category!
+                        </p>
+                      </div>
+                    )}
+                  </TabsContent>
                 </Tabs>
-              </CardContent>
-            </Card>
-          </>
-        )}
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-10 text-center">
+                {isValidating ? (
+                  <RefreshCw className="animate-spin h-12 w-12 text-primary mb-4" />
+                ) : (
+                  <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
+                )}
+                <p className="text-muted-foreground mb-2">
+                  {isValidating ? 'Validating routes...' : 'No validation data available'}
+                </p>
+                {!isValidating && (
+                  <Button variant="outline" onClick={runValidation}>
+                    Run Validation
+                  </Button>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </AdminPageLayout>
   );

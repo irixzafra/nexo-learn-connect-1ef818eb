@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { 
@@ -51,7 +50,7 @@ export const RouteMetrics: React.FC = () => {
     // If there was a previous visit, update its duration
     if (currentVisit) {
       const stayDuration = now - currentVisit.timestamp;
-      setVisits(prev => 
+      setVisits((prev: RouteVisit[]) => 
         prev.map(visit => 
           visit === currentVisit 
             ? { ...visit, stayDuration } 
@@ -66,7 +65,7 @@ export const RouteMetrics: React.FC = () => {
       timestamp: now
     };
     
-    setVisits(prev => [...prev, newVisit]);
+    setVisits((prev: RouteVisit[]) => [...prev, newVisit]);
     setCurrentVisit(newVisit);
     
     // Cleanup function to record duration when unmounting
@@ -74,7 +73,7 @@ export const RouteMetrics: React.FC = () => {
       const endTime = Date.now();
       const stayDuration = endTime - now;
       
-      setVisits(prev => 
+      setVisits((prev: RouteVisit[]) => 
         prev.map(visit => 
           visit === newVisit 
             ? { ...visit, stayDuration } 

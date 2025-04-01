@@ -11,7 +11,7 @@ import { KeyboardShortcuts } from './components/accessibility/KeyboardShortcuts'
 import BrokenLinkMonitor from './components/BrokenLinkMonitor';
 import SkipLinks from './components/accessibility/SkipLinks';
 
-// Lazy loaded admin components 
+// Create lazy loaded components
 const LazyRouteValidator = React.lazy(() => import('./pages/admin/RouteValidator'));
 const LazyNavigationDiagram = React.lazy(() => import('./pages/admin/NavigationDiagram'));
 

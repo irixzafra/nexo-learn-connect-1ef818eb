@@ -1,81 +1,100 @@
-import { SupportedLanguage, DEFAULT_LANGUAGE } from '@/contexts/LanguageContext';
 
 /**
- * Constructs a URL with language prefix based on the path and language
- * @param path The path without language prefix
- * @param lang The language code to use
- * @returns The URL with language prefix
+ * Utilities for handling language in URLs and content
  */
-export const getLocalizedUrl = (
-  path: string,
-  lang: SupportedLanguage = DEFAULT_LANGUAGE
-): string => {
-  // Remove leading slashes from path for consistent formatting
-  const sanitizedPath = path.replace(/^\/+/, '');
-  
-  // If the path already starts with a language code, replace it
-  const pathParts = sanitizedPath.split('/');
-  const supportedLanguages: SupportedLanguage[] = ['es', 'en', 'pt', 'fr', 'de'];
-  
-  if (supportedLanguages.includes(pathParts[0] as SupportedLanguage)) {
-    pathParts[0] = lang;
-    return `/${pathParts.join('/')}`;
-  }
-  
-  // Otherwise, prepend the language code
-  return `/${lang}/${sanitizedPath}`;
-};
+
+// Supported languages in the application
+export const SUPPORTED_LANGUAGES = ['en', 'es', 'fr', 'pt', 'de'] as const;
+export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
 
 /**
- * Extracts the path without language prefix from a URL
- * @param url The URL with possible language prefix
- * @returns The path without language prefix
+ * Check if a string is a supported language code
  */
-export const getPathWithoutLanguage = (url: string): string => {
-  const supportedLanguages: SupportedLanguage[] = ['es', 'en', 'pt', 'fr', 'de'];
-  const pathParts = url.split('/').filter(Boolean);
-  
-  if (pathParts.length > 0 && supportedLanguages.includes(pathParts[0] as SupportedLanguage)) {
-    return `/${pathParts.slice(1).join('/')}`;
-  }
-  
-  return url;
-};
+export function isSupportedLanguage(lang: string): lang is SupportedLanguage {
+  return SUPPORTED_LANGUAGES.includes(lang as SupportedLanguage);
+}
 
 /**
- * Extracts the language code from a URL
- * @param url The URL with possible language prefix
- * @returns The language code if found, undefined otherwise
+ * Extract language code from a path
+ * @param path The URL path
+ * @returns The language code if present, undefined otherwise
  */
-export const getLanguageFromUrl = (url: string): SupportedLanguage | undefined => {
-  const supportedLanguages: SupportedLanguage[] = ['es', 'en', 'pt', 'fr', 'de'];
-  const pathParts = url.split('/').filter(Boolean);
+export function extractLanguageFromPath(path: string): SupportedLanguage | undefined {
+  // Remove leading slash if present
+  const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
   
-  if (pathParts.length > 0 && supportedLanguages.includes(pathParts[0] as SupportedLanguage)) {
-    return pathParts[0] as SupportedLanguage;
+  // Check if the first segment is a language code
+  const firstSegment = normalizedPath.split('/')[0];
+  
+  if (isSupportedLanguage(firstSegment)) {
+    return firstSegment;
   }
   
   return undefined;
-};
+}
 
 /**
- * Checks if a URL contains a language prefix
- * @param url The URL to check
- * @returns True if the URL contains a language prefix
+ * Ensure a path has a language prefix
+ * @param path The URL path
+ * @param language The language to ensure
+ * @returns Path with language prefix
  */
-export const hasLanguagePrefix = (url: string): boolean => {
-  return getLanguageFromUrl(url) !== undefined;
-};
-
-/**
- * Ensures a URL has a language prefix, adding the default if missing
- * @param url The URL to process
- * @returns The URL with language prefix
- */
-export const ensureLanguagePrefix = (url: string): string => {
-  if (hasLanguagePrefix(url)) {
-    return url;
+export function ensureLanguagePrefix(path: string, language: SupportedLanguage): string {
+  // If already has language prefix, replace it
+  const existingLang = extractLanguageFromPath(path);
+  
+  if (existingLang) {
+    return path.replace(`/${existingLang}`, `/${language}`);
   }
   
-  return getLocalizedUrl(url, DEFAULT_LANGUAGE);
-};
+  // Remove leading slash if present for consistent handling
+  const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
+  
+  // Add language prefix
+  return `/${language}/${normalizedPath}`;
+}
+
+/**
+ * Remove language prefix from a path
+ * @param path The URL path
+ * @returns Path without language prefix
+ */
+export function removeLanguagePrefix(path: string): string {
+  const lang = extractLanguageFromPath(path);
+  
+  if (lang) {
+    // Remove leading slash if present
+    const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
+    
+    // Remove language prefix
+    return '/' + normalizedPath.substring(lang.length + 1);
+  }
+  
+  return path;
+}
+
+/**
+ * Format a date according to the specified language
+ */
+export function formatDate(date: Date, language: SupportedLanguage): string {
+  return new Intl.DateTimeFormat(languageToLocale(language), {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date);
+}
+
+/**
+ * Convert language code to locale for use with Intl
+ */
+export function languageToLocale(language: SupportedLanguage): string {
+  const localeMap: Record<SupportedLanguage, string> = {
+    en: 'en-US',
+    es: 'es-ES',
+    fr: 'fr-FR',
+    pt: 'pt-BR',
+    de: 'de-DE'
+  };
+  
+  return localeMap[language] || 'en-US';
+}

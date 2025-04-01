@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react';
 import AppLayout from './AppLayout';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
+import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 
 interface AdminPageLayoutProps {
   children: ReactNode;
@@ -13,6 +14,9 @@ interface AdminPageLayoutProps {
     onClick: () => void;
   };
   actions?: ReactNode;
+  // Add support for tabs
+  tabs?: AdminTabItem[];
+  defaultTabValue?: string;
 }
 
 const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
@@ -20,7 +24,9 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   title,
   subtitle,
   backAction,
-  actions
+  actions,
+  tabs,
+  defaultTabValue
 }) => {
   return (
     <AppLayout>
@@ -52,7 +58,14 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
           )}
         </div>
         
-        {children}
+        {tabs ? (
+          <AdminNavTabs 
+            tabs={tabs} 
+            defaultValue={defaultTabValue || tabs[0]?.value} 
+          />
+        ) : (
+          children
+        )}
       </div>
     </AppLayout>
   );

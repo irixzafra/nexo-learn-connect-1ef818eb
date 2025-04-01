@@ -1,8 +1,8 @@
 
 import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import NavigationDiagram from '@/pages/admin/NavigationDiagram';
-import RouteValidator from '@/pages/admin/RouteValidator';
+import NavigationDiagram from '../pages/admin/NavigationDiagram';
+import RouteValidator from '../pages/admin/RouteValidator';
 
 // Lazy-loaded admin components
 const AdminDashboard = React.lazy(() => import('../pages/admin/Dashboard'));
