@@ -1,65 +1,23 @@
 
+import React, { ReactNode } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 
-// Mapa de redirección de rutas antiguas a nuevas
-const redirectMap: Record<string, string> = {
-  // Cambiamos rutas con más de 2 niveles por sus equivalentes de máximo 2 niveles
-  '/admin/finance/invoices': '/admin/invoices',
-  '/admin/finance/subscriptions': '/admin/subscriptions',
-  '/admin/finance/banks': '/admin/banks',
-  '/admin/finance/cash-flow': '/admin/cashflow',
-  '/admin/finance/alerts': '/admin/alerts',
-  '/admin/finance/analytics': '/admin/analytics',
-  '/admin/settings/features': '/admin/settings/features',
-  '/admin/settings/integrations': '/admin/settings/integrations',
-  '/admin/settings/data': '/admin/settings/data',
-  '/admin/settings/pages': '/admin/settings/pages', // Corrected route
-  '/admin/pages': '/admin/settings/pages', // Added alias
-  '/admin/student-activity': '/admin/activity',
-  '/admin/learning-paths': '/admin/learning',
-  '/analytics/personal': '/analytics',
-  '/job-board': '/jobs',
-  '/home/my-courses': '/my-courses',
-  '/dashboard': '/home',
-  '/payment/success': '/payment/success',
-  '/payment/cancel': '/payment/cancel',
-  '/admin/billing/invoices': '/invoices',
-  '/admin/billing/subscriptions': '/admin/subscriptions',
-  '/admin/billing/bank': '/admin/banks',
-  '/admin/billing/alerts': '/admin/alerts',
-  // Agrega más redirecciones según sea necesario
-};
-
-interface RouteRedirectorProps {
-  children: React.ReactNode;
+export interface RouteRedirectorProps {
+  children: ReactNode;
 }
 
-/**
- * Componente que intercepta la navegación y redirecciona 
- * desde rutas antiguas a nuevas según el mapa de redirección
- */
 const RouteRedirector: React.FC<RouteRedirectorProps> = ({ children }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const currentPath = location.pathname;
+  const { path } = useParams<{ path: string }>();
 
   useEffect(() => {
-    // Comprobar si la ruta actual está en el mapa de redirección
-    const newPath = redirectMap[currentPath];
-    
-    if (newPath) {
-      // Preservar parámetros de consulta y hash si existen
-      const query = location.search || '';
-      const hash = location.hash || '';
-      
-      // Redireccionar a la nueva ruta
-      navigate(`${newPath}${query}${hash}`, { replace: true });
-      
-      // Registrar la redirección para análisis
-      console.log(`Redirección: ${currentPath} -> ${newPath}`);
+    if (path) {
+      // Decode the path, as it might be URL encoded
+      const decodedPath = decodeURIComponent(path);
+      navigate(decodedPath, { replace: true });
     }
-  }, [currentPath, navigate, location]);
+  }, [path, navigate]);
 
   return <>{children}</>;
 };

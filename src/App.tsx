@@ -6,33 +6,32 @@ import Register from './pages/Register';
 import NotFound from './pages/NotFound';
 import AppLayout from './layouts/AppLayout';
 import AdminLayout from './layouts/AdminLayout';
-import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import RouteRedirector from './components/RouteRedirector';
-import LandingPage from './pages/LandingPage';
 import { useTheme } from './contexts/ThemeContext';
 import LoadingScreen from './components/LoadingScreen';
 import './styles/edit-mode.css'; // Import the edit mode styles
 
-// Lazy-loaded pages
-const ForoPage = lazy(() => import('./pages/ForoPage'));
-const BlogPage = lazy(() => import('./pages/BlogPage'));
-const CourseList = lazy(() => import('./pages/courses/CourseList'));
-const CourseDetail = lazy(() => import('./pages/courses/CourseDetail'));
-const LessonDetail = lazy(() => import('./pages/courses/LessonDetail'));
-const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
-const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
-const AdminFeatures = lazy(() => import('./pages/admin/AdminFeatures'));
-const AdminCourses = lazy(() => import('./pages/admin/AdminCourses'));
-const AdminTemplates = lazy(() => import('./pages/admin/AdminTemplates'));
-const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const DynamicPage = lazy(() => import('./pages/DynamicPage'));
-const TestDataGenerator = lazy(() => import('./pages/admin/TestDataGenerator'));
-const AdminContent = lazy(() => import('./pages/admin/AdminContent'));
-const AdminHomePage = lazy(() => import('./pages/admin/AdminHomePage'));
-const MyLearningPage = lazy(() => import('./pages/MyLearningPage'));
-const AdminPages = lazy(() => import('./pages/admin/AdminPages'));
+// Define placeholders for pages that are referenced but don't exist yet
+const Dashboard = () => <div>Dashboard</div>;
+const ForoPage = () => <div>Foro Page</div>;
+const BlogPage = () => <div>Blog Page</div>;
+const CourseList = () => <div>Course List</div>;
+const CourseDetail = () => <div>Course Detail</div>;
+const LessonDetail = () => <div>Lesson Detail</div>;
+const AdminDashboard = () => <div>Admin Dashboard</div>;
+const AdminUsers = () => <div>Admin Users</div>;
+const AdminFeatures = () => <div>Admin Features</div>;
+const AdminCourses = lazy(() => import('./pages/admin/courses/AdminCourses'));
+const AdminTemplates = () => <div>Admin Templates</div>;
+const AdminSettings = () => <div>Admin Settings</div>;
+const ProfilePage = () => <div>Profile Page</div>;
+const DynamicPage = () => <div>Dynamic Page</div>;
+const TestDataGenerator = () => <div>Test Data Generator</div>;
+const AdminContent = () => <div>Admin Content</div>;
+const AdminHomePage = () => <div>Admin Home Page</div>;
+const MyLearningPage = () => <div>My Learning Page</div>;
+const AdminPages = () => <div>Admin Pages</div>;
 
 function App() {
   const { theme } = useTheme();
@@ -42,7 +41,7 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route element={<AppLayout />}>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<div>Landing Page</div>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
@@ -173,7 +172,9 @@ function App() {
         </Route>
         
         {/* Route Redirector - for handling legacy URLs */}
-        <Route path="/redirect/:path" element={<RouteRedirector />} />
+        <Route path="/redirect/:path" element={<RouteRedirector>
+          <div>Redirecting...</div>
+        </RouteRedirector>} />
       </Routes>
     </div>
   );

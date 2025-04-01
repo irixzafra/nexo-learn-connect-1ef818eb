@@ -1,18 +1,10 @@
 
-export interface Feature {
-  id: CoreFeatureId | ExtendedFeatureId;
-  name: string;
-  enabled: boolean;
-  description: string;
-  isCore?: boolean;
-}
-
 export type CoreFeatureId = 
   | 'core-editing'
   | 'core-publishing'
   | 'core-templates'
   | 'core-media'
-  | 'core-users'
+  | 'core-users' 
   | 'core-settings'
   | 'core-analytics'
   | 'core-backup'
@@ -25,7 +17,7 @@ export type CoreFeatureId =
   | 'community'
   | 'theming';
 
-export type ExtendedFeatureId = 
+export type ExtendedFeatureId =
   | 'enableDarkMode'
   | 'enableNotifications'
   | 'enableAnalytics'
@@ -81,9 +73,18 @@ export type ExtendedFeatureId =
 
 export type FeatureId = CoreFeatureId | ExtendedFeatureId;
 
+export interface Feature {
+  id: string;
+  name: string;
+  enabled: boolean;
+  description: string;
+  isCore?: boolean;
+  category?: string;
+  dependencies?: string[];
+}
+
 export interface FeaturesConfig {
-  coreFeatures: Record<CoreFeatureId, Feature>;
-  // Extended features as boolean properties
+  features: Record<CoreFeatureId, Feature>;
   enableDarkMode: boolean;
   enableNotifications: boolean;
   enableAnalytics: boolean;
@@ -120,7 +121,6 @@ export interface FeaturesConfig {
   enableSubscriptionPause: boolean;
   enableGiftSubscriptions: boolean;
   enableInlineEditing: boolean;
-  // Additional features for Settings pages
   designSystemEnabled: boolean;
   enableThemeSwitcher: boolean;
   enableAutoBackups: boolean;
@@ -137,12 +137,10 @@ export interface FeaturesConfig {
   autoStartOnboarding: boolean;
   showOnboardingTrigger: boolean;
   enableContextualHelp: boolean;
-  [key: string]: boolean | Record<CoreFeatureId, Feature> | undefined;
 }
 
 export interface FeaturesContextProps {
   featuresConfig: FeaturesConfig;
-  features?: Record<string, Feature>;
   isEnabled: (featureName: FeatureId) => boolean;
   enableFeature: (featureId: FeatureId) => Promise<void>;
   disableFeature: (featureId: FeatureId) => Promise<void>;

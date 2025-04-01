@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,7 +25,7 @@ import { PageStatus, PageLayout, SitePage } from '@/types/pages';
 import { Loader2 } from 'lucide-react';
 import { isSlugUnique } from '@/services/pagesService';
 
-// Schema definition for form validation, only using the exact layout values from the type
+// Schema definition for form validation with the full range of layout values
 const pageFormSchema = z.object({
   title: z.string().min(3, {
     message: 'El título debe tener al menos 3 caracteres',
@@ -38,7 +39,20 @@ const pageFormSchema = z.object({
     message: 'La meta descripción no debe exceder los 160 caracteres',
   }).optional().or(z.literal('')),
   status: z.enum(['draft', 'published', 'archived'] as const),
-  layout: z.enum(['default', 'landing', 'marketing', 'documentation', 'course', 'sidebar', 'full-width'] as const),
+  layout: z.enum([
+    'default', 
+    'landing', 
+    'marketing', 
+    'documentation', 
+    'course', 
+    'sidebar', 
+    'full-width',
+    'column',
+    'row',
+    'grid-2',
+    'grid-3',
+    'grid-4'
+  ] as const),
   content: z.any(), // For now, we'll use a simple textarea
 });
 
@@ -55,7 +69,20 @@ const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading })
   
   // We need to ensure the layout is one of the valid values in our schema
   const getSafeLayout = (layout?: string): PageLayout => {
-    const validLayouts: PageLayout[] = ['default', 'landing', 'marketing', 'documentation', 'course', 'sidebar', 'full-width'];
+    const validLayouts: PageLayout[] = [
+      'default', 
+      'landing', 
+      'marketing', 
+      'documentation', 
+      'course', 
+      'sidebar', 
+      'full-width',
+      'column',
+      'row',
+      'grid-2',
+      'grid-3',
+      'grid-4'
+    ];
     return layout && validLayouts.includes(layout as PageLayout) 
       ? layout as PageLayout 
       : 'default';
@@ -284,6 +311,11 @@ const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading })
                     <SelectItem value="course">Curso</SelectItem>
                     <SelectItem value="sidebar">Con Sidebar</SelectItem>
                     <SelectItem value="full-width">Ancho Completo</SelectItem>
+                    <SelectItem value="column">Columna</SelectItem>
+                    <SelectItem value="row">Fila</SelectItem>
+                    <SelectItem value="grid-2">Grid 2 columnas</SelectItem>
+                    <SelectItem value="grid-3">Grid 3 columnas</SelectItem>
+                    <SelectItem value="grid-4">Grid 4 columnas</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

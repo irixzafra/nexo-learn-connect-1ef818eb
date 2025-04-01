@@ -34,7 +34,20 @@ const formSchema = z.object({
     .regex(/^[a-z0-9-]+$/, 'El slug solo puede contener letras minúsculas, números y guiones'),
   meta_description: z.string().max(160, 'La meta descripción no debe exceder los 160 caracteres').optional().or(z.literal('')),
   status: z.enum(['draft', 'published', 'archived'] as const),
-  layout: z.enum(['default', 'landing', 'marketing', 'documentation', 'course', 'sidebar', 'full-width'] as const),
+  layout: z.enum([
+    'default', 
+    'landing', 
+    'marketing', 
+    'documentation', 
+    'course', 
+    'sidebar', 
+    'full-width',
+    'column',
+    'row',
+    'grid-2',
+    'grid-3',
+    'grid-4'
+  ] as const),
   content: z.any(),
 });
 
