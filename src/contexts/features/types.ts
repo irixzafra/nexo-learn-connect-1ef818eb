@@ -49,6 +49,7 @@ export interface FeaturesConfig {
   enableThemeSwitcher: boolean;
   enableMultiLanguage: boolean;
   enableDesignSystem: boolean;
+  enableAutoTheme: boolean;
   
   // Editor Features
   enableAdvancedEditor: boolean;
@@ -63,6 +64,7 @@ export interface FeaturesConfig {
   enableNotifications: boolean;
   enableRealTimeNotifications: boolean;
   enableEmailNotifications: boolean;
+  enablePushNotifications: boolean;
   
   // API and Integration
   enablePublicApi: boolean;
@@ -89,6 +91,17 @@ export interface FeaturesConfig {
   // AI Features
   enableAI: boolean;
   
+  // Course Features
+  enableCourseRecommendations: boolean;
+  enableLearningPaths: boolean;
+  
+  // Community Features
+  enableCommunity: boolean;
+  enableStudentProfiles: boolean;
+  
+  // Gamification
+  enableGamification: boolean;
+  
   // Additional properties needed for compatibility with existing files
   enableDebugMode?: boolean;
   showSectionTags?: boolean;
@@ -98,8 +111,6 @@ export interface FeaturesConfig {
   enablePasswordPolicy?: boolean;
   enableOfflineMode?: boolean;
   enableUserTracking?: boolean;
-  enableGamification?: boolean;
-  enableCommunity?: boolean;
 }
 
 // Valores predeterminados para todas las características
@@ -115,6 +126,7 @@ export const defaultFeaturesConfig: FeaturesConfig = {
   enableThemeSwitcher: true,
   enableMultiLanguage: false,
   enableDesignSystem: true,
+  enableAutoTheme: false,
   
   // Editor
   enableAdvancedEditor: true,
@@ -129,6 +141,7 @@ export const defaultFeaturesConfig: FeaturesConfig = {
   enableNotifications: true,
   enableRealTimeNotifications: true,
   enableEmailNotifications: true,
+  enablePushNotifications: false,
   
   // API
   enablePublicApi: false,
@@ -155,6 +168,17 @@ export const defaultFeaturesConfig: FeaturesConfig = {
   // AI
   enableAI: false,
   
+  // Course Features
+  enableCourseRecommendations: false,
+  enableLearningPaths: false,
+  
+  // Community Features
+  enableCommunity: false,
+  enableStudentProfiles: false,
+  
+  // Gamification
+  enableGamification: false,
+  
   // Additional properties needed for compatibility
   enableDebugMode: false,
   showSectionTags: false,
@@ -163,9 +187,7 @@ export const defaultFeaturesConfig: FeaturesConfig = {
   enableSocial: false,
   enablePasswordPolicy: true,
   enableOfflineMode: false,
-  enableUserTracking: false,
-  enableGamification: false,
-  enableCommunity: false
+  enableUserTracking: false
 };
 
 // Definición de contexto para el sistema de características

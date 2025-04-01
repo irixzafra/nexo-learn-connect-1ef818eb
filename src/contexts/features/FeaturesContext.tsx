@@ -5,6 +5,8 @@ import { applyDependencyRules, getAllDependencies, getAllDependents } from './de
 
 const FeaturesContext = createContext<FeaturesContextValue | undefined>(undefined);
 
+export { FeaturesConfig } from './types';
+
 export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(defaultFeaturesConfig);
   const [isLoading, setIsLoading] = useState(false);

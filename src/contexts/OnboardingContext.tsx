@@ -6,6 +6,7 @@ export interface OnboardingContextType {
   isOnboardingCompleted: boolean;
   isOnboardingActive: boolean;
   currentStep: number;
+  featuresConfig: FeaturesConfig;
   completeOnboarding: () => void;
   skipOnboarding: () => void;
   startOnboarding: () => void;
@@ -18,6 +19,7 @@ export const OnboardingContext = createContext<OnboardingContextType>({
   isOnboardingCompleted: false,
   isOnboardingActive: false,
   currentStep: 0,
+  featuresConfig: {} as FeaturesConfig,
   completeOnboarding: () => {},
   skipOnboarding: () => {},
   startOnboarding: () => {},
@@ -35,6 +37,24 @@ export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ chil
   
   const [isOnboardingActive, setIsOnboardingActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
+  
+  useEffect(() => {
+    // Fetch features config on mount
+    const loadFeatures = async () => {
+      try {
+        // Try to load from localStorage if available
+        const savedFeatures = localStorage.getItem('features');
+        if (savedFeatures) {
+          setFeaturesConfig(JSON.parse(savedFeatures));
+        }
+      } catch (error) {
+        console.error('Error loading features:', error);
+      }
+    };
+
+    loadFeatures();
+  }, []);
   
   const completeOnboarding = () => {
     setIsOnboardingCompleted(true);
@@ -72,6 +92,7 @@ export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ chil
         isOnboardingCompleted,
         isOnboardingActive,
         currentStep,
+        featuresConfig,
         completeOnboarding,
         skipOnboarding,
         startOnboarding,

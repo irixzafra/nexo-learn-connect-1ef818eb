@@ -29,7 +29,7 @@ import OnboardingSettings from '@/features/admin/components/settings/OnboardingS
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { toast } from 'sonner';
-import { FeaturesConfig, useFeatures } from '@/contexts/features/FeaturesContext';
+import { useFeatures } from '@/contexts/features/FeaturesContext';
 
 /**
  * Página de configuración del sistema para administradores
@@ -59,6 +59,14 @@ const SystemSettings: React.FC = () => {
     }
   };
 
+  // Create wrapper function to convert Promise-based toggleFeature to sync function
+  const handleToggleFeature = (feature: keyof typeof featuresConfig, value: boolean) => {
+    toggleFeature(feature, value).catch(err => {
+      console.error('Error toggling feature', err);
+      toast.error('Error al cambiar característica');
+    });
+  };
+
   const tabs: AdminTabItem[] = [
     {
       value: 'general',
@@ -81,7 +89,7 @@ const SystemSettings: React.FC = () => {
       dataTag: "settings-tab-appearance",
       content: <AppearanceSettings 
                 featuresConfig={featuresConfig} 
-                onToggleFeature={toggleFeature} 
+                onToggleFeature={handleToggleFeature} 
                 isLoading={isLoading} 
               />
     },
@@ -92,7 +100,7 @@ const SystemSettings: React.FC = () => {
       dataTag: "settings-tab-content",
       content: <ContentSettings 
                 featuresConfig={featuresConfig} 
-                onToggleFeature={toggleFeature} 
+                onToggleFeature={handleToggleFeature} 
                 isLoading={isLoading} 
               />
     },
@@ -103,7 +111,7 @@ const SystemSettings: React.FC = () => {
       dataTag: "settings-tab-onboarding",
       content: <OnboardingSettings 
                 featuresConfig={featuresConfig} 
-                onToggleFeature={toggleFeature} 
+                onToggleFeature={handleToggleFeature} 
                 isLoading={isLoading} 
               />
     },
@@ -121,7 +129,7 @@ const SystemSettings: React.FC = () => {
       dataTag: "settings-tab-security",
       content: <SecuritySettings 
                 featuresConfig={featuresConfig} 
-                onToggleFeature={toggleFeature} 
+                onToggleFeature={handleToggleFeature} 
                 isLoading={isLoading} 
               />
     },
@@ -130,7 +138,11 @@ const SystemSettings: React.FC = () => {
       label: 'Datos',
       icon: <DatabaseZap className="h-4 w-4" />,
       dataTag: "settings-tab-data",
-      content: <DataSettings />
+      content: <DataSettings 
+                featuresConfig={featuresConfig}
+                onToggleFeature={handleToggleFeature}
+                isLoading={isLoading}
+              />
     }
   ];
   
