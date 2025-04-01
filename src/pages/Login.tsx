@@ -28,7 +28,7 @@ const Login: React.FC = () => {
   };
   
   return (
-    <PublicLayout>
+    <PublicLayout hideNav={false} hideFooter={false}>
       <div className="container mx-auto px-4 py-12 flex justify-center">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
