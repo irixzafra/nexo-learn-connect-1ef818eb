@@ -24,23 +24,14 @@ import DynamicPage from '@/pages/DynamicPage';
 const PublicRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Main routes */}
-      <Route path="/" element={<Index />} />
+      <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
       <Route path="/landing" element={<PublicLayout><LandingPage /></PublicLayout>} />
-      
-      {/* Auth routes */}
-      <Route path="/auth/login" element={<Login />} />
+      <Route path="/auth/login" element={<PublicLayout><Login /></PublicLayout>} />
       <Route path="/auth/register" element={<PublicLayout><Register /></PublicLayout>} />
-      
-      {/* Content pages */}
       <Route path="/about-us" element={<PublicLayout><AboutUs /></PublicLayout>} />
       <Route path="/scholarships" element={<PublicLayout><Scholarships /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
       <Route path="/unauthorized" element={<PublicLayout><Unauthorized /></PublicLayout>} />
-      
-      {/* Course related */}
-      <Route path="/courses" element={<PublicLayout><CoursesCatalog /></PublicLayout>} />
-      <Route path="/courses/:courseId" element={<PublicLayout><CourseDetailPage /></PublicLayout>} />
       
       {/* Legal pages */}
       <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />
@@ -67,7 +58,7 @@ const PublicRoutes: React.FC = () => {
       } />
       
       {/* Catch-all route para rutas públicas no encontradas */}
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<PublicLayout><NotFound /></PublicLayout>} />
     </Routes>
   );
 };

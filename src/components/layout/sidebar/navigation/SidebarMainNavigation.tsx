@@ -1,9 +1,21 @@
 
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
+import { 
+  Home, 
+  Compass, 
+  Users, 
+  MessageSquare,
+  Shield,
+  User,
+  Phone,
+  AppWindow,
+  BookOpen
+} from 'lucide-react';
+
+// Importamos los componentes de navegación
 import SidebarNavSection from './SidebarNavSection';
 import SidebarNavItem from './SidebarNavItem';
-import { getNavigationByRole } from '@/config/menuConfig';
 
 interface SidebarMainNavigationProps {
   effectiveRole: UserRoleType;
@@ -17,68 +29,79 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   effectiveRole,
   isCollapsed,
   messagesCount,
-  notificationsCount,
   getHomePath
 }) => {
-  // Obtener menús filtrados por rol
-  const menus = getNavigationByRole(effectiveRole);
-
-  // Actualizar el badge para mensajes si es necesario
-  const mainMenuWithBadges = menus.main.map(item => {
-    if (item.path === '/messages') {
-      return { ...item, badge: messagesCount > 0 ? messagesCount : undefined };
-    }
-    if (item.path === '/notifications') {
-      return { ...item, badge: notificationsCount > 0 ? notificationsCount : undefined };
-    }
-    return item;
-  });
+  // Determinamos las rutas basadas en el rol del usuario
+  const dashboardRoute = effectiveRole === 'instructor' ? '/instructor/dashboard' : 
+                        effectiveRole === 'admin' ? '/admin/dashboard' : '/home';
+  
+  const coursesRoute = effectiveRole === 'instructor' ? '/instructor/courses' : 
+                      effectiveRole === 'admin' ? '/admin/courses' : '/home/my-courses';
 
   return (
     <div className={`flex-1 overflow-auto ${isCollapsed ? "px-2" : "px-4"}`}>
       <div className="space-y-4 py-4">
         <SidebarNavSection title="Navegación" isCollapsed={isCollapsed}>
-          {mainMenuWithBadges.map(item => (
+          <SidebarNavItem 
+            to={dashboardRoute}
+            icon={Home} 
+            label="Inicio" 
+            isCollapsed={isCollapsed} 
+          />
+          <SidebarNavItem 
+            to="/courses" 
+            icon={Compass} 
+            label="Explorar Cursos" 
+            isCollapsed={isCollapsed} 
+          />
+          {effectiveRole === 'student' && (
             <SidebarNavItem 
-              key={item.path}
-              to={item.path}
-              icon={item.icon} 
-              label={item.label} 
-              badge={typeof item.badge === 'number' ? item.badge : undefined}
+              to="/home/my-courses" 
+              icon={BookOpen} 
+              label="Mis Cursos" 
               isCollapsed={isCollapsed} 
             />
-          ))}
+          )}
+          <SidebarNavItem 
+            to="/community" 
+            icon={Users} 
+            label="Comunidad" 
+            isCollapsed={isCollapsed} 
+          />
+          <SidebarNavItem 
+            to="/messages" 
+            icon={MessageSquare} 
+            label="Mensajes" 
+            badge={messagesCount > 0 ? messagesCount : undefined} 
+            isCollapsed={isCollapsed} 
+          />
+          {(effectiveRole === 'admin' || effectiveRole === 'instructor') && (
+            <SidebarNavItem 
+              to="/admin/dashboard" 
+              icon={Shield} 
+              label="Administración" 
+              isCollapsed={isCollapsed} 
+            />
+          )}
+          <SidebarNavItem 
+            to="/profile" 
+            icon={User} 
+            label="Perfil" 
+            isCollapsed={isCollapsed} 
+          />
+          <SidebarNavItem 
+            to="/contact" 
+            icon={Phone} 
+            label="Contacto" 
+            isCollapsed={isCollapsed} 
+          />
+          <SidebarNavItem 
+            to="/landing" 
+            icon={AppWindow} 
+            label="Landing Page" 
+            isCollapsed={isCollapsed} 
+          />
         </SidebarNavSection>
-        
-        {/* Menú de administración si corresponde */}
-        {menus.admin.length > 0 && (
-          <SidebarNavSection title="Administración" isCollapsed={isCollapsed}>
-            {menus.admin.map(item => (
-              <SidebarNavItem 
-                key={item.path}
-                to={item.path}
-                icon={item.icon} 
-                label={item.label} 
-                isCollapsed={isCollapsed} 
-              />
-            ))}
-          </SidebarNavSection>
-        )}
-        
-        {/* Menú de gamificación si corresponde */}
-        {menus.gamification.length > 0 && (
-          <SidebarNavSection title="Gamificación" isCollapsed={isCollapsed}>
-            {menus.gamification.map(item => (
-              <SidebarNavItem 
-                key={item.path}
-                to={item.path}
-                icon={item.icon} 
-                label={item.label} 
-                isCollapsed={isCollapsed} 
-              />
-            ))}
-          </SidebarNavSection>
-        )}
       </div>
     </div>
   );

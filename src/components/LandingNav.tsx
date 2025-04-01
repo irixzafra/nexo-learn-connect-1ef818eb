@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -60,7 +59,7 @@ const LandingNav: React.FC = () => {
       role="navigation" 
       aria-label="Navegación principal"
     >
-      <div className="max-w-screen-2xl mx-auto">
+      <div className="container max-w-screen-2xl mx-auto">
         <div className="flex items-center justify-between py-3 px-4 md:px-6">
           <Link 
             to="/" 

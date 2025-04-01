@@ -1,10 +1,10 @@
 
 export { default as AdminMenu } from './AdminMenu';
-export type { AdminMenuItem } from './presets/types';
+export type { AdminMenuItem } from './AdminMenu';
 export {
   adminMainMenuItems,
   adminSecurityMenuItems,
   adminEducationMenuItems,
   adminAlertMenuItems,
   adminMobileMenuItems
-} from './presets';
+} from './AdminMenuPresets';

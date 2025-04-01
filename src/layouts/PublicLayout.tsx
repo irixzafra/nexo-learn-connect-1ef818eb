@@ -20,7 +20,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({
   const { userRole } = useAuth();
   
   return (
-    <div className="flex flex-col min-h-screen w-full relative">
+    <div className="flex flex-col min-h-screen relative">
       <SectionTag name="PublicLayout" />
       
       {!hideNav && (
@@ -30,13 +30,13 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({
         </div>
       )}
       
-      <main className="flex-grow relative w-full">
+      <main className="flex-grow relative">
         <SectionTag name="MainContent" />
         {children}
       </main>
       
       {!hideFooter && (
-        <div className="relative w-full">
+        <div className="relative">
           <SectionTag name="Footer" />
           <LandingFooter />
         </div>

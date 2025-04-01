@@ -1,39 +1,23 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-/**
- * Hook para detectar si el dispositivo es móvil basado en el ancho de la ventana
- * @param mobileBreakpoint Punto de ruptura para considerar dispositivo móvil (por defecto 768px)
- * @returns Boolean indicando si el dispositivo es móvil
- */
-export function useIsMobile(mobileBreakpoint = 768) {
-  // Estado inicial (por defecto asumimos desktop para SSR)
+export const useIsMobile = () => {
+  // Initialize with a safe server-side value and check the window size once mounted
   const [isMobile, setIsMobile] = useState(false);
-  
+
   useEffect(() => {
-    // Función para actualizar el estado según el tamaño de ventana
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < mobileBreakpoint);
-    };
+    // Function to check if window width is less than the mobile breakpoint
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     
-    // Comprobación inicial
+    // Set the initial value
     checkMobile();
     
-    // Crear media query listener para mejorar performance
-    const mql = window.matchMedia(`(max-width: ${mobileBreakpoint - 1}px)`);
-    mql.addEventListener('change', checkMobile);
+    // Add event listener for window resize
+    window.addEventListener("resize", checkMobile);
     
-    // Limpiar event listener
-    return () => {
-      mql.removeEventListener('change', checkMobile);
-    };
-  }, [mobileBreakpoint]);
-  
-  return isMobile;
-}
+    // Cleanup
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
-// Exportación alternativa para mantener compatibilidad
-export const useMobile = () => {
-  const isMobile = useIsMobile();
-  return { isMobile };
+  return isMobile;
 };
