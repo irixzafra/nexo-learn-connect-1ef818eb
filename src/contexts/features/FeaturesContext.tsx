@@ -1,110 +1,152 @@
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { toast } from 'sonner';
-import { FeaturesConfig, defaultFeaturesConfig } from './types';
-import { getFeatureDependencies, getFeatureDependents } from './dependencies';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { FeaturesConfig, FeaturesContextProps } from './types';
+import { getFeatureDependencies } from './dependencies';
 
-// Context props definition
-export interface FeaturesContextProps {
-  featuresConfig: FeaturesConfig;
-  isLoading: boolean;
-  toggleFeature: (featureName: keyof FeaturesConfig, value: boolean) => Promise<void>;
-  updateFeatures: (newConfig: Partial<FeaturesConfig>) => Promise<void>;
-  isFeatureEnabled: (featureName: keyof FeaturesConfig) => boolean;
-  getFeatureDependencies: (featureName: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
-  getFeatureDependents: (featureName: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
-}
+// Valores predeterminados
+const defaultFeatures: FeaturesConfig = {
+  // General features
+  enableDarkMode: true,
+  enableNotifications: true,
+  enableAnalytics: false,
+  enableFeedback: true,
+  
+  // User features
+  enableUserRegistration: true,
+  enableSocialLogin: false,
+  enablePublicProfiles: true,
 
-// Create context with default empty values
-const FeaturesContext = createContext<FeaturesContextProps>({} as FeaturesContextProps);
+  // Design system features
+  designSystemEnabled: true,
+  enableThemeSwitcher: true,
+  enableMultiLanguage: false,
 
-// Custom hook to use the features context
-export const useFeatures = () => useContext(FeaturesContext);
+  // Content features
+  enableAdvancedEditor: false,
+  enableContentReordering: true,
+  enableCategoryManagement: true,
+  enableLeaderboard: false,
+
+  // Data features
+  enableAutoBackups: true,
+  enableQueryCache: true,
+  enableMaintenanceMode: false,
+  enableDatabaseDevMode: false,
+
+  // Security features
+  enable2FA: false,
+  enableMultipleSessions: true,
+  enablePublicRegistration: true,
+  requireEmailVerification: true,
+  enableActivityLog: true,
+
+  // Test features
+  enableTestDataGenerator: true,
+  
+  // Onboarding features
+  enableOnboarding: true,
+  enableContextualHelp: true,
+  requireOnboarding: false
+};
+
+// Crear contexto
+const FeaturesContext = createContext<FeaturesContextProps | undefined>(undefined);
 
 export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(defaultFeaturesConfig);
-  const [isLoading, setIsLoading] = useState(false);
+  const [features, setFeatures] = useState<FeaturesConfig>(defaultFeatures);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  // Check if a feature is enabled
-  const isFeatureEnabled = useCallback(
-    (featureName: keyof FeaturesConfig) => {
-      return !!featuresConfig[featureName];
-    },
-    [featuresConfig]
-  );
-
-  // Toggle a feature on/off
-  const toggleFeature = useCallback(
-    async (featureName: keyof FeaturesConfig, value: boolean): Promise<void> => {
+  // Cargar características almacenadas al iniciar
+  useEffect(() => {
+    const loadFeatures = async () => {
       try {
         setIsLoading(true);
+        const storedFeatures = localStorage.getItem('nexo_features');
         
-        // Simulate API call with timeout
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        setFeaturesConfig(prev => ({
-          ...prev,
-          [featureName]: value
-        }));
-        
-        toast.success(`Característica "${String(featureName)}" ${value ? 'activada' : 'desactivada'}`);
-        return Promise.resolve();
-      } catch (error) {
-        console.error('Error toggling feature:', error);
-        toast.error(`Error al cambiar el estado de "${String(featureName)}"`);
-        return Promise.reject(error);
+        if (storedFeatures) {
+          setFeatures({
+            ...defaultFeatures,
+            ...JSON.parse(storedFeatures)
+          });
+        }
+      } catch (err) {
+        console.error('Error al cargar características:', err);
+        setError(err instanceof Error ? err : new Error('Error desconocido al cargar características'));
       } finally {
         setIsLoading(false);
       }
-    },
-    []
-  );
+    };
 
-  // Update multiple features at once
-  const updateFeatures = useCallback(
-    async (newConfig: Partial<FeaturesConfig>): Promise<void> => {
-      try {
-        setIsLoading(true);
-        
-        // Simulate API call with timeout
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        setFeaturesConfig(prev => ({
-          ...prev,
-          ...newConfig
-        }));
-        
-        toast.success("Configuración actualizada correctamente");
-        return Promise.resolve();
-      } catch (error) {
-        console.error('Error updating features:', error);
-        toast.error("Error al actualizar la configuración");
-        return Promise.reject(error);
-      } finally {
-        setIsLoading(false);
+    loadFeatures();
+  }, []);
+
+  // Actualizar características
+  const updateFeatures = async (newFeatures: FeaturesConfig) => {
+    try {
+      setIsLoading(true);
+      
+      // Guardar en localStorage
+      localStorage.setItem('nexo_features', JSON.stringify(newFeatures));
+      
+      // Actualizar estado
+      setFeatures(newFeatures);
+      
+      return Promise.resolve();
+    } catch (err) {
+      console.error('Error al actualizar características:', err);
+      setError(err instanceof Error ? err : new Error('Error desconocido al actualizar características'));
+      return Promise.reject(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Recargar características
+  const reloadFeatures = async () => {
+    try {
+      setIsLoading(true);
+      const storedFeatures = localStorage.getItem('nexo_features');
+      
+      if (storedFeatures) {
+        setFeatures({
+          ...defaultFeatures,
+          ...JSON.parse(storedFeatures)
+        });
+      } else {
+        setFeatures(defaultFeatures);
       }
-    },
-    []
-  );
-
-  // Provide the context value
-  const contextValue: FeaturesContextProps = {
-    featuresConfig,
-    isLoading,
-    toggleFeature,
-    updateFeatures,
-    isFeatureEnabled,
-    getFeatureDependencies,
-    getFeatureDependents
+      
+      return Promise.resolve();
+    } catch (err) {
+      console.error('Error al recargar características:', err);
+      setError(err instanceof Error ? err : new Error('Error desconocido al recargar características'));
+      return Promise.reject(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <FeaturesContext.Provider value={contextValue}>
+    <FeaturesContext.Provider value={{ 
+      features, 
+      isLoading, 
+      error,
+      updateFeatures,
+      reloadFeatures
+    }}>
       {children}
     </FeaturesContext.Provider>
   );
 };
 
-// Re-export for simplicity
-export type { FeaturesConfig };
-export { defaultFeaturesConfig };
+// Hook personalizado para usar el contexto
+export const useFeatures = (): FeaturesContextProps => {
+  const context = useContext(FeaturesContext);
+  
+  if (context === undefined) {
+    throw new Error('useFeatures debe ser usado dentro de un FeaturesProvider');
+  }
+  
+  return context;
+};

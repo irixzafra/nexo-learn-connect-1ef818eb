@@ -1,173 +1,141 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Folder, PenSquare, Tag, Layers, FileText, BookOpen, Image, Route } from 'lucide-react';
-import CategoryManagement from '@/pages/admin/CategoryManagement';
+import React, { useState } from 'react';
+import AdminPageLayout from '@/layouts/AdminPageLayout';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
-import TemplatesPage from './TemplatesPage';
+import { FileEdit, FilePlus, FolderPlus, List, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import ContentCategoriesTab from '@/components/admin/content/ContentCategoriesTab';
+import ContentPagesTab from '@/components/admin/content/ContentPagesTab';
+import ContentFilesTab from '@/components/admin/content/ContentFilesTab';
+import { AdminTabItem } from '@/components/shared/AdminNavTabs';
+import { useFeatures } from '@/contexts/features/FeaturesContext';
 
+/**
+ * Página de gestión de contenido
+ */
 const ContentManagement: React.FC = () => {
   const navigate = useNavigate();
-  const { userRole } = useAuth();
-  const [activeTab, setActiveTab] = React.useState("overview");
-  
-  // Verificar si el usuario tiene permiso para acceder a esta página
-  if (userRole !== 'admin') {
-    return (
-      <div className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-4">Acceso Denegado</h1>
-        <p>No tienes permiso para acceder a esta página.</p>
-        <Button 
-          className="mt-4" 
-          onClick={() => navigate('/dashboard')}
-        >
-          Volver al Dashboard
-        </Button>
-      </div>
-    );
-  }
+  const [activeTab, setActiveTab] = useState<string>('pages');
+  const { features } = useFeatures();
 
-  // Secciones de contenido disponibles
-  const contentSections = [
+  const handleCreatePage = () => {
+    navigate('/admin/pages/create');
+  };
+
+  const handleCreateCategory = () => {
+    // Implementación pendiente: abrir modal o navegar a página de creación
+    console.log('Crear categoría');
+  };
+
+  const tabs: AdminTabItem[] = [
     {
-      id: 'categories',
-      title: 'Categorías',
-      description: 'Administra las categorías para organizar el contenido',
-      icon: Folder,
-      path: '/admin/content/categories'
+      label: 'Páginas',
+      value: 'pages',
+      dataTag: 'admin-content-pages-tab',
+      icon: <FileEdit className="h-4 w-4" />,
+      content: (
+        <>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Páginas del Sistema</h2>
+            <Button onClick={handleCreatePage}>
+              <Plus className="mr-2 h-4 w-4" /> Nueva Página
+            </Button>
+          </div>
+          <ContentPagesTab />
+        </>
+      )
     },
     {
-      id: 'learning-paths',
-      title: 'Rutas de Aprendizaje',
-      description: 'Gestiona rutas formativas para los estudiantes',
-      icon: Route,
-      path: '/admin/learning-paths'
+      label: 'Categorías',
+      value: 'categories',
+      dataTag: 'admin-content-categories-tab',
+      icon: <FolderPlus className="h-4 w-4" />,
+      content: (
+        <>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Categorías de Contenido</h2>
+            <Button onClick={handleCreateCategory} variant="outline">
+              <Plus className="mr-2 h-4 w-4" /> Nueva Categoría
+            </Button>
+          </div>
+          <ContentCategoriesTab />
+        </>
+      )
     },
     {
-      id: 'tags',
-      title: 'Etiquetas',
-      description: 'Gestiona etiquetas para clasificar el contenido',
-      icon: Tag,
-      path: '/admin/content/tags'
-    },
-    {
-      id: 'templates',
-      title: 'Plantillas',
-      description: 'Gestiona plantillas para crear contenido rápidamente',
-      icon: Layers,
-      path: '/admin/content/templates'
-    },
-    {
-      id: 'editor',
-      title: 'Editor de Contenido',
-      description: 'Crea y edita contenido con un editor avanzado',
-      icon: PenSquare,
-      path: '/admin/content/editor'
-    },
-    {
-      id: 'assets',
-      title: 'Biblioteca de Recursos',
-      description: 'Administra imágenes, videos y otros recursos',
-      icon: Image,
-      path: '/admin/content/assets'
+      label: 'Archivos',
+      value: 'files',
+      dataTag: 'admin-content-files-tab',
+      icon: <List className="h-4 w-4" />,
+      content: <ContentFilesTab />
     }
   ];
 
   return (
-    <div>
-      <div className="flex items-center gap-3 mb-6">
-        <Folder className="h-6 w-6 text-primary" />
-        <h1 className="text-3xl font-bold">Gestión de Contenido</h1>
-      </div>
-
-      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="overview">Vista General</TabsTrigger>
-          <TabsTrigger value="categories">Categorías</TabsTrigger>
-          <TabsTrigger value="learning-paths">Rutas de Aprendizaje</TabsTrigger>
-          <TabsTrigger value="templates">Plantillas</TabsTrigger>
-          <TabsTrigger value="editor">Editor</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="overview">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {contentSections.map((section) => (
-              <Card key={section.id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-2">
-                    <section.icon className="h-5 w-5 text-primary" />
-                    <CardTitle>{section.title}</CardTitle>
-                  </div>
-                  <CardDescription>{section.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => {
-                      if (section.id === 'categories') {
-                        setActiveTab('categories');
-                      } else if (section.id === 'learning-paths') {
-                        setActiveTab('learning-paths');
-                      } else if (section.id === 'templates') {
-                        setActiveTab('templates');
-                      } else {
-                        navigate(section.path);
-                      }
-                    }}
-                  >
-                    Gestionar
-                  </Button>
-                </CardContent>
-              </Card>
+    <AdminPageLayout
+      title="Gestión de Contenido"
+      subtitle="Administra todo el contenido de la plataforma"
+    >
+      <Tabs
+        defaultValue="pages"
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="w-full"
+      >
+        <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+          <div className="flex space-x-4">
+            {tabs.map((tab) => (
+              <Button
+                key={tab.value}
+                variant={activeTab === tab.value ? "default" : "outline"}
+                onClick={() => setActiveTab(tab.value)}
+                className="flex items-center"
+                data-tag={tab.dataTag}
+              >
+                {tab.icon}
+                <span className="ml-2">{tab.label}</span>
+              </Button>
             ))}
           </div>
-        </TabsContent>
-        
-        <TabsContent value="categories">
-          <CategoryManagement embeddedView={true} />
-        </TabsContent>
-        
-        <TabsContent value="learning-paths">
-          <Card>
-            <CardHeader>
-              <CardTitle>Rutas de Aprendizaje</CardTitle>
-              <CardDescription>
-                Configura secuencias de cursos para guiar a los estudiantes en su proceso de formación.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4">Las rutas de aprendizaje permiten ordenar cursos en una secuencia lógica para formar competencias completas.</p>
-              <div className="flex justify-center p-6 bg-muted/50 rounded-lg">
-                <Route className="h-12 w-12 text-primary opacity-50" />
-                <p className="ml-4">Funcionalidad en desarrollo</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="templates">
-          <TemplatesPage />
-        </TabsContent>
-        
-        <TabsContent value="editor">
-          <Card>
-            <CardHeader>
-              <CardTitle>Editor de Contenido</CardTitle>
-              <CardDescription>
-                Esta función estará disponible próximamente.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>El editor te permitirá crear y editar contenido con herramientas avanzadas de formateo.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        </div>
+
+        {tabs.map((tab) => (
+          <TabsContent key={tab.value} value={tab.value} className="mt-0">
+            {tab.content}
+          </TabsContent>
+        ))}
       </Tabs>
-    </div>
+
+      {/* Agregar un card con información adicional */}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Consejos de Gestión de Contenido</CardTitle>
+          <CardDescription>
+            Optimiza el contenido de tu plataforma siguiendo estas recomendaciones
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-medium mb-2">Estructura Efectiva</h3>
+              <p className="text-sm text-muted-foreground">
+                Organiza tu contenido en categorías lógicas y mantén una estructura
+                coherente para facilitar la navegación de los usuarios.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-medium mb-2">Optimización para Búsqueda</h3>
+              <p className="text-sm text-muted-foreground">
+                Utiliza palabras clave relevantes en títulos y descripciones para
+                mejorar la visibilidad en los resultados de búsqueda.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </AdminPageLayout>
   );
 };
 

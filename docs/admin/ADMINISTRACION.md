@@ -1,124 +1,73 @@
 
 # Documentación de Administración
 
-## Índice
-
-1. [Introducción](#introducción)
-2. [Panel de Administración](#panel-de-administración)
-3. [Gestión de Características](#gestión-de-características)
-4. [Configuración del Sistema](#configuración-del-sistema)
-5. [Buenas Prácticas](#buenas-prácticas)
-
-## Introducción
-
-Este documento contiene la información necesaria para administrar la plataforma, configurar sus características y mantener el sistema funcionando correctamente.
-
 ## Panel de Administración
 
-El panel de administración es el centro de control principal para la gestión de la plataforma. Este panel está accesible únicamente para usuarios con roles de administrador o sistemas.
+El Panel de Administración es el centro de control unificado para la gestión de la plataforma. Permite gestionar usuarios, cursos, configuraciones del sistema y monitorizar actividades.
 
-### Acceso al Panel
+## Estructura de Navegación
 
-- URL: `/admin`
-- Autenticación requerida: Sí
-- Roles permitidos: `admin`, `sistemas`
+La navegación del panel de administración sigue una estructura jerárquica simple de 2 niveles:
 
-### Secciones Principales
+1. **Nivel 1**: Categorías principales en la barra lateral
+2. **Nivel 2**: Elementos dentro de cada categoría
 
-1. **Dashboard**: Vista general de la actividad del sistema
-2. **Usuarios**: Gestión de cuentas y permisos
-3. **Contenido**: Administración de contenidos y recursos
-4. **Características**: Activación/desactivación de funcionalidades
-5. **Configuración**: Ajustes generales del sistema
-6. **Herramientas**: Utilidades para administradores
+### Estructura Actual
 
-## Gestión de Características
+#### Dashboard
+- Visión general del sistema
+- Métricas clave
+- Accesos rápidos
 
-El sistema implementa un enfoque modular para sus características. Cada funcionalidad puede ser activada o desactivada independientemente, con respeto a las dependencias entre ellas.
+#### Usuarios
+- Lista de Usuarios
+- Roles y Permisos
 
-### Estructura de Características
+#### Cursos
+- Todos los Cursos
+- Categorías
+- Rutas de Aprendizaje
+- Certificados
 
-Las características están organizadas en categorías:
+#### Finanzas
+- Facturación
+- Suscripciones
+- Reportes
 
-1. **Core**: Funcionalidades esenciales del sistema
-   - Modo oscuro
-   - Notificaciones
-   - Analíticas
-   - Feedback
+#### Páginas
+- Gestión de Contenido
+- Editor de Páginas
 
-2. **Onboarding**: Funcionalidades de introducción para usuarios nuevos
-   - Sistema de onboarding
-   - Disparador de onboarding
-   - Inicio automático de onboarding
+#### Configuración
+- General
+- Seguridad
+- Apariencia
+- Características
+- Datos y Respaldos
 
-3. **Aprendizaje**: Funcionalidades relacionadas con cursos
-   - Cursos
-   - Rutas de aprendizaje
-   - Certificados
-   - Evaluaciones
+## Implementación Técnica
 
-4. **Comunidad**: Funcionalidades sociales
-   - Comunidad
-   - Foros
-   - Discusiones grupales
-   - Mensajería
+La navegación administrativa se implementa a través de:
 
-5. **Comercio**: Funcionalidades de comercio electrónico
-   - Comercio
-   - Suscripciones
-   - Cupones
+1. **AdminNavigation**: Componente principal de navegación del panel administrativo
+2. **ConditionalSidebar**: Determina qué tipo de barra lateral mostrar según la ruta
+3. **AdminRoutes**: Define todas las rutas disponibles en el panel administrativo
 
-6. **Administración**: Funcionalidades administrativas
-   - Categorías anidadas
-   - Registros de auditoría
-   - Acceso basado en roles
-   - Flujos de trabajo de contenido
+## Principios de Diseño
 
-### Dependencias
+1. **Simplicidad**: Máximo de 2 niveles de navegación para evitar complejidad
+2. **Contextualidad**: Las tabs aparecen sólo cuando son relevantes para la página actual
+3. **Consistencia**: Diseño uniforme en todas las secciones administrativas
+4. **Respuesta**: Adaptación a diferentes tamaños de pantalla
 
-Algunas características dependen de otras para funcionar correctamente. Por ejemplo:
+## Convenciones de Nomenclatura
 
-- El login social depende del registro de usuarios
-- Las discusiones grupales dependen de la comunidad y los foros
-- Los certificados dependen de los cursos
+Para mantener consistencia, se siguen estas convenciones:
 
-El sistema gestiona automáticamente estas dependencias, impidiendo que se desactive una característica si hay otras que dependen de ella.
-
-## Configuración del Sistema
-
-El sistema puede configurarse a través del panel de configuración en `/admin/settings`.
-
-### Opciones Principales
-
-1. **General**: Configuración básica del sistema
-2. **Apariencia**: Temas, colores y diseño
-3. **Contenido**: Opciones para la gestión de contenido
-4. **Onboarding**: Configuración del proceso de onboarding
-5. **Seguridad**: Opciones de seguridad y autenticación
-6. **Conexiones**: Integraciones con servicios externos
-7. **Datos**: Gestión de datos y copias de seguridad
-
-## Buenas Prácticas
-
-### Para Administradores
-
-1. **Planificar cambios**: Antes de desactivar una característica, evalúe el impacto en los usuarios
-2. **Cambios graduales**: Implemente cambios importantes de forma gradual
-3. **Comunicación**: Informe a los usuarios sobre cambios importantes con antelación
-4. **Monitorización**: Supervise el rendimiento del sistema después de realizar cambios
-5. **Copias de seguridad**: Realice copias de seguridad regulares de la configuración
-
-### Para Desarrolladores
-
-1. **Dependencias**: Mantenga un gráfico actualizado de dependencias entre características
-2. **Documentación**: Documente cada característica nueva y sus dependencias
-3. **Pruebas**: Pruebe exhaustivamente el funcionamiento con diferentes combinaciones de características
-4. **Retrocompatibilidad**: Asegúrese de que los cambios no rompen la compatibilidad con versiones anteriores
+1. Los componentes de administración se encuentran en `src/components/admin/`
+2. Las rutas administrativas siguen el patrón `/admin/[categoria]/[accion]`
+3. Los archivos de configuración están en `src/config/`
 
 ---
 
-## Nota Importante
-
-La documentación antigua ha sido movida a la carpeta `/docs/legacy/`. Esta documentación ya no está vigente y se mantiene únicamente con fines históricos. Por favor, no la utilice como referencia para implementaciones actuales.
-
-Para más información sobre la transición a la nueva estructura, consulte el documento `/docs/sistema-caracteristicas-modular.md`.
+Última actualización: 2023-07-01

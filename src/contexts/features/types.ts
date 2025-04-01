@@ -1,84 +1,53 @@
 
-/**
- * Configuración de características de la plataforma
- */
 export interface FeaturesConfig {
-  // Core
+  // General features
   enableDarkMode: boolean;
   enableNotifications: boolean;
   enableAnalytics: boolean;
   enableFeedback: boolean;
+  
+  // User features
   enableUserRegistration: boolean;
   enableSocialLogin: boolean;
   enablePublicProfiles: boolean;
+
+  // Design system features
+  designSystemEnabled: boolean;
+  enableThemeSwitcher: boolean;
+  enableMultiLanguage: boolean;
+
+  // Content features
+  enableAdvancedEditor: boolean;
+  enableContentReordering: boolean;
+  enableCategoryManagement: boolean;
+  enableLeaderboard: boolean;
+
+  // Data features
+  enableAutoBackups: boolean;
+  enableQueryCache: boolean;
+  enableMaintenanceMode: boolean;
+  enableDatabaseDevMode: boolean;
+
+  // Security features
+  enable2FA: boolean;
+  enableMultipleSessions: boolean;
+  enablePublicRegistration: boolean;
+  requireEmailVerification: boolean;
+  enableActivityLog: boolean;
+
+  // Test features
+  enableTestDataGenerator: boolean;
   
-  // Onboarding
-  enableOnboardingSystem: boolean;
-  showOnboardingTrigger: boolean;
-  autoStartOnboarding: boolean;
-  
-  // Learning
-  enableCourses: boolean;
-  enableLearningPaths: boolean;
-  enableCertificates: boolean;
-  enableAssessments: boolean;
-  
-  // Community
-  enableCommunity: boolean;
-  enableForums: boolean;
-  enableGroupDiscussions: boolean;
-  enableUserMessaging: boolean;
-  
-  // Commerce
-  enableCommerce: boolean;
-  enableSubscriptions: boolean;
-  enableCoupons: boolean;
-  
-  // Administrative
-  enableNestedCategories: boolean;
-  enableAuditLogs: boolean;
-  enableRoleBasedAccess: boolean;
-  enableContentWorkflows: boolean;
+  // Onboarding features
+  enableOnboarding: boolean;
+  enableContextualHelp: boolean;
+  requireOnboarding: boolean;
 }
 
-/**
- * Valores por defecto para configuración de características
- */
-export const defaultFeaturesConfig: FeaturesConfig = {
-  // Core
-  enableDarkMode: true,
-  enableNotifications: true,
-  enableAnalytics: true,
-  enableFeedback: true,
-  enableUserRegistration: true,
-  enableSocialLogin: false,
-  enablePublicProfiles: true,
-  
-  // Onboarding
-  enableOnboardingSystem: true,
-  showOnboardingTrigger: true,
-  autoStartOnboarding: true,
-  
-  // Learning
-  enableCourses: true,
-  enableLearningPaths: true,
-  enableCertificates: true,
-  enableAssessments: true,
-  
-  // Community
-  enableCommunity: true,
-  enableForums: true,
-  enableGroupDiscussions: false,
-  enableUserMessaging: true,
-  
-  // Commerce
-  enableCommerce: true,
-  enableSubscriptions: false,
-  enableCoupons: false,
-  
-  // Administrative
-  enableNestedCategories: true,
-  enableAuditLogs: true,
-  enableRoleBasedAccess: true,
-  enableContentWorkflows: false
-};
+export interface FeaturesContextProps {
+  features: FeaturesConfig;
+  isLoading: boolean;
+  error: Error | null;
+  updateFeatures: (newFeatures: FeaturesConfig) => Promise<void>;
+  reloadFeatures: () => Promise<void>;
+}
