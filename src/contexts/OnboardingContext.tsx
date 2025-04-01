@@ -1,16 +1,18 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useFeature } from '@/hooks/useFeature';
+import { FeaturesConfig, defaultFeaturesConfig } from './features/types';
 
 interface OnboardingStep {
   id: string;
   title: string;
-  content: React.ReactNode;
-  target: string;
+  description: string;
+  element?: string;
   placement?: 'top' | 'right' | 'bottom' | 'left';
+  isComplete?: boolean;
 }
 
-interface OnboardingContextProps {
+export interface OnboardingContextProps {
   steps: OnboardingStep[];
   currentStep: number;
   isOnboardingActive: boolean;
@@ -20,6 +22,10 @@ interface OnboardingContextProps {
   prevStep: () => void;
   jumpToStep: (stepIndex: number) => void;
   setSteps: (steps: OnboardingStep[]) => void;
+  // Add these missing properties for component compatibility
+  featuresConfig: FeaturesConfig;
+  previousStep: () => void; // Alias for prevStep
+  skipOnboarding: () => void; // Alias for endOnboarding
 }
 
 const OnboardingContext = createContext<OnboardingContextProps | undefined>(undefined);
@@ -29,6 +35,9 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [currentStep, setCurrentStep] = useState(0);
   const [isOnboardingActive, setIsOnboardingActive] = useState(false);
   const { isEnabled: autoStartEnabled } = useFeature('autoStartOnboarding');
+  
+  // Add featuresConfig state
+  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(defaultFeaturesConfig);
   
   useEffect(() => {
     // Auto-start onboarding if enabled and has steps
@@ -74,6 +83,10 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
+  // Create aliases for compatibility
+  const previousStep = prevStep;
+  const skipOnboarding = endOnboarding;
+
   return (
     <OnboardingContext.Provider
       value={{
@@ -86,6 +99,10 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         prevStep,
         jumpToStep,
         setSteps,
+        // Add these for component compatibility
+        featuresConfig,
+        previousStep,
+        skipOnboarding,
       }}
     >
       {children}
@@ -100,3 +117,7 @@ export const useOnboarding = () => {
   }
   return context;
 };
+
+// Export FeaturesConfig type for other components to import
+export type { FeaturesConfig };
+export { defaultFeaturesConfig };

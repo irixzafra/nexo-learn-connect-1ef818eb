@@ -88,6 +88,18 @@ export interface FeaturesConfig {
   
   // AI Features
   enableAI: boolean;
+  
+  // Additional properties needed for compatibility with existing files
+  enableDebugMode?: boolean;
+  showSectionTags?: boolean;
+  enableAIFeatures?: boolean;
+  enablePermissionsSystem?: boolean;
+  enableSocial?: boolean;
+  enablePasswordPolicy?: boolean;
+  enableOfflineMode?: boolean;
+  enableUserTracking?: boolean;
+  enableGamification?: boolean;
+  enableCommunity?: boolean;
 }
 
 // Valores predeterminados para todas las características
@@ -141,7 +153,19 @@ export const defaultFeaturesConfig: FeaturesConfig = {
   enableLeaderboard: false,
   
   // AI
-  enableAI: false
+  enableAI: false,
+  
+  // Additional properties needed for compatibility
+  enableDebugMode: false,
+  showSectionTags: false,
+  enableAIFeatures: false,
+  enablePermissionsSystem: true,
+  enableSocial: false,
+  enablePasswordPolicy: true,
+  enableOfflineMode: false,
+  enableUserTracking: false,
+  enableGamification: false,
+  enableCommunity: false
 };
 
 // Definición de contexto para el sistema de características
