@@ -10,12 +10,12 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Loader2 } from 'lucide-react';
-import type { FeaturesConfig } from '@/contexts/features/types';
+import type { FeaturesConfig, ExtendedFeatureId } from '@/contexts/features/types';
 
 export interface FeatureAccordionGroupProps {
   title: string;
   features: {
-    id: keyof FeaturesConfig;
+    id: ExtendedFeatureId;
     name: string;
     description: string;
     isExperimental?: boolean;
@@ -28,11 +28,11 @@ export const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({
 }) => {
   const { featuresConfig, toggleFeature, isLoading } = useFeatures();
 
-  const handleToggle = async (featureId: keyof FeaturesConfig, newValue: boolean) => {
+  const handleToggle = async (featureId: ExtendedFeatureId, newValue: boolean) => {
     await toggleFeature(featureId, newValue);
   };
 
-  const isFeatureEnabled = (featureId: keyof FeaturesConfig): boolean => {
+  const isFeatureEnabled = (featureId: ExtendedFeatureId): boolean => {
     // Check if featuresConfig exists before attempting to access properties
     if (!featuresConfig) {
       return false;

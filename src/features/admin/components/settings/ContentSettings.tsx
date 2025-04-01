@@ -6,10 +6,11 @@ import { Label } from '@/components/ui/label';
 import { FileText, PenSquare } from 'lucide-react';
 import { FeaturesConfig } from '@/contexts/features/types';
 import InlineEditingSettings from '@/components/admin/settings/InlineEditingSettings';
+import { ExtendedFeatureId } from '@/contexts/features/types';
 
 interface ContentSettingsProps {
   featuresConfig: FeaturesConfig;
-  onToggleFeature: (featureId: string, value?: boolean) => Promise<void>;
+  onToggleFeature: (featureId: ExtendedFeatureId, value?: boolean) => Promise<void>;
   isLoading: boolean;
 }
 

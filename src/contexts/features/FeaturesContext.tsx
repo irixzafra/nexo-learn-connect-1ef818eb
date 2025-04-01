@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { CoreFeatureId, ExtendedFeatureId, Feature, FeatureId, FeaturesConfig, FeaturesContextProps } from './types';
@@ -224,7 +223,17 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return undefined;
   };
 
-  // Toggle a feature
+  // Enable a feature - converted to return Promise
+  const enableFeature = async (featureId: FeatureId): Promise<void> => {
+    return toggleFeature(featureId, true);
+  };
+
+  // Disable a feature - converted to return Promise
+  const disableFeature = async (featureId: FeatureId): Promise<void> => {
+    return toggleFeature(featureId, false);
+  };
+
+  // Toggle a feature - already returns Promise
   const toggleFeature = async (featureId: FeatureId, value?: boolean): Promise<void> => {
     try {
       if (featuresConfig.features && Object.keys(featuresConfig.features).includes(featureId as string)) {
@@ -334,8 +343,8 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const value: FeaturesContextProps = {
     features: featuresConfig.features,
     isEnabled,
-    enableFeature: (featureId) => toggleFeature(featureId, true),
-    disableFeature: (featureId) => toggleFeature(featureId, false),
+    enableFeature,
+    disableFeature,
     toggleFeature,
     getFeature,
     featuresConfig,

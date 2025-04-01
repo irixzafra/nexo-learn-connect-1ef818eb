@@ -1,7 +1,7 @@
 
 import { useContext } from 'react';
 import { FeaturesContext } from '@/contexts/features/FeaturesContext';
-import type { FeaturesConfig } from '@/contexts/features/types';
+import type { FeaturesConfig, ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
 
 /**
  * Custom hook to access feature flags
@@ -21,12 +21,12 @@ export const useFeatures = () => {
  * @param featureName The name of the feature to check
  * @returns Boolean indicating if the feature is enabled
  */
-export const useFeature = (featureName: keyof FeaturesConfig): boolean => {
+export const useFeature = (featureName: FeatureId): boolean => {
   const { featuresConfig, isEnabled } = useFeatures();
   
   if (typeof isEnabled === 'function') {
     return isEnabled(featureName);
   }
   
-  return !!featuresConfig?.[featureName];
+  return !!featuresConfig?.[featureName as keyof FeaturesConfig];
 };

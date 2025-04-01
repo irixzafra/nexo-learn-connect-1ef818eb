@@ -11,9 +11,15 @@ import LocalizationSettings from './LocalizationSettings';
 import TestDataSettings from './TestDataSettings';
 import NotificationSettings from './NotificationSettings';
 import { useFeatures } from '@/hooks/useFeatures';
+import { ExtendedFeatureId } from '@/contexts/features/types';
 
 export const SettingsTabs: React.FC = () => {
   const { featuresConfig, toggleFeature, isLoading } = useFeatures();
+
+  // Create a wrapper function that ensures the correct type signature
+  const handleToggleFeature = (featureId: ExtendedFeatureId, value?: boolean) => {
+    return toggleFeature(featureId, value);
+  };
 
   return (
     <Tabs defaultValue="appearance" className="w-full">
@@ -63,7 +69,7 @@ export const SettingsTabs: React.FC = () => {
       <TabsContent value="appearance">
         <AppearanceSettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={toggleFeature}
+          onToggleFeature={handleToggleFeature}
           isLoading={isLoading} 
         />
       </TabsContent>
@@ -71,7 +77,7 @@ export const SettingsTabs: React.FC = () => {
       <TabsContent value="content">
         <ContentSettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={toggleFeature}
+          onToggleFeature={handleToggleFeature}
           isLoading={isLoading} 
         />
       </TabsContent>
@@ -79,7 +85,7 @@ export const SettingsTabs: React.FC = () => {
       <TabsContent value="users">
         <UserManagementSettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={toggleFeature}
+          onToggleFeature={handleToggleFeature}
           isLoading={isLoading} 
         />
       </TabsContent>
@@ -87,7 +93,7 @@ export const SettingsTabs: React.FC = () => {
       <TabsContent value="analytics">
         <AnalyticsSettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={toggleFeature}
+          onToggleFeature={handleToggleFeature}
           isLoading={isLoading} 
         />
       </TabsContent>
@@ -95,7 +101,7 @@ export const SettingsTabs: React.FC = () => {
       <TabsContent value="notifications">
         <NotificationSettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={toggleFeature}
+          onToggleFeature={handleToggleFeature}
           isLoading={isLoading} 
         />
       </TabsContent>
@@ -107,7 +113,7 @@ export const SettingsTabs: React.FC = () => {
       <TabsContent value="localization">
         <LocalizationSettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={toggleFeature}
+          onToggleFeature={handleToggleFeature}
           isLoading={isLoading} 
         />
       </TabsContent>
@@ -115,7 +121,7 @@ export const SettingsTabs: React.FC = () => {
       <TabsContent value="test-data">
         <TestDataSettings 
           featuresConfig={featuresConfig} 
-          onToggleFeature={toggleFeature}
+          onToggleFeature={handleToggleFeature}
           isLoading={isLoading} 
         />
       </TabsContent>
