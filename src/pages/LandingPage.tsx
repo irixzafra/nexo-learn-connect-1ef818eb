@@ -14,7 +14,7 @@ import PartnersSection from '@/components/landing/PartnersSection';
 import StatsSection from '@/components/landing/StatsSection';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Award, Bookmark, CheckCircle, Clock, Smartphone, Cpu, Database, CloudLightning, Lightbulb } from 'lucide-react';
+import { Award, Bookmark, CheckCircle, Clock, Smartphone, Cpu, Database, CloudLightning, Lightbulb, GraduationCap, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useAppNavigation } from '@/utils/routeUtils';
@@ -99,7 +99,28 @@ const LandingPage: React.FC = () => {
             </Card>
           </div>
           
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  LMS Core Avanzado
+                </CardTitle>
+                <CardDescription>En desarrollo</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Mejoras en el sistema central de cursos, lecciones, evaluaciones y seguimiento del progreso del estudiante.
+                </p>
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/docs/modules/core/lms-core-features.md">
+                    <GraduationCap className="h-4 w-4 mr-2" />
+                    Ver características
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+            
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2">
@@ -132,11 +153,18 @@ const LandingPage: React.FC = () => {
           </div>
           
           <div className="mt-12 text-center">
-            <Link to="/docs/ROADMAP_ERP_LMS.md">
-              <Button variant="link" className="text-primary">
-                Ver roadmap completo <Lightbulb className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <div className="space-x-4">
+              <Link to="/docs/ROADMAP_ERP_LMS.md">
+                <Button variant="link" className="text-primary">
+                  Ver roadmap completo <Lightbulb className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/docs/modules/core/lms-core-features.md">
+                <Button variant="link" className="text-primary">
+                  Documentación LMS Core <BookOpen className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
