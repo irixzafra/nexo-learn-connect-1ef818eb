@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Route, ScanSearch, List } from 'lucide-react';
+import { Route, ScanSearch, List, Navigation, Navigation2, Globe } from 'lucide-react';
 
 type NavigationItem = {
   label: string;
@@ -23,6 +23,21 @@ const NavigationDiagram: React.FC = () => {
     { label: 'PlaceholderPage', path: '/placeholder' },
     { label: 'ProfilePage', path: '/profile' },
     { label: 'Register', path: '/register' },
+  ];
+
+  // Rutas administrativas disponibles
+  const adminRoutes: NavigationItem[] = [
+    { label: 'Dashboard', path: '/admin/dashboard' },
+    { label: 'Usuarios', path: '/admin/users' },
+    { label: 'Cursos', path: '/admin/courses' },
+    { label: 'Configuración', path: '/admin/settings' },
+    { label: 'Features', path: '/admin/settings/features' },
+    { label: 'Tema', path: '/admin/settings/theme' },
+    { label: 'Integraciones', path: '/admin/settings/integrations' },
+    { label: 'Roles', path: '/admin/settings/roles' },
+    { label: 'Base de Datos', path: '/admin/settings/database' },
+    { label: 'Datos de Prueba', path: '/admin/test-data' },
+    { label: 'Diagrama de Navegación', path: '/admin/navigation-diagram' },
   ];
 
   return (
@@ -68,20 +83,41 @@ const NavigationDiagram: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-center p-6 bg-muted rounded-md">
-              <div className="flex flex-col items-center gap-2 text-center">
-                <List className="h-10 w-10 text-muted-foreground" />
-                <p className="text-muted-foreground">
-                  Estás en la ruta <strong>/admin/navigation-diagram</strong>
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Este diagrama muestra las rutas ordenadas alfabéticamente
-                </p>
-              </div>
+            <div className="rounded-md border">
+              <ul className="divide-y">
+                {adminRoutes.map((item, index) => (
+                  <li key={index} className="flex justify-between py-3 px-4">
+                    <span className="font-medium">{item.label}</span>
+                    <span className="text-muted-foreground">{item.path}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Navigation className="h-5 w-5 text-primary" />
+            Información de la página actual
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center p-6 bg-muted rounded-md">
+            <div className="flex flex-col items-center gap-2 text-center">
+              <Navigation2 className="h-10 w-10 text-primary" />
+              <p className="text-muted-foreground">
+                Estás en la ruta <strong>/admin/navigation-diagram</strong>
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Esta página proporciona una visión general de todas las rutas disponibles en la aplicación
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
