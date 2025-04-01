@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 import AccessibilityPage from './pages/accessibility/AccessibilityPage';
@@ -10,6 +10,10 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { KeyboardShortcuts } from './components/accessibility/KeyboardShortcuts';
 import BrokenLinkMonitor from './components/BrokenLinkMonitor';
 import SkipLinks from './components/accessibility/SkipLinks';
+
+// Lazy loaded admin components 
+const LazyRouteValidator = React.lazy(() => import('./pages/admin/RouteValidator'));
+const LazyNavigationDiagram = React.lazy(() => import('./pages/admin/NavigationDiagram'));
 
 const App: React.FC = () => {
   return (
@@ -25,8 +29,16 @@ const App: React.FC = () => {
               <Route path="/accessibility" element={<AccessibilityPage />} />
               <Route path="/r/:path" element={<RouteRedirector />} />
               <Route path="/redirect/:path" element={<RouteRedirector />} />
-              <Route path="/admin/route-validator" element={<React.lazy(() => import('./pages/admin/RouteValidator'))} />
-              <Route path="/admin/navigation-diagram" element={<React.lazy(() => import('./pages/admin/NavigationDiagram'))} />
+              <Route path="/admin/route-validator" element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <LazyRouteValidator />
+                </Suspense>
+              } />
+              <Route path="/admin/navigation-diagram" element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <LazyNavigationDiagram />
+                </Suspense>
+              } />
               <Route path="/*" element={<AppRoutes />} />
             </Routes>
           </main>

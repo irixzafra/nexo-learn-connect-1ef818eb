@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavSection from './SidebarNavSection';
 import SidebarNavGroup from './SidebarNavGroup';
@@ -91,15 +91,15 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   const { expanded } = useSidebarState();
   const location = useLocation();
   
-  // Verificamos si estamos en una página de administración
+  // Check if we're on an admin page
   const isAdminPage = location.pathname.startsWith('/admin');
 
-  // Obtener menús filtrados por rol
+  // Get menus filtered by role
   const menus = getNavigationByRole(effectiveRole);
 
-  // Filtrar grupos por rol
+  // Filter groups by role
   const filteredGroups = navigationGroups.filter(group => {
-    // Si estamos en una página de admin y hideOnAdminPages es true, ocultamos ciertos grupos
+    // If we're on an admin page and hideOnAdminPages is true, hide certain groups
     if (isAdminPage && hideOnAdminPages && 
         (group.id === 'general' || group.id === 'learning')) {
       return false;
@@ -114,7 +114,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
     return group.requiredRole === effectiveRole;
   });
 
-  // Actualizar badges para mensajes y notificaciones
+  // Function to enhance items with badges - moved outside the render loop
   const enhanceItemsWithBadges = (items: any[]) => {
     return items.map(item => {
       let badge = undefined;
@@ -127,9 +127,9 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         badge = notificationsCount > 0 ? notificationsCount : undefined;
       }
       
-      // Verificar y corregir enlaces
+      // Verify and correct links
       if (item.path && !item.path.startsWith('http')) {
-        // Asegurarnos de que los enlaces funcionen correctamente
+        // Make sure links work correctly
         const isActive = location.pathname === item.path;
         item.active = isActive;
       }
@@ -141,7 +141,22 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
     });
   };
 
-  // Si no hay grupos después del filtrado, no renderizamos nada
+  // Pre-validate all menu items - do this once outside the mapping of groups
+  const validatedMenus = useMemo(() => {
+    const result: Record<string, any[]> = {};
+    
+    for (const key in menus) {
+      if (Object.prototype.hasOwnProperty.call(menus, key)) {
+        const items = menus[key as keyof typeof menus] || [];
+        const validatedItems = useValidateRoutes(items);
+        result[key] = enhanceItemsWithBadges(validatedItems);
+      }
+    }
+    
+    return result;
+  }, [menus, location.pathname, messagesCount, notificationsCount]);
+
+  // If no groups after filtering, render nothing
   if (filteredGroups.length === 0) {
     return null;
   }
@@ -150,14 +165,11 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
     <div className={`flex-1 overflow-auto ${isCollapsed ? "px-2" : "px-4"}`}>
       <div className="space-y-4 py-4">
         {filteredGroups.map(group => {
-          // Obtener elementos de menú para este grupo
-          const groupItems = menus[group.navKey as keyof typeof menus] || [];
-          // Aplicar validación de rutas y mejorar con badges
-          const validatedItems = useValidateRoutes(groupItems);
-          const enhancedItems = enhanceItemsWithBadges(validatedItems);
+          // Get menu items for this group
+          const groupItems = validatedMenus[group.navKey as keyof typeof validatedMenus] || [];
           
-          // No mostrar grupos sin elementos
-          if (!enhancedItems || enhancedItems.length === 0) {
+          // Don't show groups without items
+          if (!groupItems || groupItems.length === 0) {
             return null;
           }
           
@@ -170,7 +182,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
               id={group.id}
               title={group.title}
               icon={group.icon}
-              items={enhancedItems}
+              items={groupItems}
               isCollapsed={isCollapsed}
               effectiveRole={effectiveRole}
               defaultOpen={isGroupExpanded}
