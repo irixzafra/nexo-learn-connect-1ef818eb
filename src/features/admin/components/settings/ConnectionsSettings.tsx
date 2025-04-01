@@ -9,7 +9,8 @@ import {
   Webhook,
   ExternalLink,
   Loader2,
-  Construction
+  Construction,
+  Database
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -18,9 +19,43 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import SettingsAccordion, { SettingsSection } from '@/components/admin/settings/SettingsAccordion';
 import { Separator } from '@/components/ui/separator';
+import SupabaseConnectionTest from './SupabaseConnectionTest';
 
 const ConnectionsSettings: React.FC = () => {
   const connectionsSections: SettingsSection[] = [
+    {
+      id: "database",
+      title: "Base de Datos",
+      icon: <Database className="h-5 w-5" />,
+      iconColor: "text-indigo-500",
+      content: (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="dbProvider" className="text-left block mb-1">Proveedor de Base de Datos</Label>
+            <Input id="dbProvider" value="Supabase" disabled />
+          </div>
+          
+          <Separator className="my-2" />
+          
+          <div className="space-y-2">
+            <Label className="text-left block mb-1">Estado de la conexión</Label>
+            <SupabaseConnectionTest />
+          </div>
+          
+          <Separator className="my-2" />
+          
+          <div className="flex items-center justify-between py-1">
+            <div className="text-left">
+              <h3 className="text-sm font-medium">Sincronización automática</h3>
+              <p className="text-xs text-muted-foreground">
+                Mantener los datos sincronizados automáticamente
+              </p>
+            </div>
+            <Switch id="dbSync" defaultChecked />
+          </div>
+        </div>
+      )
+    },
     {
       id: "email",
       title: "Correo Electrónico",
