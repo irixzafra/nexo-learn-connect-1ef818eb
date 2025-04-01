@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import { 
@@ -28,6 +28,7 @@ import ContentSettings from '@/features/admin/components/settings/ContentSetting
 import OnboardingSettings from '@/features/admin/components/settings/OnboardingSettings';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { useEditMode } from '@/contexts/EditModeContext';
+import { toast } from 'sonner';
 
 /**
  * Página de configuración del sistema para administradores
