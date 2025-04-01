@@ -11,7 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export const useRoleBasedNavigation = () => {
   const { userRole, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [homePath, setHomePath] = useState<string>('/home');
+  const [homePath, setHomePath] = useState<string>('/dashboard'); // Cambio de /home a /dashboard
 
   useEffect(() => {
     // Determinar la ruta de inicio según el rol
@@ -36,7 +36,7 @@ export const useRoleBasedNavigation = () => {
           setHomePath('/beta/dashboard');
           break;
         default:
-          setHomePath('/home');
+          setHomePath('/dashboard'); // Usando dashboard en lugar de home
       }
     } else {
       setHomePath('/landing');

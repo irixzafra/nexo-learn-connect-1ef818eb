@@ -35,20 +35,22 @@ export const useLogin = () => {
         
         if (profileError) {
           console.error('Error al obtener el perfil del usuario:', profileError);
-          navigate('/home');
+          // Using dashboard instead of home for better user experience
+          navigate('/dashboard');
           return;
         }
         
         const userRole = profileData?.role;
         console.log('User logged in with role:', userRole);
         
-        // Redirect based on role
+        // Redirect based on role but ensure we use routes with sidebar navigation
         if (userRole === 'admin') {
-          navigate('/home');
+          navigate('/admin/dashboard');
         } else if (userRole === 'instructor') {
-          navigate('/instructor/courses');
+          navigate('/instructor/dashboard');
         } else {
-          navigate('/my-courses');
+          // For regular students, go to dashboard instead of /home
+          navigate('/dashboard');
         }
       }
     } catch (error: any) {

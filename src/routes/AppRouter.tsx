@@ -67,7 +67,8 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         } />
         
-        <Route path="/home" element={
+        {/* Dashboard route - Main entry point for authenticated users */}
+        <Route path="/dashboard" element={
           <ProtectedRoute>
             <AppLayout>
               <React.Suspense fallback={<LoadingFallback />}>
@@ -77,7 +78,12 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         } />
         
-        <Route path="/dashboard" element={<Navigate to="/home" replace />} />
+        {/* Home route - Redirect to dashboard */}
+        <Route path="/home" element={
+          <ProtectedRoute>
+            <Navigate to="/dashboard" replace />
+          </ProtectedRoute>
+        } />
         
         {/* Profile route */}
         <Route path="/profile" element={

@@ -1,29 +1,35 @@
 
 import React, { ReactNode } from 'react';
-import { Outlet } from 'react-router-dom';
-import SiteFooter from '@/components/layout/SiteFooter';
 import { Toaster } from 'sonner';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import SidebarNavigation from '@/components/layout/SidebarNavigation';
+import ConditionalHeader from '@/components/layout/header/ConditionalHeader';
 
 interface AppLayoutProps {
   children?: ReactNode;
   showHeader?: boolean;
-  showAdminNavigation?: boolean;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ 
   children, 
-  showHeader = false, // Changed default to false to hide the header
-  showAdminNavigation = false
+  showHeader = true
 }) => {
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header has been removed as requested */}
-      <main className="flex-1">
-        {children || <Outlet />}
-      </main>
-      <SiteFooter />
-      <Toaster position="top-right" />
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <SidebarNavigation />
+        
+        <div className="flex-1 flex flex-col min-h-screen">
+          {showHeader && <ConditionalHeader />}
+          
+          <main className="flex-1 pt-2 px-4 md:px-6 overflow-x-hidden bg-background/70">
+            {children}
+          </main>
+        </div>
+        
+        <Toaster position="top-right" />
+      </div>
+    </SidebarProvider>
   );
 };
 

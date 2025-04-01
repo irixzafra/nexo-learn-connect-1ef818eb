@@ -7,20 +7,36 @@ import { useRoleBasedNavigation } from '@/hooks/useRoleBasedNavigation';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, userRole } = useAuth();
   const { getRoleHomePath } = useRoleBasedNavigation();
   
   useEffect(() => {
     if (!isLoading) {
       if (isAuthenticated) {
-        // Usar nuestra nueva función para obtener la ruta personalizada según el rol
-        const homePath = getRoleHomePath();
+        // Get role-specific home path
+        let homePath = getRoleHomePath();
+        
+        // Make sure we're redirecting to a page with the sidebar
+        if (homePath === '/home') {
+          homePath = '/dashboard';
+        }
+        
+        // Check for admin users
+        if (userRole === 'admin' && !homePath.startsWith('/admin')) {
+          homePath = '/admin/dashboard';
+        }
+        
+        // Check for instructor users
+        if (userRole === 'instructor' && !homePath.startsWith('/instructor')) {
+          homePath = '/instructor/dashboard';
+        }
+        
+        console.log('Redirecting authenticated user to:', homePath);
         navigate(homePath);
       } else {
-        // Si no está autenticado, redirigir a la página configurada
-        // Obtener configuración desde localStorage o usar valor por defecto
+        // If not authenticated, redirect to landing page
         const settings = localStorage.getItem('nexo_settings');
-        let defaultLandingUrl = '/landing'; // Valor por defecto
+        let defaultLandingUrl = '/landing';
         
         if (settings) {
           try {
@@ -34,9 +50,9 @@ const Index = () => {
         navigate(defaultLandingUrl);
       }
     }
-  }, [navigate, isAuthenticated, isLoading, getRoleHomePath]);
+  }, [navigate, isAuthenticated, isLoading, getRoleHomePath, userRole]);
   
-  // Mostrar un estado de carga mejorado mientras se determina el estado de autenticación
+  // Loading state
   if (isLoading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-background">
