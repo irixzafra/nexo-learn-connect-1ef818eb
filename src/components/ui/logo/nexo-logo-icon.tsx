@@ -15,11 +15,11 @@ export const NexoLogoIcon: React.FC<NexoLogoIconProps> = ({
   animate = true 
 }) => {
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative aspect-square", className)}>
       {/* Background pulse effect */}
       {animate && (
         <motion.div 
-          className="absolute rounded-full bg-primary/20 opacity-70"
+          className="absolute inset-0 rounded-full bg-primary/20 opacity-70"
           animate={{
             scale: [1, 1.1, 1],
             opacity: [0.5, 0.7, 0.5]
@@ -29,7 +29,6 @@ export const NexoLogoIcon: React.FC<NexoLogoIconProps> = ({
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          style={{ width: "120%", height: "120%", top: "-10%", left: "-10%" }}
         />
       )}
       

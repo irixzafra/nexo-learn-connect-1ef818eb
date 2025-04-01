@@ -2,9 +2,9 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCoursesCatalog } from '@/features/courses/hooks/useCoursesCatalog';
+import PublicLayout from '@/layouts/PublicLayout';
 
 // Componentes de la landing
-import LandingNav from '@/components/LandingNav';
 import LandingHero from '@/components/landing/LandingHero';
 import FeaturedCoursesSection from '@/components/landing/FeaturedCoursesSection';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
@@ -21,34 +21,33 @@ const LandingPage: React.FC = () => {
   const topCourses = featuredCourses?.slice(0, 6) || [];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <LandingNav />
-      
-      {/* Hero Section */}
-      <LandingHero isAuthenticated={isAuthenticated} />
-      
-      {/* Estadísticas de la plataforma */}
-      <StatsSection />
-      
-      {/* Sección de características */}
-      <FeatureGrid />
-      
-      {/* Cursos destacados */}
-      <FeaturedCoursesSection 
-        courses={topCourses} 
-        isLoading={isLoading} 
-      />
-      
-      {/* Sección de partners y confianza */}
-      <PartnersSection />
-      
-      {/* Testimonios */}
-      <TestimonialsSection />
-      
-      {/* Call to Action */}
-      <CallToActionSection isAuthenticated={isAuthenticated} />
-    </div>
+    <PublicLayout>
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <LandingHero isAuthenticated={isAuthenticated} />
+        
+        {/* Estadísticas de la plataforma */}
+        <StatsSection />
+        
+        {/* Sección de características */}
+        <FeatureGrid />
+        
+        {/* Cursos destacados */}
+        <FeaturedCoursesSection 
+          courses={topCourses} 
+          isLoading={isLoading} 
+        />
+        
+        {/* Sección de partners y confianza */}
+        <PartnersSection />
+        
+        {/* Testimonios */}
+        <TestimonialsSection />
+        
+        {/* Call to Action */}
+        <CallToActionSection isAuthenticated={isAuthenticated} />
+      </div>
+    </PublicLayout>
   );
 };
 

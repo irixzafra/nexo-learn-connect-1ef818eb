@@ -1,7 +1,7 @@
 
 import React, { ReactNode } from 'react';
 import LandingNav from '@/components/LandingNav';
-import LandingFooter from '@/components/landing/LandingFooter';
+import MinimalistFooter from '@/components/landing/MinimalistFooter';
 import { useAuth } from '@/contexts/AuthContext';
 import { Toaster } from '@/components/ui/toaster';
 import SectionTag from '@/components/layout/SectionTag';
@@ -39,7 +39,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({
       {!hideFooter && (
         <footer className="relative w-full">
           <SectionTag name="Footer" />
-          <LandingFooter />
+          <MinimalistFooter />
         </footer>
       )}
       
