@@ -1,435 +1,729 @@
-
-import React, { useState } from 'react';
-import { PageNavigationCard } from './PageNavigationCard';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState, useEffect } from 'react';
+import { Grid, LayoutList, Search, Filter, X, Database, Info } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Search, Filter, Monitor, Database, FileBadge, GraduationCap, Users, BarChart4, Home, Folder } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { PageNavigationCard, PageStatus } from '@/features/admin/components/settings/PageNavigationCard';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Badge } from '@/components/ui/badge';
 
-// Define the page data structure
-interface PageData {
-  title: string;
-  path: string;
-  description: string;
-  status: 'active' | 'development' | 'not-implemented' | 'duplicate' | 'deprecated';
-  category: string;
-  importance: 'high' | 'medium' | 'low';
-  image?: string;
+interface PageFilter {
+  status?: PageStatus;
+  category?: string;
+  searchTerm?: string;
 }
 
-// Import all the system pages from our documentation
-const systemPages: PageData[] = [
-  // Páginas Públicas
+const initialPages = [
   {
-    title: "Landing",
-    path: "/landing",
-    description: "Página principal para visitantes",
-    status: "active",
-    category: "Marketing",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?q=80&w=2070&auto=format&fit=crop"
+    title: 'Dashboard',
+    path: '/dashboard',
+    description: 'Página principal con resumen de actividad',
+    status: 'active',
+    category: 'General',
+    importance: 'high'
   },
   {
-    title: "Login",
-    path: "/auth/login",
-    description: "Inicio de sesión",
-    status: "active",
-    category: "Autenticación",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=2070&auto=format&fit=crop"
+    title: 'Cursos',
+    path: '/courses',
+    description: 'Listado de cursos disponibles',
+    status: 'active',
+    category: 'Learning',
+    importance: 'high'
   },
   {
-    title: "Registro",
-    path: "/auth/register",
-    description: "Registro de usuario",
-    status: "active",
-    category: "Autenticación",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?q=80&w=2070&auto=format&fit=crop"
+    title: 'Mi Curso',
+    path: '/my-courses',
+    description: 'Cursos en los que el usuario está inscrito',
+    status: 'active',
+    category: 'Learning',
+    importance: 'high'
   },
   {
-    title: "Sobre Nosotros",
-    path: "/about-us",
-    description: "Información institucional",
-    status: "active",
-    category: "Marketing",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
+    title: 'Comunidad',
+    path: '/community',
+    description: 'Foros y grupos de discusión',
+    status: 'active',
+    category: 'Community'
   },
   {
-    title: "Becas",
-    path: "/scholarships",
-    description: "Información sobre becas",
-    status: "active",
-    category: "Marketing",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=2070&auto=format&fit=crop"
+    title: 'Mensajes',
+    path: '/messages',
+    description: 'Sistema de mensajería interna',
+    status: 'active',
+    category: 'Community'
   },
   {
-    title: "Contacto",
-    path: "/contact",
-    description: "Formulario de contacto",
-    status: "development",
-    category: "Marketing",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1577563908411-5077b6dc7624?q=80&w=2070&auto=format&fit=crop"
+    title: 'Calendario',
+    path: '/calendar',
+    description: 'Calendario personal del usuario',
+    status: 'active',
+    category: 'General'
   },
   {
-    title: "Explorar Cursos",
-    path: "/courses",
-    description: "Catálogo de cursos disponibles",
-    status: "active",
-    category: "Cursos",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?q=80&w=2070&auto=format&fit=crop"
+    title: 'Pagos',
+    path: '/billing',
+    description: 'Información de facturación y pagos',
+    status: 'active',
+    category: 'General'
   },
   {
-    title: "Detalle de Curso",
-    path: "/courses/:id",
-    description: "Vista detallada de un curso",
-    status: "active",
-    category: "Cursos",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=2071&auto=format&fit=crop"
-  },
-  
-  // Páginas de Estudiante
-  {
-    title: "Dashboard Estudiante",
-    path: "/home",
-    description: "Panel principal del estudiante",
-    status: "active",
-    category: "Dashboard",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1543286386-713bdd548da4?q=80&w=2070&auto=format&fit=crop"
+    title: 'Configuración',
+    path: '/settings',
+    description: 'Opciones de configuración del usuario',
+    status: 'active',
+    category: 'General'
   },
   {
-    title: "Mis Cursos",
-    path: "/my-courses",
-    description: "Lista de cursos inscritos",
-    status: "active",
-    category: "Cursos",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1606761568499-6d2451b23c66?q=80&w=2074&auto=format&fit=crop"
+    title: 'Admin Dashboard',
+    path: '/admin/dashboard',
+    description: 'Panel de administración del sistema',
+    status: 'active',
+    category: 'Admin',
+    importance: 'high'
   },
   {
-    title: "Aprendizaje",
-    path: "/courses/:id/learn",
-    description: "Interfaz de aprendizaje",
-    status: "active",
-    category: "Cursos",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1456406644174-8ddd4cd52a06?q=80&w=2088&auto=format&fit=crop"
+    title: 'Gestión de Cursos',
+    path: '/admin/courses',
+    description: 'Administración de cursos y categorías',
+    status: 'development',
+    category: 'Admin'
   },
   {
-    title: "Lección",
-    path: "/courses/:id/learn/:lessonId",
-    description: "Vista de lección específica",
-    status: "active",
-    category: "Cursos",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1485546784815-e380f3297414?q=80&w=2069&auto=format&fit=crop"
+    title: 'Gestión de Usuarios',
+    path: '/admin/users',
+    description: 'Administración de usuarios y roles',
+    status: 'development',
+    category: 'Admin'
   },
   {
-    title: "Notas",
-    path: "/courses/:id/notes",
-    description: "Notas del estudiante",
-    status: "development",
-    category: "Cursos",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=2074&auto=format&fit=crop"
-  },
-  
-  // Páginas de Instructor
-  {
-    title: "Dashboard Instructor",
-    path: "/instructor/dashboard",
-    description: "Panel principal del instructor",
-    status: "development",
-    category: "Dashboard",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?q=80&w=2070&auto=format&fit=crop"
+    title: 'Gestión de Páginas',
+    path: '/admin/pages',
+    description: 'Administración de páginas del sistema',
+    status: 'development',
+    category: 'Admin'
   },
   {
-    title: "Mis Cursos (Instructor)",
-    path: "/instructor/courses",
-    description: "Gestión de cursos",
-    status: "development",
-    category: "Cursos",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1588072432836-e10032774350?q=80&w=2072&auto=format&fit=crop"
+    title: 'Ajustes del Sistema',
+    path: '/admin/settings',
+    description: 'Configuración general del sistema',
+    status: 'development',
+    category: 'Admin'
   },
   {
-    title: "Crear Curso",
-    path: "/instructor/courses/create",
-    description: "Creación de nuevo curso",
-    status: "development",
-    category: "Cursos",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1535982330050-f1c2fb79ff78?q=80&w=2074&auto=format&fit=crop"
-  },
-  
-  // Páginas de Administración
-  {
-    title: "Dashboard Admin",
-    path: "/admin/dashboard",
-    description: "Panel administrativo",
-    status: "active",
-    category: "Dashboard",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
+    title: 'Panel de Instructor',
+    path: '/instructor/dashboard',
+    description: 'Panel para instructores',
+    status: 'active',
+    category: 'Instructor',
+    importance: 'high'
   },
   {
-    title: "Usuarios",
-    path: "/admin/users",
-    description: "Gestión de usuarios",
-    status: "development",
-    category: "Usuarios",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076&auto=format&fit=crop"
+    title: 'Mis Cursos (Instructor)',
+    path: '/instructor/courses',
+    description: 'Cursos gestionados por el instructor',
+    status: 'active',
+    category: 'Instructor'
   },
   {
-    title: "Roles",
-    path: "/admin/roles",
-    description: "Gestión de roles y permisos",
-    status: "development",
-    category: "Seguridad",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?q=80&w=2070&auto=format&fit=crop"
+    title: 'Mensajes (Instructor)',
+    path: '/instructor/messages',
+    description: 'Mensajes del instructor',
+    status: 'active',
+    category: 'Instructor'
   },
   {
-    title: "Cursos (Admin)",
-    path: "/admin/courses",
-    description: "Administración de cursos",
-    status: "duplicate",
-    category: "Cursos",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"
+    title: 'Crear Curso',
+    path: '/instructor/courses/create',
+    description: 'Formulario para crear un nuevo curso',
+    status: 'not-implemented',
+    category: 'Instructor'
   },
   {
-    title: "Categorías",
-    path: "/admin/categories",
-    description: "Gestión de categorías",
-    status: "development",
-    category: "Contenido",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1494783367193-149034c05e8f?q=80&w=2070&auto=format&fit=crop"
+    title: 'Editar Curso',
+    path: '/instructor/courses/:courseId/edit',
+    description: 'Formulario para editar un curso existente',
+    status: 'not-implemented',
+    category: 'Instructor'
   },
   {
-    title: "Analíticas",
-    path: "/admin/analytics",
-    description: "Analíticas del sistema",
-    status: "development",
-    category: "Reportes",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop"
+    title: 'Lecciones',
+    path: '/instructor/courses/:courseId/lessons',
+    description: 'Gestión de lecciones del curso',
+    status: 'not-implemented',
+    category: 'Instructor'
   },
   {
-    title: "Contenido",
-    path: "/admin/content",
-    description: "Gestión de contenido",
-    status: "development",
-    category: "Contenido",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1558655146-605d86ed13b6?q=80&w=2070&auto=format&fit=crop"
+    title: 'Estudiantes',
+    path: '/instructor/courses/:courseId/students',
+    description: 'Listado de estudiantes inscritos en el curso',
+    status: 'not-implemented',
+    category: 'Instructor'
   },
   {
-    title: "Páginas",
-    path: "/admin/pages",
-    description: "Gestión de páginas",
-    status: "development",
-    category: "Contenido",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?q=80&w=2073&auto=format&fit=crop"
+    title: 'Vista Diseño (En construcción)',
+    path: '/admin/pages/design-view',
+    description: 'Vista de diseño de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
   },
   {
-    title: "Configuración",
-    path: "/admin/settings",
-    description: "Configuración del sistema",
-    status: "active",
-    category: "Sistema",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=2080&auto=format&fit=crop"
+    title: 'Vista Mapa (En construcción)',
+    path: '/admin/pages/map-view',
+    description: 'Vista de mapa de navegación (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
   },
   {
-    title: "Funcionalidades",
-    path: "/admin/settings/features",
-    description: "Gestión de características",
-    status: "development",
-    category: "Sistema",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1581089781785-603411fa81e5?q=80&w=2070&auto=format&fit=crop"
+    title: 'Vista Lista (En construcción)',
+    path: '/admin/pages/list-view',
+    description: 'Vista de lista de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
   },
   {
-    title: "Integraciones",
-    path: "/admin/settings/integrations",
-    description: "Gestión de integraciones",
-    status: "development",
-    category: "Sistema",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1490971128424-a756e7eb20a3?q=80&w=2013&auto=format&fit=crop"
+    title: 'Vista Tabla (En construcción)',
+    path: '/admin/pages/table-view',
+    description: 'Vista de tabla de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
   },
   {
-    title: "Datos",
-    path: "/admin/settings/data",
-    description: "Gestión de datos",
-    status: "development",
-    category: "Sistema",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1503252947848-7338d3f92f31?q=80&w=2031&auto=format&fit=crop"
+    title: 'Vista Arbol (En construcción)',
+    path: '/admin/pages/tree-view',
+    description: 'Vista de árbol de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
   },
   {
-    title: "Diseño",
-    path: "/admin/settings/design",
-    description: "Sistema de diseño",
-    status: "development",
-    category: "Diseño",
-    importance: "medium",
-    image: "https://images.unsplash.com/photo-1533073526757-2c8ca1df9f1c?q=80&w=2070&auto=format&fit=crop"
+    title: 'Vista Diagrama (En construcción)',
+    path: '/admin/pages/diagram-view',
+    description: 'Vista de diagrama de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
   },
   {
-    title: "Roles y Permisos",
-    path: "/admin/settings/roles",
-    description: "Gestión de roles y permisos",
-    status: "active",
-    category: "Seguridad",
-    importance: "high",
-    image: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=2070&auto=format&fit=crop"
+    title: 'Vista Jerárquica (En construcción)',
+    path: '/admin/pages/hierarchy-view',
+    description: 'Vista jerárquica de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
   },
-  // Añade aquí más páginas según la documentación
+  {
+    title: 'Vista Organigrama (En construcción)',
+    path: '/admin/pages/orgchart-view',
+    description: 'Vista de organigrama de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Grafo (En construcción)',
+    path: '/admin/pages/graph-view',
+    description: 'Vista de grafo de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Red (En construcción)',
+    path: '/admin/pages/network-view',
+    description: 'Vista de red de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Radial (En construcción)',
+    path: '/admin/pages/radial-view',
+    description: 'Vista radial de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Circular (En construcción)',
+    path: '/admin/pages/circular-view',
+    description: 'Vista circular de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Anillo (En construcción)',
+    path: '/admin/pages/ring-view',
+    description: 'Vista de anillo de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Espiral (En construcción)',
+    path: '/admin/pages/spiral-view',
+    description: 'Vista espiral de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Timeline (En construcción)',
+    path: '/admin/pages/timeline-view',
+    description: 'Vista de línea de tiempo de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Gantt (En construcción)',
+    path: '/admin/pages/gantt-view',
+    description: 'Vista de Gantt de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Kanban (En construcción)',
+    path: '/admin/pages/kanban-view',
+    description: 'Vista de Kanban de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Tablero (En construcción)',
+    path: '/admin/pages/dashboard-view',
+    description: 'Vista de tablero de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Matriz (En construcción)',
+    path: '/admin/pages/matrix-view',
+    description: 'Vista de matriz de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Mapa Mental (En construcción)',
+    path: '/admin/pages/mindmap-view',
+    description: 'Vista de mapa mental de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Flujo (En construcción)',
+    path: '/admin/pages/flow-view',
+    description: 'Vista de flujo de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Secuencia (En construcción)',
+    path: '/admin/pages/sequence-view',
+    description: 'Vista de secuencia de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Proceso (En construcción)',
+    path: '/admin/pages/process-view',
+    description: 'Vista de proceso de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Embudo (En construcción)',
+    path: '/admin/pages/funnel-view',
+    description: 'Vista de embudo de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Pirámide (En construcción)',
+    path: '/admin/pages/pyramid-view',
+    description: 'Vista de pirámide de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Iceberg (En construcción)',
+    path: '/admin/pages/iceberg-view',
+    description: 'Vista de iceberg de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Diagrama de Venn (En construcción)',
+    path: '/admin/pages/venn-view',
+    description: 'Vista de diagrama de Venn de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Mapa de Calor (En construcción)',
+    path: '/admin/pages/heatmap-view',
+    description: 'Vista de mapa de calor de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Treemap (En construcción)',
+    path: '/admin/pages/treemap-view',
+    description: 'Vista de treemap de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Sunburst (En construcción)',
+    path: '/admin/pages/sunburst-view',
+    description: 'Vista de sunburst de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Icicle (En construcción)',
+    path: '/admin/pages/icicle-view',
+    description: 'Vista de icicle de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Voronoi (En construcción)',
+    path: '/admin/pages/voronoi-view',
+    description: 'Vista de Voronoi de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Marimekko (En construcción)',
+    path: '/admin/pages/marimekko-view',
+    description: 'Vista de Marimekko de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Sankey (En construcción)',
+    path: '/admin/pages/sankey-view',
+    description: 'Vista de Sankey de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Chord (En construcción)',
+    path: '/admin/pages/chord-view',
+    description: 'Vista de Chord de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Network3D (En construcción)',
+    path: '/admin/pages/network3d-view',
+    description: 'Vista de red 3D de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Globo (En construcción)',
+    path: '/admin/pages/globe-view',
+    description: 'Vista de globo de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Mapa 3D (En construcción)',
+    path: '/admin/pages/map3d-view',
+    description: 'Vista de mapa 3D de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Realidad Aumentada (En construcción)',
+    path: '/admin/pages/ar-view',
+    description: 'Vista de realidad aumentada de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Realidad Virtual (En construcción)',
+    path: '/admin/pages/vr-view',
+    description: 'Vista de realidad virtual de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Holográfica (En construcción)',
+    path: '/admin/pages/holographic-view',
+    description: 'Vista holográfica de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Interactiva (En construcción)',
+    path: '/admin/pages/interactive-view',
+    description: 'Vista interactiva de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Dinámica (En construcción)',
+    path: '/admin/pages/dynamic-view',
+    description: 'Vista dinámica de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Adaptativa (En construcción)',
+    path: '/admin/pages/adaptive-view',
+    description: 'Vista adaptativa de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Personalizable (En construcción)',
+    path: '/admin/pages/customizable-view',
+    description: 'Vista personalizable de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Inteligente (En construcción)',
+    path: '/admin/pages/intelligent-view',
+    description: 'Vista inteligente de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Predictiva (En construcción)',
+    path: '/admin/pages/predictive-view',
+    description: 'Vista predictiva de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Colaborativa (En construcción)',
+    path: '/admin/pages/collaborative-view',
+    description: 'Vista colaborativa de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Social (En construcción)',
+    path: '/admin/pages/social-view',
+    description: 'Vista social de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Gamificada (En construcción)',
+    path: '/admin/pages/gamified-view',
+    description: 'Vista gamificada de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Inmersiva (En construcción)',
+    path: '/admin/pages/immersive-view',
+    description: 'Vista inmersiva de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Sensorial (En construcción)',
+    path: '/admin/pages/sensory-view',
+    description: 'Vista sensorial de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Emocional (En construcción)',
+    path: '/admin/pages/emotional-view',
+    description: 'Vista emocional de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Espiritual (En construcción)',
+    path: '/admin/pages/spiritual-view',
+    description: 'Vista espiritual de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Trascendental (En construcción)',
+    path: '/admin/pages/transcendental-view',
+    description: 'Vista trascendental de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Cósmica (En construcción)',
+    path: '/admin/pages/cosmic-view',
+    description: 'Vista cósmica de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  },
+  {
+    title: 'Vista Universal (En construcción)',
+    path: '/admin/pages/universal-view',
+    description: 'Vista universal de páginas (en construcción)',
+    status: 'not-implemented',
+    category: 'Admin'
+  }
 ];
 
-// Get all unique categories
-const allCategories = [...new Set(systemPages.map(page => page.category))];
-
 export const SystemPagesNavigation: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [pages, setPages] = useState(initialPages);
+  const [filter, setFilter] = useState<PageFilter>({});
+  const [isGridView, setIsGridView] = useState(true);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
-  // Filter pages based on search, category, and status
-  const filteredPages = systemPages.filter(page => {
-    const matchesSearch = page.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          page.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || page.category === selectedCategory;
-    const matchesStatus = selectedStatus === 'all' || page.status === selectedStatus;
-    
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
+  useEffect(() => {
+    applyFilters();
+  }, [filter]);
 
-  // Group pages by category
-  const pagesByCategory = allCategories.reduce<Record<string, PageData[]>>((acc, category) => {
-    acc[category] = filteredPages.filter(page => page.category === category);
-    return acc;
-  }, {});
+  const handleSearch = (term: string) => {
+    setFilter(prev => ({ ...prev, searchTerm: term }));
+  };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'Marketing': return <Home className="h-4 w-4" />;
-      case 'Autenticación': return <Users className="h-4 w-4" />;
-      case 'Cursos': return <GraduationCap className="h-4 w-4" />;
-      case 'Dashboard': return <Monitor className="h-4 w-4" />;
-      case 'Contenido': return <FileBadge className="h-4 w-4" />;
-      case 'Sistema': return <Database className="h-4 w-4" />;
-      case 'Reportes': return <BarChart4 className="h-4 w-4" />;
-      default: return <Folder className="h-4 w-4" />;
+  const handleStatusFilter = (status?: PageStatus) => {
+    setFilter(prev => ({ ...prev, status: status }));
+  };
+
+  const handleCategoryFilter = (category?: string) => {
+    setFilter(prev => ({ ...prev, category: category }));
+  };
+
+  const clearFilters = () => {
+    setFilter({});
+  };
+
+  const applyFilters = () => {
+    let filteredPages = initialPages;
+
+    if (filter.searchTerm) {
+      filteredPages = filteredPages.filter(page =>
+        page.title.toLowerCase().includes(filter.searchTerm!.toLowerCase()) ||
+        (page.description && page.description.toLowerCase().includes(filter.searchTerm!.toLowerCase()))
+      );
+    }
+
+    if (filter.status) {
+      filteredPages = filteredPages.filter(page => page.status === filter.status);
+    }
+
+    if (filter.category) {
+      filteredPages = filteredPages.filter(page => page.category === filter.category);
+    }
+
+    setPages(filteredPages);
+  };
+
+  const toggleCategory = (category: string) => {
+    if (expandedCategories.includes(category)) {
+      setExpandedCategories(prev => prev.filter(c => c !== category));
+    } else {
+      setExpandedCategories(prev => [...prev, category]);
     }
   };
 
+  const getUniqueCategories = () => {
+    return [...new Set(initialPages.map(page => page.category))];
+  };
+
+  const renderFilters = () => (
+    <Card className="mb-4">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4" />
+          <p className="text-sm font-medium">Filtros</p>
+        </div>
+        <Button variant="ghost" size="sm" onClick={clearFilters}>
+          <X className="h-3 w-3 mr-2" />
+          Limpiar
+        </Button>
+      </CardHeader>
+      <CardContent className="pl-2">
+        <Accordion type="multiple" className="w-full">
+          <AccordionItem value="status">
+            <AccordionTrigger>Estado</AccordionTrigger>
+            <AccordionContent>
+              <div className="grid gap-2">
+                <Button variant="outline" size="sm" onClick={() => handleStatusFilter(undefined)} className={filter.status === undefined ? "bg-accent" : ""}>Todos</Button>
+                <Button variant="outline" size="sm" onClick={() => handleStatusFilter('active')} className={filter.status === 'active' ? "bg-accent" : ""}>Activo</Button>
+                <Button variant="outline" size="sm" onClick={() => handleStatusFilter('development')} className={filter.status === 'development' ? "bg-accent" : ""}>En Desarrollo</Button>
+                <Button variant="outline" size="sm" onClick={() => handleStatusFilter('not-implemented')} className={filter.status === 'not-implemented' ? "bg-accent" : ""}>No Implementado</Button>
+                <Button variant="outline" size="sm" onClick={() => handleStatusFilter('duplicate')} className={filter.status === 'duplicate' ? "bg-accent" : ""}>Duplicado</Button>
+                <Button variant="outline" size="sm" onClick={() => handleStatusFilter('deprecated')} className={filter.status === 'deprecated' ? "bg-accent" : ""}>Deprecado</Button>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="category">
+            <AccordionTrigger>Categoría</AccordionTrigger>
+            <AccordionContent>
+              <div className="grid gap-2">
+                <Button variant="outline" size="sm" onClick={() => handleCategoryFilter(undefined)} className={filter.category === undefined ? "bg-accent" : ""}>Todas</Button>
+                {getUniqueCategories().map(category => (
+                  <Button key={category} variant="outline" size="sm" onClick={() => handleCategoryFilter(category)} className={filter.category === category ? "bg-accent" : ""}>{category}</Button>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </CardContent>
+    </Card>
+  );
+
+  const renderPages = () => (
+    <div className={isGridView ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3" : "space-y-4"}>
+      {pages.map(page => (
+        <PageNavigationCard key={page.path} {...page} />
+      ))}
+    </div>
+  );
+
+  const renderList = () => (
+    <div className="space-y-3">
+      {getUniqueCategories().map(category => (
+        <Accordion key={category} type="single" collapsible>
+          <AccordionItem value={category}>
+            <AccordionTrigger onClick={() => toggleCategory(category)} className="text-left">
+              <div className="flex items-center justify-between w-full">
+                {category}
+                <Badge variant="secondary">{pages.filter(page => page.category === category).length}</Badge>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-2">
+                {pages.filter(page => page.category === category).map(page => (
+                  <PageNavigationCard key={page.path} {...page} />
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      ))}
+    </div>
+  );
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Buscar páginas..."
-              className="w-full pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Search className="h-5 w-5 text-muted-foreground" />
+            <Input type="search" placeholder="Buscar página..." className="max-w-sm" onChange={(e) => handleSearch(e.target.value)} />
           </div>
-        </div>
-        <div className="flex gap-2">
-          <div className="w-[180px]">
-            <select
-              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="all">Todas las categorías</option>
-              {allCategories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
+          <ToggleGroup defaultValue={isGridView ? "grid" : "list"} onValueChange={(value) => setIsGridView(value === "grid")}>
+            <ToggleGroupItem value="grid" aria-label="Grid">
+              <Grid className="h-4 w-4" />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="list" aria-label="List">
+              <LayoutList className="h-4 w-4" />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </CardHeader>
+        <CardContent className="grid gap-4 md:grid-cols-[200px_1fr]">
+          <div className="hidden md:block">{renderFilters()}</div>
+          <div>
+            {isGridView ? renderPages() : renderList()}
           </div>
-          <div className="w-[180px]">
-            <select
-              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-            >
-              <option value="all">Todos los estados</option>
-              <option value="active">✅ Activas</option>
-              <option value="development">🚧 En desarrollo</option>
-              <option value="not-implemented">❌ No implementadas</option>
-              <option value="duplicate">🔄 Duplicadas</option>
-              <option value="deprecated">⚠️ Deprecadas</option>
-            </select>
-          </div>
-          <Button variant="outline" size="icon" title="Filtros adicionales">
-            <Filter className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      <Tabs defaultValue="grid" className="w-full">
-        <div className="flex justify-between items-center">
-          <p className="text-sm text-muted-foreground">
-            {filteredPages.length} páginas encontradas
-          </p>
-          <TabsList>
-            <TabsTrigger value="grid">Cuadrícula</TabsTrigger>
-            <TabsTrigger value="categories">Por Categorías</TabsTrigger>
-          </TabsList>
-        </div>
-
-        <TabsContent value="grid" className="mt-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredPages.map((page, index) => (
-              <PageNavigationCard
-                key={`${page.path}-${index}`}
-                {...page}
-              />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="categories" className="mt-6">
-          <div className="space-y-8">
-            {Object.entries(pagesByCategory)
-              .filter(([_, pages]) => pages.length > 0)
-              .map(([category, pages]) => (
-                <div key={category}>
-                  <div className="flex items-center gap-2 mb-4">
-                    {getCategoryIcon(category)}
-                    <h3 className="text-lg font-medium">{category}</h3>
-                    <Badge variant="outline" className="ml-2">{pages.length}</Badge>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {pages.map((page, index) => (
-                      <PageNavigationCard
-                        key={`${category}-${page.path}-${index}`}
-                        {...page}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+        </CardContent>
+        <CardFooter className="flex justify-end">
+          <Info className="h-4 w-4 mr-2" />
+          Total: {pages.length} páginas
+        </CardFooter>
+      </Card>
     </div>
   );
 };

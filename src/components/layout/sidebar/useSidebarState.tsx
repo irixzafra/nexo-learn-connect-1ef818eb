@@ -12,18 +12,21 @@ export type SidebarGroups = {
 };
 
 export const useSidebarState = () => {
+  // Default state with all groups closed
+  const defaultState: SidebarGroups = {
+    general: false,
+    learning: false,
+    community: false,
+    administration: false,
+    instructor: false,
+    account: false,
+    sistemas: false
+  };
+  
   // Retrieve previous state from localStorage or use defaults
   const getSavedState = (): SidebarGroups => {
     const savedState = localStorage.getItem('sidebarGroups');
-    return savedState ? JSON.parse(savedState) : {
-      general: true,
-      learning: true,
-      community: false,
-      administration: true,
-      instructor: true,
-      account: true,
-      sistemas: true // Changed from infrastructure to sistemas
-    };
+    return savedState ? JSON.parse(savedState) : defaultState;
   };
   
   const [expanded, setExpanded] = useState<SidebarGroups>(getSavedState());

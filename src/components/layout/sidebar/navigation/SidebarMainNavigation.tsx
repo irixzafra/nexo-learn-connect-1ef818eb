@@ -4,6 +4,7 @@ import { UserRoleType } from '@/types/auth';
 import SidebarNavSection from './SidebarNavSection';
 import SidebarNavGroup from './SidebarNavGroup';
 import { getNavigationByRole } from '@/config/navigation';
+import { useSidebarState } from '@/components/layout/sidebar/useSidebarState';
 import {
   Home,
   BookOpen,
@@ -13,16 +14,16 @@ import {
   Settings
 } from 'lucide-react';
 
-// Definir la estructura de navegación principal con jerarquía
+// Map navigation groups to sidebar state groups
 const navigationGroups = [
   {
-    id: 'main',
+    id: 'general',
     title: 'Mis Cursos',
     icon: BookOpen,
     navKey: 'main'
   },
   {
-    id: 'explore',
+    id: 'learning',
     title: 'Explorar',
     icon: Compass,
     navKey: 'explore',
@@ -75,6 +76,9 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   getHomePath,
   hideOnAdminPages = false
 }) => {
+  // Get sidebar state from localStorage
+  const { expanded } = useSidebarState();
+
   // Obtener menús filtrados por rol
   const menus = getNavigationByRole(effectiveRole);
 
@@ -116,15 +120,19 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
           const groupItems = menus[group.navKey as keyof typeof menus];
           const enhancedItems = enhanceItemsWithBadges(groupItems);
           
+          // Use the saved state from localStorage for this specific group
+          const isGroupExpanded = expanded[group.id as keyof typeof expanded] || false;
+          
           return (
             <SidebarNavGroup
               key={group.id}
+              id={group.id}
               title={group.title}
               icon={group.icon}
               items={enhancedItems}
               isCollapsed={isCollapsed}
               effectiveRole={effectiveRole}
-              defaultOpen={group.id === 'main'}
+              defaultOpen={isGroupExpanded}
             />
           );
         })}

@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import SidebarNavItem from './SidebarNavItem';
 import { MenuItem } from '@/types/navigation';
 import { UserRoleType } from '@/types/auth';
+import { useSidebarState } from '@/components/layout/sidebar/useSidebarState';
 
 interface SidebarNavGroupProps {
   title: string;
@@ -13,6 +14,7 @@ interface SidebarNavGroupProps {
   isCollapsed: boolean;
   effectiveRole: UserRoleType;
   defaultOpen?: boolean;
+  id?: string;
 }
 
 const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
@@ -21,9 +23,16 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
   icon: Icon,
   isCollapsed,
   effectiveRole,
-  defaultOpen = false
+  defaultOpen = false,
+  id
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultOpen);
+  const { toggleGroup } = useSidebarState();
+  
+  // Update local state when defaultOpen prop changes
+  useEffect(() => {
+    setIsExpanded(defaultOpen);
+  }, [defaultOpen]);
   
   // No mostrar el grupo si no hay elementos visibles para este rol
   const visibleItems = items.filter(item => {
@@ -40,8 +49,13 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
     return null;
   }
 
-  const toggleExpanded = () => {
+  const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
+    
+    // Find the group ID in the navigationGroups array to use with toggleGroup
+    if (id) {
+      toggleGroup(id as any);
+    }
   };
 
   if (isCollapsed) {
@@ -65,7 +79,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
   return (
     <div className="mb-4">
       <button
-        onClick={toggleExpanded}
+        onClick={handleToggleExpand}
         className="flex items-center justify-between w-full px-3 py-2 mb-1 text-sm font-medium text-muted-foreground hover:text-foreground rounded-md transition-colors"
         aria-expanded={isExpanded}
       >
