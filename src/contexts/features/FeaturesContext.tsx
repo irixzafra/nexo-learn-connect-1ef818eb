@@ -174,68 +174,68 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
               
               const updatedConfig = { ...featuresConfig };
               
-              if (data.auto_start_onboarding !== undefined) 
-                updatedConfig.autoStartOnboarding = data.auto_start_onboarding;
-              if (data.show_onboarding_trigger !== undefined) 
-                updatedConfig.showOnboardingTrigger = data.show_onboarding_trigger;
-              if (data.enable_onboarding_system !== undefined) 
-                updatedConfig.enableOnboardingSystem = data.enable_onboarding_system;
-              if (data.enable_edit_mode !== undefined) 
-                updatedConfig.enableEditMode = data.enable_edit_mode;
-              if (data.enable_content_reordering !== undefined) 
-                updatedConfig.enableContentReordering = data.enable_content_reordering;
-              if (data.enable_theme_switcher !== undefined) 
-                updatedConfig.enableThemeSwitcher = data.enable_theme_switcher;
-              if (data.enable_multi_language !== undefined) 
-                updatedConfig.enableMultiLanguage = data.enable_multi_language;
-              if (data.enable_design_system !== undefined) 
-                updatedConfig.enableDesignSystem = data.enable_design_system;
-              if (data.enable_advanced_editor !== undefined) 
-                updatedConfig.enableAdvancedEditor = data.enable_advanced_editor;
-              if (data.enable_invitations !== undefined) 
-                updatedConfig.enableInvitations = data.enable_invitations;
-              if (data.enable_custom_roles !== undefined) 
-                updatedConfig.enableCustomRoles = data.enable_custom_roles;
-              if (data.enable_role_management !== undefined) 
-                updatedConfig.enableRoleManagement = data.enable_role_management;
-              if (data.enable_role_switcher !== undefined) 
-                updatedConfig.enableRoleSwitcher = data.enable_role_switcher;
-              if (data.enable_notifications !== undefined) 
-                updatedConfig.enableNotifications = data.enable_notifications;
-              if (data.enable_real_time_notifications !== undefined) 
-                updatedConfig.enableRealTimeNotifications = data.enable_real_time_notifications;
-              if (data.enable_email_notifications !== undefined) 
-                updatedConfig.enableEmailNotifications = data.enable_email_notifications;
-              if (data.enable_public_api !== undefined) 
-                updatedConfig.enablePublicApi = data.enable_public_api;
-              if (data.enable_webhooks !== undefined) 
-                updatedConfig.enableWebhooks = data.enable_webhooks;
-              if (data.enable_2fa !== undefined) 
-                updatedConfig.enable2FA = data.enable_2fa;
-              if (data.enable_multiple_sessions !== undefined) 
-                updatedConfig.enableMultipleSessions = data.enable_multiple_sessions;
-              if (data.enable_public_registration !== undefined) 
-                updatedConfig.enablePublicRegistration = data.enable_public_registration;
-              if (data.require_email_verification !== undefined) 
-                updatedConfig.requireEmailVerification = data.require_email_verification;
-              if (data.enable_activity_log !== undefined) 
-                updatedConfig.enableActivityLog = data.enable_activity_log;
-              if (data.enable_test_data_generator !== undefined) 
-                updatedConfig.enableTestDataGenerator = data.enable_test_data_generator;
-              if (data.enable_database_dev_mode !== undefined) 
-                updatedConfig.enableDatabaseDevMode = data.enable_database_dev_mode;
-              if (data.enable_auto_backups !== undefined) 
-                updatedConfig.enableAutoBackups = data.enable_auto_backups;
-              if (data.enable_query_cache !== undefined) 
-                updatedConfig.enableQueryCache = data.enable_query_cache;
-              if (data.enable_maintenance_mode !== undefined) 
-                updatedConfig.enableMaintenanceMode = data.enable_maintenance_mode;
-              if (data.enable_category_management !== undefined) 
-                updatedConfig.enableCategoryManagement = data.enable_category_management;
-              if (data.enable_leaderboard !== undefined) 
-                updatedConfig.enableLeaderboard = data.enable_leaderboard;
-              if (data.enable_ai !== undefined) 
-                updatedConfig.enableAI = data.enable_ai;
+              if (newData.auto_start_onboarding !== undefined) 
+                updatedConfig.autoStartOnboarding = newData.auto_start_onboarding;
+              if (newData.show_onboarding_trigger !== undefined) 
+                updatedConfig.showOnboardingTrigger = newData.show_onboarding_trigger;
+              if (newData.enable_onboarding_system !== undefined) 
+                updatedConfig.enableOnboardingSystem = newData.enable_onboarding_system;
+              if (newData.enable_edit_mode !== undefined) 
+                updatedConfig.enableEditMode = newData.enable_edit_mode;
+              if (newData.enable_content_reordering !== undefined) 
+                updatedConfig.enableContentReordering = newData.enable_content_reordering;
+              if (newData.enable_theme_switcher !== undefined) 
+                updatedConfig.enableThemeSwitcher = newData.enable_theme_switcher;
+              if (newData.enable_multi_language !== undefined) 
+                updatedConfig.enableMultiLanguage = newData.enable_multi_language;
+              if (newData.enable_design_system !== undefined) 
+                updatedConfig.enableDesignSystem = newData.enable_design_system;
+              if (newData.enable_advanced_editor !== undefined) 
+                updatedConfig.enableAdvancedEditor = newData.enable_advanced_editor;
+              if (newData.enable_invitations !== undefined) 
+                updatedConfig.enableInvitations = newData.enable_invitations;
+              if (newData.enable_custom_roles !== undefined) 
+                updatedConfig.enableCustomRoles = newData.enable_custom_roles;
+              if (newData.enable_role_management !== undefined) 
+                updatedConfig.enableRoleManagement = newData.enable_role_management;
+              if (newData.enable_role_switcher !== undefined) 
+                updatedConfig.enableRoleSwitcher = newData.enable_role_switcher;
+              if (newData.enable_notifications !== undefined) 
+                updatedConfig.enableNotifications = newData.enable_notifications;
+              if (newData.enable_real_time_notifications !== undefined) 
+                updatedConfig.enableRealTimeNotifications = newData.enable_real_time_notifications;
+              if (newData.enable_email_notifications !== undefined) 
+                updatedConfig.enableEmailNotifications = newData.enable_email_notifications;
+              if (newData.enable_public_api !== undefined) 
+                updatedConfig.enablePublicApi = newData.enable_public_api;
+              if (newData.enable_webhooks !== undefined) 
+                updatedConfig.enableWebhooks = newData.enable_webhooks;
+              if (newData.enable_2fa !== undefined) 
+                updatedConfig.enable2FA = newData.enable_2fa;
+              if (newData.enable_multiple_sessions !== undefined) 
+                updatedConfig.enableMultipleSessions = newData.enable_multiple_sessions;
+              if (newData.enable_public_registration !== undefined) 
+                updatedConfig.enablePublicRegistration = newData.enable_public_registration;
+              if (newData.require_email_verification !== undefined) 
+                updatedConfig.requireEmailVerification = newData.require_email_verification;
+              if (newData.enable_activity_log !== undefined) 
+                updatedConfig.enableActivityLog = newData.enable_activity_log;
+              if (newData.enable_test_data_generator !== undefined) 
+                updatedConfig.enableTestDataGenerator = newData.enable_test_data_generator;
+              if (newData.enable_database_dev_mode !== undefined) 
+                updatedConfig.enableDatabaseDevMode = newData.enable_database_dev_mode;
+              if (newData.enable_auto_backups !== undefined) 
+                updatedConfig.enableAutoBackups = newData.enable_auto_backups;
+              if (newData.enable_query_cache !== undefined) 
+                updatedConfig.enableQueryCache = newData.enable_query_cache;
+              if (newData.enable_maintenance_mode !== undefined) 
+                updatedConfig.enableMaintenanceMode = newData.enable_maintenance_mode;
+              if (newData.enable_category_management !== undefined) 
+                updatedConfig.enableCategoryManagement = newData.enable_category_management;
+              if (newData.enable_leaderboard !== undefined) 
+                updatedConfig.enableLeaderboard = newData.enable_leaderboard;
+              if (newData.enable_ai !== undefined) 
+                updatedConfig.enableAI = newData.enable_ai;
               
               setFeaturesConfig(updatedConfig);
               localStorage.setItem('features_config', JSON.stringify(newData));
