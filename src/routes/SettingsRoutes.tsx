@@ -7,12 +7,12 @@ import { useFeatures } from '@/hooks/useFeatures';
 import DataSettings from '@/features/admin/components/settings/DataSettings';
 import IntegrationsPage from '@/pages/admin/settings/integrations';
 import { ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
+import AnalyticsSettings from '@/pages/admin/settings/analytics';
 
 // Placeholder components until actual ones are created
 const GeneralSettings = () => <div>Configuración General</div>;
 const FeatureSettings = () => <div>Funcionalidades</div>;
 const DesignSettings = () => <div>Diseño</div>;
-const AnalyticsSettings = () => <div>Analíticas</div>;
 const RolesSettings = () => <div>Roles y Permisos</div>;
 
 const SettingsRoutes: React.FC = () => {
