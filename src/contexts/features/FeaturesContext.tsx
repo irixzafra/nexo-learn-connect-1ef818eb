@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
+
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { supabase } from '@/lib/supabase';
 import { CoreFeatureId, ExtendedFeatureId, Feature, FeatureId, FeaturesConfig, FeaturesContextProps } from './types';
 import { toast } from 'sonner';

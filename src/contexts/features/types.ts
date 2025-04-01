@@ -15,7 +15,15 @@ export type CoreFeatureId =
   | 'core-users'
   | 'core-settings'
   | 'core-analytics'
-  | 'core-backup';
+  | 'core-backup'
+  | 'user-management'
+  | 'courses'
+  | 'gamification'
+  | 'payment-system'
+  | 'certificates'
+  | 'analytics'
+  | 'community'
+  | 'theming';
 
 export type ExtendedFeatureId = 
   | 'enableDarkMode'
@@ -63,7 +71,13 @@ export type ExtendedFeatureId =
   | 'enable2FA'
   | 'enableMultipleSessions'
   | 'enablePublicRegistration'
-  | 'requireEmailVerification';
+  | 'requireEmailVerification'
+  | 'enableActivityLog'
+  | 'enableOnboarding'
+  | 'requireOnboarding'
+  | 'autoStartOnboarding'
+  | 'showOnboardingTrigger'
+  | 'enableContextualHelp';
 
 export type FeatureId = CoreFeatureId | ExtendedFeatureId;
 
@@ -117,6 +131,12 @@ export interface FeaturesConfig {
   enableMultipleSessions: boolean;
   enablePublicRegistration: boolean;
   requireEmailVerification: boolean;
+  enableActivityLog: boolean;
+  enableOnboarding: boolean;
+  requireOnboarding: boolean;
+  autoStartOnboarding: boolean;
+  showOnboardingTrigger: boolean;
+  enableContextualHelp: boolean;
 }
 
 export interface FeaturesContextProps {

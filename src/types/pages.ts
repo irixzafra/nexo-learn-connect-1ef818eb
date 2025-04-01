@@ -54,6 +54,7 @@ export interface SitePage {
   is_system_page?: boolean;
   updated_at?: string;
   created_at?: string;
+  created_by?: string;
   accessType?: 'public' | 'authenticated' | 'admin';
   permissions?: {
     canView: string[];

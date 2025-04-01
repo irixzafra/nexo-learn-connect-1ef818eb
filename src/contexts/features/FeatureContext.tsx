@@ -8,43 +8,115 @@ import { toast } from 'sonner';
 const initialFeaturesConfig: FeaturesConfig = {
   features: {
     'user-management': {
+      id: 'user-management',
+      name: 'User Management',
       enabled: true,
       description: 'Sistema de gestión de usuarios y roles',
       isCore: true
     },
     'courses': {
+      id: 'courses',
+      name: 'Courses',
       enabled: true,
       description: 'Funcionalidad completa de cursos y lecciones',
       isCore: true
     },
     'gamification': {
+      id: 'gamification',
+      name: 'Gamification',
       enabled: false,
       description: 'Sistema de puntos, logros y clasificaciones',
       isCore: true
     },
     'payment-system': {
+      id: 'payment-system',
+      name: 'Payment System',
       enabled: false,
       description: 'Procesamiento de pagos y suscripciones',
       isCore: true
     },
     'certificates': {
+      id: 'certificates',
+      name: 'Certificates',
       enabled: true,
       description: 'Generación y gestión de certificados',
       isCore: true
     },
     'analytics': {
+      id: 'analytics',
+      name: 'Analytics',
       enabled: false,
       description: 'Seguimiento y análisis de datos',
       isCore: true
     },
     'community': {
+      id: 'community',
+      name: 'Community',
       enabled: true,
       description: 'Foros, grupos y discusiones',
       isCore: true
     },
     'theming': {
+      id: 'theming',
+      name: 'Theming',
       enabled: true,
       description: 'Personalización visual de la plataforma',
+      isCore: true
+    },
+    'core-editing': {
+      id: 'core-editing',
+      name: 'Core Editing',
+      enabled: true,
+      description: 'Core editing functionality',
+      isCore: true
+    },
+    'core-publishing': {
+      id: 'core-publishing',
+      name: 'Core Publishing',
+      enabled: true,
+      description: 'Core publishing functionality',
+      isCore: true
+    },
+    'core-templates': {
+      id: 'core-templates',
+      name: 'Core Templates',
+      enabled: true,
+      description: 'Core templates functionality',
+      isCore: true
+    },
+    'core-media': {
+      id: 'core-media',
+      name: 'Core Media',
+      enabled: true,
+      description: 'Core media functionality',
+      isCore: true
+    },
+    'core-users': {
+      id: 'core-users',
+      name: 'Core Users',
+      enabled: true,
+      description: 'Core users functionality',
+      isCore: true
+    },
+    'core-settings': {
+      id: 'core-settings',
+      name: 'Core Settings',
+      enabled: true,
+      description: 'Core settings functionality',
+      isCore: true
+    },
+    'core-analytics': {
+      id: 'core-analytics',
+      name: 'Core Analytics',
+      enabled: true,
+      description: 'Core analytics functionality',
+      isCore: true
+    },
+    'core-backup': {
+      id: 'core-backup',
+      name: 'Core Backup',
+      enabled: true,
+      description: 'Core backup functionality',
       isCore: true
     }
   },
@@ -101,6 +173,7 @@ const initialFeaturesConfig: FeaturesConfig = {
   autoStartOnboarding: true,
   showOnboardingTrigger: true,
   enableContextualHelp: true,
+  enableInlineEditing: true,
 };
 
 // Create context
@@ -119,7 +192,7 @@ export const useFeatureContext = () => {
 export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(initialFeaturesConfig);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   // Initialize core features
   useEffect(() => {
@@ -145,7 +218,7 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (error && error.code !== 'PGRST116') {
           // PGRST116 is "no rows returned" error
           console.error('Error fetching features config:', error);
-          setError(error.message);
+          setError(new Error(error.message));
         } else if (data) {
           // Update feature flags
           const updatedConfig = {
@@ -170,13 +243,13 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             
           if (insertError) {
             console.error('Error creating features config:', insertError);
-            setError(insertError.message);
+            setError(new Error(insertError.message));
           }
         }
       }
     } catch (err) {
       console.error('Error in fetchFeaturesConfig:', err);
-      setError('Failed to fetch features configuration');
+      setError(new Error('Failed to fetch features configuration'));
     } finally {
       setIsLoading(false);
     }
@@ -207,7 +280,7 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   // Enable a feature
-  const enableFeature = (featureId: FeatureId): void => {
+  const enableFeature = async (featureId: FeatureId): Promise<void> => {
     if (Object.keys(featuresConfig.features).includes(featureId as string)) {
       // It's a core feature
       setFeaturesConfig(prev => ({
@@ -227,10 +300,12 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         [featureId]: true
       }));
     }
+    
+    return Promise.resolve();
   };
 
   // Disable a feature
-  const disableFeature = (featureId: FeatureId): void => {
+  const disableFeature = async (featureId: FeatureId): Promise<void> => {
     if (Object.keys(featuresConfig.features).includes(featureId as string)) {
       // It's a core feature
       setFeaturesConfig(prev => ({
@@ -250,10 +325,12 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         [featureId]: false
       }));
     }
+    
+    return Promise.resolve();
   };
 
   // Toggle a feature
-  const toggleFeature = (featureId: FeatureId, value?: boolean): void => {
+  const toggleFeature = async (featureId: FeatureId, value?: boolean): Promise<void> => {
     if (Object.keys(featuresConfig.features).includes(featureId as string)) {
       // It's a core feature
       const isCurrentlyEnabled = featuresConfig.features[featureId as CoreFeatureId].enabled;
@@ -279,6 +356,8 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         [featureId]: newValue
       }));
     }
+    
+    return Promise.resolve();
   };
 
   // Toggle an extended feature with API sync
@@ -302,6 +381,8 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           throw error;
         }
       }
+      
+      return Promise.resolve();
     } catch (err) {
       // Revert change if failed
       setFeaturesConfig(prev => ({
@@ -310,6 +391,7 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }));
       
       toast.error('Error al actualizar la configuración');
+      return Promise.reject(err);
     }
   };
 
@@ -335,19 +417,21 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           throw error;
         }
       }
+      
+      return Promise.resolve();
     } catch (err) {
       toast.error('Error al guardar la configuración');
+      return Promise.reject(err);
     }
   };
 
   const value: FeaturesContextProps = {
-    features: featuresConfig.features,
+    featuresConfig,
     isEnabled,
     enableFeature,
     disableFeature,
     toggleFeature,
     getFeature,
-    featuresConfig,
     isFeatureEnabled,
     toggleExtendedFeature,
     updateFeatures,
