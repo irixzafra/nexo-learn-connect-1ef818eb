@@ -7,7 +7,13 @@ import {
   CreditCard, 
   RefreshCw, 
   BellDot, 
-  BarChart3 
+  BarChart3,
+  Search, 
+  Download,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight
 } from 'lucide-react';
 import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
 import { SubscriptionPlans } from '@/features/payments/components/SubscriptionPlans';
@@ -87,20 +93,26 @@ const BillingAlerts: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col space-y-4">
+          {/* Search and actions row */}
           <div className="flex justify-between mb-2">
             <div className="relative w-[260px]">
-              <Input placeholder="Buscar alerta..." className="pl-3" />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400" />
+              </div>
+              <Input placeholder="Buscar alerta..." className="pl-9" />
             </div>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" className="h-9">
-                <span className="mr-2">Exportar CSV</span>
+                <Download className="h-4 w-4 mr-2" />
+                <span>Exportar CSV</span>
               </Button>
               <Button variant="outline" size="sm" className="h-9">
-                <span className="mr-2">Columnas</span>
+                <span>Columnas</span>
               </Button>
             </div>
           </div>
           
+          {/* Table */}
           <div className="overflow-auto">
             <table className="w-full">
               <thead>
@@ -161,6 +173,7 @@ const BillingAlerts: React.FC = () => {
             </table>
           </div>
           
+          {/* Pagination */}
           <div className="flex items-center justify-between pt-4">
             <div className="text-sm text-muted-foreground">
               0 de 3 fila(s) seleccionada(s).
@@ -179,16 +192,16 @@ const BillingAlerts: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <Button variant="outline" size="icon" className="h-8 w-8" disabled>
-                  «
+                  <ChevronsLeft className="h-4 w-4" />
                 </Button>
                 <Button variant="outline" size="icon" className="h-8 w-8" disabled>
-                  ‹
+                  <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <Button variant="outline" size="icon" className="h-8 w-8" disabled>
-                  ›
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
                 <Button variant="outline" size="icon" className="h-8 w-8" disabled>
-                  »
+                  <ChevronsRight className="h-4 w-4" />
                 </Button>
               </div>
             </div>

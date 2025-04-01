@@ -1,13 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { useNotifications } from '@/hooks/useNotifications';
-import SidebarMainNavigation from '@/components/layout/sidebar/navigation/SidebarMainNavigation';
-import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
 import SidebarLogoSection from '@/components/layout/sidebar/SidebarLogoSection';
 import SidebarFooterSection from '@/components/layout/sidebar/SidebarFooterSection';
+import { SidebarContent } from '@/components/layout/sidebar/SidebarContent';
+import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
 
 interface SidebarNavigationProps {
   viewAsRole?: 'current' | UserRoleType;
@@ -46,14 +46,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       {/* Logo at the top with full title and subtitle */}
       <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
 
-      {/* Main Navigation Section */}
-      <SidebarMainNavigation 
-        effectiveRole={effectiveRole}
-        isCollapsed={isCollapsed}
-        messagesCount={messagesCount}
-        notificationsCount={notificationsCount}
-        getHomePath={() => getHomePath(effectiveRole)}
-      />
+      {/* Main Navigation Section with categories and subcategories */}
+      <SidebarContent />
       
       {/* Footer Section with Role Switcher and Language Selector */}
       <SidebarFooterSection 

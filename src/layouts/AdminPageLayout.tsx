@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import AppLayout from './AppLayout';
 import { Card } from '@/components/ui/card';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
@@ -34,9 +34,9 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   const { designFeatureEnabled } = useDesignSystem();
   
   return (
-    <AppLayout showHeader={false} showAdminNavigation={true}>
+    <AppLayout showHeader={false} showAdminNavigation={false}>
       <div className="flex min-h-screen w-full">
-        <div className="w-auto border-r">
+        <div className="w-64 border-r bg-background">
           <AdminNavigation />
         </div>
         
