@@ -59,6 +59,9 @@ export const useSidebarState = () => {
     });
   };
 
+  // Alias de toggleExpanded para compatibilidad con componentes existentes
+  const toggleGroup = toggleExpanded;
+
   // Para expandir un grupo específico
   const expandGroup = (groupId: keyof ExpandedState) => {
     setExpanded(prev => {
@@ -81,6 +84,7 @@ export const useSidebarState = () => {
   return {
     expanded,
     toggleExpanded,
+    toggleGroup,
     expandGroup
   };
 };

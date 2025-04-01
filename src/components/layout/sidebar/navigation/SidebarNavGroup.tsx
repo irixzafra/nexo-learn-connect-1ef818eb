@@ -27,7 +27,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
   id
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultOpen);
-  const { toggleGroup } = useSidebarState();
+  const { toggleExpanded } = useSidebarState();
   
   // Update local state when defaultOpen prop changes
   useEffect(() => {
@@ -52,9 +52,9 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
     
-    // Find the group ID in the navigationGroups array to use with toggleGroup
+    // Find the group ID in the navigationGroups array to use with toggleExpanded
     if (id) {
-      toggleGroup(id as any);
+      toggleExpanded(id as any);
     }
   };
 
