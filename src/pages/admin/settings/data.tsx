@@ -2,16 +2,11 @@
 import React from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Database, BackupIcon, HistoryIcon, DownloadIcon, RefreshCwIcon, AlertTriangleIcon } from 'lucide-react';
+import { Database, History, AlertTriangle, Download, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-
-// Icons que no existen en Lucide directamente, los creamos como componentes
-const BackupIcon = Database;
-const HistoryIcon = RefreshCwIcon;
-const AlertTriangleIcon = AlertTriangleIcon;
 
 const DataManagementPage: React.FC = () => {
   const [backupProgress, setBackupProgress] = React.useState(0);
@@ -43,7 +38,7 @@ const DataManagementPage: React.FC = () => {
         <Card>
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
-              <BackupIcon className="h-5 w-5 text-muted-foreground" />
+              <Database className="h-5 w-5 text-muted-foreground" />
               <CardTitle>Copias de Seguridad</CardTitle>
             </div>
             <CardDescription>
@@ -79,11 +74,11 @@ const DataManagementPage: React.FC = () => {
               
               <div className="flex flex-wrap gap-2">
                 <Button onClick={handleBackup} disabled={isBackingUp}>
-                  <BackupIcon className="h-4 w-4 mr-2" />
+                  <Database className="h-4 w-4 mr-2" />
                   Crear copia de seguridad
                 </Button>
                 <Button variant="outline">
-                  <DownloadIcon className="h-4 w-4 mr-2" />
+                  <Download className="h-4 w-4 mr-2" />
                   Descargar última copia
                 </Button>
               </div>
@@ -94,7 +89,7 @@ const DataManagementPage: React.FC = () => {
         <Card>
           <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
-              <HistoryIcon className="h-5 w-5 text-muted-foreground" />
+              <History className="h-5 w-5 text-muted-foreground" />
               <CardTitle>Historial de Copias</CardTitle>
             </div>
             <CardDescription>
@@ -116,10 +111,10 @@ const DataManagementPage: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     {backup.status === 'warning' && (
-                      <AlertTriangleIcon className="h-4 w-4 text-amber-500" />
+                      <AlertTriangle className="h-4 w-4 text-amber-500" />
                     )}
                     <Button size="sm" variant="ghost">
-                      <DownloadIcon className="h-4 w-4" />
+                      <Download className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
