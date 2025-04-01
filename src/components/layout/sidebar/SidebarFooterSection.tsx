@@ -5,7 +5,7 @@ import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { PowerIcon, BellIcon } from 'lucide-react';
 import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
-import { LanguageSelector } from '@/components/shared/LanguageSelector';
+import { LanguageSelector } from '@/components/LanguageSelector';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -92,12 +92,8 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
             </TooltipContent>
           </Tooltip>
           
-          {/* Language Switcher */}
-          <LanguageSelector
-            currentLanguage={currentLanguage}
-            languages={languages}
-            onChange={changeLanguage}
-          />
+          {/* Language Selector */}
+          <LanguageSelector variant={isCollapsed ? 'minimal' : 'icon'} />
           
           {/* Theme Toggle */}
           <ModeToggle />

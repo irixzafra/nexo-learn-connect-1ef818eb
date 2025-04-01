@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Globe, Languages, Calendar, Clock, Loader2 } from 'lucide-react';
+import { Globe, Languages, Calendar, Clock, Loader2, Shield } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -181,6 +181,76 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
                     </SelectGroup>
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div>
+          <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+            <Shield className="h-4 w-4 text-blue-500" />
+            SEO Internacional
+          </h3>
+          <div className="space-y-4 ml-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="hreflangTags">Etiquetas hreflang</Label>
+                <p className="text-sm text-muted-foreground">
+                  Generar automáticamente etiquetas hreflang para SEO internacional
+                </p>
+              </div>
+              <div className="flex items-center">
+                {isLoading && (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+                )}
+                <Switch
+                  id="hreflangTags"
+                  checked={!!featuresConfig.enableHreflangTags}
+                  onCheckedChange={(value) => onToggleFeature('enableHreflangTags', value)}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="multiRegionSeo">Contenido regional</Label>
+                <p className="text-sm text-muted-foreground">
+                  Optimizar contenido según región geográfica
+                </p>
+              </div>
+              <div className="flex items-center">
+                {isLoading && (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+                )}
+                <Switch
+                  id="multiRegionSeo"
+                  checked={!!featuresConfig.enableRegionalContent}
+                  onCheckedChange={(value) => onToggleFeature('enableRegionalContent', value)}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="langURLs">URLs con prefijo de idioma</Label>
+                <p className="text-sm text-muted-foreground">
+                  Usar prefijos (/es/, /en/) en las URLs para mejor SEO
+                </p>
+              </div>
+              <div className="flex items-center">
+                {isLoading && (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
+                )}
+                <Switch
+                  id="langURLs"
+                  checked={!!featuresConfig.enableLangPrefixUrls}
+                  onCheckedChange={(value) => onToggleFeature('enableLangPrefixUrls', value)}
+                  disabled={isLoading}
+                />
               </div>
             </div>
           </div>

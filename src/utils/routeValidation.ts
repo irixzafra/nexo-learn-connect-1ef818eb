@@ -9,7 +9,9 @@ export enum RouteIssueType {
   DUPLICATE_ROUTE = 'duplicate_route',
   DEPRECATED_ROUTE = 'deprecated_route',
   MISSING_ROLE_CHECK = 'missing_role_check',
-  INCONSISTENT_NAMING = 'inconsistent_naming'
+  INCONSISTENT_NAMING = 'inconsistent_naming',
+  MISSING_LOCALIZATION = 'missing_localization',
+  MISSING_SEO_METADATA = 'missing_seo_metadata'
 }
 
 /**
@@ -83,6 +85,17 @@ const validateSingleRoute = (path: string): RouteIssue[] => {
       severity: 'info',
       message: 'Inconsistencia en nomenclatura de rutas',
       suggestion: 'Considera usar kebab-case en lugar de snake_case para rutas'
+    });
+  }
+  
+  // Check for missing localization support (for SEO)
+  if (!path.startsWith('/api') && !path.includes(':lang') && !path.startsWith('/admin')) {
+    issues.push({
+      path,
+      type: RouteIssueType.MISSING_LOCALIZATION,
+      severity: 'info',
+      message: 'Ruta sin soporte de localización',
+      suggestion: 'Considera implementar soporte para múltiples idiomas con /:lang/ en la ruta'
     });
   }
   
@@ -176,4 +189,49 @@ export const isRouteAccessible = (route: string, userRoles: string[]): boolean =
   
   // Most other routes are accessible to all authenticated users
   return true;
+};
+
+/**
+ * Helper to validate a single path against the routeMap
+ * Used by components to check if a link is valid before rendering
+ */
+export const isValidPath = (path: string): boolean => {
+  // If path is external (starts with http), it's considered valid
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return true;
+  }
+  
+  // Check against routeMap
+  return Object.values(routeMap).some(route => {
+    if (typeof route === 'function') {
+      // For dynamic routes, we assume valid since we can't check without params
+      return path.includes('/');
+    }
+    return route === path;
+  });
+};
+
+/**
+ * Function to fix common path issues
+ * @param path The path to fix
+ */
+export const normalizePath = (path: string): string => {
+  if (!path) return '/';
+  
+  // Remove duplicate slashes
+  let normalized = path.replace(/\/+/g, '/');
+  
+  // Remove trailing slash except for root
+  if (normalized !== '/' && normalized.endsWith('/')) {
+    normalized = normalized.slice(0, -1);
+  }
+  
+  // Ensure starts with slash for internal paths
+  if (!normalized.startsWith('/') && 
+      !normalized.startsWith('http://') && 
+      !normalized.startsWith('https://')) {
+    normalized = '/' + normalized;
+  }
+  
+  return normalized;
 };
