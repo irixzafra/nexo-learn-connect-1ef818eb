@@ -11,6 +11,13 @@ export interface UserPreferences {
   language_preference: 'es' | 'en' | 'pt';
   email_notifications: boolean;
   browser_notifications: boolean;
+  mobile_notifications: boolean;
+  course_update_notifications: boolean;
+  achievement_notifications: boolean;
+  comment_notifications: boolean;
+  forum_notifications: boolean;
+  event_notifications: boolean;
+  promotional_notifications: boolean;
   learning_reminder_days: string[];
   reminder_time: string;
   daily_goal_minutes: number;
@@ -24,6 +31,13 @@ const defaultPreferences: Partial<UserPreferences> = {
   language_preference: 'es',
   email_notifications: true,
   browser_notifications: true,
+  mobile_notifications: false,
+  course_update_notifications: true,
+  achievement_notifications: true,
+  comment_notifications: true,
+  forum_notifications: true,
+  event_notifications: true,
+  promotional_notifications: false,
   learning_reminder_days: ['monday', 'wednesday', 'friday'],
   reminder_time: '09:00',
   daily_goal_minutes: 30,
