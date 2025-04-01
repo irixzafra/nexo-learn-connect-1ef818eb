@@ -1,8 +1,8 @@
-
 export type PageLayout = 'default' | 'landing' | 'marketing' | 'documentation' | 'course' | 'sidebar' | 'full-width';
 export type PageStatus = 'draft' | 'published' | 'archived';
 export type PageBlockType = 'text' | 'hero' | 'cta' | 'features' | 'testimonials' | 'faq' | 'pricing' | 'contact' | 'custom';
 export type ContainerLayout = 'column' | 'row' | 'grid-2' | 'grid-3' | 'grid-4';
+export type AccessType = 'public' | 'authenticated' | 'admin';
 
 export interface PageBlock {
   id: string;
@@ -32,6 +32,7 @@ export interface SitePage {
   updated_at: string;
   is_system_page?: boolean;
   created_by?: string;
+  accessType?: AccessType; // Added this property for access control
 }
 
 export interface PageRevision {
