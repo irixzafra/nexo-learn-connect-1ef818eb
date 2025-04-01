@@ -27,6 +27,8 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({
         <div className="relative">
           <SectionTag name="Header" className="z-50" />
           <LandingNav />
+          {/* Espacio para el navbar fijo */}
+          <div className="h-16 md:h-20"></div>
         </div>
       )}
       
