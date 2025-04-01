@@ -127,17 +127,6 @@ const LandingHero: React.FC<LandingHeroProps> = ({ isAuthenticated }) => {
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-              
-              {/* Botón play flotante */}
-              <motion.div 
-                className="absolute inset-0 flex items-center justify-center"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center shadow-xl cursor-pointer transition-colors hover:bg-primary/10">
-                  <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-primary border-b-[10px] border-b-transparent ml-1"></div>
-                </div>
-              </motion.div>
             </div>
           </motion.div>
         </div>
