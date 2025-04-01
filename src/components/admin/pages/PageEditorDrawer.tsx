@@ -4,7 +4,7 @@ import {
   Sheet, 
   SheetContent
 } from '@/components/ui/sheet';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageData } from './types';
 import { getStatusBadge } from './utils/statusBadge';
 import PageDrawerHeader from './drawer-parts/PageDrawerHeader';
@@ -14,6 +14,8 @@ import PagePreviewTab from './drawer-tabs/PagePreviewTab';
 import PageEditTab from './drawer-tabs/PageEditTab';
 import PageCodeTab from './drawer-tabs/PageCodeTab';
 import PageSettingsTab from './drawer-tabs/PageSettingsTab';
+import PageAIContentGenerator from './ai-generator/PageAIContentGenerator';
+import { useForm } from 'react-hook-form';
 
 interface PageEditorDrawerProps {
   page: PageData;
@@ -27,6 +29,11 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
   onOpenChange
 }) => {
   const [activeTab, setActiveTab] = useState('preview');
+  const form = useForm({
+    defaultValues: {
+      content: { blocks: [] }
+    }
+  });
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -48,6 +55,7 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
           
           <TabsContent value="edit">
             <PageEditTab page={page} />
+            <PageAIContentGenerator form={form} />
           </TabsContent>
           
           <TabsContent value="code">

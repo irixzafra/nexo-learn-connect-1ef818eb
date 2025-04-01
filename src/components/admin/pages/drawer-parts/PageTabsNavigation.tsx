@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, Edit, Code, Settings } from 'lucide-react';
+import { FileText, Edit, Code, Settings, Wand2 } from 'lucide-react';
 
 interface PageTabsNavigationProps {
   activeTab: string;

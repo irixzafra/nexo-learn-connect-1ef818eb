@@ -8,4 +8,5 @@ export interface PageData {
   importance?: 'high' | 'medium' | 'low';
   updated?: string;
   component?: string;
+  accessType?: 'public' | 'authenticated' | 'admin';
 }

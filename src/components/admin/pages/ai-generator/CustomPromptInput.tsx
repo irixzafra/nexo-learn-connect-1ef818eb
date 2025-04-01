@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { FormLabel } from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
 interface CustomPromptInputProps {
@@ -10,19 +10,21 @@ interface CustomPromptInputProps {
 
 const CustomPromptInput: React.FC<CustomPromptInputProps> = ({
   prompt,
-  onPromptChange,
+  onPromptChange
 }) => {
   return (
-    <div>
-      <FormLabel>Prompt personalizado</FormLabel>
-      <Textarea 
-        placeholder="Describe el contenido que quieres generar..."
-        className="min-h-24 resize-none"
+    <div className="space-y-2">
+      <Label htmlFor="custom-prompt">Prompt personalizado</Label>
+      <Textarea
+        id="custom-prompt"
+        placeholder="Describe el contenido que deseas generar..."
         value={prompt}
         onChange={onPromptChange}
+        rows={5}
+        className="resize-none"
       />
-      <p className="text-sm text-muted-foreground mt-1">
-        Describe en detalle el contenido que deseas generar
+      <p className="text-xs text-muted-foreground">
+        Proporciona detalles específicos sobre lo que deseas generar.
       </p>
     </div>
   );

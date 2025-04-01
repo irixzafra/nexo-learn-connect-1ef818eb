@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, Wand2 } from 'lucide-react';
+import { Wand2 } from 'lucide-react';
 
 interface GenerateButtonProps {
   loading: boolean;
@@ -10,23 +10,23 @@ interface GenerateButtonProps {
 
 const GenerateButton: React.FC<GenerateButtonProps> = ({
   loading,
-  onClick,
+  onClick
 }) => {
   return (
     <Button 
-      onClick={onClick} 
+      onClick={onClick}
       disabled={loading}
-      className="flex items-center gap-2"
+      className="w-full"
     >
       {loading ? (
         <>
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <span className="animate-spin mr-2">⚙️</span>
           Generando...
         </>
       ) : (
         <>
-          <Wand2 className="h-4 w-4" />
-          Generar contenido
+          <Wand2 className="mr-2 h-4 w-4" />
+          Generar con IA
         </>
       )}
     </Button>

@@ -1,61 +1,69 @@
 
 import { PageBlock } from '@/types/pages';
 
-// Función que simula la generación de contenido con IA
-// En una implementación real, esta sería una llamada a una API de IA
+// This function would call an actual API in a real implementation
 export const generateContentWithAI = async (prompt: string, template: string): Promise<PageBlock[]> => {
-  // Simulamos un tiempo de espera para la respuesta de la IA
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  console.log('Generating content with AI', { prompt, template });
   
-  // Generamos bloques diferentes según la plantilla seleccionada
-  let blocks: PageBlock[] = [];
-  
-  if (template === 'landing') {
-    blocks = [
-      {
-        id: `block-${Date.now()}-1`,
-        type: 'hero',
-        content: '¡Bienvenido a nuestra plataforma innovadora!'
-      },
-      {
-        id: `block-${Date.now()}-2`,
-        type: 'text',
-        content: 'Descubre todas las posibilidades que tenemos para ofrecerte con nuestra solución única y adaptada a tus necesidades.'
-      },
-      {
-        id: `block-${Date.now()}-3`,
-        type: 'cta',
-        content: 'Empieza ahora'
+  // Simulate API call with a delay
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // Mock content based on template
+      let blocks: PageBlock[] = [];
+      
+      if (template === 'landing') {
+        blocks = [
+          {
+            id: `block-${Date.now()}-1`,
+            type: 'hero',
+            content: 'Bienvenido a nuestra plataforma innovadora',
+            order: 1
+          },
+          {
+            id: `block-${Date.now()}-2`,
+            type: 'text',
+            content: 'Ofrecemos soluciones avanzadas para impulsar tu negocio al siguiente nivel.',
+            order: 2
+          },
+          {
+            id: `block-${Date.now()}-3`,
+            type: 'cta',
+            content: {
+              title: 'Comienza hoy',
+              buttonText: 'Registrarse',
+              link: '/register'
+            },
+            order: 3
+          }
+        ];
+      } else if (template === 'about') {
+        blocks = [
+          {
+            id: `block-${Date.now()}-1`,
+            type: 'text',
+            content: 'Somos una empresa comprometida con la innovación y la excelencia.',
+            order: 1
+          },
+          {
+            id: `block-${Date.now()}-2`,
+            type: 'text',
+            content: 'Nuestra misión es proporcionar soluciones de alta calidad que transformen la manera en que trabajas.',
+            order: 2
+          }
+        ];
+      } else {
+        // Default content for other templates
+        blocks = [
+          {
+            id: `block-${Date.now()}-1`,
+            type: 'text',
+            content: `Contenido generado automáticamente para plantilla "${template}". ${prompt}`,
+            order: 1
+          }
+        ];
       }
-    ];
-  } else if (template === 'about') {
-    blocks = [
-      {
-        id: `block-${Date.now()}-1`,
-        type: 'hero',
-        content: 'Conoce nuestro equipo y misión'
-      },
-      {
-        id: `block-${Date.now()}-2`,
-        type: 'text',
-        content: 'Somos una empresa comprometida con la excelencia y la innovación, trabajando día a día para ofrecer las mejores soluciones a nuestros clientes.'
-      }
-    ];
-  } else {
-    // Para el resto de plantillas o personalizado, usamos el prompt para generar contenido
-    blocks = [
-      {
-        id: `block-${Date.now()}-1`,
-        type: 'hero',
-        content: `${prompt.split(' ').slice(0, 7).join(' ')}...`
-      },
-      {
-        id: `block-${Date.now()}-2`,
-        type: 'text',
-        content: prompt
-      }
-    ];
-  }
-  
-  return blocks;
+      
+      resolve(blocks);
+    }, 1500);
+  });
 };
