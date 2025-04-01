@@ -15,7 +15,7 @@ export interface MenuItem {
   path: string;
   
   /** Opcional: Insignia numérica o texto */
-  badge?: number | string;
+  badge?: number;
   
   /** Opcional: Estado deshabilitado */
   disabled?: boolean;

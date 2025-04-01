@@ -44,7 +44,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
               to={item.path}
               icon={item.icon} 
               label={item.label} 
-              badge={item.badge}
+              badge={typeof item.badge === 'number' ? item.badge : undefined}
               isCollapsed={isCollapsed} 
             />
           ))}
