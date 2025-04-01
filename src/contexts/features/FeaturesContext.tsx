@@ -1,11 +1,14 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { FeaturesConfig, defaultFeaturesConfig, FeaturesContextValue } from './types';
+import {
+  FeaturesConfig,
+  FeaturesContextValue,
+  defaultFeaturesConfig
+} from './types';
 import { applyDependencyRules, getAllDependencies, getAllDependents } from './dependencies';
 
 const FeaturesContext = createContext<FeaturesContextValue | undefined>(undefined);
 
-export type { FeaturesConfig } from './types';
+export { FeaturesConfig } from './types';
 export { defaultFeaturesConfig } from './types';
 
 export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -13,17 +16,13 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // Mock loading features from API on mount
   useEffect(() => {
     const loadFeatures = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        // In a real implementation, this would be an API call
-        // For now, we'll just simulate a delay and use default values
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Try to load from localStorage if available
         const savedFeatures = localStorage.getItem('features');
         if (savedFeatures) {
           setFeaturesConfig(JSON.parse(savedFeatures));
@@ -39,37 +38,29 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     loadFeatures();
   }, []);
 
-  // Check if a feature is enabled
   const isFeatureEnabled = (feature: keyof FeaturesConfig): boolean => {
     return !!featuresConfig[feature];
   };
 
-  // Get all direct and indirect dependencies of a feature
   const getFeatureDependencies = (feature: keyof FeaturesConfig): Array<keyof FeaturesConfig> => {
     return getAllDependencies(feature);
   };
 
-  // Get all features that depend on this feature
   const getFeatureDependents = (feature: keyof FeaturesConfig): Array<keyof FeaturesConfig> => {
     return getAllDependents(feature);
   };
 
-  // Toggle a feature and handle dependencies
   const toggleFeature = async (feature: keyof FeaturesConfig, value: boolean): Promise<void> => {
     try {
       setIsLoading(true);
       setError(null);
       
-      // Simulate API call with delay
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Apply dependency rules
       const updatedFeatures = applyDependencyRules(feature, value, featuresConfig);
       
-      // Save to localStorage for persistence
       localStorage.setItem('features', JSON.stringify(updatedFeatures));
       
-      // Update state
       setFeaturesConfig(updatedFeatures);
       
       return Promise.resolve();
@@ -82,13 +73,11 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // Update multiple features at once
   const updateFeatures = async (updates: Partial<FeaturesConfig>): Promise<void> => {
     try {
       setIsLoading(true);
       setError(null);
       
-      // Simulate API call with delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
       const updatedFeatures = {
@@ -96,10 +85,8 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         ...updates
       };
       
-      // Save to localStorage for persistence
       localStorage.setItem('features', JSON.stringify(updatedFeatures));
       
-      // Update state
       setFeaturesConfig(updatedFeatures);
       
       return Promise.resolve();

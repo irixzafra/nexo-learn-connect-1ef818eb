@@ -1,14 +1,62 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Database, Save, Construction, LayoutList, Server, AlertTriangle } from 'lucide-react';
+import { 
+  Loader2, 
+  Database, 
+  Save, 
+  Construction, 
+  LayoutList, 
+  Server, 
+  AlertTriangle,
+  Download,
+  Upload,
+  RefreshCw,
+  HardDrive,
+  KeyRound
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
 import type { FeaturesConfig } from '@/contexts/features/types';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
+interface SettingsAccordionProps {
+  title: string;
+  description: string;
+  sections: any[];
+  className?: string;
+}
+
+const SettingsAccordion: React.FC<SettingsAccordionProps> = ({ title, description, sections, className }) => {
+  return (
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Accordion type="single" collapsible className="space-y-4">
+          {sections.map((section) => (
+            <AccordionItem key={section.id} value={section.id}>
+              <AccordionTrigger className="flex items-center">
+                {section.icon}
+                <span className="ml-2">{section.title}</span>
+              </AccordionTrigger>
+              <AccordionContent className="pt-4">
+                {section.content}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </CardContent>
+    </Card>
+  );
+};
 
 interface DataSettingsProps {
   featuresConfig?: FeaturesConfig;
