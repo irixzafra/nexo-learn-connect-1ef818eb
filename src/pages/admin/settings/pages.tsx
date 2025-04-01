@@ -1,15 +1,13 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, FileText, Folder, Table, Grid, Filter, Search, Download } from 'lucide-react';
+import { Plus, FileText, Folder, Eye, Edit } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
-import { DataTable } from '@/components/shared/DataTable';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Badge } from '@/components/ui/badge';
+import { AdvancedDataTable } from '@/components/shared/AdvancedDataTable';
 import { createColumn, createActionsColumn } from '@/components/shared/DataTableUtils';
+import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import PageEditorDrawer from '@/components/admin/pages/PageEditorDrawer';
 
 interface PageData {
   title: string;
@@ -23,13 +21,11 @@ interface PageData {
 }
 
 const PagesManagement: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const navigate = useNavigate();
+  const [selectedPage, setSelectedPage] = useState<PageData | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Lista extendida de páginas del sistema
   const pages: PageData[] = [
-    // Páginas existentes
     {
       title: 'Dashboard',
       path: '/dashboard',
@@ -97,7 +93,6 @@ const PagesManagement: React.FC = () => {
       updated: '2023-05-05',
       component: 'Settings'
     },
-    // Nuevas páginas de la imagen
     {
       title: 'Éxito de Pago',
       path: '/payment/success',
@@ -253,13 +248,6 @@ const PagesManagement: React.FC = () => {
     }
   ];
 
-  const filteredPages = pages.filter(page => 
-    page.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    page.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    page.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    page.path.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
@@ -277,10 +265,9 @@ const PagesManagement: React.FC = () => {
     }
   };
 
-  const handleEditPage = (pagePath: string) => {
-    // Aquí podrías navegar a una página de edición específica
-    console.log(`Editar página: ${pagePath}`);
-    // Por ejemplo: navigate(`/admin/settings/pages/edit?path=${encodeURIComponent(pagePath)}`);
+  const handleRowClick = (page: PageData) => {
+    setSelectedPage(page);
+    setDrawerOpen(true);
   };
 
   const columns = [
@@ -327,13 +314,16 @@ const PagesManagement: React.FC = () => {
     }),
     createActionsColumn<PageData>(({ row }) => (
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm" asChild>
-          <Link to={`/admin/settings/pages/edit/${encodeURIComponent(row.getValue('path'))}`}>
-            Editar
-          </Link>
+        <Button variant="ghost" size="sm" onClick={(e) => {
+          e.stopPropagation();
+          handleRowClick(row.original);
+        }}>
+          <Edit className="h-4 w-4 mr-1" />
+          Editar
         </Button>
         <Button variant="ghost" size="sm" asChild>
-          <Link to={row.getValue('path') as string} target="_blank">
+          <Link to={row.getValue('path') as string} target="_blank" onClick={(e) => e.stopPropagation()}>
+            <Eye className="h-4 w-4 mr-1" />
             Ver
           </Link>
         </Button>
@@ -361,43 +351,23 @@ const PagesManagement: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-2 w-full max-w-sm">
-              <Search className="h-5 w-5 text-muted-foreground" />
-              <Input 
-                type="search" 
-                placeholder="Buscar página..." 
-                className="max-w-sm" 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as 'table' | 'grid')}>
-                <ToggleGroupItem value="table" aria-label="Vista tabla">
-                  <Table className="h-4 w-4" />
-                </ToggleGroupItem>
-                <ToggleGroupItem value="grid" aria-label="Vista cuadrícula">
-                  <Grid className="h-4 w-4" />
-                </ToggleGroupItem>
-              </ToggleGroup>
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtros
-              </Button>
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Exportar
-              </Button>
-            </div>
-          </div>
-
-          <DataTable 
+          <AdvancedDataTable 
             columns={columns} 
-            data={filteredPages} 
+            data={pages}
+            searchPlaceholder="Buscar página..."
+            exportFilename="paginas-sistema"
+            onRowClick={handleRowClick}
           />
         </CardContent>
       </Card>
+
+      {selectedPage && (
+        <PageEditorDrawer
+          page={selectedPage}
+          open={drawerOpen}
+          onOpenChange={setDrawerOpen}
+        />
+      )}
     </div>
   );
 };
