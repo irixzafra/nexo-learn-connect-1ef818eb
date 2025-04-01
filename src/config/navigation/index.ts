@@ -8,6 +8,7 @@ import { instructorNavigation } from './instructorNavigation';
 import { academicNavigation } from './academicNavigation';
 import { financeNavigation } from './financeNavigation';
 import { settingsNavigation } from './settingsNavigation';
+import { gamificationNavigation } from './gamificationNavigation';
 import { filterMenuItemsByRole, getHomePathByRole } from './utils';
 
 export * from './types';
@@ -18,6 +19,7 @@ export * from './instructorNavigation';
 export * from './academicNavigation';
 export * from './financeNavigation';
 export * from './settingsNavigation';
+export * from './gamificationNavigation';
 export * from './utils';
 
 /**
@@ -33,6 +35,6 @@ export const getNavigationByRole = (role: UserRoleType): NavigationMenus => {
     academic: filterMenuItemsByRole(academicNavigation, role),
     finance: filterMenuItemsByRole(financeNavigation, role),
     settings: filterMenuItemsByRole(settingsNavigation, role),
-    gamification: []
+    gamification: filterMenuItemsByRole(gamificationNavigation, role)
   };
 };

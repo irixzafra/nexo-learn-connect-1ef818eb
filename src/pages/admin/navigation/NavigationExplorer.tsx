@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { 
@@ -57,7 +56,8 @@ const roleColors: Record<UserRoleType, string> = {
   moderator: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
   content_creator: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300',
   sistemas: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
-  beta_tester: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300'
+  beta_tester: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300',
+  anonimo: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
 };
 
 const navigationGroups = [

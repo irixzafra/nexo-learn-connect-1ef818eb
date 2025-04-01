@@ -1,78 +1,34 @@
-
-// Define UserRole interface (for the roles table)
-export interface UserRole {
-  id: string;
-  name: string;
-  description?: string;
-  created_at?: string;
-  permissions?: string[];
-}
-
-// Define UserProfile interface
-export interface UserProfile {
-  id: string;
-  email?: string;
-  full_name: string;
-  avatar_url?: string;
-  role: UserRoleType;
-  created_at?: string;
-  roles?: UserRole[];
-  username?: string;
-  bio?: string;
-  headline?: string;
-  website?: string;
-  location?: string;
-  phone?: string;
-  social_networks?: {
-    twitter?: string;
-    linkedin?: string;
-    github?: string;
-    instagram?: string;
-  };
-  preferences?: {
-    email_notifications?: boolean;
-    dark_mode?: boolean;
-  };
-  is_instructor?: boolean;
-  is_admin?: boolean;
-  last_login?: string;
-  is_active?: boolean;
-}
-
-export interface AuthUser {
-  id: string;
-  email?: string;
-  user_metadata?: {
-    full_name?: string;
-    avatar_url?: string;
-  };
-}
-
-// Define all roles as a string literal type
 export type UserRoleType = 
   | 'admin' 
-  | 'instructor' 
+  | 'guest' 
   | 'student' 
+  | 'instructor' 
   | 'moderator' 
-  | 'content_creator'
-  | 'guest'
+  | 'content_creator' 
+  | 'sistemas' 
   | 'beta_tester'
-  | 'sistemas'
   | 'anonimo';
 
-// Helper functions for type conversion
-export const asUserRoleType = (value: string): UserRoleType => {
-  const validRoles: UserRoleType[] = [
-    'admin', 'instructor', 'student', 'moderator', 
-    'content_creator', 'guest', 'beta_tester', 'sistemas', 'anonimo'
-  ];
-  
-  return validRoles.includes(value as UserRoleType) 
-    ? (value as UserRoleType) 
-    : 'guest';
-};
+export function toUserRoleType(role: string): UserRoleType {
+  switch (role) {
+    case 'admin':
+    case 'guest':
+    case 'student':
+    case 'instructor':
+    case 'moderator':
+    case 'content_creator':
+    case 'sistemas':
+    case 'beta_tester':
+    case 'anonimo':
+      return role as UserRoleType;
+    default:
+      return 'guest';
+  }
+}
 
-// String-to-UserRoleType conversion helper
-export const toUserRoleType = (value: string | UserRoleType): UserRoleType => {
-  return asUserRoleType(value as string);
-};
+export function asUserRoleType(role: string): UserRoleType | null {
+  if (['admin', 'guest', 'student', 'instructor', 'moderator', 'content_creator', 'sistemas', 'beta_tester', 'anonimo'].includes(role)) {
+    return role as UserRoleType;
+  }
+  return null;
+}

@@ -36,6 +36,12 @@ const AnalyticsOverview: React.FC = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('overview');
   
+  // Ensure stats has total_courses property
+  const enhancedStats = {
+    ...stats,
+    total_courses: stats.active_courses || 0, // Fallback if the property doesn't exist
+  };
+  
   // Determinar qué pestaña mostrar basado en la URL
   React.useEffect(() => {
     const path = location.pathname.split('/').pop();
@@ -157,7 +163,7 @@ const AnalyticsOverview: React.FC = () => {
 
         {/* Contenido de pestañas */}
         <div className="mt-6">
-          {activeTab === 'overview' && <PlatformOverviewSection stats={stats} isLoading={isLoading} />}
+          {activeTab === 'overview' && <PlatformOverviewSection stats={enhancedStats} isLoading={isLoading} />}
           {activeTab === 'users' && <UserAnalyticsSection />}
           {activeTab === 'courses' && <CoursesAnalyticsSection />}
           {activeTab === 'revenue' && <RevenueAnalyticsSection />}

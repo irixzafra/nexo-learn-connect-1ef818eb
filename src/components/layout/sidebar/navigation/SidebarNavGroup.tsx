@@ -49,9 +49,9 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
       <div className="mb-4">
         {visibleItems.map(item => (
           <SidebarNavItem
-            key={item.path}
-            to={item.path}
-            icon={item.icon}
+            key={item.path || item.url}
+            to={item.path || item.url || '#'}
+            icon={item.icon as React.ElementType}
             label={item.label}
             badge={typeof item.badge === 'number' ? item.badge : undefined}
             isCollapsed={isCollapsed}
@@ -90,9 +90,9 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
       >
         {visibleItems.map(item => (
           <SidebarNavItem
-            key={item.path}
-            to={item.path}
-            icon={item.icon}
+            key={item.path || item.url}
+            to={item.path || item.url || '#'}
+            icon={item.icon as React.ElementType}
             label={item.label}
             badge={typeof item.badge === 'number' ? item.badge : undefined}
             isCollapsed={isCollapsed}

@@ -10,6 +10,7 @@ export interface MenuItem {
   isHighlighted?: boolean;
   description?: string;
   disabled?: boolean;
+  badge?: string | number;
 }
 
 export type NavigationGroup = {
