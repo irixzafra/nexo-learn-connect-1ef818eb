@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CalendarDays, BookOpen, Award, Clock } from 'lucide-react';
-import WelcomeSection from '@/components/dashboard/WelcomeSection';
-import StatsSection from '@/components/dashboard/StatsSection';
+import { WelcomeSection } from '@/components/dashboard/WelcomeSection';
+import { StatsSection } from '@/components/dashboard/StatsSection';
 import UpcomingClassesSection from '@/features/home/components/UpcomingClassesSection';
 import ContinueLearningSection from '@/features/home/components/ContinueLearningSection';
 import OnboardingTrigger from '@/components/onboarding/OnboardingTrigger';
@@ -30,7 +30,10 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <WelcomeSection />
+      <WelcomeSection 
+        title="Bienvenido" 
+        description="Aquí puedes ver un resumen de tu actividad reciente" 
+      />
 
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
@@ -49,7 +52,12 @@ const Dashboard = () => {
         </TabsList>
         
         <TabsContent value="overview" className="space-y-4">
-          <StatsSection />
+          <StatsSection stats={[
+            { label: "Cursos Activos", value: "3", icon: <BookOpen className="h-4 w-4" /> },
+            { label: "Horas de Estudio", value: "28", icon: <Clock className="h-4 w-4" /> },
+            { label: "Tareas Completadas", value: "12", icon: <Award className="h-4 w-4" /> },
+            { label: "Próximas Clases", value: "5", icon: <CalendarDays className="h-4 w-4" /> }
+          ]} />
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
             <ContinueLearningSection />
             <ExploreCoursesCard />
