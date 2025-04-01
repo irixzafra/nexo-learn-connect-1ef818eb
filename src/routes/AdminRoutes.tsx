@@ -3,7 +3,6 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import NotFound from '@/pages/NotFound';
-import Page404 from '@/pages/NotFound';
 import Features from '@/pages/admin/Features';
 import Analytics from '@/pages/admin/analytics';
 import NavigationExplorer from '@/pages/admin/navigation/NavigationExplorer';
@@ -12,11 +11,7 @@ import SettingsRoutes from './SettingsRoutes';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 import PagesManagement from '@/pages/admin/settings/pages';
-
-// Placeholder components until actual ones are created
-const Dashboard = () => <div>Dashboard Content</div>;
-const Courses = () => <div>Courses Content</div>;
-const CourseDetail = () => <div>Course Detail Content</div>;
+import AdminDashboard from '@/pages/admin/dashboard';
 
 const AdminRoutes: React.FC = () => {
   return (
@@ -24,33 +19,13 @@ const AdminRoutes: React.FC = () => {
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
       <Route
         path="/dashboard"
-        element={
-          <AdminPageLayout title="Dashboard">
-            <Dashboard />
-          </AdminPageLayout>
-        }
+        element={<AdminDashboard />}
       />
       <Route
         path="/users"
         element={
           <AdminPageLayout title="Gestión de Usuarios">
             <UserManagement />
-          </AdminPageLayout>
-        }
-      />
-      <Route
-        path="/courses"
-        element={
-          <AdminPageLayout title="Cursos">
-            <Courses />
-          </AdminPageLayout>
-        }
-      />
-      <Route
-        path="/courses/:id"
-        element={
-          <AdminPageLayout title="Detalle de Curso">
-            <CourseDetail />
           </AdminPageLayout>
         }
       />
@@ -89,7 +64,7 @@ const AdminRoutes: React.FC = () => {
           </AdminPageLayout>
         }
       />
-      <Route path="*" element={<Page404 />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

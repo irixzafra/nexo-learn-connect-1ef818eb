@@ -23,7 +23,7 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useNavigate } from 'react-router-dom';
 import { useAdminDashboardStats } from '@/features/admin/hooks/useAdminDashboardStats';
-import AppLayout from '@/layouts/AppLayout';
+import AdminPageLayout from '@/layouts/AdminPageLayout';
 
 const AdminDashboard: React.FC = () => {
   const { stats, isLoading } = useAdminDashboardStats();
@@ -120,40 +120,33 @@ const AdminDashboard: React.FC = () => {
   ];
 
   return (
-    <AppLayout>
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Panel de Administración</h1>
-            <p className="text-muted-foreground">Gestión centralizada de la plataforma</p>
-          </div>
-        </div>
-
+    <AdminPageLayout title="Panel de Administración" subtitle="Gestión centralizada de la plataforma">
+      <div className="space-y-6">
         {/* Estadísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard 
             title="Usuarios" 
-            value={isLoading ? "-" : stats.total_users.toLocaleString()} 
+            value={isLoading ? "-" : stats?.total_users?.toLocaleString() || "0"} 
             icon={<Users className="h-5 w-5 text-primary" />}
           />
           <StatCard 
             title="Cursos" 
-            value={isLoading ? "-" : stats.active_courses.toLocaleString()} 
+            value={isLoading ? "-" : stats?.active_courses?.toLocaleString() || "0"} 
             icon={<BookOpen className="h-5 w-5 text-primary" />}
           />
           <StatCard 
             title="Matrículas" 
-            value={isLoading ? "-" : stats.total_enrollments.toLocaleString()} 
+            value={isLoading ? "-" : stats?.total_enrollments?.toLocaleString() || "0"} 
             icon={<CreditCard className="h-5 w-5 text-primary" />}
           />
           <StatCard 
             title="Nuevos Usuarios" 
-            value={isLoading ? "-" : `+${stats.new_users_last_7_days} esta semana`} 
+            value={isLoading ? "-" : `+${stats?.new_users_last_7_days || "0"} esta semana`} 
             icon={<BarChart3 className="h-5 w-5 text-primary" />}
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Estado del Sistema */}
           <Card>
             <CardHeader>
@@ -181,11 +174,11 @@ const AdminDashboard: React.FC = () => {
                 <div className="flex justify-between text-sm">
                   <span>Publicación de cursos</span>
                   <span className="text-muted-foreground">
-                    {isLoading ? "..." : `${stats.publishedCoursesCount}/${stats.coursesCount} (${Math.round((stats.publishedCoursesCount/stats.coursesCount || 0) * 100)}%)`}
+                    {isLoading ? "..." : `${stats?.publishedCoursesCount || 0}/${stats?.coursesCount || 0} (${Math.round(((stats?.publishedCoursesCount || 0)/(stats?.coursesCount || 1) || 0) * 100)}%)`}
                   </span>
                 </div>
                 <Progress 
-                  value={isLoading ? 0 : Math.round((stats.publishedCoursesCount/stats.coursesCount || 0) * 100)} 
+                  value={isLoading ? 0 : Math.round(((stats?.publishedCoursesCount || 0)/(stats?.coursesCount || 1) || 0) * 100)} 
                   className="h-2" 
                 />
               </div>
@@ -193,9 +186,9 @@ const AdminDashboard: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Tasa de finalización de cursos</span>
-                  <span className="text-muted-foreground">{stats.completionRate}%</span>
+                  <span className="text-muted-foreground">{stats?.completionRate || 0}%</span>
                 </div>
-                <Progress value={stats.completionRate} className="h-2" />
+                <Progress value={stats?.completionRate || 0} className="h-2" />
               </div>
             </CardContent>
           </Card>
@@ -209,7 +202,7 @@ const AdminDashboard: React.FC = () => {
             <CardContent>
               <div className="space-y-3">
                 {systemAlerts.map(alert => (
-                  <Alert key={alert.id} variant={alert.type as "default" | "destructive" | "success" | null}>
+                  <Alert key={alert.id} variant={alert.type as "default" | "destructive" | null}>
                     <div className="flex items-start">
                       <div className="mr-2 mt-0.5">{alert.icon}</div>
                       <div className="flex-1">
@@ -225,7 +218,7 @@ const AdminDashboard: React.FC = () => {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Actividad Reciente */}
           <Card>
             <CardHeader>
@@ -284,7 +277,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Acceso a Módulos */}
-        <Card id="allMenuItems" className="mb-6">
+        <Card id="allMenuItems">
           <CardHeader>
             <CardTitle>Acceso a Módulos</CardTitle>
             <CardDescription>Accede rápidamente a todos los módulos de administración</CardDescription>
@@ -323,7 +316,7 @@ const AdminDashboard: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-    </AppLayout>
+    </AdminPageLayout>
   );
 };
 

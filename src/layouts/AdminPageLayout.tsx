@@ -1,9 +1,8 @@
 
 import React from 'react';
-import AppLayout from './AppLayout';
-import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
-import FloatingEditModeToggle from '@/components/admin/FloatingEditModeToggle';
-import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
+import { Toaster } from 'sonner';
+import { AdminTabItem } from '@/components/shared/AdminNavTabs';
+import AdminNavTabs from '@/components/shared/AdminNavTabs';
 
 interface AdminPageLayoutProps {
   title: string;
@@ -12,8 +11,6 @@ interface AdminPageLayoutProps {
   defaultTabValue?: string;
   children?: React.ReactNode;
   actions?: React.ReactNode;
-  subMenuItems?: AdminSubMenuItem[];
-  baseRoute?: string;
 }
 
 const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
@@ -23,8 +20,6 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   defaultTabValue,
   children,
   actions,
-  subMenuItems,
-  baseRoute
 }) => {
   return (
     <div className="flex-1 w-full">
@@ -57,7 +52,7 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
         )}
       </div>
       
-      <FloatingEditModeToggle />
+      <Toaster position="top-right" />
     </div>
   );
 };

@@ -1,10 +1,7 @@
 
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { toast } from "sonner";
+import { useState, useEffect } from 'react';
 
-// Interfaz para tipar los datos de estadísticas
-export interface DashboardStats {
+interface DashboardStats {
   total_users: number;
   active_courses: number;
   total_enrollments: number;
@@ -14,62 +11,48 @@ export interface DashboardStats {
   completionRate: number;
 }
 
-// Default stats object to prevent undefined errors
-const defaultStats: DashboardStats = {
-  total_users: 0,
-  active_courses: 0,
-  total_enrollments: 0,
-  new_users_last_7_days: 0,
-  coursesCount: 0,
-  publishedCoursesCount: 0,
-  completionRate: 0
-};
-
 export const useAdminDashboardStats = () => {
-  const { data: statsData, isLoading } = useQuery({
-    queryKey: ["adminDashboardStats"],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase.rpc('get_dashboard_stats');
-        
-        if (error) {
-          throw error;
-        }
-        
-        // Handle potentially null data from the RPC call
-        if (!data) {
-          console.warn('No data returned from get_dashboard_stats RPC');
-          return defaultStats;
-        }
-        
-        // Validate and sanitize the received data
-        const basicStats = {
-          total_users: data.total_users || 0,
-          active_courses: data.active_courses || 0,
-          total_enrollments: data.total_enrollments || 0,
-          new_users_last_7_days: data.new_users_last_7_days || 0,
-        };
-        
-        // Datos derivados para AnalyticsTab
-        return {
-          ...basicStats,
-          coursesCount: basicStats.active_courses || 0,
-          publishedCoursesCount: Math.floor((basicStats.active_courses || 0) * 0.8), // 80% publicados como ejemplo
-          completionRate: 75 // Porcentaje de ejemplo
-        } as DashboardStats;
-      } catch (error: any) {
-        console.error("Error fetching admin dashboard stats:", error);
-        toast.error("Error al cargar estadísticas del dashboard");
-        
-        // Return default stats on error to prevent undefined values
-        return defaultStats;
-      }
-    },
-    refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
+  const [stats, setStats] = useState<DashboardStats>({
+    total_users: 0,
+    active_courses: 0,
+    total_enrollments: 0,
+    new_users_last_7_days: 0,
+    coursesCount: 0,
+    publishedCoursesCount: 0,
+    completionRate: 0,
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  return {
-    stats: statsData || defaultStats,
-    isLoading
-  };
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      try {
+        setIsLoading(true);
+        
+        // En un entorno real, aquí habría una llamada a la API
+        // Por ahora, simularemos datos para la demostración
+        setTimeout(() => {
+          setStats({
+            total_users: 1245,
+            active_courses: 87,
+            total_enrollments: 3842,
+            new_users_last_7_days: 42,
+            coursesCount: 90,
+            publishedCoursesCount: 87,
+            completionRate: 68,
+          });
+          setIsLoading(false);
+        }, 800);
+        
+      } catch (err) {
+        console.error('Error fetching dashboard stats:', err);
+        setError(err as Error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardStats();
+  }, []);
+
+  return { stats, isLoading, error };
 };

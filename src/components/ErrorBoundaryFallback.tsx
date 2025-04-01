@@ -1,42 +1,39 @@
 
 import React from 'react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ErrorBoundaryFallbackProps {
-  error?: Error;
-  resetError?: () => void;
+  error: Error;
+  resetError: () => void;
 }
 
-const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ 
-  error, 
-  resetError 
-}) => {
+const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ error, resetError }) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
-      <div className="max-w-md p-6 bg-white rounded-lg shadow-lg border border-red-200">
-        <h2 className="text-2xl font-bold text-red-600 mb-4">
-          Algo salió mal
-        </h2>
-        <p className="text-gray-700 mb-4">
-          Ha ocurrido un error inesperado. Nuestro equipo ha sido notificado y estamos trabajando para resolverlo.
+    <div className="p-6 border rounded-lg bg-destructive/5 flex flex-col items-center justify-center text-center space-y-4">
+      <AlertCircle className="h-12 w-12 text-destructive" />
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold">Algo salió mal</h3>
+        <p className="text-sm text-muted-foreground max-w-md">
+          Se ha producido un error inesperado. Por favor, intenta de nuevo o contacta con soporte si el problema persiste.
         </p>
-        {error && (
-          <div className="p-3 bg-gray-100 rounded mb-4 text-left overflow-auto max-h-32">
-            <p className="text-sm text-gray-700 font-mono">
-              {error.message}
-            </p>
+        {process.env.NODE_ENV !== 'production' && (
+          <div className="mt-4 p-4 bg-muted/50 rounded text-left overflow-auto max-h-[200px] text-xs">
+            <pre className="font-mono">{error.message}</pre>
+            {error.stack && (
+              <pre className="font-mono mt-2 text-muted-foreground">{error.stack}</pre>
+            )}
           </div>
         )}
-        {resetError && (
-          <Button 
-            onClick={resetError}
-            variant="default"
-            className="mt-2"
-          >
-            Intentar nuevamente
-          </Button>
-        )}
       </div>
+      <Button 
+        onClick={resetError} 
+        variant="outline"
+        className="mt-4"
+      >
+        <RefreshCw className="mr-2 h-4 w-4" />
+        Intentar de nuevo
+      </Button>
     </div>
   );
 };

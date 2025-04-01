@@ -1,56 +1,41 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
-interface Props {
+interface ErrorBoundaryProps {
   children: ReactNode;
-  FallbackComponent?: React.ComponentType<{ error?: Error; resetError?: () => void }>;
+  FallbackComponent: React.ComponentType<{ error: Error; resetError: () => void }>;
 }
 
-interface State {
+interface ErrorBoundaryState {
   hasError: boolean;
-  error?: Error;
+  error: Error | null;
 }
 
-class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    console.error("Uncaught error:", error, errorInfo);
+    console.error("Error caught by ErrorBoundary:", error, errorInfo);
   }
 
-  resetErrorBoundary = () => {
-    this.setState({ hasError: false, error: undefined });
+  resetError = (): void => {
+    this.setState({ hasError: false, error: null });
   };
 
   render(): ReactNode {
-    if (this.state.hasError) {
-      if (this.props.FallbackComponent) {
-        return (
-          <this.props.FallbackComponent 
-            error={this.state.error} 
-            resetError={this.resetErrorBoundary} 
-          />
-        );
-      }
-      
-      // Default fallback UI
+    if (this.state.hasError && this.state.error) {
       return (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-          <h2 className="text-lg font-medium text-red-800">Something went wrong</h2>
-          <button 
-            onClick={this.resetErrorBoundary}
-            className="mt-2 px-3 py-1 text-sm bg-red-100 text-red-800 rounded hover:bg-red-200"
-          >
-            Try again
-          </button>
-        </div>
+        <this.props.FallbackComponent
+          error={this.state.error}
+          resetError={this.resetError}
+        />
       );
     }
 

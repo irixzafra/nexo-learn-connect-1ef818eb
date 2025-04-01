@@ -1,102 +1,92 @@
 
-import { SitePage } from '@/types/pages';
+import { SitePage } from "@/types/pages";
 
-// Mock data for development
-const mockPages: SitePage[] = [
-  {
-    id: '1',
-    title: 'Home Page',
-    slug: 'home',
-    content: { 
-      blocks: [
-        { id: 'block-1', type: 'text', content: 'Welcome to our platform!' },
-        { id: 'block-2', type: 'hero', content: 'Learn and Grow With Us' }
-      ] 
-    },
-    status: 'published',
-    layout: 'default',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    is_system_page: true
-  },
-  {
-    id: '2',
-    title: 'About Us',
-    slug: 'about',
-    content: { 
-      blocks: [
-        { id: 'block-3', type: 'text', content: 'Learn more about our company.' }
-      ] 
-    },
-    status: 'published',
-    layout: 'default',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    is_system_page: false
-  }
-];
-
-/**
- * Get a page by its slug
- */
+// Placeholder para la función getPageBySlug
 export const getPageBySlug = async (slug: string): Promise<SitePage | null> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const page = mockPages.find(page => page.slug === slug);
-      resolve(page || null);
-    }, 500);
-  });
+  // En una implementación real, esta función buscaría la página en la base de datos
+  // Por ahora, simulamos el comportamiento
+  try {
+    console.log(`Fetching page with slug: ${slug}`);
+    
+    // Simular un pequeño retraso para imitar una llamada a la API
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Devolver null si no se encuentra la página
+    if (slug === "nonexistent") {
+      return null;
+    }
+    
+    // Devolver una página de ejemplo
+    return {
+      id: "1",
+      title: "Página de ejemplo",
+      slug: slug,
+      description: "Descripción de la página de ejemplo",
+      content: {
+        blocks: [
+          {
+            id: "block1",
+            type: "text",
+            content: "Este es un bloque de texto de ejemplo.",
+            order: 1
+          },
+          {
+            id: "block2",
+            type: "hero",
+            content: "Título principal de la página",
+            order: 2
+          }
+        ]
+      },
+      layout: "default",
+      is_system_page: false,
+      status: "published",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error("Error fetching page by slug:", error);
+    return null;
+  }
 };
 
-/**
- * Get all pages
- */
-export const getAllPages = async (): Promise<SitePage[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([...mockPages]);
-    }, 500);
-  });
+// Función para verificar si un slug es único
+export const isSlugUnique = async (slug: string, pageId?: string): Promise<boolean> => {
+  // En una implementación real, verificaríamos en la base de datos
+  // Por ahora, simulamos el comportamiento
+  return true;
 };
 
-/**
- * Update page status
- */
-export const updatePageStatus = async (pageId: string, status: 'draft' | 'published' | 'archived'): Promise<SitePage | null> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const pageIndex = mockPages.findIndex(page => page.id === pageId);
-      if (pageIndex === -1) {
-        resolve(null);
-        return;
-      }
-      
-      const updatedPage = {
-        ...mockPages[pageIndex],
-        status,
-        updated_at: new Date().toISOString()
-      };
-      
-      // In a real implementation, this would update the database
-      resolve(updatedPage);
-    }, 500);
-  });
+// Función para obtener una página por su ID
+export const getPageById = async (id: string): Promise<SitePage | null> => {
+  // Simular la obtención de una página por ID
+  return {
+    id: id,
+    title: "Página de ejemplo",
+    slug: "ejemplo",
+    description: "Descripción de la página de ejemplo",
+    layout: "default",
+    is_system_page: false,
+    status: "published",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
 };
 
-/**
- * Delete a page
- */
-export const deletePage = async (pageId: string): Promise<boolean> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const pageIndex = mockPages.findIndex(page => page.id === pageId);
-      if (pageIndex === -1) {
-        resolve(false);
-        return;
-      }
-      
-      // In a real implementation, this would delete from the database
-      resolve(true);
-    }, 500);
-  });
+// Función para actualizar una página
+export const updatePage = async (id: string, pageData: Partial<SitePage>): Promise<SitePage> => {
+  // Simular la actualización de una página
+  console.log(`Updating page with ID: ${id}`, pageData);
+  return {
+    ...await getPageById(id) as SitePage,
+    ...pageData,
+    updated_at: new Date().toISOString()
+  };
+};
+
+// Exportamos estas funciones desde el namespace de admin
+export const admin = {
+  getPageById,
+  updatePage,
+  isSlugUnique
 };
