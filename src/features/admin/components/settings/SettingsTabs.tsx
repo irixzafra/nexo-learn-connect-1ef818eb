@@ -5,7 +5,7 @@ import AppearanceSettings from './AppearanceSettings';
 import { SecuritySettings } from './SecuritySettings';
 import { NotificationSettings } from './NotificationSettings';
 import ContentSettings from './ContentSettings';
-import { OnboardingSettings } from './OnboardingSettings';
+import OnboardingSettings from './OnboardingSettings';
 import { TestDataSettings } from './TestDataSettings';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import DeveloperSettings from '@/components/admin/settings/DeveloperSettings';

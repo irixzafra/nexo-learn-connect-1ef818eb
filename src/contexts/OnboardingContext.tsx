@@ -42,7 +42,7 @@ const OnboardingContext = createContext<OnboardingContextValue>({
   isOpen: false,
   openOnboarding: () => {},
   closeOnboarding: () => {},
-  currentStep: null,
+  currentStep: OnboardingStep.WELCOME,
   totalSteps: onboardingSteps.length,
   goToStep: () => {},
   nextStep: () => {},
@@ -83,7 +83,8 @@ export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ chil
   const progress = Math.round(((currentStepIndex + 1) / onboardingSteps.length) * 100);
   
   // Obtener el paso actual
-  const currentStep = onboardingSteps[currentStepIndex];
+  const currentStepConfig = onboardingSteps[currentStepIndex];
+  const currentStep = currentStepConfig?.id || OnboardingStep.WELCOME;
   
   // Determinar si es el primer o último paso
   const isFirstStep = currentStepIndex === 0;
@@ -101,8 +102,9 @@ export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ chil
   };
 
   // Ir a un paso específico
-  const goToStep = (stepIndex: number) => {
-    if (stepIndex >= 0 && stepIndex < onboardingSteps.length) {
+  const goToStep = (step: OnboardingStep) => {
+    const stepIndex = onboardingSteps.findIndex(s => s.id === step);
+    if (stepIndex >= 0) {
       setCurrentStepIndex(stepIndex);
     }
   };

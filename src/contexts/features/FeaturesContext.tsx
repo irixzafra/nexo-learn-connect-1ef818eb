@@ -1,7 +1,10 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { FeaturesConfig, FeaturesContextProps, defaultFeaturesConfig } from './types';
-import { getFeatureDependencies, getFeatureDependents } from './dependencies';
+import { 
+  getFeatureDependencies, 
+  getFeatureDependents 
+} from './dependencies';
 
 // Crear contexto con valor por defecto
 export const FeaturesContext = createContext<FeaturesContextProps | undefined>(undefined);

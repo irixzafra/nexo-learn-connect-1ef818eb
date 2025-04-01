@@ -32,10 +32,10 @@ const HeaderActions: React.FC = () => {
       {/* Onboarding trigger */}
       {isAuthenticated && 
        featuresConfig.enableOnboarding && 
-       (featuresConfig.showOnboardingTrigger || false) && 
+       featuresConfig.showOnboardingTrigger && 
        !isOnboardingComplete && (
         <OnboardingTrigger 
-          onClick={() => openOnboarding()}
+          onActivate={() => openOnboarding()}
         />
       )}
 

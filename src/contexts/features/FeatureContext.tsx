@@ -2,7 +2,10 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { FeaturesConfig, defaultFeaturesConfig } from './types';
-import { featureDependencies, getReverseDependencies } from './dependencies';
+import { 
+  getFeatureDependencies, 
+  getFeatureDependents 
+} from './dependencies';
 
 // Context props definition
 export interface FeaturesContextProps {
@@ -11,6 +14,8 @@ export interface FeaturesContextProps {
   toggleFeature: (featureName: keyof FeaturesConfig, value: boolean) => Promise<void>;
   updateFeatures: (newConfig: Partial<FeaturesConfig>) => Promise<void>;
   isFeatureEnabled: (featureName: keyof FeaturesConfig) => boolean;
+  getFeatureDependencies: (feature: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
+  getFeatureDependents: (feature: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
 }
 
 // Create context with default empty values
@@ -91,7 +96,9 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     isLoading,
     toggleFeature,
     updateFeatures,
-    isFeatureEnabled
+    isFeatureEnabled,
+    getFeatureDependencies,
+    getFeatureDependents
   };
 
   return (

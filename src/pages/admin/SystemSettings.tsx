@@ -25,7 +25,7 @@ import { SecuritySettings } from '@/features/admin/components/settings/SecurityS
 import DataSettings from '@/features/admin/components/settings/DataSettings';
 import AppearanceSettings from '@/features/admin/components/settings/AppearanceSettings';
 import ContentSettings from '@/features/admin/components/settings/ContentSettings';
-import { OnboardingSettings } from '@/features/admin/components/settings/OnboardingSettings';
+import OnboardingSettings from '@/features/admin/components/settings/OnboardingSettings';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { toast } from 'sonner';

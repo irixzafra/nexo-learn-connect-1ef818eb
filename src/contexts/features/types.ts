@@ -43,9 +43,9 @@ export interface FeaturesConfig {
   enableContextualHelp: boolean;
   requireOnboarding: boolean;
   
-  // Alias properties (para mantener compatibilidad)
-  // Estos son los nombres que se usan en algunos componentes
-  // pero mapeamos a las propiedades originales para evitar duplicación
+  // Additional properties
+  autoStartOnboarding: boolean;
+  showOnboardingTrigger: boolean;
 }
 
 // Valores por defecto para usar en el provider
@@ -91,7 +91,11 @@ export const defaultFeaturesConfig: FeaturesConfig = {
   // Onboarding features
   enableOnboarding: true,
   enableContextualHelp: true,
-  requireOnboarding: false
+  requireOnboarding: false,
+  
+  // Additional properties
+  autoStartOnboarding: false,
+  showOnboardingTrigger: true
 };
 
 export interface FeaturesContextProps {

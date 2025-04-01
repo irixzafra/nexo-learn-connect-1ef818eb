@@ -1,6 +1,6 @@
 
 import { useFeatures } from '@/contexts/features/FeatureContext';
-import { featureDependencies, getReverseDependencies } from '@/contexts/features/dependencies';
+import { featureDependencies, featureDependents } from '@/contexts/features/dependencies';
 import { FeaturesConfig } from '@/contexts/features/types';
 
 /**
@@ -9,15 +9,12 @@ import { FeaturesConfig } from '@/contexts/features/types';
 export const useFeatureDependencies = () => {
   const { features } = useFeatures();
   
-  // Obtener características que dependen de una característica dada
-  const reverseDependencies = getReverseDependencies();
-  
   /**
    * Verifica si una característica puede ser desactivada
    * No se puede desactivar si hay características activas que dependen de ella
    */
   const checkIfCanDisable = (feature: keyof FeaturesConfig): boolean => {
-    const dependents = reverseDependencies[feature];
+    const dependents = featureDependents[feature];
     
     // Si no hay dependientes, siempre se puede desactivar
     if (!dependents || dependents.length === 0) {
@@ -38,7 +35,7 @@ export const useFeatureDependencies = () => {
    * Obtiene la lista de características que dependen de una característica dada
    */
   const getDependentFeatures = (feature: keyof FeaturesConfig): string[] => {
-    return reverseDependencies[feature] || [];
+    return featureDependents[feature] || [];
   };
   
   /**
