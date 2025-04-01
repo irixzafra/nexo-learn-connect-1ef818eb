@@ -3,26 +3,19 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader } from 'lucide-react';
+import { useRoleBasedNavigation } from '@/hooks/useRoleBasedNavigation';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading, userRole } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  const { getRoleHomePath } = useRoleBasedNavigation();
   
   useEffect(() => {
     if (!isLoading) {
       if (isAuthenticated) {
-        // Redirigir según el rol del usuario
-        switch (userRole) {
-          case 'admin':
-            navigate('/admin/dashboard');
-            break;
-          case 'instructor':
-            navigate('/instructor/dashboard');
-            break;
-          case 'student':
-          default:
-            navigate('/home');
-        }
+        // Usar nuestra nueva función para obtener la ruta personalizada según el rol
+        const homePath = getRoleHomePath();
+        navigate(homePath);
       } else {
         // Si no está autenticado, redirigir a la página configurada
         // Obtener configuración desde localStorage o usar valor por defecto
@@ -41,7 +34,7 @@ const Index = () => {
         navigate(defaultLandingUrl);
       }
     }
-  }, [navigate, isAuthenticated, isLoading, userRole]);
+  }, [navigate, isAuthenticated, isLoading, getRoleHomePath]);
   
   // Mostrar un estado de carga mejorado mientras se determina el estado de autenticación
   if (isLoading) {

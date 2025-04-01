@@ -73,44 +73,53 @@ const AdminRoutes: React.FC = () => {
         <Route path="/" element={<AdminDashboard />} />
         <Route path="/dashboard" element={<AdminDashboard />} />
         
-        {/* User Management */}
+        {/* User Management - Simplificado a dos niveles */}
         <Route path="/users" element={<UserManagement />} />
         <Route path="/roles" element={<RoleManagement />} />
         
-        {/* Course Management */}
+        {/* Course Management - Simplificado a dos niveles */}
         <Route path="/courses" element={<AdminCourses />} />
-        <Route path="/courses/analytics" element={<AnalyticsOverview />} />
+        <Route path="/categories" element={<AdminCourses />} />
+        <Route path="/learning" element={<AdminCourses />} />
+        <Route path="/certificates" element={<AdminCourses />} />
         
-        {/* Finances */}
-        <Route path="/finances" element={<AdminFinances />} />
-        <Route path="/billing" element={<AdminFinances />} />
-        <Route path="/billing/:tab" element={<AdminFinances />} />
+        {/* Students and Instructors */}
+        <Route path="/students" element={<UserManagement />} />
+        <Route path="/instructors" element={<UserManagement />} />
+        <Route path="/activity" element={<AnalyticsOverview />} />
+        
+        {/* Finances - Simplificado a dos niveles */}
+        <Route path="/finance" element={<AdminFinances />} />
+        <Route path="/invoices" element={<AdminFinances />} />
+        <Route path="/subscriptions" element={<AdminFinances />} />
+        <Route path="/banks" element={<AdminFinances />} />
+        <Route path="/cashflow" element={<AdminFinances />} />
+        <Route path="/alerts" element={<AdminFinances />} />
         
         {/* Analytics */}
         <Route path="/analytics" element={<AnalyticsOverview />} />
-        <Route path="/analytics/:tab" element={<AnalyticsOverview />} />
         
         {/* Design System */}
         <Route path="/design" element={<DesignSystem />} />
-        <Route path="/design/:tab" element={<DesignSystem />} />
         
-        {/* Content Management */}
+        {/* Content Management - Simplificado a dos niveles */}
         <Route path="/content" element={<ContentManagement />} />
-        <Route path="/content/templates" element={<TemplatesPage />} />
         <Route path="/pages" element={<PageManagement />} />
         <Route path="/pages/create" element={<CreatePage />} />
         <Route path="/pages/:id" element={<EditPage />} />
         
-        {/* System Settings */}
+        {/* Settings - Simplificado a dos niveles */}
         <Route path="/settings" element={<SystemSettings />} />
-        <Route path="/settings/:tab" element={<SystemSettings />} />
+        <Route path="/features" element={<SystemSettings />} />
+        <Route path="/integrations" element={<SystemSettings />} />
+        <Route path="/data" element={<SystemSettings />} />
         
         {/* Security & Audit */}
         <Route path="/audit" element={<AuditLog />} />
         <Route path="/access" element={<AccessControl />} />
         
         {/* AI Services */}
-        <Route path="/ai/services" element={<AIServicesPage />} />
+        <Route path="/ai" element={<AIServicesPage />} />
         
         {/* Default redirect */}
         <Route path="*" element={<AdminDashboard />} />

@@ -7,6 +7,7 @@ import NotFound from '@/pages/NotFound';
 import Profile from '@/pages/Profile';
 import AppLayout from '@/layouts/AppLayout';
 import PageRenderer from '@/features/pages/PageRenderer';
+import RouteRedirector from '@/components/RouteRedirector';
 import { FeaturesProvider } from '@/contexts/features/FeaturesContext';
 
 // Lazy loading of route groups
@@ -37,163 +38,170 @@ const LoadingFallback = () => (
 
 const AppRouter: React.FC = () => {
   return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/*" element={
-        <React.Suspense fallback={<LoadingFallback />}>
-          <PublicRoutes />
-        </React.Suspense>
-      } />
-      
-      {/* User routes */}
-      <Route path="/home/*" element={
-        <ProtectedRoute>
+    <RouteRedirector>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/*" element={
           <React.Suspense fallback={<LoadingFallback />}>
-            <UserRoutes />
+            <PublicRoutes />
           </React.Suspense>
-        </ProtectedRoute>
-      } />
-      
-      {/* Instructor routes */}
-      <Route path="/instructor/*" element={
-        <ProtectedRoute>
+        } />
+        
+        {/* User routes - cambiado de /home/* a / para simplificar */}
+        <Route path="/home/*" element={
+          <ProtectedRoute>
+            <React.Suspense fallback={<LoadingFallback />}>
+              <UserRoutes />
+            </React.Suspense>
+          </ProtectedRoute>
+        } />
+        
+        {/* Profile route */}
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <div className="container mx-auto px-4 py-6">
+                <Profile />
+              </div>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* My courses - simplificado */}
+        <Route path="/my-courses" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <UserRoutes />
+              </React.Suspense>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Instructor routes - mantenido como estaba */}
+        <Route path="/instructor/*" element={
+          <ProtectedRoute>
+            <React.Suspense fallback={<LoadingFallback />}>
+              <InstructorRoutes />
+            </React.Suspense>
+          </ProtectedRoute>
+        } />
+        
+        {/* Admin routes - simplificado a dos niveles */}
+        <Route path="/admin/*" element={
+          <ProtectedRoute>
+            <React.Suspense fallback={<LoadingFallback />}>
+              <FeaturesProvider>
+                <AdminRoutes />
+              </FeaturesProvider>
+            </React.Suspense>
+          </ProtectedRoute>
+        } />
+        
+        {/* Payment routes */}
+        <Route path="/payment/:status" element={
           <React.Suspense fallback={<LoadingFallback />}>
-            <InstructorRoutes />
+            <PaymentRoutes />
           </React.Suspense>
-        </ProtectedRoute>
-      } />
-      
-      {/* Admin routes */}
-      <Route path="/admin/*" element={
-        <ProtectedRoute>
+        } />
+        
+        {/* Course related routes */}
+        <Route path="/courses/:id" element={
           <React.Suspense fallback={<LoadingFallback />}>
-            <FeaturesProvider>
-              <AdminRoutes />
-            </FeaturesProvider>
+            <CourseLanding />
           </React.Suspense>
-        </ProtectedRoute>
-      } />
-      
-      {/* Payment routes */}
-      <Route path="/payment/:status" element={
-        <React.Suspense fallback={<LoadingFallback />}>
-          <PaymentRoutes />
-        </React.Suspense>
-      } />
-      
-      {/* Course related routes */}
-      <Route path="/courses/:id" element={
-        <React.Suspense fallback={<LoadingFallback />}>
-          <CourseLanding />
-        </React.Suspense>
-      } />
-      
-      <Route path="/courses" element={
-        <AppLayout>
-          <React.Suspense fallback={<LoadingFallback />}>
-            <CoursesCatalog />
-          </React.Suspense>
-        </AppLayout>
-      } />
-      
-      <Route path="/courses/:courseId/learn" element={
-        <ProtectedRoute>
-          <React.Suspense fallback={<LoadingFallback />}>
-            <CourseLearn />
-          </React.Suspense>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="/courses/:courseId/learn/:lessonId" element={
-        <ProtectedRoute>
-          <React.Suspense fallback={<LoadingFallback />}>
-            <LessonView />
-          </React.Suspense>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="/courses/:courseId/notes" element={
-        <ProtectedRoute>
-          <React.Suspense fallback={<LoadingFallback />}>
-            <CourseNotes />
-          </React.Suspense>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="/checkout/:courseId" element={
-        <ProtectedRoute>
-          <React.Suspense fallback={<LoadingFallback />}>
-            <Checkout />
-          </React.Suspense>
-        </ProtectedRoute>
-      } />
-      
-      {/* Community route */}
-      <Route path="/community" element={
-        <AppLayout>
-          <React.Suspense fallback={<LoadingFallback />}>
-            <Community />
-          </React.Suspense>
-        </AppLayout>
-      } />
-      
-      {/* Misc protected routes */}
-      <Route path="/notifications" element={
-        <ProtectedRoute>
+        } />
+        
+        <Route path="/courses" element={
           <AppLayout>
             <React.Suspense fallback={<LoadingFallback />}>
-              <Notifications />
+              <CoursesCatalog />
             </React.Suspense>
           </AppLayout>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="/messages" element={
-        <ProtectedRoute>
+        } />
+        
+        <Route path="/courses/:courseId/learn" element={
+          <ProtectedRoute>
+            <React.Suspense fallback={<LoadingFallback />}>
+              <CourseLearn />
+            </React.Suspense>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/courses/:courseId/learn/:lessonId" element={
+          <ProtectedRoute>
+            <React.Suspense fallback={<LoadingFallback />}>
+              <LessonView />
+            </React.Suspense>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/courses/:courseId/notes" element={
+          <ProtectedRoute>
+            <React.Suspense fallback={<LoadingFallback />}>
+              <CourseNotes />
+            </React.Suspense>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/checkout/:courseId" element={
+          <ProtectedRoute>
+            <React.Suspense fallback={<LoadingFallback />}>
+              <Checkout />
+            </React.Suspense>
+          </ProtectedRoute>
+        } />
+        
+        {/* Community route */}
+        <Route path="/community" element={
           <AppLayout>
             <React.Suspense fallback={<LoadingFallback />}>
-              <Messages />
+              <Community />
             </React.Suspense>
           </AppLayout>
-        </ProtectedRoute>
-      } />
-      
-      <Route path="/billing" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <React.Suspense fallback={<LoadingFallback />}>
-              <Billing />
+        } />
+        
+        {/* Misc protected routes */}
+        <Route path="/notifications" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <Notifications />
             </React.Suspense>
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      
-      {/* Profile route */}
-      <Route path="/profile" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <div className="container mx-auto px-4 py-6">
-              <Profile />
-            </div>
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      
-      {/* Redirects */}
-      <Route path="/my-courses" element={
-        <ProtectedRoute>
-          <Navigate to="/home/my-courses" replace />
-        </ProtectedRoute>
-      } />
-      
-      <Route path="/index" element={<Navigate to="/" replace />} />
-      
-      {/* Dynamic page route - debe ser después de todas las rutas específicas y antes del catch-all */}
-      <Route path="/:slug" element={<PageRenderer />} />
-      
-      {/* Catch-all para rutas no encontradas - debe ser la última ruta */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/messages" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <Messages />
+              </React.Suspense>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/billing" element={
+          <ProtectedRoute>
+            <AppLayout>
+              <React.Suspense fallback={<LoadingFallback />}>
+                <Billing />
+              </React.Suspense>
+            </AppLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Redirects */}
+        <Route path="/index" element={<Navigate to="/" replace />} />
+        
+        {/* Dynamic page route - debe ser después de todas las rutas específicas y antes del catch-all */}
+        <Route path="/:slug" element={<PageRenderer />} />
+        
+        {/* Catch-all para rutas no encontradas - debe ser la última ruta */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </RouteRedirector>
   );
 };
 

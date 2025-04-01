@@ -1,34 +1,44 @@
 
 # ARQUITECTURA DEL SISTEMA NEXO LEARNING
 
-Este documento describe la arquitectura completa del sistema, incluyendo la estructura de navegación, slugs de páginas, y funcionalidades específicas de cada sección.
+## Introducción
 
-## ESTRUCTURA DE NAVEGACIÓN GENERAL
+Este documento sirve como la referencia maestra para la arquitectura, navegación y funcionalidades de Nexo Learning. Proporciona una visión clara de la estructura de la aplicación, rutas, componentes y mapeo de funcionalidades.
 
-La navegación del sistema se divide en dos modos principales:
-1. **Navegación de Usuario**: Disponible para todos los roles, con permisos específicos
-2. **Navegación de Administración**: Accesible solo para roles administrativos
+## Roles de Usuario
 
-## ESTRUCTURA DE SLUGS Y FUNCIONALIDADES
+| Rol | Descripción | Acceso |
+|-----|-------------|--------|
+| `guest` | Usuario no autenticado | Páginas públicas y landing |
+| `student` | Estudiante registrado | Dashboard personal, cursos, comunidad |
+| `instructor` | Profesor | Todo lo de estudiante + herramientas de instructor |
+| `moderator` | Moderador de contenido | Todo lo de estudiante + moderación |
+| `admin` | Administrador | Acceso completo al sistema |
+| `sistemas` | Administrador técnico | Configuración técnica y monitoreo |
+| `content_creator` | Creador de contenido | Herramientas de creación de contenido |
+| `beta_tester` | Probador de nuevas funciones | Acceso a características en beta |
 
-### 1. DASHBOARD
+## Navegación Unificada y Estructura de Rutas
 
-- **Slug**: `/home` o `/dashboard`
+La aplicación utiliza un sistema de navegación unificado, adaptado según el rol del usuario.
+Todas las rutas están optimizadas para tener máximo dos niveles de profundidad.
+
+### Dashboard
+
+- **Slug**: `/home` (personalizado según rol de usuario)
 - **Roles**: Todos
 - **Funcionalidades**:
-  - Resumen de cursos en progreso
-  - Próximas actividades
+  - Resumen personalizado según rol
   - Notificaciones recientes
-  - Estadísticas de aprendizaje
-  - Recomendaciones personalizadas
+  - Actividades pendientes
+  - Estadísticas relevantes
 - **Componentes principales**:
   - `DashboardStats`
-  - `CourseProgressCards`
-  - `RecentlyViewedCourses`
-  - `UpcomingEvents`
-  - `LearningRecommendations`
+  - `RoleSpecificContent`
+  - `NotificationsSummary`
+  - `ActivityFeed`
 
-### 2. MIS CURSOS
+### Mis Cursos
 
 #### Mi Perfil
 - **Slug**: `/profile`
@@ -37,7 +47,6 @@ La navegación del sistema se divide en dos modos principales:
   - Visualización/edición de datos personales
   - Configuración de privacidad
   - Preferencias de aprendizaje
-  - Conexión de redes sociales
 - **Componentes principales**:
   - `ProfileForm`
   - `UserAvatar`
@@ -45,7 +54,7 @@ La navegación del sistema se divide en dos modos principales:
   - `SocialConnections`
 
 #### Mis Cursos
-- **Slug**: `/home/my-courses`
+- **Slug**: `/my-courses`
 - **Roles**: Todos
 - **Funcionalidades**:
   - Lista de cursos en progreso
@@ -127,7 +136,7 @@ La navegación del sistema se divide en dos modos principales:
   - `AccessibilityOptions`
 
 #### Analíticas
-- **Slug**: `/analytics/personal`
+- **Slug**: `/analytics`
 - **Roles**: Estudiante, Instructor, Admin
 - **Funcionalidades**:
   - Tiempo de estudio
@@ -140,7 +149,7 @@ La navegación del sistema se divide en dos modos principales:
   - `SkillsRadar`
   - `LearningGoals`
 
-### 3. EXPLORAR
+### Explorar
 
 #### Explorar Catálogo
 - **Slug**: `/courses`
@@ -185,7 +194,7 @@ La navegación del sistema se divide en dos modos principales:
   - `SkillsTree`
 
 #### Empleo
-- **Slug**: `/job-board`
+- **Slug**: `/jobs`
 - **Roles**: Estudiante, Instructor, Admin
 - **Funcionalidades**:
   - Ofertas de empleo
@@ -227,7 +236,7 @@ La navegación del sistema se divide en dos modos principales:
   - `GroupForums`
   - `CollaborativeTools`
 
-### 4. PROFESORES
+### Profesores
 
 #### Mis Cursos (Instructor)
 - **Slug**: `/instructor/courses`
@@ -285,7 +294,7 @@ La navegación del sistema se divide en dos modos principales:
   - `CourseCompletionRates`
   - `ContentEngagementStats`
 
-### 5. GESTIÓN ACADÉMICA
+### Gestión Académica
 
 #### Estudiantes
 - **Slug**: `/admin/students`
@@ -358,7 +367,7 @@ La navegación del sistema se divide en dos modos principales:
   - `CertificateHistory`
 
 #### Rutas de aprendizaje (Admin)
-- **Slug**: `/admin/learning-paths`
+- **Slug**: `/admin/learning`
 - **Roles**: Admin, Sistemas, Creador de contenido
 - **Funcionalidades**:
   - Creación de rutas
@@ -372,7 +381,7 @@ La navegación del sistema se divide en dos modos principales:
   - `PathPublisher`
 
 #### Actividad de Alumnos
-- **Slug**: `/admin/student-activity`
+- **Slug**: `/admin/activity`
 - **Roles**: Admin, Sistemas
 - **Funcionalidades**:
   - Seguimiento en tiempo real
@@ -385,7 +394,7 @@ La navegación del sistema se divide en dos modos principales:
   - `InactivityAlerts`
   - `UsagePatterns`
 
-### 6. FINANZAS
+### Finanzas
 
 #### Finanzas (Dashboard)
 - **Slug**: `/admin/finance`
@@ -402,7 +411,7 @@ La navegación del sistema se divide en dos modos principales:
   - `RevenueExpenseChart`
 
 #### Facturas
-- **Slug**: `/admin/finance/invoices`
+- **Slug**: `/admin/invoices`
 - **Roles**: Admin, Sistemas
 - **Funcionalidades**:
   - Gestión de facturas
@@ -416,7 +425,7 @@ La navegación del sistema se divide en dos modos principales:
   - `EmailSender`
 
 #### Suscripciones
-- **Slug**: `/admin/finance/subscriptions`
+- **Slug**: `/admin/subscriptions`
 - **Roles**: Admin, Sistemas
 - **Funcionalidades**:
   - Planes de suscripción
@@ -430,7 +439,7 @@ La navegación del sistema se divide en dos modos principales:
   - `DiscountSystem`
 
 #### Bancos
-- **Slug**: `/admin/finance/banks`
+- **Slug**: `/admin/banks`
 - **Roles**: Admin, Sistemas
 - **Funcionalidades**:
   - Conexiones bancarias
@@ -444,7 +453,7 @@ La navegación del sistema se divide en dos modos principales:
   - `BankReports`
 
 #### Cash-flow
-- **Slug**: `/admin/finance/cash-flow`
+- **Slug**: `/admin/cashflow`
 - **Roles**: Admin, Sistemas
 - **Funcionalidades**:
   - Proyecciones
@@ -458,7 +467,7 @@ La navegación del sistema se divide en dos modos principales:
   - `DataExport`
 
 #### Alertas
-- **Slug**: `/admin/finance/alerts`
+- **Slug**: `/admin/alerts`
 - **Roles**: Admin, Sistemas
 - **Funcionalidades**:
   - Umbrales de alertas
@@ -472,7 +481,7 @@ La navegación del sistema se divide en dos modos principales:
   - `RuleEngine`
 
 #### Analíticas (Finanzas)
-- **Slug**: `/admin/finance/analytics`
+- **Slug**: `/admin/analytics`
 - **Roles**: Admin, Sistemas
 - **Funcionalidades**:
   - Métricas financieras
@@ -485,7 +494,7 @@ La navegación del sistema se divide en dos modos principales:
   - `BenchmarkComparisons`
   - `AnalyticsExport`
 
-### 7. CONFIGURACIÓN
+### Configuración
 
 #### Configuración General
 - **Slug**: `/admin/settings`
@@ -502,7 +511,7 @@ La navegación del sistema se divide en dos modos principales:
   - `MaintenanceTools`
 
 #### Funcionalidades
-- **Slug**: `/admin/settings/features`
+- **Slug**: `/admin/features`
 - **Roles**: Admin, Sistemas
 - **Funcionalidades**:
   - Activación/desactivación
@@ -530,7 +539,7 @@ La navegación del sistema se divide en dos modos principales:
   - `DesignPreview`
 
 #### Conexiones
-- **Slug**: `/admin/settings/integrations`
+- **Slug**: `/admin/integrations`
 - **Roles**: Admin, Sistemas
 - **Funcionalidades**:
   - Integraciones externas
@@ -544,7 +553,7 @@ La navegación del sistema se divide en dos modos principales:
   - `OAuthSettings`
 
 #### Datos
-- **Slug**: `/admin/settings/data`
+- **Slug**: `/admin/data`
 - **Roles**: Admin, Sistemas
 - **Funcionalidades**:
   - Importación/exportación
@@ -571,20 +580,6 @@ La navegación del sistema se divide en dos modos principales:
   - `PageSEO`
   - `PublicationSystem`
 
-#### Analíticas (Sistema)
-- **Slug**: `/admin/analytics`
-- **Roles**: Admin, Sistemas
-- **Funcionalidades**:
-  - Rendimiento del sistema
-  - Uso
-  - Usuarios
-  - Errores
-- **Componentes principales**:
-  - `SystemAnalytics`
-  - `UsageMetrics`
-  - `UserAnalytics`
-  - `ErrorTracking`
-
 #### Roles y Permisos
 - **Slug**: `/admin/roles`
 - **Roles**: Admin, Sistemas
@@ -599,69 +594,45 @@ La navegación del sistema se divide en dos modos principales:
   - `AccessPolicies`
   - `AccessAudit`
 
-## MODO ADMINISTRACIÓN
+## Plan de Transición
 
-La navegación del panel de administración (`/admin`) tiene una estructura específica:
+Para gestionar la transición a esta nueva estructura de navegación, se implementará un enfoque en tres fases:
 
-### Dashboard de Administración
-- **Slug**: `/admin/dashboard`
-- **Componentes principales**: `AdminDashboard`, `AdminKPIs`, `SystemStatus`
+### Fase 1: Mapeo de Rutas Antiguas a Nuevas
 
-### Usuarios
-- **Slug**: `/admin/users`
-- **Subpáginas**:
-  - Lista de Usuarios: `/admin/users`
-  - Roles y Permisos: `/admin/roles`
+1. Crear un mapa de redirecciones que dirija las rutas antiguas a las nuevas.
+2. Implementar un middleware de redirección en el enrutador de la aplicación.
+3. Mantener compatibilidad con marcadores/enlaces existentes.
 
-### Cursos (Admin)
-- **Slug**: `/admin/courses`
-- **Subpáginas**:
-  - Todos los Cursos: `/admin/courses`
-  - Categorías: `/admin/courses/categories`
-  - Rutas de Aprendizaje: `/admin/courses/learning-paths`
-  - Certificados: `/admin/courses/certificates`
+### Fase 2: Refactorización de Componentes
 
-### Finanzas (Admin)
-- **Slug**: `/admin/billing`
-- **Subpáginas**:
-  - Resumen: `/admin/billing`
-  - Facturas: `/admin/billing/invoices`
-  - Suscripciones: `/admin/billing/subscriptions`
-  - Movimientos Bancarios: `/admin/billing/bank`
-  - Alertas: `/admin/billing/alerts`
+1. Trasladar todos los componentes de diseño a las nuevas rutas.
+2. Asegurar que las funcionalidades existentes se mantengan intactas.
+3. Implementar pruebas para verificar que no haya regresiones.
 
-### Diseño
-- **Slug**: `/admin/design`
-- **Subpáginas**:
-  - Componentes: `/admin/design`
-  - Temas: `/admin/design/themes`
-  - Plantillas: `/admin/design/templates`
+### Fase 3: Despliegue y Monitoreo
 
-### Páginas (Admin)
-- **Slug**: `/admin/pages`
-- **Subpáginas**:
-  - Todas las Páginas: `/admin/pages`
-  - Crear Página: `/admin/pages/create`
-  - Plantillas: `/admin/pages/templates`
+1. Implementar registros detallados para identificar problemas de navegación.
+2. Monitorear el uso de rutas anticuadas para detectar áreas problemáticas.
+3. Recopilar feedback de usuarios para mejoras continuas.
 
-### Analíticas (Admin)
-- **Slug**: `/admin/analytics`
-- **Subpáginas**:
-  - Visión General: `/admin/analytics`
-  - Usuarios: `/admin/analytics/users`
-  - Cursos: `/admin/analytics/courses`
-  - Ingresos: `/admin/analytics/revenue`
-  - Rendimiento: `/admin/analytics/performance`
-  - Engagement: `/admin/analytics/engagement`
+## Mapa de Funcionalidades por Rol
 
-### Configuración (Admin)
-- **Slug**: `/admin/settings`
-- **Subpáginas**:
-  - General: `/admin/settings`
-  - Seguridad: `/admin/settings/security`
-  - Integraciones: `/admin/settings/integrations`
-  - Base de Datos: `/admin/settings/database`
+Cada funcionalidad está disponible para roles específicos:
+
+| Funcionalidad | Student | Instructor | Admin | Sistemas | Moderator | Content Creator | Guest |
+|--------------|---------|------------|-------|----------|-----------|-----------------|-------|
+| Dashboard Personal | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
+| Exploración de Cursos | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Gestión Académica | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| Herramientas de Instructor | ✗ | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| Herramientas Financieras | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| Configuración del Sistema | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ |
+| Creación de Contenido | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ | ✗ |
+| Mensajería | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
 
 ---
 
-Documento actualizado: [Fecha actual]
+Documento actualizado: [29 de noviembre de 2023]
+
+_Este documento debe ser actualizado cuando se realicen cambios significativos en la estructura de navegación o se añadan nuevas funcionalidades._
