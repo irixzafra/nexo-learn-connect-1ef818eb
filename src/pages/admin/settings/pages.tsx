@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { DataTable } from '@/components/shared/DataTable';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Badge } from '@/components/ui/badge';
-import { createColumn } from '@/components/shared/DataTableUtils';
+import { createColumn, createActionsColumn } from '@/components/shared/DataTableUtils';
 
 interface PageData {
   title: string;
@@ -24,7 +23,6 @@ const PagesManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
 
-  // Datos de muestra - estos se reemplazarían con datos reales de una API
   const pages: PageData[] = [
     {
       title: 'Dashboard',
@@ -144,24 +142,20 @@ const PagesManagement: React.FC = () => {
       accessorKey: 'updated',
       header: 'Actualización',
     }),
-    createColumn<PageData>({
-      id: 'actions',
-      header: 'Acciones',
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" asChild>
-            <Link to={`/admin/settings/pages/edit/${row.getValue('title')}`}>
-              Editar
-            </Link>
-          </Button>
-          <Button variant="ghost" size="sm" asChild>
-            <Link to={row.getValue('path') as string} target="_blank">
-              Ver
-            </Link>
-          </Button>
-        </div>
-      )
-    })
+    createActionsColumn<PageData>(({ row }) => (
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" size="sm" asChild>
+          <Link to={`/admin/settings/pages/edit/${row.getValue('title')}`}>
+            Editar
+          </Link>
+        </Button>
+        <Button variant="ghost" size="sm" asChild>
+          <Link to={row.getValue('path') as string} target="_blank">
+            Ver
+          </Link>
+        </Button>
+      </div>
+    ))
   ];
 
   return (
