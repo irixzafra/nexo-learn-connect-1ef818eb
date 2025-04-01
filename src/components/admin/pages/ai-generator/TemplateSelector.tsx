@@ -14,6 +14,18 @@ interface TemplateSelectorProps {
   onTemplateChange: (value: string) => void;
 }
 
+// Define the templates we'll use in the application
+export const PAGE_TEMPLATES = [
+  { id: 'landing', name: 'Página de aterrizaje' },
+  { id: 'about', name: 'Sobre nosotros' },
+  { id: 'services', name: 'Servicios' },
+  { id: 'pricing', name: 'Precios' },
+  { id: 'faq', name: 'Preguntas frecuentes' },
+  { id: 'blog', name: 'Artículo de blog' },
+  { id: 'contact', name: 'Contacto' },
+  { id: 'custom', name: 'Personalizado' },
+];
+
 const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   template,
   onTemplateChange
@@ -26,14 +38,11 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
           <SelectValue placeholder="Selecciona un tipo de plantilla" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="landing">Página de aterrizaje</SelectItem>
-          <SelectItem value="about">Sobre nosotros</SelectItem>
-          <SelectItem value="services">Servicios</SelectItem>
-          <SelectItem value="pricing">Precios</SelectItem>
-          <SelectItem value="faq">Preguntas frecuentes</SelectItem>
-          <SelectItem value="blog">Artículo de blog</SelectItem>
-          <SelectItem value="contact">Contacto</SelectItem>
-          <SelectItem value="custom">Personalizado</SelectItem>
+          {PAGE_TEMPLATES.map((tmpl) => (
+            <SelectItem key={tmpl.id} value={tmpl.id}>
+              {tmpl.name}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>
