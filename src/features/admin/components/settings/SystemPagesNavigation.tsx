@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Grid, LayoutList, Search, Filter, X, Database, Info } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -16,7 +15,17 @@ interface PageFilter {
   searchTerm?: string;
 }
 
-const initialPages = [
+// Define a type for the page data that matches the expected props for PageNavigationCard
+interface PageData {
+  title: string;
+  path: string;
+  description: string;
+  status: string;
+  category: string;
+  importance?: 'high' | 'medium' | 'low'; // Make sure this matches the allowed values
+}
+
+const initialPages: PageData[] = [
   {
     title: 'Dashboard',
     path: '/dashboard',
@@ -668,7 +677,15 @@ export const SystemPagesNavigation: React.FC = () => {
   const renderPages = () => (
     <div className={isGridView ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3" : "space-y-4"}>
       {pages.map(page => (
-        <PageNavigationCard key={page.path} {...page} />
+        <PageNavigationCard 
+          key={page.path} 
+          title={page.title} 
+          path={page.path} 
+          description={page.description} 
+          status={page.status} 
+          category={page.category} 
+          importance={page.importance} 
+        />
       ))}
     </div>
   );
@@ -687,7 +704,15 @@ export const SystemPagesNavigation: React.FC = () => {
             <AccordionContent>
               <div className="space-y-2">
                 {pages.filter(page => page.category === category).map(page => (
-                  <PageNavigationCard key={page.path} {...page} />
+                  <PageNavigationCard 
+                    key={page.path} 
+                    title={page.title} 
+                    path={page.path} 
+                    description={page.description} 
+                    status={page.status} 
+                    category={page.category} 
+                    importance={page.importance} 
+                  />
                 ))}
               </div>
             </AccordionContent>
