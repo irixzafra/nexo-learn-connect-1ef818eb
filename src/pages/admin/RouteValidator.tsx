@@ -21,7 +21,7 @@ const RouteValidator: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
-    if (!validationResult) {
+    if (!validationResult.issues) {
       runValidation();
     }
   }, []);
@@ -71,7 +71,7 @@ const RouteValidator: React.FC = () => {
     }
   };
 
-  const filteredIssues = validationResult?.issues.filter(issue => {
+  const filteredIssues = validationResult?.issues?.filter(issue => {
     if (activeTab === 'all') return true;
     return issue.severity === activeTab;
   }) || [];
@@ -119,7 +119,7 @@ const RouteValidator: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="font-medium">Status:</span>
                   <div className="flex items-center">
-                    {validationResult.valid ? (
+                    {validationResult.isValid ? (
                       <>
                         <CheckCircle2 className="h-5 w-5 text-success mr-2" />
                         <span className="text-success font-medium">Passed</span>
@@ -136,27 +136,27 @@ const RouteValidator: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span>Errors:</span>
-                    <Badge variant="destructive">{validationResult.stats.errors}</Badge>
+                    <Badge variant="destructive">{validationResult.stats?.errors || 0}</Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Warnings:</span>
-                    <Badge variant="warning">{validationResult.stats.warnings}</Badge>
+                    <Badge variant="warning">{validationResult.stats?.warnings || 0}</Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Info:</span>
-                    <Badge variant="info">{validationResult.stats.info}</Badge>
+                    <Badge variant="info">{validationResult.stats?.info || 0}</Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Total:</span>
-                    <Badge variant="outline">{validationResult.stats.total}</Badge>
+                    <Badge variant="outline">{validationResult.stats?.total || 0}</Badge>
                   </div>
                 </div>
                 
                 <div className="pt-2">
                   <div className="text-sm font-medium mb-1">Validation Health</div>
                   <Progress
-                    value={validationResult.valid ? 100 : Math.max(0, 100 - (validationResult.stats.errors * 25))}
-                    className={`h-2 ${validationResult.valid ? 'bg-success' : 'bg-destructive'}`}
+                    value={validationResult.isValid ? 100 : Math.max(0, 100 - ((validationResult.stats?.errors || 0) * 25))}
+                    className={`h-2 ${validationResult.isValid ? 'bg-success' : 'bg-destructive'}`}
                   />
                 </div>
               </div>
@@ -190,21 +190,21 @@ const RouteValidator: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {validationResult ? (
+            {validationResult?.issues ? (
               <>
                 <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
                   <TabsList className="mb-4">
                     <TabsTrigger value="all">
-                      All <Badge variant="outline" className="ml-2">{validationResult.stats.total}</Badge>
+                      All <Badge variant="outline" className="ml-2">{validationResult.stats?.total || 0}</Badge>
                     </TabsTrigger>
                     <TabsTrigger value="error">
-                      Errors <Badge variant="destructive" className="ml-2">{validationResult.stats.errors}</Badge>
+                      Errors <Badge variant="destructive" className="ml-2">{validationResult.stats?.errors || 0}</Badge>
                     </TabsTrigger>
                     <TabsTrigger value="warning">
-                      Warnings <Badge variant="warning" className="ml-2">{validationResult.stats.warnings}</Badge>
+                      Warnings <Badge variant="warning" className="ml-2">{validationResult.stats?.warnings || 0}</Badge>
                     </TabsTrigger>
                     <TabsTrigger value="info">
-                      Info <Badge variant="info" className="ml-2">{validationResult.stats.info}</Badge>
+                      Info <Badge variant="info" className="ml-2">{validationResult.stats?.info || 0}</Badge>
                     </TabsTrigger>
                   </TabsList>
                   
@@ -218,16 +218,16 @@ const RouteValidator: React.FC = () => {
                                 {getSeverityIcon(issue.severity)}
                               </div>
                               <div className="flex-1">
-                                <h4 className="font-medium">{issue.title}</h4>
-                                <p className="mt-1 text-sm">{issue.description}</p>
+                                <h4 className="font-medium">{issue.title || issue.type}</h4>
+                                <p className="mt-1 text-sm">{issue.description || issue.message}</p>
                                 {issue.path && (
                                   <div className="mt-2 bg-background/50 rounded p-1.5 text-xs font-mono">
                                     {issue.path}
                                   </div>
                                 )}
-                                {issue.recommendation && (
+                                {(issue.recommendation || issue.suggestion) && (
                                   <p className="mt-2 text-sm font-medium">
-                                    Recommendation: {issue.recommendation}
+                                    Recommendation: {issue.recommendation || issue.suggestion}
                                   </p>
                                 )}
                               </div>

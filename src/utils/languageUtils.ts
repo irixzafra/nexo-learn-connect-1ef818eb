@@ -1,4 +1,3 @@
-
 /**
  * Utilities for handling language in URLs and content
  */
@@ -64,6 +63,23 @@ export function getPathWithoutLanguage(path: string): string {
   }
   
   return path;
+}
+
+/**
+ * Ensure a path has a language prefix
+ * @param path The URL path
+ * @param language The language to use if not present
+ * @returns Path with language prefix
+ */
+export function ensureLanguagePrefix(path: string, language: SupportedLanguage): string {
+  // If path already has a language prefix, return it unchanged
+  if (extractLanguageFromPath(path)) {
+    return path;
+  }
+  
+  // Otherwise, add the language prefix
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `/${language}${normalizedPath}`;
 }
 
 /**

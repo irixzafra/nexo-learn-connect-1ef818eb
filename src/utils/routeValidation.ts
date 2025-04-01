@@ -1,4 +1,5 @@
 
+// Importing the routeMap from routeUtils for consistent route validation
 import { routeMap } from './routeUtils';
 import { MenuItem } from '@/types/navigation';
 
@@ -21,7 +22,10 @@ export interface RouteIssue {
   type: RouteIssueType;
   severity: 'error' | 'warning' | 'info';
   message: string;
+  title?: string;
+  description?: string;
   suggestion?: string;
+  recommendation?: string;
   location?: string;
 }
 
@@ -190,4 +194,16 @@ export const validateRoutes = (routes: string[]): ValidationResult => {
       info: infoCount
     }
   };
+};
+
+/**
+ * Validates a single route with its related routes
+ * Simplified wrapper for validateRoutes focusing on a single path
+ */
+export const validateRoute = (path: string, includeRelated: boolean = false): ValidationResult => {
+  const routesToValidate = includeRelated 
+    ? [path, `${path}/index`, `${path}/:id`, `${path}/new`, `${path}/edit`]
+    : [path];
+    
+  return validateRoutes(routesToValidate);
 };

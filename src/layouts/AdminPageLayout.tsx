@@ -62,7 +62,9 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
           <AdminNavTabs 
             tabs={tabs} 
             defaultValue={defaultTabValue || tabs[0]?.value} 
-          />
+          >
+            {children}
+          </AdminNavTabs>
         ) : (
           children
         )}

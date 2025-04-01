@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { isValidPath } from '@/utils/routeValidation';
 
@@ -12,13 +13,14 @@ export interface MenuValidation {
   validate: (paths: string[]) => MenuValidationResult[];
 }
 
+// Fixed overloaded function implementation
 export function useValidateRoutes(): MenuValidation;
 export function useValidateRoutes(paths: string[]): MenuValidationResult[];
 export function useValidateRoutes(paths?: string[]): MenuValidation | MenuValidationResult[] {
   const [results, setResults] = useState<MenuValidationResult[]>([]);
   
-  const validate = useCallback((paths: string[]): MenuValidationResult[] => {
-    const newResults = paths.map(path => ({
+  const validate = useCallback((pathsToValidate: string[]): MenuValidationResult[] => {
+    const newResults = pathsToValidate.map(path => ({
       path,
       isValid: isValidPath(path)
     }));

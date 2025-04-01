@@ -1,117 +1,47 @@
 
+import { useContext, useState, useCallback } from 'react';
+import { FeaturesContext } from '@/contexts/FeaturesContext';
+import type { ExtendedFeatureId } from '@/contexts/features/types';
+
 /**
- * Simple feature flags hook
- * In a real application, this would likely fetch from an API or configuration service
+ * Hook to access and manage feature flags
  */
+export const useFeatures = () => {
+  const context = useContext(FeaturesContext);
+  const [isLoading, setIsLoading] = useState(false);
 
-import { useState, useEffect } from 'react';
-import { FeatureId, ExtendedFeatureId } from '@/contexts/features/types';
+  if (!context) {
+    throw new Error('useFeatures must be used within a FeaturesProvider');
+  }
 
-export type FeatureFlag = 
-  | 'enableLangPrefixUrls' 
-  | 'enableDarkMode' 
-  | 'enableAnalytics' 
-  | 'enableBetaFeatures'
-  | 'enableAdvancedFilters'
-  | 'enableDebugMode'
-  | 'enableHreflangTags'
-  | 'enableRegionalContent'
-  | 'enableContextualHelp';
+  // Extend the context with loading state
+  const toggleFeature = useCallback(async (featureId: ExtendedFeatureId, value?: boolean) => {
+    setIsLoading(true);
+    try {
+      context.toggleFeature(featureId);
+      // If there was additional async logic needed, it would go here
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Error toggling feature:', error);
+      return Promise.reject(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [context]);
 
-export interface FeatureState {
-  [key: string]: boolean;
-}
-
-// Default feature flags
-const defaultFeatures: FeatureState = {
-  enableLangPrefixUrls: true,
-  enableDarkMode: true,
-  enableAnalytics: true,
-  enableBetaFeatures: false,
-  enableAdvancedFilters: false,
-  enableDebugMode: false,
-  enableHreflangTags: true,
-  enableRegionalContent: false,
-  enableContextualHelp: true
+  return {
+    ...context,
+    isLoading,
+    toggleFeature,
+    featuresConfig: {
+      // This is a mock until we have actual feature config data
+      isLoading,
+      enabledFeatures: Object.entries(context.features)
+        .filter(([_, enabled]) => enabled)
+        .map(([key]) => key),
+    },
+  };
 };
 
-export function useFeature(featureName: FeatureFlag): boolean {
-  const { features } = useFeatures();
-  return features[featureName] ?? false;
-}
-
-export function useFeatures() {
-  const [features, setFeatures] = useState<FeatureState>(defaultFeatures);
-  const [isLoading, setIsLoading] = useState(false);
-  const [featuresConfig, setFeaturesConfig] = useState<any>({
-    features: {},
-    ...defaultFeatures
-  });
-  
-  useEffect(() => {
-    // Similar to above, but returns all features
-    const loadFeatureFlags = async () => {
-      try {
-        setIsLoading(true);
-        const storedFeatures = localStorage.getItem('feature-flags');
-        if (storedFeatures) {
-          const parsedFeatures = JSON.parse(storedFeatures);
-          setFeatures(prev => ({
-            ...prev,
-            ...parsedFeatures
-          }));
-          
-          // Also update featuresConfig for components that expect it
-          setFeaturesConfig(prev => ({
-            ...prev,
-            ...parsedFeatures
-          }));
-        }
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error loading feature flags:', error);
-        setIsLoading(false);
-      }
-    };
-    
-    loadFeatureFlags();
-  }, []);
-  
-  const toggleFeature = (featureName: FeatureFlag | FeatureId | ExtendedFeatureId, value?: boolean): Promise<void> => {
-    return new Promise<void>((resolve) => {
-      setFeatures(prev => {
-        const newValue = value !== undefined ? value : !prev[featureName];
-        const newFeatures = {
-          ...prev,
-          [featureName]: newValue
-        };
-        
-        // Update featuresConfig as well
-        setFeaturesConfig(prev => ({
-          ...prev,
-          [featureName]: newValue
-        }));
-        
-        // Persist to localStorage
-        localStorage.setItem('feature-flags', JSON.stringify(newFeatures));
-        
-        return newFeatures;
-      });
-      resolve();
-    });
-  };
-  
-  const isEnabled = (featureName: FeatureFlag | FeatureId | ExtendedFeatureId): boolean => {
-    return features[featureName] ?? false;
-  };
-  
-  return {
-    features,
-    featuresConfig,
-    toggleFeature,
-    isEnabled,
-    isLoading
-  };
-}
-
+// Export the hook as default
 export default useFeatures;

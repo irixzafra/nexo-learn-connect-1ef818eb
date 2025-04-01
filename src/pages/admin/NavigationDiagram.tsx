@@ -1,32 +1,65 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity, Network } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { DownloadCloud, RefreshCw, Share2 } from 'lucide-react';
 
 const NavigationDiagram: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  
+  const handleRefresh = () => {
+    setLoading(true);
+    setTimeout(() => setLoading(false), 1500);
+  };
+  
   return (
     <AdminPageLayout
-      title="Navigation Diagram"
-      subtitle="Visual representation of application navigation structure"
+      title="Diagrama de Navegación"
+      subtitle="Visualización de la estructura de navegación de la plataforma"
+      actions={
+        <>
+          <Button variant="outline" size="sm">
+            <Share2 className="h-4 w-4 mr-2" />
+            Compartir
+          </Button>
+          <Button variant="outline" size="sm">
+            <DownloadCloud className="h-4 w-4 mr-2" />
+            Exportar
+          </Button>
+          <Button 
+            variant="default" 
+            size="sm"
+            onClick={handleRefresh}
+            disabled={loading}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Actualizar
+          </Button>
+        </>
+      }
     >
-      <div className="grid grid-cols-1 gap-6">
+      <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Navigation Structure</CardTitle>
-            <CardDescription>Visual map of your application's navigation paths</CardDescription>
+            <CardTitle>Vista de Diagrama</CardTitle>
+            <CardDescription>
+              Representación gráfica de la estructura de navegación de la plataforma
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center justify-center p-8 text-center">
-              <Network className="h-16 w-16 text-primary mb-4" />
-              <p className="text-muted-foreground mb-4">
-                The navigation diagram visualizes the structure and connections between different routes in your application.
-              </p>
-              <div className="p-6 border rounded-lg bg-muted/50 w-full">
-                <p className="text-muted-foreground">
-                  Navigation diagram will be implemented here. It will show a visual map of all routes and their relationships.
-                </p>
-              </div>
+          <CardContent className="flex justify-center p-6">
+            <div className="w-full h-[600px] bg-muted/20 border border-dashed border-muted-foreground/20 rounded-md flex items-center justify-center text-muted-foreground">
+              {loading ? (
+                <div className="flex flex-col items-center gap-4">
+                  <RefreshCw className="h-10 w-10 animate-spin text-primary" />
+                  <p>Generando diagrama de navegación...</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <p>Diagrama de navegación se mostrará aquí</p>
+                  <p className="mt-2 text-sm">En desarrollo</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -14,17 +14,28 @@ interface AdminNavTabsProps {
   tabs: AdminTabItem[];
   defaultValue?: string;
   children?: ReactNode;
+  // Add support for controlled tabs
+  value?: string;
+  onValueChange?: (value: string) => void;
 }
 
 const AdminNavTabs: React.FC<AdminNavTabsProps> = ({ 
   tabs, 
   defaultValue,
-  children 
+  children,
+  value,
+  onValueChange
 }) => {
   const actualDefaultValue = defaultValue || tabs[0]?.value;
+  const isControlled = value !== undefined && onValueChange !== undefined;
+
+  // Props for controlled or uncontrolled behavior
+  const tabsProps = isControlled 
+    ? { value, onValueChange } 
+    : { defaultValue: actualDefaultValue };
 
   return (
-    <Tabs defaultValue={actualDefaultValue} className="w-full">
+    <Tabs {...tabsProps} className="w-full">
       <TabsList className="mb-6 flex w-full h-auto flex-wrap overflow-x-auto">
         {tabs.map((tab) => (
           <TabsTrigger 
