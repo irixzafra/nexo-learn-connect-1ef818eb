@@ -7,25 +7,9 @@ Bienvenido a la documentación oficial de Nexo Learning Platform. Esta documenta
 
 La documentación está organizada en las siguientes secciones principales:
 
-- [**Arquitectura del Sistema**](#arquitectura): Diseño general y principios de la plataforma
-- [**Navegación**](#navegacion): Estructura de navegación y flujo de usuario
+- [**Arquitectura del Sistema**](./arquitectura-del-sistema.md): Diseño general y estructura de la plataforma
 - [**Componentes**](#componentes): Descripción de los principales componentes de la aplicación
 - [**Guías de Desarrollo**](#guias): Guías y mejores prácticas para desarrollo
-
-## <a name="arquitectura"></a>Arquitectura del Sistema
-
-La arquitectura de Nexo Learning se basa en un diseño modular con componentes reutilizables y una estructura clara para diferentes roles de usuario.
-
-- [Principios de Diseño](./architecture/principles.md)
-- [Estructura de Código](./architecture/code-structure.md)
-- [Flujo de Datos](./architecture/data-flow.md)
-
-## <a name="navegacion"></a>Estructura de Navegación
-
-Nexo Learning utiliza un sistema de navegación unificado para todos los usuarios, con contenido adaptado según el rol.
-
-- [Estructura de Navegación](./estructura-navegacion.md)
-- [Administración](./admin/administracion.md)
 
 ## <a name="componentes"></a>Componentes Principales
 

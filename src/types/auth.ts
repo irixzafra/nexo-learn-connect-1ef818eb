@@ -22,7 +22,7 @@ export interface UserProfile {
   headline?: string;
   website?: string;
   location?: string;
-  phone?: string; // Added the phone property
+  phone?: string;
   social_networks?: {
     twitter?: string;
     linkedin?: string;
