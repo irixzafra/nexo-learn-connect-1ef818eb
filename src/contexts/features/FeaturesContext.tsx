@@ -43,6 +43,7 @@ const initialFeaturesConfig: FeaturesConfig = {
   enableMentoring: false,
   enableSubscriptionPause: false,
   enableGiftSubscriptions: false,
+  enableInlineEditing: true, // Nueva característica habilitada por defecto
   // Additional features for Settings pages
   designSystemEnabled: true,
   enableThemeSwitcher: true,

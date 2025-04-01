@@ -3,6 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 import { useLocation } from 'react-router-dom';
+import { useFeatures } from './features/FeaturesContext';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -19,6 +20,9 @@ interface EditModeContextType {
   setSelectedElementId: (id: string | null) => void;
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
+  isNavigationBlocked: boolean;
+  saveDraft: () => Promise<boolean>;
+  cancelEditing: () => void;
 }
 
 // Create the context with default values
@@ -37,6 +41,9 @@ const EditModeContext = createContext<EditModeContextType>({
   setSelectedElementId: () => {},
   isSidebarOpen: true,
   toggleSidebar: () => {},
+  isNavigationBlocked: false,
+  saveDraft: async () => false,
+  cancelEditing: () => {},
 });
 
 export const useEditMode = () => useContext(EditModeContext);
@@ -75,8 +82,11 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(true);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(getInitialSidebarState());
+  const [isNavigationBlocked, setIsNavigationBlocked] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { userRole } = useAuth();
   const location = useLocation();
+  const { featuresConfig } = useFeatures();
 
   const canEdit = userRole === 'admin' || userRole === 'sistemas';
 
@@ -85,10 +95,34 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     try {
       sessionStorage.setItem('isEditMode', isEditMode.toString());
       sessionStorage.setItem('isReorderMode', isReorderMode.toString());
+      
+      // Bloquear navegación cuando el modo edición está activo
+      setIsNavigationBlocked(isEditMode);
+      
+      // Establecer que hay cambios no guardados cuando se activa el modo edición
+      if (isEditMode) {
+        setHasUnsavedChanges(true);
+      }
     } catch (e) {
       console.error('Could not save edit mode state to sessionStorage:', e);
     }
   }, [isEditMode, isReorderMode]);
+
+  // Advertencia de navegación cuando hay cambios no guardados
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges && isEditMode) {
+        const message = '¿Estás seguro de que quieres salir? Tienes cambios sin guardar que se perderán.';
+        e.returnValue = message;
+        return message;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [hasUnsavedChanges, isEditMode]);
 
   // Update localStorage when sidebar state changes
   useEffect(() => {
@@ -108,11 +142,14 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Disable edit mode if the feature is disabled
   useEffect(() => {
-    if (!isEditModeEnabled && isEditMode) {
+    const isFeatureEnabled = featuresConfig.enableInlineEditing;
+    setIsEditModeEnabled(isFeatureEnabled);
+    
+    if (!isFeatureEnabled && isEditMode) {
       setIsEditMode(false);
       setIsReorderMode(false);
     }
-  }, [isEditModeEnabled, isEditMode]);
+  }, [featuresConfig.enableInlineEditing, isEditMode]);
 
   // Clear selected element when edit mode is toggled off
   useEffect(() => {
@@ -132,9 +169,6 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Check for feature configuration on mount
   useEffect(() => {
-    // By default, we'll set it to true
-    setIsEditModeEnabled(true);
-    
     // Log the current state for debugging
     console.log('Edit mode enabled:', isEditModeEnabled);
     console.log('Can edit (role):', canEdit);
@@ -170,6 +204,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       } else {
         setIsReorderMode(false);
         setSelectedElementId(null);
+        setHasUnsavedChanges(false);
         console.log('Edit mode deactivated, reorder mode also deactivated');
       }
     } else if (!isEditModeEnabled && canEdit) {
@@ -209,6 +244,37 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } else {
       document.body.classList.add('sidebar-closed');
       document.body.classList.remove('sidebar-open');
+    }
+  };
+
+  // Función para guardar borradores
+  const saveDraft = async (): Promise<boolean> => {
+    try {
+      // Simulamos guardar los cambios como borrador
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      toast.success('Borrador guardado correctamente');
+      setHasUnsavedChanges(false);
+      return true;
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      toast.error('Error al guardar el borrador');
+      return false;
+    }
+  };
+
+  // Función para cancelar la edición
+  const cancelEditing = () => {
+    if (hasUnsavedChanges) {
+      if (window.confirm('¿Estás seguro de que quieres cancelar la edición? Perderás todos los cambios no guardados.')) {
+        setIsEditMode(false);
+        setIsReorderMode(false);
+        setHasUnsavedChanges(false);
+        toast.info('Edición cancelada');
+      }
+    } else {
+      setIsEditMode(false);
+      setIsReorderMode(false);
     }
   };
 
@@ -291,7 +357,10 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       selectedElementId,
       setSelectedElementId,
       isSidebarOpen,
-      toggleSidebar
+      toggleSidebar,
+      isNavigationBlocked,
+      saveDraft,
+      cancelEditing
     }}>
       {children}
     </EditModeContext.Provider>

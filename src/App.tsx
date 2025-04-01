@@ -6,6 +6,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/contexts/AuthContext";
 import { SidebarProvider } from "@/components/layout/sidebar/SidebarProvider";
+import EditModeControls from "@/components/admin/EditModeControls";
 
 function App() {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ function App() {
         <ThemeProvider>
           <SidebarProvider>
             <AppRouter />
+            <EditModeControls />
             <Toaster />
           </SidebarProvider>
         </ThemeProvider>
