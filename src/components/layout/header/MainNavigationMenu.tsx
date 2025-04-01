@@ -8,7 +8,7 @@ interface MainNavigationMenuProps {
 }
 
 const MainNavigationMenu: React.FC<MainNavigationMenuProps> = () => {
-  // Render nothing - removing horizontal menu as requested
+  // Return null to completely remove the old navigation menu
   return null;
 };
 
