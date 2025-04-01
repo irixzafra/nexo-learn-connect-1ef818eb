@@ -24,11 +24,14 @@ export interface UserProfile {
   id: string;
   userId: string;
   fullName?: string;
+  full_name?: string; // For backward compatibility
   email?: string;
   avatarUrl?: string;
+  avatar_url?: string; // For backward compatibility
   bio?: string;
   role: UserRoleType;
   isActive?: boolean;
+  created_at?: string; // For backward compatibility
   createdAt?: string;
   updatedAt?: string;
   lastLogin?: string;

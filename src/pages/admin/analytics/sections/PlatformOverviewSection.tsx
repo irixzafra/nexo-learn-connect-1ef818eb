@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Card,
@@ -11,20 +10,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { 
   BarChart, 
-  LineChart, 
-  PieChart,
-  AreaChart,
-  Cell,
-  Bar,
+  Bar, 
+  LineChart,
+  Line,
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
   Legend, 
-  ResponsiveContainer,
-  Line,
-  Area,
-  Pie 
+  ResponsiveContainer, 
+  PieChart, 
+  Pie, 
+  Cell 
 } from 'recharts';
 import { PlatformStats } from '@/features/admin/analytics/types';
 

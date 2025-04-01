@@ -1,76 +1,76 @@
 
-import { useFeatures } from '@/contexts/features/FeaturesContext';
-import { getFeatureDependencies, getFeatureDependents } from '@/contexts/features/dependencies';
-import { FeatureId } from '@/contexts/features/types';
+import { useContext } from 'react';
+import { FeaturesContext, FeaturesContextProps, FeatureId } from '@/contexts/features/types';
+import { featureDependencies, getFeatureDependencies, getFeatureDependents } from '@/contexts/features/dependencies';
 
 /**
- * Hook para manejar las dependencias entre características del sistema
+ * Hook for managing feature dependencies
  */
-export const useFeatureDependencies = () => {
-  const { isEnabled } = useFeatures();
-  
-  /**
-   * Verifica si una característica puede ser desactivada
-   * No se puede desactivar si hay características activas que dependen de ella
-   */
-  const checkIfCanDisable = (feature: FeatureId): boolean => {
-    const dependents = getFeatureDependents(feature);
-    
-    // Si no hay dependientes, siempre se puede desactivar
-    if (!dependents || dependents.length === 0) {
-      return true;
-    }
-    
-    // Verificar si alguna de las características dependientes está activa
-    for (const dependent of dependents) {
-      if (isEnabled(dependent)) {
-        return false;
+export function useFeatureDependencies() {
+  const featuresContext = useContext(FeaturesContext);
+
+  if (!featuresContext) {
+    throw new Error('useFeatureDependencies must be used within a FeaturesProvider');
+  }
+
+  // Safely check if a feature is enabled by string name, handling potential type mismatches
+  const isFeatureEnabled = (featureName: string): boolean => {
+    try {
+      // Handle both direct features and feature flags
+      if (featuresContext.isEnabled && typeof featuresContext.isEnabled === 'function') {
+        return featuresContext.isEnabled(featureName as FeatureId);
       }
-    }
-    
-    return true;
-  };
-  
-  /**
-   * Obtiene la lista de características que dependen de una característica dada
-   */
-  const getDependentFeatures = (feature: FeatureId): FeatureId[] => {
-    return getFeatureDependents(feature) || [];
-  };
-  
-  /**
-   * Obtiene la lista de características de las que depende una característica dada
-   */
-  const getDependencies = (feature: FeatureId): FeatureId[] => {
-    return getFeatureDependencies(feature) || [];
-  };
-  
-  /**
-   * Verifica si una característica puede ser activada
-   * No se puede activar si alguna de sus dependencias está desactivada
-   */
-  const checkIfCanEnable = (feature: FeatureId): boolean => {
-    const dependencies = getFeatureDependencies(feature);
-    
-    // Si no hay dependencias, siempre se puede activar
-    if (!dependencies || dependencies.length === 0) {
-      return true;
-    }
-    
-    // Verificar si todas las dependencias están activas
-    for (const dependency of dependencies) {
-      if (!isEnabled(dependency)) {
-        return false;
+      
+      // Fallback to featuresConfig if isEnabled doesn't exist
+      if (featuresContext.featuresConfig) {
+        return !!featuresContext.featuresConfig[featureName as keyof typeof featuresContext.featuresConfig];
       }
+      
+      return false;
+    } catch (error) {
+      console.error(`Error checking if feature "${featureName}" is enabled:`, error);
+      return false;
     }
-    
-    return true;
   };
-  
+
+  // Get dependencies for a feature as a normalized array
+  const getDependencies = (featureName: string): string[] => {
+    try {
+      return getFeatureDependencies(featureName);
+    } catch (error) {
+      console.error(`Error getting dependencies for feature "${featureName}":`, error);
+      return [];
+    }
+  };
+
+  // Get dependents for a feature as a normalized array
+  const getDependents = (featureName: string): string[] => {
+    try {
+      return getFeatureDependents(featureName);
+    } catch (error) {
+      console.error(`Error getting dependents for feature "${featureName}":`, error);
+      return [];
+    }
+  };
+
+  // Check if all dependencies for a feature are enabled
+  const areDependenciesMet = (featureName: string): boolean => {
+    try {
+      const dependencies = getDependencies(featureName);
+      if (!dependencies.length) return true;
+      
+      return dependencies.every(dep => isFeatureEnabled(dep));
+    } catch (error) {
+      console.error(`Error checking dependencies for feature "${featureName}":`, error);
+      return false;
+    }
+  };
+
   return {
-    checkIfCanDisable,
-    checkIfCanEnable,
-    getDependentFeatures,
-    getDependencies
+    isFeatureEnabled,
+    getDependencies,
+    getDependents,
+    areDependenciesMet,
+    featureDependencies
   };
-};
+}

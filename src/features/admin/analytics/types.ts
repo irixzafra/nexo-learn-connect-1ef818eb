@@ -1,4 +1,3 @@
-
 export interface PlatformStats {
   total_users: number;
   active_users: number;
@@ -8,6 +7,10 @@ export interface PlatformStats {
   total_enrollments: number;
   completion_rate: number;
   average_rating: number;
+  new_users_last_7_days?: number;
+  coursesCount?: number;
+  publishedCoursesCount?: number;
+  completionRate?: number;
 }
 
 export interface UserStats {

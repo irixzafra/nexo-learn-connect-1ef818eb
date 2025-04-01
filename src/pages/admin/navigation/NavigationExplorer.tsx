@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -267,8 +266,8 @@ const NavigationExplorer: React.FC = () => {
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
                             {route.roles.map(role => (
-                              <Badge key={role} variant="outline" size="sm" className="text-xs">
-                                {roleNames[role]}
+                              <Badge key={role} variant="outline" className="mr-1 mb-1">
+                                {role}
                               </Badge>
                             ))}
                           </div>
@@ -321,8 +320,8 @@ const NavigationExplorer: React.FC = () => {
                             </div>
                             <div className="flex flex-wrap gap-1">
                               {route.roles.map(role => (
-                                <Badge key={role} variant="outline" size="sm" className="text-xs">
-                                  {roleNames[role]}
+                                <Badge key={role} variant="outline" className="mr-1 mb-1">
+                                  {role}
                                 </Badge>
                               ))}
                             </div>
