@@ -1,16 +1,16 @@
 
 import { useContext } from 'react';
-import { FeatureContext } from '@/contexts/features/FeaturesContext';
+import { FeaturesContext } from '@/contexts/features/FeaturesContext';
 import type { FeaturesConfig } from '@/contexts/features/types';
 
 /**
  * Custom hook to access feature flags
  */
 export const useFeatures = () => {
-  const context = useContext(FeatureContext);
+  const context = useContext(FeaturesContext);
   
   if (!context) {
-    throw new Error('useFeatures must be used within a FeatureProvider');
+    throw new Error('useFeatures must be used within a FeaturesProvider');
   }
   
   return context;

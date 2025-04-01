@@ -1,298 +1,210 @@
 
 import React from 'react';
-import { useUserStatistics } from '../hooks/useUserStatistics';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useUserStatistics } from '@/features/users/hooks/useUserStatistics';
 import { 
-  User, Users, UserPlus, UserCheck, 
-  BarChart, PieChart, LineChart, RefreshCw
+  BarChart, 
+  LineChart as LineChartIcon, 
+  PieChart as PieChartIcon,
+  Users,
+  UserPlus,
+  User,
+  Activity
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { 
-  BarChart as RechartsBarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer,
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  LineChart as RechartsLineChart,
-  Line
-} from 'recharts';
+import { PieChart, Pie, Cell, BarChart as RechartsBarChart, Bar, XAxis, YAxis, 
+  CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A569BD', '#EC7063'];
-const ROLE_COLORS: Record<string, string> = {
-  admin: '#FF8042',
-  instructor: '#0088FE',
-  student: '#00C49F',
-  moderator: '#FFBB28',
-  support: '#A569BD',
-};
+const COLORS = ['#8B5CF6', '#EC4899', '#F97316', '#10B981', '#3B82F6'];
 
 export const UserAnalyticsTab: React.FC = () => {
-  const { 
-    userCounts, 
-    roleDistribution, 
-    dailyRegistrations, 
-    isLoading,
-    refetchAll
-  } = useUserStatistics();
+  const { userCounts, roleDistribution, dailyRegistrations, isLoading, refetchAll } = useUserStatistics();
 
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
-  };
-
-  // Prepare data for role distribution pie chart
-  const pieData = roleDistribution.map(item => ({
-    name: item.role,
-    value: Number(item.count)
-  }));
-
-  // Fill in missing dates in registration data
-  const fillMissingDates = (data: { date: string, count: number }[]) => {
-    if (!data.length) return [];
-    
-    const result = [];
-    const start = new Date(data[0].date);
-    const end = new Date();
-    const dayMs = 24 * 60 * 60 * 1000;
-    
-    for (let date = new Date(start); date <= end; date = new Date(date.getTime() + dayMs)) {
-      const dateStr = date.toISOString().split('T')[0];
-      const existingData = data.find(d => d.date === dateStr);
-      
-      result.push({
-        date: dateStr,
-        count: existingData ? Number(existingData.count) : 0
-      });
-    }
-    
-    return result;
-  };
-
-  const filledRegistrationData = fillMissingDates(dailyRegistrations);
-
-  // Get a simplified version of registration data for display
-  const simplifiedRegistrationData = filledRegistrationData.map(item => ({
-    date: formatDate(item.date),
-    Registros: item.count
-  }));
-
-  const getRoleDisplayName = (roleCode: string): string => {
-    switch (roleCode) {
-      case 'admin': return 'Administradores';
-      case 'instructor': return 'Instructores';
-      case 'student': return 'Estudiantes';
-      case 'moderator': return 'Moderadores';
-      case 'support': return 'Soporte';
-      default: return roleCode;
-    }
-  };
+  // Skip rendering charts if the data is still loading
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin h-8 w-8 border-t-2 border-b-2 border-primary rounded-full"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* KPI cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* User Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between space-y-0">
-              <h3 className="tracking-tight text-sm font-medium">Total Usuarios</h3>
-              <Users className="h-5 w-5 text-muted-foreground" />
-            </div>
-            {isLoading ? (
-              <Skeleton className="h-8 w-24 mt-2" />
-            ) : (
-              <div className="text-3xl font-bold mt-2">{userCounts.total}</div>
-            )}
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center">
+              <Users className="h-4 w-4 mr-2 text-primary" />
+              Total Users
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{userCounts.total}</div>
+            <p className="text-sm text-muted-foreground mt-1">Registered accounts</p>
           </CardContent>
         </Card>
         
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between space-y-0">
-              <h3 className="tracking-tight text-sm font-medium">Usuarios Activos</h3>
-              <UserCheck className="h-5 w-5 text-muted-foreground" />
-            </div>
-            {isLoading ? (
-              <Skeleton className="h-8 w-24 mt-2" />
-            ) : (
-              <div className="text-3xl font-bold mt-2">{userCounts.active}</div>
-            )}
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center">
+              <User className="h-4 w-4 mr-2 text-primary" />
+              Active Users
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{userCounts.active}</div>
+            <p className="text-sm text-muted-foreground mt-1">{Math.round((userCounts.active / userCounts.total) * 100)}% of total</p>
           </CardContent>
         </Card>
         
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between space-y-0">
-              <h3 className="tracking-tight text-sm font-medium">Nuevos (7 días)</h3>
-              <UserPlus className="h-5 w-5 text-muted-foreground" />
-            </div>
-            {isLoading ? (
-              <Skeleton className="h-8 w-24 mt-2" />
-            ) : (
-              <div className="text-3xl font-bold mt-2">{userCounts.new}</div>
-            )}
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between space-y-0">
-              <h3 className="tracking-tight text-sm font-medium">% Activos</h3>
-              <User className="h-5 w-5 text-muted-foreground" />
-            </div>
-            {isLoading ? (
-              <Skeleton className="h-8 w-24 mt-2" />
-            ) : (
-              <div className="text-3xl font-bold mt-2">
-                {userCounts.total ? Math.round((userCounts.active / userCounts.total) * 100) : 0}%
-              </div>
-            )}
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center">
+              <UserPlus className="h-4 w-4 mr-2 text-primary" />
+              New Users
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{userCounts.new}</div>
+            <p className="text-sm text-muted-foreground mt-1">Last 7 days</p>
           </CardContent>
         </Card>
       </div>
-
-      {/* Charts Tabs */}
-      <Tabs defaultValue="distribution" className="space-y-4">
-        <div className="flex justify-between items-center">
-          <TabsList>
-            <TabsTrigger value="distribution" className="flex gap-2 items-center">
-              <PieChart className="h-4 w-4" />
-              <span>Distribución</span>
-            </TabsTrigger>
-            <TabsTrigger value="registrations" className="flex gap-2 items-center">
-              <LineChart className="h-4 w-4" />
-              <span>Registros</span>
-            </TabsTrigger>
-          </TabsList>
-          
-          <Button variant="outline" size="sm" onClick={refetchAll} disabled={isLoading}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Actualizar
-          </Button>
-        </div>
-
-        {/* Roles Distribution Chart */}
-        <TabsContent value="distribution" className="m-0">
-          <Card>
-            <CardHeader>
-              <CardTitle>Distribución de Roles</CardTitle>
-              <CardDescription>
-                Distribución de usuarios por rol en la plataforma
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="w-full h-96 flex items-center justify-center">
-                  <Skeleton className="h-72 w-72 rounded-full" />
+      
+      {/* Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* User Role Distribution */}
+        <Card className="md:col-span-1">
+          <CardHeader>
+            <CardTitle className="text-lg">Role Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={roleDistribution}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="count"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {roleDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Daily Registrations */}
+        <Card className="md:col-span-1">
+          <CardHeader>
+            <CardTitle className="text-lg">New Registrations</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={dailyRegistrations}
+                  margin={{
+                    top: 5,
+                    right: 20,
+                    left: 0,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="count"
+                    stroke="#8B5CF6"
+                    activeDot={{ r: 8 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      {/* Activity Tabs - Placeholder for future functionality */}
+      <Card>
+        <CardHeader>
+          <CardTitle>User Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="logins" className="w-full">
+            <TabsList className="grid grid-cols-4 w-full max-w-md">
+              <TabsTrigger value="logins" className="text-xs sm:text-sm">Logins</TabsTrigger>
+              <TabsTrigger value="pageviews" className="text-xs sm:text-sm">Page Views</TabsTrigger>
+              <TabsTrigger value="actions" className="text-xs sm:text-sm">Actions</TabsTrigger>
+              <TabsTrigger value="retention" className="text-xs sm:text-sm">Retention</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="logins" className="h-64 mt-4">
+              <div className="flex items-center justify-center h-full bg-muted/40 rounded-md">
+                <div className="text-center">
+                  <Activity className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">Login Activity</h3>
+                  <p className="text-sm text-muted-foreground max-w-md px-4">
+                    Detailed login analytics will be available in the next update.
+                  </p>
                 </div>
-              ) : (
-                <div className="flex flex-col md:flex-row gap-6">
-                  {/* Pie Chart */}
-                  <div className="w-full md:w-1/2">
-                    <ResponsiveContainer width="100%" height={350}>
-                      <RechartsPieChart>
-                        <Pie
-                          data={pieData}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          outerRadius={120}
-                          fill="#8884d8"
-                          dataKey="value"
-                          nameKey="name"
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        >
-                          {pieData.map((entry, index) => (
-                            <Cell 
-                              key={`cell-${index}`} 
-                              fill={ROLE_COLORS[entry.name] || COLORS[index % COLORS.length]} 
-                            />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                        <Legend />
-                      </RechartsPieChart>
-                    </ResponsiveContainer>
-                  </div>
-                  
-                  {/* Bar Chart */}
-                  <div className="w-full md:w-1/2">
-                    <ResponsiveContainer width="100%" height={350}>
-                      <RechartsBarChart data={pieData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis 
-                          dataKey="name" 
-                          tickFormatter={getRoleDisplayName}
-                        />
-                        <YAxis />
-                        <Tooltip 
-                          formatter={(value, name) => [value, 'Usuarios']}
-                          labelFormatter={getRoleDisplayName}
-                        />
-                        <Bar 
-                          dataKey="value" 
-                          name="Usuarios" 
-                          fill="#8884d8"
-                        >
-                          {pieData.map((entry, index) => (
-                            <Cell 
-                              key={`cell-${index}`} 
-                              fill={ROLE_COLORS[entry.name] || COLORS[index % COLORS.length]} 
-                            />
-                          ))}
-                        </Bar>
-                      </RechartsBarChart>
-                    </ResponsiveContainer>
-                  </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="pageviews" className="h-64 mt-4">
+              <div className="flex items-center justify-center h-full bg-muted/40 rounded-md">
+                <div className="text-center">
+                  <LineChartIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">Page Views</h3>
+                  <p className="text-sm text-muted-foreground max-w-md px-4">
+                    Page view analytics will be available in the next update.
+                  </p>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Registrations Chart */}
-        <TabsContent value="registrations" className="m-0">
-          <Card>
-            <CardHeader>
-              <CardTitle>Tendencia de Registros</CardTitle>
-              <CardDescription>
-                Nuevos usuarios registrados en los últimos 30 días
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="w-full h-96 flex items-center justify-center">
-                  <Skeleton className="h-72 w-full" />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="actions" className="h-64 mt-4">
+              <div className="flex items-center justify-center h-full bg-muted/40 rounded-md">
+                <div className="text-center">
+                  <BarChart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">User Actions</h3>
+                  <p className="text-sm text-muted-foreground max-w-md px-4">
+                    User action analytics will be available in the next update.
+                  </p>
                 </div>
-              ) : (
-                <ResponsiveContainer width="100%" height={400}>
-                  <RechartsLineChart data={simplifiedRegistrationData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line 
-                      type="monotone" 
-                      dataKey="Registros" 
-                      stroke="#8884d8" 
-                      activeDot={{ r: 8 }} 
-                    />
-                  </RechartsLineChart>
-                </ResponsiveContainer>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="retention" className="h-64 mt-4">
+              <div className="flex items-center justify-center h-full bg-muted/40 rounded-md">
+                <div className="text-center">
+                  <PieChartIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">User Retention</h3>
+                  <p className="text-sm text-muted-foreground max-w-md px-4">
+                    Retention analytics will be available in the next update.
+                  </p>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 };

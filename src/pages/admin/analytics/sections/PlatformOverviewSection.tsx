@@ -1,158 +1,129 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts';
+import { LineChart, BarChart, PieChart } from 'lucide-react';
+import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-// Define los tipos de los props
-interface PlatformOverviewProps {
-  stats: any;
+interface PlatformStats {
+  total_users: number;
+  active_users?: number;
+  total_courses: number;
+  active_courses: number;
+  total_enrollments: number;
+  total_revenue?: number;
+  recent_signups?: number[];
+}
+
+interface PlatformOverviewSectionProps {
+  stats: PlatformStats;
   isLoading: boolean;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
-
-const PlatformOverviewSection: React.FC<PlatformOverviewProps> = ({ stats, isLoading }) => {
-  // Datos de ejemplo para los gráficos
-  const activeUsersData = [
-    { name: 'Ene', users: 400 },
-    { name: 'Feb', users: 600 },
-    { name: 'Mar', users: 550 },
-    { name: 'Abr', users: 700 },
-    { name: 'May', users: 900 },
-    { name: 'Jun', users: 1100 },
-    { name: 'Jul', users: 1300 },
+const PlatformOverviewSection: React.FC<PlatformOverviewSectionProps> = ({ stats, isLoading }) => {
+  // Example data for activity chart
+  const activityData = [
+    { name: 'Mon', users: 120, courses: 15, enrollments: 35 },
+    { name: 'Tue', users: 140, courses: 18, enrollments: 42 },
+    { name: 'Wed', users: 160, courses: 17, enrollments: 48 },
+    { name: 'Thu', users: 180, courses: 19, enrollments: 53 },
+    { name: 'Fri', users: 210, courses: 20, enrollments: 60 },
+    { name: 'Sat', users: 190, courses: 18, enrollments: 45 },
+    { name: 'Sun', users: 150, courses: 15, enrollments: 38 },
   ];
 
-  const enrollmentsByCategory = [
-    { name: 'Tecnología', value: 40 },
-    { name: 'Negocios', value: 30 },
-    { name: 'Diseño', value: 20 },
-    { name: 'Marketing', value: 10 },
-  ];
-
-  const revenueData = [
-    { name: 'Ene', ingresos: 5000 },
-    { name: 'Feb', ingresos: 7800 },
-    { name: 'Mar', ingresos: 6000 },
-    { name: 'Abr', ingresos: 8900 },
-    { name: 'May', ingresos: 7200 },
-    { name: 'Jun', ingresos: 9800 },
-    { name: 'Jul', ingresos: 12000 },
-  ];
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Gráfico de usuarios activos */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Usuarios Activos</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <Skeleton className="h-80 w-full" />
-          ) : (
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={activeUsersData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Area 
-                  type="monotone" 
-                  dataKey="users" 
-                  name="Usuarios Activos"
-                  stroke="#8884d8" 
-                  fill="#8884d8"
-                  fillOpacity={0.3} 
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Gráficos inferiores en una cuadrícula */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Distribución de inscripciones por categoría */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Inscripciones por Categoría</CardTitle>
-              <Badge variant="outline">En desarrollo</Badge>
-            </div>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-medium">Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <Skeleton className="h-64 w-full" />
-            ) : (
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={enrollmentsByCategory}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    nameKey="name"
-                    label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {enrollmentsByCategory.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Ingresos mensuales */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Ingresos Mensuales (€)</CardTitle>
-              <Badge variant="outline">En desarrollo</Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <Skeleton className="h-64 w-full" />
-            ) : (
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={revenueData}>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsBarChart
+                  data={activityData}
+                  margin={{
+                    top: 20,
+                    right: 30,
+                    left: 0,
+                    bottom: 0,
+                  }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`€${value}`, 'Ingresos']} />
-                  <Bar 
-                    dataKey="ingresos" 
-                    name="Ingresos" 
-                    fill="#82ca9d" 
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="users" fill="#8B5CF6" name="Users" />
+                  <Bar dataKey="courses" fill="#3B82F6" name="Courses" />
+                  <Bar dataKey="enrollments" fill="#10B981" name="Enrollments" />
+                </RechartsBarChart>
               </ResponsiveContainer>
-            )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-medium">Platform Metrics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="border rounded-md p-3">
+                <p className="text-sm text-muted-foreground mb-2">Total Users</p>
+                <p className="text-2xl font-bold">{stats.total_users}</p>
+              </div>
+              <div className="border rounded-md p-3">
+                <p className="text-sm text-muted-foreground mb-2">Total Courses</p>
+                <p className="text-2xl font-bold">{stats.total_courses}</p>
+              </div>
+              <div className="border rounded-md p-3">
+                <p className="text-sm text-muted-foreground mb-2">Active Courses</p>
+                <p className="text-2xl font-bold">{stats.active_courses}</p>
+              </div>
+              <div className="border rounded-md p-3">
+                <p className="text-sm text-muted-foreground mb-2">Enrollments</p>
+                <p className="text-2xl font-bold">{stats.total_enrollments}</p>
+              </div>
+            </div>
+            
+            <div className="flex flex-col justify-center items-center py-6">
+              <div className="flex space-x-8 mb-4">
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-2">
+                    <LineChart className="h-8 w-8 text-primary" />
+                  </div>
+                  <span className="text-sm font-medium">User Growth</span>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center justify-center h-16 w-16 rounded-full bg-blue-500/10 mb-2">
+                    <BarChart className="h-8 w-8 text-blue-500" />
+                  </div>
+                  <span className="text-sm font-medium">Course Progress</span>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center justify-center h-16 w-16 rounded-full bg-amber-500/10 mb-2">
+                    <PieChart className="h-8 w-8 text-amber-500" />
+                  </div>
+                  <span className="text-sm font-medium">Revenue Split</span>
+                </div>
+              </div>
+              
+              <p className="text-sm text-muted-foreground text-center max-w-md">
+                Detailed analytics reports can be accessed from the specialized sections for Users, Courses, and Revenue.
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
