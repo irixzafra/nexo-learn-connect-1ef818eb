@@ -19,6 +19,9 @@ const AdminRoutes: React.FC = () => {
       <Route path="navigation-diagram" element={<NavigationDiagram />} />
       <Route path="navigation" element={<NavigationExplorer />} />
       
+      {/* Ruta de inicio para admin */}
+      <Route index element={<NavigationDiagram />} />
+      
       {/* Ruta por defecto para todas las demás rutas de administración */}
       <Route path="*" element={<AdminNotFound />} />
     </Routes>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -37,24 +36,20 @@ import {
 } from '@/config/navigation';
 
 const NavigationDiagram: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('menus');
-  const [selectedMenu, setSelectedMenu] = useState<string | null>(null);
-  
-  // Función para renderizar iconos de React
+  const [activeTab, setActiveTab] = useState('diagram');
+  const [selectedMenu, setSelectedMenu] = useState<string | null>('main');
+
   const renderIcon = (icon: any) => {
     if (!icon) return null;
     
-    // Si el icono es un componente de Lucide o una función
     if (typeof icon === 'function') {
       const IconComponent = icon;
       return <IconComponent className="h-4 w-4 text-primary mr-2" />;
     }
     
-    // Para otros tipos de iconos (si es un ReactNode)
     return <span className="mr-2">{React.isValidElement(icon) ? icon : null}</span>;
   };
 
-  // Función para mostrar el estado de los elementos
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
@@ -68,7 +63,6 @@ const NavigationDiagram: React.FC = () => {
     }
   };
 
-  // Agrupar menús para mostrarlos organizados
   const menuGroups = [
     { key: 'main', title: 'Menú Principal', description: 'Navegación principal para todos los usuarios', items: mainNavigation },
     { key: 'explore', title: 'Menú de Exploración', description: 'Para descubrir cursos y contenido', items: exploreNavigation },
@@ -79,7 +73,6 @@ const NavigationDiagram: React.FC = () => {
     { key: 'gamification', title: 'Menú de Gamificación', description: 'Para elementos de gamificación', items: gamificationNavigation }
   ];
 
-  // Componentes de interfaz
   const sidebarComponents = [
     { name: 'SidebarContent', path: 'src/components/layout/sidebar/SidebarContent.tsx', description: 'Contenido principal de la barra lateral', status: 'active' },
     { name: 'SidebarLogoSection', path: 'src/components/layout/sidebar/SidebarLogoSection.tsx', description: 'Sección del logo en la barra lateral', status: 'active' },
@@ -89,7 +82,6 @@ const NavigationDiagram: React.FC = () => {
     { name: 'AdminSection', path: 'src/components/layout/sidebar/AdminSection.tsx', description: 'Sección de administración (eliminada)', status: 'deprecated' }
   ];
 
-  // Archivos del sistema de navegación
   const navigationFiles = [
     { name: 'mainNavigation.ts', path: 'src/config/navigation/mainNavigation.ts', description: 'Define ítems del menú principal', status: 'active' },
     { name: 'exploreNavigation.ts', path: 'src/config/navigation/exploreNavigation.ts', description: 'Define ítems del menú de exploración', status: 'active' },
@@ -104,7 +96,6 @@ const NavigationDiagram: React.FC = () => {
     { name: 'types.ts', path: 'src/config/navigation/types.ts', description: 'Define tipos para elementos de navegación', status: 'active' }
   ];
 
-  // Función para obtener un color de borde basado en la clave del menú
   const getMenuBorderColor = (key: string) => {
     switch (key) {
       case 'main': return 'border-blue-500';
@@ -118,7 +109,6 @@ const NavigationDiagram: React.FC = () => {
     }
   };
 
-  // Obtener el icono para el menú
   const getMenuIcon = (key: string) => {
     switch (key) {
       case 'main': return <LayoutDashboard className="h-6 w-6 text-blue-500" />;
@@ -132,7 +122,6 @@ const NavigationDiagram: React.FC = () => {
     }
   };
 
-  // Obtener el color de texto para el menú
   const getMenuTextColor = (key: string) => {
     switch (key) {
       case 'main': return 'text-blue-700';
@@ -172,7 +161,7 @@ const NavigationDiagram: React.FC = () => {
         </div>
       </div>
       
-      <Tabs defaultValue="menus" className="w-full" onValueChange={setActiveTab}>
+      <Tabs defaultValue="diagram" className="w-full" onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="menus">
             <Menu className="h-4 w-4 mr-2" />
@@ -192,7 +181,6 @@ const NavigationDiagram: React.FC = () => {
           </TabsTrigger>
         </TabsList>
         
-        {/* Contenido de la pestaña de Menús */}
         <TabsContent value="menus" className="space-y-6">
           {menuGroups.map((group) => (
             <Card key={group.key} className="overflow-hidden">
@@ -270,7 +258,6 @@ const NavigationDiagram: React.FC = () => {
           ))}
         </TabsContent>
         
-        {/* Contenido de la pestaña de Diagrama Visual */}
         <TabsContent value="diagram" className="space-y-6">
           <Card className="p-6">
             <CardHeader>
@@ -283,7 +270,6 @@ const NavigationDiagram: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Seleccionar menú para visualizar */}
               <div className="mb-8">
                 <h4 className="text-sm font-medium mb-3">Selecciona un menú para ver su estructura</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -303,7 +289,6 @@ const NavigationDiagram: React.FC = () => {
                 </div>
               </div>
               
-              {/* Visualización del menú seleccionado */}
               {selectedMenu && (
                 <div className="mt-8 border rounded-lg p-6 bg-muted/20">
                   <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
@@ -316,24 +301,19 @@ const NavigationDiagram: React.FC = () => {
                   <div className="overflow-auto">
                     <div className="flex justify-center w-full min-w-[600px]">
                       <div className="flex flex-col items-center">
-                        {/* Raíz del menú */}
                         <div className={`p-3 rounded-lg ${getMenuBorderColor(selectedMenu)} border-2 bg-white dark:bg-card mb-8 shadow-md`}>
                           <div className="font-medium">
                             {menuGroups.find(g => g.key === selectedMenu)?.title}
                           </div>
                         </div>
                         
-                        {/* Línea central */}
                         <div className="w-px h-8 bg-gray-300"></div>
                         
-                        {/* Ítems del menú */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                           {menuGroups.find(g => g.key === selectedMenu)?.items.map((item, index) => (
                             <div key={index} className="flex flex-col items-center">
-                              {/* Línea vertical hacia arriba */}
                               <div className="w-px h-8 bg-gray-300"></div>
                               
-                              {/* Tarjeta del elemento */}
                               <div className="w-48 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-card shadow-sm">
                                 <div className="flex items-center gap-2 mb-2">
                                   {renderIcon(item.icon)}
@@ -347,7 +327,6 @@ const NavigationDiagram: React.FC = () => {
                                 )}
                               </div>
                               
-                              {/* Información de roles */}
                               <div className="mt-2 flex flex-wrap justify-center gap-1">
                                 {item.requiredRole && (
                                   Array.isArray(item.requiredRole) 
@@ -382,7 +361,6 @@ const NavigationDiagram: React.FC = () => {
             </CardContent>
           </Card>
           
-          {/* Diagrama General */}
           <Card className="p-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -396,9 +374,7 @@ const NavigationDiagram: React.FC = () => {
             <CardContent>
               <div className="overflow-auto py-6">
                 <div className="flex justify-center min-w-[800px]">
-                  {/* Diagrama de relación */}
                   <div className="relative">
-                    {/* Centro - Menú Principal */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
                       <div className="p-4 rounded-full bg-blue-500 text-white shadow-lg flex items-center justify-center" style={{width: '100px', height: '100px'}}>
                         <div className="text-center">
@@ -408,7 +384,6 @@ const NavigationDiagram: React.FC = () => {
                       </div>
                     </div>
                     
-                    {/* Menús secundarios en círculo */}
                     {menuGroups.filter(g => g.key !== 'main').map((group, index) => {
                       const angle = (index * (360 / (menuGroups.length - 1))) * (Math.PI / 180);
                       const x = Math.cos(angle) * 200;
@@ -416,7 +391,6 @@ const NavigationDiagram: React.FC = () => {
                       
                       return (
                         <React.Fragment key={group.key}>
-                          {/* Línea de conexión */}
                           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full">
                             <svg width="100%" height="100%" viewBox="-250 -180 500 360" style={{overflow: 'visible'}}>
                               <line 
@@ -438,7 +412,6 @@ const NavigationDiagram: React.FC = () => {
                             </svg>
                           </div>
                           
-                          {/* Nodo */}
                           <div 
                             className={`absolute p-3 rounded-full shadow-md flex items-center justify-center ${getMenuBorderColor(group.key)} border bg-white dark:bg-card z-10`}
                             style={{
@@ -462,7 +435,6 @@ const NavigationDiagram: React.FC = () => {
                 </div>
               </div>
               
-              {/* Leyenda */}
               <div className="mt-8 border-t pt-4">
                 <h4 className="text-sm font-medium mb-2">Leyenda</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -478,7 +450,6 @@ const NavigationDiagram: React.FC = () => {
           </Card>
         </TabsContent>
         
-        {/* Contenido de la pestaña de Componentes */}
         <TabsContent value="components" className="space-y-6">
           <Card>
             <CardHeader>
@@ -517,7 +488,6 @@ const NavigationDiagram: React.FC = () => {
           </Card>
         </TabsContent>
         
-        {/* Contenido de la pestaña de Archivos */}
         <TabsContent value="files" className="space-y-6">
           <Card>
             <CardHeader>
