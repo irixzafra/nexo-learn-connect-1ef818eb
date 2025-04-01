@@ -18,22 +18,22 @@ export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({
 }) => {
   const { isEnabled: onboardingEnabled } = useFeature('enableOnboardingSystem');
   const { isEnabled: triggerEnabled } = useFeature('showOnboardingTrigger');
-  const { startOnboarding, isOnboardingActive, openOnboarding } = useOnboarding();
+  const { openOnboarding, isActive } = useOnboarding();
   
   useEffect(() => {
     if (autoStart && onboardingEnabled) {
       const timer = setTimeout(() => {
-        startOnboarding();
+        openOnboarding();
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [autoStart, onboardingEnabled, startOnboarding]);
+  }, [autoStart, onboardingEnabled, openOnboarding]);
 
   const handleClick = () => {
     if (onClick) {
       onClick();
     } else {
-      startOnboarding();
+      openOnboarding();
     }
   };
 

@@ -1,129 +1,132 @@
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { type FeaturesConfig } from './features/types';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
+import { toast } from 'sonner';
+import { useFeatures } from './features/FeaturesContext';
+import { useAuth } from './AuthContext';
+import { OnboardingStep, OnboardingContextValue } from './onboarding/types';
+import { useOnboardingState } from './onboarding/useOnboardingState';
 
-// Define step enum (not type)
-export enum OnboardingStep {
-  WELCOME = 'welcome',
-  PROFILE = 'profile',
-  EXPLORE = 'explore',
-  TOUR = 'tour',
-  COMPLETE = 'complete'
+// Valor por defecto del contexto
+const defaultContextValue: OnboardingContextValue = {
+  isActive: false,
+  isOpen: false,
+  openOnboarding: () => {},
+  closeOnboarding: () => {},
+  currentStep: null,
+  totalSteps: 0,
+  goToStep: () => {},
+  nextStep: () => {},
+  prevStep: () => {},
+  isFirstStep: true,
+  isLastStep: false,
+  progress: 0,
+  restartOnboarding: () => {},
+  completeOnboarding: () => {},
+  isOnboardingComplete: false,
+};
+
+const OnboardingContext = createContext<OnboardingContextValue>(defaultContextValue);
+
+export const useOnboarding = () => useContext(OnboardingContext);
+
+interface OnboardingProviderProps {
+  children: React.ReactNode;
 }
 
-// Define the context value interface
-export interface OnboardingContextValue {
-  isOpen: boolean;
-  currentStep: OnboardingStep;
-  allSteps: OnboardingStep[];
-  openOnboarding: () => void;
-  closeOnboarding: () => void;
-  nextStep: () => void;
-  previousStep: () => void;
-  goToStep: (step: OnboardingStep) => void;
-  skipOnboarding: () => void;
-  isOnboardingComplete: boolean;
-  markOnboardingComplete: () => void;
-  // Add missing properties reported in errors
-  startOnboarding: () => void;
-  isOnboardingActive: boolean;
-  featuresConfig: FeaturesConfig;
-}
+export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({ children }) => {
+  const { user } = useAuth();
+  const { featuresConfig } = useFeatures();
+  const [isOnboardingComplete, setIsOnboardingComplete] = useLocalStorage('onboarding-completed', false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [forceStart, setForceStart] = useState(false);
 
-// Create context with default value
-const OnboardingContext = createContext<OnboardingContextValue>({} as OnboardingContextValue);
+  const { 
+    isActive,
+    currentStep,
+    totalSteps,
+    goToStep,
+    nextStep,
+    prevStep,
+    isFirstStep,
+    isLastStep,
+    progress,
+    allSteps,
+    restartOnboarding,
+    setActive
+  } = useOnboardingState();
 
-// Provider component
-export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Get from local storage or use default
-  const getInitialOnboardingComplete = (): boolean => {
-    const saved = localStorage.getItem('onboardingComplete');
-    return saved ? JSON.parse(saved) : false;
+  // Auto-iniciar el onboarding para usuarios nuevos si la función está habilitada
+  useEffect(() => {
+    if (
+      user && 
+      featuresConfig.enableOnboardingSystem && 
+      !isOnboardingComplete &&
+      featuresConfig.autoStartOnboardingForNewUsers
+    ) {
+      // Verificar si el usuario es nuevo (creado en los últimos 7 días)
+      const userCreationDate = user.created_at ? new Date(user.created_at) : null;
+      const now = new Date();
+      const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7));
+      
+      if (userCreationDate && userCreationDate > sevenDaysAgo) {
+        openOnboarding();
+      }
+    }
+  }, [user, featuresConfig.enableOnboardingSystem, isOnboardingComplete]);
+
+  // Abrir el onboarding cuando se solicita explícitamente
+  useEffect(() => {
+    if (forceStart) {
+      setIsOpen(true);
+      setForceStart(false);
+    }
+  }, [forceStart]);
+
+  const openOnboarding = () => {
+    if (!featuresConfig.enableOnboardingSystem) {
+      return;
+    }
+    
+    setActive(true);
+    setIsOpen(true);
   };
 
-  // Define allSteps for use throughout the component
-  const allSteps: OnboardingStep[] = [
-    OnboardingStep.WELCOME,
-    OnboardingStep.PROFILE, 
-    OnboardingStep.EXPLORE,
-    OnboardingStep.TOUR,
-    OnboardingStep.COMPLETE
-  ];
-
-  // State management
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>(OnboardingStep.WELCOME);
-  const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean>(getInitialOnboardingComplete());
-  const [isOnboardingActive, setIsOnboardingActive] = useState<boolean>(false);
-  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({} as FeaturesConfig);
-
-  // Open/close the onboarding modal
-  const openOnboarding = useCallback(() => {
-    setIsOpen(true);
-    setCurrentStep(OnboardingStep.WELCOME);
-  }, []);
-
-  const closeOnboarding = useCallback(() => {
+  const closeOnboarding = () => {
     setIsOpen(false);
-  }, []);
+    
+    // Dejamos un pequeño retraso antes de desactivar para que la animación
+    // de cierre del diálogo termine correctamente
+    setTimeout(() => {
+      setActive(false);
+    }, 300);
+  };
 
-  // Define startOnboarding to fix the error in OnboardingTrigger
-  const startOnboarding = useCallback(() => {
-    setIsOnboardingActive(true);
-    openOnboarding();
-  }, [openOnboarding]);
-
-  // Step navigation
-  const nextStep = useCallback(() => {
-    const currentIndex = allSteps.indexOf(currentStep);
-    if (currentIndex < allSteps.length - 1) {
-      setCurrentStep(allSteps[currentIndex + 1]);
-    } else {
-      // Last step complete, mark as done
-      markOnboardingComplete();
-      closeOnboarding();
-    }
-  }, [currentStep, allSteps]);
-
-  const previousStep = useCallback(() => {
-    const currentIndex = allSteps.indexOf(currentStep);
-    if (currentIndex > 0) {
-      setCurrentStep(allSteps[currentIndex - 1]);
-    }
-  }, [currentStep, allSteps]);
-
-  const goToStep = useCallback((step: OnboardingStep) => {
-    setCurrentStep(step);
-  }, []);
-
-  // Skip and complete actions
-  const skipOnboarding = useCallback(() => {
-    markOnboardingComplete();
-    closeOnboarding();
-  }, []);
-
-  const markOnboardingComplete = useCallback(() => {
-    localStorage.setItem('onboardingComplete', JSON.stringify(true));
+  const completeOnboarding = () => {
     setIsOnboardingComplete(true);
-  }, []);
+    closeOnboarding();
+    toast.success('¡Onboarding completado! Ya puedes empezar a usar la plataforma.');
+  };
 
-  // Context value
   const value: OnboardingContextValue = {
+    isActive,
     isOpen,
-    currentStep,
-    allSteps,
     openOnboarding,
     closeOnboarding,
-    nextStep,
-    previousStep,
+    currentStep,
+    totalSteps,
     goToStep,
-    skipOnboarding,
+    nextStep,
+    prevStep,
+    isFirstStep,
+    isLastStep,
+    progress,
+    restartOnboarding,
+    completeOnboarding,
     isOnboardingComplete,
-    markOnboardingComplete,
-    // Add the missing properties
-    startOnboarding,
-    isOnboardingActive,
-    featuresConfig
   };
 
   return (
@@ -133,8 +136,5 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   );
 };
 
-// Custom hook to use the onboarding context
-export const useOnboarding = () => useContext(OnboardingContext);
-
-// Do not re-export types that would conflict
-export { OnboardingStep };
+// Re-exportar los tipos
+export type { OnboardingContextValue };

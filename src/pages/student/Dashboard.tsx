@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +11,7 @@ import { useOnboarding } from "@/contexts/OnboardingContext";
 const StudentDashboard: React.FC = () => {
   const { user } = useAuth();
   const isOnline = connectionService.isCurrentlyOnline();
-  const { isOnboardingActive } = useOnboarding();
+  const { isActive } = useOnboarding();
 
   // Check if the user is new (created within the last 7 days)
   const isNewUser = user?.created_at && 
@@ -24,7 +25,7 @@ const StudentDashboard: React.FC = () => {
         </h1>
         
         {/* Show onboarding trigger with autoStart for new users */}
-        {isNewUser && !isOnboardingActive && (
+        {isNewUser && !isActive && (
           <div className="hidden sm:block">
             <OnboardingTrigger autoStart={true} />
           </div>

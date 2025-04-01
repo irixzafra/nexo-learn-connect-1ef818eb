@@ -1,36 +1,38 @@
 
-import { FeaturesConfig as BaseFeatureConfig, defaultFeaturesConfig as baseDefaultFeaturesConfig } from '../features/types';
+import { ReactNode } from 'react';
 
-export interface OnboardingStep {
-  id: string;
-  title: string;
-  description: string;
-  element?: string;
-  placement?: 'top' | 'right' | 'bottom' | 'left';
-  isComplete?: boolean;
+// Definición de los pasos del onboarding
+export enum OnboardingStep {
+  WELCOME = 'welcome',
+  PROFILE = 'profile',
+  EXPLORE_COURSES = 'explore_courses',
+  PLATFORM_TOUR = 'platform_tour',
+  COMPLETE = 'complete'
 }
 
-// Re-export the FeaturesConfig from features/types.ts
-export type FeaturesConfig = BaseFeatureConfig;
-
-// Add a default config for usage in the OnboardingProvider
-export const defaultFeaturesConfig: FeaturesConfig = baseDefaultFeaturesConfig;
-
-// Export the OnboardingContextValue for usage in the provider
+// Tipo para el contexto de onboarding
 export interface OnboardingContextValue {
-  isOnboardingOpen: boolean;
-  currentStep: number;
-  featuresConfig: FeaturesConfig;
-  isSaving: boolean;
-  saveError: Error | null;
+  isActive: boolean;
+  isOpen: boolean;
   openOnboarding: () => void;
   closeOnboarding: () => void;
+  currentStep: OnboardingStep | null;
+  totalSteps: number;
+  goToStep: (step: OnboardingStep) => void;
   nextStep: () => void;
   prevStep: () => void;
-  goToStep: (step: number) => void;
-  updateFeaturesConfig: (updates: Partial<FeaturesConfig>) => void;
-  isOnboardingActive: boolean;
-  startOnboarding: () => void;
-  skipOnboarding: () => void;
-  previousStep: () => void;
+  isFirstStep: boolean;
+  isLastStep: boolean;
+  progress: number;
+  restartOnboarding: () => void;
+  completeOnboarding: () => void;
+  isOnboardingComplete: boolean;
+}
+
+// Tipo para los pasos de onboarding
+export interface OnboardingStepConfig {
+  id: OnboardingStep;
+  title: string;
+  component: ReactNode;
+  description?: string;
 }

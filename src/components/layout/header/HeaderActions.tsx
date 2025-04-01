@@ -6,7 +6,7 @@ import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { OnboardingTrigger } from '@/components/onboarding/OnboardingTrigger';
 import { useFeatures } from '@/contexts/features/FeaturesContext';
-import { UserMenu } from './UserMenu';
+import { UserMenu } from '@/components/layout/header/UserMenu';
 import { NotificationPanel } from '@/components/notifications/NotificationPanel';
 import { NotificationIndicator } from '@/components/notifications/NotificationIndicator';
 
