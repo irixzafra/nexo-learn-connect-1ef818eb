@@ -1,4 +1,3 @@
-
 import { SyntheticEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -76,7 +75,8 @@ export const routeMap = {
   adminAudit: '/admin/audit',
   adminAccess: '/admin/access',
   adminAI: '/admin/ai',
-  adminDesign: '/admin/design'
+  adminDesign: '/admin/design',
+  adminNavigation: '/admin/navigation'
 };
 
 /**

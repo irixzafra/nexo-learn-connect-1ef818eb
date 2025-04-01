@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -23,10 +22,10 @@ import {
   BanknoteIcon,
   Receipt,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Map
 } from 'lucide-react';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
-import { FeaturesConfig } from '@/contexts/features/types';
 
 // Categoría de menú principal con sus subelementos
 interface NavCategory {
@@ -110,6 +109,14 @@ const getAllAdminCategories = (designFeatureEnabled: boolean): NavCategory[] => 
       { id: 'themes', icon: Palette, label: 'Temas', path: '/admin/design/themes' },
       { id: 'templates', icon: FileText, label: 'Plantillas', path: '/admin/design/templates' },
     ] : []
+  },
+  { 
+    id: 'navigation',
+    icon: Map,
+    label: "Navegación",
+    path: "/admin/navigation",
+    dataTag: "admin-nav-navigation",
+    hidden: false
   },
   { 
     id: 'pages',

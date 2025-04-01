@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
@@ -18,8 +17,9 @@ import AuditLog from '@/pages/admin/audit/AuditLog';
 import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminCourses from '@/pages/admin/courses/AdminCourses';
 import AdminFinances from '@/pages/admin/finances/AdminFinances';
-import AnalyticsOverview from '@/pages/admin/analytics/AnalyticsOverview';
+import AnalyticsOverview from '@/pages/admin/analytics/index';
 import UserAnalytics from '@/pages/admin/analytics/UserAnalytics';
+import NavigationExplorer from '@/pages/admin/navigation/NavigationExplorer';
 
 // User management components
 import { UserManagementTabs } from '@/features/users/UserManagementTabs';
@@ -96,6 +96,9 @@ const AdminRoutes: React.FC = () => {
         <Route path="/banks" element={<AdminFinances />} />
         <Route path="/cashflow" element={<AdminFinances />} />
         <Route path="/alerts" element={<AdminFinances />} />
+        
+        {/* Navigation Explorer */}
+        <Route path="/navigation" element={<NavigationExplorer />} />
         
         {/* Analytics */}
         <Route path="/analytics" element={<AnalyticsOverview />} />
