@@ -1,6 +1,6 @@
 
 import * as React from "react"
-import { Menu, X, ChevronRight } from "lucide-react"
+import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useSidebar } from "../use-sidebar"
@@ -92,7 +92,7 @@ export const SidebarTrigger = React.forwardRef<
               exit={{ opacity: 0, rotate: 180, scale: 0.5 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <Menu className="h-5 w-5" aria-hidden="true" />
+              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
             </motion.div>
           )
         )}

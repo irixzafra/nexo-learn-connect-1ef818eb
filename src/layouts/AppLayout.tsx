@@ -62,8 +62,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {shouldShowSidebar && (
           <>
             <MobileSidebar viewAsRole="current" />
-            {/* Botón flotante para alternar sidebar */}
-            <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 md:block">
+            {/* Botón flotante para alternar sidebar - Moved to the left side */}
+            <div className="fixed bottom-4 left-4 md:bottom-8 md:left-8 z-50 md:block">
               <SidebarTrigger 
                 className="shadow-lg" 
                 onClick={() => toggleSidebar()}
