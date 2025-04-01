@@ -14,13 +14,15 @@ import PartnersSection from '@/components/landing/PartnersSection';
 import StatsSection from '@/components/landing/StatsSection';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Award, Bookmark, CheckCircle, Clock } from 'lucide-react';
+import { Award, Bookmark, CheckCircle, Clock, Smartphone, Cpu, Database, CloudLightning, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { useAppNavigation } from '@/utils/routeUtils';
 
 const LandingPage: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const { courses: featuredCourses, isLoading } = useCoursesCatalog();
+  const { routes } = useAppNavigation();
   
   // Obtener solo los primeros 6 cursos para mostrar en la sección destacada
   const topCourses = featuredCourses?.slice(0, 6) || [];
@@ -58,7 +60,7 @@ const LandingPage: React.FC = () => {
                   Nuestros certificados ahora incluyen códigos QR y un sistema de verificación público para validar su autenticidad.
                 </p>
                 <Button asChild variant="outline" size="sm">
-                  <Link to="/certificates/verification-portal">
+                  <Link to={routes.certificateVerificationPortal}>
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Verificar un Certificado
                   </Link>
@@ -95,6 +97,46 @@ const LandingPage: React.FC = () => {
                 </p>
               </CardContent>
             </Card>
+          </div>
+          
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2">
+                  <Smartphone className="h-5 w-5 text-primary" />
+                  Aplicación Móvil Nativa
+                </CardTitle>
+                <CardDescription>Q4 2024</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Accede a tus cursos desde cualquier lugar con nuestra app móvil optimizada para aprendizaje en movimiento, con soporte para modo offline.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2">
+                  <Cpu className="h-5 w-5 text-primary" />
+                  Tutor Virtual Inteligente
+                </CardTitle>
+                <CardDescription>En investigación</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Un asistente de aprendizaje potenciado por IA que resuelve dudas, recomienda recursos y crea planes de estudio personalizados.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="mt-12 text-center">
+            <Link to="/docs/ROADMAP_ERP_LMS.md">
+              <Button variant="link" className="text-primary">
+                Ver roadmap completo <Lightbulb className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
