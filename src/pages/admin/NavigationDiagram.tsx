@@ -22,7 +22,8 @@ import {
   BookOpen,
   Compass,
   AlertTriangle,
-  LayoutGrid
+  LayoutGrid,
+  ArrowRight
 } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
 import { 
@@ -37,6 +38,7 @@ import {
 
 const NavigationDiagram: React.FC = () => {
   const [activeTab, setActiveTab] = useState('menus');
+  const [selectedMenu, setSelectedMenu] = useState<string | null>(null);
   
   // Función para renderizar iconos de React
   const renderIcon = (icon: any) => {
@@ -102,6 +104,48 @@ const NavigationDiagram: React.FC = () => {
     { name: 'types.ts', path: 'src/config/navigation/types.ts', description: 'Define tipos para elementos de navegación', status: 'active' }
   ];
 
+  // Función para obtener un color de borde basado en la clave del menú
+  const getMenuBorderColor = (key: string) => {
+    switch (key) {
+      case 'main': return 'border-blue-500';
+      case 'explore': return 'border-green-500';
+      case 'instructor': return 'border-purple-500';
+      case 'academic': return 'border-amber-500';
+      case 'finance': return 'border-emerald-500';
+      case 'settings': return 'border-gray-500';
+      case 'gamification': return 'border-pink-500';
+      default: return 'border-gray-300';
+    }
+  };
+
+  // Obtener el icono para el menú
+  const getMenuIcon = (key: string) => {
+    switch (key) {
+      case 'main': return <LayoutDashboard className="h-6 w-6 text-blue-500" />;
+      case 'explore': return <Compass className="h-6 w-6 text-green-500" />;
+      case 'instructor': return <User className="h-6 w-6 text-purple-500" />;
+      case 'academic': return <BookOpen className="h-6 w-6 text-amber-500" />;
+      case 'finance': return <LayoutDashboard className="h-6 w-6 text-emerald-500" />;
+      case 'settings': return <Menu className="h-6 w-6 text-gray-500" />;
+      case 'gamification': return <Navigation2 className="h-6 w-6 text-pink-500" />;
+      default: return <Menu className="h-6 w-6 text-gray-400" />;
+    }
+  };
+
+  // Obtener el color de texto para el menú
+  const getMenuTextColor = (key: string) => {
+    switch (key) {
+      case 'main': return 'text-blue-700';
+      case 'explore': return 'text-green-700';
+      case 'instructor': return 'text-purple-700';
+      case 'academic': return 'text-amber-700';
+      case 'finance': return 'text-emerald-700';
+      case 'settings': return 'text-gray-700';
+      case 'gamification': return 'text-pink-700';
+      default: return 'text-gray-700';
+    }
+  };
+
   return (
     <div className="container mx-auto py-8 space-y-6">
       <div className="flex items-start justify-between mb-8">
@@ -129,10 +173,14 @@ const NavigationDiagram: React.FC = () => {
       </div>
       
       <Tabs defaultValue="menus" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="menus">
             <Menu className="h-4 w-4 mr-2" />
             Menús
+          </TabsTrigger>
+          <TabsTrigger value="diagram">
+            <Navigation className="h-4 w-4 mr-2" />
+            Diagrama Visual
           </TabsTrigger>
           <TabsTrigger value="components">
             <LayoutGrid className="h-4 w-4 mr-2" />
@@ -220,6 +268,214 @@ const NavigationDiagram: React.FC = () => {
               </CardContent>
             </Card>
           ))}
+        </TabsContent>
+        
+        {/* Contenido de la pestaña de Diagrama Visual */}
+        <TabsContent value="diagram" className="space-y-6">
+          <Card className="p-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Navigation className="h-5 w-5 text-primary" />
+                Estructura de Navegación
+              </CardTitle>
+              <CardDescription>
+                Visualización gráfica de la estructura de menús del sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Seleccionar menú para visualizar */}
+              <div className="mb-8">
+                <h4 className="text-sm font-medium mb-3">Selecciona un menú para ver su estructura</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {menuGroups.map((group) => (
+                    <button
+                      key={group.key}
+                      onClick={() => setSelectedMenu(group.key)}
+                      className={`p-4 rounded-lg border-2 hover:bg-muted/50 transition-all ${getMenuBorderColor(group.key)} ${selectedMenu === group.key ? 'bg-muted/80 shadow-md' : ''}`}
+                    >
+                      <div className="flex flex-col items-center text-center gap-2">
+                        {getMenuIcon(group.key)}
+                        <span className={`font-medium ${getMenuTextColor(group.key)}`}>{group.title}</span>
+                        <span className="text-xs text-muted-foreground">{group.items.length} elementos</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Visualización del menú seleccionado */}
+              {selectedMenu && (
+                <div className="mt-8 border rounded-lg p-6 bg-muted/20">
+                  <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                    {getMenuIcon(selectedMenu)}
+                    <span>
+                      {menuGroups.find(g => g.key === selectedMenu)?.title}
+                    </span>
+                  </h3>
+                  
+                  <div className="overflow-auto">
+                    <div className="flex justify-center w-full min-w-[600px]">
+                      <div className="flex flex-col items-center">
+                        {/* Raíz del menú */}
+                        <div className={`p-3 rounded-lg ${getMenuBorderColor(selectedMenu)} border-2 bg-white dark:bg-card mb-8 shadow-md`}>
+                          <div className="font-medium">
+                            {menuGroups.find(g => g.key === selectedMenu)?.title}
+                          </div>
+                        </div>
+                        
+                        {/* Línea central */}
+                        <div className="w-px h-8 bg-gray-300"></div>
+                        
+                        {/* Ítems del menú */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                          {menuGroups.find(g => g.key === selectedMenu)?.items.map((item, index) => (
+                            <div key={index} className="flex flex-col items-center">
+                              {/* Línea vertical hacia arriba */}
+                              <div className="w-px h-8 bg-gray-300"></div>
+                              
+                              {/* Tarjeta del elemento */}
+                              <div className="w-48 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-card shadow-sm">
+                                <div className="flex items-center gap-2 mb-2">
+                                  {renderIcon(item.icon)}
+                                  <span className="font-medium truncate">{item.label}</span>
+                                </div>
+                                <div className="text-xs text-muted-foreground truncate">
+                                  {item.path || item.url || '—'}
+                                </div>
+                                {item.disabled && (
+                                  <Badge variant="secondary" className="mt-2 text-xs">Deshabilitado</Badge>
+                                )}
+                              </div>
+                              
+                              {/* Información de roles */}
+                              <div className="mt-2 flex flex-wrap justify-center gap-1">
+                                {item.requiredRole && (
+                                  Array.isArray(item.requiredRole) 
+                                    ? (item.requiredRole.length > 3 
+                                        ? <Badge variant="outline" className="text-xs">
+                                            {item.requiredRole.length} roles
+                                          </Badge>
+                                        : item.requiredRole.map((role: UserRoleType) => (
+                                            <Badge key={role} variant="outline" className="text-xs">
+                                              {role}
+                                            </Badge>
+                                          ))
+                                      )
+                                    : <Badge variant="outline" className="text-xs">{item.requiredRole as string}</Badge>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {!selectedMenu && (
+                <div className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
+                  <Navigation2 className="h-12 w-12 mb-4 text-muted-foreground/50" />
+                  <p>Selecciona un menú para visualizar su estructura</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
+          {/* Diagrama General */}
+          <Card className="p-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <LayoutDashboard className="h-5 w-5 text-primary" />
+                Vista General del Sistema
+              </CardTitle>
+              <CardDescription>
+                Relación entre los diferentes menús
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-auto py-6">
+                <div className="flex justify-center min-w-[800px]">
+                  {/* Diagrama de relación */}
+                  <div className="relative">
+                    {/* Centro - Menú Principal */}
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                      <div className="p-4 rounded-full bg-blue-500 text-white shadow-lg flex items-center justify-center" style={{width: '100px', height: '100px'}}>
+                        <div className="text-center">
+                          <LayoutDashboard className="h-6 w-6 mx-auto mb-1" />
+                          <div className="text-xs font-medium">Menú Principal</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Menús secundarios en círculo */}
+                    {menuGroups.filter(g => g.key !== 'main').map((group, index) => {
+                      const angle = (index * (360 / (menuGroups.length - 1))) * (Math.PI / 180);
+                      const x = Math.cos(angle) * 200;
+                      const y = Math.sin(angle) * 150;
+                      
+                      return (
+                        <React.Fragment key={group.key}>
+                          {/* Línea de conexión */}
+                          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full">
+                            <svg width="100%" height="100%" viewBox="-250 -180 500 360" style={{overflow: 'visible'}}>
+                              <line 
+                                x1="0" 
+                                y1="0" 
+                                x2={x} 
+                                y2={y} 
+                                stroke="#e2e8f0" 
+                                strokeWidth="2"
+                                strokeDasharray="5,5" 
+                              />
+                              <ArrowRight 
+                                className="text-gray-400" 
+                                size={16} 
+                                style={{
+                                  transform: `translate(${x - (x > 0 ? 8 : -8)}px, ${y - 8}px)`,
+                                }}
+                              />
+                            </svg>
+                          </div>
+                          
+                          {/* Nodo */}
+                          <div 
+                            className={`absolute p-3 rounded-full shadow-md flex items-center justify-center ${getMenuBorderColor(group.key)} border bg-white dark:bg-card z-10`}
+                            style={{
+                              left: `calc(50% + ${x}px)`,
+                              top: `calc(50% + ${y}px)`,
+                              transform: 'translate(-50%, -50%)',
+                              width: '80px',
+                              height: '80px',
+                            }}
+                          >
+                            <div className="text-center">
+                              {getMenuIcon(group.key)}
+                              <div className="text-xs font-medium">{group.title.split(' ').pop()}</div>
+                              <div className="text-xs text-muted-foreground">{group.items.length}</div>
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Leyenda */}
+              <div className="mt-8 border-t pt-4">
+                <h4 className="text-sm font-medium mb-2">Leyenda</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {menuGroups.map((group) => (
+                    <div key={group.key} className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${getMenuBorderColor(group.key)} bg-white border-2`}></div>
+                      <span className="text-sm">{group.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
         
         {/* Contenido de la pestaña de Componentes */}
