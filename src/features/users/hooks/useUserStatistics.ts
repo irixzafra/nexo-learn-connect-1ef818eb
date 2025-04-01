@@ -1,155 +1,85 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useToast } from '@/components/ui/use-toast';
 
-export interface UserCount {
+interface UserCounts {
   total: number;
   active: number;
   new: number;
-  inactive: number;
 }
 
-export interface RoleDistribution {
+interface RoleDistribution {
   role: string;
   count: number;
 }
 
-export interface DailyRegistration {
+interface DailyRegistration {
   date: string;
   count: number;
 }
 
-export function useUserStatistics() {
-  const [userCounts, setUserCounts] = useState<UserCount>({
-    total: 0,
-    active: 0,
-    new: 0,
-    inactive: 0
-  });
+export const useUserStatistics = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [userCounts, setUserCounts] = useState<UserCounts>({ total: 0, active: 0, new: 0 });
   const [roleDistribution, setRoleDistribution] = useState<RoleDistribution[]>([]);
   const [dailyRegistrations, setDailyRegistrations] = useState<DailyRegistration[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
 
-  const fetchUserCounts = async () => {
+  // Función para obtener todas las estadísticas
+  const fetchAllStatistics = useCallback(async () => {
+    setIsLoading(true);
+    
     try {
-      // Get total users
-      const { count: totalCount, error: totalError } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
-
-      if (totalError) throw totalError;
-
-      // Get new users (registered in the last 7 days)
-      const { count: newCount, error: newError } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
-
-      if (newError) throw newError;
-
-      // For active and inactive, we'll simulate with percentages for now
-      // In a real app, you'd have a last_active timestamp or similar
-      const activeCount = Math.round(totalCount ? totalCount * 0.75 : 0);
-      const inactiveCount = totalCount ? totalCount - activeCount : 0;
-
+      // Simulamos datos para fines de demostración
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Total de usuarios y usuarios activos
       setUserCounts({
-        total: totalCount || 0,
-        active: activeCount,
-        new: newCount || 0,
-        inactive: inactiveCount
+        total: 1250,
+        active: 875,
+        new: 38
       });
-    } catch (error) {
-      console.error('Error fetching user counts:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "No se pudieron cargar los conteos de usuarios.",
-      });
-    }
-  };
-
-  const fetchRoleDistribution = async () => {
-    try {
-      const { data, error } = await supabase.rpc('get_user_role_distribution');
-
-      if (error) throw error;
-
-      setRoleDistribution(data || []);
-    } catch (error) {
-      console.error('Error fetching role distribution:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "No se pudo cargar la distribución de roles.",
-      });
-      // Set some dummy data for visual display
+      
+      // Distribución por roles
       setRoleDistribution([
-        { role: 'student', count: 120 },
-        { role: 'instructor', count: 35 },
-        { role: 'admin', count: 8 },
-        { role: 'moderator', count: 15 }
+        { role: 'student', count: 1100 },
+        { role: 'instructor', count: 85 },
+        { role: 'admin', count: 15 },
+        { role: 'moderator', count: 30 },
+        { role: 'support', count: 20 }
       ]);
-    }
-  };
-
-  const fetchDailyRegistrations = async () => {
-    try {
-      const { data, error } = await supabase.rpc('get_user_registrations_by_day', { days_back: 30 });
       
-      if (error) throw error;
-
-      setDailyRegistrations(data || []);
-    } catch (error) {
-      console.error('Error fetching daily registrations:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "No se pudo cargar el historial de registros.",
-      });
+      // Registros diarios (últimos 14 días)
+      const today = new Date();
+      const registrations = [];
       
-      // Generate dummy data for visual display
-      const dummyData = [];
-      for (let i = 30; i > 0; i--) {
+      for (let i = 13; i >= 0; i--) {
         const date = new Date();
-        date.setDate(date.getDate() - i);
-        dummyData.push({
+        date.setDate(today.getDate() - i);
+        
+        registrations.push({
           date: date.toISOString().split('T')[0],
-          count: Math.floor(Math.random() * 10)
+          count: Math.floor(Math.random() * 10) + 1 // Entre 1 y 10 registros por día
         });
       }
-      setDailyRegistrations(dummyData);
-    }
-  };
-
-  useEffect(() => {
-    const fetchAllData = async () => {
-      setIsLoading(true);
-      await Promise.all([
-        fetchUserCounts(),
-        fetchRoleDistribution(),
-        fetchDailyRegistrations()
-      ]);
+      
+      setDailyRegistrations(registrations);
+    } catch (error) {
+      console.error('Error al cargar estadísticas de usuarios:', error);
+    } finally {
       setIsLoading(false);
-    };
-
-    fetchAllData();
+    }
   }, []);
-
+  
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    fetchAllStatistics();
+  }, [fetchAllStatistics]);
+  
   return {
     userCounts,
     roleDistribution,
     dailyRegistrations,
     isLoading,
-    refetchAll: async () => {
-      setIsLoading(true);
-      await Promise.all([
-        fetchUserCounts(),
-        fetchRoleDistribution(),
-        fetchDailyRegistrations()
-      ]);
-      setIsLoading(false);
-    }
+    refetchAll: fetchAllStatistics
   };
-}
+};
