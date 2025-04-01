@@ -45,9 +45,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         
         <div className="flex flex-col flex-1">
           {showHeader && (
-            <AppHeader>
-              <HeaderContent onRoleChange={onRoleChange} />
-            </AppHeader>
+            <AppHeader
+              viewAsRole={viewAsRole}
+              onRoleChange={onRoleChange}
+            />
           )}
           
           <main className="flex-1">
