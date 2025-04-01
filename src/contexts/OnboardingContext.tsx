@@ -1,153 +1,146 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import { type FeaturesConfig } from './features/types';
 
-// Define step type
-export type OnboardingStep = 
-  | 'welcome'
-  | 'profile'
-  | 'explore-courses'
-  | 'community'
-  | 'complete';
-
-// Define context value type
-export interface OnboardingContextValue {
-  isOnboardingActive: boolean;
-  currentStep: OnboardingStep;
-  startOnboarding: () => void;
-  nextStep: () => void;
-  prevStep: () => void;
-  completeOnboarding: () => void;
-  skipOnboarding: () => void;
-  resetOnboarding: () => void;
-  goToStep: (step: OnboardingStep) => void;
+// Define step types
+export enum OnboardingStep {
+  WELCOME = 'welcome',
+  PROFILE = 'profile',
+  EXPLORE = 'explore',
+  TOUR = 'tour',
+  COMPLETE = 'complete'
 }
 
-// Create context
-const OnboardingContext = createContext<OnboardingContextValue | undefined>(undefined);
+// Define the context value interface
+export interface OnboardingContextValue {
+  isOpen: boolean;
+  currentStep: OnboardingStep;
+  allSteps: OnboardingStep[];
+  openOnboarding: () => void;
+  closeOnboarding: () => void;
+  nextStep: () => void;
+  previousStep: () => void;
+  goToStep: (step: OnboardingStep) => void;
+  skipOnboarding: () => void;
+  isOnboardingComplete: boolean;
+  markOnboardingComplete: () => void;
+}
 
-// Default features config (for onboarding)
-export const defaultFeaturesConfig: FeaturesConfig = {
-  designSystemEnabled: true,
-  enableContentReordering: false,
-  enableCategoryManagement: false,
-  enableThemeSwitcher: true,
-  enableRoleSwitcher: true,
-  enableRoleManagement: true,
-  enableOnboardingSystem: true,
-  enableTestDataGenerator: false,
-  enableNotifications: true,
-  showOnboardingTrigger: true,
-  autoStartOnboarding: true,
-};
-
-// List of steps in order
-const STEPS: OnboardingStep[] = [
-  'welcome',
-  'profile',
-  'explore-courses',
-  'community',
-  'complete'
-];
+// Create context with default value
+const OnboardingContext = createContext<OnboardingContextValue>({} as OnboardingContextValue);
 
 // Provider component
 export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
-  const [isOnboardingActive, setIsOnboardingActive] = useState(false);
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
-
-  // Check if user has completed onboarding before
-  useEffect(() => {
-    if (user) {
-      const onboardingCompleted = localStorage.getItem(`onboarding_completed_${user.id}`);
-      setHasCompletedOnboarding(onboardingCompleted === 'true');
-
-      // Auto-start onboarding for new users if enabled
-      const autoStart = localStorage.getItem('auto_start_onboarding') !== 'false';
-      if (autoStart && !onboardingCompleted && defaultFeaturesConfig.autoStartOnboarding) {
-        setIsOnboardingActive(true);
-      }
-    }
-  }, [user]);
-
-  const startOnboarding = () => {
-    setCurrentStep('welcome');
-    setIsOnboardingActive(true);
+  // Get from local storage or use default
+  const getInitialOnboardingComplete = (): boolean => {
+    const saved = localStorage.getItem('onboardingComplete');
+    return saved ? JSON.parse(saved) : false;
   };
 
-  const nextStep = () => {
-    const currentIndex = STEPS.indexOf(currentStep);
-    if (currentIndex < STEPS.length - 1) {
-      setCurrentStep(STEPS[currentIndex + 1]);
+  // State management
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>(OnboardingStep.WELCOME);
+  const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean>(getInitialOnboardingComplete());
+
+  // Open/close the onboarding modal
+  const openOnboarding = useCallback(() => {
+    setIsOpen(true);
+    setCurrentStep(OnboardingStep.WELCOME);
+  }, []);
+
+  const closeOnboarding = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  // Step navigation
+  const nextStep = useCallback(() => {
+    const currentIndex = allSteps.indexOf(currentStep);
+    if (currentIndex < allSteps.length - 1) {
+      setCurrentStep(allSteps[currentIndex + 1]);
     } else {
-      completeOnboarding();
+      // Last step complete, mark as done
+      markOnboardingComplete();
+      closeOnboarding();
     }
-  };
+  }, [currentStep]);
 
-  const prevStep = () => {
-    const currentIndex = STEPS.indexOf(currentStep);
+  const previousStep = useCallback(() => {
+    const currentIndex = allSteps.indexOf(currentStep);
     if (currentIndex > 0) {
-      setCurrentStep(STEPS[currentIndex - 1]);
+      setCurrentStep(allSteps[currentIndex - 1]);
+    }
+  }, [currentStep]);
+
+  const goToStep = useCallback((step: OnboardingStep) => {
+    setCurrentStep(step);
+  }, []);
+
+  // Skip and complete actions
+  const skipOnboarding = useCallback(() => {
+    markOnboardingComplete();
+    closeOnboarding();
+  }, []);
+
+  const markOnboardingComplete = useCallback(() => {
+    localStorage.setItem('onboardingComplete', JSON.stringify(true));
+    setIsOnboardingComplete(true);
+  }, []);
+
+  // Generate recommended feature configuration based on user role and preferences
+  const getRecommendedFeatures = (userRole: string, userLevel: string): Partial<FeaturesConfig> => {
+    // Base configuration common for all
+    const baseConfig: Partial<FeaturesConfig> = {
+      designSystemEnabled: true,
+      enableThemeSwitcher: true,
+      enableOnboardingSystem: true,
+      enableNotifications: true,
+    };
+
+    // Role-specific configurations
+    switch (userRole) {
+      case 'admin':
+        return {
+          ...baseConfig,
+          enableRoleSwitcher: true,
+          enableRoleManagement: true,
+          enableTestDataGenerator: true,
+          enableContentReordering: true,
+          enableCategoryManagement: true,
+        };
+      case 'instructor':
+        return {
+          ...baseConfig,
+          enableContentReordering: true,
+        };
+      default: // student, guest, etc.
+        return baseConfig;
     }
   };
 
-  const completeOnboarding = () => {
-    setIsOnboardingActive(false);
-    setHasCompletedOnboarding(true);
-    if (user) {
-      localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
-    }
-  };
-
-  const skipOnboarding = () => {
-    setIsOnboardingActive(false);
-    if (user) {
-      localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
-    }
-  };
-
-  const resetOnboarding = () => {
-    setCurrentStep('welcome');
-    setHasCompletedOnboarding(false);
-    if (user) {
-      localStorage.removeItem(`onboarding_completed_${user.id}`);
-    }
-  };
-
-  const goToStep = (step: OnboardingStep) => {
-    if (STEPS.includes(step)) {
-      setCurrentStep(step);
-    }
+  // Context value
+  const value: OnboardingContextValue = {
+    isOpen,
+    currentStep,
+    allSteps,
+    openOnboarding,
+    closeOnboarding,
+    nextStep,
+    previousStep,
+    goToStep,
+    skipOnboarding,
+    isOnboardingComplete,
+    markOnboardingComplete,
   };
 
   return (
-    <OnboardingContext.Provider
-      value={{
-        isOnboardingActive,
-        currentStep,
-        startOnboarding,
-        nextStep,
-        prevStep,
-        completeOnboarding,
-        skipOnboarding,
-        resetOnboarding,
-        goToStep,
-      }}
-    >
+    <OnboardingContext.Provider value={value}>
       {children}
     </OnboardingContext.Provider>
   );
 };
 
 // Custom hook to use the onboarding context
-export const useOnboarding = () => {
-  const context = useContext(OnboardingContext);
-  if (context === undefined) {
-    throw new Error('useOnboarding must be used within an OnboardingProvider');
-  }
-  return context;
-};
+export const useOnboarding = () => useContext(OnboardingContext);
 
-export default OnboardingContext;
+// Re-export the types for use elsewhere
+export type { OnboardingContextValue, OnboardingStep };
+export type { FeaturesConfig };

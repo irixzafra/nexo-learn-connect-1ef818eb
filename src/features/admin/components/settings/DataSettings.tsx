@@ -1,175 +1,216 @@
+
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { Loader2, Database, Save, Construction, LayoutList, Server, AlertTriangle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
-import type { FeaturesConfig } from '@/contexts/features/types';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
+import { 
+  Database, 
+  Server,
+  HardDrive,
+  RefreshCw, 
+  Download,
+  Upload,
+  KeyRound,
+  AlertTriangle
+} from 'lucide-react';
+import { FeaturesConfig } from '@/contexts/features/types';
+import SettingsAccordion from '@/components/admin/settings/SettingsAccordion';
 
 interface DataSettingsProps {
-  featuresConfig?: FeaturesConfig;
-  onToggleFeature?: (feature: keyof FeaturesConfig, value: boolean) => void;
-  isLoading?: boolean;
+  featuresConfig: FeaturesConfig;
+  onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  isLoading: boolean;
 }
 
-const DataSettings: React.FC<DataSettingsProps> = ({ 
-  featuresConfig, 
+export const DataSettings: React.FC<DataSettingsProps> = ({
+  featuresConfig,
   onToggleFeature,
   isLoading
 }) => {
-  const sections = [
-    {
-      id: 'backups',
-      title: 'Respaldos automáticos',
-      icon: <Database className="w-5 h-5" />,
-      content: (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="enableAutoBackups" className="text-base">Activar respaldos automáticos</Label>
-              <p className="text-sm text-muted-foreground">Los respaldos se realizarán automáticamente cada noche</p>
-            </div>
-            <Switch 
-              id="enableAutoBackups" 
-              checked={featuresConfig?.enableAutoBackups}
-              onCheckedChange={(checked) => onToggleFeature?.('enableAutoBackups', checked)}
-              disabled={isLoading}
-            />
-          </div>
-          <Separator />
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <p className="text-sm font-medium">Último respaldo</p>
-              <p className="text-sm text-muted-foreground">Hace 6 horas</p>
-            </div>
-            <div className="flex justify-between items-center">
-              <p className="text-sm font-medium">Siguiente respaldo</p>
-              <p className="text-sm text-muted-foreground">En 18 horas</p>
-            </div>
-          </div>
-          <div className="pt-2 flex gap-2">
-            <Button variant="outline" size="sm" className="text-xs">
-              <Download className="mr-1 h-3 w-3" />
-              Descargar último respaldo
-            </Button>
-            <Button variant="outline" size="sm" className="text-xs">
-              <Upload className="mr-1 h-3 w-3" />
-              Subir respaldo
-            </Button>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'cache',
-      title: 'Caché de consultas',
-      icon: <RefreshCw className="w-5 h-5" />,
-      content: (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="enableQueryCache" className="text-base">Activar caché de consultas</Label>
-              <p className="text-sm text-muted-foreground">Las consultas frecuentes se guardarán en caché para mejorar el rendimiento</p>
-            </div>
-            <Switch 
-              id="enableQueryCache" 
-              checked={featuresConfig?.enableQueryCache}
-              onCheckedChange={(checked) => onToggleFeature?.('enableQueryCache', checked)}
-              disabled={isLoading}
-            />
-          </div>
-          <Separator />
-          <div>
-            <Button variant="outline" size="sm" className="text-xs">
-              <RefreshCw className="mr-1 h-3 w-3" />
-              Limpiar caché
-            </Button>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'maintenance',
-      title: 'Modo mantenimiento',
-      icon: <HardDrive className="w-5 h-5" />,
-      content: (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="enableMaintenanceMode" className="text-base">Activar modo mantenimiento</Label>
-              <p className="text-sm text-muted-foreground">La plataforma mostrará una página de mantenimiento a los usuarios</p>
-            </div>
-            <Switch 
-              id="enableMaintenanceMode" 
-              checked={featuresConfig?.enableMaintenanceMode}
-              onCheckedChange={(checked) => onToggleFeature?.('enableMaintenanceMode', checked)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'testData',
-      title: 'Datos de prueba',
-      icon: <Server className="w-5 h-5" />,
-      content: (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="enableTestDataGenerator" className="text-base">Generador de datos de prueba</Label>
-                <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20">En desarrollo</Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">Herramienta para generar datos de prueba para desarrollo y testing</p>
-            </div>
-            <Switch 
-              id="enableTestDataGenerator" 
-              checked={featuresConfig?.enableTestDataGenerator}
-              onCheckedChange={(checked) => onToggleFeature?.('enableTestDataGenerator', checked)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'devMode',
-      title: 'Modo desarrollador',
-      icon: <KeyRound className="w-5 h-5" />,
-      content: (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="enableDatabaseDevMode" className="text-base">Activar modo desarrollador</Label>
-                <Badge variant="outline" className="bg-red-500/10 text-red-600 hover:bg-red-500/20">Solo administradores</Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">Habilita herramientas avanzadas y logs de diagnóstico</p>
-            </div>
-            <Switch 
-              id="enableDatabaseDevMode" 
-              checked={featuresConfig?.enableDatabaseDevMode}
-              onCheckedChange={(checked) => onToggleFeature?.('enableDatabaseDevMode', checked)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-      )
-    },
-  ];
+  const handleBackupDownload = () => {
+    toast.success('Backup generado y descargado correctamente');
+  };
+
+  const handleDataRefresh = () => {
+    toast.info('Datos actualizados correctamente');
+  };
 
   return (
     <div className="space-y-6">
-      <SettingsAccordion 
-        title="Datos"
-        description="Administra la configuración de datos y respaldos"
-        sections={sections}
-        className="bg-card"
+      <div>
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <Database className="h-5 w-5 text-primary" />
+          Gestión de Datos
+        </h2>
+        <p className="text-muted-foreground">
+          Administra las opciones relacionadas con la base de datos, respaldos y caché
+        </p>
+      </div>
+
+      <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Respaldos y Recuperación
+            </CardTitle>
+            <CardDescription>Configuración para respaldos automáticos</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="autoBackups">Respaldos Automáticos</Label>
+                <p className="text-sm text-muted-foreground">Programar respaldos automáticos de la base de datos</p>
+              </div>
+              <Switch
+                id="autoBackups"
+                checked={!!featuresConfig.enableAutoBackups}
+                onCheckedChange={(checked) => onToggleFeature('enableAutoBackups', checked)}
+                disabled={isLoading}
+              />
+            </div>
+            <Separator />
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleBackupDownload} className="gap-2">
+                <Download className="h-4 w-4" />
+                Descargar backup
+              </Button>
+              <Button variant="outline" className="gap-2">
+                <Upload className="h-4 w-4" />
+                Restaurar backup
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <RefreshCw className="h-5 w-5" />
+              Caché y Rendimiento
+            </CardTitle>
+            <CardDescription>Configuración de caché y rendimiento</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="queryCache">Caché de Consultas</Label>
+                <p className="text-sm text-muted-foreground">Activar caché para consultas frecuentes</p>
+              </div>
+              <Switch
+                id="queryCache"
+                checked={!!featuresConfig.enableQueryCache}
+                onCheckedChange={(checked) => onToggleFeature('enableQueryCache', checked)}
+                disabled={isLoading}
+              />
+            </div>
+            <Separator />
+            <Button variant="outline" onClick={handleDataRefresh} className="gap-2">
+              <RefreshCw className="h-4 w-4" />
+              Limpiar caché
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <HardDrive className="h-5 w-5" />
+              Estado del Sistema
+            </CardTitle>
+            <CardDescription>Configuración de mantenimiento</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="maintenanceMode">Modo Mantenimiento</Label>
+                <p className="text-sm text-muted-foreground">
+                  Activar modo mantenimiento (solo administradores podrán acceder)
+                </p>
+              </div>
+              <Switch
+                id="maintenanceMode"
+                checked={!!featuresConfig.enableMaintenanceMode}
+                onCheckedChange={(checked) => onToggleFeature('enableMaintenanceMode', checked)}
+                disabled={isLoading}
+              />
+            </div>
+            <div className="bg-amber-50 border border-amber-200 p-3 rounded-md">
+              <div className="flex gap-2 items-center text-amber-800 mb-1">
+                <AlertTriangle className="h-4 w-4" />
+                <span className="font-medium">Aviso</span>
+              </div>
+              <p className="text-sm text-amber-700">
+                El modo mantenimiento bloquea el acceso a todos los usuarios excepto administradores.
+                Úsalo con precaución.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <KeyRound className="h-5 w-5" />
+              Opciones de Desarrollo
+            </CardTitle>
+            <CardDescription>Configuración para desarrolladores</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="devMode">Modo Desarrollo DB</Label>
+                <p className="text-sm text-muted-foreground">
+                  Habilitar herramientas de desarrollo para la base de datos
+                </p>
+              </div>
+              <Switch
+                id="devMode"
+                checked={!!featuresConfig.enableDatabaseDevMode}
+                onCheckedChange={(checked) => onToggleFeature('enableDatabaseDevMode', checked)}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <SettingsAccordion
+        title="Configuración Avanzada de Datos"
+        description="Opciones avanzadas para la gestión de datos del sistema"
+        sections={[
+          {
+            id: "database",
+            title: "Conexiones de Base de Datos",
+            icon: <Database className="h-5 w-5" />,
+            content: (
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Configuración de conexiones a bases de datos
+                </p>
+                {/* Aquí iría el contenido de conexiones */}
+              </div>
+            ),
+            iconColor: "text-blue-600"
+          },
+          {
+            id: "queries",
+            title: "Optimización de Consultas",
+            icon: <Server className="h-5 w-5" />,
+            content: (
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Ajustes para optimizar el rendimiento de consultas
+                </p>
+                {/* Aquí iría el contenido de optimización */}
+              </div>
+            ),
+            iconColor: "text-green-600"
+          }
+        ]}
       />
     </div>
   );

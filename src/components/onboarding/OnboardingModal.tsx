@@ -1,16 +1,18 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useOnboarding } from '@/contexts/OnboardingContext';
-import { WelcomeStep } from './steps/WelcomeStep';
-import { ProfileStep } from './steps/ProfileStep';
-import { ExploreCoursesStep } from './steps/ExploreCoursesStep';
-import { PlatformTourStep } from './steps/PlatformTourStep';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, ArrowRight, X } from 'lucide-react';
+import { useOnboarding, OnboardingStep } from '@/contexts/OnboardingContext';
+import WelcomeStep from './steps/WelcomeStep';
+import ProfileStep from './steps/ProfileStep';
+import ExploreCoursesStep from './steps/ExploreCoursesStep';
+import PlatformTourStep from './steps/PlatformTourStep';
 
 export const OnboardingModal: React.FC = () => {
   const { 
-    isOnboardingActive, 
+    isOpen, 
+    closeOnboarding, 
     currentStep, 
     nextStep, 
     previousStep, 
@@ -20,68 +22,71 @@ export const OnboardingModal: React.FC = () => {
   // Render the appropriate step content
   const renderStepContent = () => {
     switch (currentStep) {
-      case 0:
+      case OnboardingStep.WELCOME:
         return <WelcomeStep />;
-      case 1:
+      case OnboardingStep.PROFILE:
         return <ProfileStep />;
-      case 2:
+      case OnboardingStep.EXPLORE:
         return <ExploreCoursesStep />;
-      case 3:
+      case OnboardingStep.TOUR:
         return <PlatformTourStep />;
       default:
         return <WelcomeStep />;
     }
   };
 
-  // Get appropriate step title
-  const getStepTitle = (step: number): string => {
-    switch (step) {
-      case 0:
-        return 'Bienvenido a Nexo';
-      case 1:
-        return 'Completa tu perfil';
-      case 2:
-        return 'Explora cursos disponibles';
-      case 3:
-        return 'Conoce la plataforma';
-      default:
-        return 'Bienvenido';
-    }
+  // Step navigation controls (back, next, skip)
+  const renderControls = () => {
+    const isFirstStep = currentStep === OnboardingStep.WELCOME;
+    const isLastStep = currentStep === OnboardingStep.TOUR;
+
+    return (
+      <div className="flex justify-between items-center mt-6">
+        <Button
+          variant="ghost"
+          onClick={skipOnboarding}
+          className="text-muted-foreground"
+        >
+          Omitir
+        </Button>
+        
+        <div className="flex gap-2">
+          {!isFirstStep && (
+            <Button variant="outline" onClick={previousStep}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Anterior
+            </Button>
+          )}
+          
+          <Button onClick={nextStep}>
+            {isLastStep ? 'Finalizar' : 'Siguiente'}
+            {!isLastStep && <ArrowRight className="ml-2 h-4 w-4" />}
+          </Button>
+        </div>
+      </div>
+    );
   };
 
-  // Check if it's the first or last step
-  const isFirstStep = currentStep === 0;
-  const isLastStep = currentStep === 3;
-
   return (
-    <Dialog open={isOnboardingActive} onOpenChange={skipOnboarding}>
-      <DialogContent className="sm:max-w-[500px] md:max-w-[600px] p-0 overflow-hidden">
-        <DialogHeader className="p-6 pb-4 bg-primary/5">
-          <DialogTitle className="text-2xl">{getStepTitle(currentStep)}</DialogTitle>
-        </DialogHeader>
-        
-        <div className="p-6 overflow-y-auto max-h-[60vh]">
+    <Dialog open={isOpen} onOpenChange={closeOnboarding}>
+      <DialogContent className="sm:max-w-[500px]">
+        <Button
+          variant="ghost"
+          className="absolute right-4 top-4"
+          onClick={closeOnboarding}
+          size="icon"
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Cerrar</span>
+        </Button>
+
+        <div className="pt-2">
           {renderStepContent()}
+          {renderControls()}
         </div>
-        
-        <DialogFooter className="p-6 pt-4 border-t flex justify-between">
-          <div>
-            {!isFirstStep && (
-              <Button variant="ghost" onClick={previousStep}>
-                Anterior
-              </Button>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={skipOnboarding}>
-              Saltar
-            </Button>
-            <Button onClick={nextStep}>
-              {isLastStep ? 'Completar' : 'Siguiente'}
-            </Button>
-          </div>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
+
+export default OnboardingModal;

@@ -1,152 +1,154 @@
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { Loader2, Shield, Users, Mail, Construction, Activity, KeyRound } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { AlertTriangle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import type { FeaturesConfig } from '@/contexts/features/types';
 
-export interface SecuritySettingsProps {
+import React from 'react';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { 
+  ShieldCheck, 
+  Lock, 
+  KeyRound, 
+  Users, 
+  LogIn, 
+  UserCheck,
+  ClipboardList
+} from 'lucide-react';
+import { FeaturesConfig } from '@/contexts/features/types';
+
+interface SecuritySettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
-export const SecuritySettings: React.FC<SecuritySettingsProps> = ({ 
-  featuresConfig, 
+export const SecuritySettings: React.FC<SecuritySettingsProps> = ({
+  featuresConfig,
   onToggleFeature,
-  isLoading = false
+  isLoading
 }) => {
-  const navigate = useNavigate();
-
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Shield className="h-4 w-4 text-red-500" />
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <ShieldCheck className="h-5 w-5 text-primary" />
           Seguridad
-        </CardTitle>
-        <CardDescription className="text-xs">
-          Configura las opciones de seguridad del sistema
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3 pt-0">
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Autenticación de dos factores</h3>
-            <p className="text-xs text-muted-foreground">
-              Habilita 2FA para mayor seguridad
-            </p>
-            <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
-              <Construction className="h-3 w-3 mr-1" />
-              En desarrollo
-            </Badge>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enable2FA"
-              checked={featuresConfig.enable2FA}
-              onCheckedChange={(value) => onToggleFeature('enable2FA', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
+        </h2>
+        <p className="text-muted-foreground">
+          Configura las opciones de seguridad y autenticación del sistema
+        </p>
+      </div>
+
+      <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5" />
+              Autenticación
+            </CardTitle>
+            <CardDescription>Configura cómo los usuarios inician sesión</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="2fa">Autenticación de dos factores</Label>
+                <p className="text-sm text-muted-foreground">Requerir 2FA para usuarios</p>
+              </div>
+              <Switch
+                id="2fa"
+                checked={!!featuresConfig.enable2FA}
+                onCheckedChange={(checked) => onToggleFeature('enable2FA', checked)}
+                disabled={isLoading}
+              />
+            </div>
+            
+            <Separator />
+            
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="multipleSessions">Sesiones múltiples</Label>
+                <p className="text-sm text-muted-foreground">Permitir iniciar sesión en varios dispositivos</p>
+              </div>
+              <Switch
+                id="multipleSessions"
+                checked={!!featuresConfig.enableMultipleSessions}
+                onCheckedChange={(checked) => onToggleFeature('enableMultipleSessions', checked)}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
         
-        <Separator />
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Registro de usuarios
+            </CardTitle>
+            <CardDescription>Configura cómo los usuarios se registran</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="publicRegistration">Registro público</Label>
+                <p className="text-sm text-muted-foreground">Permitir registro público de usuarios</p>
+              </div>
+              <Switch
+                id="publicRegistration"
+                checked={!!featuresConfig.enablePublicRegistration}
+                onCheckedChange={(checked) => onToggleFeature('enablePublicRegistration', checked)}
+                disabled={isLoading}
+              />
+            </div>
+            
+            <Separator />
+            
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="emailVerification">Verificación por email</Label>
+                <p className="text-sm text-muted-foreground">Requerir verificación de email</p>
+              </div>
+              <Switch
+                id="emailVerification"
+                checked={!!featuresConfig.requireEmailVerification}
+                onCheckedChange={(checked) => onToggleFeature('requireEmailVerification', checked)}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
         
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Sesiones múltiples</h3>
-            <p className="text-xs text-muted-foreground">
-              Permite iniciar sesión desde múltiples dispositivos
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableMultipleSessions"
-              checked={featuresConfig.enableMultipleSessions}
-              onCheckedChange={(value) => onToggleFeature('enableMultipleSessions', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Registro público</h3>
-            <p className="text-xs text-muted-foreground">
-              Permite que cualquier persona se registre
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enablePublicRegistration"
-              checked={featuresConfig.enablePublicRegistration}
-              onCheckedChange={(value) => onToggleFeature('enablePublicRegistration', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Verificación de correo</h3>
-            <p className="text-xs text-muted-foreground">
-              Requiere verificar el email al registrarse
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="requireEmailVerification"
-              checked={featuresConfig.requireEmailVerification}
-              onCheckedChange={(value) => onToggleFeature('requireEmailVerification', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Registro de actividad</h3>
-            <p className="text-xs text-muted-foreground">
-              Guarda un historial de acciones de usuarios
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableActivityLog"
-              checked={featuresConfig.enableActivityLog}
-              onCheckedChange={(value) => onToggleFeature('enableActivityLog', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ClipboardList className="h-5 w-5" />
+              Registro de actividad
+            </CardTitle>
+            <CardDescription>Configura el registro de actividad de usuarios</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="activityLog">Registro de actividad</Label>
+                <p className="text-sm text-muted-foreground">Mantener registro de actividad de usuarios</p>
+              </div>
+              <Switch
+                id="activityLog"
+                checked={!!featuresConfig.enableActivityLog}
+                onCheckedChange={(checked) => onToggleFeature('enableActivityLog', checked)}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
+
+export default SecuritySettings;

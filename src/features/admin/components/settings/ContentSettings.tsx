@@ -1,127 +1,137 @@
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { Loader2, BookOpen, FileSymlink, Construction, PanelTop, ListTodo, Trophy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
-import { AlertTriangle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import type { FeaturesConfig } from '@/contexts/features/types';
 
-export interface ContentSettingsProps {
+import React from 'react';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Layout, 
+  FileText, 
+  Trophy, 
+  Layers,
+  Edit,
+  Tag
+} from 'lucide-react';
+import { FeaturesConfig } from '@/contexts/features/types';
+
+interface ContentSettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
-export const ContentSettings: React.FC<ContentSettingsProps> = ({ 
-  featuresConfig, 
+const ContentSettings: React.FC<ContentSettingsProps> = ({
+  featuresConfig,
   onToggleFeature,
-  isLoading = false
+  isLoading
 }) => {
-  const navigate = useNavigate();
-
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <BookOpen className="h-4 w-4 text-orange-500" />
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <Layout className="h-5 w-5 text-primary" />
           Contenido
-        </CardTitle>
-        <CardDescription className="text-xs">
-          Configura las opciones relacionadas con la gestión de contenido
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3 pt-0">
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Editor avanzado</h3>
-            <p className="text-xs text-muted-foreground">
-              Habilita el editor avanzado para la creación de contenido
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableAdvancedEditor"
-              checked={featuresConfig.enableAdvancedEditor}
-              onCheckedChange={(value) => onToggleFeature('enableAdvancedEditor', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
+        </h2>
+        <p className="text-muted-foreground">
+          Configura opciones relacionadas con el contenido y categorías
+        </p>
+      </div>
+
+      <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Edit className="h-5 w-5" />
+              Editor de contenido
+            </CardTitle>
+            <CardDescription>Opciones para el editor de contenido</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="advancedEditor">Editor Avanzado</Label>
+                <p className="text-sm text-muted-foreground">Activar editor avanzado con más opciones</p>
+              </div>
+              <Switch
+                id="advancedEditor"
+                checked={!!featuresConfig.enableAdvancedEditor}
+                onCheckedChange={(checked) => onToggleFeature('enableAdvancedEditor', checked)}
+                disabled={isLoading}
+              />
+            </div>
+            
+            <Separator />
+            
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="contentReordering">Reordenación de Contenido</Label>
+                <p className="text-sm text-muted-foreground">Permitir reordenar contenido mediante arrastrar y soltar</p>
+              </div>
+              <Switch
+                id="contentReordering"
+                checked={featuresConfig.enableContentReordering}
+                onCheckedChange={(checked) => onToggleFeature('enableContentReordering', checked)}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
         
-        <Separator />
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Tag className="h-5 w-5" />
+              Categorías
+            </CardTitle>
+            <CardDescription>Gestión de categorías y etiquetas</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="categoryManagement">Gestión de Categorías</Label>
+                <p className="text-sm text-muted-foreground">Activar gestión avanzada de categorías</p>
+              </div>
+              <Switch
+                id="categoryManagement"
+                checked={featuresConfig.enableCategoryManagement}
+                onCheckedChange={(checked) => onToggleFeature('enableCategoryManagement', checked)}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
         
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Gestión de categorías</h3>
-            <p className="text-xs text-muted-foreground">
-              Permite crear y administrar categorías para organizar el contenido
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableCategoryManagement"
-              checked={featuresConfig.enableCategoryManagement}
-              onCheckedChange={(value) => onToggleFeature('enableCategoryManagement', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Tabla de clasificación</h3>
-            <p className="text-xs text-muted-foreground">
-              Muestra una tabla de clasificación de usuarios
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableLeaderboard"
-              checked={featuresConfig.enableLeaderboard}
-              onCheckedChange={(value) => onToggleFeature('enableLeaderboard', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Reordenamiento de contenido</h3>
-            <p className="text-xs text-muted-foreground">
-              Permite a los usuarios reordenar el contenido
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableContentReordering"
-              checked={featuresConfig.enableContentReordering}
-              onCheckedChange={(value) => onToggleFeature('enableContentReordering', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="h-5 w-5" />
+              Gamificación
+            </CardTitle>
+            <CardDescription>Elementos de gamificación</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="leaderboard">Tabla de Clasificación</Label>
+                <p className="text-sm text-muted-foreground">Activar tabla de clasificación y competencia</p>
+              </div>
+              <Switch
+                id="leaderboard"
+                checked={!!featuresConfig.enableLeaderboard}
+                onCheckedChange={(checked) => onToggleFeature('enableLeaderboard', checked)}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 

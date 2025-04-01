@@ -1,147 +1,160 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Paintbrush, Globe, Loader2, Construction, Palette } from 'lucide-react';
-import type { FeaturesConfig } from '@/contexts/features/types';
+import { 
+  Palette, 
+  Paintbrush, 
+  Globe, 
+  Monitor,
+  Sun,
+  Moon
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { FeaturesConfig } from '@/contexts/features/types';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
 
-export interface AppearanceSettingsProps {
+interface AppearanceSettingsProps {
   featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
-export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({ 
-  featuresConfig, 
+const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
+  featuresConfig,
   onToggleFeature,
-  isLoading = false
+  isLoading
 }) => {
-  const navigate = useNavigate();
+  const handleApplyTheme = (theme: string) => {
+    toast.success(`Tema aplicado: ${theme}`);
+  };
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Paintbrush className="h-4 w-4 text-pink-500" />
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <Palette className="h-5 w-5 text-primary" />
           Apariencia
-        </CardTitle>
-        <CardDescription className="text-xs">
-          Configura la apariencia y las opciones visuales del sistema
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3 pt-0">
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Selector de temas</h3>
+        </h2>
+        <p className="text-muted-foreground">
+          Personaliza el aspecto y comportamiento visual de la plataforma
+        </p>
+      </div>
+
+      <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Paintbrush className="h-5 w-5" />
+              Sistema de Diseño
+            </CardTitle>
+            <CardDescription>Configuración del sistema de diseño</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="designSystem">Sistema de Diseño Avanzado</Label>
+                <p className="text-sm text-muted-foreground">Activar sistema de diseño personalizable</p>
+              </div>
+              <Switch
+                id="designSystem"
+                checked={!!featuresConfig.designSystemEnabled}
+                onCheckedChange={(checked) => onToggleFeature('designSystemEnabled', checked)}
+                disabled={isLoading}
+              />
+            </div>
+            
+            <Separator />
+            
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="themeSwitcher">Selector de Temas</Label>
+                <p className="text-sm text-muted-foreground">Permitir a los usuarios cambiar entre temas</p>
+              </div>
+              <Switch
+                id="themeSwitcher"
+                checked={featuresConfig.enableThemeSwitcher}
+                onCheckedChange={(checked) => onToggleFeature('enableThemeSwitcher', checked)}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="h-5 w-5" />
+              Internacionalización
+            </CardTitle>
+            <CardDescription>Configuración de idiomas y localización</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="multiLanguage">Soporte Multi-idioma</Label>
+                <p className="text-sm text-muted-foreground">Activar soporte para múltiples idiomas</p>
+              </div>
+              <Switch
+                id="multiLanguage"
+                checked={!!featuresConfig.enableMultiLanguage}
+                onCheckedChange={(checked) => onToggleFeature('enableMultiLanguage', checked)}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Monitor className="h-5 w-5" />
+              Temas Predefinidos
+            </CardTitle>
+            <CardDescription>Selecciona un tema predefinido</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2 h-24 justify-start p-4"
+                onClick={() => handleApplyTheme('Claro')}
+              >
+                <Sun className="h-5 w-5 text-amber-500" />
+                <div className="text-left">
+                  <div className="font-medium">Tema Claro</div>
+                  <div className="text-xs text-muted-foreground">Interfaz con fondo claro</div>
+                </div>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2 h-24 justify-start p-4"
+                onClick={() => handleApplyTheme('Oscuro')}
+              >
+                <Moon className="h-5 w-5 text-indigo-400" />
+                <div className="text-left">
+                  <div className="font-medium">Tema Oscuro</div>
+                  <div className="text-xs text-muted-foreground">Interfaz con fondo oscuro</div>
+                </div>
+              </Button>
+            </div>
+            
             <p className="text-xs text-muted-foreground">
-              Permite a los usuarios cambiar entre tema claro y oscuro
+              Los cambios de tema se aplicarán inmediatamente a todos los usuarios
             </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableThemeSwitcher"
-              checked={featuresConfig.enableThemeSwitcher}
-              onCheckedChange={(value) => onToggleFeature('enableThemeSwitcher', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Sistema de Diseño</h3>
-            <p className="text-xs text-muted-foreground">
-              Habilita el sistema de diseño personalizado
-            </p>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableDesignSystem"
-              checked={featuresConfig.enableDesignSystem}
-              onCheckedChange={(value) => onToggleFeature('enableDesignSystem', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Soporte multilenguaje</h3>
-            <p className="text-xs text-muted-foreground">
-              Habilita el soporte para múltiples idiomas
-            </p>
-            <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
-              <Construction className="h-3 w-3 mr-1" />
-              En desarrollo
-            </Badge>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableMultiLanguage"
-              checked={featuresConfig.enableMultiLanguage}
-              onCheckedChange={(value) => onToggleFeature('enableMultiLanguage', value)}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="flex items-center justify-between py-1">
-          <div>
-            <h3 className="text-sm font-medium">Modo oscuro automático</h3>
-            <p className="text-xs text-muted-foreground">
-              Cambia el tema automáticamente según preferencias del sistema
-            </p>
-            <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
-              <Construction className="h-3 w-3 mr-1" />
-              En desarrollo
-            </Badge>
-          </div>
-          <div className="flex items-center">
-            {isLoading && (
-              <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-            )}
-            <Switch
-              id="enableAutoTheme"
-              checked={false}
-              disabled={true}
-            />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <div className="mt-4">
-          <Button 
-            variant="outline" 
-            className="w-full text-sm"
-            size="sm"
-            onClick={() => navigate('/admin/design')}
-          >
-            <Palette className="mr-2 h-4 w-4" />
-            Configurar Sistema de Diseño
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 
