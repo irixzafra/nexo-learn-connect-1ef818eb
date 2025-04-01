@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from '@/components/ui/use-toast';
 import { UserCog, Shield, User, Terminal, Ghost, ChevronDown } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface UserRoleSwitcherProps {
@@ -24,40 +23,26 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
   currentRole: propCurrentRole,
   onRoleChange
 }) => {
-  const { userRole: contextUserRole, user } = useAuth();
   const { toast } = useToast();
   
-  // Use the role from props if provided, otherwise use the context
-  const currentRole = propCurrentRole || toUserRoleType(contextUserRole || 'student');
-  const [selectedRole, setSelectedRole] = useState<UserRoleType>(currentRole);
+  // Use the role from props as the current role
+  const currentRole = propCurrentRole || 'student';
   const [isChanging, setIsChanging] = useState(false);
   
-  const handleRoleSelect = (role: UserRoleType) => {
-    setSelectedRole(role);
-    handleChange(role);
-  };
-  
-  const handleChange = async (roleToSet: UserRoleType = selectedRole) => {
-    if (roleToSet === currentRole) {
+  const handleRoleChange = async (role: UserRoleType) => {
+    if (role === currentRole || !userId || !onRoleChange) {
       return;
     }
     
     setIsChanging(true);
     
     try {
-      if (onRoleChange && userId) {
-        // Use the provided callback if available
-        await onRoleChange(userId, roleToSet);
-      } else {
-        // This is for view-mode switching only (doesn't change actual role in DB)
-        toast({
-          title: "Modo de vista cambiado",
-          description: `Ahora estás viendo la aplicación como ${roleToSet}`,
-        });
-        
-        // You might want to update some context or state here
-        // This is just a visual change and doesn't modify the database
-      }
+      await onRoleChange(userId, role);
+      
+      toast({
+        title: "Rol actualizado",
+        description: `El rol se ha cambiado a ${getRoleName(role)}`,
+      });
     } catch (error) {
       console.error('Error changing role:', error);
       toast({
@@ -104,6 +89,14 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
     }
   };
 
+  const availableRoles: UserRoleType[] = [
+    'admin', 
+    'instructor', 
+    'student', 
+    'sistemas', 
+    'anonimo'
+  ];
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -111,24 +104,28 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              size="icon"
+              size="sm"
               disabled={isChanging}
-              className="h-8 w-8 rounded-full"
+              className="flex items-center gap-1"
             >
               {isChanging ? (
                 <span className="h-4 w-4 animate-spin rounded-full border-b-2 border-current"></span>
               ) : (
-                getRoleIcon(selectedRole)
+                <>
+                  {getRoleIcon(currentRole)}
+                  <span className="ml-1">{getRoleName(currentRole)}</span>
+                  <ChevronDown className="h-3 w-3 opacity-50" />
+                </>
               )}
-              <span className="sr-only">Cambiar rol</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            {(['admin', 'instructor', 'student', 'sistemas', 'anonimo'] as UserRoleType[]).map((role) => (
+            {availableRoles.map((role) => (
               <DropdownMenuItem 
                 key={role}
-                onClick={() => handleRoleSelect(role)}
+                onClick={() => handleRoleChange(role)}
                 className="cursor-pointer"
+                disabled={role === currentRole}
               >
                 <div className="flex items-center gap-2">
                   {getRoleIcon(role)}
