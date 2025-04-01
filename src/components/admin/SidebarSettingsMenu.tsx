@@ -9,8 +9,7 @@ import {
   Database,
   FileText,
   BarChart,
-  Shield,
-  Code
+  Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -26,7 +25,7 @@ const SidebarSettingsMenu: React.FC = () => {
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-            isActive
+            isActive && location.pathname === "/admin/settings"
               ? "bg-primary/10 text-primary"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )
@@ -34,7 +33,7 @@ const SidebarSettingsMenu: React.FC = () => {
         end
       >
         <Settings className="h-4 w-4" />
-        <span>General</span>
+        <span>Configuración General</span>
       </NavLink>
       
       <NavLink
@@ -53,7 +52,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/settings/developer"
+        to="/admin/settings/design"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -63,8 +62,8 @@ const SidebarSettingsMenu: React.FC = () => {
           )
         }
       >
-        <Code className="h-4 w-4" />
-        <span>Desarrollo</span>
+        <Palette className="h-4 w-4" />
+        <span>Diseño</span>
       </NavLink>
       
       <NavLink
@@ -79,7 +78,7 @@ const SidebarSettingsMenu: React.FC = () => {
         }
       >
         <Plug className="h-4 w-4" />
-        <span>Integraciones</span>
+        <span>Conexiones</span>
       </NavLink>
       
       <NavLink
@@ -98,7 +97,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/pages"
+        to="/admin/settings/pages"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -113,7 +112,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/analytics"
+        to="/admin/settings/analytics"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -128,7 +127,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/roles"
+        to="/admin/settings/roles"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",

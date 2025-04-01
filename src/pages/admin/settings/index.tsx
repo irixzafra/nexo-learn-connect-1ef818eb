@@ -3,17 +3,19 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { SettingsTabs } from '@/features/admin/components/settings/SettingsTabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Settings, 
   ToggleLeft, 
+  Palette,
   Plug, 
   Database, 
-  Code 
+  FileText,
+  BarChart,
+  Shield
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useFeatures } from '@/hooks/useFeatures';
-import { Button } from '@/components/ui/button';
 
 const SystemSettings: React.FC = () => {
   const { featuresConfig, toggleFeature } = useFeatures();
@@ -40,16 +42,16 @@ const SystemSettings: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/settings/developer')}>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/settings/design')}>
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2">
-                <Code className="h-5 w-5 text-primary" />
-                <CardTitle className="text-base">Desarrollo</CardTitle>
+                <Palette className="h-5 w-5 text-primary" />
+                <CardTitle className="text-base">Diseño</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Herramientas avanzadas para desarrolladores
+                Personaliza la apariencia visual del sistema
               </p>
             </CardContent>
           </Card>
@@ -58,7 +60,7 @@ const SystemSettings: React.FC = () => {
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2">
                 <Plug className="h-5 w-5 text-primary" />
-                <CardTitle className="text-base">Integraciones</CardTitle>
+                <CardTitle className="text-base">Conexiones</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -78,6 +80,48 @@ const SystemSettings: React.FC = () => {
             <CardContent>
               <p className="text-sm text-muted-foreground">
                 Gestión de copias de seguridad y datos
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/settings/pages')}>
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                <CardTitle className="text-base">Páginas</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Administra las páginas del sistema
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/settings/analytics')}>
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2">
+                <BarChart className="h-5 w-5 text-primary" />
+                <CardTitle className="text-base">Analíticas</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Configuración de seguimiento y métricas
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/settings/roles')}>
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <CardTitle className="text-base">Roles y Permisos</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Gestión de roles de usuario y permisos
               </p>
             </CardContent>
           </Card>
@@ -101,10 +145,6 @@ const SystemSettings: React.FC = () => {
             <Separator className="my-4" />
             <SettingsTabs />
           </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button variant="outline">Restablecer ajustes por defecto</Button>
-            <Button>Guardar cambios</Button>
-          </CardFooter>
         </Card>
       </div>
     </AdminPageLayout>

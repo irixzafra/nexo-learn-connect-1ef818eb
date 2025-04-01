@@ -9,7 +9,7 @@ import {
   BarChart,
   Shield
 } from 'lucide-react';
-import { MenuItem } from './types';
+import { MenuItem } from '@/types/navigation';
 
 /**
  * Menú de configuración
@@ -30,7 +30,7 @@ export const settingsNavigation: MenuItem[] = [
   {
     icon: Palette,
     label: 'Diseño',
-    path: '/admin/design',
+    path: '/admin/settings/design',
     requiredRole: ['admin', 'sistemas']
   },
   {
@@ -48,19 +48,19 @@ export const settingsNavigation: MenuItem[] = [
   {
     icon: FileText,
     label: 'Páginas',
-    path: '/admin/pages',
+    path: '/admin/settings/pages',
     requiredRole: ['admin', 'sistemas', 'content_creator']
   },
   {
     icon: BarChart,
     label: 'Analíticas',
-    path: '/admin/analytics',
+    path: '/admin/settings/analytics',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: Shield,
     label: 'Roles y Permisos',
-    path: '/admin/roles',
+    path: '/admin/settings/roles',
     requiredRole: ['admin', 'sistemas']
   }
 ];

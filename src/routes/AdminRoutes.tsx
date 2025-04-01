@@ -56,9 +56,11 @@ const AdminRoutes: React.FC = () => {
       <Route
         path="/features"
         element={
-          <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
-            <Features />
-          </ErrorBoundary>
+          <AdminPageLayout title="Gestión de Características">
+            <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+              <Features />
+            </ErrorBoundary>
+          </AdminPageLayout>
         }
       />
       <Route path="/settings/*" element={<SettingsRoutes />} />
