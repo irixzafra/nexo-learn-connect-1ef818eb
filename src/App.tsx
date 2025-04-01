@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
@@ -175,7 +176,7 @@ const AppRoutes: React.FC = () => {
         <ProtectedRoute allowedRoles={["admin", "sistemas"]}>
           <AdminLessonEdit />
         </ProtectedRoute>
-      },
+      } />
       <Route path="/admin/categories" element={
         <AdminRoute>
           <AdminCategories />
