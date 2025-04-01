@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -15,7 +14,7 @@ import {
   Smartphone,
   Sidebar,
   PanelTop,
-  Footer,
+  LucideFooter,
   LayoutList
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -362,7 +361,7 @@ const NavigationDiagram: React.FC = () => {
                     </div>
                     
                     <div className="p-3 bg-background rounded-md border shadow-sm text-center">
-                      <Footer className="h-6 w-6 mx-auto mb-2 text-primary" />
+                      <Menu className="h-6 w-6 mx-auto mb-2 text-primary" />
                       <div className="font-semibold mb-1">SiteFooter</div>
                       <div className="text-xs text-muted-foreground">Pie de página</div>
                     </div>
