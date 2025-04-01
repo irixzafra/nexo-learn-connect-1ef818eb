@@ -4,6 +4,7 @@ import { useFeature } from '@/hooks/useFeature';
 import { OnboardingModal } from './OnboardingModal';
 import { Button } from '@/components/ui/button';
 import { Info } from 'lucide-react';
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 interface OnboardingTriggerProps {
   autoStart?: boolean;

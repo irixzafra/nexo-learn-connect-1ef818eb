@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useFeatures } from '@/contexts/features/FeaturesContext';
 import { FeaturesConfig } from '@/contexts/features/types';
@@ -6,7 +7,8 @@ import {
   CardContent, 
   CardDescription, 
   CardHeader, 
-  CardTitle 
+  CardTitle,
+  CardFooter
 } from '@/components/ui/card';
 import { 
   Accordion, 

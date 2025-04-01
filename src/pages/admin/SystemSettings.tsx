@@ -29,6 +29,7 @@ import OnboardingSettings from '@/features/admin/components/settings/OnboardingS
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { toast } from 'sonner';
+import { FeaturesConfig, useFeatures } from '@/contexts/features/FeaturesContext';
 
 /**
  * Página de configuración del sistema para administradores
@@ -39,6 +40,7 @@ const SystemSettings: React.FC = () => {
   const navigate = useNavigate();
   const { designFeatureEnabled, toggleDesignFeature } = useDesignSystem();
   const { setEditModeEnabled } = useEditMode();
+  const { featuresConfig, toggleFeature, isLoading } = useFeatures();
   
   const handleToggleDesignSystem = async () => {
     try {
@@ -77,21 +79,33 @@ const SystemSettings: React.FC = () => {
       label: 'Apariencia',
       icon: <Palette className="h-4 w-4" />,
       dataTag: "settings-tab-appearance",
-      content: <AppearanceSettings />
+      content: <AppearanceSettings 
+                featuresConfig={featuresConfig} 
+                onToggleFeature={toggleFeature} 
+                isLoading={isLoading} 
+              />
     },
     {
       value: 'content',
       label: 'Contenido',
       icon: <Layout className="h-4 w-4" />,
       dataTag: "settings-tab-content",
-      content: <ContentSettings />
+      content: <ContentSettings 
+                featuresConfig={featuresConfig} 
+                onToggleFeature={toggleFeature} 
+                isLoading={isLoading} 
+              />
     },
     {
       value: 'onboarding',
       label: 'Onboarding',
       icon: <Book className="h-4 w-4" />,
       dataTag: "settings-tab-onboarding",
-      content: <OnboardingSettings />
+      content: <OnboardingSettings 
+                featuresConfig={featuresConfig} 
+                onToggleFeature={toggleFeature} 
+                isLoading={isLoading} 
+              />
     },
     {
       value: 'connections',
@@ -105,7 +119,11 @@ const SystemSettings: React.FC = () => {
       label: 'Seguridad',
       icon: <ShieldCheck className="h-4 w-4" />,
       dataTag: "settings-tab-security",
-      content: <SecuritySettings />
+      content: <SecuritySettings 
+                featuresConfig={featuresConfig} 
+                onToggleFeature={toggleFeature} 
+                isLoading={isLoading} 
+              />
     },
     {
       value: 'data',

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { 
@@ -9,7 +8,6 @@ import {
 import { applyDependencyRules, getAllDependencies, getAllDependents } from './dependencies';
 import { toast } from 'sonner';
 
-// Crear el contexto con un valor inicial
 const FeaturesContext = createContext<FeaturesContextValue | undefined>(undefined);
 
 interface FeaturesProviderProps {
@@ -22,14 +20,14 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
   const [error, setError] = useState<Error | null>(null);
   const [initialLoadComplete, setInitialLoadComplete] = useState<boolean>(false);
 
-  // Cargar la configuración inicial desde Supabase
   useEffect(() => {
     const loadFeatures = async () => {
       try {
         setIsLoading(true);
         setError(null);
         
-        const { data: userData } = await supabase.auth.getUser();
+        const authResponse = await supabase.auth.getUser();
+        const userData = authResponse.data;
         
         if (!userData.user) {
           console.warn("No user authenticated. Using default feature configuration.");
@@ -39,24 +37,18 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
           return;
         }
         
-        // Intentar cargar desde localStorage primero (para rendimiento)
         const cachedConfig = localStorage.getItem('features_config');
         if (cachedConfig) {
           try {
             const parsedConfig = JSON.parse(cachedConfig);
             if (parsedConfig.user_id === userData.user.id) {
-              // Combinar con valores predeterminados para asegurar que tenemos todas las propiedades
               const mergedConfig = { ...defaultFeaturesConfig };
-              
-              // Mapear los nombres de columnas snake_case a camelCase
               Object.keys(parsedConfig).forEach(key => {
                 const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
                 if (camelKey in mergedConfig) {
-                  // @ts-ignore - La verificación del tipo se hace con la línea anterior
                   mergedConfig[camelKey] = parsedConfig[key];
                 }
               });
-              
               setFeaturesConfig(mergedConfig);
             }
           } catch (e) {
@@ -64,7 +56,6 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
           }
         }
         
-        // Luego intentar cargar desde Supabase
         const { data, error } = await supabase
           .from('features_config')
           .select('*')
@@ -72,15 +63,11 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
           .single();
           
         if (error) {
-          if (error.code !== 'PGRST116') { // No rows found
+          if (error.code !== 'PGRST116') {
             throw error;
           }
-          // Si no hay configuración específica para el usuario, se mantiene la predeterminada
         } else if (data) {
-          // Transformar datos de snake_case a camelCase y actualizar el estado
           const mergedConfig = { ...defaultFeaturesConfig };
-          
-          // Mapeo explícito de nombres de columnas
           if (data.auto_start_onboarding !== undefined) 
             mergedConfig.autoStartOnboarding = data.auto_start_onboarding;
           if (data.show_onboarding_trigger !== undefined) 
@@ -146,13 +133,11 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
           
           setFeaturesConfig(mergedConfig);
           
-          // Guardar en localStorage como caché
           localStorage.setItem('features_config', JSON.stringify(data));
         }
       } catch (err) {
         console.error('Error loading features configuration:', err);
         setError(err instanceof Error ? err : new Error('Unknown error loading features'));
-        // En caso de error, usamos la configuración predeterminada
         setFeaturesConfig(defaultFeaturesConfig);
       } finally {
         setIsLoading(false);
@@ -163,73 +148,129 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
     loadFeatures();
   }, []);
 
-  // Configurar el canal de Supabase Realtime para actualizaciones en tiempo real
   useEffect(() => {
     if (!initialLoadComplete) return;
     
-    const { data: authData } = supabase.auth.getSession();
-    
-    if (!authData) return;
-    
-    // Suscribirse a cambios en la tabla features_config
-    const channel = supabase
-      .channel('features_config_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'features_config',
-          filter: `user_id=eq.${authData.session?.user?.id}`
-        },
-        (payload) => {
-          console.log('Received features config update:', payload);
-          if (payload.eventType === 'UPDATE') {
-            const newData = payload.new;
-            
-            // Mapear de nuevo de snake_case a camelCase
-            const updatedConfig = { ...featuresConfig };
-            
-            // Mismo mapeo explícito que en la carga inicial
-            // (Se omite por brevedad, es el mismo código del efecto anterior)
-            
-            // Aplica las reglas de dependencia al nuevo estado
-            setFeaturesConfig(updatedConfig);
-            localStorage.setItem('features_config', JSON.stringify(newData));
-            
-            toast.info('La configuración de características ha sido actualizada');
+    const setupRealtimeChannel = async () => {
+      const authResponse = await supabase.auth.getSession();
+      const authData = authResponse.data;
+      
+      if (!authData || !authData.session) return;
+      
+      const channel = supabase
+        .channel('features_config_changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'features_config',
+            filter: `user_id=eq.${authData.session?.user?.id}`
+          },
+          (payload) => {
+            console.log('Received features config update:', payload);
+            if (payload.eventType === 'UPDATE') {
+              const newData = payload.new;
+              
+              const updatedConfig = { ...featuresConfig };
+              
+              if (data.auto_start_onboarding !== undefined) 
+                updatedConfig.autoStartOnboarding = data.auto_start_onboarding;
+              if (data.show_onboarding_trigger !== undefined) 
+                updatedConfig.showOnboardingTrigger = data.show_onboarding_trigger;
+              if (data.enable_onboarding_system !== undefined) 
+                updatedConfig.enableOnboardingSystem = data.enable_onboarding_system;
+              if (data.enable_edit_mode !== undefined) 
+                updatedConfig.enableEditMode = data.enable_edit_mode;
+              if (data.enable_content_reordering !== undefined) 
+                updatedConfig.enableContentReordering = data.enable_content_reordering;
+              if (data.enable_theme_switcher !== undefined) 
+                updatedConfig.enableThemeSwitcher = data.enable_theme_switcher;
+              if (data.enable_multi_language !== undefined) 
+                updatedConfig.enableMultiLanguage = data.enable_multi_language;
+              if (data.enable_design_system !== undefined) 
+                updatedConfig.enableDesignSystem = data.enable_design_system;
+              if (data.enable_advanced_editor !== undefined) 
+                updatedConfig.enableAdvancedEditor = data.enable_advanced_editor;
+              if (data.enable_invitations !== undefined) 
+                updatedConfig.enableInvitations = data.enable_invitations;
+              if (data.enable_custom_roles !== undefined) 
+                updatedConfig.enableCustomRoles = data.enable_custom_roles;
+              if (data.enable_role_management !== undefined) 
+                updatedConfig.enableRoleManagement = data.enable_role_management;
+              if (data.enable_role_switcher !== undefined) 
+                updatedConfig.enableRoleSwitcher = data.enable_role_switcher;
+              if (data.enable_notifications !== undefined) 
+                updatedConfig.enableNotifications = data.enable_notifications;
+              if (data.enable_real_time_notifications !== undefined) 
+                updatedConfig.enableRealTimeNotifications = data.enable_real_time_notifications;
+              if (data.enable_email_notifications !== undefined) 
+                updatedConfig.enableEmailNotifications = data.enable_email_notifications;
+              if (data.enable_public_api !== undefined) 
+                updatedConfig.enablePublicApi = data.enable_public_api;
+              if (data.enable_webhooks !== undefined) 
+                updatedConfig.enableWebhooks = data.enable_webhooks;
+              if (data.enable_2fa !== undefined) 
+                updatedConfig.enable2FA = data.enable_2fa;
+              if (data.enable_multiple_sessions !== undefined) 
+                updatedConfig.enableMultipleSessions = data.enable_multiple_sessions;
+              if (data.enable_public_registration !== undefined) 
+                updatedConfig.enablePublicRegistration = data.enable_public_registration;
+              if (data.require_email_verification !== undefined) 
+                updatedConfig.requireEmailVerification = data.require_email_verification;
+              if (data.enable_activity_log !== undefined) 
+                updatedConfig.enableActivityLog = data.enable_activity_log;
+              if (data.enable_test_data_generator !== undefined) 
+                updatedConfig.enableTestDataGenerator = data.enable_test_data_generator;
+              if (data.enable_database_dev_mode !== undefined) 
+                updatedConfig.enableDatabaseDevMode = data.enable_database_dev_mode;
+              if (data.enable_auto_backups !== undefined) 
+                updatedConfig.enableAutoBackups = data.enable_auto_backups;
+              if (data.enable_query_cache !== undefined) 
+                updatedConfig.enableQueryCache = data.enable_query_cache;
+              if (data.enable_maintenance_mode !== undefined) 
+                updatedConfig.enableMaintenanceMode = data.enable_maintenance_mode;
+              if (data.enable_category_management !== undefined) 
+                updatedConfig.enableCategoryManagement = data.enable_category_management;
+              if (data.enable_leaderboard !== undefined) 
+                updatedConfig.enableLeaderboard = data.enable_leaderboard;
+              if (data.enable_ai !== undefined) 
+                updatedConfig.enableAI = data.enable_ai;
+              
+              setFeaturesConfig(updatedConfig);
+              localStorage.setItem('features_config', JSON.stringify(newData));
+              
+              toast.info('La configuración de características ha sido actualizada');
+            }
           }
-        }
-      )
-      .subscribe();
-    
-    return () => {
-      supabase.removeChannel(channel);
+        )
+        .subscribe();
+      
+      return () => {
+        supabase.removeChannel(channel);
+      };
     };
+    
+    setupRealtimeChannel();
   }, [initialLoadComplete, featuresConfig]);
 
-  // Función para activar o desactivar una característica con gestión de dependencias
   const toggleFeature = async (feature: keyof FeaturesConfig, enabled: boolean) => {
     try {
       setIsLoading(true);
       
-      // Aplicar reglas de dependencia automáticamente
       const newConfig = applyDependencyRules(feature, enabled, featuresConfig);
       
-      // Convertir las claves de camelCase a snake_case para la base de datos
       const dbUpdates: Record<string, boolean> = {};
       
-      // Solo actualizamos los valores que han cambiado
       Object.entries(newConfig).forEach(([key, value]) => {
         if (featuresConfig[key as keyof FeaturesConfig] !== value) {
-          // Convertir camelCase a snake_case
           const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
           dbUpdates[snakeKey] = value;
         }
       });
       
       if (Object.keys(dbUpdates).length === 0) {
-        return; // No hay cambios que guardar
+        return;
       }
       
       const { data: userData } = await supabase.auth.getUser();
@@ -238,7 +279,6 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
         throw new Error('No user authenticated');
       }
       
-      // Primero guardamos en localStorage para reflejar cambios inmediatamente
       const localData = {
         ...JSON.parse(localStorage.getItem('features_config') || '{}'),
         ...dbUpdates,
@@ -247,7 +287,6 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
       };
       localStorage.setItem('features_config', JSON.stringify(localData));
       
-      // Guardamos en la base de datos
       const { error } = await supabase
         .from('features_config')
         .upsert({
@@ -262,10 +301,8 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
         throw error;
       }
       
-      // Actualizar el estado local con los cambios
       setFeaturesConfig(newConfig);
       
-      // Mostrar notificación apropiada
       if (enabled) {
         toast.success(`Característica "${feature}" activada`);
       } else {
@@ -287,12 +324,10 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
     }
   };
   
-  // Función para actualizar múltiples características a la vez
   const updateFeatures = async (updates: Partial<FeaturesConfig>) => {
     try {
       setIsLoading(true);
       
-      // Aplicar cada actualización teniendo en cuenta las dependencias
       let newConfig = { ...featuresConfig };
       
       Object.entries(updates).forEach(([key, value]) => {
@@ -300,10 +335,8 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
         newConfig = applyDependencyRules(featureKey, !!value, newConfig);
       });
       
-      // Convertir a snake_case para la base de datos
       const dbUpdates: Record<string, boolean> = {};
       
-      // Solo actualizamos los valores que han cambiado
       Object.entries(newConfig).forEach(([key, value]) => {
         if (featuresConfig[key as keyof FeaturesConfig] !== value) {
           const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
@@ -312,7 +345,7 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
       });
       
       if (Object.keys(dbUpdates).length === 0) {
-        return; // No hay cambios que guardar
+        return;
       }
       
       const { data: userData } = await supabase.auth.getUser();
@@ -321,7 +354,6 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
         throw new Error('No user authenticated');
       }
       
-      // Guardar en localStorage
       const localData = {
         ...JSON.parse(localStorage.getItem('features_config') || '{}'),
         ...dbUpdates,
@@ -330,7 +362,6 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
       };
       localStorage.setItem('features_config', JSON.stringify(localData));
       
-      // Guardar en la base de datos
       const { error } = await supabase
         .from('features_config')
         .upsert({
@@ -345,7 +376,6 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
         throw error;
       }
       
-      // Actualizar el estado local
       setFeaturesConfig(newConfig);
       toast.success('Configuración de características actualizada');
     } catch (err) {
@@ -357,22 +387,18 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
     }
   };
   
-  // Función simple para verificar si una característica está habilitada
   const isFeatureEnabled = (feature: keyof FeaturesConfig): boolean => {
     return !!featuresConfig[feature];
   };
   
-  // Obtener las dependencias de una característica
   const getFeatureDependencies = (feature: keyof FeaturesConfig): Array<keyof FeaturesConfig> => {
     return getAllDependencies(feature);
   };
   
-  // Obtener las características que dependen de una característica
   const getFeatureDependents = (feature: keyof FeaturesConfig): Array<keyof FeaturesConfig> => {
     return getAllDependents(feature);
   };
   
-  // Construir el objeto de contexto
   const contextValue: FeaturesContextValue = {
     featuresConfig,
     isLoading,
@@ -391,7 +417,6 @@ export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ children }) 
   );
 };
 
-// Hook personalizado para usar el contexto
 export const useFeatures = (): FeaturesContextValue => {
   const context = useContext(FeaturesContext);
   
@@ -402,6 +427,5 @@ export const useFeatures = (): FeaturesContextValue => {
   return context;
 };
 
-// Re-exportar tipos para facilitar el uso
 export type { FeaturesConfig } from './types';
 export { defaultFeaturesConfig } from './types';
