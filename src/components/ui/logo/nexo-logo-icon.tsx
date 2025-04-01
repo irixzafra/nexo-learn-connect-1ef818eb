@@ -32,7 +32,7 @@ export const NexoLogoIcon: React.FC<NexoLogoIconProps> = ({
         />
       )}
       
-      {/* Logo icon */}
+      {/* Logo icon - ensuring perfect circularity */}
       <div className="relative w-full h-full flex items-center justify-center bg-primary text-white rounded-full shadow-sm z-10">
         <Atom className="w-3/5 h-3/5" />
         

@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles, Users, Layers, Zap, PaintBucket, Brain } from 'lucide-react';
 import { routeMap } from '@/utils/routeUtils';
 
 interface LandingHeroProps {
@@ -12,8 +12,12 @@ interface LandingHeroProps {
 
 const LandingHero: React.FC<LandingHeroProps> = ({ isAuthenticated }) => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-white pt-24 pb-16 md:pt-32 md:pb-24">
-      <div className="absolute inset-0 -z-10 opacity-40">
+    <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-24">
+      {/* Gradient background */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-50 via-blue-50/80 to-white"></div>
+      
+      {/* Background patterns */}
+      <div className="absolute inset-0 -z-10 opacity-30">
         <svg
           width="100%"
           height="100%"
@@ -36,7 +40,7 @@ const LandingHero: React.FC<LandingHeroProps> = ({ isAuthenticated }) => {
         </svg>
       </div>
       
-      {/* Elementos de fondo animados */}
+      {/* Animated background elements */}
       <motion.div 
         className="absolute top-20 left-[10%] w-40 h-40 rounded-full bg-blue-200/30 blur-3xl"
         animate={{ 
@@ -115,19 +119,102 @@ const LandingHero: React.FC<LandingHeroProps> = ({ isAuthenticated }) => {
             </div>
           </motion.div>
           
+          {/* New Feature Highlights Section */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="mt-16 w-full max-w-5xl"
+            className="w-full mt-20"
           >
-            <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl group">
-              <img
-                src="/public/lovable-uploads/1905d13b-c9b8-4af8-ae8a-cffede4bb617.png"
-                alt="Plataforma Nexo"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            {/* 3D Features Display */}
+            <div className="relative max-w-6xl mx-auto">
+              {/* Central Image */}
+              <div className="relative z-10 aspect-video max-w-4xl mx-auto overflow-hidden rounded-2xl shadow-2xl">
+                <img
+                  src="/public/lovable-uploads/5896bc74-e132-43f4-bfed-8b52fa73c627.png"
+                  alt="Plataforma Nexo"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 w-full p-6 text-white">
+                  <h3 className="text-2xl font-bold mb-2">Aprende, crea y comparte</h3>
+                  <p className="text-white/90">Explora el siguiente nivel de aprendizaje creativo</p>
+                </div>
+              </div>
+              
+              {/* Feature Cards - Positioned Absolutely */}
+              <div className="absolute grid grid-cols-3 gap-6 w-full -bottom-16 left-0 right-0 px-8 md:px-0">
+                <motion.div 
+                  whileHover={{ y: -8, scale: 1.03 }}
+                  className="bg-white rounded-xl shadow-lg p-5 border border-blue-100 hover:border-blue-300 transition-all duration-300"
+                >
+                  <div className="bg-blue-50 p-3 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+                    <Sparkles className="text-blue-600" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Cursos Interactivos</h3>
+                  <p className="text-sm text-muted-foreground">Experiencias de aprendizaje inmersivas con feedback en tiempo real</p>
+                </motion.div>
+                
+                <motion.div 
+                  whileHover={{ y: -8, scale: 1.03 }}
+                  className="bg-white rounded-xl shadow-lg p-5 border border-indigo-100 hover:border-indigo-300 transition-all duration-300"
+                >
+                  <div className="bg-indigo-50 p-3 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+                    <Users className="text-indigo-600" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Comunidad Activa</h3>
+                  <p className="text-sm text-muted-foreground">Conecta con profesionales y crea oportunidades en el ecosistema creativo</p>
+                </motion.div>
+                
+                <motion.div 
+                  whileHover={{ y: -8, scale: 1.03 }}
+                  className="bg-white rounded-xl shadow-lg p-5 border border-purple-100 hover:border-purple-300 transition-all duration-300"
+                >
+                  <div className="bg-purple-50 p-3 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+                    <Layers className="text-purple-600" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Aprendizaje Adaptativo</h3>
+                  <p className="text-sm text-muted-foreground">Contenido personalizado que se adapta a tu nivel y a tus objetivos</p>
+                </motion.div>
+              </div>
+            </div>
+            
+            <div className="pt-32 mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              <motion.div
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <Zap className="h-10 w-10 text-blue-500 mb-4" />
+                <h3 className="font-bold text-lg mb-2">Innovación Constante</h3>
+                <p className="text-sm text-muted-foreground">Nuestro contenido se actualiza continuamente con las últimas tendencias</p>
+              </motion.div>
+              
+              <motion.div
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <PaintBucket className="h-10 w-10 text-green-500 mb-4" />
+                <h3 className="font-bold text-lg mb-2">Proyectos Prácticos</h3>
+                <p className="text-sm text-muted-foreground">Aprende haciendo con proyectos reales y feedback personalizado</p>
+              </motion.div>
+              
+              <motion.div
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <Brain className="h-10 w-10 text-purple-500 mb-4" />
+                <h3 className="font-bold text-lg mb-2">IA Educativa</h3>
+                <p className="text-sm text-muted-foreground">Sistemas inteligentes que optimizan tu trayectoria de aprendizaje</p>
+              </motion.div>
+              
+              <motion.div
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <Users className="h-10 w-10 text-amber-500 mb-4" />
+                <h3 className="font-bold text-lg mb-2">Mentorías</h3>
+                <p className="text-sm text-muted-foreground">Acceso a mentores experimentados para guiar tu desarrollo profesional</p>
+              </motion.div>
             </div>
           </motion.div>
         </div>
