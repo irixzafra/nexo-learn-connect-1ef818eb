@@ -1,7 +1,6 @@
 
 import React, { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
-import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import { Toaster } from 'sonner';
 
@@ -13,12 +12,12 @@ interface AppLayoutProps {
 
 const AppLayout: React.FC<AppLayoutProps> = ({ 
   children, 
-  showHeader = true,
+  showHeader = false, // Changed default to false to hide the header
   showAdminNavigation = false
 }) => {
   return (
     <div className="min-h-screen flex flex-col">
-      {showHeader && <SiteHeader />}
+      {/* Header has been removed as requested */}
       <main className="flex-1">
         {children || <Outlet />}
       </main>

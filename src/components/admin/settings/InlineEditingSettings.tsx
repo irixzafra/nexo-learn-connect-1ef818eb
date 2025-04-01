@@ -1,15 +1,14 @@
 
 import React from 'react';
 
-// Placeholder component for inline editing settings
-const InlineEditingSettings: React.FC<{
-  featuresConfig: any;
-  onToggleFeature: (featureId: string, value?: boolean) => Promise<void>;
-  isLoading: boolean;
-}> = () => {
+// Simple placeholder component to replace the removed InlineEditingSettings
+const InlineEditingSettings: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
   return (
-    <div className="text-muted-foreground py-4">
-      <p>Inline editing features have been removed from the application.</p>
+    <div className="p-4 border rounded-md">
+      <h3 className="text-lg font-medium mb-2">Edición en línea</h3>
+      <p className="text-sm text-muted-foreground">
+        La funcionalidad de edición en línea ha sido simplificada en esta versión.
+      </p>
     </div>
   );
 };

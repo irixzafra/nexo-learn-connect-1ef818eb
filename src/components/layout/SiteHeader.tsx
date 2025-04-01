@@ -1,24 +1,10 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 
+// This component has been removed as requested to eliminate the Academia LMS header
 const SiteHeader: React.FC = () => {
-  return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
-      <nav className="container flex h-16 items-center justify-between">
-        <Link to="/" className="font-bold">Academia LMS</Link>
-        
-        <div className="flex items-center gap-4">
-          <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground">
-            Iniciar sesión
-          </Link>
-          <Link to="/register" className="text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-2 rounded-md">
-            Registrarse
-          </Link>
-        </div>
-      </nav>
-    </header>
-  );
+  // Return null to prevent rendering anything
+  return null;
 };
 
 export default SiteHeader;

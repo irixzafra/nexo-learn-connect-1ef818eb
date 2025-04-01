@@ -1,26 +1,13 @@
 
 import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from '@/components/ui/toggle-group';
-import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import InlineEditingSettings from '@/components/admin/settings/InlineEditingSettings';
 
-export const ContentSettings: React.FC = () => {
-  const featuresConfig = {
-    inline_editing: false,
-    drag_and_drop: false,
-    ai_assistant: true
-  };
-
-  const onToggleFeature = async (featureId: string, value?: boolean) => {
-    console.log(`Toggling feature ${featureId} to ${value}`);
-    return Promise.resolve();
-  };
-
+// Simplified ContentSettings component
+const ContentSettings = () => {
   const isLoading = false;
 
   return (
@@ -28,68 +15,46 @@ export const ContentSettings: React.FC = () => {
       <div>
         <h3 className="text-lg font-medium">Configuración de Contenido</h3>
         <p className="text-sm text-muted-foreground">
-          Gestiona las opciones relacionadas con la edición y visualización de contenido
+          Gestiona la configuración de contenido de la plataforma
         </p>
       </div>
-
-      <Tabs defaultValue="editor">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="editor">Editor</TabsTrigger>
-          <TabsTrigger value="inline">Edición Inline</TabsTrigger>
-          <TabsTrigger value="media">Medios</TabsTrigger>
+      <Separator />
+      
+      <Tabs defaultValue="general" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="inline-editing">Edición en línea</TabsTrigger>
+          <TabsTrigger value="seo">SEO</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="editor" className="space-y-4 pt-4">
+        
+        <TabsContent value="general" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Opciones del Editor</CardTitle>
+              <CardTitle>Opciones Generales</CardTitle>
               <CardDescription>
-                Personaliza el comportamiento y apariencia del editor de contenido
+                Configura las opciones generales para el contenido
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="editor-theme">Tema del Editor</Label>
-                <ToggleGroup type="single" defaultValue="light" id="editor-theme">
-                  <ToggleGroupItem value="light">Claro</ToggleGroupItem>
-                  <ToggleGroupItem value="dark">Oscuro</ToggleGroupItem>
-                  <ToggleGroupItem value="system">Sistema</ToggleGroupItem>
-                </ToggleGroup>
-              </div>
+            <CardContent className="space-y-2">
+              <p>Las opciones de contenido han sido simplificadas</p>
             </CardContent>
           </Card>
         </TabsContent>
-
-        <TabsContent value="inline" className="space-y-4 pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Edición Inline</CardTitle>
-              <CardDescription>
-                Configura las opciones para la edición inline de contenido
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <InlineEditingSettings 
-                featuresConfig={featuresConfig} 
-                onToggleFeature={onToggleFeature} 
-                isLoading={isLoading} 
-              />
-            </CardContent>
-          </Card>
+        
+        <TabsContent value="inline-editing" className="space-y-4">
+          <InlineEditingSettings isLoading={isLoading} />
         </TabsContent>
-
-        <TabsContent value="media" className="space-y-4 pt-4">
+        
+        <TabsContent value="seo" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Gestión de Medios</CardTitle>
+              <CardTitle>Configuración SEO</CardTitle>
               <CardDescription>
-                Configura las opciones para la gestión de imágenes y otros medios
+                Configura las opciones de SEO para el contenido
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Características de gestión de medios en desarrollo.
-              </p>
+            <CardContent className="space-y-2">
+              <p>Las opciones de SEO han sido simplificadas</p>
             </CardContent>
           </Card>
         </TabsContent>
