@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import LandingPage from '@/pages/LandingPage';
@@ -25,6 +24,7 @@ import LeaderBoard from '@/pages/LeaderBoard';
 import CertificateVerifyPage from '@/pages/public/CertificateVerifyPage';
 import CertificateVerificationPortal from '@/pages/public/CertificateVerificationPortal';
 import PlaceholderPage from '@/pages/placeholder/PlaceholderPage';
+import NotFoundLayout from '@/layouts/NotFoundLayout';
 
 const PublicRoutes: React.FC = () => {
   return (
@@ -78,7 +78,11 @@ const PublicRoutes: React.FC = () => {
       } />
       
       {/* Catch-all route para rutas públicas no encontradas */}
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={
+        <NotFoundLayout>
+          <NotFound />
+        </NotFoundLayout>
+      } />
     </Routes>
   );
 };
