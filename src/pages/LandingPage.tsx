@@ -14,7 +14,7 @@ import PartnersSection from '@/components/landing/PartnersSection';
 import StatsSection from '@/components/landing/StatsSection';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Award, Certificate, CheckCircle, Clock } from 'lucide-react';
+import { Award, Bookmark, CheckCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
@@ -69,7 +69,7 @@ const LandingPage: React.FC = () => {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2">
-                  <Certificate className="h-5 w-5 text-primary" />
+                  <Bookmark className="h-5 w-5 text-primary" />
                   Credenciales Digitales
                 </CardTitle>
                 <CardDescription>En desarrollo</CardDescription>
