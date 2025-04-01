@@ -12,7 +12,8 @@ import {
   LineChart,
   Shield,
   Bell,
-  PieChart
+  PieChart,
+  Navigation
 } from 'lucide-react';
 import { MenuItem } from './types';
 
@@ -88,6 +89,13 @@ export const adminNavigation: MenuItem[] = [
     path: '/admin/reports',
     requiredRole: ['admin', 'sistemas'],
     description: 'Generación de reportes'
+  },
+  {
+    icon: Navigation,
+    label: 'Diagrama de Navegación',
+    path: '/admin/navigation-diagram',
+    requiredRole: ['admin', 'sistemas'],
+    description: 'Visualización de la estructura de navegación'
   },
   {
     icon: Database,

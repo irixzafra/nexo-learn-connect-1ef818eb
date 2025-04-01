@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
@@ -14,7 +13,8 @@ import {
   Route,
   Bell,
   History,
-  ChevronRight
+  ChevronRight,
+  Navigation
 } from 'lucide-react';
 import { adminNavigation } from '@/config/navigation/adminNavigation';
 import { settingsNavigation } from '@/config/navigation/settingsNavigation';
@@ -202,7 +202,21 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true
         <span>Auditoría</span>
       </NavLink>
       
-      {/* Configuración con submenú desplegable */}
+      <NavLink
+        to="/admin/navigation-diagram"
+        className={({ isActive }) =>
+          cn(
+            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            isActive
+              ? "bg-primary/10 text-primary"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          )
+        }
+      >
+        <Navigation className="h-5 w-5" />
+        <span>Diagrama de Navegación</span>
+      </NavLink>
+      
       <div className="relative">
         <div 
           className={cn(

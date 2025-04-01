@@ -14,7 +14,6 @@ import {
   Smartphone,
   Sidebar,
   PanelTop,
-  LucideFooter,
   LayoutList
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -37,7 +36,6 @@ type NavigationComponent = {
 };
 
 const NavigationDiagram: React.FC = () => {
-  // Menú de la imagen, ordenado alfabéticamente
   const menuItems: NavigationItem[] = [
     { label: 'Dashboard', path: '/dashboard' },
     { label: 'DynamicPage', path: '/dynamic' },
@@ -53,7 +51,6 @@ const NavigationDiagram: React.FC = () => {
     { label: 'Register', path: '/register' },
   ];
 
-  // Rutas administrativas disponibles
   const adminRoutes: NavigationItem[] = [
     { label: 'Dashboard', path: '/admin/dashboard' },
     { label: 'Usuarios', path: '/admin/users' },
@@ -68,7 +65,6 @@ const NavigationDiagram: React.FC = () => {
     { label: 'Diagrama de Navegación', path: '/admin/navigation-diagram' },
   ];
 
-  // Componentes de navegación del sistema
   const navigationComponents: NavigationComponent[] = [
     {
       name: 'AdminNavigation',
