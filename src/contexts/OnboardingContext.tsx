@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface FeaturesConfig {
@@ -52,29 +51,6 @@ export interface FeaturesConfig {
   enableAI: boolean;
 }
 
-interface OnboardingState {
-  showWelcome: boolean;
-  completed: boolean;
-  currentStep: number;
-  featuresConfig: FeaturesConfig;
-  isOnboardingActive: boolean;
-}
-
-interface OnboardingContextType {
-  state: OnboardingState;
-  startOnboarding: () => void;
-  skipOnboarding: () => void;
-  completeOnboarding: () => void;
-  nextStep: () => void;
-  prevStep: () => void;
-  previousStep: () => void;
-  goToStep: (step: number) => void;
-  toggleFeature: (feature: keyof FeaturesConfig, enabled: boolean) => void;
-  featuresConfig: FeaturesConfig;
-  isOnboardingActive: boolean;
-  currentStep: number;
-}
-
 export const defaultFeaturesConfig: FeaturesConfig = {
   autoStartOnboarding: true,
   showOnboardingTrigger: true,
@@ -106,6 +82,29 @@ export const defaultFeaturesConfig: FeaturesConfig = {
   enableCategoryManagement: false,
   enableLeaderboard: false
 };
+
+interface OnboardingState {
+  showWelcome: boolean;
+  completed: boolean;
+  currentStep: number;
+  featuresConfig: FeaturesConfig;
+  isOnboardingActive: boolean;
+}
+
+interface OnboardingContextType {
+  state: OnboardingState;
+  startOnboarding: () => void;
+  skipOnboarding: () => void;
+  completeOnboarding: () => void;
+  nextStep: () => void;
+  prevStep: () => void;
+  previousStep: () => void;
+  goToStep: (step: number) => void;
+  toggleFeature: (feature: keyof FeaturesConfig, enabled: boolean) => void;
+  featuresConfig: FeaturesConfig;
+  isOnboardingActive: boolean;
+  currentStep: number;
+}
 
 const defaultOnboardingState: OnboardingState = {
   showWelcome: true,
@@ -159,7 +158,6 @@ export const OnboardingProvider: React.FC<{children: ReactNode}> = ({ children }
     }));
   };
 
-  // Alias for backward compatibility
   const previousStep = prevStep;
 
   const goToStep = (step: number) => {
@@ -179,7 +177,6 @@ export const OnboardingProvider: React.FC<{children: ReactNode}> = ({ children }
     }));
   };
 
-  // Create extended context with shorthand access to commonly used values
   const contextValue: OnboardingContextType = {
     state,
     startOnboarding,
@@ -190,7 +187,6 @@ export const OnboardingProvider: React.FC<{children: ReactNode}> = ({ children }
     previousStep,
     goToStep,
     toggleFeature,
-    // These properties are added for easier access
     featuresConfig: state.featuresConfig,
     isOnboardingActive: state.isOnboardingActive,
     currentStep: state.currentStep

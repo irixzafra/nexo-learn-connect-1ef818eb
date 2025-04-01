@@ -6,6 +6,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
 import AdminNavigation from '@/components/admin/AdminNavigation';
+import { TableHead } from '@/components/ui/table';
+
+export const AdminTableHead = React.forwardRef<
+  HTMLTableCellElement,
+  React.HTMLAttributes<HTMLTableCellElement>
+>(({ className, ...props }, ref) => (
+  <TableHead 
+    ref={ref} 
+    className={cn("text-xs font-medium text-muted-foreground", className)} 
+    {...props} 
+  />
+));
+AdminTableHead.displayName = "AdminTableHead";
 
 interface AdminPageLayoutProps {
   children?: React.ReactNode;
