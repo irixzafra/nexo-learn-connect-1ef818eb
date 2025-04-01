@@ -56,9 +56,12 @@ const SupabaseConnectionTest: React.FC<SupabaseConnectionTestProps> = ({
           .single();
           
         if (!metaError && metaData) {
+          // Fix here: We need to extract the number from the response and pass that to formatBytes
+          const dbSize = metaData.pg_database_size;
+          
           setDbInfo({
             version: metaData.version,
-            size: formatBytes(metaData.pg_database_size)
+            size: typeof dbSize === 'number' ? formatBytes(dbSize) : 'Unknown'
           });
         }
       } catch (metaErr) {

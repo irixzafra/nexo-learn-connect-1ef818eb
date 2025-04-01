@@ -184,8 +184,6 @@ export const DataSettings: React.FC<DataSettingsProps> = ({
       </div>
 
       <SettingsAccordion
-        title="Configuración Avanzada de Datos"
-        description="Opciones avanzadas para la gestión de datos del sistema"
         sections={[
           {
             id: "database",

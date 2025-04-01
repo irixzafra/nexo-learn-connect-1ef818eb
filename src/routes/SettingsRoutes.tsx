@@ -6,6 +6,7 @@ import PagesManagement from '@/pages/admin/settings/pages';
 import { useFeatures } from '@/hooks/useFeatures';
 import DataSettings from '@/features/admin/components/settings/DataSettings';
 import IntegrationsPage from '@/pages/admin/settings/integrations';
+import { ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
 
 // Placeholder components until actual ones are created
 const GeneralSettings = () => <div>Configuración General</div>;
@@ -16,6 +17,11 @@ const RolesSettings = () => <div>Roles y Permisos</div>;
 
 const SettingsRoutes: React.FC = () => {
   const { featuresConfig, toggleFeature, isLoading } = useFeatures();
+
+  // Create a type-safe wrapper for toggleFeature
+  const handleToggleFeature = (feature: keyof typeof featuresConfig, value: boolean) => {
+    toggleFeature(feature as FeatureId, value);
+  };
 
   return (
     <Routes>
@@ -57,7 +63,7 @@ const SettingsRoutes: React.FC = () => {
           <AdminPageLayout title="Datos">
             <DataSettings 
               featuresConfig={featuresConfig} 
-              onToggleFeature={toggleFeature} 
+              onToggleFeature={handleToggleFeature} 
               isLoading={isLoading} 
             />
           </AdminPageLayout>
