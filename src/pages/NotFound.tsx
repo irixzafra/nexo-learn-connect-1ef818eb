@@ -57,7 +57,7 @@ const NotFound: React.FC = () => {
   };
 
   const notFoundContent = (
-    <div className="container mx-auto flex items-center justify-center min-h-[80vh] p-6">
+    <div className="w-full flex items-center justify-center min-h-[80vh] p-6">
       <div className="text-center">
         <h1 className="text-9xl font-bold text-primary mb-4">404</h1>
         <h2 className="text-3xl font-bold mb-2">Página no encontrada</h2>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { NexoLogo } from '@/components/ui/logo';
@@ -8,8 +7,8 @@ const LandingFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="bg-muted/50 pt-16 pb-8 border-t">
-      <div className="container mx-auto px-4">
+    <footer className="bg-muted/50 pt-16 pb-8 border-t w-full">
+      <div className="max-w-screen-2xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Logo y descripción */}
           <div className="space-y-4">

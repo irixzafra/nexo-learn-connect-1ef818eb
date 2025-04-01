@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
@@ -24,12 +23,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const location = useLocation();
   const { isSidebarOpen, toggleSidebar } = useEditMode();
   
-  // Check if current page is an admin page
   const isAdminPage = location.pathname.includes('/admin');
   const shouldShowHeader = showHeader && !isAdminPage;
   const shouldShowSidebar = !isAdminPage || showAdminNavigation;
 
-  // Log toggle state for debugging
   useEffect(() => {
     console.log("Current route:", location.pathname);
     console.log("Is admin page:", isAdminPage);
@@ -51,7 +48,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           </Sidebar>
         )}
         
-        <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
+        <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden w-full">
           {shouldShowHeader && <HeaderContent />}
           
           <main className="flex-1 w-full">
@@ -62,7 +59,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {shouldShowSidebar && (
           <>
             <MobileSidebar viewAsRole="current" />
-            {/* Botón flotante para alternar sidebar - Moved to the left side */}
             <div className="fixed bottom-4 left-4 md:bottom-8 md:left-8 z-50 md:block">
               <SidebarTrigger 
                 className="shadow-lg" 
