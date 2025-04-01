@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
 import { Outlet } from 'react-router-dom';
-import MainNavMenu from '@/components/layout/header/MainNavMenu';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavigation from '@/components/layout/SidebarNavigation';
 import AppHeader from '@/components/layout/AppHeader';
