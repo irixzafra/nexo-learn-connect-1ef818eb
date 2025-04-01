@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -41,7 +42,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
             )}
             <Switch
               id="enableNotifications"
-              checked={featuresConfig.enableNotifications}
+              checked={!!featuresConfig.enableNotifications}
               onCheckedChange={(value) => onToggleFeature('enableNotifications', value)}
               disabled={isLoading}
             />

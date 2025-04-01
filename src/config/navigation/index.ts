@@ -1,6 +1,6 @@
 
 import { UserRoleType } from '@/types/auth';
-import { NavigationMenus } from './types';
+import { NavigationMenus } from '@/types/navigation';
 import { mainNavigation } from './mainNavigation';
 import { adminNavigation } from './adminNavigation';
 import { exploreNavigation } from './exploreNavigation';
@@ -32,6 +32,7 @@ export const getNavigationByRole = (role: UserRoleType): NavigationMenus => {
     instructor: filterMenuItemsByRole(instructorNavigation, role),
     academic: filterMenuItemsByRole(academicNavigation, role),
     finance: filterMenuItemsByRole(financeNavigation, role),
-    settings: filterMenuItemsByRole(settingsNavigation, role)
+    settings: filterMenuItemsByRole(settingsNavigation, role),
+    gamification: []
   };
 };

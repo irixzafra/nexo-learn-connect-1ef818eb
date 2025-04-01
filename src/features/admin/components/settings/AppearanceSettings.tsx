@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Card, 
@@ -81,7 +80,7 @@ const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
               </div>
               <Switch
                 id="themeSwitcher"
-                checked={featuresConfig.enableThemeSwitcher}
+                checked={!!featuresConfig.enableThemeSwitcher}
                 onCheckedChange={(checked) => onToggleFeature('enableThemeSwitcher', checked)}
                 disabled={isLoading}
               />

@@ -42,7 +42,7 @@ const initialFeaturesConfig: FeaturesConfig = {
 };
 
 // Create context
-const FeaturesContext = createContext<FeaturesContextProps>({} as FeaturesContextProps);
+export const FeaturesContext = createContext<FeaturesContextProps>({} as FeaturesContextProps);
 
 // Hook to access the context
 export const useFeatures = () => {

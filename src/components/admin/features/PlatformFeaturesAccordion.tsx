@@ -2,7 +2,7 @@
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Switch } from '@/components/ui/switch';
-import { FeaturesConfig } from '@/contexts/features/types';
+import { FeaturesConfig, FeatureId } from '@/contexts/features/types';
 import { getFeatureDependencies, getDependencyDescription } from '@/contexts/features/dependencies';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
@@ -17,7 +17,7 @@ const PlatformFeaturesAccordion: React.FC<PlatformFeaturesAccordionProps> = ({
   onToggleFeature
 }) => {
   const renderFeatureItem = (key: keyof FeaturesConfig, label: string, description: string) => {
-    const dependencies = getFeatureDependencies(key);
+    const dependencies = getFeatureDependencies(key as FeatureId);
     const hasDependencies = dependencies.length > 0;
     const hasDisabledDependencies = dependencies.some(dep => !features[dep]);
     
@@ -29,7 +29,7 @@ const PlatformFeaturesAccordion: React.FC<PlatformFeaturesAccordionProps> = ({
             <p className="text-xs text-muted-foreground">{description}</p>
           </div>
           <Switch
-            checked={features[key]}
+            checked={!!features[key]}
             onCheckedChange={(checked) => onToggleFeature(key, checked)}
             disabled={hasDisabledDependencies}
           />
@@ -41,7 +41,7 @@ const PlatformFeaturesAccordion: React.FC<PlatformFeaturesAccordionProps> = ({
             <AlertDescription className="text-xs">
               {dependencies.filter(dep => !features[dep]).map(dep => (
                 <div key={dep} className="mt-1">
-                  {getDependencyDescription(key, dep)}
+                  {getDependencyDescription(key as FeatureId, dep)}
                 </div>
               ))}
             </AlertDescription>

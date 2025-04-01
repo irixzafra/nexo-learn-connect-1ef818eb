@@ -42,4 +42,19 @@ export interface NavigationMenus {
   
   /** Menú de gamificación */
   gamification: MenuItem[];
+  
+  /** Menú de exploración */
+  explore: MenuItem[];
+  
+  /** Menú de instructor */
+  instructor: MenuItem[];
+  
+  /** Menú académico */
+  academic: MenuItem[];
+  
+  /** Menú de finanzas */
+  finance: MenuItem[];
+  
+  /** Menú de configuración */
+  settings: MenuItem[];
 }

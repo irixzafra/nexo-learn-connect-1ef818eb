@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Accordion,
@@ -7,7 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Switch } from "@/components/ui/switch";
-import { FeaturesConfig } from '@/contexts/features/types';
+import { FeaturesConfig, FeatureId } from '@/contexts/features/types';
 import { getFeatureDependencies } from '@/contexts/features/dependencies';
 import { Badge } from "@/components/ui/badge";
 import InfoTooltip from '@/components/ui/info-tooltip';
@@ -69,7 +68,7 @@ const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({ features,
     enableRoleSwitcher: "Permite a los administradores cambiar temporalmente su rol"
   };
 
-  // Agrupación de características por categoría
+  // Feature grouping
   const interfaceFeatures: (keyof FeaturesConfig)[] = [
     'enableDarkMode', 'enableNotifications', 'enableAnalytics', 'enableFeedback'
   ];
@@ -108,13 +107,13 @@ const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({ features,
     'enableRoleManagement', 'enableRoleSwitcher'
   ];
 
-  // Verificar si una funcionalidad puede ser habilitada basado en sus dependencias
-  const canBeEnabled = (featureKey: keyof FeaturesConfig): boolean => {
-    const dependencies = getFeatureDependencies(featureKey);
-    return dependencies.every(dep => features[dep]);
+  // Check if a feature can be enabled based on dependencies
+  const canBeEnabled = (featureKey: string): boolean => {
+    const dependencies = getFeatureDependencies(featureKey as FeatureId);
+    return dependencies.every(dep => !!features[dep]);
   };
 
-  // Renderizar un grupo de características
+  // Render feature group
   const renderFeatureGroup = (
     groupTitle: string, 
     featureKeys: (keyof FeaturesConfig)[]
@@ -127,8 +126,8 @@ const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({ features,
         <AccordionContent className="px-2">
           <div className="space-y-4 py-2">
             {featureKeys.map(key => {
-              const isDisabled = !canBeEnabled(key);
-              const dependencies = getFeatureDependencies(key);
+              const isDisabled = !canBeEnabled(key as string);
+              const dependencies = getFeatureDependencies(key as FeatureId);
               
               return (
                 <div key={key} className="flex items-center justify-between py-1">
@@ -160,7 +159,7 @@ const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({ features,
                     </p>
                   </div>
                   <Switch
-                    checked={features[key]}
+                    checked={!!features[key]}
                     onCheckedChange={(checked) => onToggleFeature(key, checked)}
                     disabled={isDisabled}
                   />

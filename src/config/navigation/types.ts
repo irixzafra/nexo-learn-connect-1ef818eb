@@ -8,8 +8,12 @@ export interface MenuItem {
   path: string;
   requiredRole: UserRoleType | UserRoleType[];
   isHighlighted?: boolean;
+  description?: string;
+  disabled?: boolean;
 }
 
 export type NavigationGroup = {
   [key: string]: MenuItem[];
 };
+
+export { NavigationMenus } from '@/types/navigation';

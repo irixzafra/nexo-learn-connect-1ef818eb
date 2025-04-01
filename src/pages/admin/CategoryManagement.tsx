@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Card,
@@ -102,6 +101,11 @@ const sampleCategories: Category[] = [
     updated_at: '2024-01-05T00:00:00Z'
   }
 ];
+
+const checkFeatureEnabled = (features: any) => {
+  // Check if the enableCategoryManagement is defined in the FeaturesConfig
+  return features.enableCategoryManagement === true;
+};
 
 const CategoryManagement: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>(sampleCategories);
@@ -344,7 +348,7 @@ const CategoryManagement: React.FC = () => {
   const supportsNestedCategories = () => {
     // En una implementación real, esto verificaría si la característica existe en features
     // Por ahora, para pasar la compilación, verificamos una propiedad estándar
-    return features.enableCategoryManagement; 
+    return checkFeatureEnabled(features);
   };
 
   return (
