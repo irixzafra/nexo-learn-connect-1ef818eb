@@ -53,7 +53,6 @@ const OnboardingContext = createContext<OnboardingContextValue>({
   restartOnboarding: () => {},
   completeOnboarding: () => {},
   isOnboardingComplete: false,
-  previousStep: () => {},
   skipOnboarding: () => {}
 });
 
@@ -124,9 +123,6 @@ export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ chil
     }
   };
 
-  // Alias para prevStep para compatibilidad
-  const previousStep = prevStep;
-
   // Reiniciar el onboarding
   const restartOnboarding = () => {
     setCurrentStepIndex(0);
@@ -164,7 +160,6 @@ export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ chil
     restartOnboarding,
     completeOnboarding,
     isOnboardingComplete,
-    previousStep,
     skipOnboarding
   };
 

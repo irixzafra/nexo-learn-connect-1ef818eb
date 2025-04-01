@@ -67,6 +67,20 @@ export const getReverseDependencies = () => {
 };
 
 /**
+ * Obtiene la lista de características que dependen de una característica dada
+ */
+export const getFeatureDependents = (feature: keyof FeaturesConfig): Array<keyof FeaturesConfig> => {
+  return getReverseDependencies()[feature] || [];
+};
+
+/**
+ * Obtiene la lista de características de las que depende una característica dada
+ */
+export const getFeatureDependencies = (feature: keyof FeaturesConfig): Array<keyof FeaturesConfig> => {
+  return featureDependencies[feature] || [];
+};
+
+/**
  * Descripciones de las características
  */
 export const featureDescriptions: Record<keyof FeaturesConfig, string> = {

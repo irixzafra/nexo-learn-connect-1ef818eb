@@ -24,7 +24,6 @@ export const OnboardingModal: React.FC = () => {
     currentStep, 
     nextStep, 
     prevStep,
-    previousStep,
     skipOnboarding,
     isFirstStep, 
     isLastStep, 
@@ -66,7 +65,7 @@ export const OnboardingModal: React.FC = () => {
         <DialogFooter className="flex justify-between">
           <div>
             {!isFirstStep && (
-              <Button variant="outline" onClick={previousStep} className="mr-2">
+              <Button variant="outline" onClick={prevStep} className="mr-2">
                 Anterior
               </Button>
             )}

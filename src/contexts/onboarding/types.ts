@@ -1,4 +1,6 @@
 
+import { ReactNode } from 'react';
+
 export enum OnboardingStep {
   WELCOME = 'welcome',
   PROFILE = 'profile',
@@ -9,8 +11,8 @@ export enum OnboardingStep {
 export interface OnboardingStepConfig {
   id: OnboardingStep;
   title: string;
-  component: React.ReactNode;
   description: string;
+  component: ReactNode;
 }
 
 export interface OnboardingContextValue {
@@ -29,4 +31,5 @@ export interface OnboardingContextValue {
   restartOnboarding: () => void;
   completeOnboarding: () => void;
   isOnboardingComplete: boolean;
+  skipOnboarding: () => void;
 }

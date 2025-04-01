@@ -271,3 +271,5 @@ export const FeatureManagement: React.FC = () => {
     </div>
   );
 };
+
+export default FeatureManagement;

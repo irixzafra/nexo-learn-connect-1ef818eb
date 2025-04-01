@@ -1,131 +1,124 @@
 
-# Guía de Administración de Nexo Learning
+# Documentación de Administración
+
+## Índice
+
+1. [Introducción](#introducción)
+2. [Panel de Administración](#panel-de-administración)
+3. [Gestión de Características](#gestión-de-características)
+4. [Configuración del Sistema](#configuración-del-sistema)
+5. [Buenas Prácticas](#buenas-prácticas)
 
 ## Introducción
 
-Este documento describe la estructura y funcionalidades del sistema de administración de Nexo Learning. El sistema de administración permite gestionar todos los aspectos de la plataforma, desde usuarios y cursos hasta configuraciones técnicas y analíticas.
+Este documento contiene la información necesaria para administrar la plataforma, configurar sus características y mantener el sistema funcionando correctamente.
 
-## Estructura de Navegación
+## Panel de Administración
 
-El sistema de administración utiliza una estructura de navegación simplificada con un máximo de dos niveles de profundidad para mejorar la usabilidad y el SEO.
+El panel de administración es el centro de control principal para la gestión de la plataforma. Este panel está accesible únicamente para usuarios con roles de administrador o sistemas.
 
-### Estructura General
+### Acceso al Panel
 
-```
-/admin/[funcionalidad]
-```
+- URL: `/admin`
+- Autenticación requerida: Sí
+- Roles permitidos: `admin`, `sistemas`
 
-Donde `[funcionalidad]` corresponde a una de las áreas específicas de administración.
+### Secciones Principales
 
-### Áreas Principales
+1. **Dashboard**: Vista general de la actividad del sistema
+2. **Usuarios**: Gestión de cuentas y permisos
+3. **Contenido**: Administración de contenidos y recursos
+4. **Características**: Activación/desactivación de funcionalidades
+5. **Configuración**: Ajustes generales del sistema
+6. **Herramientas**: Utilidades para administradores
 
-1. **Dashboard** (`/admin/dashboard`)
-   - Resumen general del sistema
-   - Estadísticas clave
-   - Alertas y notificaciones importantes
+## Gestión de Características
 
-2. **Usuarios** (`/admin/users`)
-   - Gestión de usuarios
-   - Gestión de roles
-   - Analíticas de usuarios
+El sistema implementa un enfoque modular para sus características. Cada funcionalidad puede ser activada o desactivada independientemente, con respeto a las dependencias entre ellas.
 
-3. **Cursos** (`/admin/courses`)
-   - Catálogo de cursos
-   - Categorías
+### Estructura de Características
+
+Las características están organizadas en categorías:
+
+1. **Core**: Funcionalidades esenciales del sistema
+   - Modo oscuro
+   - Notificaciones
+   - Analíticas
+   - Feedback
+
+2. **Onboarding**: Funcionalidades de introducción para usuarios nuevos
+   - Sistema de onboarding
+   - Disparador de onboarding
+   - Inicio automático de onboarding
+
+3. **Aprendizaje**: Funcionalidades relacionadas con cursos
+   - Cursos
    - Rutas de aprendizaje
    - Certificados
+   - Evaluaciones
 
-4. **Finanzas** (`/admin/finance`)
-   - Dashboard financiero
-   - Facturas
+4. **Comunidad**: Funcionalidades sociales
+   - Comunidad
+   - Foros
+   - Discusiones grupales
+   - Mensajería
+
+5. **Comercio**: Funcionalidades de comercio electrónico
+   - Comercio
    - Suscripciones
-   - Alertas financieras
+   - Cupones
 
-5. **Analíticas** (`/admin/analytics`)
-   - Métricas de uso
-   - Comportamiento de usuarios
-   - Rendimiento de cursos
-   - Reportes personalizados
+6. **Administración**: Funcionalidades administrativas
+   - Categorías anidadas
+   - Registros de auditoría
+   - Acceso basado en roles
+   - Flujos de trabajo de contenido
 
-6. **Configuración** (`/admin/settings`)
-   - Configuración general
-   - Características y flags
-   - Diseño y personalización
-   - Integración con servicios externos
+### Dependencias
 
-7. **Roles** (`/admin/roles`)
-   - Gestión de roles del sistema
-   - Asignación de permisos
+Algunas características dependen de otras para funcionar correctamente. Por ejemplo:
 
-## Transición desde el Sistema Anterior
+- El login social depende del registro de usuarios
+- Las discusiones grupales dependen de la comunidad y los foros
+- Los certificados dependen de los cursos
 
-El sistema de administración ha sido rediseñado para utilizar una estructura de navegación simplificada con un máximo de dos niveles. Todas las rutas anteriores que tenían más de dos niveles han sido rediseñadas para ajustarse a este nuevo patrón.
+El sistema gestiona automáticamente estas dependencias, impidiendo que se desactive una característica si hay otras que dependen de ella.
 
-### Mapeo de Rutas Antiguas a Nuevas
+## Configuración del Sistema
 
-| Ruta Antigua | Ruta Nueva |
-|--------------|------------|
-| `/admin/settings/features` | `/admin/features` |
-| `/admin/users/roles/permissions` | `/admin/roles` |
-| `/admin/courses/categories` | `/admin/categories` |
-| `/admin/finance/reports/annual` | `/admin/finance` |
+El sistema puede configurarse a través del panel de configuración en `/admin/settings`.
 
-## Guía de Implementación
+### Opciones Principales
 
-Para implementar nuevas funcionalidades en el sistema de administración, siga estos lineamientos:
+1. **General**: Configuración básica del sistema
+2. **Apariencia**: Temas, colores y diseño
+3. **Contenido**: Opciones para la gestión de contenido
+4. **Onboarding**: Configuración del proceso de onboarding
+5. **Seguridad**: Opciones de seguridad y autenticación
+6. **Conexiones**: Integraciones con servicios externos
+7. **Datos**: Gestión de datos y copias de seguridad
 
-1. **Estructura de Archivos**:
-   - Cree componentes en `/components/admin/[funcionalidad]/`
-   - Implemente páginas en `/pages/admin/[funcionalidad].tsx`
-   - Use hooks específicos en `/hooks/use[Funcionalidad].ts`
+## Buenas Prácticas
 
-2. **Patrones de Diseño**:
-   - Utilice el componente `AdminPageLayout` para todas las páginas de administración
-   - Implemente tabs con `AdminNavTabs` para organizar contenido relacionado
-   - Use componentes de shadcn/ui para la interfaz
+### Para Administradores
 
-3. **Control de Acceso**:
-   - Todas las rutas de administración deben estar protegidas con el componente `ProtectedRoute`
-   - Especifique los roles permitidos (admin, sistemas) en cada ruta
+1. **Planificar cambios**: Antes de desactivar una característica, evalúe el impacto en los usuarios
+2. **Cambios graduales**: Implemente cambios importantes de forma gradual
+3. **Comunicación**: Informe a los usuarios sobre cambios importantes con antelación
+4. **Monitorización**: Supervise el rendimiento del sistema después de realizar cambios
+5. **Copias de seguridad**: Realice copias de seguridad regulares de la configuración
 
-## Ejemplo de Implementación
+### Para Desarrolladores
 
-```tsx
-// pages/admin/example.tsx
-import React from 'react';
-import AdminPageLayout from '@/layouts/AdminPageLayout';
-import { AdminTabItem } from '@/components/shared/AdminNavTabs';
-import { ExampleTab } from '@/features/admin/components/example/ExampleTab';
-import { Settings } from 'lucide-react';
-
-const ExamplePage: React.FC = () => {
-  const tabs: AdminTabItem[] = [
-    {
-      value: 'main',
-      label: 'Principal',
-      icon: <Settings className="h-4 w-4" />,
-      content: <ExampleTab />
-    }
-  ];
-
-  return (
-    <AdminPageLayout
-      title="Ejemplo"
-      subtitle="Esta es una página de ejemplo"
-      tabs={tabs}
-      defaultTabValue="main"
-    />
-  );
-};
-
-export default ExamplePage;
-```
-
-## Referencias
-
-- [Documentación de Arquitectura del Sistema](../NEXO_SYSTEM_ARCHITECTURE.md)
-- [Estructura de Navegación Actualizada](../ESTRUCTURA_NAVEGACION_ACTUALIZADA.md)
+1. **Dependencias**: Mantenga un gráfico actualizado de dependencias entre características
+2. **Documentación**: Documente cada característica nueva y sus dependencias
+3. **Pruebas**: Pruebe exhaustivamente el funcionamiento con diferentes combinaciones de características
+4. **Retrocompatibilidad**: Asegúrese de que los cambios no rompen la compatibilidad con versiones anteriores
 
 ---
 
-Documento actualizado: 2023-08-15
+## Nota Importante
+
+La documentación antigua ha sido movida a la carpeta `/docs/legacy/`. Esta documentación ya no está vigente y se mantiene únicamente con fines históricos. Por favor, no la utilice como referencia para implementaciones actuales.
+
+Para más información sobre la transición a la nueva estructura, consulte el documento `/docs/sistema-caracteristicas-modular.md`.
