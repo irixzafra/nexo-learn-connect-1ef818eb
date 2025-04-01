@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -31,11 +32,12 @@ const Billing = React.lazy(() => import('@/pages/placeholder/Billing'));
 const Features = React.lazy(() => import('@/pages/admin/Features'));
 const MyCourses = React.lazy(() => import('@/pages/student/MyCourses'));
 const Calendar = React.lazy(() => import('@/pages/placeholder/Calendar'));
-const Invoices = React.lazy(() => import('@/pages/placeholder/Invoices'));
+const Invoices = React.lazy(() => import('@/pages/student/Invoices'));
 const Certificates = React.lazy(() => import('@/pages/user/Certificates'));
 const CertificateDetail = React.lazy(() => import('@/pages/user/CertificateDetail'));
 const CertificateVerify = React.lazy(() => import('@/pages/CertificateVerify'));
 const Recommendations = React.lazy(() => import('@/pages/Recommendations'));
+const Preferences = React.lazy(() => import('@/pages/user/Preferences'));
 
 // Loading component for suspense
 const LoadingFallback = () => (
@@ -56,6 +58,14 @@ const AppRouter: React.FC = () => {
         } />
         
         {/* User routes */}
+        <Route path="/user/*" element={
+          <ProtectedRoute>
+            <React.Suspense fallback={<LoadingFallback />}>
+              <UserRoutes />
+            </React.Suspense>
+          </ProtectedRoute>
+        } />
+        
         <Route path="/home" element={
           <ProtectedRoute>
             <AppLayout>
@@ -82,7 +92,7 @@ const AppRouter: React.FC = () => {
           <ProtectedRoute>
             <AppLayout>
               <React.Suspense fallback={<LoadingFallback />}>
-                <React.lazy(() => import('@/pages/user/Preferences')) />
+                <Preferences />
               </React.Suspense>
             </AppLayout>
           </ProtectedRoute>
