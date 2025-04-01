@@ -22,6 +22,11 @@ export const useFeatures = () => {
  * @returns Boolean indicating if the feature is enabled
  */
 export const useFeature = (featureName: keyof FeaturesConfig): boolean => {
-  const { featuresConfig } = useFeatures();
-  return !!featuresConfig[featureName];
+  const { featuresConfig, isEnabled } = useFeatures();
+  
+  if (typeof isEnabled === 'function') {
+    return isEnabled(featureName);
+  }
+  
+  return !!featuresConfig?.[featureName];
 };

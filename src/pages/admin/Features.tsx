@@ -2,6 +2,8 @@
 import React from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { FeatureManagement } from '@/components/admin/features/FeatureManagement';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 
 const Features: React.FC = () => {
   return (
@@ -9,7 +11,9 @@ const Features: React.FC = () => {
       title="Gestión de Características"
       subtitle="Activa o desactiva funcionalidades del sistema"
     >
-      <FeatureManagement />
+      <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+        <FeatureManagement />
+      </ErrorBoundary>
     </AdminPageLayout>
   );
 };

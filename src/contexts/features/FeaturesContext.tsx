@@ -65,15 +65,6 @@ const initialFeaturesConfig: FeaturesConfig = {
 // Create context
 export const FeaturesContext = createContext<FeaturesContextProps>({} as FeaturesContextProps);
 
-// Hook to access the context
-export const useFeatures = () => {
-  const context = useContext(FeaturesContext);
-  if (!context) {
-    throw new Error('useFeatures must be used within a FeaturesProvider');
-  }
-  return context;
-};
-
 // Provider component
 export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(initialFeaturesConfig);
@@ -233,31 +224,50 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   // Toggle a feature
-  const toggleFeature = (featureId: FeatureId, value?: boolean): void => {
-    if (featuresConfig.features && Object.keys(featuresConfig.features).includes(featureId as string)) {
-      // It's a core feature
-      const isCurrentlyEnabled = featuresConfig.features[featureId as CoreFeatureId]?.enabled;
-      const newValue = typeof value === 'boolean' ? value : !isCurrentlyEnabled;
-      
-      setFeaturesConfig(prev => ({
-        ...prev,
-        features: {
-          ...prev.features,
+  const toggleFeature = async (featureId: FeatureId, value?: boolean): Promise<void> => {
+    try {
+      if (featuresConfig.features && Object.keys(featuresConfig.features).includes(featureId as string)) {
+        // It's a core feature
+        const isCurrentlyEnabled = featuresConfig.features[featureId as CoreFeatureId]?.enabled;
+        const newValue = typeof value === 'boolean' ? value : !isCurrentlyEnabled;
+        
+        const updatedFeatures = {
+          ...featuresConfig.features,
           [featureId]: {
-            ...prev.features[featureId as CoreFeatureId],
+            ...featuresConfig.features[featureId as CoreFeatureId],
             enabled: newValue
           }
+        };
+        
+        setFeaturesConfig(prev => ({
+          ...prev,
+          features: updatedFeatures
+        }));
+        
+        // Sync with database
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          const { error } = await supabase
+            .from('features_config')
+            .update({ features: updatedFeatures })
+            .eq('user_id', user.id);
+            
+          if (error) {
+            console.error('Error updating core feature:', error);
+            throw error;
+          }
         }
-      }));
-    } else {
-      // It's an extended feature
-      const isCurrentlyEnabled = !!featuresConfig[featureId as keyof FeaturesConfig];
-      const newValue = typeof value === 'boolean' ? value : !isCurrentlyEnabled;
-      
-      setFeaturesConfig(prev => ({
-        ...prev,
-        [featureId]: newValue
-      }));
+      } else {
+        // It's an extended feature
+        const isCurrentlyEnabled = !!featuresConfig[featureId as keyof FeaturesConfig];
+        const newValue = typeof value === 'boolean' ? value : !isCurrentlyEnabled;
+        
+        await toggleExtendedFeature(featureId as ExtendedFeatureId, newValue);
+      }
+    } catch (err) {
+      console.error('Error in toggleFeature:', err);
+      toast.error('Error al actualizar la característica');
     }
   };
 
@@ -340,4 +350,13 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       {children}
     </FeaturesContext.Provider>
   );
+};
+
+// Hook to access the context
+export const useFeatures = () => {
+  const context = useContext(FeaturesContext);
+  if (!context) {
+    throw new Error('useFeatures must be used within a FeaturesProvider');
+  }
+  return context;
 };

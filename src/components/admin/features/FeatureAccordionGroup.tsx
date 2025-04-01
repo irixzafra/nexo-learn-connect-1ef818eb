@@ -33,11 +33,23 @@ export const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({
   };
 
   const isFeatureEnabled = (featureId: keyof FeaturesConfig): boolean => {
-    // Comprobamos si la propiedad existe antes de intentar leerla
-    if (featuresConfig && featuresConfig.hasOwnProperty(featureId)) {
-      return !!featuresConfig[featureId];
+    // Check if featuresConfig exists before attempting to access properties
+    if (!featuresConfig) {
+      return false;
     }
-    // Si la propiedad no existe, asumimos que está desactivada
+    
+    // For core features, check the features object
+    if (featuresConfig.features && typeof featureId === 'string' && 
+        Object.keys(featuresConfig.features).includes(featureId)) {
+      return !!featuresConfig.features[featureId as any]?.enabled;
+    } 
+    
+    // For extended features, check the direct property
+    if (featuresConfig.hasOwnProperty(featureId)) {
+      return !!featuresConfig[featureId as keyof FeaturesConfig];
+    }
+    
+    // Default to false if the feature is not found
     return false;
   };
 

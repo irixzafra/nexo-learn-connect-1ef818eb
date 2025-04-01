@@ -9,6 +9,8 @@ import Analytics from '@/pages/admin/analytics';
 import NavigationExplorer from '@/pages/admin/navigation/NavigationExplorer';
 import UserManagement from '@/pages/admin/UserManagement';
 import SettingsRoutes from './SettingsRoutes';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 
 // Placeholder components until actual ones are created
 const Dashboard = () => <div>Dashboard Content</div>;
@@ -54,9 +56,9 @@ const AdminRoutes: React.FC = () => {
       <Route
         path="/features"
         element={
-          <AdminPageLayout title="Características">
+          <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
             <Features />
-          </AdminPageLayout>
+          </ErrorBoundary>
         }
       />
       <Route path="/settings/*" element={<SettingsRoutes />} />
