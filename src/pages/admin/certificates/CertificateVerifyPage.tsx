@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -91,23 +92,36 @@ const CertificateVerifyPage: React.FC = () => {
       
       if (error) throw error;
       
-      const certData = data as CertificateData;
+      // Convert to the expected structure with type assertion
+      const rawData = data as unknown as {
+        id: string;
+        certificate_number: string;
+        issue_date: string;
+        expiry_date: string | null;
+        status: 'issued' | 'revoked' | 'expired';
+        profiles: { full_name: string };
+        courses: {
+          title: string;
+          description: string;
+          profiles: { full_name: string };
+        };
+      };
       
       // Transformar datos para facilitar acceso
       const formattedData: Certificate = {
-        id: certData.id,
-        certificate_number: certData.certificate_number,
-        issue_date: certData.issue_date,
-        expiry_date: certData.expiry_date,
-        status: certData.status,
+        id: rawData.id,
+        certificate_number: rawData.certificate_number,
+        issue_date: rawData.issue_date,
+        expiry_date: rawData.expiry_date,
+        status: rawData.status,
         user: {
-          full_name: certData.profiles?.full_name || 'Usuario desconocido'
+          full_name: rawData.profiles?.full_name || 'Usuario desconocido'
         },
         course: {
-          title: certData.courses?.title || 'Curso desconocido',
-          description: certData.courses?.description || 'Sin descripción',
+          title: rawData.courses?.title || 'Curso desconocido',
+          description: rawData.courses?.description || 'Sin descripción',
           instructor: {
-            full_name: certData.courses?.profiles?.full_name || 'Instructor desconocido'
+            full_name: rawData.courses?.profiles?.full_name || 'Instructor desconocido'
           }
         }
       };

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   ColumnDef,
@@ -102,7 +101,6 @@ const CertificatesTab: React.FC<CertificatesTabProps> = ({ course }) => {
       
       if (error) throw error;
       
-      // Transformar los datos para facilitar el acceso
       const formattedData = data.map((cert: any) => ({
         id: cert.id,
         certificate_number: cert.certificate_number,
@@ -128,14 +126,12 @@ const CertificatesTab: React.FC<CertificatesTabProps> = ({ course }) => {
     try {
       setLoadingStudents(true);
       
-      // Obtener estudiantes matriculados que aún no tienen certificado
       const { data, error } = await supabase.rpc('get_course_enrollments_with_details', {
         course_id_param: course?.id
       });
       
       if (error) throw error;
       
-      // Obtener los IDs de estudiantes que ya tienen certificado
       const { data: existingCertificates, error: certError } = await supabase
         .from('certificates')
         .select('user_id')
@@ -144,7 +140,6 @@ const CertificatesTab: React.FC<CertificatesTabProps> = ({ course }) => {
       
       if (certError) throw certError;
       
-      // Filtrar estudiantes que ya tienen certificado
       const certificateUserIds = new Set(existingCertificates.map(cert => cert.user_id));
       const eligibleStudents = data.filter((student: any) => !certificateUserIds.has(student.user_id));
       
@@ -159,19 +154,16 @@ const CertificatesTab: React.FC<CertificatesTabProps> = ({ course }) => {
 
   const createCertificate = async () => {
     try {
-      // Validar que haya un usuario seleccionado
       if (!newCertificate.userId) {
         toast.error('Debe seleccionar un estudiante');
         return;
       }
       
-      // Llamar a la función para generar un número de certificado
       const { data: certNumberData, error: certNumberError } = await supabase
         .rpc('generate_certificate_number');
       
       if (certNumberError) throw certNumberError;
       
-      // Crear el registro de certificado
       const { data, error } = await supabase
         .from('certificates')
         .insert([
@@ -187,7 +179,6 @@ const CertificatesTab: React.FC<CertificatesTabProps> = ({ course }) => {
       
       if (error) throw error;
       
-      // Actualizar la verificación URL con el ID del certificado
       const certId = data[0].id;
       const { error: updateError } = await supabase
         .from('certificates')
@@ -200,7 +191,6 @@ const CertificatesTab: React.FC<CertificatesTabProps> = ({ course }) => {
       setIsCreateDialogOpen(false);
       fetchCertificates();
       
-      // Resetear el form
       setNewCertificate({
         userId: '',
         expiryDate: null
@@ -366,7 +356,6 @@ const CertificatesTab: React.FC<CertificatesTabProps> = ({ course }) => {
           <Button
             onClick={() => {
               if (!course.grants_certificate) {
-                // Actualizar curso para habilitar certificados
                 supabase
                   .from('courses')
                   .update({ grants_certificate: true })
@@ -470,7 +459,6 @@ const CertificatesTab: React.FC<CertificatesTabProps> = ({ course }) => {
         </div>
       )}
 
-      {/* Dialog para crear certificado */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -511,7 +499,7 @@ const CertificatesTab: React.FC<CertificatesTabProps> = ({ course }) => {
               <Label htmlFor="expiryDate">Fecha de expiración (opcional)</Label>
               <DatePicker
                 date={newCertificate.expiryDate}
-                onSelect={(date) => setNewCertificate({...newCertificate, expiryDate: date})}
+                onDateChange={(date) => setNewCertificate({...newCertificate, expiryDate: date})}
                 className="w-full"
               />
               <p className="text-sm text-muted-foreground">
@@ -531,7 +519,6 @@ const CertificatesTab: React.FC<CertificatesTabProps> = ({ course }) => {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog para revocar certificado */}
       <Dialog open={isRevokeDialogOpen} onOpenChange={setIsRevokeDialogOpen}>
         <DialogContent>
           <DialogHeader>
