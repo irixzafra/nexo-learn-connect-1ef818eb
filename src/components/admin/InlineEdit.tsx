@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { Pencil, Check, X, Wand2, Tag as TagIcon } from 'lucide-react';
+import { Pencil, Check, X, Wand2, TagIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -178,7 +177,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
               className="h-6 w-6 rounded-full bg-primary/10 hover:bg-primary/20"
               onClick={() => setIsTaggingOpen(true)}
             >
-              <Tag className="h-3 w-3 text-primary" />
+              <TagIcon className="h-3 w-3 text-primary" />
             </Button>
             <Button
               type="button"
@@ -310,7 +309,7 @@ const InlineEdit: React.FC<InlineEditProps> = ({
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Tag className="h-5 w-5 text-primary" />
+              <TagIcon className="h-5 w-5 text-primary" />
               Etiquetar elemento
             </DialogTitle>
             <DialogDescription>
