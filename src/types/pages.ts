@@ -8,6 +8,7 @@ export interface PageBlock {
   type: PageBlockType;
   content: string | Record<string, any>;
   order?: number;
+  tags?: string[];
 }
 
 export interface SitePage {
@@ -42,6 +43,11 @@ export const contentToString = (content: string | Record<string, any>): string =
     return content;
   }
   return JSON.stringify(content);
+};
+
+// Helper function to safely display content as React nodes
+export const renderContent = (content: string | Record<string, any>): string => {
+  return contentToString(content);
 };
 
 // Helper function to get a specific field from content

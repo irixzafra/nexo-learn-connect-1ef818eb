@@ -66,6 +66,29 @@ const DynamicPage: React.FC = () => {
     return <Navigate to={`/${page.slug}`} replace />;
   }
 
+  // Handle tag changes for a block
+  const handleBlockTagsChange = (blockId: string, tags: string[]) => {
+    if (!page || !page.content) return;
+    
+    const updatedBlocks = page.content.blocks.map(block => {
+      if (block.id === blockId) {
+        return { ...block, tags };
+      }
+      return block;
+    });
+    
+    setPage({
+      ...page,
+      content: {
+        ...page.content,
+        blocks: updatedBlocks
+      }
+    });
+    
+    // Here you would typically save the tags to the backend
+    console.log(`Updated tags for block ${blockId}:`, tags);
+  };
+
   // Transform content blocks to draggable items
   const contentBlocks = page.content?.blocks || [];
   const draggableItems = contentBlocks.map((block: PageBlock, index: number) => ({
@@ -81,6 +104,8 @@ const DynamicPage: React.FC = () => {
             value={contentToString(block.content)}
             multiline={true}
             className="prose max-w-none"
+            tags={block.tags}
+            onTagsChange={(tags) => handleBlockTagsChange(block.id || `block-${index}`, tags)}
           />
         )}
         {block.type === 'hero' && (
@@ -91,6 +116,8 @@ const DynamicPage: React.FC = () => {
               field="content"
               value={contentToString(block.content)}
               className="text-2xl font-bold"
+              tags={block.tags}
+              onTagsChange={(tags) => handleBlockTagsChange(block.id || `block-${index}`, tags)}
             />
           </div>
         )}
@@ -105,7 +132,8 @@ const DynamicPage: React.FC = () => {
     const newBlock: PageBlock = {
       id: `block-${Date.now()}`,
       type: (type || 'text') as PageBlockType,
-      content: content
+      content: content,
+      tags: []
     };
     
     const blocks = [...(page.content.blocks || [])];
@@ -208,6 +236,7 @@ const DynamicPage: React.FC = () => {
             value={page.title}
             className="text-3xl font-bold mb-6"
             placeholder="Título de la página"
+            tags={[]}
           />
         ) : (
           <h1 className="text-3xl font-bold mb-6">{page.title}</h1>

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { Pencil, Check, X, Wand2 } from 'lucide-react';
+import { Pencil, Check, X, Wand2, Tag } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import ElementTagger from './ElementTagger';
 
 interface InlineEditProps {
   table: string;
@@ -31,6 +32,8 @@ interface InlineEditProps {
   placeholder?: string;
   maxLength?: number;
   onSave?: (value: string) => void;
+  tags?: string[];
+  onTagsChange?: (tags: string[]) => void;
 }
 
 const InlineEdit: React.FC<InlineEditProps> = ({
@@ -43,6 +46,8 @@ const InlineEdit: React.FC<InlineEditProps> = ({
   placeholder = 'Editar texto...',
   maxLength,
   onSave,
+  tags = [],
+  onTagsChange,
 }) => {
   const { isEditMode, updateText, applyAIEdit } = useEditMode();
   const [editing, setEditing] = useState(false);
@@ -50,11 +55,17 @@ const InlineEdit: React.FC<InlineEditProps> = ({
   const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
   const [isApplyingAI, setIsApplyingAI] = useState(false);
+  const [isTaggingOpen, setIsTaggingOpen] = useState(false);
+  const [elementTags, setElementTags] = useState<string[]>(tags);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setEditValue(value);
   }, [value]);
+
+  useEffect(() => {
+    setElementTags(tags);
+  }, [tags]);
 
   useEffect(() => {
     if (editing && inputRef.current) {
@@ -104,6 +115,13 @@ const InlineEdit: React.FC<InlineEditProps> = ({
 
   const handleAIAssist = () => {
     setIsAIDialogOpen(true);
+  };
+
+  const handleTagsChange = (newTags: string[]) => {
+    setElementTags(newTags);
+    if (onTagsChange) {
+      onTagsChange(newTags);
+    }
   };
 
   const handleApplyAI = async () => {
@@ -158,6 +176,15 @@ const InlineEdit: React.FC<InlineEditProps> = ({
               size="icon"
               variant="ghost"
               className="h-6 w-6 rounded-full bg-primary/10 hover:bg-primary/20"
+              onClick={() => setIsTaggingOpen(true)}
+            >
+              <Tag className="h-3 w-3 text-primary" />
+            </Button>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-6 w-6 rounded-full bg-primary/10 hover:bg-primary/20"
               onClick={handleAIAssist}
             >
               <Wand2 className="h-3 w-3 text-primary" />
@@ -204,6 +231,19 @@ const InlineEdit: React.FC<InlineEditProps> = ({
               <div className="break-words">
                 {value || placeholder}
               </div>
+              {elementTags && elementTags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {elementTags.map(tag => (
+                    <span 
+                      key={tag} 
+                      className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-primary/10 text-primary"
+                    >
+                      <TagIcon className="h-2.5 w-2.5 mr-0.5" />
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
               <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="bg-primary text-primary-foreground rounded-full p-1">
                   <Pencil className="h-3 w-3" />
@@ -261,6 +301,34 @@ const InlineEdit: React.FC<InlineEditProps> = ({
             </Button>
             <Button onClick={handleApplyAI} disabled={isApplyingAI || !aiPrompt.trim()}>
               {isApplyingAI ? 'Aplicando...' : 'Aplicar IA'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isTaggingOpen} onOpenChange={setIsTaggingOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Tag className="h-5 w-5 text-primary" />
+              Etiquetar elemento
+            </DialogTitle>
+            <DialogDescription>
+              Añade etiquetas a este elemento para organizar y categorizar el contenido.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <ElementTagger 
+              tags={elementTags} 
+              onChange={handleTagsChange} 
+              className="flex-col items-start"
+            />
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsTaggingOpen(false)}>
+              Cerrar
             </Button>
           </DialogFooter>
         </DialogContent>
