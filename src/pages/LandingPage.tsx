@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCoursesCatalog } from '@/features/courses/hooks/useCoursesCatalog';
 
 // Componentes de la landing
+import LandingNav from '@/components/LandingNav';
 import LandingHero from '@/components/landing/LandingHero';
 import FeaturedCoursesSection from '@/components/landing/FeaturedCoursesSection';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
@@ -21,6 +22,9 @@ const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <LandingNav />
+      
       {/* Hero Section */}
       <LandingHero isAuthenticated={isAuthenticated} />
       

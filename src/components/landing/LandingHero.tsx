@@ -4,15 +4,6 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
-import { 
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle
-} from "@/components/ui/navigation-menu"
 
 interface LandingHeroProps {
   isAuthenticated: boolean;
@@ -21,83 +12,6 @@ interface LandingHeroProps {
 const LandingHero: React.FC<LandingHeroProps> = ({ isAuthenticated }) => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-white pt-24 pb-16 md:pt-32 md:pb-24">
-      {/* Navigation Menu */}
-      <div className="container mx-auto px-4 mb-8">
-        <NavigationMenu className="mx-auto max-w-4xl justify-center hidden md:flex">
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <Link to="/landing">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Inicio
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link to="/courses">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Cursos
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Recursos</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid gap-3 p-4 w-[400px]">
-                  <li className="row-span-3">
-                    <NavigationMenuLink asChild>
-                      <a
-                        className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-blue-500 to-blue-700 p-6 no-underline outline-none focus:shadow-md"
-                        href="/scholarships"
-                      >
-                        <div className="mb-2 mt-4 text-lg font-medium text-white">
-                          Becas y Ayudas
-                        </div>
-                        <p className="text-sm leading-tight text-white/90">
-                          Explora las oportunidades para financiar tu formación
-                        </p>
-                      </a>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <a
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        href="/about-us"
-                      >
-                        <div className="text-sm font-medium leading-none">Sobre Nosotros</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Conoce nuestra historia y misión
-                        </p>
-                      </a>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <a
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        href="/contact"
-                      >
-                        <div className="text-sm font-medium leading-none">Contacto</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          ¿Necesitas ayuda? Escríbenos
-                        </p>
-                      </a>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link to="/leaderboard">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Comunidad
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-      </div>
-
       <div className="absolute inset-0 -z-10 opacity-40">
         <svg
           width="100%"
