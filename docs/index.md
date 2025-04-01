@@ -1,28 +1,52 @@
 
-# Documentación Nexo Learning Platform
+# Nexo Learning - Documentación Principal
 
-Bienvenido a la documentación oficial de Nexo Learning Platform. Esta guía proporciona información detallada sobre la arquitectura, funcionalidades y procedimientos para trabajar con la plataforma.
+Bienvenido a la documentación oficial de Nexo Learning Platform. Esta documentación proporciona información detallada sobre la arquitectura, componentes, y funcionamiento de la plataforma.
 
-## Secciones Principales
+## Estructura de la Documentación
 
-- [Getting Started](01_getting_started.md): Visión general del producto, principios de diseño y configuración inicial del entorno de desarrollo.
-  
-- [Arquitectura y Convenciones](02_architecture.md): Descripción de la arquitectura técnica, estructura de directorios y convenciones de código utilizadas en el proyecto.
-  
-- [Módulos Funcionales](03_features/README.md): Documentación detallada de las principales funcionalidades del sistema:
-  - [Autenticación y Roles](03_features/authentication.md)
-  - [Gestión de Cursos](03_features/courses.md)
-  - [Comunidad](03_features/community.md)
-  - [Administración de Usuarios](03_features/admin_users.md)
-  
-- [UI Kit y Componentes](04_ui_kit.md): Información sobre los componentes de interfaz de usuario disponibles y cómo utilizarlos.
-  
-- [Integraciones](05_integrations.md): Guías para trabajar con las integraciones externas como Supabase, Stripe y otras APIs.
+La documentación está organizada en las siguientes secciones principales:
 
-## Cómo Usar Esta Documentación
+- [**Arquitectura del Sistema**](#arquitectura): Diseño general y principios de la plataforma
+- [**Navegación**](#navegacion): Estructura de navegación y flujo de usuario
+- [**Componentes**](#componentes): Descripción de los principales componentes de la aplicación
+- [**Guías de Desarrollo**](#guias): Guías y mejores prácticas para desarrollo
 
-La documentación está organizada de manera que puedas navegar desde conceptos generales hasta detalles técnicos específicos. Recomendamos comenzar con la sección [Getting Started](01_getting_started.md) si eres nuevo en el proyecto.
+## <a name="arquitectura"></a>Arquitectura del Sistema
 
-## Contribuir a la Documentación
+La arquitectura de Nexo Learning se basa en un diseño modular con componentes reutilizables y una estructura clara para diferentes roles de usuario.
 
-Esta documentación está en constante evolución. Si encuentras información desactualizada o quieres contribuir con nueva documentación, por favor sigue nuestras [guías de contribución](02_architecture.md#workflow-de-desarrollo).
+- [Principios de Diseño](./architecture/principles.md)
+- [Estructura de Código](./architecture/code-structure.md)
+- [Flujo de Datos](./architecture/data-flow.md)
+
+## <a name="navegacion"></a>Estructura de Navegación
+
+Nexo Learning utiliza un sistema de navegación unificado para todos los usuarios, con contenido adaptado según el rol.
+
+- [Estructura de Navegación](./ESTRUCTURA_NAVEGACION.md)
+- [Administración](./admin/ADMINISTRACION.md)
+
+## <a name="componentes"></a>Componentes Principales
+
+La plataforma está construida con componentes reutilizables que siguen patrones consistentes.
+
+- [Componentes de UI](./components/ui.md)
+- [Layouts](./components/layouts.md)
+- [Formularios](./components/forms.md)
+
+## <a name="guias"></a>Guías de Desarrollo
+
+Estas guías proporcionan instrucciones para el desarrollo y mantenimiento de la plataforma.
+
+- [Convenciones de Código](./guides/code-conventions.md)
+- [Flujo de Trabajo](./guides/workflow.md)
+- [Control de Calidad](./guides/quality-control.md)
+
+## Contribuciones
+
+Para contribuir a esta documentación, siga las [guías de contribución](./guides/contributing.md).
+
+---
+
+Última actualización: Julio 2024
