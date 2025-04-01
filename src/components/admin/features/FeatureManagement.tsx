@@ -1,606 +1,273 @@
 
 import React, { useState } from 'react';
+import { useFeatures } from '@/contexts/features/FeatureContext';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
-import { toast } from 'sonner';
-import { 
-  AlertTriangle, 
-  Eye, 
-  EyeOff, 
-  RefreshCw,
-  ToggleLeft,
-  Paintbrush,
-  Shield,
-  Bell,
-  Layout,
-  Book,
-  Database
-} from 'lucide-react';
-import FeatureAccordionGroup from './FeatureAccordionGroup';
-import PlatformFeaturesAccordion from './PlatformFeaturesAccordion';
-import { useFeatures } from '@/contexts/features/FeaturesContext';
-import { defaultFeaturesConfig } from '@/contexts/features/types';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { FeatureAccordionGroup } from './FeatureAccordionGroup';
+import { PlatformFeaturesAccordion } from './PlatformFeaturesAccordion';
+import { Loader2, AlertTriangle, Info, Check } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { FeaturesConfig } from '@/contexts/features/types';
+import OnboardingSettings from '@/features/admin/components/settings/OnboardingSettings';
 
+/**
+ * Componente para gestionar las características del sistema
+ */
 export const FeatureManagement: React.FC = () => {
-  const { 
-    featuresConfig, 
-    toggleFeature, 
-    isLoading,
-    getFeatureDependencies,
-    getFeatureDependents,
-    updateFeatures
-  } = useFeatures();
-  
-  const [showDisabled, setShowDisabled] = useState(false);
-  const [showDependencies, setShowDependencies] = useState(false);
-  
-  const handleResetToDefaults = async () => {
+  const { features, updateFeatures, isLoading, error } = useFeatures();
+  const [activeTab, setActiveTab] = useState<string>('general');
+  const { toast } = useToast();
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+
+  const handleToggleFeature = async (featureKey: keyof FeaturesConfig, value: boolean) => {
     try {
-      await updateFeatures(defaultFeaturesConfig);
-      toast.success('Configuración restablecida a los valores predeterminados');
+      setSaveStatus('saving');
+      await updateFeatures({
+        ...features,
+        [featureKey]: value
+      });
+      setSaveStatus('success');
+      
+      toast({
+        title: "Configuración actualizada",
+        description: `La característica ha sido ${value ? 'activada' : 'desactivada'}.`,
+      });
+      
+      // Reset status after a delay
+      setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
-      toast.error('Error al restablecer la configuración');
+      setSaveStatus('error');
+      console.error("Error toggling feature:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo actualizar la configuración.",
+      });
     }
   };
-  
-  // Helper to display dependency warnings
-  const getDependencyWarning = (featureKey: keyof typeof featuresConfig) => {
-    const dependencies = getFeatureDependencies(featureKey);
-    if (dependencies.length === 0) return null;
-    
-    // Check if any dependency is disabled
-    const disabledDependencies = dependencies.filter(
-      (dep) => !featuresConfig[dep]
-    );
-    
-    if (disabledDependencies.length === 0) return null;
-    
+
+  if (error) {
     return (
-      <div className="mt-2 text-xs bg-amber-50 text-amber-800 p-2 rounded-md flex gap-2 items-start">
-        <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
-        <div>
-          <span>Requiere activar:</span>
-          <ul className="list-disc pl-4 mt-1">
-            {disabledDependencies.map((dep) => (
-              <li key={dep as string}>{dep as string}</li>
-            ))}
-          </ul>
-        </div>
+      <Alert variant="destructive" className="mb-4">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          No se pudo cargar la configuración de características. Por favor, intente nuevamente.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  if (isLoading || !features) {
+    return (
+      <div className="flex justify-center items-center h-40">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2 text-muted-foreground">Cargando configuración...</span>
       </div>
     );
-  };
-  
-  // Helper to display dependent features warnings
-  const getDependentWarning = (featureKey: keyof typeof featuresConfig) => {
-    if (!featuresConfig[featureKey]) return null;
-    
-    const dependents = getFeatureDependents(featureKey);
-    if (dependents.length === 0) return null;
-    
-    // Find dependents that are enabled
-    const enabledDependents = dependents.filter(
-      (dep) => featuresConfig[dep]
-    );
-    
-    if (enabledDependents.length === 0) return null;
-    
-    return (
-      <div className="mt-2 text-xs bg-blue-50 text-blue-800 p-2 rounded-md flex gap-2 items-start">
-        <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
-        <div>
-          <span>Al desactivar esto también se desactivarán:</span>
-          <ul className="list-disc pl-4 mt-1">
-            {enabledDependents.map((dep) => (
-              <li key={dep as string}>{dep as string}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    );
-  };
-  
+  }
+
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ToggleLeft className="h-5 w-5 text-primary" />
-            Gestión de Características
-          </CardTitle>
-          <CardDescription>
-            Activa o desactiva características del sistema
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowDisabled(!showDisabled)}
-                className="gap-2 text-xs"
-              >
-                {showDisabled ? (
-                  <>
-                    <Eye className="h-3.5 w-3.5" />
-                    Ver activas
-                  </>
-                ) : (
-                  <>
-                    <EyeOff className="h-3.5 w-3.5" />
-                    Ver todas
-                  </>
-                )}
-              </Button>
+      <Tabs defaultValue="general" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="onboarding">Onboarding</TabsTrigger>
+          <TabsTrigger value="advanced">Avanzado</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="general" className="space-y-4 mt-4">
+          <Alert variant="default" className="bg-muted">
+            <Info className="h-4 w-4" />
+            <AlertTitle>Información</AlertTitle>
+            <AlertDescription>
+              Active o desactive las funcionalidades generales del sistema. Algunos cambios pueden requerir actualizar la página.
+            </AlertDescription>
+          </Alert>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Características Principales</CardTitle>
+              <CardDescription>
+                Habilite o deshabilite las características principales del sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="dark-mode">Modo Oscuro</Label>
+                  <p className="text-sm text-muted-foreground">Permitir cambiar entre modo claro y oscuro</p>
+                </div>
+                <Switch 
+                  id="dark-mode" 
+                  checked={features.enableDarkMode}
+                  onCheckedChange={(checked) => handleToggleFeature('enableDarkMode', checked)}
+                  disabled={isLoading}
+                />
+              </div>
               
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowDependencies(!showDependencies)}
-                className="gap-2 text-xs"
-              >
-                {showDependencies ? "Ocultar dependencias" : "Mostrar dependencias"}
-              </Button>
-            </div>
-            
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleResetToDefaults}
-              disabled={isLoading}
-              className="gap-2 text-xs"
-            >
-              <RefreshCw className="h-3.5 w-3.5" />
-              Restablecer
-            </Button>
-          </div>
+              <Separator />
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="notifications">Notificaciones</Label>
+                  <p className="text-sm text-muted-foreground">Sistema de notificaciones en tiempo real</p>
+                </div>
+                <Switch 
+                  id="notifications" 
+                  checked={features.enableNotifications}
+                  onCheckedChange={(checked) => handleToggleFeature('enableNotifications', checked)}
+                  disabled={isLoading}
+                />
+              </div>
+              
+              <Separator />
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="analytics">Analíticas</Label>
+                  <p className="text-sm text-muted-foreground">Recolección de datos de uso anónimos</p>
+                </div>
+                <Switch 
+                  id="analytics" 
+                  checked={features.enableAnalytics}
+                  onCheckedChange={(checked) => handleToggleFeature('enableAnalytics', checked)}
+                  disabled={isLoading}
+                />
+              </div>
+              
+              <Separator />
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="feedback">Sistema de Feedback</Label>
+                  <p className="text-sm text-muted-foreground">Permitir que los usuarios envíen feedback</p>
+                </div>
+                <Switch 
+                  id="feedback" 
+                  checked={features.enableFeedback}
+                  onCheckedChange={(checked) => handleToggleFeature('enableFeedback', checked)}
+                  disabled={isLoading}
+                />
+              </div>
+            </CardContent>
+          </Card>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-            <FeatureAccordionGroup
-              title="Diseño y Apariencia"
-              icon={<Paintbrush className="h-5 w-5" />}
-              features={[
-                {
-                  id: "designSystemEnabled",
-                  title: "Sistema de Diseño",
-                  description: "Habilitar sistema de diseño personalizable",
-                  checked: featuresConfig.designSystemEnabled,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('designSystemEnabled', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('designSystemEnabled'),
-                  dependent: getDependentWarning('designSystemEnabled'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableMultiLanguage",
-                  title: "Multi-idioma",
-                  description: "Soporte para múltiples idiomas",
-                  checked: !!featuresConfig.enableMultiLanguage,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableMultiLanguage', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableMultiLanguage'),
-                  dependent: getDependentWarning('enableMultiLanguage'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableEditMode",
-                  title: "Modo de Edición",
-                  description: "Edición visual de contenido",
-                  checked: !!featuresConfig.enableEditMode,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableEditMode', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableEditMode'),
-                  dependent: getDependentWarning('enableEditMode'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableThemeSwitcher",
-                  title: "Selector de Temas",
-                  description: "Cambio entre temas claro y oscuro",
-                  checked: featuresConfig.enableThemeSwitcher,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableThemeSwitcher', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableThemeSwitcher'),
-                  dependent: getDependentWarning('enableThemeSwitcher'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableAdvancedEditor",
-                  title: "Editor Avanzado",
-                  description: "Editor de contenido con más opciones",
-                  checked: !!featuresConfig.enableAdvancedEditor,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableAdvancedEditor', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableAdvancedEditor'),
-                  dependent: getDependentWarning('enableAdvancedEditor'),
-                  showDependencies: showDependencies
-                }
-              ]}
-            />
-            
-            <FeatureAccordionGroup
-              title="Usuarios y Permisos"
-              icon={<Shield className="h-5 w-5" />}
-              features={[
-                {
-                  id: "enableRoleSwitcher",
-                  title: "Selector de Rol",
-                  description: "Cambiar entre roles de usuario",
-                  checked: featuresConfig.enableRoleSwitcher,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableRoleSwitcher', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableRoleSwitcher'),
-                  dependent: getDependentWarning('enableRoleSwitcher'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableRoleManagement",
-                  title: "Gestión de Roles",
-                  description: "Administrar roles y permisos",
-                  checked: featuresConfig.enableRoleManagement,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableRoleManagement', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableRoleManagement'),
-                  dependent: getDependentWarning('enableRoleManagement'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableInvitations",
-                  title: "Invitaciones",
-                  description: "Sistema de invitaciones de usuarios",
-                  checked: !!featuresConfig.enableInvitations,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableInvitations', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableInvitations'),
-                  dependent: getDependentWarning('enableInvitations'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableCustomRoles",
-                  title: "Roles Personalizados",
-                  description: "Crear roles personalizados",
-                  checked: !!featuresConfig.enableCustomRoles,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableCustomRoles', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableCustomRoles'),
-                  dependent: getDependentWarning('enableCustomRoles'),
-                  showDependencies: showDependencies
-                }
-              ]}
-            />
-            
-            <FeatureAccordionGroup
-              title="Contenido y Categorías"
-              icon={<Layout className="h-5 w-5" />}
-              features={[
-                {
-                  id: "enableContentReordering",
-                  title: "Reordenación de Contenido",
-                  description: "Reordenar contenido via drag & drop",
-                  checked: featuresConfig.enableContentReordering,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableContentReordering', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableContentReordering'),
-                  dependent: getDependentWarning('enableContentReordering'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableCategoryManagement",
-                  title: "Gestión de Categorías",
-                  description: "Sistema avanzado de categorías",
-                  checked: featuresConfig.enableCategoryManagement,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableCategoryManagement', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableCategoryManagement'),
-                  dependent: getDependentWarning('enableCategoryManagement'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableLeaderboard",
-                  title: "Tabla de Clasificación",
-                  description: "Sistema de clasificación de usuarios",
-                  checked: !!featuresConfig.enableLeaderboard,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableLeaderboard', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableLeaderboard'),
-                  dependent: getDependentWarning('enableLeaderboard'),
-                  showDependencies: showDependencies
-                }
-              ]}
-            />
-            
-            <FeatureAccordionGroup
-              title="Notificaciones"
-              icon={<Bell className="h-5 w-5" />}
-              features={[
-                {
-                  id: "enableNotifications",
-                  title: "Sistema de Notificaciones",
-                  description: "Sistema de notificaciones básicas",
-                  checked: featuresConfig.enableNotifications,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableNotifications', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableNotifications'),
-                  dependent: getDependentWarning('enableNotifications'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableRealTimeNotifications",
-                  title: "Notificaciones en Tiempo Real",
-                  description: "Notificaciones push instantáneas",
-                  checked: !!featuresConfig.enableRealTimeNotifications,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableRealTimeNotifications', checked),
-                  disabled: isLoading || !featuresConfig.enableNotifications,
-                  warning: getDependencyWarning('enableRealTimeNotifications'),
-                  dependent: getDependentWarning('enableRealTimeNotifications'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableEmailNotifications",
-                  title: "Notificaciones por Email",
-                  description: "Envío de emails de notificación",
-                  checked: !!featuresConfig.enableEmailNotifications,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableEmailNotifications', checked),
-                  disabled: isLoading || !featuresConfig.enableNotifications,
-                  warning: getDependencyWarning('enableEmailNotifications'),
-                  dependent: getDependentWarning('enableEmailNotifications'),
-                  showDependencies: showDependencies
-                }
-              ]}
-            />
-            
-            <FeatureAccordionGroup
-              title="Seguridad"
-              icon={<Shield className="h-5 w-5" />}
-              features={[
-                {
-                  id: "enable2FA",
-                  title: "Autenticación 2FA",
-                  description: "Autenticación de dos factores",
-                  checked: !!featuresConfig.enable2FA,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enable2FA', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enable2FA'),
-                  dependent: getDependentWarning('enable2FA'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableMultipleSessions",
-                  title: "Sesiones Múltiples",
-                  description: "Permitir múltiples sesiones",
-                  checked: !!featuresConfig.enableMultipleSessions,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableMultipleSessions', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableMultipleSessions'),
-                  dependent: getDependentWarning('enableMultipleSessions'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "requireEmailVerification",
-                  title: "Verificación de Email",
-                  description: "Verificación obligatoria de email",
-                  checked: !!featuresConfig.requireEmailVerification,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('requireEmailVerification', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('requireEmailVerification'),
-                  dependent: getDependentWarning('requireEmailVerification'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enablePublicRegistration",
-                  title: "Registro Público",
-                  description: "Permitir registro público",
-                  checked: !!featuresConfig.enablePublicRegistration,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enablePublicRegistration', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enablePublicRegistration'),
-                  dependent: getDependentWarning('enablePublicRegistration'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableActivityLog",
-                  title: "Registro de Actividad",
-                  description: "Log de actividad de usuarios",
-                  checked: !!featuresConfig.enableActivityLog,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableActivityLog', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableActivityLog'),
-                  dependent: getDependentWarning('enableActivityLog'),
-                  showDependencies: showDependencies
-                }
-              ]}
-            />
-            
-            <FeatureAccordionGroup
-              title="Integración y APIs"
-              icon={<Database className="h-5 w-5" />}
-              features={[
-                {
-                  id: "enableAI",
-                  title: "Inteligencia Artificial",
-                  description: "Integración con IA",
-                  checked: !!featuresConfig.enableAI,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableAI', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableAI'),
-                  dependent: getDependentWarning('enableAI'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableLeaderboard",
-                  title: "Tabla de Clasificación",
-                  description: "Sistema de gamificación",
-                  checked: !!featuresConfig.enableLeaderboard,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableLeaderboard', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableLeaderboard'),
-                  dependent: getDependentWarning('enableLeaderboard'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enablePublicApi",
-                  title: "API Pública",
-                  description: "Acceso a API para desarrolladores",
-                  checked: !!featuresConfig.enablePublicApi,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enablePublicApi', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enablePublicApi'),
-                  dependent: getDependentWarning('enablePublicApi'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableWebhooks",
-                  title: "Webhooks",
-                  description: "Integración con webhooks",
-                  checked: !!featuresConfig.enableWebhooks,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableWebhooks', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableWebhooks'),
-                  dependent: getDependentWarning('enableWebhooks'),
-                  showDependencies: showDependencies
-                }
-              ]}
-            />
-            
-            <FeatureAccordionGroup
-              title="Onboarding y Ayuda"
-              icon={<Book className="h-5 w-5" />}
-              features={[
-                {
-                  id: "enableOnboardingSystem",
-                  title: "Sistema de Onboarding",
-                  description: "Tutorial de introducción",
-                  checked: featuresConfig.enableOnboardingSystem,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableOnboardingSystem', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableOnboardingSystem'),
-                  dependent: getDependentWarning('enableOnboardingSystem'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "showOnboardingTrigger",
-                  title: "Botón de Onboarding",
-                  description: "Mostrar acceso a tutorial",
-                  checked: featuresConfig.showOnboardingTrigger,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('showOnboardingTrigger', checked),
-                  disabled: isLoading || !featuresConfig.enableOnboardingSystem,
-                  warning: getDependencyWarning('showOnboardingTrigger'),
-                  dependent: getDependentWarning('showOnboardingTrigger'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "autoStartOnboarding",
-                  title: "Onboarding Automático",
-                  description: "Iniciar tutorial automáticamente",
-                  checked: featuresConfig.autoStartOnboarding,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('autoStartOnboarding', checked),
-                  disabled: isLoading || !featuresConfig.enableOnboardingSystem,
-                  warning: getDependencyWarning('autoStartOnboarding'),
-                  dependent: getDependentWarning('autoStartOnboarding'),
-                  showDependencies: showDependencies
-                }
-              ]}
-            />
-            
-            <FeatureAccordionGroup
-              title="Desarrollo y Herramientas"
-              icon={<Database className="h-5 w-5" />}
-              features={[
-                {
-                  id: "enableDatabaseDevMode",
-                  title: "Modo Desarrollo DB",
-                  description: "Herramientas de desarrollo DB",
-                  checked: !!featuresConfig.enableDatabaseDevMode,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableDatabaseDevMode', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableDatabaseDevMode'),
-                  dependent: getDependentWarning('enableDatabaseDevMode'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableAutoBackups",
-                  title: "Respaldos Automáticos",
-                  description: "Respaldos programados",
-                  checked: !!featuresConfig.enableAutoBackups,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableAutoBackups', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableAutoBackups'),
-                  dependent: getDependentWarning('enableAutoBackups'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableQueryCache",
-                  title: "Caché de Consultas",
-                  description: "Mejorar rendimiento",
-                  checked: !!featuresConfig.enableQueryCache,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableQueryCache', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableQueryCache'),
-                  dependent: getDependentWarning('enableQueryCache'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableMaintenanceMode",
-                  title: "Modo Mantenimiento",
-                  description: "Bloquear acceso a usuarios",
-                  checked: !!featuresConfig.enableMaintenanceMode,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableMaintenanceMode', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableMaintenanceMode'),
-                  dependent: getDependentWarning('enableMaintenanceMode'),
-                  showDependencies: showDependencies
-                },
-                {
-                  id: "enableTestDataGenerator",
-                  title: "Datos de Prueba",
-                  description: "Generador de datos de prueba",
-                  checked: featuresConfig.enableTestDataGenerator,
-                  onCheckedChange: (checked) => 
-                    toggleFeature('enableTestDataGenerator', checked),
-                  disabled: isLoading,
-                  warning: getDependencyWarning('enableTestDataGenerator'),
-                  dependent: getDependentWarning('enableTestDataGenerator'),
-                  showDependencies: showDependencies
-                }
-              ]}
-            />
-          </div>
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Características de Usuarios</CardTitle>
+              <CardDescription>
+                Configure las opciones relacionadas con usuarios y perfiles
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="user-registration">Registro de Usuarios</Label>
+                  <p className="text-sm text-muted-foreground">Permitir que nuevos usuarios se registren</p>
+                </div>
+                <Switch 
+                  id="user-registration" 
+                  checked={features.enableUserRegistration}
+                  onCheckedChange={(checked) => handleToggleFeature('enableUserRegistration', checked)}
+                  disabled={isLoading}
+                />
+              </div>
+              
+              <Separator />
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="social-login">Login Social</Label>
+                  <p className="text-sm text-muted-foreground">Permitir inicio de sesión con redes sociales</p>
+                </div>
+                <Switch 
+                  id="social-login" 
+                  checked={features.enableSocialLogin}
+                  onCheckedChange={(checked) => handleToggleFeature('enableSocialLogin', checked)}
+                  disabled={isLoading}
+                />
+              </div>
+              
+              <Separator />
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="profiles">Perfiles Públicos</Label>
+                  <p className="text-sm text-muted-foreground">Permitir que los perfiles sean visibles para otros usuarios</p>
+                </div>
+                <Switch 
+                  id="profiles" 
+                  checked={features.enablePublicProfiles}
+                  onCheckedChange={(checked) => handleToggleFeature('enablePublicProfiles', checked)}
+                  disabled={isLoading}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="onboarding" className="space-y-4 mt-4">
+          <OnboardingSettings 
+            featuresConfig={features} 
+            onToggleFeature={handleToggleFeature}
+            isLoading={isLoading}
+          />
+        </TabsContent>
+        
+        <TabsContent value="advanced" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Todas las Características</CardTitle>
+              <CardDescription>
+                Vista completa de todas las características disponibles en el sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PlatformFeaturesAccordion 
+                features={features} 
+                onToggleFeature={handleToggleFeature}
+                isLoading={isLoading}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
       
-      <PlatformFeaturesAccordion />
+      {saveStatus === 'saving' && (
+        <Alert>
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <AlertTitle>Guardando cambios</AlertTitle>
+          <AlertDescription>
+            Aplicando la configuración, espere un momento...
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {saveStatus === 'success' && (
+        <Alert>
+          <Check className="h-4 w-4 text-green-500" />
+          <AlertTitle>Cambios guardados</AlertTitle>
+          <AlertDescription>
+            La configuración ha sido actualizada correctamente.
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {saveStatus === 'error' && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            No se pudieron guardar los cambios. Intente nuevamente.
+          </AlertDescription>
+        </Alert>
+      )}
     </div>
   );
 };

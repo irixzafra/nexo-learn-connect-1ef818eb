@@ -1,135 +1,116 @@
 
 import { FeaturesConfig } from './types';
 
-// Feature dependency mapping
-const featureDependencies: Record<keyof FeaturesConfig, (keyof FeaturesConfig)[]> = {
-  // Design system
-  designSystemEnabled: [],
-  enableDesignSystem: [],
-  
-  // Content management
-  enableContentReordering: [],
-  enableCategoryManagement: [],
-  enableAdvancedEditor: ['enableContentReordering'],
-  
-  // UI Customization
-  enableThemeSwitcher: [],
-  enableMultiLanguage: [],
-  enableEditMode: [],
-  
-  // User management
-  enableRoleSwitcher: [],
-  enableRoleManagement: [],
-  enableCustomRoles: ['enableRoleManagement'],
-  enableInvitations: [],
-  enablePublicRegistration: [],
-  requireEmailVerification: [],
+/**
+ * Define las dependencias entre características:
+ * Cuando una característica depende de otra, no se puede activar si la dependencia está desactivada
+ * y no se puede desactivar si hay características que dependen de ella.
+ */
+export const featureDependencies: Record<keyof FeaturesConfig, Array<keyof FeaturesConfig>> = {
+  // Core
+  enableDarkMode: [],
+  enableNotifications: [],
+  enableAnalytics: [],
+  enableFeedback: [],
+  enableUserRegistration: [],
+  enableSocialLogin: ['enableUserRegistration'],
+  enablePublicProfiles: ['enableUserRegistration'],
   
   // Onboarding
   enableOnboardingSystem: [],
   showOnboardingTrigger: ['enableOnboardingSystem'],
-  autoStartOnboarding: ['enableOnboardingSystem', 'showOnboardingTrigger'],
+  autoStartOnboarding: ['enableOnboardingSystem'],
   
-  // Development tools
-  enableTestDataGenerator: [],
-  enableDatabaseDevMode: [],
-  enableMaintenanceMode: [],
-  enableQueryCache: [],
-  enableAutoBackups: [],
+  // Learning
+  enableCourses: [],
+  enableLearningPaths: ['enableCourses'],
+  enableCertificates: ['enableCourses'],
+  enableAssessments: ['enableCourses'],
   
-  // Notifications
-  enableNotifications: [],
-  enableRealTimeNotifications: ['enableNotifications'],
-  enableEmailNotifications: ['enableNotifications'],
+  // Community
+  enableCommunity: [],
+  enableForums: ['enableCommunity'],
+  enableGroupDiscussions: ['enableCommunity', 'enableForums'],
+  enableUserMessaging: ['enableUserRegistration'],
   
-  // Security
-  enable2FA: [],
-  enableMultipleSessions: [],
-  enableActivityLog: [],
+  // Commerce
+  enableCommerce: [],
+  enableSubscriptions: ['enableCommerce'],
+  enableCoupons: ['enableCommerce'],
   
-  // Integrations
-  enableAI: [],
-  enablePublicApi: [],
-  enableWebhooks: [],
-  
-  // Gamification
-  enableLeaderboard: []
+  // Administrative
+  enableNestedCategories: [],
+  enableAuditLogs: [],
+  enableRoleBasedAccess: [],
+  enableContentWorkflows: []
 };
 
-// Feature descriptions
-const featureDescriptions: Record<keyof FeaturesConfig, string> = {
-  // Design system
-  designSystemEnabled: "Habilita el sistema de diseño completo de la plataforma",
-  enableDesignSystem: "Activa componentes avanzados del sistema de diseño",
+/**
+ * Obtiene las dependencias inversas: qué características dependen de una característica dada
+ */
+export const getReverseDependencies = () => {
+  const reverseDeps: Record<keyof FeaturesConfig, Array<keyof FeaturesConfig>> = {} as Record<keyof FeaturesConfig, Array<keyof FeaturesConfig>>;
   
-  // Content management
-  enableContentReordering: "Permite reordenar contenidos mediante drag and drop",
-  enableCategoryManagement: "Activa la gestión avanzada de categorías",
-  enableAdvancedEditor: "Habilita el editor de contenido avanzado con más funciones",
-  
-  // UI Customization
-  enableThemeSwitcher: "Permite a los usuarios cambiar entre temas claro y oscuro",
-  enableMultiLanguage: "Activa soporte para múltiples idiomas en la interfaz",
-  enableEditMode: "Habilita el modo de edición en línea para administradores",
-  
-  // User management
-  enableRoleSwitcher: "Permite a usuarios con permisos cambiar entre roles",
-  enableRoleManagement: "Activa la administración de roles del sistema",
-  enableCustomRoles: "Permite crear y configurar roles personalizados",
-  enableInvitations: "Activa el sistema de invitación de usuarios",
-  enablePublicRegistration: "Permite el registro público de nuevos usuarios",
-  requireEmailVerification: "Requiere verificación de email al registrarse",
-  
-  // Onboarding
-  enableOnboardingSystem: "Activa el sistema de onboarding para nuevos usuarios",
-  showOnboardingTrigger: "Muestra el botón de inicio de onboarding",
-  autoStartOnboarding: "Inicia automáticamente el onboarding para nuevos usuarios",
-  
-  // Development tools
-  enableTestDataGenerator: "Habilita herramientas para generar datos de prueba",
-  enableDatabaseDevMode: "Activa modo desarrollador para la base de datos",
-  enableMaintenanceMode: "Permite activar el modo mantenimiento",
-  enableQueryCache: "Activa caché de consultas para mejor rendimiento",
-  enableAutoBackups: "Habilita copias de seguridad automáticas",
-  
-  // Notifications
-  enableNotifications: "Activa el sistema de notificaciones",
-  enableRealTimeNotifications: "Habilita notificaciones en tiempo real",
-  enableEmailNotifications: "Activa notificaciones por email",
-  
-  // Security
-  enable2FA: "Habilita autenticación de dos factores",
-  enableMultipleSessions: "Permite múltiples sesiones simultáneas",
-  enableActivityLog: "Activa registro de actividad de usuarios",
-  
-  // Integrations
-  enableAI: "Habilita funciones de inteligencia artificial",
-  enablePublicApi: "Activa la API pública para integraciones",
-  enableWebhooks: "Permite configurar webhooks para eventos",
-  
-  // Gamification
-  enableLeaderboard: "Activa tablero de clasificación de usuarios"
-};
-
-// Get all dependencies for a feature
-export const getFeatureDependencies = (feature: keyof FeaturesConfig): (keyof FeaturesConfig)[] => {
-  return featureDependencies[feature] || [];
-};
-
-// Get all features that depend on a specific feature
-export const getFeatureDependents = (feature: keyof FeaturesConfig): (keyof FeaturesConfig)[] => {
-  const dependents: (keyof FeaturesConfig)[] = [];
-  
-  Object.entries(featureDependencies).forEach(([key, dependencies]) => {
-    if (dependencies.includes(feature as keyof FeaturesConfig)) {
-      dependents.push(key as keyof FeaturesConfig);
-    }
+  // Inicializar array vacío para cada característica
+  Object.keys(featureDependencies).forEach(key => {
+    reverseDeps[key as keyof FeaturesConfig] = [];
   });
   
-  return dependents;
+  // Llenar las dependencias inversas
+  Object.entries(featureDependencies).forEach(([feature, deps]) => {
+    deps.forEach(dep => {
+      reverseDeps[dep].push(feature as keyof FeaturesConfig);
+    });
+  });
+  
+  return reverseDeps;
 };
 
-// Get the description for a feature
+/**
+ * Descripciones de las características
+ */
+export const featureDescriptions: Record<keyof FeaturesConfig, string> = {
+  // Core
+  enableDarkMode: 'Permite que los usuarios cambien entre tema claro y oscuro',
+  enableNotifications: 'Activa el sistema de notificaciones en tiempo real',
+  enableAnalytics: 'Recolecta datos anónimos de uso para mejorar la plataforma',
+  enableFeedback: 'Permite que los usuarios envíen comentarios y sugerencias',
+  enableUserRegistration: 'Habilita el registro de nuevos usuarios en la plataforma',
+  enableSocialLogin: 'Permite iniciar sesión con cuentas de redes sociales',
+  enablePublicProfiles: 'Hace que los perfiles de usuario sean visibles para otros',
+  
+  // Onboarding
+  enableOnboardingSystem: 'Activa el sistema de onboarding para nuevos usuarios',
+  showOnboardingTrigger: 'Muestra un botón para iniciar manualmente el onboarding',
+  autoStartOnboarding: 'Inicia automáticamente el onboarding para nuevos usuarios',
+  
+  // Learning
+  enableCourses: 'Activa el sistema de cursos y lecciones',
+  enableLearningPaths: 'Permite la creación de rutas de aprendizaje',
+  enableCertificates: 'Habilita la emisión de certificados al completar cursos',
+  enableAssessments: 'Activa el sistema de evaluaciones y exámenes',
+  
+  // Community
+  enableCommunity: 'Activa las funciones de comunidad y redes sociales',
+  enableForums: 'Habilita los foros de discusión general',
+  enableGroupDiscussions: 'Permite discusiones en grupos específicos',
+  enableUserMessaging: 'Activa los mensajes directos entre usuarios',
+  
+  // Commerce
+  enableCommerce: 'Habilita las funciones de comercio electrónico',
+  enableSubscriptions: 'Permite suscripciones de pago recurrentes',
+  enableCoupons: 'Activa el sistema de cupones de descuento',
+  
+  // Administrative
+  enableNestedCategories: 'Permite categorías con jerarquías multinivel',
+  enableAuditLogs: 'Registra cambios importantes en el sistema',
+  enableRoleBasedAccess: 'Implementa control de acceso basado en roles',
+  enableContentWorkflows: 'Habilita flujos de trabajo para creación de contenido'
+};
+
+/**
+ * Obtiene la descripción de una característica
+ */
 export const getDependencyDescription = (feature: keyof FeaturesConfig): string => {
-  return featureDescriptions[feature] || '';
+  return featureDescriptions[feature] || 'No hay descripción disponible';
 };

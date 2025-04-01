@@ -1,114 +1,151 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
-import { toast } from 'sonner';
-import { useFeatures } from './features/FeaturesContext';
-import { useAuth } from './AuthContext';
-import { OnboardingStep, OnboardingContextValue } from './onboarding/types';
-import { useOnboardingState } from './onboarding/useOnboardingState';
+import { OnboardingStep, OnboardingContextValue, OnboardingStepConfig } from './onboarding/types';
+import { WelcomeStep } from '@/components/onboarding/steps/WelcomeStep';
+import { ProfileStep } from '@/components/onboarding/steps/ProfileStep';
+import { ExploreCoursesStep } from '@/components/onboarding/steps/ExploreCoursesStep';
+import { PlatformTourStep } from '@/components/onboarding/steps/PlatformTourStep';
+import { useFeatures } from './features/FeatureContext';
 
-// Valor por defecto del contexto
-const defaultContextValue: OnboardingContextValue = {
+// Configuración de los pasos de onboarding
+const onboardingSteps: OnboardingStepConfig[] = [
+  {
+    id: OnboardingStep.WELCOME,
+    title: 'Bienvenida',
+    component: <WelcomeStep />,
+    description: 'Introducción a la plataforma'
+  },
+  {
+    id: OnboardingStep.PROFILE,
+    title: 'Perfil',
+    component: <ProfileStep />,
+    description: 'Configura tu perfil de usuario'
+  },
+  {
+    id: OnboardingStep.EXPLORE,
+    title: 'Explorar',
+    component: <ExploreCoursesStep />,
+    description: 'Descubre cursos y contenidos'
+  },
+  {
+    id: OnboardingStep.TOUR,
+    title: 'Tour',
+    component: <PlatformTourStep />,
+    description: 'Recorrido por la plataforma'
+  }
+];
+
+// Crear el contexto con un valor inicial
+const OnboardingContext = createContext<OnboardingContextValue>({
   isActive: false,
   isOpen: false,
   openOnboarding: () => {},
   closeOnboarding: () => {},
   currentStep: null,
-  totalSteps: 0,
+  totalSteps: onboardingSteps.length,
   goToStep: () => {},
   nextStep: () => {},
   prevStep: () => {},
   isFirstStep: true,
-  isLastStep: false,
+  isLastStep: true,
   progress: 0,
   restartOnboarding: () => {},
   completeOnboarding: () => {},
   isOnboardingComplete: false,
-};
+  previousStep: () => {},
+  skipOnboarding: () => {}
+});
 
-const OnboardingContext = createContext<OnboardingContextValue>(defaultContextValue);
-
-export const useOnboarding = () => useContext(OnboardingContext);
-
-interface OnboardingProviderProps {
-  children: React.ReactNode;
-}
-
-export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({ children }) => {
-  const { user } = useAuth();
-  const { featuresConfig } = useFeatures();
-  const [isOnboardingComplete, setIsOnboardingComplete] = useLocalStorage('onboarding-completed', false);
+export const OnboardingProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+  const { features } = useFeatures();
+  const [isOnboardingComplete, setIsOnboardingComplete] = useLocalStorage('onboarding-complete', false);
+  const [isActive, setIsActive] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [forceStart, setForceStart] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
-  const { 
-    isActive,
-    currentStep,
-    totalSteps,
-    goToStep,
-    nextStep,
-    prevStep,
-    isFirstStep,
-    isLastStep,
-    progress,
-    allSteps,
-    restartOnboarding,
-    setActive
-  } = useOnboardingState();
-
-  // Auto-iniciar el onboarding para usuarios nuevos si la función está habilitada
+  // Detectar si es un usuario nuevo y mostrar onboarding automáticamente
   useEffect(() => {
-    if (
-      user && 
-      featuresConfig.enableOnboardingSystem && 
-      !isOnboardingComplete &&
-      featuresConfig.autoStartOnboardingForNewUsers
-    ) {
-      // Verificar si el usuario es nuevo (creado en los últimos 7 días)
-      const userCreationDate = user.created_at ? new Date(user.created_at) : null;
-      const now = new Date();
-      const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7));
+    const isNewUser = localStorage.getItem('is-new-user') === 'true';
+    
+    if (isNewUser && features?.enableOnboardingSystem && !isOnboardingComplete) {
+      const autoStart = features?.autoStartOnboarding || false;
       
-      if (userCreationDate && userCreationDate > sevenDaysAgo) {
-        openOnboarding();
+      if (autoStart) {
+        setIsActive(true);
+        setIsOpen(true);
+        localStorage.setItem('is-new-user', 'false');
       }
     }
-  }, [user, featuresConfig.enableOnboardingSystem, isOnboardingComplete]);
+  }, [features, isOnboardingComplete]);
 
-  // Abrir el onboarding cuando se solicita explícitamente
-  useEffect(() => {
-    if (forceStart) {
-      setIsOpen(true);
-      setForceStart(false);
-    }
-  }, [forceStart]);
+  // Calcular el progreso actual
+  const progress = ((currentStepIndex + 1) / onboardingSteps.length) * 100;
+  
+  // El paso actual
+  const currentStep = onboardingSteps[currentStepIndex]?.id || null;
+  
+  // Verificar si es el primer o último paso
+  const isFirstStep = currentStepIndex === 0;
+  const isLastStep = currentStepIndex === onboardingSteps.length - 1;
 
+  // Abrir el modal de onboarding
   const openOnboarding = () => {
-    if (!featuresConfig.enableOnboardingSystem) {
-      return;
-    }
-    
-    setActive(true);
+    setIsActive(true);
     setIsOpen(true);
   };
 
+  // Cerrar el modal de onboarding
   const closeOnboarding = () => {
     setIsOpen(false);
-    
-    // Dejamos un pequeño retraso antes de desactivar para que la animación
-    // de cierre del diálogo termine correctamente
-    setTimeout(() => {
-      setActive(false);
-    }, 300);
   };
 
+  // Ir a un paso específico
+  const goToStep = (step: OnboardingStep) => {
+    const stepIndex = onboardingSteps.findIndex(s => s.id === step);
+    if (stepIndex !== -1) {
+      setCurrentStepIndex(stepIndex);
+    }
+  };
+
+  // Ir al siguiente paso
+  const nextStep = () => {
+    if (!isLastStep) {
+      setCurrentStepIndex(prevIndex => prevIndex + 1);
+    } else {
+      completeOnboarding();
+    }
+  };
+
+  // Ir al paso anterior
+  const prevStep = () => {
+    if (!isFirstStep) {
+      setCurrentStepIndex(prevIndex => prevIndex - 1);
+    }
+  };
+
+  // Alias para prevStep para compatibilidad
+  const previousStep = prevStep;
+
+  // Reiniciar el onboarding
+  const restartOnboarding = () => {
+    setCurrentStepIndex(0);
+    setIsActive(true);
+    setIsOpen(true);
+  };
+
+  // Completar el onboarding
   const completeOnboarding = () => {
     setIsOnboardingComplete(true);
-    closeOnboarding();
-    toast.success('¡Onboarding completado! Ya puedes empezar a usar la plataforma.');
+    setIsOpen(false);
+    setIsActive(false);
+  };
+
+  // Saltar el onboarding
+  const skipOnboarding = () => {
+    setIsOnboardingComplete(true);
+    setIsOpen(false);
+    setIsActive(false);
   };
 
   const value: OnboardingContextValue = {
@@ -117,7 +154,7 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({ children
     openOnboarding,
     closeOnboarding,
     currentStep,
-    totalSteps,
+    totalSteps: onboardingSteps.length,
     goToStep,
     nextStep,
     prevStep,
@@ -127,6 +164,8 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({ children
     restartOnboarding,
     completeOnboarding,
     isOnboardingComplete,
+    previousStep,
+    skipOnboarding
   };
 
   return (
@@ -136,5 +175,4 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({ children
   );
 };
 
-// Re-exportar los tipos
-export type { OnboardingContextValue };
+export const useOnboarding = () => useContext(OnboardingContext);

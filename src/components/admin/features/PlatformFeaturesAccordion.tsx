@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { FeaturesConfig } from '@/contexts/features/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useFeatureDependencies } from '@/hooks/useFeatureDependencies';
 import { getDependencyDescription } from '@/contexts/features/dependencies';
 import { Info } from 'lucide-react';
+import { FeaturesConfig } from '@/contexts/features/types';
 
 interface PlatformFeaturesAccordionProps {
   features: FeaturesConfig;
@@ -16,10 +16,10 @@ interface PlatformFeaturesAccordionProps {
 /**
  * Componente para mostrar todas las características de la plataforma en un acordeón
  */
-const PlatformFeaturesAccordion: React.FC<PlatformFeaturesAccordionProps> = ({
-  features,
-  onToggleFeature,
-  isLoading = false,
+const PlatformFeaturesAccordion: React.FC<PlatformFeaturesAccordionProps> = ({ 
+  features, 
+  onToggleFeature, 
+  isLoading = false 
 }) => {
   const { getDependentFeatures, checkIfCanDisable } = useFeatureDependencies();
 
@@ -35,11 +35,10 @@ const PlatformFeaturesAccordion: React.FC<PlatformFeaturesAccordionProps> = ({
               {Object.entries(features).map(([key, value]) => {
                 // Convertir key de string a keyof FeaturesConfig
                 const featureKey = key as keyof FeaturesConfig;
-                
                 const dependentFeatures = getDependentFeatures(featureKey);
                 const hasDependents = dependentFeatures.length > 0;
                 const canDisable = checkIfCanDisable(featureKey);
-                
+
                 return (
                   <div key={key} className="flex flex-col space-y-2">
                     <div className="flex items-start justify-between">
@@ -55,11 +54,12 @@ const PlatformFeaturesAccordion: React.FC<PlatformFeaturesAccordionProps> = ({
                         <div className="text-xs text-muted-foreground">
                           {getDependencyDescription(featureKey) || 'Descripción no disponible'}
                         </div>
-                        
                         {hasDependents && (
                           <div className="mt-1 text-xs text-blue-600 flex items-center">
                             <Info className="h-3 w-3 mr-1" />
-                            <span>Necesario para: {dependentFeatures.join(', ')}</span>
+                            <span>
+                              Necesario para: {dependentFeatures.join(', ')}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -86,3 +86,4 @@ const PlatformFeaturesAccordion: React.FC<PlatformFeaturesAccordionProps> = ({
 };
 
 export default PlatformFeaturesAccordion;
+export { PlatformFeaturesAccordion };

@@ -1,52 +1,79 @@
 
-import { useCallback } from 'react';
+import { useFeatures } from '@/contexts/features/FeatureContext';
+import { featureDependencies, getReverseDependencies } from '@/contexts/features/dependencies';
 import { FeaturesConfig } from '@/contexts/features/types';
-import { getFeatureDependencies, getFeatureDependents } from '@/contexts/features/dependencies';
 
 /**
- * Custom hook to handle feature dependencies and relationships
+ * Hook para manejar las dependencias entre características del sistema
  */
 export const useFeatureDependencies = () => {
+  const { features } = useFeatures();
+  
+  // Obtener características que dependen de una característica dada
+  const reverseDependencies = getReverseDependencies();
+  
   /**
-   * Get all features that depend on a specific feature
+   * Verifica si una característica puede ser desactivada
+   * No se puede desactivar si hay características activas que dependen de ella
    */
-  const getDependentFeatures = useCallback((feature: keyof FeaturesConfig): string[] => {
-    return getFeatureDependents(feature);
-  }, []);
-
+  const checkIfCanDisable = (feature: keyof FeaturesConfig): boolean => {
+    const dependents = reverseDependencies[feature];
+    
+    // Si no hay dependientes, siempre se puede desactivar
+    if (!dependents || dependents.length === 0) {
+      return true;
+    }
+    
+    // Verificar si alguna de las características dependientes está activa
+    for (const dependent of dependents) {
+      if (features && features[dependent]) {
+        return false;
+      }
+    }
+    
+    return true;
+  };
+  
   /**
-   * Check if a feature can be disabled based on its dependents
+   * Obtiene la lista de características que dependen de una característica dada
    */
-  const checkIfCanDisable = useCallback((feature: keyof FeaturesConfig): boolean => {
-    const dependents = getFeatureDependents(feature);
-    // Si no tiene dependientes, se puede deshabilitar
-    return dependents.length === 0;
-  }, []);
-
+  const getDependentFeatures = (feature: keyof FeaturesConfig): string[] => {
+    return reverseDependencies[feature] || [];
+  };
+  
   /**
-   * Get all dependencies for a specific feature
+   * Obtiene la lista de características de las que depende una característica dada
    */
-  const getFeatureDeps = useCallback((feature: keyof FeaturesConfig): (keyof FeaturesConfig)[] => {
-    return getFeatureDependencies(feature);
-  }, []);
-
+  const getDependencies = (feature: keyof FeaturesConfig): string[] => {
+    return featureDependencies[feature] || [];
+  };
+  
   /**
-   * Check if all dependencies of a feature are enabled
+   * Verifica si una característica puede ser activada
+   * No se puede activar si alguna de sus dependencias está desactivada
    */
-  const checkDependenciesEnabled = useCallback((
-    feature: keyof FeaturesConfig, 
-    featuresConfig: FeaturesConfig
-  ): boolean => {
-    const dependencies = getFeatureDependencies(feature);
-    return dependencies.every(dep => !!featuresConfig[dep]);
-  }, []);
-
+  const checkIfCanEnable = (feature: keyof FeaturesConfig): boolean => {
+    const dependencies = featureDependencies[feature];
+    
+    // Si no hay dependencias, siempre se puede activar
+    if (!dependencies || dependencies.length === 0) {
+      return true;
+    }
+    
+    // Verificar si todas las dependencias están activas
+    for (const dependency of dependencies) {
+      if (features && !features[dependency]) {
+        return false;
+      }
+    }
+    
+    return true;
+  };
+  
   return {
-    getDependentFeatures,
     checkIfCanDisable,
-    getFeatureDeps,
-    checkDependenciesEnabled
+    checkIfCanEnable,
+    getDependentFeatures,
+    getDependencies
   };
 };
-
-export default useFeatureDependencies;
