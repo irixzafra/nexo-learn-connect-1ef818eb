@@ -34,7 +34,7 @@ interface DraggableContentProps {
   resizable?: boolean;
   layout?: 'vertical' | 'horizontal';
   minSize?: number;
-  onAddItem?: (content: string, position?: number) => void;
+  onAddItem?: (content: string, type?: string) => void;
 }
 
 const DraggableContent: React.FC<DraggableContentProps> = ({
@@ -57,13 +57,10 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
-  // Adapter function to convert position number to type string for SectionInsert
   const handleAddSection = (content: string, type?: string) => {
     if (onAddItem) {
-      const position = type ? undefined : parseInt(type || '');
-      onAddItem(content, position);
+      onAddItem(content, type);
     } else {
-      // Si no hay una función personalizada, agregamos el elemento al estado local
       const newItem: DraggableItem = {
         id: `item-${Date.now()}`,
         order: draggableItems.length + 1,
@@ -83,14 +80,11 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     
     setDraggedItem(item);
     e.dataTransfer.effectAllowed = 'move';
-    // Required for Firefox
     e.dataTransfer.setData('text/plain', item.id);
     
-    // Añadir clase de estilos durante el arrastre
     const element = e.currentTarget as HTMLElement;
     element.classList.add('opacity-50', 'border-2', 'border-primary');
     
-    // Mostrar una guía visual de que estamos arrastrando
     toast.info("Arrastra para reordenar y suelta para guardar la posición", {
       id: "drag-info",
       duration: 2000,
@@ -101,16 +95,13 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     e.preventDefault();
     if (!draggedItem || draggedItem.id === item.id || !isReorderMode) return;
     
-    // Actualizar el índice sobre el que estamos
     setHoverIndex(index);
     
-    // Añadir indicadores visuales
     const element = e.currentTarget as HTMLElement;
     element.classList.add('bg-primary/10', 'border-primary');
   };
   
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    // Eliminar los indicadores visuales
     const element = e.currentTarget as HTMLElement;
     element.classList.remove('bg-primary/10', 'border-primary');
     setHoverIndex(null);
@@ -119,7 +110,6 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
   const handleDrop = (e: React.DragEvent<HTMLDivElement>, targetItem: DraggableItem, targetIndex: number) => {
     e.preventDefault();
     
-    // Eliminar los indicadores visuales
     const allElements = document.querySelectorAll('.draggable-item');
     allElements.forEach(el => {
       (el as HTMLElement).classList.remove('opacity-50', 'border-2', 'border-primary', 'bg-primary/10');
@@ -127,17 +117,14 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     
     if (!draggedItem || draggedItem.id === targetItem.id || !isReorderMode) return;
     
-    // Reordenar items
     const newItems = [...draggableItems];
     const draggedIndex = newItems.findIndex(i => i.id === draggedItem.id);
     
     if (draggedIndex === -1) return;
     
-    // Remover el elemento arrastrado y colocarlo en la nueva posición
     const [removedItem] = newItems.splice(draggedIndex, 1);
     newItems.splice(targetIndex, 0, removedItem);
     
-    // Actualizar order values
     const updatedItems = newItems.map((item, index) => ({
       ...item,
       order: index + 1
@@ -146,12 +133,10 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     setDraggableItems(updatedItems);
     setHoverIndex(null);
     
-    // Guardar el nuevo orden
     handleSaveReorder(updatedItems);
   };
 
   const handleDragEnd = async (e: React.DragEvent<HTMLDivElement>) => {
-    // Eliminar los indicadores visuales
     const allElements = document.querySelectorAll('.draggable-item');
     allElements.forEach(el => {
       (el as HTMLElement).classList.remove('opacity-50', 'border-2', 'border-primary', 'bg-primary/10');
@@ -178,14 +163,12 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
         }
         toast.success("Elementos reordenados correctamente");
       } else {
-        // Revert to original order on failure
         setDraggableItems(items);
         toast.error("No se pudo guardar el nuevo orden");
       }
     } catch (error) {
       console.error('Error saving new order:', error);
       toast.error("Error al reordenar los elementos");
-      // Revert to original order on error
       setDraggableItems(items);
     }
   };
@@ -199,7 +182,6 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     setIsGenerating(true);
     
     try {
-      // Here we would call an AI API, for now simulating response
       setTimeout(() => {
         setAiResult(`Contenido generado basado en: ${prompt}`);
         setIsGenerating(false);
@@ -227,8 +209,6 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     
     const newItems = [...draggableItems];
     
-    // No hacer nada si intentamos mover el primer elemento hacia arriba
-    // o el último elemento hacia abajo
     if ((index === 0 && direction === 'up') || 
         (index === newItems.length - 1 && direction === 'down')) {
       return;
@@ -236,10 +216,8 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     
     const newIndex = direction === 'up' ? index - 1 : index + 1;
     
-    // Intercambiar elementos
     [newItems[index], newItems[newIndex]] = [newItems[newIndex], newItems[index]];
     
-    // Actualizar orden
     const updatedItems = newItems.map((item, idx) => ({
       ...item,
       order: idx + 1
@@ -247,7 +225,6 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
     
     setDraggableItems(updatedItems);
     
-    // Guardar el nuevo orden
     handleSaveReorder(updatedItems);
   };
 
@@ -370,7 +347,6 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
                   <ResizableHandle withHandle />
                 )}
                 
-                {/* Insert Section Component between panels */}
                 {isEditMode && index < draggableItems.length - 1 && (
                   <SectionInsert onAddSection={handleAddSection} />
                 )}
@@ -378,7 +354,6 @@ const DraggableContent: React.FC<DraggableContentProps> = ({
             ))}
           </ResizablePanelGroup>
           
-          {/* Add section at the end */}
           {isEditMode && <SectionInsert onAddSection={handleAddSection} />}
           
           {isEditMode && <AddItemButton />}

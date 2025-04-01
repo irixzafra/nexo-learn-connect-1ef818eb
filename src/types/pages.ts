@@ -35,3 +35,19 @@ export interface PageRevision {
   created_at: string;
   created_by: string;
 }
+
+// Helper function to convert content to string for displaying/editing
+export const contentToString = (content: string | Record<string, any>): string => {
+  if (typeof content === 'string') {
+    return content;
+  }
+  return JSON.stringify(content);
+};
+
+// Helper function to get a specific field from content
+export const getContentValue = (content: string | Record<string, any>, field: string, defaultValue: string = ''): string => {
+  if (typeof content === 'string') {
+    return content;
+  }
+  return content[field] || defaultValue;
+};

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SitePage, PageBlock, PageBlockType } from '@/types/pages';
@@ -8,10 +7,7 @@ import InlineEdit from '@/components/admin/InlineEdit';
 import DraggableContent from '@/components/admin/DraggableContent';
 import SectionInsert from '@/components/admin/SectionInsert';
 
-// Import the page service
 const getPageBySlug = async (slug: string): Promise<SitePage | null> => {
-  // This is a placeholder - in a real app, this would fetch from an API
-  // For now, we'll just simulate a delay and return some dummy data
   return new Promise((resolve) => {
     setTimeout(() => {
       if (slug === 'home') {
@@ -49,7 +45,7 @@ const PageRenderer: React.FC = () => {
     const fetchPage = async () => {
       setLoading(true);
       try {
-        const pageSlug = slug || 'home'; // Default to home if no slug
+        const pageSlug = slug || 'home';
         const pageData = await getPageBySlug(pageSlug);
         
         if (pageData) {
@@ -102,7 +98,6 @@ const PageRenderer: React.FC = () => {
     );
   }
 
-  // Transform content blocks to draggable items
   const contentBlocks = page?.content?.blocks || [];
   const draggableItems = contentBlocks.map((block: PageBlock, index: number) => ({
     id: block.id || `block-${index}`,
@@ -135,13 +130,20 @@ const PageRenderer: React.FC = () => {
     text: typeof block.content === 'string' ? block.content : JSON.stringify(block.content)
   }));
 
-  // Updated to align with SectionInsert component
   const handleAddBlock = (content: string, type?: string) => {
     if (!page || !page.content) return;
     
-    // Convert position from string to number if it's a valid number
-    const position = type && !isNaN(parseInt(type)) ? parseInt(type) : undefined;
-    const blockType = (position === undefined && type) ? type as PageBlockType : 'text';
+    let blockType: PageBlockType = 'text';
+    let position: number | undefined = undefined;
+    
+    if (type) {
+      const parsedPosition = parseInt(type);
+      if (!isNaN(parsedPosition)) {
+        position = parsedPosition;
+      } else {
+        blockType = type as PageBlockType;
+      }
+    }
     
     const newBlock: PageBlock = {
       id: `block-${Date.now()}`,
@@ -165,14 +167,12 @@ const PageRenderer: React.FC = () => {
       }
     });
     
-    // Here you would typically save the new content to the backend
     console.log("Added new block:", newBlock);
   };
 
   const handleReorderBlocks = (items: any[]) => {
     if (!page || !page.content) return;
     
-    // Map the reordered items back to content blocks
     const reorderedBlocks = items.map((item, index) => {
       const originalBlock = page.content?.blocks.find((b: any) => b.id === item.id);
       if (!originalBlock) return null;
@@ -191,11 +191,9 @@ const PageRenderer: React.FC = () => {
       }
     });
     
-    // Here you would typically save the reordered content to the backend
     console.log("Reordered blocks:", reorderedBlocks);
   };
 
-  // Basic layout renderer based on page layout type
   const renderPageContent = () => {
     if (isEditMode) {
       return (

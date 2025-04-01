@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { SitePage, PageBlock } from '@/types/pages';
+import { SitePage, PageBlock, contentToString, getContentValue } from '@/types/pages';
 
 interface PagePreviewProps {
   page: {
@@ -19,7 +18,7 @@ const PagePreview: React.FC<PagePreviewProps> = ({ page }) => {
       case 'text':
         return (
           <div className="prose max-w-none my-6">
-            {block.content.split('\n').map((paragraph, i) => (
+            {contentToString(block.content).split('\n').map((paragraph, i) => (
               <p key={i} className="mb-4">{paragraph}</p>
             ))}
           </div>
@@ -27,14 +26,14 @@ const PagePreview: React.FC<PagePreviewProps> = ({ page }) => {
       case 'hero':
         return (
           <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-8 rounded-lg text-center my-6">
-            <h2 className="text-3xl font-bold text-primary mb-4">{block.content}</h2>
+            <h2 className="text-3xl font-bold text-primary mb-4">{contentToString(block.content)}</h2>
           </div>
         );
       case 'cta':
         return (
           <div className="bg-primary text-primary-foreground rounded-lg p-8 text-center my-6">
             <h3 className="text-2xl font-bold mb-4">¡Actúa ahora!</h3>
-            <p className="mb-6">{block.content}</p>
+            <p className="mb-6">{contentToString(block.content)}</p>
             <button className="bg-white text-primary hover:bg-primary-foreground px-6 py-2 rounded-md font-medium transition-colors">
               Empezar
             </button>
@@ -55,7 +54,6 @@ const PagePreview: React.FC<PagePreviewProps> = ({ page }) => {
           </div>
         );
       default:
-        // Para otros tipos de bloques o desconocidos
         return (
           <div className="p-4 bg-muted rounded-md">
             <pre className="text-xs overflow-auto">
@@ -67,7 +65,6 @@ const PagePreview: React.FC<PagePreviewProps> = ({ page }) => {
   };
 
   const renderPageByLayout = () => {
-    // Renderizamos la página según el layout
     switch (page.layout) {
       case 'landing':
         return (
@@ -183,7 +180,6 @@ const PagePreview: React.FC<PagePreviewProps> = ({ page }) => {
         );
       
       default:
-        // Diseño por defecto
         return (
           <div className="max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-6">{page.title}</h1>

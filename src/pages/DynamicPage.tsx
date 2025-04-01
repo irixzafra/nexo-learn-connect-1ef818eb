@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { getPageBySlug } from '@/services/pagesService';
-import { SitePage, PageBlock, PageBlockType } from '@/types/pages';
+import { SitePage, PageBlock, PageBlockType, contentToString } from '@/types/pages';
 import { Loader2 } from 'lucide-react';
 import PublicLayout from '@/layouts/PublicLayout';
 import NotFound from '@/pages/NotFound';
@@ -78,7 +78,7 @@ const DynamicPage: React.FC = () => {
             table="page_blocks"
             id={block.id || `block-${index}`}
             field="content"
-            value={block.content}
+            value={contentToString(block.content)}
             multiline={true}
             className="prose max-w-none"
           />
@@ -89,14 +89,14 @@ const DynamicPage: React.FC = () => {
               table="page_blocks"
               id={block.id || `block-${index}`}
               field="content"
-              value={block.content}
+              value={contentToString(block.content)}
               className="text-2xl font-bold"
             />
           </div>
         )}
       </div>
     ),
-    text: block.content
+    text: contentToString(block.content)
   }));
 
   const handleAddBlock = (content: string, type?: string) => {
@@ -183,10 +183,10 @@ const DynamicPage: React.FC = () => {
           <div className="blocks-container space-y-8">
             {contentBlocks.map((block: any, index: number) => (
               <div key={block.id || index} className="block">
-                {block.type === 'text' && <p>{block.content}</p>}
+                {block.type === 'text' && <p>{contentToString(block.content)}</p>}
                 {block.type === 'hero' && (
                   <div className="bg-primary/10 p-8 rounded-lg text-center mb-8">
-                    <h2 className="text-2xl font-bold">{block.content}</h2>
+                    <h2 className="text-2xl font-bold">{contentToString(block.content)}</h2>
                   </div>
                 )}
               </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import {
@@ -179,10 +178,20 @@ const PageContentEditor: React.FC<PageContentEditorProps> = ({ form }) => {
                             
                             <CardContent className="p-4">
                               <Textarea 
-                                value={block.content}
+                                value={typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}
                                 onChange={(e) => {
                                   const newBlocks = [...blocks];
-                                  newBlocks[index].content = e.target.value;
+                                  try {
+                                    // Try to parse as JSON if it starts with { or [
+                                    if (e.target.value.trim().startsWith('{') || e.target.value.trim().startsWith('[')) {
+                                      newBlocks[index].content = JSON.parse(e.target.value);
+                                    } else {
+                                      newBlocks[index].content = e.target.value;
+                                    }
+                                  } catch (err) {
+                                    // If parsing fails, just store as string
+                                    newBlocks[index].content = e.target.value;
+                                  }
                                   form.setValue('content', {
                                     ...content,
                                     blocks: newBlocks
