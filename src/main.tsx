@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
@@ -8,9 +7,9 @@ import { ThemeProvider } from './contexts/ThemeContext.tsx';
 import { AuthProvider } from './contexts/AuthContext.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { FeaturesProvider } from './contexts/features/FeaturesContext.tsx';
-import { EditModeProvider } from './contexts/EditModeContext.tsx'; // Still need this for compatibility
+import { EditModeProvider } from './contexts/EditModeContext.tsx';
+import './styles/accessibility.css';
 
-// Create a client for React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

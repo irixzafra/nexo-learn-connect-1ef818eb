@@ -1,0 +1,148 @@
+
+/* Accessibility Styles */
+
+/* High Contrast Mode */
+.high-contrast {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #121212;
+  --card-foreground: #ffffff;
+  --popover: #121212;
+  --popover-foreground: #ffffff;
+  --primary: #ffcc00;
+  --primary-foreground: #000000;
+  --secondary: #2b2b2b;
+  --secondary-foreground: #ffffff;
+  --muted: #1e1e1e;
+  --muted-foreground: #dddddd;
+  --accent: #333333;
+  --accent-foreground: #ffffff;
+  --destructive: #ff4d4d;
+  --destructive-foreground: #ffffff;
+  --border: #444444;
+  --input: #2b2b2b;
+  --ring: #ffcc00;
+  
+  /* Increase contrast for focus states */
+  --focus-ring: 0 0 0 3px var(--ring);
+}
+
+.high-contrast a, 
+.high-contrast button, 
+.high-contrast input, 
+.high-contrast select {
+  outline: 2px solid transparent;
+}
+
+.high-contrast a:focus, 
+.high-contrast button:focus, 
+.high-contrast input:focus, 
+.high-contrast select:focus {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Reduced Motion */
+.reduce-motion * {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+}
+
+/* Text Sizes */
+.text-size-small {
+  --font-size-multiplier: 0.85;
+}
+
+.text-size-normal {
+  --font-size-multiplier: 1;
+}
+
+.text-size-large {
+  --font-size-multiplier: 1.2;
+}
+
+.text-size-x-large {
+  --font-size-multiplier: 1.5;
+}
+
+/* Apply text size to common elements */
+.text-size-small h1, 
+.text-size-large h1,
+.text-size-x-large h1,
+.text-size-small h2, 
+.text-size-large h2,
+.text-size-x-large h2,
+.text-size-small h3, 
+.text-size-large h3,
+.text-size-x-large h3,
+.text-size-small h4, 
+.text-size-large h4,
+.text-size-x-large h4,
+.text-size-small p, 
+.text-size-large p,
+.text-size-x-large p,
+.text-size-small span, 
+.text-size-large span,
+.text-size-x-large span,
+.text-size-small div, 
+.text-size-large div,
+.text-size-x-large div,
+.text-size-small button, 
+.text-size-large button,
+.text-size-x-large button,
+.text-size-small a, 
+.text-size-large a,
+.text-size-x-large a,
+.text-size-small label, 
+.text-size-large label,
+.text-size-x-large label,
+.text-size-small input, 
+.text-size-large input,
+.text-size-x-large input,
+.text-size-small select, 
+.text-size-large select,
+.text-size-x-large select,
+.text-size-small textarea, 
+.text-size-large textarea,
+.text-size-x-large textarea {
+  font-size: calc(var(--font-size-multiplier) * 100%);
+}
+
+/* Enhanced Focus Indicators */
+.focus-visible:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Screen Reader Only (visually hidden but accessible to screen readers) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Larger clickable areas for buttons and links */
+.click-assist button,
+.click-assist a {
+  padding: 0.5rem !important;
+  margin: 0.25rem !important;
+}
+
+/* Navigation modes */
+.nav-simplified .sidebar-secondary-content,
+.nav-simplified .extra-menu-items {
+  display: none !important;
+}
+
+.nav-text-only .sidebar-icon,
+.nav-text-only .header-icon {
+  display: none !important;
+}
