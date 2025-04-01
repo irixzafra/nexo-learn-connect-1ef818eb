@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { Pencil, Check, X, Wand2, Tag } from 'lucide-react';
+import { Pencil, Check, X, Wand2, Tag as TagIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
