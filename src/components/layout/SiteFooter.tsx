@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const SiteFooter: React.FC = () => {
   return (
@@ -8,6 +9,14 @@ const SiteFooter: React.FC = () => {
         <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
           &copy; {new Date().getFullYear()} Academia LMS. Todos los derechos reservados.
         </p>
+        <div className="flex items-center gap-4">
+          <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground">
+            Términos
+          </Link>
+          <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
+            Privacidad
+          </Link>
+        </div>
       </div>
     </footer>
   );

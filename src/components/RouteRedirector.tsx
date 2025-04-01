@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
 export interface RouteRedirectorProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 const RouteRedirector: React.FC<RouteRedirectorProps> = ({ children }) => {
