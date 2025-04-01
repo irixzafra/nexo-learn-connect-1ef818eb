@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Navigation, ExternalLink } from 'lucide-react';
+import { Navigation, ExternalLink, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,7 +19,7 @@ const NavigationExplorer: React.FC = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -52,6 +52,24 @@ const NavigationExplorer: React.FC = () => {
             <p className="mb-4">Consulta la documentación completa sobre la estructura de navegación del sistema.</p>
             <Button variant="outline" onClick={() => window.open('/docs/ESTRUCTURA_NAVEGACION.md', '_blank')}>
               Ver Documentación
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Map className="h-5 w-5 text-primary" />
+              Roadmap ERP-LMS
+            </CardTitle>
+            <CardDescription>
+              Plan detallado de implementación ERP-LMS
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4">Consulta el roadmap completo para la implementación del sistema ERP-LMS integrado.</p>
+            <Button variant="outline" onClick={() => window.open('/docs/ROADMAP_ERP_LMS.md', '_blank')}>
+              Ver Roadmap
             </Button>
           </CardContent>
         </Card>
