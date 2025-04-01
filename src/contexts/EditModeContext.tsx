@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, ReactNode } from 'react';
 
-// Create a simplified context without editing features
+// Simplified context with no editing functionality
 export interface EditModeContextProps {
   isEditMode: boolean;
   canEdit: boolean;
@@ -18,7 +18,7 @@ interface EditModeProviderProps {
 }
 
 export const EditModeProvider: React.FC<EditModeProviderProps> = ({ children }) => {
-  // Simplified context - editing functionality completely removed
+  // Always return false for edit mode since the feature has been removed
   const value = {
     isEditMode: false,
     canEdit: false,

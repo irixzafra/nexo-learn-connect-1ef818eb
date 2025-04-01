@@ -1,21 +1,9 @@
 
-import React, { useState } from 'react';
-import { 
-  Sheet, 
-  SheetContent
-} from '@/components/ui/sheet';
+import React from 'react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageData } from './types';
-import { getStatusBadge } from './utils/statusBadge';
-import PageDrawerHeader from './drawer-parts/PageDrawerHeader';
-import PageTabsNavigation from './drawer-parts/PageTabsNavigation';
-import PageDrawerFooter from './drawer-parts/PageDrawerFooter';
-import PagePreviewTab from './drawer-tabs/PagePreviewTab';
-import PageEditTab from './drawer-tabs/PageEditTab';
-import PageCodeTab from './drawer-tabs/PageCodeTab';
-import PageSettingsTab from './drawer-tabs/PageSettingsTab';
-import PageAIContentGenerator from './ai-generator/PageAIContentGenerator';
-import { useForm } from 'react-hook-form';
 
 interface PageEditorDrawerProps {
   page: PageData;
@@ -28,46 +16,81 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
   open,
   onOpenChange
 }) => {
-  const [activeTab, setActiveTab] = useState('preview');
-  const form = useForm({
-    defaultValues: {
-      content: { blocks: [] }
-    }
-  });
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl overflow-y-auto">
-        <PageDrawerHeader 
-          page={page} 
-          getStatusBadge={getStatusBadge} 
-        />
-        
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <PageTabsNavigation 
-            activeTab={activeTab} 
-            onTabChange={setActiveTab} 
-          />
-          
-          <TabsContent value="preview">
-            <PagePreviewTab page={page} />
+      <SheetContent className="sm:max-w-[600px] overflow-y-auto">
+        <SheetHeader className="mb-6">
+          <SheetTitle>Editar página: {page.title}</SheetTitle>
+        </SheetHeader>
+
+        <Tabs defaultValue="general">
+          <TabsList className="grid grid-cols-3 mb-4">
+            <TabsTrigger value="general">General</TabsTrigger>
+            <TabsTrigger value="content">Contenido</TabsTrigger>
+            <TabsTrigger value="settings">Configuración</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="general" className="space-y-4">
+            <div className="space-y-2">
+              <div className="font-medium">Título</div>
+              <div>{page.title}</div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="font-medium">Ruta</div>
+              <div className="bg-muted p-2 rounded">{page.path}</div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="font-medium">Descripción</div>
+              <div>{page.description}</div>
+            </div>
           </TabsContent>
-          
-          <TabsContent value="edit">
-            <PageEditTab page={page} />
-            <PageAIContentGenerator form={form} />
+
+          <TabsContent value="content" className="space-y-4">
+            {page.content?.blocks ? (
+              <div className="space-y-4">
+                {page.content.blocks.map((block, index) => (
+                  <div key={index} className="border p-3 rounded">
+                    <div className="font-medium mb-1">Bloque de tipo: {block.type}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {typeof block.content === 'string' 
+                        ? block.content 
+                        : JSON.stringify(block.content)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center p-4 text-muted-foreground">
+                Esta página no tiene bloques de contenido.
+              </div>
+            )}
           </TabsContent>
-          
-          <TabsContent value="code">
-            <PageCodeTab page={page} />
-          </TabsContent>
-          
-          <TabsContent value="settings">
-            <PageSettingsTab page={page} />
+
+          <TabsContent value="settings" className="space-y-4">
+            <div className="space-y-2">
+              <div className="font-medium">Estado</div>
+              <div className="capitalize">{page.status}</div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="font-medium">Categoría</div>
+              <div>{page.category || "Sin categoría"}</div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="font-medium">Tipo de acceso</div>
+              <div className="capitalize">{page.accessType || "Público"}</div>
+            </div>
           </TabsContent>
         </Tabs>
-        
-        <PageDrawerFooter onClose={() => onOpenChange(false)} />
+
+        <div className="mt-6 flex justify-end">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cerrar
+          </Button>
+        </div>
       </SheetContent>
     </Sheet>
   );

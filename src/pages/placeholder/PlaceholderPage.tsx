@@ -1,49 +1,46 @@
 
 import React from 'react';
-import { BookText, AlertTriangle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 interface PlaceholderPageProps {
   title: string;
   subtitle?: string;
+  returnPath?: string;
+  returnLabel?: string;
 }
 
-const PlaceholderPage: React.FC<PlaceholderPageProps> = ({ title, subtitle }) => {
+const PlaceholderPage: React.FC<PlaceholderPageProps> = ({
+  title,
+  subtitle = 'Esta página está en desarrollo',
+  returnPath = '/',
+  returnLabel = 'Volver al inicio',
+}) => {
   return (
-    <div className="container mx-auto p-6">
-      <Card className="p-8 border-2 border-dashed border-primary/30 flex flex-col items-center justify-center text-center space-y-8">
-        <div className="bg-primary/10 p-6 rounded-full">
-          <BookText className="h-16 w-16 text-primary" />
-        </div>
-        
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold">{title}</h1>
-          <p className="text-muted-foreground">
-            {subtitle || "Esta página está en desarrollo y estará disponible pronto."}
-          </p>
-        </div>
-        
-        <div className="bg-muted p-4 rounded-md max-w-lg text-sm border text-left">
-          <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
-            <span className="font-medium">Nota para desarrolladores</span>
+    <div className="container mx-auto py-8 px-4">
+      <Card className="mx-auto max-w-3xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">{title}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="bg-muted p-8 rounded-lg text-center">
+            <p className="text-muted-foreground">{subtitle}</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Estamos trabajando en esta funcionalidad y estará disponible próximamente.
+            </p>
           </div>
-          <p className="text-muted-foreground">
-            Esta es una página de marcador de posición que se muestra cuando un componente real 
-            aún no se ha implementado. Una vez que la implementación esté completa, 
-            actualice el router para utilizar el componente real.
-          </p>
-        </div>
-        
-        <div className="flex gap-4">
-          <Button variant="outline" onClick={() => window.history.back()}>
-            Volver atrás
-          </Button>
-          <Button asChild>
-            <a href="/">Ir al inicio</a>
-          </Button>
-        </div>
+          
+          <div className="flex justify-center">
+            <Button asChild variant="outline">
+              <Link to={returnPath}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                {returnLabel}
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

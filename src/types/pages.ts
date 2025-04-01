@@ -8,12 +8,11 @@ export type PageLayout =
   | "marketing" 
   | "documentation" 
   | "course"
-  | "grid"
-  | "row"
-  | "column"
   | "grid-2"
   | "grid-3"
-  | "grid-4";
+  | "grid-4"
+  | "row"
+  | "column";
 
 // Define possible page status values
 export type PageStatus = 
@@ -34,7 +33,10 @@ export type ContainerLayout =
   | "row" 
   | "column" 
   | "grid"
-  | "masonry";
+  | "masonry"
+  | "grid-2"
+  | "grid-3"
+  | "grid-4";
 
 // Define available block types
 export type PageBlockType = 
@@ -56,7 +58,7 @@ export type PageBlockType =
 export interface PageBlock {
   id: string;
   type: PageBlockType;
-  content: string | object;
+  content: string | Record<string, any>;
   layout?: ContainerLayout;
   order?: number;
   width?: string;
@@ -72,7 +74,7 @@ export interface SitePage {
   slug: string;
   description?: string;
   layout: PageLayout;
-  content?: PageContent | string;
+  content: PageContent;
   is_system_page: boolean;
   status: PageStatus;
   meta_title?: string;
@@ -109,7 +111,12 @@ export const getLayoutClass = (layout?: ContainerLayout): string => {
     case 'column':
       return 'flex flex-col gap-4';
     case 'grid':
+    case 'grid-2':
+      return 'grid grid-cols-1 sm:grid-cols-2 gap-4';
+    case 'grid-3':
       return 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4';
+    case 'grid-4':
+      return 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
     case 'masonry':
       return 'columns-1 sm:columns-2 md:columns-3 gap-4';
     default:
