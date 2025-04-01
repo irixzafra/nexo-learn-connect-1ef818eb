@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Paintbrush, Globe, Loader2, Construction, Palette } from 'lucide-react';
-import { FeaturesConfig } from '@/contexts/OnboardingContext';
+import type { FeaturesConfig } from '@/contexts/features/types';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';

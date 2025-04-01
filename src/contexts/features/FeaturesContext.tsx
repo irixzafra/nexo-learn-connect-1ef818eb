@@ -1,11 +1,12 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { FeaturesConfig, defaultFeaturesConfig, FeaturesContextValue } from './types';
+import type { FeaturesConfig, defaultFeaturesConfig, FeaturesContextValue } from './types';
 import { applyDependencyRules, getAllDependencies, getAllDependents } from './dependencies';
 
 const FeaturesContext = createContext<FeaturesContextValue | undefined>(undefined);
 
-export { FeaturesConfig } from './types';
+export type { FeaturesConfig } from './types';
+export { defaultFeaturesConfig } from './types';
 
 export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>(defaultFeaturesConfig);

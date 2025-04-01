@@ -1,27 +1,14 @@
-
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { 
-  DatabaseZap, 
-  Database, 
-  RefreshCw, 
-  Clock, 
-  HardDrive,
-  KeyRound,
-  Lock,
-  CheckCircle,
-  Server,
-  Download,
-  Upload
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { FeaturesConfig } from '@/contexts/OnboardingContext';
 import { Separator } from '@/components/ui/separator';
-import SettingsAccordion from '@/components/admin/settings/SettingsAccordion';
-import { cn } from '@/lib/utils';
+import { Loader2, Database, Save, Construction, LayoutList, Server, AlertTriangle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Label } from '@/components/ui/label';
+import type { FeaturesConfig } from '@/contexts/features/types';
 
 interface DataSettingsProps {
   featuresConfig?: FeaturesConfig;

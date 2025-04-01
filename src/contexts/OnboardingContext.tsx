@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { FeaturesConfig } from './features/types';
+import type { FeaturesConfig } from './features/types';
 
 export interface OnboardingContextType {
   isOnboardingCompleted: boolean;
