@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useFeature } from '@/hooks/useFeature';
 import { OnboardingModal } from './OnboardingModal';
 import { Button } from '@/components/ui/button';
 import { Info } from 'lucide-react';
@@ -12,15 +12,17 @@ interface OnboardingTriggerProps {
 export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({ 
   autoStart = false 
 }) => {
-  const { startOnboarding, isOnboardingActive, featuresConfig } = useOnboarding();
+  const { isEnabled: onboardingEnabled } = useFeature('enableOnboardingSystem');
+  const { isEnabled: triggerEnabled } = useFeature('showOnboardingTrigger');
+  const { startOnboarding, isOnboardingActive } = useOnboarding();
 
-  // Don't render anything if the onboarding system is completely disabled
-  if (!featuresConfig.enableOnboardingSystem) {
+  // No render anything if the onboarding system is completely disabled
+  if (!onboardingEnabled) {
     return null;
   }
 
   // If the button functionality is disabled but system is enabled, only render the modal
-  if (!featuresConfig.showOnboardingTrigger) {
+  if (!triggerEnabled) {
     return <OnboardingModal />;
   }
 

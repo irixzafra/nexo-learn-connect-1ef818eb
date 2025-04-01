@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import { 
@@ -26,71 +26,19 @@ import DataSettings from '@/features/admin/components/settings/DataSettings';
 import AppearanceSettings from '@/features/admin/components/settings/AppearanceSettings';
 import ContentSettings from '@/features/admin/components/settings/ContentSettings';
 import OnboardingSettings from '@/features/admin/components/settings/OnboardingSettings';
-import { FeaturesConfig, useOnboarding, defaultFeaturesConfig } from '@/contexts/OnboardingContext';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { toast } from 'sonner';
 
+/**
+ * Página de configuración del sistema para administradores
+ */
 const SystemSettings: React.FC = () => {
-  const [featuresConfig, setFeaturesConfig] = useState<FeaturesConfig>({
-    ...defaultFeaturesConfig,
-    enableEditMode: false,
-    enableContentReordering: false,
-    enableThemeSwitcher: true,
-    enableMultiLanguage: false,
-    enableAdvancedEditor: true,
-    enableInvitations: true,
-    enableCustomRoles: false,
-    enableRealTimeNotifications: true,
-    enableEmailNotifications: true,
-    enablePublicApi: false,
-    enableWebhooks: false,
-    enable2FA: false,
-    enableMultipleSessions: true,
-    enablePublicRegistration: false,
-    requireEmailVerification: true,
-    enableActivityLog: true,
-    enableDatabaseDevMode: false,
-    enableAutoBackups: true,
-    enableQueryCache: true,
-    enableMaintenanceMode: false,
-    enableCategoryManagement: false,
-    enableLeaderboard: false,
-    enableOnboardingSystem: true
-  });
-  
   const [isSaving, setIsSaving] = useState(false);
   const { tab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
   const { designFeatureEnabled, toggleDesignFeature } = useDesignSystem();
   const { setEditModeEnabled } = useEditMode();
   
-  useEffect(() => {
-    // Sincronizar el estado de EditMode con el featuresConfig
-    setEditModeEnabled(featuresConfig.enableEditMode || false);
-  }, [featuresConfig.enableEditMode, setEditModeEnabled]);
-  
-  const handleToggleFeature = (feature: keyof FeaturesConfig, value: boolean) => {
-    setIsSaving(true);
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      setFeaturesConfig(prev => ({
-        ...prev,
-        [feature]: value
-      }));
-      
-      // Actualizar el estado de edición en línea si es esa característica
-      if (feature === 'enableEditMode') {
-        setEditModeEnabled(value);
-      }
-      
-      setIsSaving(false);
-      // Show toast for feedback
-      toast.success(`Configuración actualizada: ${feature} ${value ? 'activado' : 'desactivado'}`);
-    }, 800);
-  };
-
   const handleToggleDesignSystem = async () => {
     try {
       await toggleDesignFeature(!designFeatureEnabled);
@@ -121,44 +69,28 @@ const SystemSettings: React.FC = () => {
       label: 'Funcionalidades',
       icon: <ToggleRight className="h-4 w-4" />,
       dataTag: "settings-tab-features",
-      content: <FeaturesSettings 
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
+      content: <FeaturesSettings />
     },
     {
       value: 'appearance',
       label: 'Apariencia',
       icon: <Palette className="h-4 w-4" />,
       dataTag: "settings-tab-appearance",
-      content: <AppearanceSettings
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
+      content: <AppearanceSettings />
     },
     {
       value: 'content',
       label: 'Contenido',
       icon: <Layout className="h-4 w-4" />,
       dataTag: "settings-tab-content",
-      content: <ContentSettings
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
+      content: <ContentSettings />
     },
     {
       value: 'onboarding',
       label: 'Onboarding',
       icon: <Book className="h-4 w-4" />,
       dataTag: "settings-tab-onboarding",
-      content: <OnboardingSettings
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
+      content: <OnboardingSettings />
     },
     {
       value: 'connections',
@@ -172,22 +104,14 @@ const SystemSettings: React.FC = () => {
       label: 'Seguridad',
       icon: <ShieldCheck className="h-4 w-4" />,
       dataTag: "settings-tab-security",
-      content: <SecuritySettings 
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
+      content: <SecuritySettings />
     },
     {
       value: 'data',
       label: 'Datos',
       icon: <DatabaseZap className="h-4 w-4" />,
       dataTag: "settings-tab-data",
-      content: <DataSettings 
-        featuresConfig={featuresConfig}
-        onToggleFeature={handleToggleFeature}
-        isLoading={isSaving}
-      />
+      content: <DataSettings />
     }
   ];
   
