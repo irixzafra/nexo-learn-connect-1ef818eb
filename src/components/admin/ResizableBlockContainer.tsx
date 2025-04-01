@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { 
-  Layout, Move, ArrowsMaximize, ChevronDown, ChevronUp, 
+  Layout, Move, Maximize2, ChevronDown, ChevronUp, 
   ChevronLeft, ChevronRight, Grid2X2, Rows3, Columns
 } from 'lucide-react';
 import { PageBlock, ContainerLayout, getLayoutClass } from '@/types/pages';
@@ -169,14 +169,14 @@ const ResizableBlockContainer: React.FC<ResizableBlockContainerProps> = ({
             </PopoverContent>
           </Popover>
           
-          {/* Botón para redimensionar */}
+          {/* Botón para redimensionar - Cambiado de ArrowsMaximize a Maximize2 */}
           <Button 
             variant="ghost" 
             size="icon" 
             className="h-6 w-6"
             onClick={() => setIsResizing(true)}
           >
-            <ArrowsMaximize className="h-3 w-3" />
+            <Maximize2 className="h-3 w-3" />
           </Button>
           
           {/* Botones para mover el bloque */}

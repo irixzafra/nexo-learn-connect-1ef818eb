@@ -31,7 +31,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ viewAsRole, trigge
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild onClick={handleToggle}>
           {trigger || (
-            <Button variant="primary" size="icon" className="h-12 w-12 rounded-full shadow-lg">
+            <Button variant="primary" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-primary text-primary-foreground">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Abrir menú</span>
             </Button>

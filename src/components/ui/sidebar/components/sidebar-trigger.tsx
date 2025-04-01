@@ -20,7 +20,7 @@ export const SidebarTrigger = React.forwardRef<
   const handleToggleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("SidebarTrigger clicked", isMobile ? "mobile" : "desktop");
+    console.log("SidebarTrigger clicked", isMobile ? "mobile" : "desktop", "Current state:", isCollapsed ? "collapsed" : "expanded");
     
     if (onClick) {
       onClick(e);
@@ -40,9 +40,8 @@ export const SidebarTrigger = React.forwardRef<
       variant="ghost"
       size="icon"
       className={cn(
-        "h-10 w-10 rounded-full bg-primary text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300",
-        "fixed left-4 bottom-4 z-50 md:static md:left-auto md:bottom-auto md:z-auto",
-        isMobile && "z-50",
+        "h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300",
+        "z-50",
         className
       )}
       onClick={handleToggleClick}
