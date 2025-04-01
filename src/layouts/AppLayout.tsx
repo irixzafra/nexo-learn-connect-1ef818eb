@@ -2,11 +2,11 @@
 import React, { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
-import SidebarNavigation from '@/components/layout/SidebarNavigation';
 import { Sidebar, SidebarContent, SidebarTrigger } from '@/components/ui/sidebar';
 import { useLocation } from 'react-router-dom';
 import HeaderContent from '@/components/layout/HeaderContent';
 import { MobileSidebar } from '@/components/layout/header/MobileSidebar';
+import RefactoredSidebarNavigation from '@/components/layout/sidebar/RefactoredSidebarNavigation';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -36,7 +36,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {!isAdminPage && (
           <Sidebar variant="sidebar" collapsible="icon">
             <SidebarContent>
-              <SidebarNavigation viewAsRole="current" />
+              <RefactoredSidebarNavigation viewAsRole="current" />
             </SidebarContent>
           </Sidebar>
         )}
@@ -52,7 +52,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {!isAdminPage && (
           <>
             <MobileSidebar viewAsRole="current" />
-            {/* Botón visible para alternar sidebar en escritorio */}
+            {/* Botón flotante para alternar sidebar */}
             <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 md:block">
               <SidebarTrigger className="shadow-lg" />
             </div>
