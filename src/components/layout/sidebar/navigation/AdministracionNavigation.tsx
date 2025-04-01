@@ -13,7 +13,8 @@ import {
   FileText,
   Route,
   LineChart,
-  Palette
+  Palette,
+  BarChart3
 } from 'lucide-react';
 import { SidebarMenu } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
@@ -101,7 +102,7 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
         {/* Analíticas */}
         <MenuItem
           to="/admin/analytics"
-          icon={LineChart}
+          icon={BarChart3}
           label="Analíticas"
           isCollapsed={isCollapsed}
         />
@@ -111,6 +112,13 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({ isO
           to="/admin/content/categories"
           icon={FileText}
           label="Categorías"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/admin/pages"
+          icon={FileText}
+          label="Páginas"
           isCollapsed={isCollapsed}
         />
         

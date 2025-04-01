@@ -19,6 +19,7 @@ import AuditLog from '@/pages/admin/audit/AuditLog';
 import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminCourses from '@/pages/admin/courses/AdminCourses';
 import AdminFinances from '@/pages/admin/finances/AdminFinances';
+import AnalyticsOverview from '@/pages/admin/analytics/AnalyticsOverview';
 
 // User management components
 import { UserManagementTabs } from '@/features/users/UserManagementTabs';
@@ -47,64 +48,6 @@ const CourseManagement = () => (
     subtitle="Administra el catálogo de cursos de la plataforma"
   >
     <AllCoursesTab />
-  </AdminPageLayout>
-);
-
-// Analytics Overview Page
-const AnalyticsOverviewPage = () => (
-  <AdminPageLayout 
-    title="Analíticas - Visión General"
-    subtitle="Panorama completo del rendimiento de la plataforma"
-  >
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <UserAdminStats 
-        totalUsers={845}
-        activeUsers={621}
-        newUsers={42}
-        inactiveUsers={124}
-        loading={false}
-      />
-    </div>
-  </AdminPageLayout>
-);
-
-// User Analytics Page
-const UserAnalyticsPage = () => (
-  <AdminPageLayout 
-    title="Analíticas - Usuarios"
-    subtitle="Estadísticas y tendencias de usuarios"
-  >
-    <UserAnalytics />
-  </AdminPageLayout>
-);
-
-// Course Analytics Page
-const CourseAnalyticsPage = () => (
-  <AdminPageLayout 
-    title="Analíticas - Cursos"
-    subtitle="Estadísticas y tendencias de cursos"
-  >
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Estadísticas de Cursos</h2>
-      <p className="text-muted-foreground">
-        Analiza el rendimiento, popularidad y engagement de los cursos.
-      </p>
-    </div>
-  </AdminPageLayout>
-);
-
-// Revenue Analytics Page
-const RevenueAnalyticsPage = () => (
-  <AdminPageLayout 
-    title="Analíticas - Ingresos"
-    subtitle="Estadísticas financieras y proyecciones"
-  >
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Ingresos y Finanzas</h2>
-      <p className="text-muted-foreground">
-        Analiza los ingresos, tendencias de ventas y proyecciones financieras.
-      </p>
-    </div>
   </AdminPageLayout>
 );
 
@@ -138,7 +81,7 @@ const AdminRoutes: React.FC = () => {
         
         {/* Course Management */}
         <Route path="/courses" element={<AdminCourses />} />
-        <Route path="/courses/analytics" element={<CourseAnalyticsPage />} />
+        <Route path="/courses/analytics" element={<AnalyticsOverview />} />
         
         {/* Finances */}
         <Route path="/finances" element={<AdminFinances />} />
@@ -146,11 +89,8 @@ const AdminRoutes: React.FC = () => {
         <Route path="/billing/:tab" element={<AdminFinances />} />
         
         {/* Analytics */}
-        <Route path="/analytics" element={<AnalyticsOverviewPage />} />
-        <Route path="/analytics/users" element={<UserAnalyticsPage />} />
-        <Route path="/analytics/courses" element={<CourseAnalyticsPage />} />
-        <Route path="/analytics/revenue" element={<RevenueAnalyticsPage />} />
-        <Route path="/analytics/:tab" element={<AnalyticsOverviewPage />} />
+        <Route path="/analytics" element={<AnalyticsOverview />} />
+        <Route path="/analytics/:tab" element={<AnalyticsOverview />} />
         
         {/* Design System */}
         <Route path="/design" element={<DesignSystem />} />

@@ -104,7 +104,18 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // Log the current state for debugging
     console.log('Edit mode enabled:', isEditModeEnabled);
     console.log('Can edit (role):', canEdit);
-  }, []);
+    
+    // Add a CSS class to the body when in edit mode for global styling
+    if (isEditMode) {
+      document.body.classList.add('edit-mode-active');
+    } else {
+      document.body.classList.remove('edit-mode-active');
+    }
+    
+    return () => {
+      document.body.classList.remove('edit-mode-active');
+    };
+  }, [isEditModeEnabled, canEdit, isEditMode]);
 
   const toggleEditMode = () => {
     if (canEdit && isEditModeEnabled) {
