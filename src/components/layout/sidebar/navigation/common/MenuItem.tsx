@@ -1,60 +1,80 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { LucideIcon } from 'lucide-react';
-import { useEditMode } from '@/contexts/EditModeContext';
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import InlineEdit from '@/components/admin/InlineEdit';
+import { useEditMode } from '@/contexts/EditModeContext';
 
 interface MenuItemProps {
-  to: string;
-  icon: LucideIcon;
-  label: string;
-  isCollapsed: boolean;
+  href: string;
+  title: string;
+  icon?: React.ReactNode;
+  isActive?: boolean;
   badge?: React.ReactNode;
-  id?: string;
+  className?: string;
+  isExternal?: boolean;
+  itemId?: string;
 }
 
-export const MenuItem: React.FC<MenuItemProps> = ({ 
-  to, 
-  icon: Icon, 
-  label, 
-  isCollapsed,
+const MenuItem: React.FC<MenuItemProps> = ({
+  href,
+  title,
+  icon,
+  isActive = false,
   badge,
-  id = `nav-item-${to.replace(/\//g, '-')}`
+  className,
+  isExternal = false,
+  itemId
 }) => {
   const { isEditMode } = useEditMode();
   
+  const handleTitleChange = (newTitle: string) => {
+    console.log(`Menu item ${itemId} title changed to: ${newTitle}`);
+    // In a real implementation, we would save this to the database
+  };
+
+  const content = (
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center">
+        {icon && <span className="mr-2">{icon}</span>}
+        {isEditMode && itemId ? (
+          <InlineEdit 
+            value={title}
+            onChange={handleTitleChange}
+            className="font-medium"
+          />
+        ) : (
+          <span>{title}</span>
+        )}
+      </div>
+      {badge && <div>{badge}</div>}
+    </div>
+  );
+
+  if (isExternal) {
+    return (
+      <Button
+        variant={isActive ? "secondary" : "ghost"}
+        className={cn("justify-start w-full", className)}
+        asChild
+      >
+        <a href={href} target="_blank" rel="noopener noreferrer">
+          {content}
+        </a>
+      </Button>
+    );
+  }
+
   return (
-    <NavLink
-      to={to}
-      className={({ isActive }) => `
-        flex items-center px-2 py-1.5 rounded-md text-sm
-        ${isActive 
-          ? 'bg-accent text-accent-foreground font-medium' 
-          : 'text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-colors'}
-      `}
+    <Button
+      variant={isActive ? "secondary" : "ghost"}
+      className={cn("justify-start w-full", className)}
+      asChild
     >
-      {({ isActive }) => (
-        <>
-          <Icon className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-muted-foreground'} shrink-0`} />
-          {!isCollapsed && (
-            <div className="ml-2 flex items-center">
-              {isEditMode ? (
-                <InlineEdit
-                  table="navigation"
-                  id={id}
-                  field="label"
-                  value={label}
-                  className="min-w-[80px]"
-                />
-              ) : (
-                <span>{label}</span>
-              )}
-              {badge && badge}
-            </div>
-          )}
-        </>
-      )}
-    </NavLink>
+      <Link to={href}>{content}</Link>
+    </Button>
   );
 };
+
+export default MenuItem;

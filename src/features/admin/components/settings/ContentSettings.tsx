@@ -1,70 +1,99 @@
 
 import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@/components/ui/toggle-group';
 import { Label } from '@/components/ui/label';
-import { FileText, PenSquare } from 'lucide-react';
-import { FeaturesConfig } from '@/contexts/features/types';
 import InlineEditingSettings from '@/components/admin/settings/InlineEditingSettings';
-import { ExtendedFeatureId } from '@/contexts/features/types';
 
-interface ContentSettingsProps {
-  featuresConfig: FeaturesConfig;
-  onToggleFeature: (featureId: ExtendedFeatureId, value?: boolean) => Promise<void>;
-  isLoading: boolean;
-}
+export const ContentSettings: React.FC = () => {
+  const featuresConfig = {
+    inline_editing: false,
+    drag_and_drop: false,
+    ai_assistant: true
+  };
 
-const ContentSettings: React.FC<ContentSettingsProps> = ({ 
-  featuresConfig, 
-  onToggleFeature,
-  isLoading 
-}) => {
+  const onToggleFeature = async (featureId: string, value?: boolean) => {
+    console.log(`Toggling feature ${featureId} to ${value}`);
+    return Promise.resolve();
+  };
+
+  const isLoading = false;
+
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <FileText className="mr-2 h-5 w-5 text-primary" />
-            Gestión de Contenido
-          </CardTitle>
-          <CardDescription>
-            Configura cómo se administra el contenido en la plataforma
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between space-y-1">
-            <div>
-              <Label htmlFor="category-management" className="font-medium">Gestión de categorías</Label>
-              <p className="text-sm text-muted-foreground">
-                Permite crear y gestionar categorías personalizadas
+      <div>
+        <h3 className="text-lg font-medium">Configuración de Contenido</h3>
+        <p className="text-sm text-muted-foreground">
+          Gestiona las opciones relacionadas con la edición y visualización de contenido
+        </p>
+      </div>
+
+      <Tabs defaultValue="editor">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="editor">Editor</TabsTrigger>
+          <TabsTrigger value="inline">Edición Inline</TabsTrigger>
+          <TabsTrigger value="media">Medios</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="editor" className="space-y-4 pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Opciones del Editor</CardTitle>
+              <CardDescription>
+                Personaliza el comportamiento y apariencia del editor de contenido
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="editor-theme">Tema del Editor</Label>
+                <ToggleGroup type="single" defaultValue="light" id="editor-theme">
+                  <ToggleGroupItem value="light">Claro</ToggleGroupItem>
+                  <ToggleGroupItem value="dark">Oscuro</ToggleGroupItem>
+                  <ToggleGroupItem value="system">Sistema</ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="inline" className="space-y-4 pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Edición Inline</CardTitle>
+              <CardDescription>
+                Configura las opciones para la edición inline de contenido
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <InlineEditingSettings 
+                featuresConfig={featuresConfig} 
+                onToggleFeature={onToggleFeature} 
+                isLoading={isLoading} 
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="media" className="space-y-4 pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gestión de Medios</CardTitle>
+              <CardDescription>
+                Configura las opciones para la gestión de imágenes y otros medios
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Características de gestión de medios en desarrollo.
               </p>
-            </div>
-            <Switch
-              id="category-management"
-              checked={featuresConfig.enableCategoryManagement}
-              onCheckedChange={() => onToggleFeature('enableCategoryManagement')}
-              disabled={isLoading}
-            />
-          </div>
-          
-          <div className="flex items-center justify-between space-y-1">
-            <div>
-              <Label htmlFor="advanced-filters" className="font-medium">Filtros avanzados</Label>
-              <p className="text-sm text-muted-foreground">
-                Habilita filtros avanzados en la búsqueda de contenido
-              </p>
-            </div>
-            <Switch
-              id="advanced-filters"
-              checked={featuresConfig.enableAdvancedFilters}
-              onCheckedChange={() => onToggleFeature('enableAdvancedFilters')}
-              disabled={isLoading}
-            />
-          </div>
-        </CardContent>
-      </Card>
-      
-      <InlineEditingSettings isLoading={isLoading} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

@@ -38,7 +38,7 @@ const pageFormSchema = z.object({
   meta_description: z.string().max(160, {
     message: 'La meta descripción no debe exceder los 160 caracteres',
   }).optional().or(z.literal('')),
-  status: z.enum(['draft', 'published', 'archived'] as const),
+  status: z.enum(['draft', 'published', 'archived', 'scheduled'] as const),
   layout: z.enum([
     'default', 
     'landing', 

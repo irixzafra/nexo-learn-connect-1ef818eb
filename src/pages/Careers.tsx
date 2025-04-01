@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import AppLayout from "@/layouts/AppLayout";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,7 +61,6 @@ const CareerRecommendations = () => {
   );
 };
 
-// Componente principal de la página Careers
 const Careers: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
@@ -70,25 +68,25 @@ const Careers: React.FC = () => {
   const [jobType, setJobType] = useState("all");
   const [activeTab, setActiveTab] = useState("jobs");
 
+  const handleTextChange = (newValue: string) => {
+    console.log('Text changed:', newValue);
+  };
+
   return (
     <AppLayout>
       <div className="container mx-auto py-8 px-4 md:px-6">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold mb-3">
             <InlineEdit
-              table="content"
-              id="careers-title"
-              field="text"
               value="Oportunidades Profesionales"
+              onChange={handleTextChange}
               className="text-3xl font-bold"
             />
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             <InlineEdit
-              table="content"
-              id="careers-subtitle"
-              field="text"
               value="Descubre oportunidades laborales y recursos para impulsar tu carrera en el mundo tecnológico"
+              onChange={handleTextChange}
               className="text-lg text-muted-foreground"
               multiline
             />
@@ -198,7 +196,6 @@ const Careers: React.FC = () => {
           </TabsContent>
         </Tabs>
 
-        {/* Call to Action */}
         <div className="bg-muted rounded-lg p-8 text-center mt-12">
           <GraduationCap className="h-12 w-12 mx-auto text-primary mb-4" />
           <h2 className="text-2xl font-bold mb-4">¿Buscas impulsar tu carrera profesional?</h2>

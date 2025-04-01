@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Code, Search, FileText, Eye } from 'lucide-react';
-import { SitePage, PageLayout, PageStatus, PageBlock } from '@/types/pages';
+import { SitePage, PageLayout } from '@/types/pages';
 import { getPageById, updatePage, isSlugUnique } from '@/features/admin/services/pagesService';
 import PageContentEditor from './PageContentEditor';
 import PageSeoEditor from './PageSeoEditor';
@@ -33,7 +33,7 @@ const formSchema = z.object({
   slug: z.string().min(2, 'El slug debe tener al menos 2 caracteres')
     .regex(/^[a-z0-9-]+$/, 'El slug solo puede contener letras minúsculas, números y guiones'),
   meta_description: z.string().max(160, 'La meta descripción no debe exceder los 160 caracteres').optional().or(z.literal('')),
-  status: z.enum(['draft', 'published', 'archived'] as const),
+  status: z.enum(['draft', 'published', 'archived', 'scheduled'] as const),
   layout: z.enum([
     'default', 
     'landing', 
@@ -70,7 +70,7 @@ const PageEditorDialog: React.FC<PageEditorProps> = ({
       title: '',
       slug: '',
       meta_description: '',
-      status: 'draft' as PageStatus,
+      status: 'draft',
       layout: 'default' as PageLayout,
       content: { blocks: [] },
     }
@@ -87,7 +87,7 @@ const PageEditorDialog: React.FC<PageEditorProps> = ({
               title: data.title,
               slug: data.slug,
               meta_description: data.meta_description || '',
-              status: data.status as PageStatus,
+              status: data.status,
               layout: data.layout as PageLayout,
               content: data.content || { blocks: [] },
             });

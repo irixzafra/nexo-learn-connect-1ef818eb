@@ -1,4 +1,3 @@
-
 import React from "react";
 import AppLayout from "@/layouts/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -18,18 +17,14 @@ const Scholarships: React.FC = () => {
             <CardTitle className="flex items-center gap-2">
               <Award className="h-5 w-5 text-primary" />
               <InlineEdit 
-                table="content" 
-                id="scholarship-1-title" 
-                field="text" 
                 value="Beca de Excelencia Académica" 
+                onChange={() => {}}
               />
             </CardTitle>
             <CardDescription>
               <InlineEdit 
-                table="content" 
-                id="scholarship-1-category" 
-                field="text" 
                 value="Programa de Becas 2023" 
+                onChange={() => {}}
               />
             </CardDescription>
           </CardHeader>
@@ -40,10 +35,8 @@ const Scholarships: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium">Fecha límite:</p>
                   <InlineEdit 
-                    table="content" 
-                    id="scholarship-1-deadline" 
-                    field="text" 
                     value="30 de Junio, 2023" 
+                    onChange={() => {}}
                     className="text-sm text-muted-foreground"
                   />
                 </div>
@@ -53,10 +46,8 @@ const Scholarships: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium">Descripción:</p>
                   <InlineEdit 
-                    table="content" 
-                    id="scholarship-1-description" 
-                    field="text" 
                     value="Beca completa para estudiantes con excelente rendimiento académico en programas de desarrollo web y programación." 
+                    onChange={() => {}}
                     className="text-sm text-muted-foreground"
                     multiline
                   />
@@ -76,18 +67,14 @@ const Scholarships: React.FC = () => {
             <CardTitle className="flex items-center gap-2">
               <Award className="h-5 w-5 text-primary" />
               <InlineEdit 
-                table="content" 
-                id="scholarship-2-title" 
-                field="text" 
                 value="Beca para Nuevos Talentos" 
+                onChange={() => {}}
               />
             </CardTitle>
             <CardDescription>
               <InlineEdit 
-                table="content" 
-                id="scholarship-2-category" 
-                field="text" 
                 value="Programa de Becas 2023" 
+                onChange={() => {}}
               />
             </CardDescription>
           </CardHeader>
@@ -98,10 +85,8 @@ const Scholarships: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium">Fecha límite:</p>
                   <InlineEdit 
-                    table="content" 
-                    id="scholarship-2-deadline" 
-                    field="text" 
                     value="15 de Julio, 2023" 
+                    onChange={() => {}}
                     className="text-sm text-muted-foreground"
                   />
                 </div>
@@ -111,10 +96,8 @@ const Scholarships: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium">Descripción:</p>
                   <InlineEdit 
-                    table="content" 
-                    id="scholarship-2-description" 
-                    field="text" 
                     value="Programa dirigido a jóvenes talentos que buscan formarse en el ámbito de la tecnología y desarrollo de software." 
+                    onChange={() => {}}
                     className="text-sm text-muted-foreground"
                     multiline
                   />
@@ -134,18 +117,14 @@ const Scholarships: React.FC = () => {
             <CardTitle className="flex items-center gap-2">
               <Award className="h-5 w-5 text-primary" />
               <InlineEdit 
-                table="content" 
-                id="scholarship-3-title" 
-                field="text" 
                 value="Beca de Diversidad en Tech" 
+                onChange={() => {}}
               />
             </CardTitle>
             <CardDescription>
               <InlineEdit 
-                table="content" 
-                id="scholarship-3-category" 
-                field="text" 
                 value="Programa de Becas 2023" 
+                onChange={() => {}}
               />
             </CardDescription>
           </CardHeader>
@@ -156,10 +135,8 @@ const Scholarships: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium">Fecha límite:</p>
                   <InlineEdit 
-                    table="content" 
-                    id="scholarship-3-deadline" 
-                    field="text" 
                     value="30 de Julio, 2023" 
+                    onChange={() => {}}
                     className="text-sm text-muted-foreground"
                   />
                 </div>
@@ -169,10 +146,8 @@ const Scholarships: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium">Descripción:</p>
                   <InlineEdit 
-                    table="content" 
-                    id="scholarship-3-description" 
-                    field="text" 
                     value="Programa dirigido a promover la diversidad en el mundo tecnológico, ofreciendo oportunidades de formación en desarrollo de software." 
+                    onChange={() => {}}
                     className="text-sm text-muted-foreground"
                     multiline
                   />
@@ -191,19 +166,15 @@ const Scholarships: React.FC = () => {
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold mb-3">
             <InlineEdit 
-              table="content" 
-              id="scholarships-title" 
-              field="text" 
               value="Becas Disponibles" 
+              onChange={() => {}}
               className="text-3xl font-bold" 
             />
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             <InlineEdit 
-              table="content" 
-              id="scholarships-subtitle" 
-              field="text" 
               value="Descubre nuestras oportunidades de becas para impulsar tu carrera en tecnología" 
+              onChange={() => {}}
               className="text-lg text-muted-foreground"
               multiline
             />
@@ -212,7 +183,6 @@ const Scholarships: React.FC = () => {
 
         <DraggableContent 
           items={scholarshipItems}
-          table="scholarship_items"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
           itemClassName="flex"
         />
@@ -221,19 +191,15 @@ const Scholarships: React.FC = () => {
           <GraduationCap className="h-12 w-12 mx-auto text-primary mb-4" />
           <h2 className="text-2xl font-bold mb-3">
             <InlineEdit 
-              table="content" 
-              id="scholarships-cta-title" 
-              field="text" 
               value="¿Quieres solicitar una beca?" 
+              onChange={() => {}}
               className="text-2xl font-bold"
             />
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto mb-6">
             <InlineEdit 
-              table="content" 
-              id="scholarships-cta-description" 
-              field="text" 
               value="Completa el formulario de solicitud y nuestro equipo se pondrá en contacto contigo para ofrecerte más información." 
+              onChange={() => {}}
               className="text-muted-foreground"
               multiline
             />
