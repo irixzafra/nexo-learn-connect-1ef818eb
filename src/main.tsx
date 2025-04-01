@@ -4,13 +4,12 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import './index.css';
-import './styles/edit-mode.css'; // Add our edit mode styles
 import { Toaster } from './components/ui/toaster';
 import { ThemeProvider } from './contexts/ThemeContext.tsx';
 import { AuthProvider } from './contexts/AuthContext.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { FeaturesProvider } from './contexts/features/FeaturesContext.tsx';
-import { EditModeProvider } from './contexts/EditModeContext.tsx'; // Import the EditModeProvider
+import { EditModeProvider } from './contexts/EditModeContext.tsx'; // Still need this for compatibility
 
 // Create a client for React Query
 const queryClient = new QueryClient({

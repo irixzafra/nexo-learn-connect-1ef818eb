@@ -1,163 +1,36 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Home, BookOpen, User, Settings } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import PublicLayout from '@/layouts/PublicLayout';
-import UniversalEditableElement from '@/components/admin/UniversalEditableElement';
-import { useEditMode } from '@/contexts/EditModeContext';
-import InlineEdit from '@/components/admin/InlineEdit';
+import { FileQuestion } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const NotFound: React.FC = () => {
-  const navigate = useNavigate();
-  const { isAuthenticated, userRole } = useAuth();
-  const { isEditMode, updateText } = useEditMode();
-
-  // Determinar ruta de inicio según el rol del usuario
-  const getHomeRoute = () => {
-    if (!isAuthenticated) return '/';
-    
-    switch (userRole) {
-      case 'admin':
-        return '/admin/dashboard';
-      case 'instructor':
-        return '/instructor/dashboard';
-      default:
-        return '/home';
-    }
-  };
-
-  // Generar enlaces de navegación basados en el rol
-  const getNavigationLinks = () => {
-    if (!isAuthenticated) {
-      return [
-        { to: '/', icon: <Home className="h-4 w-4" />, label: 'Inicio' },
-        { to: '/courses', icon: <BookOpen className="h-4 w-4" />, label: 'Cursos' },
-        { to: '/auth/login', icon: <User className="h-4 w-4" />, label: 'Iniciar sesión' },
-      ];
-    }
-
-    switch (userRole) {
-      case 'admin':
-        return [
-          { to: '/admin/dashboard', icon: <Home className="h-4 w-4" />, label: 'Dashboard' },
-          { to: '/admin/users', icon: <User className="h-4 w-4" />, label: 'Usuarios' },
-          { to: '/admin/courses', icon: <BookOpen className="h-4 w-4" />, label: 'Cursos' },
-        ];
-      case 'instructor':
-        return [
-          { to: '/instructor/dashboard', icon: <Home className="h-4 w-4" />, label: 'Dashboard' },
-          { to: '/instructor/courses', icon: <BookOpen className="h-4 w-4" />, label: 'Mis Cursos' },
-          { to: '/instructor/students', icon: <User className="h-4 w-4" />, label: 'Estudiantes' },
-        ];
-      default:
-        return [
-          { to: '/home', icon: <Home className="h-4 w-4" />, label: 'Inicio' },
-          { to: '/home/my-courses', icon: <BookOpen className="h-4 w-4" />, label: 'Mis Cursos' },
-          { to: '/profile', icon: <User className="h-4 w-4" />, label: 'Mi Perfil' },
-        ];
-    }
-  };
-
-  const notFoundContent = (
-    <div className="w-full flex items-center justify-center min-h-[80vh] p-6">
-      <UniversalEditableElement
-        id="notfound-container"
-        elementType="section"
-        className="text-center w-full"
-      >
-        <h1 className="text-9xl font-bold text-primary mb-4">
-          <InlineEdit
-            table="system_text"
-            id="notfound-error-code"
-            field="content"
-            value="404"
-            className="text-9xl font-bold text-primary"
-          />
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 text-center">
+      <div className="space-y-6 max-w-md">
+        <div className="bg-primary/10 p-4 rounded-full inline-block mx-auto">
+          <FileQuestion className="h-12 w-12 text-primary" />
+        </div>
+        
+        <h1 className="text-3xl font-bold">
+          Página no encontrada
         </h1>
         
-        <h2 className="text-3xl font-bold mb-2">
-          <InlineEdit
-            table="system_text"
-            id="notfound-title"
-            field="content"
-            value="Página no encontrada"
-            className="text-3xl font-bold"
-          />
-        </h2>
+        <p className="text-muted-foreground">
+          Lo sentimos, la página que estás buscando no existe o ha sido movida.
+        </p>
         
-        <div className="mb-8 max-w-md mx-auto">
-          <InlineEdit
-            table="system_text"
-            id="notfound-description"
-            field="content"
-            value="Lo sentimos, la página que estás buscando no existe o ha sido trasladada a otra ubicación."
-            className="text-muted-foreground"
-            multiline={true}
-          />
-        </div>
-        
-        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
-          <Button variant="outline" onClick={() => navigate(-1)} className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            <InlineEdit
-              table="system_text"
-              id="notfound-back-button"
-              field="content"
-              value="Volver atrás"
-              className="inline"
-            />
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+          <Button variant="outline" onClick={() => window.history.back()}>
+            Volver atrás
           </Button>
-          <Button asChild className="gap-2">
-            <Link to={getHomeRoute()}>
-              <Home className="h-4 w-4" />
-              <InlineEdit
-                table="system_text"
-                id="notfound-home-button"
-                field="content"
-                value="Ir al inicio"
-                className="inline"
-              />
-            </Link>
+          
+          <Button asChild>
+            <Link to="/">Ir al inicio</Link>
           </Button>
         </div>
-        
-        {/* Enlaces de navegación principales */}
-        <div className="mt-8">
-          <h3 className="text-lg font-medium mb-4">
-            <InlineEdit
-              table="system_text"
-              id="notfound-links-title"
-              field="content"
-              value="Enlaces rápidos"
-              className="text-lg font-medium"
-            />
-          </h3>
-          <div className="flex flex-wrap justify-center gap-3">
-            {getNavigationLinks().map((link, index) => (
-              <Button 
-                key={index} 
-                variant="secondary" 
-                asChild 
-                className="gap-2"
-              >
-                <Link to={link.to}>
-                  {link.icon}
-                  <span>{link.label}</span>
-                </Link>
-              </Button>
-            ))}
-          </div>
-        </div>
-      </UniversalEditableElement>
+      </div>
     </div>
-  );
-
-  return (
-    <PublicLayout>
-      {notFoundContent}
-    </PublicLayout>
   );
 };
 
