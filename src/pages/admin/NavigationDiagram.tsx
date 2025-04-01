@@ -112,9 +112,9 @@ const NavigationDiagram: React.FC = () => {
                         {mainRoutesValidated.map((item, idx) => (
                           <li key={idx} className="flex items-center gap-1">
                             <span className={item.active ? "text-primary font-medium" : ""}>
-                              {item.title} {item.path && <span className="text-xs text-muted-foreground">({item.path})</span>}
+                              {item.label} {item.path && <span className="text-xs text-muted-foreground">({item.path})</span>}
                             </span>
-                            {item.isExternal && <ExternalLink className="h-3 w-3 text-muted-foreground" />}
+                            {item.external && <ExternalLink className="h-3 w-3 text-muted-foreground" />}
                           </li>
                         ))}
                       </ul>
@@ -124,7 +124,7 @@ const NavigationDiagram: React.FC = () => {
                         {adminRoutesValidated.map((item, idx) => (
                           <li key={idx} className="flex items-center gap-1">
                             <span className={item.active ? "text-primary font-medium" : ""}>
-                              {item.title} {item.path && <span className="text-xs text-muted-foreground">({item.path})</span>}
+                              {item.label} {item.path && <span className="text-xs text-muted-foreground">({item.path})</span>}
                             </span>
                           </li>
                         ))}

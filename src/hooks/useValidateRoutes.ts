@@ -1,48 +1,40 @@
 
-import { useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MenuItem } from '@/types/navigation';
+import { isValidPath } from '@/utils/routeValidation';
 
 /**
- * Hook para validar si las rutas son válidas y están activas
- * 
- * @param items Elementos de navegación a validar
- * @returns Elementos validados con indicadores de estado activo
+ * Hook that validates route paths in navigation items
+ * @param items Navigation items array to validate
+ * @returns Array of navigation items with active property indicating validity
  */
-export const useValidateRoutes = (items: MenuItem[]) => {
-  const location = useLocation();
-  const [validatedItems, setValidatedItems] = useState<MenuItem[]>(items);
+export function useValidateRoutes(items: MenuItem[]): (MenuItem & { active: boolean })[] {
+  const [validatedItems, setValidatedItems] = useState<(MenuItem & { active: boolean })[]>([]);
   
   useEffect(() => {
-    // Verificar y mejorar los elementos de navegación
-    const enhancedItems = items.map(item => {
-      // Verificar si la ruta actual coincide con la del elemento
-      const isActive = item.path ? location.pathname === item.path : false;
+    if (!items || !items.length) {
+      setValidatedItems([]);
+      return;
+    }
+    
+    // Process each menu item and check if its path is valid
+    const processedItems = items.map(item => {
+      // For items with path property, validate the path
+      let isActive = true;
       
-      // Verificar si hay subelementos y procesarlos
-      let processedSubItems = item.items;
-      if (item.items && item.items.length > 0) {
-        processedSubItems = item.items.map(subItem => {
-          const isSubActive = subItem.path ? location.pathname === subItem.path : false;
-          return { ...subItem, active: isSubActive };
-        });
+      if (item.path && typeof item.path === 'string' && !item.external) {
+        isActive = isValidPath(item.path);
       }
       
-      // Verificar si tiene una URL externa en lugar de ruta interna
-      const hasExternalUrl = !item.path && item.url && (
-        item.url.startsWith('http://') || item.url.startsWith('https://')
-      );
-      
+      // Return the original item with the added active property
       return {
         ...item,
-        active: isActive,
-        items: processedSubItems,
-        isExternal: hasExternalUrl
+        active: isActive
       };
     });
     
-    setValidatedItems(enhancedItems);
-  }, [items, location.pathname]);
+    setValidatedItems(processedItems);
+  }, [items]);
   
   return validatedItems;
-};
+}
