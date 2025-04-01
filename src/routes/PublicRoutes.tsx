@@ -40,7 +40,7 @@ const PublicRoutes: React.FC = () => {
       <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
       <Route path="/unauthorized" element={<PublicLayout><Unauthorized /></PublicLayout>} />
       <Route path="/careers" element={<PublicLayout><Careers /></PublicLayout>} />
-      <Route path="/leaderboard" element={<LeaderBoard />} />
+      <Route path="/leaderboard" element={<PublicLayout><LeaderBoard /></PublicLayout>} />
       
       {/* Course related */}
       <Route path="/courses" element={<PublicLayout><CoursesCatalog /></PublicLayout>} />
