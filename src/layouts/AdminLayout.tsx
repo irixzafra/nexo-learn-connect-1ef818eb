@@ -10,25 +10,18 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex min-h-screen flex-col">
-        <div className="flex flex-1">
-          <div className="hidden md:flex md:w-64 md:flex-col border-r bg-card">
-            <div className="flex flex-col overflow-y-auto pt-5 pb-4">
-              <div className="flex flex-shrink-0 items-center px-4 mb-5">
-                <span className="font-bold text-lg">Academia LMS</span>
-              </div>
-              <AdminNavigation />
-            </div>
-          </div>
-          
-          <div className="flex flex-1 flex-col">
-            <main className="flex-1 p-6">
-              {children || <Outlet />}
-            </main>
-          </div>
+    <div className="min-h-screen bg-background flex">
+      <aside className="hidden md:block md:w-64 border-r bg-card">
+        <div className="p-5 flex-col overflow-y-auto">
+          <div className="font-bold text-lg mb-5">Academia LMS</div>
+          <AdminNavigation />
         </div>
-      </div>
+      </aside>
+      
+      <main className="flex-1 p-6">
+        {children || <Outlet />}
+      </main>
+      
       <Toaster position="top-right" />
     </div>
   );

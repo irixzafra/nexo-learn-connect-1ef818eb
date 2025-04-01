@@ -24,7 +24,7 @@ const PageSection: React.FC<PageSectionProps> = ({
 }) => {
   if (variant === 'card') {
     return (
-      <Card className={cn(className)}>
+      <Card className={className}>
         {(title || description) && (
           <CardHeader className={title && description ? 'pb-3' : 'pb-1'}>
             {title && <CardTitle>{title}</CardTitle>}
@@ -41,10 +41,10 @@ const PageSection: React.FC<PageSectionProps> = ({
   return (
     <section className={cn("space-y-2", fullWidth ? "w-full" : "", className)}>
       {title && (
-        <div className="space-y-1">
+        <header className="space-y-1">
           <h3 className="text-lg font-medium">{title}</h3>
           {description && <p className="text-sm text-muted-foreground">{description}</p>}
-        </div>
+        </header>
       )}
       <div className={contentClassName}>{children}</div>
     </section>

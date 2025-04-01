@@ -6,14 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const AdminCourses: React.FC = () => {
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex items-center justify-between mb-6">
+    <section className="container mx-auto py-6">
+      <header className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">Gestión de Cursos</h1>
-        
-        <Button variant="default">
-          Crear Nuevo Curso
-        </Button>
-      </div>
+        <Button variant="default">Crear Nuevo Curso</Button>
+      </header>
 
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="grid w-full md:w-auto grid-cols-3 md:grid-cols-4 mb-6">
@@ -67,7 +64,7 @@ const AdminCourses: React.FC = () => {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+    </section>
   );
 };
 

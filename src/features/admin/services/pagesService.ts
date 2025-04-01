@@ -1,31 +1,96 @@
 
 import { SitePage } from '@/types/pages';
 
-// This would be replaced with an actual API call in a real app
-export const isSlugUnique = async (slug: string, currentPageId?: string): Promise<boolean> => {
-  console.log(`Checking if slug ${slug} is unique for page ID ${currentPageId}`);
-  // Mock implementation - always return true for now
-  return Promise.resolve(true);
+/**
+ * Create a new page
+ */
+export const createPage = async (pageData: Partial<SitePage>): Promise<SitePage | null> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const newPage: SitePage = {
+        id: `page-${Date.now()}`,
+        title: pageData.title || 'New Page',
+        slug: pageData.slug || `page-${Date.now()}`,
+        content: pageData.content || { blocks: [] },
+        status: pageData.status || 'draft',
+        layout: pageData.layout || 'default',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_system_page: false,
+        ...pageData
+      };
+      
+      // In a real implementation, this would save to the database
+      resolve(newPage);
+    }, 500);
+  });
 };
 
-export const getPageById = async (id: string): Promise<SitePage | null> => {
-  console.log(`Fetching page with ID ${id}`);
-  // Mock implementation - always return null for now
-  return Promise.resolve(null);
+/**
+ * Get all pages for admin management
+ */
+export const getAllPages = async (): Promise<SitePage[]> => {
+  // This would typically fetch from an API
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([
+        {
+          id: '1',
+          title: 'Home Page',
+          slug: 'home',
+          content: { blocks: [] },
+          status: 'published',
+          layout: 'default',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_system_page: true
+        },
+        {
+          id: '2',
+          title: 'About Us',
+          slug: 'about',
+          content: { blocks: [] },
+          status: 'published',
+          layout: 'default',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_system_page: false
+        }
+      ]);
+    }, 500);
+  });
 };
 
-export const updatePage = async (id: string, pageData: any): Promise<SitePage> => {
-  console.log(`Updating page with ID ${id}`, pageData);
-  // Mock implementation - always return a dummy page for now
-  return Promise.resolve({
-    id,
-    title: pageData.title,
-    slug: pageData.slug,
-    status: pageData.status,
-    layout: pageData.layout,
-    content: pageData.content,
-    is_system_page: false,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+/**
+ * Update page status
+ */
+export const updatePageStatus = async (pageId: string, status: 'draft' | 'published' | 'archived'): Promise<SitePage | null> => {
+  // Implementation would connect to API
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        id: pageId,
+        title: 'Updated Page',
+        slug: 'updated-page',
+        content: { blocks: [] },
+        status,
+        layout: 'default',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_system_page: false
+      });
+    }, 500);
+  });
+};
+
+/**
+ * Delete a page
+ */
+export const deletePage = async (pageId: string): Promise<boolean> => {
+  // Implementation would connect to API
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 500);
   });
 };

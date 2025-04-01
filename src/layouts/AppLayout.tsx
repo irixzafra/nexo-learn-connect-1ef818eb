@@ -1,16 +1,26 @@
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import { Toaster } from 'sonner';
 
-const AppLayout: React.FC = () => {
+interface AppLayoutProps {
+  children?: ReactNode;
+  showHeader?: boolean;
+  showAdminNavigation?: boolean;
+}
+
+const AppLayout: React.FC<AppLayoutProps> = ({ 
+  children, 
+  showHeader = true,
+  showAdminNavigation = false
+}) => {
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
+    <div className="min-h-screen flex flex-col">
+      {showHeader && <SiteHeader />}
       <main className="flex-1">
-        <Outlet />
+        {children || <Outlet />}
       </main>
       <SiteFooter />
       <Toaster position="top-right" />

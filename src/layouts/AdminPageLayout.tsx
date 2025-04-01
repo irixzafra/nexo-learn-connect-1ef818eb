@@ -3,8 +3,6 @@ import React from 'react';
 import AppLayout from './AppLayout';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import FloatingEditModeToggle from '@/components/admin/FloatingEditModeToggle';
-import { useLocation } from 'react-router-dom';
-import { useDesignSystem } from '@/contexts/DesignSystemContext';
 import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
 
 interface AdminPageLayoutProps {
@@ -28,46 +26,39 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   subMenuItems,
   baseRoute
 }) => {
-  const location = useLocation();
-  const { designFeatureEnabled } = useDesignSystem();
-  
   return (
-    <AppLayout showHeader={false} showAdminNavigation={true}>
-      <div className="flex-1 w-full">
-        <div className="container max-w-full mx-auto space-y-4 p-4 md:p-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-              {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
-            </div>
-            
-            {actions && (
-              <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-                {actions}
-              </div>
-            )}
+    <div className="flex-1 w-full">
+      <div className="container max-w-full mx-auto space-y-4 p-4 md:p-6">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+            {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
           </div>
           
-          {tabs && tabs.length > 0 ? (
-            <>
-              <div className="bg-muted/30 py-1 border-b">
-                <AdminNavTabs
-                  tabs={tabs}
-                  defaultValue={defaultTabValue || tabs[0]?.value}
-                />
-              </div>
-              <div>
-                {children}
-              </div>
-            </>
-          ) : (
-            <div className="w-full">{children}</div>
+          {actions && (
+            <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+              {actions}
+            </div>
           )}
-        </div>
+        </header>
+        
+        {tabs.length > 0 ? (
+          <>
+            <nav className="bg-muted/30 py-1 border-b">
+              <AdminNavTabs
+                tabs={tabs}
+                defaultValue={defaultTabValue || tabs[0]?.value}
+              />
+            </nav>
+            {children}
+          </>
+        ) : (
+          children
+        )}
       </div>
       
       <FloatingEditModeToggle />
-    </AppLayout>
+    </div>
   );
 };
 
