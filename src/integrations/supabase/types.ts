@@ -207,6 +207,44 @@ export type Database = {
         }
         Relationships: []
       }
+      career_categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          parent_id: string | null
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+          slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "career_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
@@ -590,6 +628,57 @@ export type Database = {
         }
         Relationships: []
       }
+      educational_resources: {
+        Row: {
+          author: string | null
+          category: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          description: string
+          duration: string | null
+          id: string
+          is_featured: boolean | null
+          level: string | null
+          tags: string[] | null
+          title: string
+          type: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          author?: string | null
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description: string
+          duration?: string | null
+          id?: string
+          is_featured?: boolean | null
+          level?: string | null
+          tags?: string[] | null
+          title: string
+          type: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          author?: string | null
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string
+          duration?: string | null
+          id?: string
+          is_featured?: boolean | null
+          level?: string | null
+          tags?: string[] | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
       enrollments: {
         Row: {
           course_id: string
@@ -943,6 +1032,69 @@ export type Database = {
           },
         ]
       }
+      job_listings: {
+        Row: {
+          application_url: string | null
+          category: string | null
+          company: string
+          company_logo_url: string | null
+          contact_email: string | null
+          contract_type: string | null
+          description: string
+          experience_level: string | null
+          expires_at: string | null
+          id: string
+          is_featured: boolean | null
+          is_remote: boolean | null
+          location: string | null
+          posted_at: string | null
+          requirements: string | null
+          salary_range: Json | null
+          status: string | null
+          title: string
+        }
+        Insert: {
+          application_url?: string | null
+          category?: string | null
+          company: string
+          company_logo_url?: string | null
+          contact_email?: string | null
+          contract_type?: string | null
+          description: string
+          experience_level?: string | null
+          expires_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_remote?: boolean | null
+          location?: string | null
+          posted_at?: string | null
+          requirements?: string | null
+          salary_range?: Json | null
+          status?: string | null
+          title: string
+        }
+        Update: {
+          application_url?: string | null
+          category?: string | null
+          company?: string
+          company_logo_url?: string | null
+          contact_email?: string | null
+          contract_type?: string | null
+          description?: string
+          experience_level?: string | null
+          expires_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_remote?: boolean | null
+          location?: string | null
+          posted_at?: string | null
+          requirements?: string | null
+          salary_range?: Json | null
+          status?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       job_postings: {
         Row: {
           application_url: string | null
@@ -1274,6 +1426,116 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mentoring_sessions: {
+        Row: {
+          created_at: string | null
+          duration: number
+          feedback_comment: string | null
+          feedback_score: number | null
+          id: string
+          mentor_id: string
+          notes: string | null
+          scheduled_at: string
+          status: string | null
+          student_email: string
+          student_name: string
+          topic: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          duration: number
+          feedback_comment?: string | null
+          feedback_score?: number | null
+          id?: string
+          mentor_id: string
+          notes?: string | null
+          scheduled_at: string
+          status?: string | null
+          student_email: string
+          student_name: string
+          topic: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          duration?: number
+          feedback_comment?: string | null
+          feedback_score?: number | null
+          id?: string
+          mentor_id?: string
+          notes?: string | null
+          scheduled_at?: string
+          status?: string | null
+          student_email?: string
+          student_name?: string
+          topic?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mentoring_sessions_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "mentors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mentors: {
+        Row: {
+          available: boolean | null
+          biography: string | null
+          company: string | null
+          completed_sessions: number | null
+          created_at: string | null
+          currency: string | null
+          email: string | null
+          hourly_rate: number | null
+          id: string
+          image_url: string | null
+          name: string
+          next_availability: string | null
+          role: string
+          specialties: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          available?: boolean | null
+          biography?: string | null
+          company?: string | null
+          completed_sessions?: number | null
+          created_at?: string | null
+          currency?: string | null
+          email?: string | null
+          hourly_rate?: number | null
+          id?: string
+          image_url?: string | null
+          name: string
+          next_availability?: string | null
+          role: string
+          specialties?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          available?: boolean | null
+          biography?: string | null
+          company?: string | null
+          completed_sessions?: number | null
+          created_at?: string | null
+          currency?: string | null
+          email?: string | null
+          hourly_rate?: number | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          next_availability?: string | null
+          role?: string
+          specialties?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       messages: {
         Row: {
@@ -1979,6 +2241,122 @@ export type Database = {
         }
         Relationships: []
       }
+      scholarship_applications: {
+        Row: {
+          applicant_email: string
+          applicant_name: string
+          documents: Json | null
+          id: string
+          notes: string | null
+          responses: Json | null
+          scholarship_id: string
+          status: string | null
+          submitted_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          applicant_email: string
+          applicant_name: string
+          documents?: Json | null
+          id?: string
+          notes?: string | null
+          responses?: Json | null
+          scholarship_id: string
+          status?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          applicant_email?: string
+          applicant_name?: string
+          documents?: Json | null
+          id?: string
+          notes?: string | null
+          responses?: Json | null
+          scholarship_id?: string
+          status?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scholarship_applications_scholarship_id_fkey"
+            columns: ["scholarship_id"]
+            isOneToOne: false
+            referencedRelation: "scholarships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scholarships: {
+        Row: {
+          amount: number | null
+          application_deadline: string | null
+          application_url: string | null
+          available_spots: number | null
+          benefits: string | null
+          category: string | null
+          contact_email: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          currency: string | null
+          description: string
+          education_level: string | null
+          id: string
+          is_featured: boolean | null
+          location: string | null
+          provider: string
+          requirements: string | null
+          status: Database["public"]["Enums"]["scholarship_status"] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount?: number | null
+          application_deadline?: string | null
+          application_url?: string | null
+          available_spots?: number | null
+          benefits?: string | null
+          category?: string | null
+          contact_email?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description: string
+          education_level?: string | null
+          id?: string
+          is_featured?: boolean | null
+          location?: string | null
+          provider: string
+          requirements?: string | null
+          status?: Database["public"]["Enums"]["scholarship_status"] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number | null
+          application_deadline?: string | null
+          application_url?: string | null
+          available_spots?: number | null
+          benefits?: string | null
+          category?: string | null
+          contact_email?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string
+          education_level?: string | null
+          id?: string
+          is_featured?: boolean | null
+          location?: string | null
+          provider?: string
+          requirements?: string | null
+          status?: Database["public"]["Enums"]["scholarship_status"] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       site_page_revisions: {
         Row: {
           content: Json | null
@@ -2520,6 +2898,7 @@ export type Database = {
         | "true_false"
         | "short_answer"
         | "essay"
+      scholarship_status: "active" | "closed" | "upcoming"
       user_role: "student" | "instructor" | "admin"
     }
     CompositeTypes: {
