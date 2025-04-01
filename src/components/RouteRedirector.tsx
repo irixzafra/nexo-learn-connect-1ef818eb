@@ -14,7 +14,8 @@ const redirectMap: Record<string, string> = {
   '/admin/settings/features': '/admin/settings/features',
   '/admin/settings/integrations': '/admin/settings/integrations',
   '/admin/settings/data': '/admin/settings/data',
-  '/admin/settings/pages': '/admin/pages',
+  '/admin/settings/pages': '/admin/settings/pages', // Corrected route
+  '/admin/pages': '/admin/settings/pages', // Added alias
   '/admin/student-activity': '/admin/activity',
   '/admin/learning-paths': '/admin/learning',
   '/analytics/personal': '/analytics',
