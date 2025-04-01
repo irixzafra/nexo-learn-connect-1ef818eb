@@ -67,7 +67,7 @@ const PublicRoutes: React.FC = () => {
       } />
       
       {/* Catch-all route para rutas públicas no encontradas */}
-      <Route path="*" element={<PublicLayout><NotFound /></PublicLayout>} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
