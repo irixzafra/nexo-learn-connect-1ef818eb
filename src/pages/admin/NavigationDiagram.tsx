@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -9,16 +10,27 @@ import {
   LayoutDashboard,
   Users,
   Menu,
-  Menu as MenuIcon,
   Monitor,
   Smartphone,
   Sidebar,
   PanelTop,
-  LayoutList
+  LayoutList,
+  HomeIcon,
+  HelpCircle,
+  Settings,
+  MessageSquare,
+  Bell,
+  BookOpen,
+  FileText,
+  Calendar,
+  CreditCard,
+  Shield
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { adminNavigation } from '@/config/navigation/adminNavigation';
+import { settingsNavigation } from '@/config/navigation/settingsNavigation';
 
 type NavigationItem = {
   label: string;
@@ -51,19 +63,17 @@ const NavigationDiagram: React.FC = () => {
     { label: 'Register', path: '/register' },
   ];
 
-  const adminRoutes: NavigationItem[] = [
-    { label: 'Dashboard', path: '/admin/dashboard' },
-    { label: 'Usuarios', path: '/admin/users' },
-    { label: 'Cursos', path: '/admin/courses' },
-    { label: 'Configuración', path: '/admin/settings' },
-    { label: 'Features', path: '/admin/settings/features' },
-    { label: 'Tema', path: '/admin/settings/theme' },
-    { label: 'Integraciones', path: '/admin/settings/integrations' },
-    { label: 'Roles', path: '/admin/settings/roles' },
-    { label: 'Base de Datos', path: '/admin/settings/database' },
-    { label: 'Datos de Prueba', path: '/admin/test-data' },
-    { label: 'Diagrama de Navegación', path: '/admin/navigation-diagram' },
-  ];
+  // Convertir adminNavigation a un formato más simple para visualizar
+  const adminRoutesFromConfig = adminNavigation.map(item => ({
+    label: item.label,
+    path: item.path
+  }));
+
+  // Convertir settingsNavigation a un formato más simple para visualizar
+  const settingsRoutesFromConfig = settingsNavigation.map(item => ({
+    label: item.label,
+    path: item.path
+  }));
 
   const navigationComponents: NavigationComponent[] = [
     {
@@ -130,87 +140,153 @@ const NavigationDiagram: React.FC = () => {
       usedIn: ['AppLayout', 'dispositivos móviles']
     },
     {
-      name: 'CursosNavigation',
-      description: 'Navegación específica para la sección de cursos. Muestra enlaces a diferentes aspectos de los cursos.',
-      filePath: 'src/components/layout/sidebar/navigation/CursosNavigation.tsx',
-      role: 'Mostrar opciones de navegación para la sección de cursos',
+      name: 'HeaderContent',
+      description: 'Contenido principal del encabezado que muestra la información del usuario y controles de navegación.',
+      filePath: 'src/components/layout/HeaderContent.tsx',
+      role: 'Mostrar información y controles en el encabezado',
       status: 'active',
-      type: 'sidebar',
-      usedIn: ['SidebarMainNavigation']
+      type: 'header',
+      usedIn: ['AppHeader']
     },
     {
-      name: 'DashboardNavigation',
-      description: 'Navegación específica para el dashboard. Muestra enlaces a diferentes aspectos del panel de control.',
-      filePath: 'src/components/layout/sidebar/navigation/DashboardNavigation.tsx',
-      role: 'Mostrar opciones de navegación para el dashboard',
+      name: 'HeaderLogo',
+      description: 'Componente del logo en el encabezado con opciones de navegación móvil.',
+      filePath: 'src/components/layout/header/HeaderLogo.tsx',
+      role: 'Mostrar logo y proporcionar navegación en móviles',
       status: 'active',
-      type: 'sidebar',
-      usedIn: ['SidebarMainNavigation']
+      type: 'header',
+      usedIn: ['HeaderContent']
     },
     {
-      name: 'ComunidadNavigation',
-      description: 'Navegación específica para la sección de comunidad. Muestra enlaces a foros, mensajes, etc.',
-      filePath: 'src/components/layout/sidebar/navigation/ComunidadNavigation.tsx',
-      role: 'Mostrar opciones de navegación para la sección de comunidad',
-      status: 'active',
-      type: 'sidebar',
-      usedIn: ['SidebarMainNavigation']
-    },
-    {
-      name: 'ConfiguracionNavigation',
-      description: 'Navegación específica para la sección de configuración. Muestra enlaces a diferentes ajustes.',
-      filePath: 'src/components/layout/sidebar/navigation/ConfiguracionNavigation.tsx',
-      role: 'Mostrar opciones de navegación para la configuración',
-      status: 'active',
-      type: 'sidebar',
-      usedIn: ['SidebarMainNavigation']
-    },
-    {
-      name: 'CalendarNavigation',
-      description: 'Navegación específica para la sección de calendario. Muestra enlaces a diferentes vistas del calendario.',
-      filePath: 'src/components/layout/sidebar/navigation/CalendarNavigation.tsx',
-      role: 'Mostrar opciones de navegación para el calendario',
-      status: 'active',
-      type: 'sidebar',
-      usedIn: ['SidebarMainNavigation']
-    },
-    {
-      name: 'GamificationNavigation',
-      description: 'Navegación específica para la sección de gamificación. Muestra enlaces a logros, desafíos, etc.',
-      filePath: 'src/components/layout/sidebar/navigation/GamificationNavigation.tsx',
-      role: 'Mostrar opciones de navegación para la gamificación',
-      status: 'active',
-      type: 'sidebar',
-      usedIn: ['SidebarMainNavigation']
-    },
-    {
-      name: 'AdminMenu',
-      description: 'Componente de menú administrativo que puede mostrarse en diferentes formatos (botones, tarjetas, etc).',
-      filePath: 'src/components/ui/admin-menu/AdminMenu.tsx',
-      role: 'Mostrar menú administrativo en diferentes formatos',
+      name: 'UserMenu',
+      description: 'Menú desplegable con opciones de usuario y controles de cuenta.',
+      filePath: 'src/components/layout/header/UserMenu.tsx',
+      role: 'Proporcionar acceso a opciones de usuario',
       status: 'active',
       type: 'menu',
-      usedIn: ['admin/*']
+      usedIn: ['HeaderContent']
     },
     {
-      name: 'AppLayout',
-      description: 'Layout principal de la aplicación. Contiene el sidebar, header y estructura básica.',
-      filePath: 'src/layouts/AppLayout.tsx',
-      role: 'Definir la estructura básica de páginas regulares',
+      name: 'SidebarContent',
+      description: 'Contenido principal de la barra lateral que muestra diferentes secciones de navegación.',
+      filePath: 'src/components/layout/sidebar/SidebarContent.tsx',
+      role: 'Mostrar opciones de navegación en la barra lateral',
       status: 'active',
-      type: 'layout',
-      usedIn: ['pages regulares']
+      type: 'sidebar',
+      usedIn: ['ConditionalSidebar']
     },
     {
-      name: 'AdminLayout',
-      description: 'Layout específico para la sección administrativa. Contiene la barra lateral administrativa.',
-      filePath: 'src/layouts/AdminLayout.tsx',
-      role: 'Definir la estructura básica de páginas administrativas',
+      name: 'SidebarGroup',
+      description: 'Grupo de elementos de navegación en la barra lateral con título plegable.',
+      filePath: 'src/components/layout/sidebar/SidebarGroup.tsx',
+      role: 'Agrupar elementos de navegación relacionados',
       status: 'active',
-      type: 'layout',
-      usedIn: ['páginas administrativas']
+      type: 'sidebar',
+      usedIn: ['SidebarContent']
+    },
+    {
+      name: 'SidebarLogoSection',
+      description: 'Sección superior de la barra lateral que muestra el logo de la aplicación.',
+      filePath: 'src/components/layout/sidebar/SidebarLogoSection.tsx',
+      role: 'Mostrar el logo en la barra lateral',
+      status: 'active',
+      type: 'sidebar',
+      usedIn: ['ConditionalSidebar']
+    },
+    {
+      name: 'SidebarFooterSection',
+      description: 'Sección inferior de la barra lateral con opciones de usuario y configuración.',
+      filePath: 'src/components/layout/sidebar/SidebarFooterSection.tsx',
+      role: 'Mostrar opciones de configuración y usuario en la barra lateral',
+      status: 'active',
+      type: 'sidebar',
+      usedIn: ['ConditionalSidebar']
+    },
+    {
+      name: 'MainNavigationMenu',
+      description: 'Menú de navegación principal en el encabezado con enlaces a secciones principales.',
+      filePath: 'src/components/layout/header/MainNavigationMenu.tsx',
+      role: 'Proporcionar navegación principal en el encabezado',
+      status: 'active',
+      type: 'menu',
+      usedIn: ['HeaderContent']
+    },
+    {
+      name: 'MobileSidebar',
+      description: 'Barra lateral para dispositivos móviles que se muestra como un panel deslizable.',
+      filePath: 'src/components/layout/header/MobileSidebar.tsx',
+      role: 'Proporcionar navegación en dispositivos móviles',
+      status: 'active',
+      type: 'sidebar',
+      usedIn: ['HeaderContent']
+    },
+    {
+      name: 'SidebarNavItem',
+      description: 'Elemento individual de navegación en la barra lateral.',
+      filePath: 'src/components/layout/sidebar/navigation/SidebarNavItem.tsx',
+      role: 'Mostrar un enlace individual en la navegación',
+      status: 'active',
+      type: 'navigation',
+      usedIn: ['SidebarNavGroup']
+    },
+    {
+      name: 'SidebarNavGroup',
+      description: 'Grupo de elementos de navegación con título en la barra lateral.',
+      filePath: 'src/components/layout/sidebar/navigation/SidebarNavGroup.tsx',
+      role: 'Agrupar elementos de navegación relacionados',
+      status: 'active',
+      type: 'navigation',
+      usedIn: ['SidebarNavSection']
+    },
+    {
+      name: 'SidebarNavSection',
+      description: 'Sección de navegación en la barra lateral que contiene grupos de elementos.',
+      filePath: 'src/components/layout/sidebar/navigation/SidebarNavSection.tsx',
+      role: 'Organizar grupos de navegación relacionados',
+      status: 'active',
+      type: 'navigation',
+      usedIn: ['SidebarMainNavigation']
+    },
+    {
+      name: 'SidebarSettingsMenu',
+      description: 'Submenú de configuración en la barra lateral administrativa.',
+      filePath: 'src/components/admin/SidebarSettingsMenu.tsx',
+      role: 'Mostrar opciones de configuración en la administración',
+      status: 'active',
+      type: 'menu',
+      usedIn: ['AdminNavigation']
     }
   ];
+
+  // Lista de archivos de navegación por tipos
+  const navigationFiles = {
+    layouts: [
+      'src/layouts/AdminLayout.tsx',
+      'src/layouts/AppLayout.tsx'
+    ],
+    sidebars: [
+      'src/components/layout/sidebar/SidebarContent.tsx',
+      'src/components/admin/AdminNavigation.tsx',
+      'src/components/layout/ConditionalSidebar.tsx'
+    ],
+    headers: [
+      'src/components/layout/AppHeader.tsx',
+      'src/components/layout/HeaderContent.tsx'
+    ],
+    footers: [
+      'src/components/layout/SiteFooter.tsx'
+    ],
+    menus: [
+      'src/components/layout/header/UserMenu.tsx',
+      'src/components/layout/header/MainNavigationMenu.tsx',
+      'src/components/admin/SidebarSettingsMenu.tsx'
+    ],
+    configs: [
+      'src/config/navigation/adminNavigation.ts',
+      'src/config/navigation/mainNavigation.ts',
+      'src/config/navigation/settingsNavigation.ts'
+    ]
+  };
 
   return (
     <div className="container mx-auto py-8 space-y-6">
@@ -223,6 +299,7 @@ const NavigationDiagram: React.FC = () => {
         <TabsList className="mb-4">
           <TabsTrigger value="components">Componentes de Navegación</TabsTrigger>
           <TabsTrigger value="routes">Rutas de Navegación</TabsTrigger>
+          <TabsTrigger value="files">Archivos</TabsTrigger>
           <TabsTrigger value="diagram">Diagrama Visual</TabsTrigger>
         </TabsList>
         
@@ -311,13 +388,84 @@ const NavigationDiagram: React.FC = () => {
             <CardContent>
               <div className="rounded-md border">
                 <ul className="divide-y">
-                  {adminRoutes.map((item, index) => (
+                  {adminRoutesFromConfig.map((item, index) => (
                     <li key={index} className="flex justify-between py-3 px-4">
                       <span className="font-medium">{item.label}</span>
                       <span className="text-muted-foreground">{item.path}</span>
                     </li>
                   ))}
                 </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="files" className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                Archivos de Navegación
+              </CardTitle>
+              <CardDescription>
+                Todos los archivos relacionados con la navegación
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {Object.entries(navigationFiles).map(([category, files]) => (
+                  <div key={category} className="space-y-2">
+                    <h3 className="font-medium capitalize">{category}</h3>
+                    <div className="rounded-md border bg-muted/50">
+                      <ul className="divide-y">
+                        {files.map((file, index) => (
+                          <li key={index} className="py-2 px-3 text-sm">
+                            {file}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5 text-primary" />
+                Configuración de Navegación
+              </CardTitle>
+              <CardDescription>
+                Archivos de configuración que definen la navegación
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-medium mb-2">adminNavigation.ts</h3>
+                  <div className="rounded-md border bg-muted/50 p-3">
+                    <p className="text-sm text-muted-foreground mb-2">Define la navegación del panel de administración</p>
+                    <Badge>14 rutas</Badge>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium mb-2">settingsNavigation.ts</h3>
+                  <div className="rounded-md border bg-muted/50 p-3">
+                    <p className="text-sm text-muted-foreground mb-2">Define las rutas de configuración</p>
+                    <Badge>{settingsRoutesFromConfig.length} rutas</Badge>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium mb-2">mainNavigation.ts</h3>
+                  <div className="rounded-md border bg-muted/50 p-3">
+                    <p className="text-sm text-muted-foreground mb-2">Define la navegación principal de la aplicación</p>
+                    <Badge>8 rutas</Badge>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -375,12 +523,12 @@ const NavigationDiagram: React.FC = () => {
                       
                       <div className="grid grid-cols-2 gap-2">
                         <div className="p-2 bg-background rounded-md border shadow-sm text-center">
-                          <MenuIcon className="h-5 w-5 mx-auto mb-1 text-primary" />
+                          <Menu className="h-5 w-5 mx-auto mb-1 text-primary" />
                           <div className="text-xs font-medium">SidebarMainNavigation</div>
                         </div>
                         
                         <div className="p-2 bg-background rounded-md border shadow-sm text-center">
-                          <MenuIcon className="h-5 w-5 mx-auto mb-1 text-primary" />
+                          <Menu className="h-5 w-5 mx-auto mb-1 text-primary" />
                           <div className="text-xs font-medium">AdminNavigation</div>
                         </div>
                       </div>
@@ -537,7 +685,7 @@ const NavigationDiagram: React.FC = () => {
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="w-2 h-2 bg-primary rounded-full"></span>
-                      <span>AdminMenu</span>
+                      <span>SidebarSettingsMenu</span>
                     </li>
                   </ul>
                 </div>
@@ -559,7 +707,7 @@ const NavigationDiagram: React.FC = () => {
             <div className="flex flex-col items-center gap-2 text-center">
               <Navigation2 className="h-10 w-10 text-primary" />
               <p className="text-muted-foreground">
-                Estás en la ruta <strong>/admin/analytics</strong>
+                Estás en la ruta <strong>/admin/navigation-diagram</strong>
               </p>
               <p className="text-sm text-muted-foreground mt-2">
                 Desde esta página puedes revisar todos los componentes de navegación del sistema y decidir cuáles mantener y cuáles eliminar
