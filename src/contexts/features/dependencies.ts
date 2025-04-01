@@ -2,61 +2,94 @@
 import { FeaturesConfig } from './types';
 
 /**
+ * Maps of dependencies between features
+ */
+export const featureDependencies: Record<keyof FeaturesConfig, (keyof FeaturesConfig)[]> = {
+  // Interface
+  enableDarkMode: [],
+  enableNotifications: [],
+  enableAnalytics: [],
+  enableFeedback: [],
+  
+  // User features
+  enableUserRegistration: [],
+  enableSocialLogin: ['enableUserRegistration'],
+  enablePublicProfiles: ['enableUserRegistration'],
+  
+  // Design system
+  designSystemEnabled: [],
+  enableThemeSwitcher: ['designSystemEnabled'],
+  enableMultiLanguage: [],
+  
+  // Content features
+  enableAdvancedEditor: [],
+  enableContentReordering: [],
+  enableCategoryManagement: [],
+  enableLeaderboard: [],
+  
+  // Technical features
+  enableAutoBackups: [],
+  enableQueryCache: [],
+  enableMaintenanceMode: [],
+  enableDatabaseDevMode: [],
+  
+  // Security features
+  enable2FA: ['enableUserRegistration'],
+  enableMultipleSessions: ['enableUserRegistration'],
+  enablePublicRegistration: ['enableUserRegistration'],
+  requireEmailVerification: ['enableUserRegistration'],
+  enableActivityLog: [],
+  
+  // Development features
+  enableTestDataGenerator: [],
+  
+  // Onboarding features
+  enableOnboarding: [],
+  enableContextualHelp: [],
+  requireOnboarding: ['enableOnboarding'],
+  autoStartOnboarding: ['enableOnboarding'],
+  showOnboardingTrigger: ['enableOnboarding'],
+  
+  // Role management
+  enableRoleManagement: [],
+  enableRoleSwitcher: ['enableRoleManagement']
+};
+
+/**
+ * Generate the reverse mapping of feature dependents
+ */
+export const featureDependents: Record<keyof FeaturesConfig, (keyof FeaturesConfig)[]> = (() => {
+  const result: Record<string, (keyof FeaturesConfig)[]> = {};
+  
+  // Initialize all features with empty arrays
+  Object.keys(featureDependencies).forEach(key => {
+    result[key] = [];
+  });
+  
+  // Build the reverse mapping
+  Object.entries(featureDependencies).forEach(([feature, dependencies]) => {
+    dependencies.forEach(dependency => {
+      if (result[dependency]) {
+        result[dependency].push(feature as keyof FeaturesConfig);
+      }
+    });
+  });
+  
+  return result as Record<keyof FeaturesConfig, (keyof FeaturesConfig)[]>;
+})();
+
+/**
  * Gets the list of feature dependencies for a given feature
  */
 export const getFeatureDependencies = (featureKey: keyof FeaturesConfig): (keyof FeaturesConfig)[] => {
-  const dependencies: Record<keyof FeaturesConfig, (keyof FeaturesConfig)[]> = {
-    // Interface
-    enableDarkMode: [],
-    enableNotifications: [],
-    enableAnalytics: [],
-    enableFeedback: [],
-    
-    // User features
-    enableUserRegistration: [],
-    enableSocialLogin: ['enableUserRegistration'],
-    enablePublicProfiles: ['enableUserRegistration'],
-    
-    // Design system
-    designSystemEnabled: [],
-    enableThemeSwitcher: ['designSystemEnabled'],
-    enableMultiLanguage: [],
-    
-    // Content features
-    enableAdvancedEditor: [],
-    enableContentReordering: [],
-    enableCategoryManagement: [],
-    enableLeaderboard: [],
-    
-    // Technical features
-    enableAutoBackups: [],
-    enableQueryCache: [],
-    enableMaintenanceMode: [],
-    enableDatabaseDevMode: [],
-    
-    // Security features
-    enable2FA: ['enableUserRegistration'],
-    enableMultipleSessions: ['enableUserRegistration'],
-    enablePublicRegistration: ['enableUserRegistration'],
-    requireEmailVerification: ['enableUserRegistration'],
-    enableActivityLog: [],
-    
-    // Development features
-    enableTestDataGenerator: [],
-    
-    // Onboarding features
-    enableOnboarding: [],
-    enableContextualHelp: [],
-    requireOnboarding: ['enableOnboarding'],
-    autoStartOnboarding: ['enableOnboarding'],
-    showOnboardingTrigger: ['enableOnboarding'],
-    
-    // Role management
-    enableRoleManagement: [],
-    enableRoleSwitcher: ['enableRoleManagement']
-  };
-  
-  return dependencies[featureKey] || [];
+  return featureDependencies[featureKey] || [];
+};
+
+/**
+ * Gets the list of features that depend on a given feature
+ */
+export const getFeatureDependents = (featureKey: keyof FeaturesConfig): (keyof FeaturesConfig)[] => {
+  return featureDependents[featureKey] || [];
 };
 
 /**

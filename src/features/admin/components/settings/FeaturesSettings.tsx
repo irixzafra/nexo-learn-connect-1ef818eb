@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ToggleRight } from 'lucide-react';
-import { FeatureManagement } from '@/components/admin/features/FeatureManagement';
+import FeatureManagement from '@/components/admin/features/FeatureManagement';
 
 /**
  * Componente para gestionar la configuración de características del sistema

@@ -50,6 +50,19 @@ export interface FeaturesConfig {
   enableRoleSwitcher: boolean;
 }
 
+export interface FeaturesContextProps {
+  features: FeaturesConfig;
+  featuresConfig: FeaturesConfig;  // Alias for backward compatibility
+  isLoading: boolean;
+  error?: Error | null;
+  updateFeatures: (newConfig: FeaturesConfig) => Promise<void>;
+  reloadFeatures?: () => Promise<void>;
+  isFeatureEnabled: (featureName: keyof FeaturesConfig) => boolean;
+  toggleFeature: (featureName: keyof FeaturesConfig, value: boolean) => Promise<void>;
+  getFeatureDependencies: (feature: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
+  getFeatureDependents: (feature: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
+}
+
 export const defaultFeaturesConfig: FeaturesConfig = {
   // Interface features
   enableDarkMode: true,

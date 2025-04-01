@@ -1,22 +1,11 @@
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { toast } from 'sonner';
-import { FeaturesConfig, defaultFeaturesConfig } from './types';
+import { FeaturesConfig, defaultFeaturesConfig, FeaturesContextProps } from './types';
 import { 
   getFeatureDependencies, 
   getFeatureDependents 
 } from './dependencies';
-
-// Context props definition
-export interface FeaturesContextProps {
-  features: FeaturesConfig;
-  isLoading: boolean;
-  toggleFeature: (featureName: keyof FeaturesConfig, value: boolean) => Promise<void>;
-  updateFeatures: (newConfig: Partial<FeaturesConfig>) => Promise<void>;
-  isFeatureEnabled: (featureName: keyof FeaturesConfig) => boolean;
-  getFeatureDependencies: (feature: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
-  getFeatureDependents: (feature: keyof FeaturesConfig) => (keyof FeaturesConfig)[];
-}
 
 // Create context with default empty values
 const FeaturesContext = createContext<FeaturesContextProps>({} as FeaturesContextProps);
@@ -65,7 +54,7 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Update multiple features at once
   const updateFeatures = useCallback(
-    async (newConfig: Partial<FeaturesConfig>): Promise<void> => {
+    async (newConfig: FeaturesConfig): Promise<void> => {
       try {
         setIsLoading(true);
         
@@ -93,7 +82,9 @@ export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Provide the context value
   const contextValue: FeaturesContextProps = {
     features,
+    featuresConfig: features,
     isLoading,
+    error: null,
     toggleFeature,
     updateFeatures,
     isFeatureEnabled,

@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Undo2, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import FeatureAccordionGroup from './FeatureAccordionGroup';
-import { useFeature } from '@/hooks/useFeature';
+import { useFeatures } from '@/contexts/features/FeaturesContext';
 
 const FeatureManagement: React.FC = () => {
-  const { features, updateFeatures } = useFeature();
+  const { features, updateFeatures, isLoading: contextLoading } = useFeatures();
   const [localFeatures, setLocalFeatures] = useState<FeaturesConfig>({...features});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -70,7 +70,7 @@ const FeatureManagement: React.FC = () => {
             <Button
               variant="outline"
               onClick={handleRestoreDefaults}
-              disabled={isLoading}
+              disabled={isLoading || contextLoading}
             >
               Restaurar predeterminados
             </Button>
@@ -79,7 +79,7 @@ const FeatureManagement: React.FC = () => {
               <Button
                 variant="outline"
                 onClick={handleReset}
-                disabled={isLoading}
+                disabled={isLoading || contextLoading}
               >
                 <Undo2 className="mr-2 h-4 w-4" />
                 Descartar
@@ -87,7 +87,7 @@ const FeatureManagement: React.FC = () => {
               
               <Button
                 onClick={handleSave}
-                disabled={isLoading}
+                disabled={isLoading || contextLoading}
               >
                 <Save className="mr-2 h-4 w-4" />
                 Guardar Cambios

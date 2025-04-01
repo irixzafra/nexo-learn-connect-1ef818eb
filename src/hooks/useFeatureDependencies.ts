@@ -1,6 +1,6 @@
 
 import { useFeatures } from '@/contexts/features/FeatureContext';
-import { featureDependencies, featureDependents } from '@/contexts/features/dependencies';
+import { getFeatureDependencies, getFeatureDependents } from '@/contexts/features/dependencies';
 import { FeaturesConfig } from '@/contexts/features/types';
 
 /**
@@ -14,7 +14,7 @@ export const useFeatureDependencies = () => {
    * No se puede desactivar si hay características activas que dependen de ella
    */
   const checkIfCanDisable = (feature: keyof FeaturesConfig): boolean => {
-    const dependents = featureDependents[feature];
+    const dependents = getFeatureDependents(feature);
     
     // Si no hay dependientes, siempre se puede desactivar
     if (!dependents || dependents.length === 0) {
@@ -35,14 +35,14 @@ export const useFeatureDependencies = () => {
    * Obtiene la lista de características que dependen de una característica dada
    */
   const getDependentFeatures = (feature: keyof FeaturesConfig): string[] => {
-    return featureDependents[feature] || [];
+    return getFeatureDependents(feature) || [];
   };
   
   /**
    * Obtiene la lista de características de las que depende una característica dada
    */
   const getDependencies = (feature: keyof FeaturesConfig): string[] => {
-    return featureDependencies[feature] || [];
+    return getFeatureDependencies(feature) || [];
   };
   
   /**
@@ -50,7 +50,7 @@ export const useFeatureDependencies = () => {
    * No se puede activar si alguna de sus dependencias está desactivada
    */
   const checkIfCanEnable = (feature: keyof FeaturesConfig): boolean => {
-    const dependencies = featureDependencies[feature];
+    const dependencies = getFeatureDependencies(feature);
     
     // Si no hay dependencias, siempre se puede activar
     if (!dependencies || dependencies.length === 0) {
