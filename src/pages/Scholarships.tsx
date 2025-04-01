@@ -1,453 +1,359 @@
 
-import React from "react";
-import PublicLayout from "@/layouts/PublicLayout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { GraduationCap, Award, BookOpen, Calendar, ArrowRight, Globe, Users, Target, Sparkles, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import React from 'react';
+import PublicLayout from '@/layouts/PublicLayout';
+import { motion } from 'framer-motion';
+import { AwardIcon, CalendarIcon, GraduationCap, Clock, FileCheck, Globe, HelpCircle, Lightbulb } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const Scholarships: React.FC = () => {
-  // Animation variants
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
-
   return (
     <PublicLayout>
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-background">
         {/* Hero Section */}
-        <section className="relative py-20 bg-gradient-to-b from-blue-50 to-white overflow-hidden">
-          <div className="absolute inset-0 overflow-hidden -z-10">
-            <svg className="absolute left-[calc(50%-30rem)] top-[calc(50%-30rem)] transform-gpu blur-3xl" viewBox="0 0 1155 678" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill="url(#45de2b6b-92d5-4d68-a6a0-9b9b2abad533)" fillOpacity=".3" d="M317.219 518.975L203.852 678 0 438.341l317.219 80.634 204.172-286.402c1.307 132.337 45.083 346.658 209.733 145.248C936.936 126.058 882.053-94.234 1031.02 41.331c119.18 108.451 130.68 295.337 121.53 375.223L855 299l21.173 362.054-558.954-142.079z" />
-              <defs>
-                <linearGradient id="45de2b6b-92d5-4d68-a6a0-9b9b2abad533" x1="1155.49" x2="-78.208" y1=".177" y2="474.645" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#9089FC" />
-                  <stop offset="1" stopColor="#4878f0" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
-          
-          <div className="container mx-auto px-4 relative z-10">
+        <section className="pt-16 pb-24 bg-gradient-to-b from-primary/10 to-background relative overflow-hidden">
+          <div className="container mx-auto px-4">
             <motion.div 
-              className="max-w-4xl mx-auto text-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6 }}
+              className="max-w-4xl mx-auto"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-800 mb-6">
-                <GraduationCap className="h-5 w-5" />
-                <span className="font-medium">Programa de Becas 2023</span>
+              <div className="flex items-center gap-3 mb-4">
+                <AwardIcon className="h-7 w-7 text-primary" />
+                <h1 className="text-4xl md:text-5xl font-bold">Programa de Becas</h1>
               </div>
-              
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                Impulsamos tu talento creativo
-              </h1>
-              
-              <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-                Descubre nuestras oportunidades de becas diseñadas para democratizar el acceso al conocimiento y potenciar el desarrollo de nuevos talentos.
+              <p className="text-xl text-muted-foreground mb-8 md:text-2xl max-w-3xl">
+                Impulsamos el talento y facilitamos el acceso a educación de calidad a través de nuestras becas y ayudas al estudio.
               </p>
               
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button size="lg" className="group shadow-md" asChild>
-                  <a href="#scholarships">
-                    Ver becas disponibles
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </a>
+              <div className="flex flex-col sm:flex-row gap-4 mb-12">
+                <Button asChild size="lg" variant="default">
+                  <Link to="/scholarships/apply">
+                    Solicitar beca
+                  </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-2" asChild>
-                  <a href="#application">Solicitar beca</a>
+                <Button asChild size="lg" variant="outline">
+                  <Link to="#scholarships-types">
+                    Ver tipos de becas
+                  </Link>
                 </Button>
               </div>
             </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="relative mt-8 rounded-xl overflow-hidden shadow-lg"
+            >
+              <img 
+                src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
+                alt="Estudiantes becados" 
+                className="w-full h-auto object-cover rounded-xl aspect-video"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-8">
+                <p className="text-white text-xl font-medium">Nuestra misión es eliminar las barreras económicas en el acceso a la educación</p>
+              </div>
+            </motion.div>
+          </div>
+          
+          {/* Decorative elements */}
+          <div className="absolute -z-10 top-24 right-12 w-64 h-64 bg-secondary/5 rounded-full blur-3xl"></div>
+          <div className="absolute -z-10 bottom-12 left-12 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+        </section>
+        
+        {/* Main content */}
+        <section className="py-16" id="scholarships-types">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-3xl font-bold mb-4">Tipos de Becas Disponibles</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Ofrecemos diversas modalidades de becas adaptadas a diferentes perfiles y necesidades.
+              </p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  title: "Beca Talento",
+                  icon: <Lightbulb className="h-10 w-10 text-amber-500" />,
+                  description: "Para estudiantes con alto rendimiento académico demostrable",
+                  discount: "60%",
+                  spots: 40,
+                  remaining: 12,
+                  deadline: "15 de Noviembre, 2023"
+                },
+                {
+                  title: "Beca Digital",
+                  icon: <GraduationCap className="h-10 w-10 text-sky-500" />,
+                  description: "Especializada en programas de tecnología y transformación digital",
+                  discount: "45%",
+                  spots: 70,
+                  remaining: 23,
+                  deadline: "30 de Noviembre, 2023"
+                },
+                {
+                  title: "Beca Internacional",
+                  icon: <Globe className="h-10 w-10 text-emerald-500" />,
+                  description: "Para estudiantes internacionales que buscan formación especializada",
+                  discount: "50%",
+                  spots: 25,
+                  remaining: 8,
+                  deadline: "10 de Diciembre, 2023"
+                },
+                {
+                  title: "Beca Mujer en Tech",
+                  icon: <FileCheck className="h-10 w-10 text-purple-500" />,
+                  description: "Enfocada en impulsar la presencia femenina en carreras tecnológicas",
+                  discount: "70%",
+                  spots: 30,
+                  remaining: 15,
+                  deadline: "20 de Diciembre, 2023"
+                },
+                {
+                  title: "Beca Emprendimiento",
+                  icon: <Lightbulb className="h-10 w-10 text-orange-500" />,
+                  description: "Para proyectos emprendedores con potencial de impacto",
+                  discount: "55%",
+                  spots: 20,
+                  remaining: 7,
+                  deadline: "5 de Enero, 2024"
+                },
+                {
+                  title: "Beca Inclusión",
+                  icon: <HelpCircle className="h-10 w-10 text-indigo-500" />,
+                  description: "Diseñada para personas con diversidad funcional o en riesgo de exclusión",
+                  discount: "80%",
+                  spots: 15,
+                  remaining: 9,
+                  deadline: "15 de Enero, 2024"
+                }
+              ].map((scholarship, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                >
+                  <Card className="h-full hover:shadow-md transition-shadow">
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                          {scholarship.icon}
+                        </div>
+                        <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-bold">
+                          {scholarship.discount} descuento
+                        </div>
+                      </div>
+                      <CardTitle className="text-xl">{scholarship.title}</CardTitle>
+                      <CardDescription className="line-clamp-2">{scholarship.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex items-center justify-between text-sm mb-1">
+                            <span className="text-muted-foreground">Plazas disponibles</span>
+                            <span className="font-medium">{scholarship.remaining} de {scholarship.spots}</span>
+                          </div>
+                          <Progress value={(scholarship.remaining / scholarship.spots) * 100} className="h-2" />
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <CalendarIcon className="h-4 w-4" />
+                          <span>Fecha límite: {scholarship.deadline}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Clock className="h-4 w-4" />
+                          <span>Resolución: 15-30 días</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button variant="outline" className="w-full">Ver requisitos</Button>
+                    </CardFooter>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
         
-        {/* Stats Section */}
-        <section className="py-16 bg-white">
+        {/* How to Apply */}
+        <section className="py-16 bg-muted/20">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <motion.div 
-                className="text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-3xl font-bold mb-4">Proceso de Solicitud</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Seguir estos pasos te ayudará a completar tu solicitud de beca correctamente.
+              </p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: 0.1 }}
+                transition={{ duration: 0.6 }}
               >
-                <h3 className="text-4xl font-bold text-blue-600 mb-2">350+</h3>
-                <p className="text-muted-foreground">Becas otorgadas</p>
+                <div className="space-y-8">
+                  {[
+                    { number: "01", title: "Registrarte en la plataforma", description: "Crea una cuenta gratuita y verifica tu dirección de correo electrónico" },
+                    { number: "02", title: "Completa tu perfil", description: "Asegúrate de que tu información personal esté actualizada y sea precisa" },
+                    { number: "03", title: "Elige el tipo de beca", description: "Selecciona la beca que mejor se adapte a tu perfil y necesidades actuales" },
+                    { number: "04", title: "Adjunta documentación", description: "Sube los documentos requeridos que respalden tu solicitud" },
+                    { number: "05", title: "Envía la solicitud", description: "Revisa toda la información y envía tu solicitud para evaluación" }
+                  ].map((step, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1, duration: 0.5 }}
+                      className="flex gap-4"
+                    >
+                      <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
+                        {step.number}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold mb-1">{step.title}</h3>
+                        <p className="text-muted-foreground">{step.description}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </motion.div>
               
-              <motion.div 
-                className="text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: 0.2 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="relative rounded-2xl overflow-hidden"
               >
-                <h3 className="text-4xl font-bold text-indigo-600 mb-2">85%</h3>
-                <p className="text-muted-foreground">Tasa de finalización</p>
-              </motion.div>
-              
-              <motion.div 
-                className="text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: 0.3 }}
-              >
-                <h3 className="text-4xl font-bold text-purple-600 mb-2">25</h3>
-                <p className="text-muted-foreground">Países participantes</p>
-              </motion.div>
-              
-              <motion.div 
-                className="text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: 0.4 }}
-              >
-                <h3 className="text-4xl font-bold text-pink-600 mb-2">€500K</h3>
-                <p className="text-muted-foreground">Fondos destinados</p>
+                <img 
+                  src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
+                  alt="Estudiante completando solicitud" 
+                  className="w-full h-full object-cover rounded-2xl aspect-[3/4] md:aspect-[4/3]"
+                />
+                
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  className="absolute top-4 right-4 bg-background p-4 rounded-xl shadow-lg max-w-xs"
+                >
+                  <p className="font-medium text-sm">
+                    "La beca de Nexo Learning me permitió acceder a una formación que de otro modo no habría podido costear. Hoy trabajo en lo que me apasiona gracias a ello."
+                  </p>
+                  <div className="flex items-center gap-2 mt-3">
+                    <div className="h-8 w-8 rounded-full bg-primary/20"></div>
+                    <div>
+                      <p className="text-sm font-medium">Ana Martínez</p>
+                      <p className="text-xs text-muted-foreground">Desarrolladora Web</p>
+                    </div>
+                  </div>
+                </motion.div>
               </motion.div>
             </div>
           </div>
         </section>
         
-        {/* Scholarships Section */}
-        <section id="scholarships" className="py-20 bg-gradient-to-b from-white to-blue-50">
+        {/* FAQ Section */}
+        <section className="py-16">
           <div className="container mx-auto px-4">
-            <motion.div 
-              className="text-center max-w-3xl mx-auto mb-16"
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
             >
-              <h2 className="text-4xl font-bold mb-6">Becas Disponibles</h2>
-              <p className="text-lg text-muted-foreground">
-                Ofrecemos diferentes programas adaptados a distintos perfiles y necesidades.
-                Encuentra la beca que mejor se ajuste a tus objetivos profesionales.
+              <h2 className="text-3xl font-bold mb-4">Preguntas Frecuentes</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Resolvemos tus dudas sobre el programa de becas y el proceso de solicitud.
               </p>
             </motion.div>
             
-            <motion.div 
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
-              variants={container}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-            >
-              {/* Scholarship Card 1 */}
-              <motion.div variants={item}>
-                <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 relative">
-                  <div className="absolute top-0 right-0 bg-blue-600 text-white px-4 py-1 text-sm font-medium rounded-bl-lg">
-                    100% Financiada
-                  </div>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="bg-blue-100 p-2 rounded-lg">
-                        <Award className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <CardTitle>Beca de Excelencia Académica</CardTitle>
-                    </div>
-                    <CardDescription>
-                      Programa de Becas 2023
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-3">
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-2">
-                        <Calendar className="h-4 w-4 mt-1 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">Fecha límite:</p>
-                          <p className="text-sm text-muted-foreground">30 de Junio, 2023</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <BookOpen className="h-4 w-4 mt-1 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">Descripción:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Beca completa para estudiantes con excelente rendimiento académico en programas de desarrollo web y programación.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Target className="h-4 w-4 mt-1 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">Requisitos:</p>
-                          <ul className="text-sm text-muted-foreground list-disc pl-4 mt-1 space-y-1">
-                            <li>Expediente académico destacado</li>
-                            <li>Carta de motivación</li>
-                            <li>Proyecto de portfolio</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button className="w-full group" asChild>
-                      <a href="#application">
-                        Solicitar ahora
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </a>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-              
-              {/* Scholarship Card 2 */}
-              <motion.div variants={item}>
-                <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 relative">
-                  <div className="absolute top-0 right-0 bg-indigo-600 text-white px-4 py-1 text-sm font-medium rounded-bl-lg">
-                    75% Financiada
-                  </div>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="bg-indigo-100 p-2 rounded-lg">
-                        <Award className="h-6 w-6 text-indigo-600" />
-                      </div>
-                      <CardTitle>Beca para Nuevos Talentos</CardTitle>
-                    </div>
-                    <CardDescription>
-                      Programa de Becas 2023
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-3">
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-2">
-                        <Calendar className="h-4 w-4 mt-1 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">Fecha límite:</p>
-                          <p className="text-sm text-muted-foreground">15 de Julio, 2023</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <BookOpen className="h-4 w-4 mt-1 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">Descripción:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Programa dirigido a jóvenes talentos que buscan formarse en el ámbito de la tecnología y desarrollo de software.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Target className="h-4 w-4 mt-1 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">Requisitos:</p>
-                          <ul className="text-sm text-muted-foreground list-disc pl-4 mt-1 space-y-1">
-                            <li>Menos de 25 años</li>
-                            <li>Proyecto personal</li>
-                            <li>Entrevista personal</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button className="w-full group" asChild>
-                      <a href="#application">
-                        Solicitar ahora
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </a>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-              
-              {/* Scholarship Card 3 */}
-              <motion.div variants={item}>
-                <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 relative">
-                  <div className="absolute top-0 right-0 bg-purple-600 text-white px-4 py-1 text-sm font-medium rounded-bl-lg">
-                    50% Financiada
-                  </div>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="bg-purple-100 p-2 rounded-lg">
-                        <Award className="h-6 w-6 text-purple-600" />
-                      </div>
-                      <CardTitle>Beca de Diversidad en Tech</CardTitle>
-                    </div>
-                    <CardDescription>
-                      Programa de Becas 2023
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-3">
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-2">
-                        <Calendar className="h-4 w-4 mt-1 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">Fecha límite:</p>
-                          <p className="text-sm text-muted-foreground">30 de Julio, 2023</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <BookOpen className="h-4 w-4 mt-1 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">Descripción:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Programa dirigido a promover la diversidad en el mundo tecnológico, ofreciendo oportunidades de formación en desarrollo de software.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Target className="h-4 w-4 mt-1 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">Requisitos:</p>
-                          <ul className="text-sm text-muted-foreground list-disc pl-4 mt-1 space-y-1">
-                            <li>Grupos subrepresentados en tech</li>
-                            <li>Carta de motivación</li>
-                            <li>Evaluación de competencias</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button className="w-full group" asChild>
-                      <a href="#application">
-                        Solicitar ahora
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </a>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            </motion.div>
-          </div>
-        </section>
-        
-        {/* Benefits Section */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <motion.div 
-              className="text-center max-w-3xl mx-auto mb-16"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <h2 className="text-4xl font-bold mb-6">Beneficios exclusivos</h2>
-              <p className="text-lg text-muted-foreground">
-                Nuestros becarios obtienen acceso a una serie de ventajas y recursos adicionales
-                que potencian su experiencia de aprendizaje y desarrollo profesional.
-              </p>
-            </motion.div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <motion.div 
-                className="relative"
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl p-1">
-                  <div className="bg-white rounded-xl overflow-hidden">
-                    <img 
-                      src="/lovable-uploads/69a3f68a-63d6-4fa4-a8aa-9cd3023f201a.png" 
-                      alt="Beneficios para becarios" 
-                      className="w-full h-auto"
-                    />
-                  </div>
-                </div>
-              </motion.div>
-              
-              <motion.div 
-                className="space-y-6"
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="flex gap-4 items-start">
-                  <div className="bg-blue-100 p-3 rounded-xl">
-                    <Users className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">Mentoría Personalizada</h3>
-                    <p className="text-muted-foreground">
-                      Asignación de un mentor experto en la industria que te guiará durante todo el programa, 
-                      proporcionando retroalimentación y consejos personalizados.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-4 items-start">
-                  <div className="bg-indigo-100 p-3 rounded-xl">
-                    <Globe className="h-6 w-6 text-indigo-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">Networking Privilegiado</h3>
-                    <p className="text-muted-foreground">
-                      Acceso a eventos exclusivos con líderes de la industria, oportunidades de conexión 
-                      con empresas asociadas y una red global de talento.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-4 items-start">
-                  <div className="bg-purple-100 p-3 rounded-xl">
-                    <Sparkles className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">Recursos Premium</h3>
-                    <p className="text-muted-foreground">
-                      Herramientas y recursos exclusivos, acceso a bibliotecas de contenido avanzado 
-                      y software especializado para complementar tu formación.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-4 items-start">
-                  <div className="bg-pink-100 p-3 rounded-xl">
-                    <CheckCircle2 className="h-6 w-6 text-pink-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">Certificación Reconocida</h3>
-                    <p className="text-muted-foreground">
-                      Al finalizar tu formación, recibirás una certificación especial que acredita 
-                      tu participación en el programa de becas, valorada por empresas del sector.
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+            <div className="max-w-3xl mx-auto">
+              <Accordion type="single" collapsible className="space-y-4">
+                {[
+                  {
+                    question: "¿Quién puede solicitar una beca?",
+                    answer: "Nuestras becas están abiertas a estudiantes de todos los niveles educativos y profesionales que cumplan con los requisitos específicos de cada programa. No hay restricciones de edad ni nacionalidad para la mayoría de nuestras becas."
+                  },
+                  {
+                    question: "¿Cuándo sabré si me han concedido la beca?",
+                    answer: "El proceso de evaluación suele durar entre 15 y 30 días desde el cierre de la convocatoria. Te notificaremos por correo electrónico tanto si tu solicitud ha sido aceptada como si ha sido denegada."
+                  },
+                  {
+                    question: "¿Puedo solicitar más de una beca a la vez?",
+                    answer: "Puedes solicitar diferentes tipos de becas, pero solo podrás beneficiarte de una beca por programa formativo. Recomendamos que te centres en aquella que mejor se adapte a tu perfil para aumentar tus posibilidades."
+                  },
+                  {
+                    question: "¿Qué documentación necesito presentar?",
+                    answer: "La documentación requerida varía según el tipo de beca. Generalmente solicitamos: documento de identidad, CV actualizado, carta de motivación, certificado de estudios o títulos académicos y, en algunos casos, documentación económica."
+                  },
+                  {
+                    question: "¿La beca cubre el 100% del curso?",
+                    answer: "La mayoría de nuestras becas cubren entre el 40% y el 80% del coste total del programa, dependiendo del tipo de beca y tu situación particular. Algunas becas especiales pueden cubrir hasta el 100% en casos excepcionales."
+                  }
+                ].map((faq, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                  >
+                    <AccordionItem value={`item-${index}`} className="border rounded-lg p-2">
+                      <AccordionTrigger className="text-left text-lg font-medium px-4">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground px-4 pb-4">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </motion.div>
+                ))}
+              </Accordion>
             </div>
           </div>
         </section>
         
-        {/* Application Section */}
-        <section id="application" className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-          <div className="container mx-auto px-4">
-            <motion.div 
-              className="max-w-4xl mx-auto text-center"
+        {/* Call to Action */}
+        <section className="py-12 md:py-20 bg-gradient-to-r from-primary/10 to-primary/5 rounded-t-3xl">
+          <div className="container mx-auto px-4 text-center">
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6 }}
             >
-              <GraduationCap className="h-16 w-16 mx-auto mb-6" />
-              <h2 className="text-4xl font-bold mb-6">¿Quieres solicitar una beca?</h2>
-              <p className="text-xl mb-10 text-white/80">
-                Completa el formulario de solicitud y nuestro equipo se pondrá en contacto contigo para ofrecerte más información y guiarte en el proceso.
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">¿Listo para dar el siguiente paso?</h2>
+              <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                No dejes que los obstáculos económicos te impidan alcanzar tus metas profesionales. Solicita tu beca hoy.
               </p>
-              <Button size="lg" variant="secondary" className="text-blue-600 font-medium" asChild>
-                <Link to="/contact">
-                  Solicitar información
+              <Button asChild size="lg" className="px-8 py-6 text-lg rounded-full">
+                <Link to="/scholarships/apply">
+                  Solicitar beca ahora
                 </Link>
               </Button>
             </motion.div>

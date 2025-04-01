@@ -1,28 +1,25 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { BookOpen, Clock, Users, Star } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-
-export interface FeaturedCourse {
-  id: number;
-  title: string;
-  description: string;
-  instructor: string;
-  price: number;
-  rating: number;
-  students: number;
-  hours: number;
-  level: string;
-  category: string;
-  image: string;  // Changed from imageUrl to image
-}
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { StarIcon, Users, Clock, ArrowRight } from 'lucide-react';
 
 interface FeaturedCourseCardProps {
-  course: FeaturedCourse;
+  course: {
+    id: string;
+    title: string;
+    description: string;
+    instructor: string;
+    price: number;
+    rating: number;
+    students: number;
+    hours: number;
+    level: string;
+    category: string;
+    image: string;
+  };
   index: number;
 }
 
@@ -30,55 +27,73 @@ export const FeaturedCourseCard: React.FC<FeaturedCourseCardProps> = ({ course, 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow">
-        <div className="aspect-video overflow-hidden">
-          <img 
-            src={course.image} 
-            alt={course.title} 
-            className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
-          />
-        </div>
-        <CardHeader>
-          <div className="flex justify-between items-start">
-            <div>
-              <CardTitle className="line-clamp-2 hover:text-primary transition-colors">
-                {course.title}
-              </CardTitle>
-              <CardDescription className="text-sm mt-1">
-                Por {course.instructor}
-              </CardDescription>
+      <Card className="overflow-hidden h-full hover:shadow-md transition-all group">
+        <div className="relative overflow-hidden bg-muted">
+          <div className="absolute top-2 right-2 z-10">
+            <div className="bg-primary rounded-full px-2.5 py-1 text-xs font-medium text-primary-foreground">
+              {course.level}
             </div>
-            <Badge variant="secondary">{course.level}</Badge>
           </div>
-        </CardHeader>
-        <CardContent className="flex-grow">
-          <p className="text-muted-foreground line-clamp-3 mb-4">
-            {course.description}
-          </p>
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
-            <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 text-amber-500" />
-              <span className="font-medium">{course.rating}</span>
+          <Link to={`/courses/${course.id}`}>
+            <div className="aspect-video overflow-hidden">
+              <img 
+                src={course.image} 
+                alt={course.title}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
             </div>
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <Users className="h-4 w-4" />
-              <span>{course.students} estudiantes</span>
+          </Link>
+        </div>
+        
+        <CardContent className="p-6">
+          <div className="flex flex-col space-y-4">
+            <Link to={`/courses/${course.id}`} className="hover:text-primary transition-colors">
+              <h3 className="font-bold text-xl line-clamp-2">{course.title}</h3>
+            </Link>
+            
+            <p className="text-muted-foreground line-clamp-2 text-sm">
+              {course.description}
+            </p>
+            
+            <div className="flex items-center text-sm">
+              <div className="flex items-center space-x-1 text-amber-500">
+                <StarIcon className="h-4 w-4 fill-current" />
+                <span className="font-medium">{course.rating}</span>
+              </div>
+              
+              <span className="mx-2 text-muted-foreground">•</span>
+              
+              <div className="flex items-center space-x-1 text-muted-foreground">
+                <Users className="h-4 w-4" />
+                <span>{course.students} estudiantes</span>
+              </div>
+              
+              <span className="mx-2 text-muted-foreground">•</span>
+              
+              <div className="flex items-center space-x-1 text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span>{course.hours} horas</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span>{course.hours} horas</span>
+            
+            <div className="flex items-center justify-between mt-auto pt-4 border-t border-border">
+              <div className="text-lg font-bold">
+                {course.price === 0 ? 'Gratis' : `${course.price.toFixed(2).replace('.', ',')} €`}
+              </div>
+              
+              <Button variant="ghost" size="sm" className="group" asChild>
+                <Link to={`/courses/${course.id}`}>
+                  Ver curso
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
             </div>
           </div>
         </CardContent>
-        <CardFooter className="border-t pt-4 flex justify-between items-center">
-          <div className="font-bold text-lg">€{course.price}</div>
-          <Button asChild>
-            <Link to={`/courses/${course.id}`}>Ver Detalles</Link>
-          </Button>
-        </CardFooter>
       </Card>
     </motion.div>
   );

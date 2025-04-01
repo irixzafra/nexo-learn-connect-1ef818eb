@@ -1,223 +1,163 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles, Users, Layers, Zap, PaintBucket, Brain } from 'lucide-react';
-import { routeMap } from '@/utils/routeUtils';
+import { useAuth } from '@/contexts/AuthContext';
+import { motion } from 'framer-motion';
+import { ChevronRight, Sparkles, GraduationCap, User, Users, BookOpen } from 'lucide-react';
 
 interface LandingHeroProps {
-  isAuthenticated: boolean;
+  isAuthenticated?: boolean;
 }
 
-const LandingHero: React.FC<LandingHeroProps> = ({ isAuthenticated }) => {
+const LandingHero: React.FC<LandingHeroProps> = ({ isAuthenticated = false }) => {
   return (
-    <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-24">
-      {/* Gradient background */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-50 via-blue-50/80 to-white"></div>
-      
-      {/* Background patterns */}
-      <div className="absolute inset-0 -z-10 opacity-30">
-        <svg
-          width="100%"
-          height="100%"
-          viewBox="0 0 800 800"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <pattern
-              id="dotPattern"
-              x="0"
-              y="0"
-              width="20"
-              height="20"
-              patternUnits="userSpaceOnUse"
-            >
-              <circle cx="2" cy="2" r="1" fill="currentColor" className="text-primary/20" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#dotPattern)" />
-        </svg>
-      </div>
-      
-      {/* Animated background elements */}
-      <motion.div 
-        className="absolute top-20 left-[10%] w-40 h-40 rounded-full bg-blue-200/30 blur-3xl"
-        animate={{ 
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.4, 0.3] 
-        }}
-        transition={{ 
-          duration: 8, 
-          repeat: Infinity,
-          ease: "easeInOut" 
-        }}
-      />
-      
-      <motion.div 
-        className="absolute bottom-40 right-[15%] w-60 h-60 rounded-full bg-indigo-200/30 blur-3xl"
-        animate={{ 
-          scale: [1, 1.3, 1],
-          opacity: [0.2, 0.3, 0.2] 
-        }}
-        transition={{ 
-          duration: 10, 
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1 
-        }}
-      />
-
+    <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-background py-16 md:py-24">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col items-center text-center">
-          <motion.div
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Hero Text Content */}
+          <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-4xl mx-auto"
+            transition={{ duration: 0.6 }}
+            className="text-left"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-              Descubre el{' '}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                ecosistema creativo
-              </span>{' '}
-              de Nexo
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium mb-6">
+              <Sparkles className="h-4 w-4" />
+              <span>Formación online de alta calidad</span>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
+              Transforma tu futuro con nuestra plataforma de aprendizaje
             </h1>
             
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Aprende y conecta con una comunidad de profesionales creativos.
-              Cursos, recursos y networking para impulsar tu carrera.
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg">
+              Adquiere habilidades demandadas, certifica tus conocimientos y avanza en tu carrera profesional con nuestros cursos especializados.
             </p>
-
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-              {isAuthenticated ? (
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button size="lg" className="group shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700" asChild>
-                    <Link to="/home">
-                      Ir al panel de control
-                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                  </Button>
-                </motion.div>
-              ) : (
-                <>
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button size="lg" className="group shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700" asChild>
-                      <Link to="/courses">
-                        Explorar cursos
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </Link>
-                    </Button>
-                  </motion.div>
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button size="lg" variant="outline" className="border-2 border-primary/30 hover:border-primary/50 hover:bg-primary/5" asChild>
-                      <Link to="/auth/register">Crear cuenta</Link>
-                    </Button>
-                  </motion.div>
-                </>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button asChild size="lg" className="group">
+                <Link to="/courses">
+                  Explorar cursos
+                  <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+              
+              {!isAuthenticated && (
+                <Button asChild variant="outline" size="lg">
+                  <Link to="/auth/register">
+                    Crear cuenta
+                    <User className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
               )}
+            </div>
+            
+            <div className="flex items-center gap-6 mt-8 text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5 text-primary" />
+                <span>+200 cursos</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                <span>+20,000 estudiantes</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-primary" />
+                <span>Certificados</span>
+              </div>
             </div>
           </motion.div>
           
-          {/* New Feature Highlights Section */}
+          {/* Hero Image/Animation */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="w-full mt-20"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="relative"
           >
-            {/* 3D Features Display */}
-            <div className="relative max-w-6xl mx-auto">
-              {/* Central Image */}
-              <div className="relative z-10 aspect-video max-w-4xl mx-auto overflow-hidden rounded-2xl shadow-2xl">
-                <img
-                  src="/public/lovable-uploads/5896bc74-e132-43f4-bfed-8b52fa73c627.png"
-                  alt="Plataforma Nexo"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 w-full p-6 text-white">
-                  <h3 className="text-2xl font-bold mb-2">Aprende, crea y comparte</h3>
-                  <p className="text-white/90">Explora el siguiente nivel de aprendizaje creativo</p>
-                </div>
-              </div>
-              
-              {/* Feature Cards - Positioned Absolutely */}
-              <div className="absolute grid grid-cols-3 gap-6 w-full -bottom-16 left-0 right-0 px-8 md:px-0">
-                <motion.div 
-                  whileHover={{ y: -8, scale: 1.03 }}
-                  className="bg-white rounded-xl shadow-lg p-5 border border-blue-100 hover:border-blue-300 transition-all duration-300"
+            <div className="relative z-10 rounded-2xl overflow-hidden shadow-xl">
+              <div className="aspect-[4/3] relative bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl overflow-hidden">
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.7 }}
+                  className="absolute inset-0 flex items-center justify-center"
                 >
-                  <div className="bg-blue-50 p-3 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
-                    <Sparkles className="text-blue-600" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">Cursos Interactivos</h3>
-                  <p className="text-sm text-muted-foreground">Experiencias de aprendizaje inmersivas con feedback en tiempo real</p>
-                </motion.div>
-                
-                <motion.div 
-                  whileHover={{ y: -8, scale: 1.03 }}
-                  className="bg-white rounded-xl shadow-lg p-5 border border-indigo-100 hover:border-indigo-300 transition-all duration-300"
-                >
-                  <div className="bg-indigo-50 p-3 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
-                    <Users className="text-indigo-600" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">Comunidad Activa</h3>
-                  <p className="text-sm text-muted-foreground">Conecta con profesionales y crea oportunidades en el ecosistema creativo</p>
-                </motion.div>
-                
-                <motion.div 
-                  whileHover={{ y: -8, scale: 1.03 }}
-                  className="bg-white rounded-xl shadow-lg p-5 border border-purple-100 hover:border-purple-300 transition-all duration-300"
-                >
-                  <div className="bg-purple-50 p-3 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
-                    <Layers className="text-purple-600" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">Aprendizaje Adaptativo</h3>
-                  <p className="text-sm text-muted-foreground">Contenido personalizado que se adapta a tu nivel y a tus objetivos</p>
+                  <img 
+                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80" 
+                    alt="Estudiantes colaborando en un ambiente de aprendizaje moderno" 
+                    className="w-full h-full object-cover rounded-2xl"
+                  />
                 </motion.div>
               </div>
             </div>
             
-            <div className="pt-32 mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              <motion.div
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                <Zap className="h-10 w-10 text-blue-500 mb-4" />
-                <h3 className="font-bold text-lg mb-2">Innovación Constante</h3>
-                <p className="text-sm text-muted-foreground">Nuestro contenido se actualiza continuamente con las últimas tendencias</p>
-              </motion.div>
-              
-              <motion.div
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                <PaintBucket className="h-10 w-10 text-green-500 mb-4" />
-                <h3 className="font-bold text-lg mb-2">Proyectos Prácticos</h3>
-                <p className="text-sm text-muted-foreground">Aprende haciendo con proyectos reales y feedback personalizado</p>
-              </motion.div>
-              
-              <motion.div
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                <Brain className="h-10 w-10 text-purple-500 mb-4" />
-                <h3 className="font-bold text-lg mb-2">IA Educativa</h3>
-                <p className="text-sm text-muted-foreground">Sistemas inteligentes que optimizan tu trayectoria de aprendizaje</p>
-              </motion.div>
-              
-              <motion.div
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                <Users className="h-10 w-10 text-amber-500 mb-4" />
-                <h3 className="font-bold text-lg mb-2">Mentorías</h3>
-                <p className="text-sm text-muted-foreground">Acceso a mentores experimentados para guiar tu desarrollo profesional</p>
-              </motion.div>
-            </div>
+            {/* Floating elements */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8, duration: 0.7 }}
+              className="absolute -left-16 top-20 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg z-20"
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <GraduationCap className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Aprendizaje personalizado</p>
+                  <p className="text-xs text-muted-foreground">Adapta tu ritmo de estudio</p>
+                </div>
+              </div>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1, duration: 0.7 }}
+              className="absolute -right-16 bottom-20 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg z-20"
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Users className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Comunidad activa</p>
+                  <p className="text-xs text-muted-foreground">Conecta con otros estudiantes</p>
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* Decorative elements */}
+            <div className="absolute -z-10 -bottom-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"></div>
+            <div className="absolute -z-10 -top-10 -left-10 w-40 h-40 bg-secondary/5 rounded-full blur-3xl"></div>
           </motion.div>
         </div>
+      </div>
+      
+      {/* Wave divider */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 overflow-hidden">
+        <svg
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+          className="absolute bottom-0 w-full h-full"
+          fill="currentColor"
+        >
+          <path
+            className="text-background"
+            d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
+            opacity=".25"
+          />
+          <path
+            className="text-background"
+            d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z"
+            opacity=".5"
+          />
+          <path
+            className="text-background"
+            d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"
+          />
+        </svg>
       </div>
     </section>
   );
