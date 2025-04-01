@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
@@ -5,7 +6,7 @@ import PagesManagement from '@/pages/admin/settings/pages';
 import { useFeatures } from '@/hooks/useFeatures';
 import DataSettings from '@/features/admin/components/settings/DataSettings';
 import IntegrationsPage from '@/pages/admin/settings/integrations';
-import { ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
+import { ExtendedFeatureId } from '@/contexts/features/types';
 import AnalyticsSettings from '@/pages/admin/settings/analytics';
 
 // Placeholder components until actual ones are created
@@ -19,7 +20,7 @@ const SettingsRoutes: React.FC = () => {
 
   // Create a type-safe wrapper for toggleFeature
   const handleToggleFeature = (feature: string) => {
-    toggleFeature(feature as FeatureId);
+    toggleFeature(feature as ExtendedFeatureId);
   };
 
   return (

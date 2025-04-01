@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
@@ -9,6 +10,7 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { useFeature } from '@/hooks/useFeature';
 import { 
   BarChart3, 
@@ -28,6 +30,7 @@ import PlatformOverviewSection from './sections/PlatformOverviewSection';
 import UserAnalyticsSection from './sections/UserAnalyticsSection';
 import CoursesAnalyticsSection from './sections/CoursesAnalyticsSection';
 import RevenueAnalyticsSection from './sections/RevenueAnalyticsSection';
+import { PlatformStats } from '@/features/admin/analytics/types';
 
 const AnalyticsOverview: React.FC = () => {
   const analyticsEnabled = useFeature('enableAnalytics');
