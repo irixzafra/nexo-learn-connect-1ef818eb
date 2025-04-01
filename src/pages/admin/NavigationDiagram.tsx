@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -41,14 +42,14 @@ const NavigationDiagram: React.FC = () => {
   const renderIcon = (icon: any) => {
     if (!icon) return null;
     
-    // Si el icono es un componente de Lucide
+    // Si el icono es un componente de Lucide o una función
     if (typeof icon === 'function') {
       const IconComponent = icon;
       return <IconComponent className="h-4 w-4 text-primary mr-2" />;
     }
     
-    // Para otros tipos de iconos (podría ser un ReactNode)
-    return <span className="mr-2">{icon}</span>;
+    // Para otros tipos de iconos (si es un ReactNode)
+    return <span className="mr-2">{React.isValidElement(icon) ? icon : null}</span>;
   };
 
   // Función para mostrar el estado de los elementos
