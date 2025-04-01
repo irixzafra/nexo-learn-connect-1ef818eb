@@ -1,371 +1,409 @@
-import React, { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import PublicLayout from '@/layouts/PublicLayout';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
-import { 
-  Tabs, 
-  TabsList, 
-  TabsTrigger, 
-  TabsContent 
-} from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  BookOpen, 
-  Briefcase, 
-  Calendar, 
-  Filter, 
-  GraduationCap, 
-  Search, 
-  StarIcon,
-  Users,
-  Clock,
-  BookCheck,
-  Share
-} from 'lucide-react';
 
-// Datos dummy para las carreras profesionales
-const CAREERS = [
+import React, { useState } from "react";
+import AppLayout from "@/layouts/AppLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Search, MapPin, Briefcase, Clock, Filter, Building } from "lucide-react";
+import InlineEdit from "@/components/admin/InlineEdit";
+import EducationalResources from "@/components/careers/EducationalResources";
+import MentoringSection from "@/components/careers/MentoringSection";
+
+// Job listings data
+const jobListings = [
   {
-    id: 1,
-    title: 'Desarrollo Full Stack',
-    description: 'Conviértete en un desarrollador Full Stack dominando tanto el front-end como el back-end.',
-    duration: '12 meses',
-    level: 'Intermedio',
-    courses: 8,
-    students: 1245,
-    rating: 4.8,
-    image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=300',
-    category: 'programming',
-    price: 1299.99,
-    featured: true,
-    skills: ['JavaScript', 'React', 'Node.js', 'Express', 'MongoDB', 'GraphQL']
+    id: "job-1",
+    title: "Instructor de Desarrollo Web",
+    company: "Nexo Learning",
+    location: "Madrid, España",
+    type: "Tiempo Completo",
+    salary: "€40,000 - €55,000",
+    posted: "2 días atrás",
+    category: "Enseñanza",
+    description: "Buscamos un instructor experimentado en desarrollo web para enseñar HTML, CSS, JavaScript y React a nuestros estudiantes.",
+    requirements: ["3+ años de experiencia en desarrollo web", "Experiencia docente", "Conocimientos avanzados de React"],
+    featured: true
   },
   {
-    id: 2,
-    title: 'Ciencia de Datos',
-    description: 'Domina las técnicas de análisis de datos, machine learning y visualización.',
-    duration: '10 meses',
-    level: 'Avanzado',
-    courses: 7,
-    students: 890,
-    rating: 4.7,
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=300',
-    category: 'data-science',
-    price: 1499.99,
-    featured: true,
-    skills: ['Python', 'Pandas', 'NumPy', 'Scikit-Learn', 'TensorFlow', 'Tableau']
+    id: "job-2",
+    title: "Desarrollador Full Stack",
+    company: "TechSolutions",
+    location: "Barcelona, España",
+    type: "Tiempo Completo",
+    salary: "€45,000 - €60,000",
+    posted: "1 semana atrás",
+    category: "Desarrollo",
+    description: "Empresa líder busca desarrollador full stack para trabajar en proyectos innovadores con tecnologías modernas.",
+    requirements: ["Experiencia con React y Node.js", "Conocimiento de bases de datos SQL y NoSQL", "Metodologías ágiles"],
+    featured: false
   },
   {
-    id: 3,
-    title: 'Diseño UX/UI',
-    description: 'Aprende a crear experiencias de usuario atractivas y funcionales para aplicaciones y sitios web.',
-    duration: '8 meses',
-    level: 'Todos los niveles',
-    courses: 6,
-    students: 730,
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?q=80&w=300',
-    category: 'design',
-    price: 999.99,
-    featured: false,
-    skills: ['Figma', 'Adobe XD', 'Sketch', 'Prototyping', 'User Testing']
+    id: "job-3",
+    title: "Diseñador UX/UI",
+    company: "Creativos Digitales",
+    location: "Remoto",
+    type: "Tiempo Parcial",
+    salary: "€25,000 - €35,000",
+    posted: "3 días atrás",
+    category: "Diseño",
+    description: "Buscamos un diseñador UX/UI para crear experiencias de usuario intuitivas y atractivas para aplicaciones web y móviles.",
+    requirements: ["Portafolio con proyectos de UX/UI", "Experiencia con Figma y Adobe XD", "Conocimientos de diseño responsivo"],
+    featured: false
   },
   {
-    id: 4,
-    title: 'Marketing Digital',
-    description: 'Desarrolla estrategias efectivas de marketing en línea y optimiza la presencia web de las empresas.',
-    duration: '6 meses',
-    level: 'Principiante',
-    courses: 5,
-    students: 1050,
-    rating: 4.6,
-    image: 'https://images.unsplash.com/photo-1533750516457-a7f992034fec?q=80&w=300',
-    category: 'marketing',
-    price: 799.99,
-    featured: false,
-    skills: ['SEO', 'SEM', 'Social Media', 'Email Marketing', 'Analytics']
+    id: "job-4",
+    title: "Especialista en Marketing Digital",
+    company: "Growth Agency",
+    location: "Valencia, España",
+    type: "Tiempo Completo",
+    salary: "€30,000 - €40,000",
+    posted: "5 días atrás",
+    category: "Marketing",
+    description: "Se busca especialista en marketing digital para gestionar campañas SEM, SEO y redes sociales.",
+    requirements: ["Experiencia en Google Ads y Analytics", "Conocimiento de herramientas SEO", "Estrategia de contenidos"],
+    featured: true
   },
   {
-    id: 5,
-    title: 'Ciberseguridad',
-    description: 'Aprende a proteger sistemas y redes contra amenazas informáticas y ataques cibernéticos.',
-    duration: '14 meses',
-    level: 'Avanzado',
-    courses: 9,
-    students: 620,
-    rating: 4.8,
-    image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=300',
-    category: 'security',
-    price: 1599.99,
-    featured: true,
-    skills: ['Ethical Hacking', 'Cryptography', 'Network Security', 'Penetration Testing']
+    id: "job-5",
+    title: "Data Scientist",
+    company: "DataInsights",
+    location: "Sevilla, España",
+    type: "Tiempo Completo",
+    salary: "€50,000 - €65,000",
+    posted: "2 semanas atrás",
+    category: "Análisis de Datos",
+    description: "Empresa de análisis de datos busca científico de datos para proyectos de machine learning y BI.",
+    requirements: ["Experiencia con Python y R", "Conocimientos de ML y estadística", "Manejo de grandes volúmenes de datos"],
+    featured: false
   },
   {
-    id: 6,
-    title: 'Inteligencia Artificial',
-    description: 'Especialízate en Machine Learning, Deep Learning y sistemas inteligentes.',
-    duration: '15 meses',
-    level: 'Avanzado',
-    courses: 10,
-    students: 480,
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=300',
-    category: 'ai',
-    price: 1799.99,
-    featured: true,
-    skills: ['Python', 'TensorFlow', 'PyTorch', 'Computer Vision', 'NLP']
+    id: "job-6",
+    title: "Product Manager",
+    company: "Innovate Inc.",
+    location: "Remoto",
+    type: "Tiempo Completo",
+    salary: "€55,000 - €70,000",
+    posted: "1 día atrás",
+    category: "Gestión",
+    description: "Buscamos product manager con experiencia para liderar el desarrollo de nuevos productos digitales.",
+    requirements: ["Experiencia en gestión de productos digitales", "Conocimiento de metodologías ágiles", "Habilidades de comunicación"],
+    featured: true
   }
 ];
 
-const CareersPage: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
-  
-  // Filtrar carreras por búsqueda y categoría
-  const filteredCareers = CAREERS.filter(career => {
-    const matchesSearch = career.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          career.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = activeTab === 'all' || career.category === activeTab;
-    return matchesSearch && matchesCategory;
-  });
-  
+// Categories for filtering
+const jobCategories = [
+  { value: "all", label: "Todas las categorías" },
+  { value: "Desarrollo", label: "Desarrollo" },
+  { value: "Diseño", label: "Diseño" },
+  { value: "Marketing", label: "Marketing" },
+  { value: "Enseñanza", label: "Enseñanza" },
+  { value: "Análisis de Datos", label: "Análisis de Datos" },
+  { value: "Gestión", label: "Gestión" }
+];
+
+// Locations for filtering
+const jobLocations = [
+  { value: "all", label: "Todas las ubicaciones" },
+  { value: "Madrid", label: "Madrid" },
+  { value: "Barcelona", label: "Barcelona" },
+  { value: "Valencia", label: "Valencia" },
+  { value: "Sevilla", label: "Sevilla" },
+  { value: "Remoto", label: "Remoto" }
+];
+
+// Job types for filtering
+const jobTypes = [
+  { value: "all", label: "Todos los tipos" },
+  { value: "Tiempo Completo", label: "Tiempo Completo" },
+  { value: "Tiempo Parcial", label: "Tiempo Parcial" },
+  { value: "Contrato", label: "Contrato" },
+  { value: "Freelance", label: "Freelance" },
+  { value: "Prácticas", label: "Prácticas" }
+];
+
+const CareerRecommendations = () => {
   return (
-    <PublicLayout>
-      <Helmet>
-        <title>Carreras Profesionales | Nexo Learning</title>
-        <meta name="description" content="Explora las carreras profesionales en tecnología y negocios digitales en Nexo Learning." />
-      </Helmet>
+    <div className="space-y-12">
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold">Recomendaciones de carrera</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Evaluación de habilidades</CardTitle>
+              <CardDescription>Descubre tus puntos fuertes y áreas de mejora</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">Realiza una evaluación completa de tus habilidades técnicas y blandas para identificar oportunidades de crecimiento profesional.</p>
+            </CardContent>
+            <CardFooter>
+              <Button>Iniciar evaluación</Button>
+            </CardFooter>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Plan de desarrollo profesional</CardTitle>
+              <CardDescription>Traza tu camino hacia el éxito</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">Crea un plan personalizado para alcanzar tus objetivos profesionales con recomendaciones específicas para tu perfil.</p>
+            </CardContent>
+            <CardFooter>
+              <Button>Crear plan</Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
       
-      <div className="container mx-auto px-4 py-12">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Carreras Profesionales</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Programas formativos completos diseñados por expertos para impulsar tu carrera en el mundo digital.
-          </p>
-        </div>
-        
-        {/* Search and Filters */}
-        <div className="mb-10">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
-            <div className="relative w-full md:w-96">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar carreras..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtros
-              </Button>
-              <Button variant="outline" size="sm">
-                <Users className="h-4 w-4 mr-2" />
-                Popularidad
-              </Button>
-            </div>
+      <EducationalResources />
+      
+      <MentoringSection />
+    </div>
+  );
+};
+
+const JobListingCard = ({ job }: { job: any }) => {
+  return (
+    <Card className={job.featured ? "border-primary" : ""}>
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="mb-1">{job.title}</CardTitle>
+            <CardDescription className="flex items-center">
+              <Building className="h-4 w-4 mr-1" />
+              {job.company}
+            </CardDescription>
           </div>
-          
-          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="all">Todas</TabsTrigger>
-              <TabsTrigger value="programming">Programación</TabsTrigger>
-              <TabsTrigger value="data-science">Ciencia de Datos</TabsTrigger>
-              <TabsTrigger value="design">Diseño</TabsTrigger>
-              <TabsTrigger value="marketing">Marketing</TabsTrigger>
-              <TabsTrigger value="security">Seguridad</TabsTrigger>
-              <TabsTrigger value="ai">Inteligencia Artificial</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-        
-        {/* Featured Careers */}
-        {activeTab === 'all' && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Carreras Destacadas</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {CAREERS.filter(career => career.featured).map(career => (
-                <Card key={career.id} className="overflow-hidden transition-all duration-300 hover:shadow-lg">
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={career.image}
-                      alt={career.title}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                    <div className="absolute top-2 right-2">
-                      <Badge variant="secondary" className="bg-primary text-white">Destacado</Badge>
-                    </div>
-                  </div>
-                  <CardHeader>
-                    <CardTitle>{career.title}</CardTitle>
-                    <CardDescription>{career.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {career.skills.slice(0, 3).map(skill => (
-                        <Badge key={skill} variant="outline">{skill}</Badge>
-                      ))}
-                      {career.skills.length > 3 && (
-                        <Badge variant="outline">+{career.skills.length - 3} más</Badge>
-                      )}
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span>{career.duration}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                        <span>{career.level}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <BookOpen className="h-4 w-4 text-muted-foreground" />
-                        <span>{career.courses} cursos</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                        <span>{career.students} estudiantes</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <div className="flex items-center gap-1">
-                      <span className="font-bold">{career.rating}</span>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <StarIcon key={i} className={`h-4 w-4 ${i < Math.floor(career.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
-                        ))}
-                      </div>
-                    </div>
-                    <div className="font-bold text-lg">€{career.price}</div>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {/* All Careers */}
-        <div>
-          <h2 className="text-2xl font-bold mb-6">
-            {activeTab === 'all' ? 'Todas las Carreras' : 
-             activeTab === 'programming' ? 'Carreras en Programación' :
-             activeTab === 'data-science' ? 'Carreras en Ciencia de Datos' :
-             activeTab === 'design' ? 'Carreras en Diseño' :
-             activeTab === 'marketing' ? 'Carreras en Marketing' :
-             activeTab === 'security' ? 'Carreras en Seguridad' :
-             'Carreras en Inteligencia Artificial'}
-          </h2>
-          
-          {filteredCareers.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {filteredCareers.map(career => (
-                <Card key={career.id} className="flex flex-col md:flex-row overflow-hidden">
-                  <div className="md:w-1/3 relative">
-                    <img
-                      src={career.image}
-                      alt={career.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="md:w-2/3">
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle>{career.title}</CardTitle>
-                          <CardDescription className="mt-1">{career.description}</CardDescription>
-                        </div>
-                        {career.featured && (
-                          <Badge variant="secondary" className="bg-primary text-white">Destacado</Badge>
-                        )}
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-2 gap-2 text-sm mb-4">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                          <span>{career.duration}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <BookCheck className="h-4 w-4 text-muted-foreground" />
-                          <span>{career.courses} cursos</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4 text-muted-foreground" />
-                          <span>{career.students} estudiantes</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div className="flex items-center">
-                            <StarIcon className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                            <span className="ml-1">{career.rating}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {career.skills.map(skill => (
-                          <Badge key={skill} variant="outline">{skill}</Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                    <CardFooter className="flex justify-between items-center">
-                      <div className="font-bold text-lg">€{career.price}</div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                          <Share className="h-4 w-4 mr-2" />
-                          Compartir
-                        </Button>
-                        <Button>
-                          Ver Detalles
-                        </Button>
-                      </div>
-                    </CardFooter>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-lg text-muted-foreground">No se encontraron carreras que coincidan con tu búsqueda.</p>
-              <Button variant="link" onClick={() => { setSearchTerm(''); setActiveTab('all'); }}>
-                Mostrar todas las carreras
-              </Button>
-            </div>
+          {job.featured && (
+            <Badge variant="default" className="ml-2">
+              Destacado
+            </Badge>
           )}
         </div>
-        
+      </CardHeader>
+      <CardContent className="pb-2">
+        <div className="flex flex-wrap gap-2 text-sm text-muted-foreground mb-3">
+          <div className="flex items-center">
+            <MapPin className="h-4 w-4 mr-1" /> {job.location}
+          </div>
+          <div className="flex items-center">
+            <Briefcase className="h-4 w-4 mr-1" /> {job.type}
+          </div>
+          <div className="flex items-center">
+            <Clock className="h-4 w-4 mr-1" /> {job.posted}
+          </div>
+        </div>
+        <p className="text-sm mb-3">{job.description}</p>
+        <div className="flex flex-wrap gap-1 mt-1">
+          <Badge variant="secondary">{job.category}</Badge>
+          <Badge variant="outline">{job.salary}</Badge>
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-between pt-2">
+        <Button variant="outline" size="sm">
+          Ver detalles
+        </Button>
+        <Button size="sm">Aplicar</Button>
+      </CardFooter>
+    </Card>
+  );
+};
+
+const Careers: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [category, setCategory] = useState("all");
+  const [location, setLocation] = useState("all");
+  const [jobType, setJobType] = useState("all");
+  const [activeTab, setActiveTab] = useState("jobs");
+
+  // Filter jobs based on search and filters
+  const filteredJobs = jobListings.filter((job) => {
+    const matchesSearch =
+      searchQuery === "" ||
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesCategory = category === "all" || job.category === category;
+    const matchesLocation =
+      location === "all" || job.location.includes(location);
+    const matchesType = jobType === "all" || job.type === jobType;
+
+    return matchesSearch && matchesCategory && matchesLocation && matchesType;
+  });
+
+  return (
+    <AppLayout>
+      <div className="container mx-auto py-8 px-4 md:px-6">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold mb-3">
+            <InlineEdit
+              table="content"
+              id="careers-title"
+              field="text"
+              value="Oportunidades Profesionales"
+              className="text-3xl font-bold"
+            />
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <InlineEdit
+              table="content"
+              id="careers-subtitle"
+              field="text"
+              value="Descubre oportunidades laborales y recursos para impulsar tu carrera en el mundo tecnológico"
+              className="text-lg text-muted-foreground"
+              multiline
+            />
+          </p>
+        </div>
+
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full mb-8"
+        >
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="jobs">Ofertas de Trabajo</TabsTrigger>
+            <TabsTrigger value="career">Desarrollo Profesional</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="jobs" className="mt-6">
+            <div className="flex flex-col space-y-4 mb-6">
+              {/* Search and filters */}
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder="Buscar por título, empresa o palabras clave..."
+                    className="pl-8"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+
+                <div className="flex flex-1 flex-col sm:flex-row gap-4">
+                  <Select
+                    value={category}
+                    onValueChange={setCategory}
+                  >
+                    <SelectTrigger className="w-full">
+                      <Filter className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {jobCategories.map((cat) => (
+                        <SelectItem key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select
+                    value={location}
+                    onValueChange={setLocation}
+                  >
+                    <SelectTrigger className="w-full">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Ubicación" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {jobLocations.map((loc) => (
+                        <SelectItem key={loc.value} value={loc.value}>
+                          {loc.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select
+                    value={jobType}
+                    onValueChange={setJobType}
+                  >
+                    <SelectTrigger className="w-full">
+                      <Briefcase className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {jobTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Results count */}
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Mostrando {filteredJobs.length} de {jobListings.length} ofertas
+                </p>
+                <Button variant="outline" size="sm" onClick={() => {
+                  setSearchQuery("");
+                  setCategory("all");
+                  setLocation("all");
+                  setJobType("all");
+                }}>
+                  Limpiar filtros
+                </Button>
+              </div>
+            </div>
+
+            {/* Job listings */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredJobs.length > 0 ? (
+                filteredJobs.map((job) => (
+                  <JobListingCard key={job.id} job={job} />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-10">
+                  <p className="text-muted-foreground">No se encontraron ofertas que coincidan con tus criterios.</p>
+                  <Button 
+                    variant="outline" 
+                    className="mt-4"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setCategory("all");
+                      setLocation("all");
+                      setJobType("all");
+                    }}
+                  >
+                    Limpiar filtros
+                  </Button>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="career" className="mt-6">
+            <CareerRecommendations />
+          </TabsContent>
+        </Tabs>
+
         {/* Call to Action */}
-        <div className="mt-16 bg-muted rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">¿No encuentras lo que buscas?</h2>
+        <div className="bg-muted rounded-lg p-8 text-center mt-12">
+          <h2 className="text-2xl font-bold mb-4">¿Buscas impulsar tu carrera profesional?</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Contamos con asesores académicos que pueden ayudarte a encontrar la carrera perfecta para tus objetivos profesionales.
+            Únete a nuestra comunidad de profesionales y accede a recursos exclusivos, mentorías y oportunidades laborales personalizadas.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button variant="default" size="lg">
-              <GraduationCap className="h-5 w-5 mr-2" />
-              Hablar con un asesor
+              Regístrate ahora
             </Button>
             <Button variant="outline" size="lg">
-              <BookOpen className="h-5 w-5 mr-2" />
-              Explorar todos los cursos
+              Solicitar asesoramiento
             </Button>
           </div>
         </div>
       </div>
-    </PublicLayout>
+    </AppLayout>
   );
 };
 
-export default CareersPage;
+export default Careers;
