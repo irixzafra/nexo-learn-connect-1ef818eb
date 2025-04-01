@@ -293,18 +293,20 @@ const PageRenderer: React.FC = () => {
       className={`page-container page-layout-${page?.layout}`}
     >
       <div className="container mx-auto px-4">
-        {isEditMode ? (
-          <InlineEdit
-            table="pages"
-            id={page?.id || ''}
-            field="title"
-            value={page?.title || ''}
-            className="text-3xl font-bold mb-6"
-            placeholder="Título de la página"
-          />
-        ) : (
-          <h1 className="text-3xl font-bold mb-6">{page?.title}</h1>
-        )}
+        <UniversalEditableElement id={`page-title-${page.id}`} elementType="h1" className="mb-6">
+          {isEditMode ? (
+            <InlineEdit
+              table="pages"
+              id={page?.id || ''}
+              field="title"
+              value={page?.title || ''}
+              className="text-3xl font-bold"
+              placeholder="Título de la página"
+            />
+          ) : (
+            <h1 className="text-3xl font-bold">{page?.title}</h1>
+          )}
+        </UniversalEditableElement>
         {renderPageContent()}
       </div>
     </UniversalEditableElement>

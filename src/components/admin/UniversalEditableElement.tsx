@@ -23,6 +23,8 @@ interface UniversalEditableElementProps {
   tags?: string[];
   additionalControls?: React.ReactNode;
   disableAI?: boolean;
+  editable?: boolean;
+  selector?: string;
 }
 
 const UniversalEditableElement: React.FC<UniversalEditableElementProps> = ({
@@ -34,7 +36,9 @@ const UniversalEditableElement: React.FC<UniversalEditableElementProps> = ({
   onSave,
   tags = [],
   additionalControls,
-  disableAI = false
+  disableAI = false,
+  editable = true,
+  selector
 }) => {
   const { isEditMode, updateText, applyAIEdit, selectedElementId, setSelectedElementId } = useEditMode();
   const [isEditing, setIsEditing] = useState(false);
@@ -45,6 +49,7 @@ const UniversalEditableElement: React.FC<UniversalEditableElementProps> = ({
   const [showControls, setShowControls] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
   const [showAIPopover, setShowAIPopover] = useState(false);
+  const [elementContent, setElementContent] = useState('');
 
   const elementRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -61,7 +66,22 @@ const UniversalEditableElement: React.FC<UniversalEditableElementProps> = ({
     }
   }, [isEditing]);
 
+  useEffect(() => {
+    if (elementRef.current && !editableContent) {
+      // Extract text content from the element
+      const textContent = elementRef.current.textContent || '';
+      setElementContent(textContent);
+      setEditValue(textContent);
+      setOriginalValue(textContent);
+    }
+  }, [elementRef, editableContent]);
+
   if (!isEditMode) {
+    return <>{children}</>;
+  }
+
+  // If not editable, just render the children
+  if (!editable) {
     return <>{children}</>;
   }
 
@@ -85,6 +105,13 @@ const UniversalEditableElement: React.FC<UniversalEditableElementProps> = ({
 
   const handleStartEdit = () => {
     setIsEditing(true);
+    
+    // If no explicit editableContent, grab the current text from the element
+    if (!editableContent && elementRef.current) {
+      const content = elementRef.current.textContent || '';
+      setEditValue(content);
+      setOriginalValue(content);
+    }
   };
 
   const handleCancelEdit = () => {
@@ -100,7 +127,13 @@ const UniversalEditableElement: React.FC<UniversalEditableElementProps> = ({
         success = await onSave(editValue);
       } else {
         // Default update logic
-        success = await updateText('page_elements', id, 'content', editValue);
+        const targetElement = selector ? document.querySelector(selector) : null;
+        if (targetElement) {
+          targetElement.textContent = editValue;
+          success = true;
+        } else {
+          success = await updateText('page_elements', id, 'content', editValue);
+        }
       }
       if (success) {
         setOriginalValue(editValue);

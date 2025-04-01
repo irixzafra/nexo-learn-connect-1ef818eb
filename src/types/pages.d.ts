@@ -9,7 +9,11 @@ export type PageLayout =
   | 'course' 
   | 'sidebar' 
   | 'full-width'
-  | 'column'; // Añadimos "column" como layout válido
+  | 'column'
+  | 'row'
+  | 'grid-2'
+  | 'grid-3'
+  | 'grid-4';
 
 export interface SitePage {
   id: string;

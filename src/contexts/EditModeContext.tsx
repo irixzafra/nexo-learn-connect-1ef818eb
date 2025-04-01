@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 import { useLocation } from 'react-router-dom';
-import { useFeatures } from '@/hooks/useFeatures';
+import { useFeatures } from './features/FeaturesContext';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -83,7 +83,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { userRole } = useAuth();
   const location = useLocation();
-  const { featuresConfig = {} } = useFeatures();
+  const { featuresConfig } = useFeatures();
 
   const canEdit = userRole === 'admin' || userRole === 'sistemas';
 
@@ -132,7 +132,10 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [userRole, canEdit, isEditMode]);
 
   useEffect(() => {
-    const isFeatureEnabled = featuresConfig?.enableInlineEditing ?? true;
+    const isFeatureEnabled = typeof featuresConfig?.enableInlineEditing === 'boolean' 
+      ? featuresConfig.enableInlineEditing 
+      : true;
+    
     setIsEditModeEnabled(isFeatureEnabled);
     
     if (!isFeatureEnabled && isEditMode) {

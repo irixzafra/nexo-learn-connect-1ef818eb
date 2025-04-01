@@ -1,3 +1,4 @@
+
 export interface Feature {
   id: CoreFeatureId | ExtendedFeatureId;
   name: string;
@@ -81,8 +82,8 @@ export type ExtendedFeatureId =
 export type FeatureId = CoreFeatureId | ExtendedFeatureId;
 
 export interface FeaturesConfig {
-  features: Record<CoreFeatureId, Feature>;
-  // Extended features
+  coreFeatures: Record<CoreFeatureId, Feature>;
+  // Extended features as boolean properties
   enableDarkMode: boolean;
   enableNotifications: boolean;
   enableAnalytics: boolean;
@@ -136,7 +137,7 @@ export interface FeaturesConfig {
   autoStartOnboarding: boolean;
   showOnboardingTrigger: boolean;
   enableContextualHelp: boolean;
-  [key: string]: boolean | undefined;
+  [key: string]: boolean | Record<CoreFeatureId, Feature> | undefined;
 }
 
 export interface FeaturesContextProps {

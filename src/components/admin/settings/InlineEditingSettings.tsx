@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { PenSquare, AlertTriangle, FileEdit, Save } from 'lucide-react';
+import { PenSquare, AlertTriangle, FileEdit, Save, ListTree, Layout, Menu, FileX } from 'lucide-react';
 import { useFeatures } from '@/contexts/features/FeaturesContext';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -32,10 +32,10 @@ const InlineEditingSettings: React.FC<InlineEditingSettingsProps> = ({ isLoading
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2">
           <PenSquare className="h-5 w-5 text-primary" />
-          Edición Inline
+          Edición Inline Universal
         </CardTitle>
         <CardDescription>
-          Configura las opciones para la edición directa de contenido en las páginas públicas
+          Configura las opciones para la edición directa de cualquier contenido visible en las páginas
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -43,10 +43,10 @@ const InlineEditingSettings: React.FC<InlineEditingSettingsProps> = ({ isLoading
           <div>
             <Label htmlFor="inline-editing" className="font-medium flex items-center">
               <FileEdit className="mr-2 h-4 w-4 text-primary" />
-              Activar edición inline
+              Activar edición inline universal
             </Label>
             <p className="text-sm text-muted-foreground">
-              Permite editar contenido directamente en las páginas públicas
+              Permite editar cualquier elemento visible directamente en las páginas
             </p>
           </div>
           <Switch
@@ -67,8 +67,18 @@ const InlineEditingSettings: React.FC<InlineEditingSettingsProps> = ({ isLoading
                 Importante
               </AlertTitle>
               <AlertDescription className="mt-2 text-sm">
-                La edición inline permite modificar el contenido directamente en las páginas públicas. 
+                La edición inline universal permite modificar cualquier contenido visible directamente en las páginas. 
                 Para activar el modo de edición, haz clic en el botón "Editar" que aparecerá en la interfaz.
+                <div className="mt-3">
+                  <strong>Elementos editables:</strong>
+                  <ul className="list-disc list-inside mt-1 space-y-1">
+                    <li className="flex items-center gap-2"><FileEdit className="h-3 w-3" /> Textos en cualquier parte de la página</li>
+                    <li className="flex items-center gap-2"><Layout className="h-3 w-3" /> Secciones y contenedores</li>
+                    <li className="flex items-center gap-2"><Menu className="h-3 w-3" /> Elementos de menú y navegación</li>
+                    <li className="flex items-center gap-2"><FileX className="h-3 w-3" /> Páginas de error y páginas 404</li>
+                    <li className="flex items-center gap-2"><ListTree className="h-3 w-3" /> Cualquier elemento visible en la página</li>
+                  </ul>
+                </div>
                 <div className="mt-3">
                   <strong>Características activas:</strong>
                   <ul className="list-disc list-inside mt-1 space-y-1">
