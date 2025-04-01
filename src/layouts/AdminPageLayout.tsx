@@ -3,6 +3,8 @@ import React from 'react';
 import { Toaster } from 'sonner';
 import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
 import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface AdminPageLayoutProps {
   title: string;
@@ -13,6 +15,10 @@ interface AdminPageLayoutProps {
   actions?: React.ReactNode;
   navigationItems?: AdminSubMenuItem[];
   baseRoute?: string;
+  backAction?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
@@ -24,6 +30,7 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   actions,
   navigationItems = [],
   baseRoute,
+  backAction,
 }) => {
   return (
     <div className="flex-1 w-full">
@@ -34,8 +41,19 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
             {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
           </div>
           
-          {actions && (
+          {(actions || backAction) && (
             <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+              {backAction && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={backAction.onClick}
+                  className="flex items-center gap-1"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  {backAction.label}
+                </Button>
+              )}
               {actions}
             </div>
           )}

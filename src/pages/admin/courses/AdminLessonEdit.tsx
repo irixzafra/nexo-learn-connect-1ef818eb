@@ -202,10 +202,16 @@ const AdminLessonEdit: React.FC = () => {
     <AdminPageLayout
       title={`Editar Lección: ${lesson.title}`}
       subtitle="Modifica el contenido y la configuración de esta lección"
-      backAction={{
-        label: "Volver al curso",
-        onClick: () => navigate(`/admin/courses/${courseId}`)
-      }}
+      actions={
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => navigate(`/admin/courses/${courseId}`)}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Volver al curso
+        </Button>
+      }
     >
       <Card>
         <CardHeader>
