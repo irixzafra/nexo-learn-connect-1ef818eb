@@ -1,205 +1,99 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export interface FeaturesConfig {
-  // Onboarding features
-  autoStartOnboarding: boolean;
-  showOnboardingTrigger: boolean;
-  enableOnboardingSystem: boolean;
-  
-  // UI Features
-  enableEditMode: boolean;
-  enableContentReordering: boolean;
-  enableThemeSwitcher: boolean;
-  enableMultiLanguage: boolean;
-  enableDesignSystem: boolean;
-  
-  // Editor Features
-  enableAdvancedEditor: boolean;
-  
-  // User Management
-  enableInvitations: boolean;
-  enableCustomRoles: boolean;
-  
-  // Notifications
-  enableNotifications: boolean;
-  enableRealTimeNotifications: boolean;
-  enableEmailNotifications: boolean;
-  
-  // API and Integration
-  enablePublicApi: boolean;
-  enableWebhooks: boolean;
-  
-  // Security
-  enable2FA: boolean;
-  enableMultipleSessions: boolean;
-  enablePublicRegistration: boolean;
-  requireEmailVerification: boolean;
-  enableActivityLog: boolean;
-  
-  // Data Management
-  enableTestDataGenerator: boolean; 
-  enableDatabaseDevMode: boolean;
-  enableAutoBackups: boolean;
-  enableQueryCache: boolean;
-  enableMaintenanceMode: boolean;
-  
-  // Content Management
-  enableCategoryManagement: boolean;
-  enableLeaderboard: boolean;
-  
-  // AI Features
-  enableAI: boolean;
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useFeature } from '@/hooks/useFeature';
+
+interface OnboardingStep {
+  id: string;
+  title: string;
+  content: React.ReactNode;
+  target: string;
+  placement?: 'top' | 'right' | 'bottom' | 'left';
 }
 
-export const defaultFeaturesConfig: FeaturesConfig = {
-  autoStartOnboarding: true,
-  showOnboardingTrigger: true,
-  enableOnboardingSystem: true,
-  enableEditMode: false,
-  enableContentReordering: false,
-  enableThemeSwitcher: true,
-  enableMultiLanguage: false,
-  enableDesignSystem: false,
-  enableAdvancedEditor: true,
-  enableInvitations: true,
-  enableCustomRoles: false,
-  enableNotifications: true,
-  enableRealTimeNotifications: true,
-  enableEmailNotifications: true,
-  enablePublicApi: false,
-  enableWebhooks: false,
-  enable2FA: false,
-  enableMultipleSessions: true,
-  enablePublicRegistration: false,
-  requireEmailVerification: true,
-  enableActivityLog: true,
-  enableTestDataGenerator: true,
-  enableDatabaseDevMode: false,
-  enableAutoBackups: true,
-  enableQueryCache: true,
-  enableMaintenanceMode: false,
-  enableAI: true,
-  enableCategoryManagement: false,
-  enableLeaderboard: false
-};
-
-interface OnboardingState {
-  showWelcome: boolean;
-  completed: boolean;
+interface OnboardingContextProps {
+  steps: OnboardingStep[];
   currentStep: number;
-  featuresConfig: FeaturesConfig;
   isOnboardingActive: boolean;
-}
-
-interface OnboardingContextType {
-  state: OnboardingState;
   startOnboarding: () => void;
-  skipOnboarding: () => void;
-  completeOnboarding: () => void;
+  endOnboarding: () => void;
   nextStep: () => void;
   prevStep: () => void;
-  previousStep: () => void;
-  goToStep: (step: number) => void;
-  toggleFeature: (feature: keyof FeaturesConfig, enabled: boolean) => void;
-  featuresConfig: FeaturesConfig;
-  isOnboardingActive: boolean;
-  currentStep: number;
+  jumpToStep: (stepIndex: number) => void;
+  setSteps: (steps: OnboardingStep[]) => void;
 }
 
-const defaultOnboardingState: OnboardingState = {
-  showWelcome: true,
-  completed: false,
-  currentStep: 0,
-  featuresConfig: defaultFeaturesConfig,
-  isOnboardingActive: false
-};
+const OnboardingContext = createContext<OnboardingContextProps | undefined>(undefined);
 
-const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
-
-export const OnboardingProvider: React.FC<{children: ReactNode}> = ({ children }) => {
-  const [state, setState] = useState<OnboardingState>(defaultOnboardingState);
-
+export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [steps, setSteps] = useState<OnboardingStep[]>([]);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isOnboardingActive, setIsOnboardingActive] = useState(false);
+  const { isEnabled: autoStartEnabled } = useFeature('autoStartOnboarding');
+  
+  useEffect(() => {
+    // Auto-start onboarding if enabled and has steps
+    if (autoStartEnabled && steps.length > 0 && !isOnboardingActive) {
+      const hasSeenOnboarding = localStorage.getItem('nexo_has_seen_onboarding');
+      if (hasSeenOnboarding !== 'true') {
+        // Delay start to ensure DOM is ready
+        const timer = setTimeout(() => {
+          startOnboarding();
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [autoStartEnabled, steps]);
+  
   const startOnboarding = () => {
-    setState(prev => ({
-      ...prev,
-      showWelcome: false,
-      isOnboardingActive: true
-    }));
+    setCurrentStep(0);
+    setIsOnboardingActive(true);
   };
 
-  const skipOnboarding = () => {
-    setState(prev => ({
-      ...prev,
-      completed: true,
-      isOnboardingActive: false
-    }));
-  };
-
-  const completeOnboarding = () => {
-    setState(prev => ({
-      ...prev,
-      completed: true,
-      currentStep: 0,
-      isOnboardingActive: false
-    }));
+  const endOnboarding = () => {
+    setIsOnboardingActive(false);
+    localStorage.setItem('nexo_has_seen_onboarding', 'true');
   };
 
   const nextStep = () => {
-    setState(prev => ({
-      ...prev,
-      currentStep: prev.currentStep + 1,
-    }));
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      endOnboarding();
+    }
   };
 
   const prevStep = () => {
-    setState(prev => ({
-      ...prev,
-      currentStep: Math.max(0, prev.currentStep - 1),
-    }));
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
   };
 
-  const previousStep = prevStep;
-
-  const goToStep = (step: number) => {
-    setState(prev => ({
-      ...prev,
-      currentStep: step,
-    }));
-  };
-
-  const toggleFeature = (feature: keyof FeaturesConfig, enabled: boolean) => {
-    setState(prev => ({
-      ...prev,
-      featuresConfig: {
-        ...prev.featuresConfig,
-        [feature]: enabled,
-      },
-    }));
-  };
-
-  const contextValue: OnboardingContextType = {
-    state,
-    startOnboarding,
-    skipOnboarding,
-    completeOnboarding,
-    nextStep,
-    prevStep,
-    previousStep,
-    goToStep,
-    toggleFeature,
-    featuresConfig: state.featuresConfig,
-    isOnboardingActive: state.isOnboardingActive,
-    currentStep: state.currentStep
+  const jumpToStep = (stepIndex: number) => {
+    if (stepIndex >= 0 && stepIndex < steps.length) {
+      setCurrentStep(stepIndex);
+    }
   };
 
   return (
-    <OnboardingContext.Provider value={contextValue}>
+    <OnboardingContext.Provider
+      value={{
+        steps,
+        currentStep,
+        isOnboardingActive,
+        startOnboarding,
+        endOnboarding,
+        nextStep,
+        prevStep,
+        jumpToStep,
+        setSteps,
+      }}
+    >
       {children}
     </OnboardingContext.Provider>
   );
 };
 
-export const useOnboarding = (): OnboardingContextType => {
+export const useOnboarding = () => {
   const context = useContext(OnboardingContext);
   if (context === undefined) {
     throw new Error('useOnboarding must be used within an OnboardingProvider');
