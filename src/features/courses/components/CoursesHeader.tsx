@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { GraduationCap } from 'lucide-react';
 
 interface CoursesHeaderProps {
   title?: string;
@@ -10,21 +11,23 @@ interface CoursesHeaderProps {
 }
 
 export const CoursesHeader: React.FC<CoursesHeaderProps> = ({ 
-  title = "Explora Nuestros Cursos",
-  subtitle = "Descubre contenido educativo de alta calidad creado por expertos en la industria",
+  title = "Oferta Académica",
+  subtitle = "Explora nuestra selección premium de programas formativos diseñados para potenciar tu carrera profesional",
   showFilters,
   onToggleFilters
 }) => {
   return (
     <div className="text-center mb-12 md:mb-16">
-      <motion.h1 
-        className="text-3xl md:text-5xl font-bold mb-4"
+      <motion.div
+        className="flex items-center justify-center gap-2 mb-3"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {title}
-      </motion.h1>
+        <GraduationCap className="h-6 w-6 text-primary" />
+        <h1 className="text-3xl md:text-5xl font-bold">{title}</h1>
+      </motion.div>
+      
       <motion.p 
         className="text-lg text-muted-foreground max-w-2xl mx-auto"
         initial={{ opacity: 0 }}

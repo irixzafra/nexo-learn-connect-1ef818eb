@@ -28,7 +28,7 @@ const CursosNavigation: React.FC<CursosNavigationProps> = ({ isOpen, onToggle })
         <MenuItem
           to="/courses"
           icon={Compass}
-          label="Catálogo de Cursos"
+          label="Oferta Académica"
           isCollapsed={isCollapsed}
         />
         

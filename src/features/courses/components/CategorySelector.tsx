@@ -54,34 +54,36 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
   };
 
   return (
-    <ScrollArea className="w-full" type="always">
-      <div className="flex space-x-2 pb-2 pt-1 pr-4">
-        {allCategories.map((category) => {
-          const isSelected = 
-            (category === 'Todos' && selectedCategory === null) || 
-            category === selectedCategory;
-          
-          const icon = category === 'Todos' 
-            ? <BookOpen className="w-4 h-4 mr-2" />
-            : (categoryIcons[category] || <BookOpen className="w-4 h-4 mr-2" />);
+    <div className="container max-w-screen-xl mx-auto">
+      <ScrollArea className="w-full" type="always">
+        <div className="flex space-x-2 pb-2 pt-1 pr-4 no-scrollbar overflow-x-auto">
+          {allCategories.map((category) => {
+            const isSelected = 
+              (category === 'Todos' && selectedCategory === null) || 
+              category === selectedCategory;
             
-          return (
-            <Button
-              key={category}
-              variant={isSelected ? "default" : "outline"}
-              size="sm"
-              className={cn(
-                "flex-shrink-0 h-9 px-3 text-xs sm:text-sm whitespace-nowrap",
-                isSelected ? "bg-primary text-primary-foreground" : "text-muted-foreground"
-              )}
-              onClick={() => handleCategoryClick(category)}
-            >
-              {icon}
-              {category}
-            </Button>
-          );
-        })}
-      </div>
-    </ScrollArea>
+            const icon = category === 'Todos' 
+              ? <BookOpen className="w-4 h-4 mr-2" />
+              : (categoryIcons[category] || <BookOpen className="w-4 h-4 mr-2" />);
+              
+            return (
+              <Button
+                key={category}
+                variant={isSelected ? "default" : "outline"}
+                size="sm"
+                className={cn(
+                  "flex-shrink-0 h-9 px-3 text-xs sm:text-sm whitespace-nowrap",
+                  isSelected ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                )}
+                onClick={() => handleCategoryClick(category)}
+              >
+                {icon}
+                {category}
+              </Button>
+            );
+          })}
+        </div>
+      </ScrollArea>
+    </div>
   );
 };

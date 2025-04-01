@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Input } from '@/components/ui/input';
-import { Search, BookOpen, Sparkles } from 'lucide-react';
+import { Search, GraduationCap, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface CatalogHeaderProps {
@@ -28,8 +28,8 @@ export const CatalogHeader: React.FC<CatalogHeaderProps> = ({
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.5 }}
           >
-            <BookOpen className="h-6 w-6 text-primary" />
-            <h1 className="text-3xl font-bold">Catálogo de Cursos</h1>
+            <GraduationCap className="h-6 w-6 text-primary" />
+            <h1 className="text-3xl font-bold">Oferta Académica</h1>
             <div className="ml-2 hidden sm:flex">
               <Sparkles className="h-5 w-5 text-amber-500" />
             </div>
@@ -40,7 +40,7 @@ export const CatalogHeader: React.FC<CatalogHeaderProps> = ({
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            Explora nuestros cursos y comienza a aprender hoy mismo con contenido creado por expertos en la industria. Personaliza tu búsqueda utilizando los filtros avanzados.
+            Explora nuestros programas formativos y comienza a aprender hoy mismo con contenido creado por expertos en la industria. Personaliza tu búsqueda utilizando los filtros avanzados.
           </motion.p>
         </div>
         

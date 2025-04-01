@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CategorySelector } from "@/features/courses/components/CategorySelector";
 import { AdvancedCourseFilters } from "@/features/courses/components/AdvancedCourseFilters";
-import { CourseGrid } from "@/features/courses/components/CourseGrid";
+import { CourseCarousel } from "@/features/courses/components/CourseCarousel";
 import { CourseCatalogError } from "@/features/courses/components/CourseCatalogError";
 import { CourseCardSkeleton } from "@/features/courses/components/CourseCardSkeleton";
 import { useCoursesCatalog } from "@/features/courses/hooks/useCoursesCatalog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
-import { Filter, RefreshCw, Search, BookOpen, Sparkles, ArrowRight, Flame } from "lucide-react";
+import { Filter, RefreshCw, Search, BookOpen, Sparkles, ArrowRight, Flame, GraduationCap } from "lucide-react";
 
 const CoursesCatalog: React.FC = () => {
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
@@ -112,12 +112,12 @@ const CoursesCatalog: React.FC = () => {
             className="text-center mb-6 md:mb-10"
           >
             <div className="flex items-center justify-center gap-2 mb-3">
-              <BookOpen className="h-6 w-6 text-primary" />
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Catálogo de Cursos</h1>
+              <GraduationCap className="h-6 w-6 text-primary" />
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Oferta Académica</h1>
               <Sparkles className="h-5 w-5 text-amber-400" />
             </div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explora nuestra colección premium de cursos y encuentra el perfecto para impulsar tu carrera.
+              Explora nuestra selección premium de programas formativos diseñados para potenciar tu carrera profesional.
             </p>
           </motion.div>
 
@@ -254,8 +254,8 @@ const CoursesCatalog: React.FC = () => {
             </div>
           </div>
         ) : (
-          <CourseGrid
-            filteredCourses={filteredCourses}
+          <CourseCarousel
+            courses={filteredCourses}
             selectedCategory={selectedCategory || 'all'}
             onCourseClick={handleCourseClick}
           />
