@@ -8,6 +8,7 @@ import RouteValidator from '@/pages/admin/RouteValidator';
 import ResourceRepository from '@/pages/admin/resources/ResourceRepository';
 import CertificateManagement from '@/pages/admin/certificates/CertificateManagement';
 import CertificateVerifyPage from '@/pages/admin/certificates/CertificateVerifyPage';
+import CertificateVerificationPortal from '@/pages/public/CertificateVerificationPortal';
 
 // Componente de página no encontrada
 const AdminNotFound = () => (
@@ -28,6 +29,7 @@ const AdminRoutes: React.FC = () => {
       <Route path="resources" element={<ResourceRepository />} />
       <Route path="certificates" element={<CertificateManagement />} />
       <Route path="certificates/verify/:certificateId" element={<CertificateVerifyPage />} />
+      <Route path="certificates/verification-portal" element={<CertificateVerificationPortal />} />
       
       {/* Ruta de inicio para admin */}
       <Route index element={<NavigationDiagram />} />

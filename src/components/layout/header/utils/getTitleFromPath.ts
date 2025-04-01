@@ -28,6 +28,10 @@ export const getPageTitle = (path: string): string => {
       case 'learning-paths': return 'Rutas de Aprendizaje';
       case 'audit-log': return 'Historial de Auditoría';
       case 'instructors': return 'Instructores';
+      case 'certificates': 
+        if (segments[2] === 'verify') return 'Verificación de Certificado';
+        if (segments[2] === 'verification-portal') return 'Portal de Verificación';
+        return 'Certificados';
       default: 
         // Try to capitalize the path segment
         return segments[1].charAt(0).toUpperCase() + segments[1].slice(1);
@@ -58,6 +62,9 @@ export const getPageTitle = (path: string): string => {
     case 'billing': return 'Facturación';
     case 'community': return 'Comunidad';
     case 'learning-paths': return 'Rutas de Aprendizaje';
+    case 'certificates': 
+      if (segments[1] === 'verify') return 'Verificación de Certificado';
+      return 'Certificados';
     default:
       // Capitalize the first segment as a fallback
       return segments[0].charAt(0).toUpperCase() + segments[0].slice(1);

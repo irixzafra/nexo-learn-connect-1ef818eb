@@ -1,13 +1,14 @@
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { Award, FileCheck, Ban, Clock, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Award, FileCheck, Ban, Clock, ExternalLink, ArrowLeft, Share2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface Certificate {
   id: string;
@@ -50,11 +51,16 @@ const CertificateVerifyPage: React.FC = () => {
   const [certificate, setCertificate] = useState<Certificate | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [verificationUrl, setVerificationUrl] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
     if (certificateId) {
       fetchCertificate(certificateId);
+      
+      // Set verification URL for QR code
+      const baseUrl = window.location.origin;
+      setVerificationUrl(`${baseUrl}/admin/certificates/verify/${certificateId}`);
     }
   }, [certificateId]);
 
@@ -92,42 +98,29 @@ const CertificateVerifyPage: React.FC = () => {
       
       if (error) throw error;
       
-      // Convert to the expected structure with type assertion
-      const rawData = data as unknown as {
-        id: string;
-        certificate_number: string;
-        issue_date: string;
-        expiry_date: string | null;
-        status: 'issued' | 'revoked' | 'expired';
-        profiles: { full_name: string };
-        courses: {
-          title: string;
-          description: string;
-          profiles: { full_name: string };
-        };
-      };
-      
-      // Transformar datos para facilitar acceso
-      const formattedData: Certificate = {
-        id: rawData.id,
-        certificate_number: rawData.certificate_number,
-        issue_date: rawData.issue_date,
-        expiry_date: rawData.expiry_date,
-        status: rawData.status,
-        user: {
-          full_name: rawData.profiles?.full_name || 'Usuario desconocido'
-        },
-        course: {
-          title: rawData.courses?.title || 'Curso desconocido',
-          description: rawData.courses?.description || 'Sin descripción',
-          instructor: {
-            full_name: rawData.courses?.profiles?.full_name || 'Instructor desconocido'
+      if (data) {
+        // Transform the data to match our expected Certificate interface
+        const certificateData = {
+          id: data.id,
+          certificate_number: data.certificate_number,
+          issue_date: data.issue_date,
+          expiry_date: data.expiry_date,
+          status: data.status,
+          user: {
+            full_name: data.profiles?.full_name || 'Usuario desconocido'
+          },
+          course: {
+            title: data.courses?.title || 'Curso desconocido',
+            description: data.courses?.description || 'Sin descripción',
+            instructor: {
+              full_name: data.courses?.profiles?.full_name || 'Instructor desconocido'
+            }
           }
-        }
-      };
-      
-      setCertificate(formattedData);
-      setError(null);
+        };
+        
+        setCertificate(certificateData);
+        setError(null);
+      }
     } catch (error: any) {
       console.error('Error fetching certificate:', error);
       setCertificate(null);
@@ -174,6 +167,52 @@ const CertificateVerifyPage: React.FC = () => {
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const shareCertificate = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `Certificado ${certificate?.certificate_number}`,
+        text: `Verificar certificado de ${certificate?.user.full_name} para el curso ${certificate?.course.title}`,
+        url: window.location.href,
+      }).catch((error) => {
+        console.error('Error sharing:', error);
+        copyToClipboard();
+      });
+    } else {
+      copyToClipboard();
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success('Enlace copiado al portapapeles');
+  };
+
+  const downloadCertificateInfo = () => {
+    if (!certificate) return;
+    
+    const certificateInfo = {
+      certificateNumber: certificate.certificate_number,
+      studentName: certificate.user.full_name,
+      courseName: certificate.course.title,
+      issueDate: new Date(certificate.issue_date).toLocaleDateString(),
+      expiryDate: certificate.expiry_date ? new Date(certificate.expiry_date).toLocaleDateString() : 'No expira',
+      status: getStatusText(certificate.status),
+      verificationUrl: window.location.href
+    };
+    
+    const blob = new Blob([JSON.stringify(certificateInfo, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `certificate_${certificate.certificate_number}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast.success('Información del certificado descargada');
   };
 
   return (
@@ -279,21 +318,42 @@ const CertificateVerifyPage: React.FC = () => {
                   <p>{certificate.expiry_date ? new Date(certificate.expiry_date).toLocaleDateString() : 'No expira'}</p>
                 </div>
               </div>
+              
+              {/* QR Code for verification */}
+              <div className="flex flex-col items-center justify-center border rounded-md p-4 bg-white">
+                <h3 className="font-medium text-md mb-3">Código de verificación</h3>
+                <QRCodeSVG
+                  value={verificationUrl}
+                  size={150}
+                  includeMargin={true}
+                  level="H"
+                />
+                <p className="text-xs text-muted-foreground mt-3">Escanee para verificar este certificado</p>
+              </div>
             </div>
           </CardContent>
           
           <CardFooter className="flex-col space-y-4">
+            <div className="w-full flex flex-col sm:flex-row gap-2">
+              <Button variant="default" onClick={shareCertificate} className="flex-1">
+                <Share2 className="h-4 w-4 mr-2" />
+                Compartir Certificado
+              </Button>
+              <Button variant="outline" onClick={downloadCertificateInfo} className="flex-1">
+                <Download className="h-4 w-4 mr-2" />
+                Descargar Info
+              </Button>
+            </div>
+            
             <div className="w-full pt-4 border-t">
               <p className="text-sm text-muted-foreground">
                 Este certificado puede ser verificado en cualquier momento utilizando el siguiente enlace:
               </p>
               <div className="flex items-center mt-2">
                 <code className="bg-muted p-2 rounded text-sm flex-1 overflow-x-auto">
-                  {window.location.href}
+                  {verificationUrl}
                 </code>
-                <Button variant="ghost" size="icon" className="ml-2" onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                }}>
+                <Button variant="ghost" size="icon" className="ml-2" onClick={copyToClipboard}>
                   <ExternalLink className="h-4 w-4" />
                 </Button>
               </div>
