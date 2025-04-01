@@ -1,146 +1,114 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { FeaturesConfig, FeaturesContextProps } from './types';
-import { getFeatureDependencies } from './dependencies';
+import { FeaturesConfig, FeaturesContextProps, defaultFeaturesConfig } from './types';
+import { getFeatureDependencies, getFeatureDependents } from './dependencies';
 
-// Valores predeterminados
-const defaultFeatures: FeaturesConfig = {
-  // General features
-  enableDarkMode: true,
-  enableNotifications: true,
-  enableAnalytics: false,
-  enableFeedback: true,
-  
-  // User features
-  enableUserRegistration: true,
-  enableSocialLogin: false,
-  enablePublicProfiles: true,
+// Crear contexto con valor por defecto
+export const FeaturesContext = createContext<FeaturesContextProps | undefined>(undefined);
 
-  // Design system features
-  designSystemEnabled: true,
-  enableThemeSwitcher: true,
-  enableMultiLanguage: false,
+interface FeaturesProviderProps {
+  children: React.ReactNode;
+  initialFeatures?: Partial<FeaturesConfig>;
+}
 
-  // Content features
-  enableAdvancedEditor: false,
-  enableContentReordering: true,
-  enableCategoryManagement: true,
-  enableLeaderboard: false,
-
-  // Data features
-  enableAutoBackups: true,
-  enableQueryCache: true,
-  enableMaintenanceMode: false,
-  enableDatabaseDevMode: false,
-
-  // Security features
-  enable2FA: false,
-  enableMultipleSessions: true,
-  enablePublicRegistration: true,
-  requireEmailVerification: true,
-  enableActivityLog: true,
-
-  // Test features
-  enableTestDataGenerator: true,
-  
-  // Onboarding features
-  enableOnboarding: true,
-  enableContextualHelp: true,
-  requireOnboarding: false
-};
-
-// Crear contexto
-const FeaturesContext = createContext<FeaturesContextProps | undefined>(undefined);
-
-export const FeaturesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [features, setFeatures] = useState<FeaturesConfig>(defaultFeatures);
-  const [isLoading, setIsLoading] = useState(true);
+export const FeaturesProvider: React.FC<FeaturesProviderProps> = ({ 
+  children, 
+  initialFeatures 
+}) => {
+  const [features, setFeatures] = useState<FeaturesConfig>({
+    ...defaultFeaturesConfig,
+    ...initialFeatures
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // Cargar características almacenadas al iniciar
+  // Cargar configuración inicial
   useEffect(() => {
-    const loadFeatures = async () => {
-      try {
-        setIsLoading(true);
-        const storedFeatures = localStorage.getItem('nexo_features');
-        
-        if (storedFeatures) {
-          setFeatures({
-            ...defaultFeatures,
-            ...JSON.parse(storedFeatures)
-          });
-        }
-      } catch (err) {
-        console.error('Error al cargar características:', err);
-        setError(err instanceof Error ? err : new Error('Error desconocido al cargar características'));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadFeatures();
+    reloadFeatures();
   }, []);
 
-  // Actualizar características
-  const updateFeatures = async (newFeatures: FeaturesConfig) => {
+  // Verificar si una característica está habilitada
+  const isFeatureEnabled = (feature: keyof FeaturesConfig): boolean => {
+    return features[feature] === true;
+  };
+
+  // Activar/desactivar una característica
+  const toggleFeature = async (feature: keyof FeaturesConfig, value: boolean): Promise<void> => {
     try {
-      setIsLoading(true);
-      
-      // Guardar en localStorage
-      localStorage.setItem('nexo_features', JSON.stringify(newFeatures));
-      
-      // Actualizar estado
-      setFeatures(newFeatures);
-      
-      return Promise.resolve();
+      await updateFeatures({
+        ...features,
+        [feature]: value
+      });
     } catch (err) {
-      console.error('Error al actualizar características:', err);
+      console.error('Error toggling feature:', err);
+      throw err;
+    }
+  };
+
+  // Actualizar todas las características
+  const updateFeatures = async (newFeatures: FeaturesConfig): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Aquí iría una llamada a la API para guardar las características
+      // Por ahora solo simulamos una espera
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Actualizar estado local
+      setFeatures(newFeatures);
+    } catch (err) {
       setError(err instanceof Error ? err : new Error('Error desconocido al actualizar características'));
-      return Promise.reject(err);
+      throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Recargar características
-  const reloadFeatures = async () => {
+  // Recargar configuración desde el servidor
+  const reloadFeatures = async (): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    
     try {
-      setIsLoading(true);
-      const storedFeatures = localStorage.getItem('nexo_features');
+      // Aquí iría una llamada a la API para obtener las características
+      // Por ahora solo simulamos una espera y usamos valores por defecto
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      if (storedFeatures) {
+      if (initialFeatures) {
         setFeatures({
-          ...defaultFeatures,
-          ...JSON.parse(storedFeatures)
+          ...defaultFeaturesConfig,
+          ...initialFeatures
         });
-      } else {
-        setFeatures(defaultFeatures);
       }
-      
-      return Promise.resolve();
     } catch (err) {
-      console.error('Error al recargar características:', err);
-      setError(err instanceof Error ? err : new Error('Error desconocido al recargar características'));
-      return Promise.reject(err);
+      setError(err instanceof Error ? err : new Error('Error desconocido al cargar características'));
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const value: FeaturesContextProps = {
+    features,
+    featuresConfig: features, // Alias para mantener compatibilidad
+    isLoading,
+    error,
+    updateFeatures,
+    reloadFeatures,
+    isFeatureEnabled,
+    toggleFeature,
+    getFeatureDependencies,
+    getFeatureDependents
   };
 
   return (
-    <FeaturesContext.Provider value={{ 
-      features, 
-      isLoading, 
-      error,
-      updateFeatures,
-      reloadFeatures
-    }}>
+    <FeaturesContext.Provider value={value}>
       {children}
     </FeaturesContext.Provider>
   );
 };
 
-// Hook personalizado para usar el contexto
+// Hook para usar el contexto de características
 export const useFeatures = (): FeaturesContextProps => {
   const context = useContext(FeaturesContext);
   

@@ -12,43 +12,30 @@ Este documento define la estructura actual de navegación del sistema, facilitan
 
 ## Estructura General
 
-La navegación se compone de:
+La navegación se compone de un sistema unificado que muestra diferentes elementos según:
+1. **El rol del usuario** (estudiante, instructor, administrador, etc.)
+2. **La ruta actual** (páginas normales vs. páginas administrativas)
 
-1. **Navegación General** - Para usuarios regulares (estudiantes, instructores)
-2. **Navegación Administrativa** - Específica para administradores y páginas de administración
+### Flujo de Navegación
 
-### Navegación General
+1. El componente `ConditionalSidebar` detecta la ruta actual y el rol del usuario
+2. Se cargan los elementos de navegación adecuados del directorio `src/config/navigation/`
+3. Se filtran los elementos según los permisos del usuario
+4. Se muestra la navegación correspondiente manteniendo una experiencia coherente
 
-**Nivel 1: Categorías principales**
-- Dashboard
-- Mis Cursos
-- Explorar
-- Comunidad
-- Configuración
-- Ayuda
+### Filtrado por Rol
 
-**Nivel 2: Subcategorías**
-- Ejemplo: Mis Cursos > En Progreso, Completados, Favoritos
+Los usuarios ven únicamente los elementos de navegación para los que tienen permisos:
 
-### Navegación Administrativa
-
-**Nivel 1: Módulos administrativos**
-- Dashboard
-- Usuarios
-- Cursos
-- Finanzas
-- Contenido
-- Configuración
-- Sistema
-
-**Nivel 2: Subcategorías administrativas**
-- Ejemplo: Usuarios > Lista, Roles, Permisos
+- **Estudiantes**: Dashboard, Mis Cursos, Comunidad, Explorar, Configuración básica
+- **Instructores**: Todo lo anterior + Sección de profesor
+- **Administradores**: Todo lo anterior + Secciones administrativas
 
 ## Componentes Clave
 
-- **AdminPageLayout**: Layout principal para páginas administrativas
-- **AdminTabs**: Componente para navegación contextual
-- **ConditionalSidebar**: Determina qué navegación mostrar según la ruta
+- **SidebarNavigation**: Componente base de navegación utilizado por todos los usuarios
+- **ConditionalSidebar**: Determina qué elementos mostrar según el contexto
+- **AdminTabs**: Componente para navegación contextual dentro de páginas administrativas
 
 ## Arquitectura de Archivos
 
@@ -60,8 +47,7 @@ La estructura de navegación se gestiona en:
     /navigation        # Configuración centralizada de navegación
   /components
     /layout            # Componentes estructurales
-    /admin             # Componentes administrativos
-    /navigation        # Componentes de navegación general
+    /navigation        # Componentes de navegación
   /layouts             # Layouts principales
   /routes              # Definición de rutas
 ```
@@ -90,4 +76,5 @@ Además de la navegación principal, existen elementos contextuales:
 
 ---
 
-Documento actualizado: 2023-07-01
+Documento actualizado: 2024-07-15
+

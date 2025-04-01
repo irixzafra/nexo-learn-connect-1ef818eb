@@ -5,146 +5,94 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { FeaturesConfig } from '@/contexts/features/types';
-import { Book, LayoutDashboard, Lightbulb, Users } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Info } from 'lucide-react';
 
 interface OnboardingSettingsProps {
   featuresConfig: FeaturesConfig;
-  onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => Promise<void>;
   isLoading: boolean;
 }
 
-export const OnboardingSettings: React.FC<OnboardingSettingsProps> = ({
+/**
+ * Componente para configurar las opciones de onboarding
+ */
+const OnboardingSettings: React.FC<OnboardingSettingsProps> = ({
   featuresConfig,
   onToggleFeature,
   isLoading
 }) => {
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold flex items-center gap-2">
-          <Book className="h-5 w-5 text-primary" />
-          Configuración de Onboarding
-        </h2>
-        <p className="text-muted-foreground">
-          Personaliza la experiencia de onboarding para usuarios nuevos
-        </p>
-      </div>
-
-      <div className="grid gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <LayoutDashboard className="h-5 w-5" />
-              Características Básicas
-            </CardTitle>
-            <CardDescription>Funcionalidades principales del sistema de onboarding</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="onboardingSystem">Sistema de Onboarding</Label>
-                <p className="text-sm text-muted-foreground">Habilitar sistema de onboarding para nuevos usuarios</p>
-              </div>
-              <Switch
-                id="onboardingSystem"
-                checked={featuresConfig.enableOnboardingSystem}
-                onCheckedChange={(checked) => onToggleFeature('enableOnboardingSystem', checked)}
-                disabled={isLoading}
-              />
+      <Alert variant="default" className="bg-muted">
+        <Info className="h-4 w-4" />
+        <AlertTitle>Información</AlertTitle>
+        <AlertDescription>
+          Configure las opciones del sistema de onboarding para nuevos usuarios.
+        </AlertDescription>
+      </Alert>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Onboarding de Usuarios</CardTitle>
+          <CardDescription>
+            Configuración del sistema de inducción para nuevos usuarios
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Habilitar Onboarding */}
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="enable-onboarding">Sistema de Onboarding</Label>
+              <p className="text-sm text-muted-foreground">
+                Activar el sistema completo de onboarding
+              </p>
             </div>
-
-            <Separator />
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="onboardingTrigger">Mostrar Botón de Onboarding</Label>
-                <p className="text-sm text-muted-foreground">Mostrar el botón para iniciar el tutorial</p>
-              </div>
-              <Switch
-                id="onboardingTrigger"
-                checked={featuresConfig.showOnboardingTrigger}
-                onCheckedChange={(checked) => onToggleFeature('showOnboardingTrigger', checked)}
-                disabled={isLoading || !featuresConfig.enableOnboardingSystem}
-              />
+            <Switch
+              id="enable-onboarding"
+              checked={featuresConfig.enableOnboarding}
+              onCheckedChange={(checked) => onToggleFeature('enableOnboarding', checked)}
+              disabled={isLoading}
+            />
+          </div>
+          
+          <Separator />
+          
+          {/* Mostrar el botón de ayuda contextual */}
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="contextual-help">Ayuda Contextual</Label>
+              <p className="text-sm text-muted-foreground">
+                Mostrar botones de ayuda en diferentes secciones
+              </p>
             </div>
-
-            <Separator />
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="autoStartOnboarding">Inicio Automático</Label>
-                <p className="text-sm text-muted-foreground">Iniciar onboarding automáticamente para nuevos usuarios</p>
-              </div>
-              <Switch
-                id="autoStartOnboarding"
-                checked={featuresConfig.autoStartOnboarding}
-                onCheckedChange={(checked) => onToggleFeature('autoStartOnboarding', checked)}
-                disabled={isLoading || !featuresConfig.enableOnboardingSystem}
-              />
+            <Switch
+              id="contextual-help"
+              checked={featuresConfig.enableContextualHelp}
+              onCheckedChange={(checked) => onToggleFeature('enableContextualHelp', checked)}
+              disabled={isLoading || !featuresConfig.enableOnboarding}
+            />
+          </div>
+          
+          <Separator />
+          
+          {/* Onboarding Obligatorio */}
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="require-onboarding">Onboarding Obligatorio</Label>
+              <p className="text-sm text-muted-foreground">
+                Obligar a los nuevos usuarios a completar el proceso de inducción
+              </p>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Personalización por Rol
-            </CardTitle>
-            <CardDescription>Personaliza el onboarding según el rol del usuario</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Cada rol de usuario tiene un flujo de onboarding diferente para mostrar las características relevantes.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-2">Estudiantes</h3>
-                <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• Exploración de cursos</li>
-                  <li>• Completar perfil</li>
-                  <li>• Iniciar primer curso</li>
-                </ul>
-              </div>
-              <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-2">Instructores</h3>
-                <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• Crear contenido</li>
-                  <li>• Herramientas de enseñanza</li>
-                  <li>• Estadísticas y análisis</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lightbulb className="h-5 w-5" />
-              Tips y Ayudas Contextuales
-            </CardTitle>
-            <CardDescription>Configura ayudas y consejos para usuarios</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="contextualHelp">Ayudas Contextuales</Label>
-                <p className="text-sm text-muted-foreground">Mostrar consejos de ayuda según el contexto</p>
-              </div>
-              <Switch
-                id="contextualHelp"
-                checked={true}
-                disabled={true}
-                aria-readonly={true}
-              />
-            </div>
-            <p className="text-xs text-muted-foreground italic">
-              Esta característica estará disponible próximamente.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+            <Switch
+              id="require-onboarding"
+              checked={featuresConfig.requireOnboarding}
+              onCheckedChange={(checked) => onToggleFeature('requireOnboarding', checked)}
+              disabled={isLoading || !featuresConfig.enableOnboarding}
+            />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

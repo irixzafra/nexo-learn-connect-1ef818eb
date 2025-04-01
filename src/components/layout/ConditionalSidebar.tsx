@@ -23,6 +23,10 @@ interface ConditionalSidebarProps {
   changeLanguage: (code: string) => void;
 }
 
+/**
+ * ConditionalSidebar determina qué navegación mostrar basado en la ruta actual.
+ * Es un componente unificado que maneja tanto la navegación regular como la administrativa.
+ */
 const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   userRole,
   effectiveRole,
@@ -46,10 +50,12 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       {/* Logo at the top with full title and subtitle */}
       <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
 
-      {/* Main Navigation or Admin Navigation based on the route */}
+      {/* Navegación condicional basada en la ruta actual */}
       {isAdminPage ? (
+        // Navegación administrativa para rutas /admin/*
         <AdminNavigation enabled={true} />
       ) : (
+        // Navegación principal para el resto de rutas
         <SidebarMainNavigation 
           effectiveRole={effectiveRole}
           isCollapsed={isCollapsed}

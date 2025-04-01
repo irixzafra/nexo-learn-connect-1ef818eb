@@ -7,67 +7,62 @@ El Panel de Administración es el centro de control unificado para la gestión d
 
 ## Estructura de Navegación
 
-La navegación del panel de administración sigue una estructura jerárquica simple de 2 niveles:
+La navegación del sistema sigue una estructura jerárquica simple y unificada para todos los usuarios:
 
 1. **Nivel 1**: Categorías principales en la barra lateral
 2. **Nivel 2**: Elementos dentro de cada categoría
 
+Lo que cambia según el rol del usuario es **qué elementos** puede ver, no el **componente** que se utiliza para mostrarlos.
+
 ### Estructura Actual
 
-#### Dashboard
-- Visión general del sistema
-- Métricas clave
-- Accesos rápidos
+El sistema muestra diferentes secciones de navegación según el rol del usuario, pero utilizando los mismos componentes:
 
-#### Usuarios
-- Lista de Usuarios
-- Roles y Permisos
+#### Estudiantes
+- Dashboard
+- Mis Cursos
+- Comunidad
+- Explorar
+- Configuración
 
-#### Cursos
-- Todos los Cursos
-- Categorías
-- Rutas de Aprendizaje
-- Certificados
+#### Instructores
+- Todo lo anterior
+- Sección de Profesor (Mis Cursos Creados, Estudiantes)
 
-#### Finanzas
-- Facturación
-- Suscripciones
-- Reportes
-
-#### Páginas
-- Gestión de Contenido
-- Editor de Páginas
-
-#### Configuración
-- General
-- Seguridad
-- Apariencia
-- Características
+#### Administradores
+- Todo lo anterior
+- Dashboard Administrativo
+- Usuarios y Roles
+- Cursos y Categorías
+- Finanzas
+- Páginas
+- Configuración del Sistema
 - Datos y Respaldos
 
 ## Implementación Técnica
 
-La navegación administrativa se implementa a través de:
+La navegación se implementa a través de:
 
-1. **AdminNavigation**: Componente principal de navegación del panel administrativo
-2. **ConditionalSidebar**: Determina qué tipo de barra lateral mostrar según la ruta
-3. **AdminRoutes**: Define todas las rutas disponibles en el panel administrativo
+1. **ConditionalSidebar**: Componente único que determina qué elementos mostrar según la ruta y el rol del usuario
+2. **SidebarNavigation**: Componente base de navegación utilizado por todos los usuarios
+3. **Filtrado por rol**: Los elementos se filtran automáticamente según el rol del usuario
 
 ## Principios de Diseño
 
 1. **Simplicidad**: Máximo de 2 niveles de navegación para evitar complejidad
 2. **Contextualidad**: Las tabs aparecen sólo cuando son relevantes para la página actual
-3. **Consistencia**: Diseño uniforme en todas las secciones administrativas
+3. **Consistencia**: Diseño uniforme en todas las secciones
 4. **Respuesta**: Adaptación a diferentes tamaños de pantalla
 
 ## Convenciones de Nomenclatura
 
 Para mantener consistencia, se siguen estas convenciones:
 
-1. Los componentes de administración se encuentran en `src/components/admin/`
-2. Las rutas administrativas siguen el patrón `/admin/[categoria]/[accion]`
-3. Los archivos de configuración están en `src/config/`
+1. Los componentes de navegación se encuentran en `src/components/layout/`
+2. La configuración de navegación está centralizada en `src/config/navigation/`
+3. Las rutas administrativas siguen el patrón `/admin/[categoria]/[accion]`
 
 ---
 
-Última actualización: 2023-07-01
+Última actualización: 2024-07-15
+

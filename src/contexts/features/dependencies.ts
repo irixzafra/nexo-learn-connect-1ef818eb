@@ -100,3 +100,30 @@ export function getFeatureDependencies(feature: keyof FeaturesConfig): (keyof Fe
   addIndirectDependencies(directDependencies);
   return Array.from(allDependencies);
 }
+
+/**
+ * Obtiene dependientes de una característica
+ */
+export function getFeatureDependents(feature: keyof FeaturesConfig): (keyof FeaturesConfig)[] {
+  return getReverseDependencies()[feature] || [];
+}
+
+/**
+ * Obtiene descripción de una dependencia
+ */
+export function getDependencyDescription(feature: keyof FeaturesConfig): string {
+  const descriptions: Partial<Record<keyof FeaturesConfig, string>> = {
+    enableDarkMode: "Permite cambiar entre tema claro y oscuro",
+    enableNotifications: "Sistema de notificaciones en tiempo real",
+    enableAnalytics: "Recolección de datos de uso anónimos",
+    enableFeedback: "Sistema para envío de comentarios y sugerencias",
+    enableUserRegistration: "Permite que nuevos usuarios se registren en la plataforma",
+    enableSocialLogin: "Permite inicio de sesión con redes sociales",
+    enablePublicProfiles: "Permite que los perfiles sean visibles para otros usuarios",
+    enableOnboarding: "Sistema de inducción para usuarios nuevos",
+    enableContextualHelp: "Muestra ayuda contextual en diferentes secciones",
+    requireOnboarding: "Obliga a completar el onboarding a usuarios nuevos"
+  };
+  
+  return descriptions[feature] || "Sin descripción disponible";
+}

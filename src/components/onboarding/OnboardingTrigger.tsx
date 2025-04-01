@@ -1,70 +1,60 @@
 
-import React, { useEffect } from 'react';
-import { useFeature } from '@/hooks/useFeature';
-import { OnboardingModal } from './OnboardingModal';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Info } from 'lucide-react';
-import { useOnboarding } from '@/contexts/OnboardingContext';
-import { motion } from 'framer-motion';
+import { HelpCircle } from 'lucide-react';
+import { useFeatures } from '@/contexts/features/FeaturesContext';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface OnboardingTriggerProps {
-  autoStart?: boolean;
-  onClick?: () => void;
+  title?: string;
+  children?: React.ReactNode;
+  tooltipContent?: React.ReactNode;
+  onActivate?: () => void;
 }
 
-export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({ 
-  autoStart = false,
-  onClick 
+export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({
+  title = 'Ayuda',
+  tooltipContent = 'Haga clic para ver la ayuda contextual',
+  onActivate,
+  children
 }) => {
-  const { isEnabled: onboardingEnabled } = useFeature('enableOnboardingSystem');
-  const { isEnabled: triggerEnabled } = useFeature('showOnboardingTrigger');
-  const { openOnboarding, isActive } = useOnboarding();
+  const { isFeatureEnabled } = useFeatures();
   
-  useEffect(() => {
-    if (autoStart && onboardingEnabled) {
-      const timer = setTimeout(() => {
-        openOnboarding();
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [autoStart, onboardingEnabled, openOnboarding]);
-
+  // Comprobamos si el onboarding está habilitado
+  if (!isFeatureEnabled('enableOnboarding')) {
+    return null;
+  }
+  
   const handleClick = () => {
-    if (onClick) {
-      onClick();
-    } else {
-      openOnboarding();
+    if (onActivate) {
+      onActivate();
     }
   };
 
-  // No render anything if the onboarding system is completely disabled
-  if (!onboardingEnabled) {
-    return null;
-  }
-
-  // If the button functionality is disabled but system is enabled, only render the modal
-  if (!triggerEnabled) {
-    return <OnboardingModal />;
-  }
-
   return (
-    <>
-      <motion.div
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <Button 
-          variant="outline"
-          size="icon"
-          onClick={handleClick}
-          title="Iniciar tutorial"
-          className="bg-white/80 backdrop-blur-sm shadow-sm border-primary/20 hover:bg-primary/10 hover:border-primary/30 transition-all"
-        >
-          <Info className="h-4 w-4 text-primary" />
-        </Button>
-      </motion.div>
-      <OnboardingModal />
-    </>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleClick}
+            className="rounded-full h-8 w-8"
+            aria-label={title}
+          >
+            {children || <HelpCircle className="h-4 w-4" />}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltipContent}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
