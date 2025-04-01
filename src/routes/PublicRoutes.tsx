@@ -24,14 +24,23 @@ import DynamicPage from '@/pages/DynamicPage';
 const PublicRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
+      {/* Main routes */}
+      <Route path="/" element={<Index />} />
       <Route path="/landing" element={<PublicLayout><LandingPage /></PublicLayout>} />
-      <Route path="/auth/login" element={<PublicLayout><Login /></PublicLayout>} />
+      
+      {/* Auth routes */}
+      <Route path="/auth/login" element={<Login />} />
       <Route path="/auth/register" element={<PublicLayout><Register /></PublicLayout>} />
+      
+      {/* Content pages */}
       <Route path="/about-us" element={<PublicLayout><AboutUs /></PublicLayout>} />
       <Route path="/scholarships" element={<PublicLayout><Scholarships /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
       <Route path="/unauthorized" element={<PublicLayout><Unauthorized /></PublicLayout>} />
+      
+      {/* Course related */}
+      <Route path="/courses" element={<PublicLayout><CoursesCatalog /></PublicLayout>} />
+      <Route path="/courses/:courseId" element={<PublicLayout><CourseDetailPage /></PublicLayout>} />
       
       {/* Legal pages */}
       <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />

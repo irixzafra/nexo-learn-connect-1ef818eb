@@ -5,6 +5,8 @@ import { NexoLogo } from '@/components/ui/logo';
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, MapPin, Phone } from 'lucide-react';
 
 const LandingFooter: React.FC = () => {
+  const currentYear = new Date().getFullYear();
+  
   return (
     <footer className="bg-muted/50 pt-16 pb-8 border-t">
       <div className="container mx-auto px-4">
@@ -123,7 +125,7 @@ const LandingFooter: React.FC = () => {
         <div className="border-t border-border/50 pt-8 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-              © {new Date().getFullYear()} Nexo Ecosistema Creativo. Todos los derechos reservados.
+              © {currentYear} Nexo Ecosistema Creativo. Todos los derechos reservados.
             </p>
             <div className="flex space-x-4">
               <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
