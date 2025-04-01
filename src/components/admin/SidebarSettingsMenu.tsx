@@ -9,7 +9,8 @@ import {
   Database,
   FileText,
   BarChart,
-  Shield
+  Shield,
+  Navigation
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -139,6 +140,21 @@ const SidebarSettingsMenu: React.FC = () => {
       >
         <Shield className="h-4 w-4" />
         <span>Roles y Permisos</span>
+      </NavLink>
+      
+      <NavLink
+        to="/admin/navigation-diagram"
+        className={({ isActive }) =>
+          cn(
+            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            isActive
+              ? "bg-primary/10 text-primary"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          )
+        }
+      >
+        <Navigation className="h-4 w-4" />
+        <span>Diagrama de Navegación</span>
       </NavLink>
     </div>
   );

@@ -7,7 +7,8 @@ import {
   Database,
   FileText,
   BarChart,
-  Shield
+  Shield,
+  Navigation
 } from 'lucide-react';
 import { MenuItem } from '@/types/navigation';
 
@@ -62,5 +63,11 @@ export const settingsNavigation: MenuItem[] = [
     label: 'Roles y Permisos',
     path: '/admin/settings/roles',
     requiredRole: ['admin', 'sistemas']
+  },
+  {
+    icon: Navigation,
+    label: 'Diagrama de Navegación',
+    path: '/admin/navigation-diagram',
+    requiredRole: ['admin', 'sistemas', 'content_creator']
   }
 ];

@@ -11,8 +11,10 @@ import {
   Compass,
   GraduationCap,
   CreditCard,
-  Settings
+  Settings,
+  Navigation
 } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 // Map navigation groups to sidebar state groups
 const navigationGroups = [
@@ -78,12 +80,22 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
 }) => {
   // Get sidebar state from localStorage
   const { expanded } = useSidebarState();
+  const location = useLocation();
+  
+  // Verificamos si estamos en una página de administración
+  const isAdminPage = location.pathname.startsWith('/admin');
 
   // Obtener menús filtrados por rol
   const menus = getNavigationByRole(effectiveRole);
 
   // Filtrar grupos por rol
   const filteredGroups = navigationGroups.filter(group => {
+    // Si estamos en una página de admin y hideOnAdminPages es true, ocultamos ciertos grupos
+    if (isAdminPage && hideOnAdminPages && 
+        (group.id === 'general' || group.id === 'learning')) {
+      return false;
+    }
+    
     if (!group.requiredRole) return true;
     
     if (Array.isArray(group.requiredRole)) {
@@ -106,6 +118,13 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         badge = notificationsCount > 0 ? notificationsCount : undefined;
       }
       
+      // Verificar y corregir enlaces
+      if (item.path && !item.path.startsWith('http')) {
+        // Asegurarnos de que los enlaces funcionen correctamente
+        const isActive = location.pathname === item.path;
+        item.active = isActive;
+      }
+      
       return {
         ...item,
         badge
@@ -113,12 +132,22 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
     });
   };
 
+  // Si no hay grupos después del filtrado, no renderizamos nada
+  if (filteredGroups.length === 0) {
+    return null;
+  }
+
   return (
     <div className={`flex-1 overflow-auto ${isCollapsed ? "px-2" : "px-4"}`}>
       <div className="space-y-4 py-4">
         {filteredGroups.map(group => {
           const groupItems = menus[group.navKey as keyof typeof menus];
           const enhancedItems = enhanceItemsWithBadges(groupItems);
+          
+          // No mostrar grupos sin elementos
+          if (!enhancedItems || enhancedItems.length === 0) {
+            return null;
+          }
           
           // Use the saved state from localStorage for this specific group
           const isGroupExpanded = expanded[group.id as keyof typeof expanded] || false;
