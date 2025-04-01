@@ -28,6 +28,7 @@ interface Certificate {
   };
 }
 
+// This interface represents the raw data structure we get from Supabase
 interface CertificateData {
   id: string;
   certificate_number: string;
@@ -99,26 +100,29 @@ const CertificateVerifyPage: React.FC = () => {
       if (error) throw error;
       
       if (data) {
-        // Transform the data to match our expected Certificate interface
-        const certificateData = {
-          id: data.id,
-          certificate_number: data.certificate_number,
-          issue_date: data.issue_date,
-          expiry_date: data.expiry_date,
-          status: data.status,
+        // Transform the raw data to match our Certificate interface
+        const certificateData = data as unknown as CertificateData;
+        
+        // Create a properly structured Certificate object
+        const transformedCertificate: Certificate = {
+          id: certificateData.id,
+          certificate_number: certificateData.certificate_number,
+          issue_date: certificateData.issue_date,
+          expiry_date: certificateData.expiry_date,
+          status: certificateData.status,
           user: {
-            full_name: data.profiles?.full_name || 'Usuario desconocido'
+            full_name: certificateData.profiles?.full_name || 'Usuario desconocido'
           },
           course: {
-            title: data.courses?.title || 'Curso desconocido',
-            description: data.courses?.description || 'Sin descripción',
+            title: certificateData.courses?.title || 'Curso desconocido',
+            description: certificateData.courses?.description || 'Sin descripción',
             instructor: {
-              full_name: data.courses?.profiles?.full_name || 'Instructor desconocido'
+              full_name: certificateData.courses?.profiles?.full_name || 'Instructor desconocido'
             }
           }
         };
         
-        setCertificate(certificateData);
+        setCertificate(transformedCertificate);
         setError(null);
       }
     } catch (error: any) {
