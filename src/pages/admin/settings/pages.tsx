@@ -2,35 +2,45 @@
 import React from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { PlusCircle, FileText, Folder, Navigation, Shuffle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
+import { SystemPagesNavigation } from '@/features/admin/components/settings/SystemPagesNavigation';
 
 const PagesManagement: React.FC = () => {
   return (
     <AdminPageLayout 
       title="Gestión de Páginas" 
-      subtitle="Administra las páginas públicas y privadas de la plataforma"
+      subtitle="Administra las páginas y la navegación del sistema"
+      actions={
+        <Button asChild>
+          <Link to="/admin/pages/create">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Nueva Página
+          </Link>
+        </Button>
+      }
     >
       <div className="space-y-6">
         <Card>
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>Páginas del Sistema</CardTitle>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Navigation className="h-5 w-5 text-primary" />
+                <CardTitle>Explorador de Navegación</CardTitle>
+              </div>
+              <Button variant="outline" size="sm">
+                <Shuffle className="mr-2 h-4 w-4" />
+                Modo Mapa
+              </Button>
             </div>
             <CardDescription>
-              Crea y edita páginas personalizadas para tu plataforma
+              Explora todas las páginas disponibles en el sistema, sus estados y categorías
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              El gestor de páginas te permite crear y administrar todo el contenido
-              estático de la plataforma, como la página de inicio, sobre nosotros, etc.
-            </p>
-            <Separator className="my-4" />
-            <div className="space-y-4">
-              <p>Funcionalidad en desarrollo. Próximamente disponible.</p>
-            </div>
+            <SystemPagesNavigation />
           </CardContent>
         </Card>
       </div>
