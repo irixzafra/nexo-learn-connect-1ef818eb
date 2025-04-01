@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
-import { AdminTableHead } from '@/components/layout/admin/AdminPageLayout';
 
 interface Certificate {
   id: string;
