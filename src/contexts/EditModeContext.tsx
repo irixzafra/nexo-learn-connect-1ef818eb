@@ -76,7 +76,7 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const [isEditMode, setIsEditMode] = useState(getInitialEditMode());
   const [isReorderMode, setIsReorderMode] = useState(getInitialReorderMode());
-  const [isEditModeEnabled, setIsEditModeEnabled] = useState(true);
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(getInitialSidebarState());
   const [isNavigationBlocked, setIsNavigationBlocked] = useState(false);
@@ -175,31 +175,8 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [isEditModeEnabled, canEdit, isEditMode]);
 
   const toggleEditMode = () => {
-    if (canEdit && isEditModeEnabled) {
-      const newValue = !isEditMode;
-      setIsEditMode(newValue);
-      
-      if (newValue) {
-        setIsReorderMode(true);
-        toast.info(
-          "Modo edición universal activado. Ahora puedes editar o modificar cualquier elemento visible.",
-          { duration: 4000 }
-        );
-        
-        console.log('Edit mode activated, reorder mode also activated');
-      } else {
-        setIsReorderMode(false);
-        setSelectedElementId(null);
-        setHasUnsavedChanges(false);
-        console.log('Edit mode deactivated, reorder mode also deactivated');
-      }
-    } else if (!isEditModeEnabled && canEdit) {
-      toast.error("La funcionalidad de edición en línea está desactivada");
-      console.log('Edit mode activation failed: feature disabled');
-    } else if (!canEdit) {
-      toast.error("No tienes permisos para activar el modo edición");
-      console.log('Edit mode activation failed: insufficient permissions');
-    }
+    toast.info('La funcionalidad de edición inline está siendo reconstruida. Estará disponible próximamente.');
+    return;
   };
 
   const toggleReorderMode = () => {

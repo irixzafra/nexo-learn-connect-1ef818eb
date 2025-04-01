@@ -21,7 +21,7 @@ const InlineEditingSettings: React.FC<InlineEditingSettingsProps> = ({ isLoading
     await toggleFeature('enableInlineEditing');
     
     if (!featuresConfig.enableInlineEditing) {
-      toast.success('Edición inline activada. Ahora puedes editar contenido directamente en las páginas.');
+      toast.info('Edición inline en desarrollo. Esta funcionalidad está siendo reconstruida para mejorar la experiencia.');
     } else {
       toast.info('Edición inline desactivada.');
     }
@@ -35,7 +35,7 @@ const InlineEditingSettings: React.FC<InlineEditingSettingsProps> = ({ isLoading
           Edición Inline Universal
         </CardTitle>
         <CardDescription>
-          Configura las opciones para la edición directa de cualquier contenido visible en las páginas
+          Configuración para la edición directa de cualquier contenido visible en las páginas
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -53,67 +53,20 @@ const InlineEditingSettings: React.FC<InlineEditingSettingsProps> = ({ isLoading
             id="inline-editing"
             checked={featuresConfig.enableInlineEditing}
             onCheckedChange={handleToggleInlineEditing}
-            disabled={isLoading}
+            disabled={isLoading || true}
           />
         </div>
 
-        {featuresConfig.enableInlineEditing && (
-          <>
-            <Separator className="my-2" />
-            
-            <Alert variant="info" className="bg-primary/5 text-primary">
-              <AlertTitle className="flex items-center">
-                <AlertTriangle className="h-4 w-4 mr-2" />
-                Importante
-              </AlertTitle>
-              <AlertDescription className="mt-2 text-sm">
-                La edición inline universal permite modificar cualquier contenido visible directamente en las páginas. 
-                Para activar el modo de edición, haz clic en el botón "Editar" que aparecerá en la interfaz.
-                <div className="mt-3">
-                  <strong>Elementos editables:</strong>
-                  <ul className="list-disc list-inside mt-1 space-y-1">
-                    <li className="flex items-center gap-2"><FileEdit className="h-3 w-3" /> Textos en cualquier parte de la página</li>
-                    <li className="flex items-center gap-2"><Layout className="h-3 w-3" /> Secciones y contenedores</li>
-                    <li className="flex items-center gap-2"><Menu className="h-3 w-3" /> Elementos de menú y navegación</li>
-                    <li className="flex items-center gap-2"><FileX className="h-3 w-3" /> Páginas de error y páginas 404</li>
-                    <li className="flex items-center gap-2"><ListTree className="h-3 w-3" /> Cualquier elemento visible en la página</li>
-                  </ul>
-                </div>
-                <div className="mt-3">
-                  <strong>Características activas:</strong>
-                  <ul className="list-disc list-inside mt-1 space-y-1">
-                    <li>Edición directa de contenido en cualquier elemento visible</li>
-                    <li>Edición de textos, imágenes y elementos de página</li>
-                    <li>Edición de páginas de error y páginas 404</li>
-                    <li>Asistente de edición con IA</li>
-                    <li>Bloqueo de navegación durante la edición</li>
-                    <li>Guardado de borradores</li>
-                    <li>Advertencia de cambios no guardados</li>
-                  </ul>
-                </div>
-              </AlertDescription>
-            </Alert>
-
-            <div className="flex justify-end gap-2 mt-4">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => toast.info('Configuración avanzada próximamente')}
-              >
-                Configuración avanzada
-              </Button>
-              <Button 
-                variant="default" 
-                size="sm"
-                className="gap-2"
-                onClick={() => toast.success('Configuración guardada correctamente')}
-              >
-                <Save className="h-4 w-4" />
-                Guardar configuración
-              </Button>
-            </div>
-          </>
-        )}
+        <Alert variant="warning" className="bg-yellow-500/10 text-yellow-600 border-yellow-200">
+          <AlertTitle className="flex items-center">
+            <AlertTriangle className="h-4 w-4 mr-2" />
+            Funcionalidad en desarrollo
+          </AlertTitle>
+          <AlertDescription className="mt-2 text-sm">
+            La edición inline universal está siendo reconstruida para mejorar la experiencia del usuario.
+            Esta funcionalidad estará disponible próximamente con mejoras significativas.
+          </AlertDescription>
+        </Alert>
       </CardContent>
     </Card>
   );
