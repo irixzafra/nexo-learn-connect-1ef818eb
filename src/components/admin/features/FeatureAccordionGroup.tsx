@@ -1,113 +1,211 @@
 
 import React from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from "@/components/ui/accordion";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { FeaturesConfig } from '@/contexts/features/types';
-import { LucideIcon, Settings, Shield, Bell, Palette, Database, BookOpen, ToggleRight } from 'lucide-react';
+import { useFeatureDependencies } from '@/hooks/useFeatureDependencies';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
+import { LockIcon } from 'lucide-react';
 
-interface FeatureItem {
-  key: keyof FeaturesConfig;
-  label: string;
-  description: string;
-}
+// Descripción de las características por grupo
+const featureDescriptions: Record<string, Record<keyof FeaturesConfig, string>> = {
+  general: {
+    enableDarkMode: "Permite cambiar entre temas claro y oscuro",
+    enableNotifications: "Habilita el sistema de notificaciones en la plataforma",
+    enableAnalytics: "Recopilación de datos de uso para análisis",
+    enableFeedback: "Permite a los usuarios enviar comentarios y sugerencias"
+  },
+  user: {
+    enableUserRegistration: "Permite que los usuarios se registren en la plataforma",
+    enableSocialLogin: "Habilita inicio de sesión con redes sociales",
+    enablePublicProfiles: "Permite perfiles públicos para los usuarios"
+  },
+  design: {
+    designSystemEnabled: "Habilita el sistema de diseño unificado",
+    enableThemeSwitcher: "Permite cambiar entre diferentes temas visuales",
+    enableMultiLanguage: "Soporte para múltiples idiomas"
+  },
+  content: {
+    enableAdvancedEditor: "Editor avanzado con más opciones de formato",
+    enableContentReordering: "Permite reordenar el contenido mediante arrastrar y soltar",
+    enableCategoryManagement: "Gestión avanzada de categorías para el contenido",
+    enableLeaderboard: "Muestra una tabla de clasificación para usuarios"
+  },
+  data: {
+    enableAutoBackups: "Copias de seguridad automáticas de los datos",
+    enableQueryCache: "Caché de consultas para mejor rendimiento",
+    enableMaintenanceMode: "Modo de mantenimiento para realizar actualizaciones",
+    enableDatabaseDevMode: "Herramientas de desarrollo para la base de datos"
+  },
+  security: {
+    enable2FA: "Autenticación de dos factores para mayor seguridad",
+    enableMultipleSessions: "Permite múltiples sesiones activas para un usuario",
+    enablePublicRegistration: "Registro público abierto (sin invitación)",
+    requireEmailVerification: "Requiere verificación de email para nuevas cuentas",
+    enableActivityLog: "Registro de actividad de los usuarios"
+  },
+  testing: {
+    enableTestDataGenerator: "Herramienta para generar datos de prueba"
+  },
+  onboarding: {
+    enableOnboarding: "Habilita el sistema de iniciación para nuevos usuarios",
+    enableContextualHelp: "Ayuda contextual en diferentes partes de la aplicación",
+    requireOnboarding: "Hace obligatorio completar el proceso de iniciación",
+    autoStartOnboarding: "Inicia automáticamente el proceso de iniciación",
+    showOnboardingTrigger: "Muestra un botón para iniciar el proceso de iniciación"
+  }
+};
 
-interface FeatureGroupProps {
+interface FeatureGroupConfig {
   id: string;
   title: string;
-  icon: LucideIcon;
-  features: FeatureItem[];
-  featuresConfig: FeaturesConfig;
-  onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
-  isLoading: boolean;
+  features: Array<keyof FeaturesConfig>;
 }
 
-/**
- * Grupo de características en formato acordeón
- */
-export const FeatureAccordionGroup: React.FC = () => {
-  const { features, toggleFeature, isLoading } = useFeatures();
+// Grupos de características para mostrar en acordeones
+export const featureGroups: FeatureGroupConfig[] = [
+  {
+    id: "general",
+    title: "General",
+    features: ["enableDarkMode", "enableNotifications", "enableAnalytics", "enableFeedback"]
+  },
+  {
+    id: "user",
+    title: "Usuarios",
+    features: ["enableUserRegistration", "enableSocialLogin", "enablePublicProfiles"]
+  },
+  {
+    id: "design",
+    title: "Diseño",
+    features: ["designSystemEnabled", "enableThemeSwitcher", "enableMultiLanguage"]
+  },
+  {
+    id: "content",
+    title: "Contenido",
+    features: ["enableAdvancedEditor", "enableContentReordering", "enableCategoryManagement", "enableLeaderboard"]
+  },
+  {
+    id: "data",
+    title: "Datos",
+    features: ["enableAutoBackups", "enableQueryCache", "enableMaintenanceMode", "enableDatabaseDevMode"]
+  },
+  {
+    id: "security",
+    title: "Seguridad",
+    features: ["enable2FA", "enableMultipleSessions", "enablePublicRegistration", "requireEmailVerification", "enableActivityLog"]
+  },
+  {
+    id: "testing",
+    title: "Pruebas",
+    features: ["enableTestDataGenerator"]
+  },
+  {
+    id: "onboarding",
+    title: "Iniciación",
+    features: ["enableOnboarding", "enableContextualHelp", "requireOnboarding", "autoStartOnboarding", "showOnboardingTrigger"]
+  }
+];
 
-  const featureGroups = [
-    {
-      id: "general",
-      title: "Funcionalidades Generales",
-      icon: Settings,
-      features: [
-        { key: "enableDarkMode", label: "Modo Oscuro", description: "Permite cambiar al tema oscuro" },
-        { key: "enableNotifications", label: "Notificaciones", description: "Habilita el sistema de notificaciones" },
-        { key: "enableAnalytics", label: "Analíticas", description: "Recolecta datos de uso para análisis" },
-        { key: "enableFeedback", label: "Feedback", description: "Permite a los usuarios enviar comentarios" }
-      ]
-    },
-    {
-      id: "onboarding",
-      title: "Onboarding y Ayuda",
-      icon: BookOpen,
-      features: [
-        { key: "enableOnboarding", label: "Onboarding", description: "Guía inicial para nuevos usuarios" },
-        { key: "requireOnboarding", label: "Onboarding Obligatorio", description: "Requiere completar el onboarding" },
-        { key: "enableContextualHelp", label: "Ayuda Contextual", description: "Muestra ayuda según el contexto" },
-        { key: "autoStartOnboarding", label: "Inicio Automático", description: "Inicia el onboarding automáticamente" },
-        { key: "showOnboardingTrigger", label: "Mostrar Botón de Ayuda", description: "Muestra un botón para iniciar el onboarding" }
-      ]
-    },
-    {
-      id: "security",
-      title: "Seguridad",
-      icon: Shield,
-      features: [
-        { key: "enable2FA", label: "Autenticación de Dos Factores", description: "Habilita 2FA para mayor seguridad" },
-        { key: "enableMultipleSessions", label: "Múltiples Sesiones", description: "Permite iniciar sesión en varios dispositivos" },
-        { key: "requireEmailVerification", label: "Verificación de Email", description: "Requiere verificar el email al registrarse" },
-        { key: "enableActivityLog", label: "Registro de Actividad", description: "Guarda un historial de acciones del usuario" }
-      ]
-    }
-  ];
+interface FeatureAccordionGroupProps {
+  features: FeaturesConfig;
+  onToggleFeature: (feature: keyof FeaturesConfig, enabled: boolean) => void;
+  isLoading?: boolean;
+}
+
+export const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({
+  features,
+  onToggleFeature,
+  isLoading = false
+}) => {
+  const { checkIfCanDisable, checkIfCanEnable, getDependentFeatures, getDependencies } = useFeatureDependencies();
+
+  const getFeatureDescription = (groupId: string, featureKey: keyof FeaturesConfig): string => {
+    return featureDescriptions[groupId]?.[featureKey] || "No hay descripción disponible";
+  };
 
   return (
-    <Accordion type="multiple" defaultValue={["general"]} className="w-full">
+    <Accordion type="multiple" className="w-full" defaultValue={["general"]}>
       {featureGroups.map((group) => (
-        <AccordionItem key={group.id} value={group.id} className="border rounded-lg my-2">
-          <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <div className="flex items-center space-x-2">
-              <group.icon className="h-5 w-5 text-primary" />
-              <span>{group.title}</span>
-            </div>
+        <AccordionItem key={group.id} value={group.id}>
+          <AccordionTrigger className="text-lg font-medium py-4">
+            {group.title}
           </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <ScrollArea className={group.features.length > 6 ? "h-[400px]" : undefined}>
-              <div className="space-y-4 pr-4">
-                {group.features.map((feature, index) => (
-                  <React.Fragment key={feature.key}>
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label htmlFor={`${group.id}-${feature.key}`}>{feature.label}</Label>
-                        <p className="text-sm text-muted-foreground">{feature.description}</p>
+          <AccordionContent>
+            <div className="space-y-4 pt-2">
+              {group.features.map((featureKey) => {
+                // Verificar dependencias
+                const canDisable = checkIfCanDisable(featureKey);
+                const canEnable = checkIfCanEnable(featureKey);
+                const isEnabled = features[featureKey];
+                const dependencies = getDependencies(featureKey);
+                const dependents = getDependentFeatures(featureKey);
+                
+                let disabledReason = "";
+                
+                if (!canEnable && !isEnabled) {
+                  disabledReason = "No se puede activar: requiere activar otras características primero";
+                } else if (!canDisable && isEnabled) {
+                  disabledReason = "No se puede desactivar: otras características dependen de esta";
+                }
+                
+                return (
+                  <div key={String(featureKey)} className="flex flex-col space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor={`switch-${featureKey}`} className="text-base font-medium">
+                            {String(featureKey).replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                          </Label>
+                          
+                          {disabledReason && (
+                            <InfoTooltip content={disabledReason}>
+                              <LockIcon className="h-4 w-4 text-muted-foreground" />
+                            </InfoTooltip>
+                          )}
+                          
+                          {dependencies.length > 0 && (
+                            <Badge variant="outline" className="text-xs">
+                              Requiere: {dependencies.join(', ')}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {getFeatureDescription(group.id, featureKey)}
+                        </p>
                       </div>
                       <Switch
-                        id={`${group.id}-${feature.key}`}
-                        checked={features[feature.key] || false}
-                        onCheckedChange={(checked) => toggleFeature(feature.key, checked)}
-                        disabled={isLoading}
+                        id={`switch-${featureKey}`}
+                        checked={isEnabled}
+                        onCheckedChange={(checked) => onToggleFeature(featureKey, checked)}
+                        disabled={
+                          isLoading || 
+                          (!canEnable && !isEnabled) || 
+                          (!canDisable && isEnabled)
+                        }
                       />
                     </div>
-                    {index < group.features.length - 1 && <Separator />}
-                  </React.Fragment>
-                ))}
-              </div>
-            </ScrollArea>
+                    
+                    {dependents.length > 0 && isEnabled && (
+                      <div className="ml-6 mt-1">
+                        <p className="text-xs text-muted-foreground">
+                          Características que dependen de esta: {dependents.join(', ')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>
   );
 };
-
-// Export named component
-export default FeatureAccordionGroup;
-
-// Missing import
-import { useFeatures } from '@/contexts/features/FeaturesContext';

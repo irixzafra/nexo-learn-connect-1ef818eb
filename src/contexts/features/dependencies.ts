@@ -1,8 +1,13 @@
 
 import { FeaturesConfig } from './types';
 
-// Define feature dependencies - what features are required for each feature
-export const featureDependencies: Record<keyof FeaturesConfig, (keyof FeaturesConfig)[]> = {
+/**
+ * Este archivo contiene las definiciones de dependencias entre características
+ * Las dependencias indican qué características necesitan estar activas para que otra característica funcione
+ */
+
+// Lista de características que dependen de otras
+export const featureDependencies: Record<keyof FeaturesConfig, Array<keyof FeaturesConfig>> = {
   // General features
   enableDarkMode: [],
   enableNotifications: [],
@@ -29,17 +34,17 @@ export const featureDependencies: Record<keyof FeaturesConfig, (keyof FeaturesCo
   enableAutoBackups: [],
   enableQueryCache: [],
   enableMaintenanceMode: [],
-  enableDatabaseDevMode: [],
+  enableDatabaseDevMode: ['enableMaintenanceMode'],
 
   // Security features
   enable2FA: [],
   enableMultipleSessions: [],
-  enablePublicRegistration: [],
-  requireEmailVerification: [],
+  enablePublicRegistration: ['enableUserRegistration'],
+  requireEmailVerification: ['enableUserRegistration'],
   enableActivityLog: [],
 
   // Test features
-  enableTestDataGenerator: [],
+  enableTestDataGenerator: ['enableDatabaseDevMode'],
   
   // Onboarding features
   enableOnboarding: [],
@@ -51,85 +56,83 @@ export const featureDependencies: Record<keyof FeaturesConfig, (keyof FeaturesCo
   showOnboardingTrigger: ['enableOnboarding']
 };
 
-// Define feature dependents - what features depend on each feature
-export const featureDependents: Record<keyof FeaturesConfig, (keyof FeaturesConfig)[]> = {
-  // Generate dependents based on dependencies
-  ...Object.fromEntries(
-    Object.keys(featureDependencies).map((key) => [key, []])
-  ),
-};
-
-// Fill dependents based on dependencies
-Object.entries(featureDependencies).forEach(([feature, deps]) => {
-  deps.forEach((dep) => {
-    if (featureDependents[dep]) {
-      featureDependents[dep].push(feature as keyof FeaturesConfig);
-    }
+// Lista de características que dependen de una característica dada
+// Este es el inverso de featureDependencies para facilitar las consultas
+export const featureDependents = (() => {
+  const result: Record<string, Array<keyof FeaturesConfig>> = {};
+  
+  // Inicializar todas las características con un array vacío
+  Object.keys(featureDependencies).forEach(feature => {
+    result[feature] = [];
   });
-});
+  
+  // Construir el mapa inverso
+  Object.entries(featureDependencies).forEach(([feature, dependencies]) => {
+    dependencies.forEach(dependency => {
+      result[dependency].push(feature as keyof FeaturesConfig);
+    });
+  });
+  
+  return result as Record<keyof FeaturesConfig, Array<keyof FeaturesConfig>>;
+})();
 
-// Export helper functions for getting dependencies and dependents
-export const getFeatureDependencies = (feature: keyof FeaturesConfig): (keyof FeaturesConfig)[] => {
-  return featureDependencies[feature] || [];
-};
-
-export const getFeatureDependents = (feature: keyof FeaturesConfig): (keyof FeaturesConfig)[] => {
+/**
+ * Obtiene la lista de características que dependen de una característica dada
+ */
+export const getFeatureDependents = (feature: keyof FeaturesConfig): Array<keyof FeaturesConfig> => {
   return featureDependents[feature] || [];
 };
 
-// Get reverse dependencies - which features depend on a given feature
-export const getReverseDependencies = (): Record<keyof FeaturesConfig, (keyof FeaturesConfig)[]> => {
-  return featureDependents;
+/**
+ * Obtiene la lista de características de las que depende una característica dada
+ */
+export const getFeatureDependencies = (feature: keyof FeaturesConfig): Array<keyof FeaturesConfig> => {
+  return featureDependencies[feature] || [];
 };
 
-// Get descriptions for dependencies
-export const getDependencyDescription = (feature: keyof FeaturesConfig): string => {
-  const descriptions: Record<string, string> = {
-    // General features
-    enableDarkMode: "Habilita el modo oscuro en la interfaz de usuario",
-    enableNotifications: "Permite el sistema de notificaciones para usuarios",
-    enableAnalytics: "Activa el seguimiento de análisis de uso",
-    enableFeedback: "Habilita la recolección de comentarios de usuarios",
+/**
+ * Verifica recursivamente si una característica puede ser desactivada
+ * Una característica no puede ser desactivada si otra característica activa depende de ella
+ */
+export const canDisableFeature = (
+  feature: keyof FeaturesConfig, 
+  features: FeaturesConfig, 
+  visited: Set<keyof FeaturesConfig> = new Set()
+): boolean => {
+  // Evitar bucles infinitos
+  if (visited.has(feature)) {
+    return true;
+  }
+  
+  visited.add(feature);
+  
+  // Comprobar dependientes directos
+  for (const dependent of featureDependents[feature] || []) {
+    // Si el dependiente está activo, no podemos desactivar esta característica
+    if (features[dependent]) {
+      return false;
+    }
     
-    // User features
-    enableUserRegistration: "Permite a los usuarios registrarse en la plataforma",
-    enableSocialLogin: "Habilita inicio de sesión con redes sociales",
-    enablePublicProfiles: "Permite perfiles públicos de usuario",
+    // Comprobar dependientes indirectos (recursivamente)
+    if (!canDisableFeature(dependent, features, visited)) {
+      return false;
+    }
+  }
+  
+  return true;
+};
 
-    // Design system features
-    designSystemEnabled: "Activa el sistema de diseño avanzado",
-    enableThemeSwitcher: "Permite cambiar entre temas de la aplicación",
-    enableMultiLanguage: "Habilita soporte para múltiples idiomas",
-
-    // Content features
-    enableAdvancedEditor: "Activa el editor de contenido avanzado",
-    enableContentReordering: "Permite reordenar contenido con arrastrar y soltar",
-    enableCategoryManagement: "Habilita la gestión de categorías",
-    enableLeaderboard: "Muestra tabla de clasificación de usuarios",
-
-    // Data features
-    enableAutoBackups: "Realiza copias de seguridad automáticas",
-    enableQueryCache: "Activa el caché de consultas para mejor rendimiento",
-    enableMaintenanceMode: "Permite activar el modo de mantenimiento",
-    enableDatabaseDevMode: "Habilita opciones de desarrollo para la base de datos",
-
-    // Security features
-    enable2FA: "Activa la autenticación de dos factores",
-    enableMultipleSessions: "Permite múltiples sesiones simultáneas",
-    enablePublicRegistration: "Permite registro público de usuarios",
-    requireEmailVerification: "Requiere verificación de email al registrarse",
-    enableActivityLog: "Registra actividad de usuarios para auditoría",
-
-    // Test features
-    enableTestDataGenerator: "Habilita generador de datos de prueba",
-    
-    // Onboarding features
-    enableOnboarding: "Activa el sistema de onboarding para nuevos usuarios",
-    enableContextualHelp: "Muestra ayuda contextual en la interfaz",
-    requireOnboarding: "Hace obligatorio completar el onboarding",
-    autoStartOnboarding: "Inicia automáticamente el onboarding para nuevos usuarios",
-    showOnboardingTrigger: "Muestra botón para reiniciar el onboarding"
-  };
-
-  return descriptions[feature] || `Configuración para ${String(feature)}`;
+/**
+ * Verifica si una característica puede ser activada
+ * Una característica no puede ser activada si alguna de sus dependencias está desactivada
+ */
+export const canEnableFeature = (feature: keyof FeaturesConfig, features: FeaturesConfig): boolean => {
+  // Comprobar si todas las dependencias están activas
+  for (const dependency of featureDependencies[feature] || []) {
+    if (!features[dependency]) {
+      return false;
+    }
+  }
+  
+  return true;
 };
