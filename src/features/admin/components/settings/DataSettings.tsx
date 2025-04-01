@@ -1,180 +1,190 @@
 
 import React from 'react';
-import { Switch } from '@/components/ui/switch';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { 
   DatabaseZap, 
   Database, 
-  Server, 
-  Construction,
-  Loader2
+  RefreshCw, 
+  Clock, 
+  HardDrive,
+  KeyRound,
+  Lock,
+  CheckCircle,
+  Server,
+  Download,
+  Upload
 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { FeaturesConfig } from '@/contexts/OnboardingContext';
-import SettingsAccordion, { SettingsSection } from '@/components/admin/settings/SettingsAccordion';
+import { Separator } from '@/components/ui/separator';
+import SettingsAccordion from '@/components/admin/settings/SettingsAccordion';
+import { cn } from '@/lib/utils';
 
 interface DataSettingsProps {
-  featuresConfig: FeaturesConfig;
-  onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  featuresConfig?: FeaturesConfig;
+  onToggleFeature?: (feature: keyof FeaturesConfig, value: boolean) => void;
   isLoading?: boolean;
 }
 
 const DataSettings: React.FC<DataSettingsProps> = ({ 
-  featuresConfig,
+  featuresConfig, 
   onToggleFeature,
-  isLoading = false
+  isLoading
 }) => {
-  const dataSections: SettingsSection[] = [
+  const sections = [
     {
-      id: "database",
-      title: "Base de Datos",
-      icon: <Database className="h-5 w-5" />,
-      iconColor: "text-blue-500",
+      id: 'backups',
+      title: 'Respaldos automáticos',
+      icon: <Database className="w-5 h-5" />,
       content: (
         <div className="space-y-4">
-          <div className="flex items-center justify-between py-1">
-            <div>
-              <h3 className="text-sm font-medium">Modo Desarrollo DB</h3>
-              <p className="text-xs text-muted-foreground">
-                Muestra SQL queries en consola para depuración
-              </p>
-              <Badge variant="outline" className="bg-amber-100 text-amber-800 text-xs border-amber-200 mt-1">
-                <Construction className="h-3 w-3 mr-1" />
-                Solo usar en desarrollo
-              </Badge>
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="enableAutoBackups" className="text-base">Activar respaldos automáticos</Label>
+              <p className="text-sm text-muted-foreground">Los respaldos se realizarán automáticamente cada noche</p>
             </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableDatabaseDevMode"
-                checked={featuresConfig.enableDatabaseDevMode}
-                onCheckedChange={(value) => onToggleFeature('enableDatabaseDevMode', value)}
-                disabled={isLoading}
-              />
+            <Switch 
+              id="enableAutoBackups" 
+              checked={featuresConfig?.enableAutoBackups}
+              onCheckedChange={(checked) => onToggleFeature?.('enableAutoBackups', checked)}
+              disabled={isLoading}
+            />
+          </div>
+          <Separator />
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <p className="text-sm font-medium">Último respaldo</p>
+              <p className="text-sm text-muted-foreground">Hace 6 horas</p>
+            </div>
+            <div className="flex justify-between items-center">
+              <p className="text-sm font-medium">Siguiente respaldo</p>
+              <p className="text-sm text-muted-foreground">En 18 horas</p>
             </div>
           </div>
-          
-          <Separator />
-          
-          <div className="flex items-center justify-between py-1">
-            <div>
-              <h3 className="text-sm font-medium">Generador de Datos de Prueba</h3>
-              <p className="text-xs text-muted-foreground">
-                Habilita la generación de datos de prueba
-              </p>
-            </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableTestDataGenerator"
-                checked={featuresConfig.enableTestDataGenerator}
-                onCheckedChange={(value) => onToggleFeature('enableTestDataGenerator', value)}
-                disabled={isLoading}
-              />
-            </div>
+          <div className="pt-2 flex gap-2">
+            <Button variant="outline" size="sm" className="text-xs">
+              <Download className="mr-1 h-3 w-3" />
+              Descargar último respaldo
+            </Button>
+            <Button variant="outline" size="sm" className="text-xs">
+              <Upload className="mr-1 h-3 w-3" />
+              Subir respaldo
+            </Button>
           </div>
         </div>
       )
     },
     {
-      id: "backups",
-      title: "Respaldos",
-      icon: <Server className="h-5 w-5" />,
-      iconColor: "text-purple-500",
+      id: 'cache',
+      title: 'Caché de consultas',
+      icon: <RefreshCw className="w-5 h-5" />,
       content: (
         <div className="space-y-4">
-          <div className="flex items-center justify-between py-1">
-            <div>
-              <h3 className="text-sm font-medium">Respaldos Automáticos</h3>
-              <p className="text-xs text-muted-foreground">
-                Programación de respaldos automáticos
-              </p>
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="enableQueryCache" className="text-base">Activar caché de consultas</Label>
+              <p className="text-sm text-muted-foreground">Las consultas frecuentes se guardarán en caché para mejorar el rendimiento</p>
             </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableAutoBackups"
-                checked={featuresConfig.enableAutoBackups}
-                onCheckedChange={(value) => onToggleFeature('enableAutoBackups', value)}
-                disabled={isLoading}
-              />
-            </div>
+            <Switch 
+              id="enableQueryCache" 
+              checked={featuresConfig?.enableQueryCache}
+              onCheckedChange={(checked) => onToggleFeature?.('enableQueryCache', checked)}
+              disabled={isLoading}
+            />
           </div>
-          
           <Separator />
-          
-          <div className="flex items-center justify-between py-1">
-            <div>
-              <h3 className="text-sm font-medium">Modo Mantenimiento</h3>
-              <p className="text-xs text-muted-foreground">
-                Pone la plataforma en modo mantenimiento
-              </p>
-            </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableMaintenanceMode"
-                checked={featuresConfig.enableMaintenanceMode}
-                onCheckedChange={(value) => onToggleFeature('enableMaintenanceMode', value)}
-                disabled={isLoading}
-              />
-            </div>
+          <div>
+            <Button variant="outline" size="sm" className="text-xs">
+              <RefreshCw className="mr-1 h-3 w-3" />
+              Limpiar caché
+            </Button>
           </div>
         </div>
       )
     },
     {
-      id: "performance",
-      title: "Rendimiento",
-      icon: <DatabaseZap className="h-5 w-5" />,
-      iconColor: "text-yellow-500",
+      id: 'maintenance',
+      title: 'Modo mantenimiento',
+      icon: <HardDrive className="w-5 h-5" />,
       content: (
         <div className="space-y-4">
-          <div className="flex items-center justify-between py-1">
-            <div>
-              <h3 className="text-sm font-medium">Caché de Consultas</h3>
-              <p className="text-xs text-muted-foreground">
-                Mejora rendimiento almacenando resultados en caché
-              </p>
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="enableMaintenanceMode" className="text-base">Activar modo mantenimiento</Label>
+              <p className="text-sm text-muted-foreground">La plataforma mostrará una página de mantenimiento a los usuarios</p>
             </div>
-            <div className="flex items-center">
-              {isLoading && (
-                <Loader2 className="h-3 w-3 mr-2 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id="enableQueryCache"
-                checked={featuresConfig.enableQueryCache}
-                onCheckedChange={(value) => onToggleFeature('enableQueryCache', value)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          
-          <Separator />
-          
-          <div className="flex justify-end pt-2">
-            <Button variant="outline" size="sm">Limpiar Caché</Button>
+            <Switch 
+              id="enableMaintenanceMode" 
+              checked={featuresConfig?.enableMaintenanceMode}
+              onCheckedChange={(checked) => onToggleFeature?.('enableMaintenanceMode', checked)}
+              disabled={isLoading}
+            />
           </div>
         </div>
       )
-    }
+    },
+    {
+      id: 'testData',
+      title: 'Datos de prueba',
+      icon: <Server className="w-5 h-5" />,
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="enableTestDataGenerator" className="text-base">Generador de datos de prueba</Label>
+                <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20">En desarrollo</Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">Herramienta para generar datos de prueba para desarrollo y testing</p>
+            </div>
+            <Switch 
+              id="enableTestDataGenerator" 
+              checked={featuresConfig?.enableTestDataGenerator}
+              onCheckedChange={(checked) => onToggleFeature?.('enableTestDataGenerator', checked)}
+              disabled={isLoading}
+            />
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'devMode',
+      title: 'Modo desarrollador',
+      icon: <KeyRound className="w-5 h-5" />,
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="enableDatabaseDevMode" className="text-base">Activar modo desarrollador</Label>
+                <Badge variant="outline" className="bg-red-500/10 text-red-600 hover:bg-red-500/20">Solo administradores</Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">Habilita herramientas avanzadas y logs de diagnóstico</p>
+            </div>
+            <Switch 
+              id="enableDatabaseDevMode" 
+              checked={featuresConfig?.enableDatabaseDevMode}
+              onCheckedChange={(checked) => onToggleFeature?.('enableDatabaseDevMode', checked)}
+              disabled={isLoading}
+            />
+          </div>
+        </div>
+      )
+    },
   ];
 
   return (
-    <SettingsAccordion 
-      sections={dataSections} 
-      title="Datos"
-      description="Administra la configuración de datos y respaldos"
-    />
+    <div className="space-y-6">
+      <SettingsAccordion 
+        title="Datos"
+        description="Administra la configuración de datos y respaldos"
+        sections={sections}
+        className="bg-card"
+      />
+    </div>
   );
 };
 
