@@ -5,10 +5,14 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Home, BookOpen, User, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import PublicLayout from '@/layouts/PublicLayout';
+import UniversalEditableElement from '@/components/admin/UniversalEditableElement';
+import { useEditMode } from '@/contexts/EditModeContext';
+import InlineEdit from '@/components/admin/InlineEdit';
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, userRole } = useAuth();
+  const { isEditMode, updateText } = useEditMode();
 
   // Determinar ruta de inicio según el rol del usuario
   const getHomeRoute = () => {
@@ -58,29 +62,78 @@ const NotFound: React.FC = () => {
 
   const notFoundContent = (
     <div className="w-full flex items-center justify-center min-h-[80vh] p-6">
-      <div className="text-center">
-        <h1 className="text-9xl font-bold text-primary mb-4">404</h1>
-        <h2 className="text-3xl font-bold mb-2">Página no encontrada</h2>
-        <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-          Lo sentimos, la página que estás buscando no existe o ha sido trasladada a otra ubicación.
-        </p>
+      <UniversalEditableElement
+        id="notfound-container"
+        elementType="section"
+        className="text-center w-full"
+      >
+        <h1 className="text-9xl font-bold text-primary mb-4">
+          <InlineEdit
+            table="system_text"
+            id="notfound-error-code"
+            field="content"
+            value="404"
+            className="text-9xl font-bold text-primary"
+          />
+        </h1>
+        
+        <h2 className="text-3xl font-bold mb-2">
+          <InlineEdit
+            table="system_text"
+            id="notfound-title"
+            field="content"
+            value="Página no encontrada"
+            className="text-3xl font-bold"
+          />
+        </h2>
+        
+        <div className="mb-8 max-w-md mx-auto">
+          <InlineEdit
+            table="system_text"
+            id="notfound-description"
+            field="content"
+            value="Lo sentimos, la página que estás buscando no existe o ha sido trasladada a otra ubicación."
+            className="text-muted-foreground"
+            multiline={true}
+          />
+        </div>
         
         <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
           <Button variant="outline" onClick={() => navigate(-1)} className="gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Volver atrás
+            <InlineEdit
+              table="system_text"
+              id="notfound-back-button"
+              field="content"
+              value="Volver atrás"
+              className="inline"
+            />
           </Button>
           <Button asChild className="gap-2">
             <Link to={getHomeRoute()}>
               <Home className="h-4 w-4" />
-              Ir al inicio
+              <InlineEdit
+                table="system_text"
+                id="notfound-home-button"
+                field="content"
+                value="Ir al inicio"
+                className="inline"
+              />
             </Link>
           </Button>
         </div>
         
         {/* Enlaces de navegación principales */}
         <div className="mt-8">
-          <h3 className="text-lg font-medium mb-4">Enlaces rápidos</h3>
+          <h3 className="text-lg font-medium mb-4">
+            <InlineEdit
+              table="system_text"
+              id="notfound-links-title"
+              field="content"
+              value="Enlaces rápidos"
+              className="text-lg font-medium"
+            />
+          </h3>
           <div className="flex flex-wrap justify-center gap-3">
             {getNavigationLinks().map((link, index) => (
               <Button 
@@ -91,13 +144,13 @@ const NotFound: React.FC = () => {
               >
                 <Link to={link.to}>
                   {link.icon}
-                  {link.label}
+                  <span>{link.label}</span>
                 </Link>
               </Button>
             ))}
           </div>
         </div>
-      </div>
+      </UniversalEditableElement>
     </div>
   );
 

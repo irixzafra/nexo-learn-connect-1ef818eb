@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SitePage, PageBlock, PageBlockType } from '@/types/pages';
@@ -6,6 +7,7 @@ import { useEditMode } from '@/contexts/EditModeContext';
 import InlineEdit from '@/components/admin/InlineEdit';
 import DraggableContent from '@/components/admin/DraggableContent';
 import SectionInsert from '@/components/admin/SectionInsert';
+import UniversalEditableElement from '@/components/admin/UniversalEditableElement';
 
 const getPageBySlug = async (slug: string): Promise<SitePage | null> => {
   return new Promise((resolve) => {
@@ -78,23 +80,59 @@ const PageRenderer: React.FC = () => {
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold text-red-500 mb-4">{error}</h1>
+      <UniversalEditableElement
+        id="error-container"
+        elementType="section"
+        className="container mx-auto px-4 py-12 text-center"
+      >
+        <h1 className="text-2xl font-bold text-red-500 mb-4">
+          <InlineEdit
+            table="system_text"
+            id="page-error-message"
+            field="content"
+            value={error}
+            className="text-2xl font-bold text-red-500"
+          />
+        </h1>
         <p className="text-muted-foreground">
-          La página que estás buscando no existe o no está disponible.
+          <InlineEdit
+            table="system_text"
+            id="page-error-description"
+            field="content"
+            value="La página que estás buscando no existe o no está disponible."
+            className="text-muted-foreground"
+          />
         </p>
-      </div>
+      </UniversalEditableElement>
     );
   }
 
   if (!page) {
     return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold mb-4">Página no encontrada</h1>
+      <UniversalEditableElement
+        id="not-found-container"
+        elementType="section"
+        className="container mx-auto px-4 py-12 text-center"
+      >
+        <h1 className="text-2xl font-bold mb-4">
+          <InlineEdit
+            table="system_text"
+            id="page-not-found-title"
+            field="content"
+            value="Página no encontrada"
+            className="text-2xl font-bold"
+          />
+        </h1>
         <p className="text-muted-foreground">
-          No se pudo encontrar la página solicitada.
+          <InlineEdit
+            table="system_text"
+            id="page-not-found-description"
+            field="content"
+            value="No se pudo encontrar la página solicitada."
+            className="text-muted-foreground"
+          />
         </p>
-      </div>
+      </UniversalEditableElement>
     );
   }
 
@@ -103,7 +141,11 @@ const PageRenderer: React.FC = () => {
     id: block.id || `block-${index}`,
     order: index + 1,
     content: (
-      <div className="mb-6">
+      <UniversalEditableElement
+        id={block.id || `block-${index}`}
+        elementType={`block-${block.type}`}
+        className="mb-6 w-full"
+      >
         {block.type === 'text' && (
           <InlineEdit
             table="page_blocks"
@@ -125,7 +167,7 @@ const PageRenderer: React.FC = () => {
             />
           </div>
         )}
-      </div>
+      </UniversalEditableElement>
     ),
     text: typeof block.content === 'string' ? block.content : JSON.stringify(block.content)
   }));
@@ -197,7 +239,11 @@ const PageRenderer: React.FC = () => {
   const renderPageContent = () => {
     if (isEditMode) {
       return (
-        <div className="page-content py-8">
+        <UniversalEditableElement
+          id="page-content-container"
+          elementType="main"
+          className="page-content py-8"
+        >
           {contentBlocks.length === 0 ? (
             <div className="text-center py-12 border-2 border-dashed border-primary/20 rounded-lg">
               <p className="text-muted-foreground mb-4">Esta página no tiene contenido.</p>
@@ -212,7 +258,7 @@ const PageRenderer: React.FC = () => {
               onAddItem={handleAddBlock}
             />
           )}
-        </div>
+        </UniversalEditableElement>
       );
     }
     
@@ -241,7 +287,11 @@ const PageRenderer: React.FC = () => {
   };
 
   return (
-    <div className={`page-container page-layout-${page?.layout}`}>
+    <UniversalEditableElement
+      id={`page-container-${page.id}`}
+      elementType="div"
+      className={`page-container page-layout-${page?.layout}`}
+    >
       <div className="container mx-auto px-4">
         {isEditMode ? (
           <InlineEdit
@@ -257,7 +307,7 @@ const PageRenderer: React.FC = () => {
         )}
         {renderPageContent()}
       </div>
-    </div>
+    </UniversalEditableElement>
   );
 };
 

@@ -72,7 +72,10 @@ const InlineEditingSettings: React.FC<InlineEditingSettingsProps> = ({ isLoading
                 <div className="mt-3">
                   <strong>Características activas:</strong>
                   <ul className="list-disc list-inside mt-1 space-y-1">
-                    <li>Edición directa de contenido</li>
+                    <li>Edición directa de contenido en cualquier elemento visible</li>
+                    <li>Edición de textos, imágenes y elementos de página</li>
+                    <li>Edición de páginas de error y páginas 404</li>
+                    <li>Asistente de edición con IA</li>
                     <li>Bloqueo de navegación durante la edición</li>
                     <li>Guardado de borradores</li>
                     <li>Advertencia de cambios no guardados</li>
