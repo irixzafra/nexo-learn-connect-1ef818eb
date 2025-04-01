@@ -1,758 +1,781 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import PublicLayout from '@/layouts/PublicLayout';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
 } from '@/components/ui/card';
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent
+import { 
+  Tabs, 
+  TabsList, 
+  TabsTrigger, 
+  TabsContent 
 } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
+import { 
+  Search, 
+  Medal, 
+  Award, 
+  TrendingUp, 
+  Users, 
+  Filter, 
+  Calendar, 
+  CheckCircle2, 
+  Flame,
   Trophy,
-  Medal,
   Star,
-  Search,
-  Filter,
-  Users,
-  Calendar,
-  CheckCircle,
-  BarChart2,
-  Award,
-  Crown,
-  Clock,
-  Book
+  Zap
 } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-// Datos dummy para el tablero de líderes
+// Datos dummy para el Leaderboard
 const LEADERBOARD_USERS = [
   {
     id: 1,
-    name: 'Laura Martínez',
+    name: 'Carlos Rodríguez',
+    username: 'carlos_rod',
+    avatarUrl: 'https://i.pravatar.cc/150?img=11',
     points: 9875,
-    level: 'Experto',
-    badges: 28,
-    courses_completed: 15,
-    streak_days: 87,
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=300',
     rank: 1,
-    progress: 92,
-    achievements: ['Experto en JavaScript', 'Maestro de React', 'Explorador Frontend']
+    level: 32,
+    streakDays: 85,
+    completedCourses: 12,
+    badges: 24,
+    activity: 'high',
+    isVerified: true,
+    lastActive: '2023-06-22T10:30:00Z',
   },
   {
     id: 2,
-    name: 'Carlos Rodríguez',
+    name: 'Laura Martínez',
+    username: 'laura_m',
+    avatarUrl: 'https://i.pravatar.cc/150?img=5',
     points: 8640,
-    level: 'Avanzado',
-    badges: 22,
-    courses_completed: 12,
-    streak_days: 64,
-    avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?q=80&w=300',
     rank: 2,
-    progress: 87,
-    achievements: ['Experto en Python', 'Científico de Datos', 'Analítico']
+    level: 29,
+    streakDays: 62,
+    completedCourses: 9,
+    badges: 18,
+    activity: 'high',
+    isVerified: true,
+    lastActive: '2023-06-21T14:45:00Z',
   },
   {
     id: 3,
-    name: 'María García',
-    points: 7920,
-    level: 'Avanzado',
-    badges: 19,
-    courses_completed: 10,
-    streak_days: 45,
-    avatar: 'https://images.unsplash.com/photo-1619895862022-09114b41f16f?q=80&w=300',
+    name: 'Alejandro Sánchez',
+    username: 'alex_sanchez',
+    avatarUrl: 'https://i.pravatar.cc/150?img=12',
+    points: 7520,
     rank: 3,
-    progress: 83,
-    achievements: ['Diseñadora UX/UI', 'Creativa Visual', 'Pensamiento de Diseño']
+    level: 26,
+    streakDays: 45,
+    completedCourses: 8,
+    badges: 15,
+    activity: 'medium',
+    isVerified: true,
+    lastActive: '2023-06-20T09:15:00Z',
   },
   {
     id: 4,
-    name: 'Alejandro Pérez',
-    points: 7450,
-    level: 'Intermedio',
-    badges: 17,
-    courses_completed: 8,
-    streak_days: 38,
-    avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=300',
+    name: 'Paula García',
+    username: 'paula_g',
+    avatarUrl: 'https://i.pravatar.cc/150?img=9',
+    points: 6890,
     rank: 4,
-    progress: 78,
-    achievements: ['DevOps Proficient', 'Cloud Expert']
+    level: 24,
+    streakDays: 38,
+    completedCourses: 7,
+    badges: 14,
+    activity: 'high',
+    isVerified: true,
+    lastActive: '2023-06-22T08:30:00Z',
   },
   {
     id: 5,
-    name: 'Lucía Fernández',
-    points: 6980,
-    level: 'Intermedio',
-    badges: 15,
-    courses_completed: 7,
-    streak_days: 30,
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300',
+    name: 'Daniel López',
+    username: 'dani_lopez',
+    avatarUrl: 'https://i.pravatar.cc/150?img=15',
+    points: 6240,
     rank: 5,
-    progress: 74,
-    achievements: ['Analista de Marketing', 'Estratega SEO']
+    level: 21,
+    streakDays: 30,
+    completedCourses: 6,
+    badges: 12,
+    activity: 'medium',
+    isVerified: false,
+    lastActive: '2023-06-18T16:20:00Z',
   },
   {
     id: 6,
-    name: 'Jorge Navarro',
-    points: 6240,
-    level: 'Intermedio',
-    badges: 14,
-    courses_completed: 6,
-    streak_days: 28,
-    avatar: 'https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?q=80&w=300',
+    name: 'Elena Ruiz',
+    username: 'elena_r',
+    avatarUrl: 'https://i.pravatar.cc/150?img=3',
+    points: 5780,
     rank: 6,
-    progress: 69,
-    achievements: ['Ciberseguridad']
+    level: 19,
+    streakDays: 25,
+    completedCourses: 5,
+    badges: 10,
+    activity: 'low',
+    isVerified: true,
+    lastActive: '2023-06-15T11:45:00Z',
   },
   {
     id: 7,
-    name: 'Isabel Torres',
-    points: 5980,
-    level: 'Intermedio',
-    badges: 13,
-    courses_completed: 5,
-    streak_days: 25,
-    avatar: 'https://images.unsplash.com/photo-1548142813-c348350df52b?q=80&w=300',
+    name: 'Mario González',
+    username: 'mario_g',
+    avatarUrl: 'https://i.pravatar.cc/150?img=18',
+    points: 5320,
     rank: 7,
-    progress: 65,
-    achievements: ['Mobile Developer']
+    level: 18,
+    streakDays: 22,
+    completedCourses: 4,
+    badges: 9,
+    activity: 'medium',
+    isVerified: true,
+    lastActive: '2023-06-19T13:10:00Z',
   },
   {
     id: 8,
-    name: 'David López',
-    points: 5650,
-    level: 'Intermedio',
-    badges: 12,
-    courses_completed: 5,
-    streak_days: 21,
-    avatar: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=300',
+    name: 'Sofía Torres',
+    username: 'sofia_t',
+    avatarUrl: 'https://i.pravatar.cc/150?img=6',
+    points: 4950,
     rank: 8,
-    progress: 62,
-    achievements: ['Backend Developer']
+    level: 17,
+    streakDays: 19,
+    completedCourses: 4,
+    badges: 8,
+    activity: 'high',
+    isVerified: true,
+    lastActive: '2023-06-21T10:05:00Z',
   },
   {
     id: 9,
-    name: 'Carmen Ruiz',
-    points: 4980,
-    level: 'Principiante',
-    badges: 10,
-    courses_completed: 4,
-    streak_days: 18,
-    avatar: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=300',
+    name: 'Javier Fernández',
+    username: 'javi_f',
+    avatarUrl: 'https://i.pravatar.cc/150?img=17',
+    points: 4680,
     rank: 9,
-    progress: 55,
-    achievements: ['Scrum Master']
+    level: 16,
+    streakDays: 15,
+    completedCourses: 3,
+    badges: 7,
+    activity: 'low',
+    isVerified: false,
+    lastActive: '2023-06-12T09:30:00Z',
   },
   {
     id: 10,
-    name: 'Miguel Jiménez',
+    name: 'Carmen Navarro',
+    username: 'carmen_n',
+    avatarUrl: 'https://i.pravatar.cc/150?img=8',
     points: 4320,
-    level: 'Principiante',
-    badges: 8,
-    courses_completed: 3,
-    streak_days: 14,
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300',
     rank: 10,
-    progress: 48,
-    achievements: ['Product Owner']
+    level: 15,
+    streakDays: 12,
+    completedCourses: 3,
+    badges: 6,
+    activity: 'medium',
+    isVerified: true,
+    lastActive: '2023-06-18T15:25:00Z',
   }
 ];
 
+// Datos dummy para desafíos
 const CHALLENGES = [
   {
     id: 1,
-    title: 'Reto 30 días de código',
-    description: 'Completa un ejercicio diario durante 30 días consecutivos',
-    participants: 2435,
-    difficulty: 'Intermedio',
-    points: 5000,
-    deadline: '15 días restantes',
-    progress: 68,
-    category: 'programming'
+    title: 'Maratón de Programación',
+    description: 'Completa 5 cursos de programación en 30 días',
+    points: 2000,
+    participants: 245,
+    endDate: '2023-07-15T23:59:59Z',
+    category: 'programming',
+    difficulty: 'hard',
+    progressRequired: 5,
+    badgeUrl: 'https://img.icons8.com/fluency/48/code.png'
   },
   {
     id: 2,
-    title: 'Maratón de Machine Learning',
-    description: 'Completa 5 proyectos prácticos de Machine Learning',
-    participants: 1270,
-    difficulty: 'Avanzado',
-    points: 7500,
-    deadline: '10 días restantes',
-    progress: 45,
-    category: 'data-science'
+    title: 'Desafío de Datos',
+    description: 'Resuelve 10 ejercicios de análisis de datos',
+    points: 1500,
+    participants: 187,
+    endDate: '2023-07-10T23:59:59Z',
+    category: 'data-science',
+    difficulty: 'medium',
+    progressRequired: 10,
+    badgeUrl: 'https://img.icons8.com/fluency/48/combo-chart.png'
   },
   {
     id: 3,
-    title: 'UX Challenge',
-    description: 'Diseña una aplicación completa desde cero',
-    participants: 987,
-    difficulty: 'Todos los niveles',
-    points: 4000,
-    deadline: '20 días restantes',
-    progress: 30,
-    category: 'design'
+    title: 'Diseñador Experto',
+    description: 'Crea 3 prototipos funcionales en Figma',
+    points: 1200,
+    participants: 130,
+    endDate: '2023-07-20T23:59:59Z',
+    category: 'design',
+    difficulty: 'medium',
+    progressRequired: 3,
+    badgeUrl: 'https://img.icons8.com/fluency/48/apple-pencil.png'
   },
   {
     id: 4,
-    title: 'Semana de DevOps',
-    description: 'Configura una pipeline CI/CD completa',
-    participants: 650,
-    difficulty: 'Avanzado',
-    points: 6000,
-    deadline: '5 días restantes',
-    progress: 85,
-    category: 'devops'
-  },
-  {
-    id: 5,
-    title: 'Cybersecurity CTF',
-    description: 'Captura la bandera en 10 escenarios diferentes',
-    participants: 820,
-    difficulty: 'Avanzado',
-    points: 8000,
-    deadline: '3 días restantes',
-    progress: 92,
-    category: 'security'
+    title: 'Racha de Aprendizaje',
+    description: 'Mantén una racha diaria de 14 días',
+    points: 1000,
+    participants: 520,
+    endDate: '2023-08-01T23:59:59Z',
+    category: 'general',
+    difficulty: 'easy',
+    progressRequired: 14,
+    badgeUrl: 'https://img.icons8.com/fluency/48/fire-element.png'
   }
 ];
 
+// Datos dummy para logros
+const ACHIEVEMENTS = [
+  {
+    id: 1,
+    name: 'Maestro del Código',
+    description: 'Completar todos los cursos de programación',
+    icon: <Code className="h-6 w-6 text-indigo-500" />,
+    rarity: 'legendary',
+    unlockedBy: 0.02, // 2% de usuarios
+    points: 5000
+  },
+  {
+    id: 2,
+    name: 'Analista de Datos',
+    description: 'Completar todos los cursos de ciencia de datos',
+    icon: <BarChart2 className="h-6 w-6 text-blue-500" />,
+    rarity: 'epic',
+    unlockedBy: 0.05, // 5% de usuarios
+    points: 3000
+  },
+  {
+    id: 3,
+    name: 'Diseñador UI/UX',
+    description: 'Completar todos los cursos de diseño',
+    icon: <Palette className="h-6 w-6 text-pink-500" />,
+    rarity: 'rare',
+    unlockedBy: 0.08, // 8% de usuarios
+    points: 2500
+  },
+  {
+    id: 4,
+    name: 'Experto en Marketing',
+    description: 'Completar todos los cursos de marketing digital',
+    icon: <TrendingUp className="h-6 w-6 text-green-500" />,
+    rarity: 'uncommon',
+    unlockedBy: 0.12, // 12% de usuarios
+    points: 2000
+  },
+  {
+    id: 5,
+    name: 'Maestro de la Ciberseguridad',
+    description: 'Completar todos los cursos de seguridad informática',
+    icon: <Shield className="h-6 w-6 text-red-500" />,
+    rarity: 'rare',
+    unlockedBy: 0.07, // 7% de usuarios
+    points: 2800
+  },
+  {
+    id: 6,
+    name: 'Racha de 100 días',
+    description: 'Mantener una racha de aprendizaje de 100 días',
+    icon: <Flame className="h-6 w-6 text-orange-500" />,
+    rarity: 'epic',
+    unlockedBy: 0.04, // 4% de usuarios
+    points: 3500
+  },
+  {
+    id: 7,
+    name: 'Estudiante Dedicado',
+    description: 'Completar 50 cursos en la plataforma',
+    icon: <GraduationCap className="h-6 w-6 text-indigo-700" />,
+    rarity: 'legendary',
+    unlockedBy: 0.01, // 1% de usuarios
+    points: 6000
+  },
+  {
+    id: 8,
+    name: 'Colaborador Activo',
+    description: 'Ayudar a 100 estudiantes en el foro de la comunidad',
+    icon: <Users className="h-6 w-6 text-green-600" />,
+    rarity: 'uncommon',
+    unlockedBy: 0.15, // 15% de usuarios
+    points: 1800
+  }
+];
+
+// Componente de Lucide React para iconos faltantes
+const Code = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <polyline points="16 18 22 12 16 6"></polyline>
+    <polyline points="8 6 2 12 8 18"></polyline>
+  </svg>
+);
+
+const BarChart2 = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <rect x="2" y="10" width="4" height="10"></rect>
+    <rect x="10" y="4" width="4" height="16"></rect>
+    <rect x="18" y="8" width="4" height="12"></rect>
+  </svg>
+);
+
+const Palette = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <circle cx="13.5" cy="6.5" r="1.5"></circle>
+    <circle cx="17.5" cy="10.5" r="1.5"></circle>
+    <circle cx="8.5" cy="7.5" r="1.5"></circle>
+    <circle cx="6.5" cy="12.5" r="1.5"></circle>
+    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+  </svg>
+);
+
+const Shield = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+  </svg>
+);
+
+const GraduationCap = ({ className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+    <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+  </svg>
+);
+
 const LeaderBoard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('leaderboard');
   const [timeFilter, setTimeFilter] = useState('all-time');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [userRanking, setUserRanking] = useState<{ rank: number, points: number } | null>(null);
-
-  // Filtrar usuarios
+  
+  // Filtrar usuarios por búsqueda
   const filteredUsers = LEADERBOARD_USERS.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Efecto para simular la obtención de la posición del usuario actual
-  useEffect(() => {
-    // Simular carga de datos
-    const timer = setTimeout(() => {
-      setUserRanking({
-        rank: 42,
-        points: 2850
-      });
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
+  
   return (
     <PublicLayout>
       <Helmet>
-        <title>Tabla de Posiciones | Nexo Learning</title>
-        <meta name="description" content="Explora el ranking de estudiantes y los retos disponibles en la plataforma." />
+        <title>Tablero de Líderes | Nexo Learning</title>
+        <meta name="description" content="Explora el tablero de líderes y desafíos en Nexo Learning. Compite con otros estudiantes y gana puntos." />
       </Helmet>
-
+      
       <div className="container mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Tabla de Posiciones</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Tablero de Líderes</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Compite, aprende y gana reconocimiento por tus logros académicos en nuestra comunidad.
+            Compite con otros estudiantes, gana puntos y desbloquea logros en tu camino de aprendizaje.
           </p>
         </div>
-
-        {/* Top Leaders Section */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold mb-8">Los Mejores Estudiantes</h2>
+        
+        {/* Top Players Section */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-6">Top Estudiantes</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {LEADERBOARD_USERS.slice(0, 3).map((user, index) => (
-              <Card key={user.id} className={`overflow-hidden ${index === 0 ? 'border-yellow-400 border-2' : index === 1 ? 'border-gray-400 border-2' : 'border-amber-700 border-2'}`}>
-                <div className="absolute top-4 right-4">
-                  {index === 0 ? (
-                    <Crown className="h-8 w-8 text-yellow-500 fill-yellow-500" />
-                  ) : index === 1 ? (
-                    <Award className="h-8 w-8 text-gray-500 fill-gray-500" />
-                  ) : (
-                    <Medal className="h-8 w-8 text-amber-700 fill-amber-700" />
-                  )}
-                </div>
-                <CardContent className="pt-6 text-center">
-                  <div className="mb-4 relative">
-                    <Avatar className="w-24 h-24 mx-auto border-4 border-primary">
-                      <AvatarImage src={user.avatar} alt={user.name} />
+              <Card key={user.id} className={`overflow-hidden ${index === 0 ? 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-transparent dark:from-yellow-950/20 dark:to-transparent' : index === 1 ? 'border-slate-400 bg-gradient-to-br from-slate-50 to-transparent dark:from-slate-950/20 dark:to-transparent' : 'border-amber-700 bg-gradient-to-br from-amber-50 to-transparent dark:from-amber-950/20 dark:to-transparent'}`}>
+                <div className="relative p-6 text-center">
+                  <div className="absolute top-0 left-0 w-full flex justify-center -mt-8">
+                    <div className={`rounded-full p-3 ${index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-slate-400' : 'bg-amber-700'}`}>
+                      <Trophy className={`h-6 w-6 ${index === 0 ? 'text-yellow-800' : index === 1 ? 'text-slate-700' : 'text-amber-100'}`} />
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 mb-4">
+                    <Avatar className="w-20 h-20 mx-auto border-4 border-white shadow-lg">
+                      <AvatarImage src={user.avatarUrl} alt={user.name} />
                       <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg">
-                      {user.rank}
-                    </div>
                   </div>
-                  <h3 className="text-xl font-bold mt-2">{user.name}</h3>
-                  <p className="text-muted-foreground">{user.level}</p>
-                  <div className="mt-4 text-2xl font-bold text-primary">{user.points.toLocaleString()} pts</div>
                   
-                  <div className="grid grid-cols-3 gap-2 mt-6 text-center">
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold">{user.name}</h3>
+                    <p className="text-muted-foreground">@{user.username}</p>
+                    {user.isVerified && (
+                      <Badge variant="secondary" className="mt-1">Verificado</Badge>
+                    )}
+                  </div>
+                  
+                  <div className="text-center mb-4">
+                    <div className="text-3xl font-bold">{user.points.toLocaleString()}</div>
+                    <p className="text-sm text-muted-foreground">Puntos</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-2 mb-4">
                     <div>
-                      <p className="text-sm text-muted-foreground">Cursos</p>
-                      <div className="flex items-center justify-center gap-1 mt-1">
-                        <Book className="h-4 w-4 text-primary" />
-                        <span className="font-semibold">{user.courses_completed}</span>
-                      </div>
+                      <div className="font-semibold">{user.level}</div>
+                      <p className="text-xs text-muted-foreground">Nivel</p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Insignias</p>
-                      <div className="flex items-center justify-center gap-1 mt-1">
-                        <Award className="h-4 w-4 text-primary" />
-                        <span className="font-semibold">{user.badges}</span>
-                      </div>
+                      <div className="font-semibold">{user.badges}</div>
+                      <p className="text-xs text-muted-foreground">Insignias</p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Racha</p>
-                      <div className="flex items-center justify-center gap-1 mt-1">
-                        <Clock className="h-4 w-4 text-primary" />
-                        <span className="font-semibold">{user.streak_days} días</span>
-                      </div>
+                      <div className="font-semibold">{user.streakDays}</div>
+                      <p className="text-xs text-muted-foreground">Racha</p>
                     </div>
                   </div>
-                </CardContent>
-                <CardFooter className="bg-muted/50 px-6 py-3">
-                  <div className="w-full">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Nivel {Math.floor(user.progress / 10)}</span>
-                      <span>Nivel {Math.ceil(user.progress / 10) + 1}</span>
-                    </div>
-                    <Progress value={user.progress % 10 * 10} className="h-2" />
-                  </div>
-                </CardFooter>
+                  
+                  <Button className="w-full" variant={index === 0 ? "default" : "outline"}>
+                    Ver Perfil
+                  </Button>
+                </div>
               </Card>
             ))}
           </div>
         </div>
-
-        {/* User's Current Position */}
-        {userRanking && (
-          <Card className="mb-12 bg-muted/30">
-            <CardContent className="p-6">
-              <div className="flex flex-col md:flex-row justify-between items-center">
-                <div className="flex items-center gap-4 mb-4 md:mb-0">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Trophy className="h-8 w-8 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold">Tu posición actual</h3>
-                    <p className="text-muted-foreground">Sigue aprendiendo para subir en la clasificación</p>
-                  </div>
-                </div>
-                <div className="flex gap-6 items-center">
-                  <div className="text-center">
-                    <p className="text-muted-foreground text-sm">Posición</p>
-                    <p className="text-2xl font-bold">#{userRanking.rank}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-muted-foreground text-sm">Puntos</p>
-                    <p className="text-2xl font-bold text-primary">{userRanking.points.toLocaleString()}</p>
-                  </div>
-                  <Button>
-                    <Book className="h-4 w-4 mr-2" />
-                    Seguir aprendiendo
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Main Content */}
-        <div>
-          <Tabs defaultValue="leaderboard" className="mb-8">
-            <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3">
-              <TabsTrigger value="leaderboard" className="flex items-center gap-2">
-                <BarChart2 className="h-4 w-4" />
-                <span>Clasificación</span>
-              </TabsTrigger>
-              <TabsTrigger value="challenges" className="flex items-center gap-2">
-                <Trophy className="h-4 w-4" />
-                <span>Retos</span>
-              </TabsTrigger>
-              <TabsTrigger value="achievements" className="flex items-center gap-2">
-                <Award className="h-4 w-4" />
-                <span>Logros</span>
-              </TabsTrigger>
+        
+        {/* Tabs for Leaderboard, Challenges, Achievements */}
+        <Tabs defaultValue="leaderboard" value={activeTab} onValueChange={setActiveTab} className="mb-10">
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
+            <TabsList>
+              <TabsTrigger value="leaderboard">Clasificación</TabsTrigger>
+              <TabsTrigger value="challenges">Desafíos</TabsTrigger>
+              <TabsTrigger value="achievements">Logros</TabsTrigger>
             </TabsList>
-
-            {/* Leaderboard Tab */}
-            <TabsContent value="leaderboard" className="pt-6">
-              <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
-                <div className="relative w-full md:w-96">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Buscar por nombre..."
-                    className="pl-10"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <div className="flex gap-3">
-                  <Select value={timeFilter} onValueChange={setTimeFilter}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Periodo de tiempo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all-time">Todo el tiempo</SelectItem>
-                      <SelectItem value="this-month">Este mes</SelectItem>
-                      <SelectItem value="this-week">Esta semana</SelectItem>
-                      <SelectItem value="today">Hoy</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" size="icon">
-                    <Filter className="h-4 w-4" />
-                  </Button>
-                </div>
+            
+            <div className="mt-4 sm:mt-0 flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => setTimeFilter('all-time')} className={timeFilter === 'all-time' ? 'bg-secondary' : ''}>
+                Todos los tiempos
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setTimeFilter('monthly')} className={timeFilter === 'monthly' ? 'bg-secondary' : ''}>
+                Mensual
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setTimeFilter('weekly')} className={timeFilter === 'weekly' ? 'bg-secondary' : ''}>
+                Semanal
+              </Button>
+            </div>
+          </div>
+          
+          {/* Leaderboard Tab Content */}
+          <TabsContent value="leaderboard">
+            <div className="mb-6">
+              <div className="relative w-full max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por nombre o usuario..."
+                  className="pl-10"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
-
-              <div className="bg-white rounded-lg shadow overflow-hidden">
+            </div>
+            
+            <Card>
+              <CardHeader className="pb-0">
+                <CardTitle>Tablero de Puntuación {timeFilter === 'monthly' ? '- Mensual' : timeFilter === 'weekly' ? '- Semanal' : ''}</CardTitle>
+                <CardDescription>
+                  Compite con otros estudiantes y sube en la clasificación
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-muted/50">
-                      <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                          Posición
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                          Estudiante
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                          Nivel
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                          Puntos
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                          Cursos
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                          Insignias
-                        </th>
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-3 px-4 font-medium">Rank</th>
+                        <th className="text-left py-3 px-4 font-medium">Usuario</th>
+                        <th className="text-left py-3 px-4 font-medium">Nivel</th>
+                        <th className="text-left py-3 px-4 font-medium">Puntos</th>
+                        <th className="text-left py-3 px-4 font-medium">Racha</th>
+                        <th className="text-left py-3 px-4 font-medium">Actividad</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody>
                       {filteredUsers.map((user) => (
-                        <tr key={user.id} className="hover:bg-muted/20 transition-colors">
-                          <td className="px-6 py-4 whitespace-nowrap">
+                        <tr key={user.id} className="border-b hover:bg-muted/50">
+                          <td className="py-3 px-4">
                             <div className="flex items-center">
-                              <span className={`w-8 h-8 flex items-center justify-center rounded-full font-semibold 
-                                ${user.rank === 1 ? 'bg-yellow-100 text-yellow-800' : 
-                                  user.rank === 2 ? 'bg-gray-100 text-gray-800' : 
-                                  user.rank === 3 ? 'bg-amber-100 text-amber-800' : 
-                                  'bg-muted/50'}`}>
-                                {user.rank}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="flex-shrink-0 h-10 w-10">
-                                <Avatar>
-                                  <AvatarImage src={user.avatar} alt={user.name} />
-                                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                              </div>
-                              <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                                <div className="text-sm text-muted-foreground flex items-center">
-                                  <Clock className="h-3 w-3 mr-1" />
-                                  <span>{user.streak_days} días consecutivos</span>
+                              {user.rank <= 3 ? (
+                                <div className={`p-1 rounded-full mr-2 ${
+                                  user.rank === 1 ? 'bg-yellow-400' : 
+                                  user.rank === 2 ? 'bg-slate-400' : 
+                                  'bg-amber-700'
+                                }`}>
+                                  <Medal className="h-4 w-4 text-white" />
                                 </div>
+                              ) : (
+                                <span className="font-semibold text-muted-foreground ml-2 mr-1">
+                                  {user.rank}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center">
+                              <Avatar className="h-8 w-8 mr-2">
+                                <AvatarImage src={user.avatarUrl} alt={user.name} />
+                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="font-medium flex items-center">
+                                  {user.name}
+                                  {user.isVerified && (
+                                    <CheckCircle2 className="h-3 w-3 ml-1 text-blue-500" />
+                                  )}
+                                </div>
+                                <div className="text-sm text-muted-foreground">@{user.username}</div>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <Badge variant={
-                              user.level === 'Experto' ? 'default' : 
-                              user.level === 'Avanzado' ? 'secondary' : 
-                              'outline'
-                            }>
-                              {user.level}
-                            </Badge>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center">
+                              <Star className="h-4 w-4 text-yellow-500 mr-1" />
+                              <span>{user.level}</span>
+                            </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">
+                          <td className="py-3 px-4 font-semibold">
                             {user.points.toLocaleString()}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="py-3 px-4">
                             <div className="flex items-center">
-                              <Book className="h-4 w-4 mr-2 text-muted-foreground" />
-                              {user.courses_completed}
+                              <Flame className="h-4 w-4 text-orange-500 mr-1" />
+                              <span>{user.streakDays} días</span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <div className="flex items-center">
-                              <Award className="h-4 w-4 mr-2 text-muted-foreground" />
-                              {user.badges}
-                            </div>
+                          <td className="py-3 px-4">
+                            <Badge variant={
+                              user.activity === 'high' ? 'default' : 
+                              user.activity === 'medium' ? 'secondary' : 
+                              'outline'
+                            }>
+                              {user.activity === 'high' ? 'Alta' : 
+                               user.activity === 'medium' ? 'Media' : 'Baja'}
+                            </Badge>
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-              </div>
-            </TabsContent>
-
-            {/* Challenges Tab */}
-            <TabsContent value="challenges" className="pt-6">
-              <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
-                <div className="relative w-full md:w-96">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Buscar retos..." className="pl-10" />
-                </div>
-                <div className="flex gap-3">
-                  <Select defaultValue="all">
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Categoría" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todas las categorías</SelectItem>
-                      <SelectItem value="programming">Programación</SelectItem>
-                      <SelectItem value="data-science">Ciencia de datos</SelectItem>
-                      <SelectItem value="design">Diseño</SelectItem>
-                      <SelectItem value="security">Seguridad</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select defaultValue="active">
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Estado" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Retos activos</SelectItem>
-                      <SelectItem value="completed">Completados</SelectItem>
-                      <SelectItem value="upcoming">Próximos</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {CHALLENGES.map(challenge => (
-                  <Card key={challenge.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                    <CardHeader className="pb-3">
-                      <CardTitle>{challenge.title}</CardTitle>
-                      <CardDescription>{challenge.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pb-0">
-                      <div className="flex flex-wrap gap-y-3 mb-4">
-                        <Badge variant="outline" className="mr-2">
-                          {challenge.difficulty}
-                        </Badge>
-                        <Badge variant="secondary" className="mr-2">
-                          {challenge.points.toLocaleString()} pts
-                        </Badge>
-                        <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-200">
-                          {challenge.deadline}
-                        </Badge>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 text-sm mb-4">
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4 text-muted-foreground" />
-                          <span>{challenge.participants.toLocaleString()} participantes</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span>{challenge.deadline}</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Progreso</span>
-                          <span>{challenge.progress}%</span>
-                        </div>
-                        <Progress value={challenge.progress} className="h-2" />
-                      </div>
-                    </CardContent>
-                    <CardFooter className="pt-4">
-                      <Button className="w-full">
-                        Participar en el reto
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            {/* Achievements Tab */}
-            <TabsContent value="achievements" className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Mis Logros</CardTitle>
-                    <CardDescription>
-                      Has conseguido 18 de 50 logros disponibles
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex justify-between text-sm">
-                        <span>Progreso general</span>
-                        <span>36%</span>
-                      </div>
-                      <Progress value={36} className="h-2" />
-                      
-                      <div className="mt-6 flex flex-wrap gap-2">
-                        <Badge className="bg-green-100 text-green-800 border-green-200 py-1 px-2">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          <span>Primer curso completado</span>
-                        </Badge>
-                        <Badge className="bg-green-100 text-green-800 border-green-200 py-1 px-2">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          <span>Racha de 7 días</span>
-                        </Badge>
-                        <Badge className="bg-green-100 text-green-800 border-green-200 py-1 px-2">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          <span>5 pruebas perfectas</span>
-                        </Badge>
-                        <Badge className="bg-green-100 text-green-800 border-green-200 py-1 px-2">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          <span>Primeros 1000 puntos</span>
-                        </Badge>
-                        <Badge className="bg-gray-100 text-gray-500 border-gray-200 py-1 px-2 opacity-60">
-                          <span>Completar 10 cursos</span>
-                        </Badge>
-                        <Badge className="bg-gray-100 text-gray-500 border-gray-200 py-1 px-2 opacity-60">
-                          <span>Racha de 30 días</span>
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button variant="outline" className="w-full">
-                      Ver todos los logros
-                    </Button>
-                  </CardFooter>
-                </Card>
                 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Insignias</CardTitle>
-                    <CardDescription>
-                      Colecciona insignias completando cursos y retos específicos
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-4 gap-4">
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                        <div key={i} className={`flex flex-col items-center ${i > 5 ? 'opacity-40' : ''}`}>
-                          <div className={`w-14 h-14 rounded-full flex items-center justify-center ${i > 5 ? 'bg-gray-100' : 'bg-primary/10'}`}>
-                            {i <= 5 ? (
-                              <Award className={`h-8 w-8 ${i === 1 ? 'text-yellow-500' : i === 2 ? 'text-blue-500' : i === 3 ? 'text-green-500' : i === 4 ? 'text-purple-500' : 'text-red-500'}`} />
-                            ) : (
-                              <span className="text-gray-400 text-lg">?</span>
-                            )}
+                {filteredUsers.length === 0 && (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">No se encontraron usuarios</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          {/* Challenges Tab Content */}
+          <TabsContent value="challenges">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {CHALLENGES.map(challenge => (
+                <Card key={challenge.id}>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center mr-3">
+                            <img src={challenge.badgeUrl} alt={challenge.title} className="h-6 w-6" />
                           </div>
-                          <span className="text-xs mt-2 text-center">
-                            {i <= 5 ? (
-                              i === 1 ? 'Maestro JS' : 
-                              i === 2 ? 'Python Pro' : 
-                              i === 3 ? 'UX Expert' : 
-                              i === 4 ? 'DevOps' : 
-                              'Security+'
-                            ) : (
-                              'Bloqueado'
-                            )}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button variant="outline" className="w-full">
-                      Ver mi colección
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </div>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Retos de la Comunidad</CardTitle>
-                  <CardDescription>
-                    Compite con otros estudiantes en retos especiales para ganar puntos extra e insignias exclusivas
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {[
-                      { 
-                        title: 'Codificador Semanal', 
-                        description: 'Completa 5 ejercicios de código en una semana', 
-                        reward: '500 puntos + Insignia', 
-                        participants: 1240,
-                        completed: 3,
-                        total: 5
-                      },
-                      { 
-                        title: 'Maratón de Aprendizaje', 
-                        description: 'Estudia al menos 30 minutos cada día durante 2 semanas', 
-                        reward: '1000 puntos + Acceso anticipado a nuevo curso', 
-                        participants: 850,
-                        completed: 8,
-                        total: 14
-                      },
-                      { 
-                        title: 'Mentor Estrella', 
-                        description: 'Ayuda a 10 estudiantes en el foro de la comunidad', 
-                        reward: '750 puntos + Insignia de Mentor', 
-                        participants: 320,
-                        completed: 6,
-                        total: 10
-                      }
-                    ].map((challenge, i) => (
-                      <div key={i} className="border rounded-lg p-4 hover:shadow-sm transition-shadow">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                          <div className="mb-4 md:mb-0">
-                            <h3 className="font-semibold">{challenge.title}</h3>
-                            <p className="text-sm text-muted-foreground">{challenge.description}</p>
-                            <div className="flex items-center gap-2 mt-1 text-sm">
-                              <Star className="h-4 w-4 text-yellow-500" />
-                              <span>{challenge.reward}</span>
-                            </div>
-                          </div>
-                          <div className="flex flex-col md:items-end gap-2">
-                            <div className="flex items-center text-sm text-muted-foreground">
-                              <Users className="h-4 w-4 mr-1" />
-                              <span>{challenge.participants.toLocaleString()} participantes</span>
-                            </div>
-                            <div className="w-full md:w-48">
-                              <div className="flex justify-between text-xs mb-1">
-                                <span>Progreso</span>
-                                <span>{challenge.completed}/{challenge.total}</span>
-                              </div>
-                              <Progress value={challenge.completed / challenge.total * 100} className="h-2" />
-                            </div>
+                          <div>
+                            <CardTitle className="text-xl">{challenge.title}</CardTitle>
+                            <CardDescription>{challenge.description}</CardDescription>
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button variant="outline">
+                      <Badge variant={
+                        challenge.difficulty === 'easy' ? 'outline' : 
+                        challenge.difficulty === 'medium' ? 'secondary' : 
+                        'destructive'
+                      }>
+                        {challenge.difficulty === 'easy' ? 'Fácil' : 
+                         challenge.difficulty === 'medium' ? 'Medio' : 'Difícil'}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-primary">{challenge.points}</div>
+                        <p className="text-xs text-muted-foreground">Puntos</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold">{challenge.participants}</div>
+                        <p className="text-xs text-muted-foreground">Participantes</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold">
+                          {new Date(challenge.endDate).toLocaleDateString('es-ES', {
+                            day: 'numeric',
+                            month: 'short'
+                          })}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Finaliza</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4 mr-1" />
+                        <span>
+                          {Math.ceil((new Date(challenge.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} días restantes
+                        </span>
+                      </div>
+                      <Button>Participar</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            
+            <div className="mt-8 text-center">
+              <Button variant="outline" size="lg">
+                Ver todos los desafíos
+              </Button>
+            </div>
+          </TabsContent>
+          
+          {/* Achievements Tab Content */}
+          <TabsContent value="achievements">
+            <div className="mb-6">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="relative w-full max-w-md">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="Buscar logros..." className="pl-10" />
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
                     <Filter className="h-4 w-4 mr-2" />
-                    Filtrar retos
+                    Filtros
                   </Button>
-                  <Button>
-                    Ver todos los retos
+                  <Button variant="outline" size="sm">
+                    <Award className="h-4 w-4 mr-2" />
+                    Rareza
                   </Button>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {ACHIEVEMENTS.map(achievement => (
+                <Card key={achievement.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-start">
+                      <div className={`h-14 w-14 rounded-full flex items-center justify-center mr-4 ${
+                        achievement.rarity === 'legendary' ? 'bg-yellow-100 dark:bg-yellow-900/20' : 
+                        achievement.rarity === 'epic' ? 'bg-purple-100 dark:bg-purple-900/20' : 
+                        achievement.rarity === 'rare' ? 'bg-blue-100 dark:bg-blue-900/20' : 
+                        'bg-green-100 dark:bg-green-900/20'
+                      }`}>
+                        {achievement.icon}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-semibold text-lg">{achievement.name}</h3>
+                          <Badge variant={
+                            achievement.rarity === 'legendary' ? 'default' : 
+                            achievement.rarity === 'epic' ? 'secondary' : 
+                            achievement.rarity === 'rare' ? 'outline' : 
+                            'ghost'
+                          } className={
+                            achievement.rarity === 'legendary' ? 'bg-yellow-600' : 
+                            achievement.rarity === 'epic' ? 'bg-purple-600' : 
+                            achievement.rarity === 'rare' ? 'border-blue-600 text-blue-600' : 
+                            'border-green-600 text-green-600'
+                          }>
+                            {achievement.rarity === 'legendary' ? 'Legendario' : 
+                            achievement.rarity === 'epic' ? 'Épico' : 
+                            achievement.rarity === 'rare' ? 'Raro' : 
+                            'Común'}
+                          </Badge>
+                        </div>
+                        <p className="text-muted-foreground text-sm mb-2">{achievement.description}</p>
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center">
+                            <Zap className="h-4 w-4 text-yellow-500 mr-1" />
+                            <span>{achievement.points} puntos</span>
+                          </div>
+                          <div className="text-muted-foreground">
+                            Desbloqueado por {(achievement.unlockedBy * 100).toFixed(1)}% de estudiantes
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+        
+        {/* Call to Action */}
+        <div className="mt-16 bg-muted rounded-lg p-8 text-center">
+          <h2 className="text-2xl font-bold mb-4">¡Alcanza la cima del Ranking!</h2>
+          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+            Completa cursos, participa en desafíos y mantén tu racha diaria para ganar puntos y destacar entre los mejores estudiantes.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button variant="default" size="lg">
+              <TrendingUp className="h-5 w-5 mr-2" />
+              Explorar Cursos
+            </Button>
+            <Button variant="outline" size="lg">
+              <Users className="h-5 w-5 mr-2" />
+              Unirse a la Comunidad
+            </Button>
+          </div>
         </div>
       </div>
     </PublicLayout>
