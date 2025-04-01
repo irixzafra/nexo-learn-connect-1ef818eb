@@ -52,14 +52,14 @@ const SettingsAccordion: React.FC<SettingsAccordionProps> = ({
         <div className="mb-6">
           <div className="flex flex-col items-start mb-4">
             {title && (
-              <h1 className="text-2xl font-bold flex items-center gap-2 text-primary">
-                {sections[0]?.icon && <span className={cn("text-2xl", sections[0]?.iconColor || "text-primary")}>{sections[0]?.icon}</span>}
+              <h1 className="text-3xl font-bold flex items-center gap-3 text-primary">
+                {sections[0]?.icon && <span className={cn("text-3xl", sections[0]?.iconColor || "text-primary")}>{sections[0]?.icon}</span>}
                 {title}
               </h1>
             )}
-            {description && <p className="text-muted-foreground mt-1 text-sm">{description}</p>}
+            {description && <p className="text-muted-foreground mt-2 text-sm">{description}</p>}
           </div>
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end space-x-2 mt-4">
             <Button 
               variant="outline" 
               size="sm" 

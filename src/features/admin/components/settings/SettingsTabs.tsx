@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import AppearanceSettings from './AppearanceSettings';
 import SecuritySettings from './SecuritySettings';
-import { NotificationSettings } from './NotificationSettings';
+import NotificationSettings from './NotificationSettings';
 import ContentSettings from './ContentSettings';
 import OnboardingSettings from './OnboardingSettings';
 import { TestDataSettings } from './TestDataSettings';

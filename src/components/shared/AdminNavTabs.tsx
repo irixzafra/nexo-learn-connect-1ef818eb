@@ -7,14 +7,14 @@ import { GripVertical, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 export interface AdminTabItem {
-  value: string;
   label: string;
-  icon: React.ReactNode;
+  value: string;
+  icon?: React.ReactNode;
   content: React.ReactNode;
-  disabled?: boolean;
   dataTag?: string;
   route?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 interface AdminNavTabsProps {

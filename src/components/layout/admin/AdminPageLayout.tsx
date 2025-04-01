@@ -4,9 +4,8 @@ import { cn } from '@/lib/utils';
 import { AdminTabItem } from '@/components/shared/AdminNavTabs';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
-import AdminNavigation from '@/components/admin/AdminNavigation';
 import { TableHead } from '@/components/ui/table';
+import AdminNavigation from '@/components/admin/AdminNavigation';
 
 export const AdminTableHead = React.forwardRef<
   HTMLTableCellElement,
@@ -66,7 +65,9 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   
   return (
     <div className="flex min-h-screen w-full">
-      <AdminNavigation />
+      <div className="w-auto border-r">
+        <AdminNavigation />
+      </div>
       
       <div className="flex-1 max-w-full">
         <div className={cn("container mx-auto py-6 space-y-6", className)}>
