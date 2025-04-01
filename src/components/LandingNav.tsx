@@ -88,7 +88,7 @@ const LandingNav: React.FC = () => {
           >
             <NexoLogo 
               className="h-10 md:h-12 w-auto transition-transform duration-300 group-hover:scale-105" 
-              variant="default"
+              variant="icon"
               subtitle=""
             />
             <div className="flex flex-col ml-2">
