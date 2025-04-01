@@ -22,7 +22,7 @@ export interface OnboardingContextProps {
   prevStep: () => void;
   jumpToStep: (stepIndex: number) => void;
   setSteps: (steps: OnboardingStep[]) => void;
-  // Add these missing properties for component compatibility
+  // Additional properties for component compatibility
   featuresConfig: FeaturesConfig;
   previousStep: () => void; // Alias for prevStep
   skipOnboarding: () => void; // Alias for endOnboarding

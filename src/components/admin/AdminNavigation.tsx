@@ -1,5 +1,5 @@
 
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
@@ -12,23 +12,20 @@ import {
   Palette,
   LineChart,
   BarChart3,
-  PieChart,
-  TrendingUp,
-  Users2,
   Activity,
   DollarSign,
-  ToggleRight,
-  Plug,
+  TrendingUp,
+  Users2,
   ShieldCheck,
+  Plug,
   DatabaseZap,
   Bell,
   BanknoteIcon,
-  Receipt,
-  CreditCard as CreditCardIcon
+  Receipt
 } from 'lucide-react';
 import AdminSubMenu, { AdminSubMenuItem } from './AdminSubMenu';
 import { useDesignSystem } from '@/contexts/DesignSystemContext';
-import { FeaturesConfig } from '@/contexts/OnboardingContext';
+import { FeaturesConfig } from '@/contexts/features/types';
 
 // Main navigation categories
 const getAllAdminCategories = (designFeatureEnabled: boolean) => [
@@ -130,9 +127,9 @@ const getSubMenus = (designFeatureEnabled: boolean): Record<string, AdminSubMenu
     { id: 'engagement', icon: Activity, label: 'Engagement', path: '/admin/analytics/engagement' },
   ],
   finances: [
-    { id: 'overview', icon: CreditCardIcon, label: 'Resumen', path: '/admin/billing' },
+    { id: 'overview', icon: CreditCard, label: 'Resumen', path: '/admin/billing' },
     { id: 'invoices', icon: Receipt, label: 'Facturas', path: '/admin/billing/invoices' },
-    { id: 'subscriptions', icon: CreditCardIcon, label: 'Suscripciones', path: '/admin/billing/subscriptions' },
+    { id: 'subscriptions', icon: CreditCard, label: 'Suscripciones', path: '/admin/billing/subscriptions' },
     { id: 'bank', icon: BanknoteIcon, label: 'Movimientos Bancarios', path: '/admin/billing/bank' },
     { id: 'alerts', icon: Bell, label: 'Alertas', path: '/admin/billing/alerts' },
   ],
