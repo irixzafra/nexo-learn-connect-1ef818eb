@@ -43,7 +43,9 @@ const UserManagement: React.FC = () => {
       subtitle="Administra los usuarios, roles y permisos de la plataforma"
       tabs={tabs}
       defaultTabValue="users"
-    />
+    >
+      {/* Los contenidos de las pestañas se renderizan automáticamente por el componente AdminNavTabs */}
+    </AdminPageLayout>
   );
 };
 

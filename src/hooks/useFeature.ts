@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 // Tipo para las características disponibles en la aplicación
-type FeatureFlag = 
+export type FeatureFlag = 
   | 'enableAnalytics'
   | 'enableRealTimeChat'
   | 'enableAdvancedSearch'

@@ -13,11 +13,22 @@ const SafeRouteWrapper: React.FC<SafeRouteWrapperProps> = ({
   children, 
   requiredRole 
 }) => {
-  const { session, userRole, isLoading } = useAuth(); // Obtener session en lugar de isAuthenticated
+  const { session, userRole, isLoading, isInitialized } = useAuth();
   const location = useLocation();
   
   console.log('SafeRouteWrapper evaluating:', location.pathname);
-  console.log('SafeRouteWrapper auth state:', { isLoading, session, userRole });
+  console.log('SafeRouteWrapper auth state:', { isLoading, isInitialized, session, userRole });
+  
+  // Verificamos primero si la autenticación se ha inicializado
+  if (!isInitialized) {
+    console.log('SafeRouteWrapper: isInitialized is false, showing initialization spinner...');
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
+        <span className="ml-3 text-primary">Inicializando...</span>
+      </div>
+    );
+  }
   
   // Show loading spinner while auth state is being determined
   if (isLoading) {

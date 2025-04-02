@@ -71,11 +71,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const initializeAuth = async () => {
       setIsLoading(true);
       try {
-        console.info('Getting current session...');
+        console.info('Antes de obtener la sesión actual...');
         const { data: { session: currentSession } } = await supabase.auth.getSession();
+        console.info('Sesión obtenida:', !!currentSession);
         
         if (currentSession?.user) {
           console.info('Found existing session for user:', currentSession.user.id);
+          console.info('Actualizando estado de sesión y usuario');
           setSession(currentSession);
           setUser(currentSession.user);
           
@@ -83,6 +85,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const userProfile = await ensureUserProfile(currentSession.user.id, currentSession.user.email || '');
           if (userProfile) {
             console.info('Found/created profile with role:', userProfile.role);
+            console.info('Actualizando estado de perfil y rol de usuario');
             setProfile(userProfile);
             setUserRole(userProfile.role || null);
           } else {
@@ -94,12 +97,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } catch (error) {
         console.error('Error initializing auth:', error);
       } finally {
-        console.info('Auth initialization complete, state:', { 
+        console.info('Finalizando inicialización de autenticación, estado:', { 
           hasUser: !!user, 
           hasSession: !!session, 
-          userRole 
+          userRole,
+          isInitialized: false
         });
         setIsLoading(false);
+        console.info('Estableciendo isInitialized a true');
         setIsInitialized(true);
       }
     };
