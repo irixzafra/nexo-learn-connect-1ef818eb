@@ -1,4 +1,3 @@
-
 // Core feature IDs with specific names for type safety
 export type CoreFeatureId = 
   | 'core-editing'
@@ -74,7 +73,9 @@ export type ExtendedFeatureId =
   | 'enableContextualHelp'
   | 'enableHreflangTags'
   | 'enableRegionalContent'
-  | 'enableLangPrefixUrls';
+  | 'enableLangPrefixUrls'
+  | 'enableAccessibility'
+  | 'enableAdvancedAccessibility';
 
 // Union type for all feature IDs
 export type FeatureId = CoreFeatureId | ExtendedFeatureId;
