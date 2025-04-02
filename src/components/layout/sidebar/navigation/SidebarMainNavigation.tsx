@@ -45,7 +45,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
       {/* Home dashboard navigation for all roles */}
       <HomeNavigation 
         role={effectiveRole}
-        to={homePath} 
+        homePath={homePath}
         isCollapsed={isCollapsed}
         notificationsCount={notificationsCount}
       />

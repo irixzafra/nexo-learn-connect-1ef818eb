@@ -1,91 +1,47 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { 
-  Home,
-  LayoutDashboard,
-  Compass,
-  BookOpen,
-  Newspaper
-} from 'lucide-react';
-import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
+import { Home } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
+import MenuItem from './common/MenuItem';
+import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { Badge } from '@/components/ui/badge';
 
 interface HomeNavigationProps {
-  role?: UserRoleType;
-  to?: string;
+  role: UserRoleType;
+  notificationsCount: number;
+  homePath?: string;
   isCollapsed: boolean;
-  notificationsCount?: number;
 }
 
 const HomeNavigation: React.FC<HomeNavigationProps> = ({ 
-  role = 'student',
-  to = '/home',
-  isCollapsed 
+  role, 
+  notificationsCount, 
+  homePath = '/',
+  isCollapsed
 }) => {
+  const getNotificationBadge = () => {
+    if (notificationsCount === 0) return null;
+    
+    return (
+      <Badge 
+        variant="secondary" 
+        className="ml-2 px-1 min-w-[1.5rem] text-center"
+      >
+        {notificationsCount}
+      </Badge>
+    );
+  };
+
   return (
-    <SidebarGroup className="px-3">
-      <SidebarGroupContent className="space-y-1">
-        <SidebarMenu>
-          {role === 'admin' ? (
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <NavLink to="/admin/dashboard" className={({ isActive }) => 
-                  isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
-                }>
-                  <LayoutDashboard className="h-4 w-4 mr-3 flex-shrink-0" />
-                  <span>Dashboard</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ) : (
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <NavLink to={to} className={({ isActive }) => 
-                  isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
-                }>
-                  <Home className="h-4 w-4 mr-3 flex-shrink-0" />
-                  <span>Inicio</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          )}
-          
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <NavLink to="/courses" className={({ isActive }) => 
-                isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
-              }>
-                <Compass className="h-4 w-4 mr-3 flex-shrink-0" />
-                <span>Explorar Cursos</span>
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <NavLink to="/my-learning" className={({ isActive }) => 
-                isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
-              }>
-                <BookOpen className="h-4 w-4 mr-3 flex-shrink-0" />
-                <span>Mi Aprendizaje</span>
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <NavLink to="/blog" className={({ isActive }) => 
-                isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
-              }>
-                <Newspaper className="h-4 w-4 mr-3 flex-shrink-0" />
-                <span>Blog</span>
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+    <div className="mb-2">
+      <MenuItem
+        to={homePath}
+        icon={Home}
+        label="Inicio"
+        isCollapsed={isCollapsed}
+        badge={getNotificationBadge()}
+      />
+    </div>
   );
 };
 
