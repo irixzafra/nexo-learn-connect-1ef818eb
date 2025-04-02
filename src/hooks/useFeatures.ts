@@ -10,7 +10,7 @@ export const useFeatures = () => {
   const context = useContext(FeaturesContext);
 
   if (!context) {
-    // Provide a fallback that matches the FeaturesContextProps interface
+    // Provide a fallback that matches the FeaturesContextProps interface with proper typing
     return {
       featuresConfig: {
         features: {

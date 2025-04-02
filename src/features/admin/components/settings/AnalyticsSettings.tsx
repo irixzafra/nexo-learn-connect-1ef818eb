@@ -5,11 +5,11 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { BarChart, Loader2 } from 'lucide-react';
 import { useFeatures } from '@/hooks/useFeatures';
-import type { FeaturesConfig } from '@/contexts/features/types';
+import type { FeaturesConfig, ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
 
 interface AnalyticsSettingsProps {
   featuresConfig: FeaturesConfig | Record<string, any>;
-  onToggleFeature: (feature: string, value: boolean) => void | Promise<void>;
+  onToggleFeature: (feature: ExtendedFeatureId | FeatureId, value: boolean) => void | Promise<void>;
   isLoading?: boolean;
 }
 
@@ -44,7 +44,7 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
             <Switch
               id="enableAnalytics"
               checked={!!featuresConfig.enableAnalytics}
-              onCheckedChange={(value) => onToggleFeature('enableAnalytics', value)}
+              onCheckedChange={(value) => onToggleFeature('enableAnalytics' as ExtendedFeatureId, value)}
               disabled={isLoading}
             />
           </div>

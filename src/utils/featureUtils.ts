@@ -1,5 +1,5 @@
 
-import { FeaturesConfig, ExtendedFeatureId } from '@/contexts/features/types';
+import { FeaturesConfig, ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
 
 /**
  * Safely check if a feature is enabled in a features config
@@ -9,7 +9,7 @@ import { FeaturesConfig, ExtendedFeatureId } from '@/contexts/features/types';
  */
 export const isFeatureEnabled = (
   config: FeaturesConfig | Record<string, any>, 
-  featureId: ExtendedFeatureId | string
+  featureId: ExtendedFeatureId | FeatureId
 ): boolean => {
   if (!config) return false;
   
@@ -19,7 +19,7 @@ export const isFeatureEnabled = (
   }
   
   // Check if it's a boolean flag directly on the config object
-  return !!config[featureId as string];
+  return !!config[featureId];
 };
 
 /**
@@ -28,9 +28,9 @@ export const isFeatureEnabled = (
  * @returns A function that always returns a Promise
  */
 export const createSafeToggleFunction = (
-  toggleFn: (featureId: ExtendedFeatureId | string, value?: boolean) => void | Promise<void>
-): (featureId: ExtendedFeatureId | string, value?: boolean) => Promise<void> => {
-  return async (featureId: ExtendedFeatureId | string, value?: boolean): Promise<void> => {
+  toggleFn: (featureId: ExtendedFeatureId | FeatureId, value?: boolean) => void | Promise<void>
+): (featureId: ExtendedFeatureId | FeatureId, value?: boolean) => Promise<void> => {
+  return async (featureId: ExtendedFeatureId | FeatureId, value?: boolean): Promise<void> => {
     const result = toggleFn(featureId, value);
     // Ensure we always return a Promise
     if (result instanceof Promise) {
