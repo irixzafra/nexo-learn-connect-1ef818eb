@@ -9,6 +9,16 @@ import AuthRoutes from './AuthRoutes';
 import LandingPage from '@/pages/LandingPage';
 import PlaceholderPage from '@/components/PlaceholderPage';
 import SafeRouteWrapper from '@/components/SafeRouteWrapper';
+import AccessibilityPage from '@/pages/accessibility/AccessibilityPage';
+import RouteRedirector from '@/components/RouteRedirector';
+import UserRoutes from './UserRoutes';
+import ProfileRoutes from './ProfileRoutes';
+import CourseRoutes from './CourseRoutes';
+import ProfesorRoutes from './InstructorRoutes';
+import ModeratorRoutes from './ModeratorRoutes';
+import SettingsRoutes from './SettingsRoutes';
+import AccessibilityRoutes from './AccessibilityRoutes';
+import PaymentRoutes from './PaymentRoutes';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -16,42 +26,52 @@ const AppRoutes: React.FC = () => {
       {/* Ruta raíz - Página principal */}
       <Route path="/" element={<LandingPage />} />
       
-      {/* Rutas públicas */}
-      <Route path="/*" element={<PublicRoutes />} />
-      
-      {/* Rutas de autenticación */}
-      <Route path="auth/*" element={<AuthRoutes />} />
-      
-      {/* Placeholders para rutas principales */}
+      {/* Rutas específicas que corresponden a secciones principales */}
       <Route path="dashboard" element={
         <SafeRouteWrapper>
           <PlaceholderPage title="Dashboard" subtitle="Panel principal del usuario" />
         </SafeRouteWrapper>
       } />
       
-      <Route path="profile" element={
+      <Route path="profile/*" element={
         <SafeRouteWrapper>
-          <PlaceholderPage title="Mi Perfil" subtitle="Información del perfil de usuario" />
+          <ProfileRoutes />
         </SafeRouteWrapper>
       } />
       
-      <Route path="settings" element={
+      <Route path="settings/*" element={
         <SafeRouteWrapper>
-          <PlaceholderPage title="Configuración" subtitle="Opciones y preferencias del usuario" />
+          <SettingsRoutes />
         </SafeRouteWrapper>
       } />
       
       <Route path="courses" element={<PlaceholderPage title="Cursos" subtitle="Catálogo de cursos disponibles" />} />
-      
       <Route path="courses/:courseId" element={<PlaceholderPage title="Detalle del Curso" subtitle="Información detallada del curso" />} />
+      <Route path="course/*" element={<SafeRouteWrapper><CourseRoutes /></SafeRouteWrapper>} />
       
-      {/* Rutas de administración */}
-      <Route path="admin/*" element={<AdminRoutes />} />
+      {/* Rutas de redirección y utilidad */}
+      <Route path="accessibility/*" element={<SafeRouteWrapper><AccessibilityRoutes /></SafeRouteWrapper>} />
+      <Route path="accessibility" element={<AccessibilityPage />} />
+      <Route path="r/:path" element={<RouteRedirector />} />
+      <Route path="redirect/:path" element={<RouteRedirector />} />
       
-      {/* Ruta dinámica de páginas - debe estar después de todas las rutas específicas */}
+      {/* Rutas con roles específicos */}
+      <Route path="admin/*" element={<SafeRouteWrapper requiredRole={['admin']}><AdminRoutes /></SafeRouteWrapper>} />
+      <Route path="profesor/*" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><ProfesorRoutes /></SafeRouteWrapper>} />
+      <Route path="moderator/*" element={<SafeRouteWrapper><ModeratorRoutes /></SafeRouteWrapper>} />
+      <Route path="user/*" element={<SafeRouteWrapper><UserRoutes /></SafeRouteWrapper>} />
+      <Route path="payment/:status" element={<PaymentRoutes />} />
+      
+      {/* Rutas de autenticación */}
+      <Route path="auth/*" element={<AuthRoutes />} />
+      
+      {/* Rutas públicas anidadas */}
+      <Route path="/*" element={<PublicRoutes />} />
+      
+      {/* Ruta dinámica de páginas - debe estar después de todas las rutas específicas pero antes del 404 */}
       <Route path=":slug" element={<PageRenderer />} />
       
-      {/* Ruta para páginas no encontradas */}
+      {/* Ruta para páginas no encontradas - siempre debe ser la última */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

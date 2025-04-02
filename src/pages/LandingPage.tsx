@@ -11,7 +11,7 @@ const LandingPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
   
   return (
-    <div className="min-h-screen bg-background">
+    <PublicLayout>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl mb-6">
@@ -124,7 +124,7 @@ const LandingPage: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    </PublicLayout>
   );
 };
 

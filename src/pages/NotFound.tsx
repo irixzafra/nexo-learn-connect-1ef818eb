@@ -5,14 +5,14 @@ import { FileQuestion } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAccessibility } from '@/hooks/useAccessibility';
 import { useLocalization } from '@/hooks/useLocalization';
-import NotFoundLayout from '@/layouts/NotFoundLayout';
+import PublicLayout from '@/layouts/PublicLayout';
 
 const NotFound: React.FC = () => {
   const { t } = useLocalization();
   const { isHighContrastEnabled } = useAccessibility();
   
   return (
-    <NotFoundLayout reportBrokenLink={false}>
+    <PublicLayout>
       <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 text-center">
         <div className={`space-y-6 max-w-md ${isHighContrastEnabled ? 'border border-primary p-8 rounded-lg' : ''}`}>
           <div className="bg-primary/10 p-4 rounded-full inline-block mx-auto">
@@ -47,7 +47,7 @@ const NotFound: React.FC = () => {
           </div>
         </div>
       </div>
-    </NotFoundLayout>
+    </PublicLayout>
   );
 };
 
