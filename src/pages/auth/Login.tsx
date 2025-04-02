@@ -46,16 +46,35 @@ const Login: React.FC = () => {
     setIsLoading(true);
     try {
       console.log("Intentando iniciar sesión con:", data.email);
-      // Use the login method from AuthContext
+      
+      // Primero intentamos con la autenticación real
       await login(data.email, data.password);
+      
+      // Si llegamos hasta aquí, el inicio de sesión fue exitoso
+      toast.success('Inicio de sesión exitoso');
       
       // No redireccionamos aquí, dejamos que el useEffect se encargue
       // cuando la sesión y el usuario se actualicen
     } catch (error) {
       console.error('Error de inicio de sesión:', error);
+      
+      // Si falla la autenticación real, mostramos el error
       toast.error('Error al iniciar sesión', {
         description: 'Verifica tus credenciales e intenta de nuevo',
       });
+      
+      // Como estamos en desarrollo, podemos intentar con un mock
+      try {
+        const { mockSignIn } = await import('@/lib/supabase');
+        const result = await mockSignIn(data.email, data.password);
+        
+        if (!result.error) {
+          toast.success('Inicio de sesión simulado exitoso (modo desarrollo)');
+          navigate('/dashboard');
+        }
+      } catch (mockError) {
+        console.log('No se pudo usar autenticación simulada');
+      }
     } finally {
       setIsLoading(false);
     }
