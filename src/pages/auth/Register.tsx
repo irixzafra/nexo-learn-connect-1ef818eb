@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Link, useNavigate } from 'react-router-dom';
-import { useLocalization } from '@/hooks/useLocalization';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { Loader2, Mail, LockKeyhole, User } from 'lucide-react';
@@ -27,7 +27,6 @@ const registerSchema = z.object({
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const Register: React.FC = () => {
-  const { localizeUrl } = useLocalization();
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -70,7 +69,7 @@ const Register: React.FC = () => {
         description: 'Ya puedes iniciar sesión con tus credenciales',
       });
       
-      navigate(localizeUrl('/auth/login'));
+      navigate('/auth/login');
     } catch (error: any) {
       console.error('Error de registro:', error);
       toast.error('Error al registrarse', {
@@ -203,7 +202,7 @@ const Register: React.FC = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
               ¿Ya tienes una cuenta?{' '}
-              <Link to={localizeUrl('/auth/login')} className="text-primary hover:underline">
+              <Link to="/auth/login" className="text-primary hover:underline">
                 Iniciar Sesión
               </Link>
             </p>

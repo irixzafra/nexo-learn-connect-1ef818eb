@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import LocalizedLink from '@/components/LocalizedLink';
+import { useLocation, Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { isRouteActive } from '@/utils/routeUtils';
 
@@ -30,15 +29,15 @@ const NavigationLink: React.FC<NavigationLinkProps> = ({
   const isActive = isRouteActive(location.pathname, to, exact);
   
   return (
-    <LocalizedLink
+    <Link
       to={to}
       className={cn(className, isActive && activeClassName)}
       onClick={onClick}
-      ariaLabel={ariaLabel}
+      aria-label={ariaLabel}
     >
       {icon && <span className="mr-2">{icon}</span>}
       {children}
-    </LocalizedLink>
+    </Link>
   );
 };
 

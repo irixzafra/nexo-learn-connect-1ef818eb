@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -10,8 +10,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, Mail, LockKeyhole } from 'lucide-react';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 // Esquema de validación
@@ -23,7 +21,6 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login: React.FC = () => {
-  const { t, localizeUrl } = useLocalization();
   const { session, user, isLoading: authLoading, login } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -127,7 +124,7 @@ const Login: React.FC = () => {
                   />
                   <label htmlFor="remember" className="text-sm text-gray-600">Recordarme</label>
                 </div>
-                <Link to={localizeUrl('/auth/forgot-password')} className="text-sm text-primary hover:underline">
+                <Link to="/auth/forgot-password" className="text-sm text-primary hover:underline">
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
@@ -152,7 +149,7 @@ const Login: React.FC = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
               ¿No tienes una cuenta?{' '}
-              <Link to={localizeUrl('/auth/register')} className="text-primary hover:underline">
+              <Link to="/auth/register" className="text-primary hover:underline">
                 Regístrate
               </Link>
             </p>

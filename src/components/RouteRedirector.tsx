@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import NotFound from '@/pages/NotFound';
 import { isValidPath } from '@/utils/routeValidation';
 import { toast } from 'sonner';
-import { useLocalization } from '@/hooks/useLocalization';
 import NotFoundLayout from '@/layouts/NotFoundLayout';
 
 export interface RouteRedirectorProps {
@@ -21,7 +20,6 @@ const RouteRedirector: React.FC<RouteRedirectorProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useLocalization();
   const { path } = useParams<{ path: string }>();
   const [isValidRoute, setIsValidRoute] = useState<boolean | null>(null);
   const [isProcessing, setIsProcessing] = useState(true);
@@ -39,9 +37,7 @@ const RouteRedirector: React.FC<RouteRedirectorProps> = ({
         if (valid) {
           // Show a success message
           toast.success(
-            t('navigation.redirecting', { 
-              default: 'Redirecting you to the correct page'
-            }),
+            'Redirigiendo a la página correcta',
             { duration: 2000 }
           );
           
@@ -55,15 +51,9 @@ const RouteRedirector: React.FC<RouteRedirectorProps> = ({
           
           // Show error message
           toast.error(
-            t('errors.invalidRedirect', { 
-              default: 'Invalid redirect destination', 
-              path: decodedPath 
-            }),
+            'Destino de redirección inválido',
             {
-              description: t('errors.redirectFailure', { 
-                default: 'We could not redirect you to the requested page.', 
-                path: decodedPath 
-              }),
+              description: `No se pudo redirigir a la página solicitada: ${decodedPath}`,
               duration: 5000,
             }
           );
@@ -78,7 +68,7 @@ const RouteRedirector: React.FC<RouteRedirectorProps> = ({
     } else {
       setIsProcessing(false);
     }
-  }, [path, navigate, reportBrokenLinks, t]);
+  }, [path, navigate, reportBrokenLinks]);
 
   // Show loading indicator while processing
   if (isProcessing) {

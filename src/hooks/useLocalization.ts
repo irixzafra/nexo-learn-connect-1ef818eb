@@ -1,43 +1,33 @@
 
-import { useLanguage, SupportedLanguage } from '@/contexts/LanguageContext';
-import { getPathWithoutLanguage } from '@/utils/languageUtils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 /**
- * Hook for handling localization and translation of routes and content
+ * Hook for handling localization and translation of content
  */
 export const useLocalization = () => {
   const { 
     currentLanguage, 
     t, 
-    supportedLanguages, 
-    changeLanguage,
-    isMultiLanguageEnabled 
+    supportedLanguages,
+    changeLanguage
   } = useLanguage();
 
   /**
-   * Localizes a URL with the current language if multi-language is enabled
-   * Otherwise returns the original URL
-   * @param path The URL path to localize
-   * @returns The localized URL
+   * Returns the URL as-is (no language prefix)
+   * @param path The URL path
+   * @returns The original URL
    */
   const localizeUrl = (path: string): string => {
-    // If multi-language is disabled, just return the path
-    if (!isMultiLanguageEnabled) {
-      return path.startsWith('/') ? path : `/${path}`;
-    }
-    
-    // If multi-language is enabled, use the language prefix
-    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-    return `/${currentLanguage}/${cleanPath}`;
+    return path.startsWith('/') ? path : `/${path}`;
   };
 
   /**
-   * Removes the language prefix from a path
+   * Returns the path as-is (no language modifications)
    * @param path The URL path
-   * @returns The path without language prefix
+   * @returns The original path
    */
   const removeLanguagePrefix = (path: string): string => {
-    return getPathWithoutLanguage(path);
+    return path;
   };
 
   /**
@@ -45,12 +35,7 @@ export const useLocalization = () => {
    * @param language The language to set
    */
   const setLanguage = (language: string) => {
-    if (!isMultiLanguageEnabled) return;
-    
-    // Cast to SupportedLanguage only if it's actually supported
-    if (supportedLanguages.includes(language as SupportedLanguage)) {
-      changeLanguage(language as SupportedLanguage);
-    }
+    changeLanguage(language as any);
   };
 
   return {
@@ -60,7 +45,7 @@ export const useLocalization = () => {
     t,
     supportedLanguages,
     setLanguage,
-    isMultiLanguageEnabled
+    isMultiLanguageEnabled: false
   };
 };
 
