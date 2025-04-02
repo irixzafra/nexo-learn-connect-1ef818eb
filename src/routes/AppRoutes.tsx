@@ -36,7 +36,7 @@ const AppRoutes: React.FC = () => {
       
       {/* Ruta App Base - AppLayout con Outlet para rutas anidadas */}
       <Route 
-        path="/app" 
+        path="/app/*" 
         element={
           <SafeRouteWrapper>
             <AppLayout />
