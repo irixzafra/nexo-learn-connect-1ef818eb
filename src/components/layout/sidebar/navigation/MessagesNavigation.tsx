@@ -11,9 +11,14 @@ import MenuItem from './common/MenuItem';
 interface MessagesNavigationProps {
   isOpen: boolean;
   onToggle: () => void;
+  messagesCount?: number;
 }
 
-const MessagesNavigation: React.FC<MessagesNavigationProps> = ({ isOpen, onToggle }) => {
+const MessagesNavigation: React.FC<MessagesNavigationProps> = ({ 
+  isOpen, 
+  onToggle,
+  messagesCount
+}) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
@@ -29,6 +34,7 @@ const MessagesNavigation: React.FC<MessagesNavigationProps> = ({ isOpen, onToggl
           to="/messages"
           icon={MessageSquare}
           label="Chats"
+          badge={messagesCount}
           isCollapsed={isCollapsed}
         />
         

@@ -50,7 +50,6 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       {/* Navegación principal para todas las rutas */}
       <SidebarMainNavigation 
         effectiveRole={effectiveRole}
-        isCollapsed={isCollapsed}
         messagesCount={messagesCount}
         notificationsCount={notificationsCount}
         getHomePath={() => getHomePath(effectiveRole)}

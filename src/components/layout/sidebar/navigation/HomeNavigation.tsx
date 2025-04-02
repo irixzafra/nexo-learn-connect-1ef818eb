@@ -12,10 +12,17 @@ import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, Sideba
 import { UserRoleType } from '@/types/auth';
 
 interface HomeNavigationProps {
-  role: UserRoleType;
+  role?: UserRoleType;
+  to?: string;
+  isCollapsed: boolean;
+  notificationsCount?: number;
 }
 
-const HomeNavigation: React.FC<HomeNavigationProps> = ({ role }) => {
+const HomeNavigation: React.FC<HomeNavigationProps> = ({ 
+  role = 'student',
+  to = '/home',
+  isCollapsed 
+}) => {
   return (
     <SidebarGroup className="px-3">
       <SidebarGroupContent className="space-y-1">
@@ -34,7 +41,7 @@ const HomeNavigation: React.FC<HomeNavigationProps> = ({ role }) => {
           ) : (
             <SidebarMenuItem>
               <SidebarMenuButton>
-                <NavLink to="/home" className={({ isActive }) => 
+                <NavLink to={to} className={({ isActive }) => 
                   isActive ? "text-primary flex items-center w-full" : "flex items-center w-full"
                 }>
                   <Home className="h-4 w-4 mr-3 flex-shrink-0" />

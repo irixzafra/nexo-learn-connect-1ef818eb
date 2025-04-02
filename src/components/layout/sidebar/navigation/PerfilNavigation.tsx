@@ -41,7 +41,7 @@ const PerfilNavigation: React.FC<PerfilNavigationProps> = ({
           to="/notifications"
           icon={Bell}
           label="Notificaciones"
-          badge={notificationsCount > 0 ? notificationsCount.toString() : undefined}
+          badge={notificationsCount}
           isCollapsed={isCollapsed}
         />
         

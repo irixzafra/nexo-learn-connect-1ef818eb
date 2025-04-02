@@ -9,8 +9,9 @@ interface MenuItemProps {
   to: string;
   icon: LucideIcon;
   label: string;
-  badge?: number;
+  badge?: number | React.ReactNode;
   isCollapsed: boolean;
+  disabled?: boolean;
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({ 
@@ -18,10 +19,40 @@ const MenuItem: React.FC<MenuItemProps> = ({
   icon: Icon, 
   label, 
   badge, 
-  isCollapsed 
+  isCollapsed,
+  disabled = false
 }) => {
   const location = useLocation();
   const isActive = location.pathname.startsWith(to);
+  
+  const renderBadge = () => {
+    if (badge === undefined) return null;
+    
+    // For React element badges (like custom components)
+    if (React.isValidElement(badge)) {
+      return badge;
+    }
+    
+    // For number badges
+    if (typeof badge === 'number' && badge > 0) {
+      return (
+        <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+          {badge > 99 ? '99+' : badge}
+        </span>
+      );
+    }
+    
+    // For string badges
+    if (typeof badge === 'string') {
+      return (
+        <span className="ml-auto flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+          {badge}
+        </span>
+      );
+    }
+    
+    return null;
+  };
   
   const content = (
     <Link
@@ -30,18 +61,16 @@ const MenuItem: React.FC<MenuItemProps> = ({
         "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
         isActive 
           ? "bg-primary/10 text-primary" 
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground",
+        disabled && "opacity-50 cursor-not-allowed"
       )}
+      onClick={(e) => disabled && e.preventDefault()}
     >
       <Icon className="h-4 w-4" />
       {!isCollapsed && (
         <>
           <span>{label}</span>
-          {badge !== undefined && badge > 0 && (
-            <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-              {badge > 99 ? '99+' : badge}
-            </span>
-          )}
+          {renderBadge()}
         </>
       )}
     </Link>
@@ -55,11 +84,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
         </TooltipTrigger>
         <TooltipContent side="right" className="flex items-center gap-2">
           {label}
-          {badge !== undefined && badge > 0 && (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-              {badge > 99 ? '99+' : badge}
-            </span>
-          )}
+          {renderBadge()}
         </TooltipContent>
       </Tooltip>
     );

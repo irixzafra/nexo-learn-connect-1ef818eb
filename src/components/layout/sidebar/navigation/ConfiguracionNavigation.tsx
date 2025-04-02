@@ -9,7 +9,6 @@ import {
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import MenuItem from './common/MenuItem';
-import { Badge } from '@/components/ui/badge';
 
 interface ConfiguracionNavigationProps {
   isOpen: boolean;
@@ -40,11 +39,6 @@ const ConfiguracionNavigation: React.FC<ConfiguracionNavigationProps> = ({ isOpe
           icon={HelpCircle}
           label="Ayuda / Soporte"
           isCollapsed={isCollapsed}
-          badge={
-            <Badge variant="outline" className="ml-2 bg-amber-100 text-amber-800 text-xs border-amber-200">
-              En desarrollo
-            </Badge>
-          }
         />
         
         <MenuItem
@@ -52,11 +46,6 @@ const ConfiguracionNavigation: React.FC<ConfiguracionNavigationProps> = ({ isOpe
           icon={Info}
           label="Acerca de Nosotros"
           isCollapsed={isCollapsed}
-          badge={
-            <Badge variant="outline" className="ml-2 bg-amber-100 text-amber-800 text-xs border-amber-200">
-              En desarrollo
-            </Badge>
-          }
         />
       </SidebarMenu>
     </SidebarGroup>

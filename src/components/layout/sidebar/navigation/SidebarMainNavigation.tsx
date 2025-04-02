@@ -43,6 +43,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
     <div className="flex-1 overflow-auto py-2">
       {/* Home dashboard navigation for all roles */}
       <HomeNavigation 
+        role={effectiveRole}
         to={homePath} 
         isCollapsed={isCollapsed}
         notificationsCount={notificationsCount}
@@ -115,6 +116,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         <AdministracionNavigation 
           isOpen={expanded.administration} 
           onToggle={() => toggleGroup('administration')}
+          userRole={effectiveRole}
         />
       )}
       
@@ -123,6 +125,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         <GestionNavigation 
           isOpen={expanded.administration} 
           onToggle={() => toggleGroup('administration')}
+          role={effectiveRole}
         />
       )}
     </div>

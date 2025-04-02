@@ -4,7 +4,7 @@ import { Shield } from 'lucide-react';
 import { SidebarMenu } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
-import { MenuItem } from '../MenuItems';
+import MenuItem from './common/MenuItem';
 import { adminNavigation, filterMenuItemsByRole } from '@/config/menuConfig';
 import { UserRoleType } from '@/types/auth';
 
