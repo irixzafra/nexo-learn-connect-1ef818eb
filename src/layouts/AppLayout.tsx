@@ -8,6 +8,7 @@ import { Loader } from 'lucide-react';
 import AdminSidebar from '@/components/layout/sidebars/AdminSidebar';
 import InstructorSidebar from '@/components/layout/sidebars/InstructorSidebar';
 import StudentSidebar from '@/components/layout/sidebars/StudentSidebar';
+import SafeRouteWrapper from '@/components/SafeRouteWrapper';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -50,7 +51,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           {renderSidebar()}
         </div>
         <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6">
-          <Outlet />
+          <SafeRouteWrapper>
+            <Outlet />
+          </SafeRouteWrapper>
         </main>
       </div>
       <Toaster position="top-right" />
