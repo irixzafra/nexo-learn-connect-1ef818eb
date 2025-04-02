@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Toaster } from 'sonner';
+import { Outlet } from 'react-router-dom';
 import AuthenticatedHeader from '@/components/layout/AuthenticatedHeader';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader } from 'lucide-react';
@@ -49,7 +50,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           {renderSidebar()}
         </div>
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          {children}
+          <Outlet />
         </main>
       </div>
       <Toaster position="top-right" />

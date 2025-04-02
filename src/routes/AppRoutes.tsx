@@ -4,11 +4,17 @@ import { Route, Routes } from 'react-router-dom';
 import NotFound from '@/pages/NotFound';
 import LandingPage from '@/pages/LandingPage';
 import Login from '@/pages/auth/Login'; 
-import PlaceholderPage from '@/components/PlaceholderPage';
 import SafeRouteWrapper from '@/components/SafeRouteWrapper';
 import PublicLayout from '@/layouts/PublicLayout';
 import AuthLayout from '@/layouts/AuthLayout';
 import AppLayout from '@/layouts/AppLayout';
+import StudentDashboard from '@/pages/student/Dashboard';
+import StudentMyCourses from '@/pages/student/MyCourses';
+import ProfileRoutes from '@/routes/ProfileRoutes';
+import SettingsRoutes from '@/routes/SettingsRoutes';
+import CourseRoutes from '@/routes/CourseRoutes';
+import AdminRoutes from '@/routes/AdminRoutes';
+import InstructorRoutes from '@/routes/InstructorRoutes';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -33,19 +39,26 @@ const AppRoutes: React.FC = () => {
         } 
       />
       
-      {/* 3. Ruta Base App (Autenticada) */}
+      {/* 3. Ruta Base App (Autenticada) con rutas anidadas */}
       <Route 
         path="/app" 
         element={
           <SafeRouteWrapper>
-            <AppLayout>
-              {/* Renderiza un placeholder directamente aquí por ahora */}
-              <PlaceholderPage title="App Base" subtitle="Contenido autenticado irá aquí" />
-              {/* <Outlet /> se usará más tarde cuando volvamos a anidar */}
-            </AppLayout>
+            <AppLayout />
           </SafeRouteWrapper>
         } 
-      />
+      >
+        {/* Rutas anidadas dentro de /app */}
+        <Route index element={<StudentDashboard />} />
+        <Route path="dashboard" element={<StudentDashboard />} />
+        <Route path="my-courses" element={<StudentMyCourses />} />
+        <Route path="profile/*" element={<ProfileRoutes />} />
+        <Route path="settings/*" element={<SettingsRoutes />} />
+        <Route path="course/*" element={<CourseRoutes />} />
+        <Route path="admin/*" element={<AdminRoutes />} />
+        <Route path="profesor/*" element={<InstructorRoutes />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
 
       {/* 4. Ruta NotFound Global */}
       <Route 
