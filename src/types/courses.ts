@@ -26,6 +26,18 @@ export interface Course {
   original_price?: number;
   cover_image_url?: string;
   prerequisites_text?: string;
+  badge?: string;
+  discount_percentage?: number;
+  featured_instructor?: string;
+  slug?: string;
+  is_published?: boolean;
+  is_featured_on_landing?: boolean;
+  display_order?: number;
+  seo_title?: string;
+  seo_description?: string;
+  start_date?: string;
+  end_date?: string;
+  popular_score?: number;
 }
 
 export interface Instructor {
@@ -34,12 +46,15 @@ export interface Instructor {
   avatar_url?: string;
   bio?: string;
   title?: string;
+  email?: string;
+  role?: string;
 }
 
 export interface Category {
   id: string;
   name: string;
   slug: string;
+  description?: string;
 }
 
 export interface Module {
@@ -50,6 +65,7 @@ export interface Module {
   course_id: string;
   lessons?: Lesson[];
   count?: number;
+  module_order?: number;
 }
 
 export interface Lesson {
@@ -64,6 +80,10 @@ export interface Lesson {
   completed?: boolean;
   duration?: number;
   is_previewable?: boolean;
+  lesson_order?: number;
+  content_text?: any;
+  content_video_url?: string;
+  course_id?: string;
 }
 
 export interface Enrollment {
