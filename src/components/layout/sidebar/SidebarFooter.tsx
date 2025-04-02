@@ -17,6 +17,11 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   
+  // Get avatar image and name from user profile if available
+  const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.avatarUrl;
+  const displayName = user?.user_metadata?.name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Usuario';
+  const userEmail = user?.email || '';
+  
   const handleLogout = async () => {
     try {
       await logout();
@@ -40,14 +45,14 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
           isCollapsed ? "flex-col" : "gap-3"
         )}>
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.avatarUrl} alt={user?.name || 'Usuario'} />
-            <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+            <AvatarImage src={avatarUrl} alt={displayName} />
+            <AvatarFallback>{displayName.charAt(0) || 'U'}</AvatarFallback>
           </Avatar>
           
           {!isCollapsed && (
             <div className="flex flex-col">
-              <span className="text-sm font-medium">{user?.name || 'Usuario'}</span>
-              <span className="text-xs text-muted-foreground">{user?.email}</span>
+              <span className="text-sm font-medium">{displayName}</span>
+              <span className="text-xs text-muted-foreground">{userEmail}</span>
             </div>
           )}
         </div>

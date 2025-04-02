@@ -6,9 +6,20 @@ import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
-const SidebarLogoSection: React.FC = () => {
-  const { state, toggleSidebar } = useSidebar();
-  const isCollapsed = state === "collapsed";
+interface SidebarLogoSectionProps {
+  isCollapsed?: boolean;
+  toggleSidebar?: () => void;
+}
+
+const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({ 
+  isCollapsed: propIsCollapsed,
+  toggleSidebar: propToggleSidebar
+}) => {
+  const { state, toggleSidebar: contextToggleSidebar } = useSidebar();
+  
+  // Use props if provided, otherwise use context values
+  const isCollapsed = propIsCollapsed !== undefined ? propIsCollapsed : state === "collapsed";
+  const handleToggle = propToggleSidebar || contextToggleSidebar;
 
   return (
     <div className={cn(
@@ -32,7 +43,7 @@ const SidebarLogoSection: React.FC = () => {
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={toggleSidebar}
+          onClick={handleToggle}
           className="text-muted-foreground hover:text-foreground"
         >
           <ChevronLeft className="h-4 w-4" />

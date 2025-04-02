@@ -3,7 +3,7 @@ import React from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import { SidebarContent } from '../sidebar/SidebarContent';
+import SidebarContent from '../sidebar/SidebarContent';
 
 const MobileSidebar: React.FC = () => {
   return (
