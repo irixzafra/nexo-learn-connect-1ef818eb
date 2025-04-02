@@ -5,13 +5,16 @@ import { Toaster } from 'sonner';
 import AuthenticatedHeader from '@/components/layout/AuthenticatedHeader';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader } from 'lucide-react';
+import AdminSidebar from '@/components/layout/sidebars/AdminSidebar';
+import InstructorSidebar from '@/components/layout/sidebars/InstructorSidebar';
+import StudentSidebar from '@/components/layout/sidebars/StudentSidebar';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { isLoading } = useAuth();
+  const { isLoading, userRole } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -27,23 +30,24 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     );
   }
 
+  const renderSidebar = () => {
+    if (userRole === 'admin') {
+      return <AdminSidebar />;
+    } else if (userRole === 'profesor') {
+      return <InstructorSidebar />;
+    } else {
+      return <StudentSidebar />;
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <AuthenticatedHeader onToggleSidebar={toggleSidebar} />
       <div className="flex flex-1 overflow-hidden">
-        {/* Placeholder para Sidebar */}
         <div className={`w-64 border-r bg-gray-50 dark:bg-gray-900 transition-all duration-300 ${
           isSidebarOpen ? 'block' : 'hidden md:block'
         }`}>
-          {/* El contenido del Sidebar se implementará más adelante */}
-          <div className="p-4">
-            <h3 className="font-medium mb-4">Navegación</h3>
-            <div className="space-y-1">
-              <p className="p-2 text-muted-foreground text-sm rounded-md">
-                Sidebar (placeholder)
-              </p>
-            </div>
-          </div>
+          {renderSidebar()}
         </div>
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           {children || <Outlet />}
