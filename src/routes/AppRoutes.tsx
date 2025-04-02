@@ -35,6 +35,16 @@ const AppRoutes: React.FC = () => {
         </SafeRouteWrapper>
       } />
       
+      {/* Rutas de catálogo de cursos */}
+      <Route path="courses" element={
+        <PublicLayout>
+          <PlaceholderPage 
+            title="Cursos" 
+            subtitle="Catálogo de cursos disponibles" 
+          />
+        </PublicLayout>
+      } />
+      
       {/* Rutas anidadas - Autenticadas con wrapper */}
       <Route path="profile/*" element={
         <SafeRouteWrapper>
@@ -46,15 +56,6 @@ const AppRoutes: React.FC = () => {
         <SafeRouteWrapper>
           <SettingsRoutes />
         </SafeRouteWrapper>
-      } />
-      
-      <Route path="courses" element={
-        <PublicLayout>
-          <PlaceholderPage 
-            title="Cursos" 
-            subtitle="Catálogo de cursos disponibles" 
-          />
-        </PublicLayout>
       } />
       
       <Route path="course/*" element={
