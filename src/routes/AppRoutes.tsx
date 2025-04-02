@@ -9,6 +9,13 @@ import AuthRoutes from './AuthRoutes';
 import PublicLayout from '@/layouts/PublicLayout';
 import AuthLayout from '@/layouts/AuthLayout';
 import AppLayout from '@/layouts/AppLayout';
+import AdminRoutes from './AdminRoutes';
+import ProfileRoutes from './ProfileRoutes';
+import CourseRoutes from './CourseRoutes';
+import SettingsRoutes from './SettingsRoutes';
+import InstructorRoutes from './InstructorRoutes';
+import StudentDashboard from '@/pages/student/StudentDashboard';
+import StudentMyCourses from '@/pages/student/StudentMyCourses';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -43,27 +50,51 @@ const AppRoutes: React.FC = () => {
       } />
       
       {/* Rutas de aplicación autenticada */}
-      <Route path="app/*" element={
-        <SafeRouteWrapper>
-          <AppLayout>
-            <Routes>
-              <Route path="/" element={
-                <PlaceholderPage 
-                  title="Dashboard" 
-                  subtitle="Panel principal del usuario autenticado" 
-                />
-              } />
-              <Route path="dashboard" element={
-                <PlaceholderPage 
-                  title="Dashboard" 
-                  subtitle="Panel principal del usuario autenticado" 
-                />
-              } />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AppLayout>
-        </SafeRouteWrapper>
-      } />
+      <Route 
+        path="app" 
+        element={
+          <SafeRouteWrapper>
+            <AppLayout />
+          </SafeRouteWrapper>
+        }
+      >
+        {/* Rutas Anidadas dentro de AppLayout */}
+        <Route index element={<StudentDashboard />} />
+        <Route path="dashboard" element={<StudentDashboard />} />
+        <Route path="my-courses" element={<StudentMyCourses />} />
+
+        {/* Rutas de Profile (para todos los autenticados) */}
+        <Route path="profile/*" element={<ProfileRoutes />} />
+        
+        {/* Rutas de Settings (para todos los autenticados) */}
+        <Route path="settings/*" element={<SettingsRoutes />} />
+
+        {/* Rutas de Courses (para todos los autenticados) */}
+        <Route path="course/*" element={<CourseRoutes />} /> 
+
+        {/* Rutas de Admin (con protección de rol) */}
+        <Route 
+          path="admin/*" 
+          element={
+            <SafeRouteWrapper requiredRole={['admin']}>
+              <AdminRoutes />
+            </SafeRouteWrapper>
+          } 
+        />
+
+        {/* Rutas de Profesor (con protección de rol) */}
+        <Route 
+          path="profesor/*" 
+          element={
+            <SafeRouteWrapper requiredRole={['profesor', 'admin']}> 
+              <InstructorRoutes />
+            </SafeRouteWrapper>
+          } 
+        />
+
+        {/* Catch-all para rutas no encontradas DENTRO de /app */}
+        <Route path="*" element={<NotFound />} /> 
+      </Route>
       
       {/* Ruta para páginas no encontradas - siempre debe ser la última */}
       <Route path="*" element={<PublicLayout><NotFound /></PublicLayout>} />
