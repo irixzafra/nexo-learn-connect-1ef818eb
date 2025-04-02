@@ -30,16 +30,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    console.info('🔐 [Auth] Configurando listener de estado de autenticación');
+    console.info('🔐 [Auth] Iniciando configuración del sistema de autenticación');
     
     // Primero: Configurar el listener de cambios de estado de autenticación
+    // IMPORTANTE: Este listener debe establecerse primero para capturar eventos futuros
+    console.info('🔐 [Auth] Configurando listener de cambios en el estado de autenticación');
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
+      (event, newSession) => {
         console.info(`🔐 [Auth] Evento de autenticación detectado: ${event}`);
-        console.info(`🔐 [Auth] Usuario en sesión nueva: ${newSession?.user?.id || 'ninguno'}`);
+        console.info(`🔐 [Auth] Usuario en evento: ${newSession?.user?.id || 'ninguno'}`);
         
         if (event === 'SIGNED_OUT') {
-          console.info('🔐 [Auth] Usuario cerró sesión, limpiando estado');
+          console.info('🔐 [Auth] Usuario cerró sesión, limpiando estado de autenticación');
           setSession(null);
           setUser(null);
           setProfile(null);
@@ -48,24 +51,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         
         if (newSession?.user) {
-          console.info(`🔐 [Auth] Nueva sesión detectada para usuario: ${newSession.user.id}`);
+          console.info(`🔐 [Auth] Sesión actualizada para usuario: ${newSession.user.id}`);
           
-          // Actualizamos primero los estados básicos de sesión y usuario
+          // Actualizaciones síncronas - inmediatas para mejorar UX
           setSession(newSession);
           setUser(newSession.user);
           
-          // Usamos setTimeout para evitar posible deadlock con el cliente Supabase
+          // IMPORTANTE: Uso de setTimeout para evitar deadlock potencial con el cliente Supabase
+          // Esto resuelve un problema conocido al realizar operaciones Supabase dentro del callback
           setTimeout(async () => {
             try {
               console.info(`🔐 [Auth] Obteniendo perfil para usuario: ${newSession.user.id}`);
               const userProfile = await ensureUserProfile(newSession.user.id, newSession.user.email || '');
               
               if (userProfile) {
-                console.info(`🔐 [Auth] Perfil encontrado/creado con rol: ${userProfile.role}`);
+                console.info(`🔐 [Auth] Perfil obtenido con rol: ${userProfile.role}`);
                 setProfile(userProfile);
                 setUserRole(userProfile.role || null);
               } else {
-                console.warn(`⚠️ [Auth] No se pudo obtener/crear perfil para: ${newSession.user.id}`);
+                console.warn(`⚠️ [Auth] No se pudo obtener perfil para: ${newSession.user.id}`);
               }
             } catch (error) {
               console.error('❌ [Auth] Error al obtener el perfil:', error);
@@ -75,14 +79,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     );
 
-    console.info('🔐 [Auth] Iniciando inicialización de autenticación...');
-    
+    // Segundo: Inicializar el estado de autenticación inicial
     const initializeAuth = async () => {
-      console.time('🔐 [Auth] Tiempo de inicialización');
+      console.time('🔐 [Auth] Tiempo total de inicialización');
+      console.info('🔐 [Auth] Comenzando inicialización de estado de autenticación...');
+      
       setIsLoading(true);
       
       try {
-        console.info('🔐 [Auth] Obteniendo sesión actual...');
+        console.info('🔐 [Auth] Consultando sesión actual en Supabase...');
         const { data: { session: currentSession }, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -90,71 +95,75 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           throw error;
         }
         
-        console.info(`🔐 [Auth] Sesión obtenida: ${currentSession ? 'Sí' : 'No'}`);
+        console.info(`🔐 [Auth] Resultado de getSession: ${currentSession ? 'Sesión activa' : 'Sin sesión'}`);
         
         if (currentSession?.user) {
-          console.info(`🔐 [Auth] Sesión existente para usuario: ${currentSession.user.id}`);
-          console.info('🔐 [Auth] Actualizando estado de sesión y usuario');
+          console.info(`🔐 [Auth] Sesión existente encontrada para: ${currentSession.user.id}`);
           
           setSession(currentSession);
           setUser(currentSession.user);
           
-          console.info(`🔐 [Auth] Obteniendo perfil para usuario: ${currentSession.user.id}`);
+          console.info(`🔐 [Auth] Obteniendo datos de perfil para: ${currentSession.user.id}`);
           
           try {
             const userProfile = await ensureUserProfile(currentSession.user.id, currentSession.user.email || '');
             
             if (userProfile) {
-              console.info(`🔐 [Auth] Perfil encontrado/creado con rol: ${userProfile.role}`);
+              console.info(`🔐 [Auth] Perfil obtenido exitosamente con rol: ${userProfile.role}`);
               setProfile(userProfile);
               setUserRole(userProfile.role || null);
             } else {
               console.warn(`⚠️ [Auth] No se pudo encontrar/crear perfil para: ${currentSession.user.id}`);
             }
           } catch (profileError) {
-            console.error('❌ [Auth] Error al obtener el perfil:', profileError);
+            console.error('❌ [Auth] Error al obtener el perfil durante inicialización:', profileError);
           }
         } else {
           console.info('🔐 [Auth] No hay sesión activa durante la inicialización');
         }
       } catch (error) {
-        console.error('❌ [Auth] Error al inicializar autenticación:', error);
+        console.error('❌ [Auth] Error crítico durante inicialización de autenticación:', error);
       } finally {
-        console.info('🔐 [Auth] Finalizando inicialización, estado:', { 
+        console.info('🔐 [Auth] Finalizando inicialización de autenticación');
+        console.info('🔐 [Auth] Estado final:', { 
           hasUser: !!user, 
           hasSession: !!session, 
           userRole,
+          profile: profile ? 'Cargado' : 'No disponible'
         });
         
         setIsLoading(false);
         
-        // IMPORTANTE: Marcamos la inicialización como completada
-        console.info('🔐 [Auth] Estableciendo isInitialized a true');
+        // CRÍTICO: Marcamos la inicialización como completada independientemente del resultado
+        // Esto permite que la aplicación continúe incluso si hay errores de autenticación
+        console.info('🔐 [Auth] Estableciendo isInitialized a true - autenticación lista');
         setIsInitialized(true);
-        console.timeEnd('🔐 [Auth] Tiempo de inicialización');
+        console.timeEnd('🔐 [Auth] Tiempo total de inicialización');
       }
     };
 
+    // Ejecutar inicialización
     initializeAuth();
     
+    // Limpiar suscripción al desmontar
     return () => {
       console.info('🔐 [Auth] Limpiando suscripción de autenticación');
       subscription.unsubscribe();
     };
   }, []);
 
-  // Función de login mejorada
+  // Función de login mejorada con mejor manejo de errores
   const login = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
-      console.info(`🔐 [Auth] Intentando iniciar sesión con: ${email}`);
+      console.info(`🔐 [Auth] Iniciando login para: ${email}`);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        console.error('❌ [Auth] Error al iniciar sesión:', error);
+        console.error('❌ [Auth] Error de login:', error.message);
         toast.error('Error al iniciar sesión', {
           description: 'Verifica tus credenciales e intenta de nuevo',
         });
@@ -162,12 +171,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       if (data?.user) {
-        // El cambio de estado de autenticación manejará la actualización del estado del usuario
-        console.info(`🔐 [Auth] Usuario inició sesión exitosamente: ${data.user.id}`);
-        toast.success('Inicio de sesión exitoso');
+        // El cambio de estado será manejado por el listener onAuthStateChange
+        console.info(`🔐 [Auth] Login exitoso para: ${data.user.id}`);
+        toast.success('¡Bienvenido!', {
+          description: 'Has iniciado sesión correctamente',
+        });
       }
     } catch (error) {
-      console.error('❌ [Auth] Error de login:', error);
+      console.error('❌ [Auth] Error durante el proceso de login:', error);
       toast.error('Error al iniciar sesión', {
         description: 'Verifica tus credenciales e intenta de nuevo',
       });
@@ -180,8 +191,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Función de logout mejorada
   const logout = async (): Promise<void> => {
     try {
-      console.info('🔐 [Auth] Cerrando sesión de usuario');
+      console.info('🔐 [Auth] Iniciando proceso de cierre de sesión');
       await supabase.auth.signOut();
+      console.info('🔐 [Auth] Sesión cerrada exitosamente');
       toast.success('Has cerrado sesión correctamente');
     } catch (error) {
       console.error('❌ [Auth] Error durante el cierre de sesión:', error);
@@ -190,7 +202,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Calculamos isAuthenticated para compatibilidad con versiones anteriores
+  // Calculamos isAuthenticated para compatibilidad
   const isAuthenticated = !!session;
 
   // Objeto de contexto con todos los valores necesarios
@@ -206,7 +218,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated
   };
 
-  console.debug('🔐 [Auth] Estado del proveedor:', {
+  console.debug('🔐 [Auth] Estado actual del proveedor:', {
     isInitialized,
     isLoading,
     isAuthenticated,
