@@ -7,6 +7,7 @@ export interface Module {
   created_at: string;
   updated_at: string;
   lessons?: Lesson[];
+  count?: number; // Adding missing property
 }
 
 export interface Lesson {
@@ -21,6 +22,7 @@ export interface Lesson {
   is_previewable: boolean;
   created_at: string;
   updated_at: string;
+  duration?: number; // Adding missing property
 }
 
 export interface Course {
@@ -46,7 +48,6 @@ export interface Course {
   // Adding the missing properties
   category?: string;
   featured_instructor?: string;
-  // Adding the missing original_price property
   original_price?: number;
   // New properties for enhanced filter functionality
   start_date?: string;
@@ -55,6 +56,10 @@ export interface Course {
   rating?: number;
   tags?: string[];
   popular_score?: number;
+  // Progress property for student tracking
+  progress?: number;
+  // Learning objectives
+  learning_objectives?: string[];
   // Nuevos campos añadidos
   badge?: string;
   discount_percentage?: number;
@@ -64,6 +69,9 @@ export interface Course {
   instructor?: {
     id: string;
     full_name: string;
+    avatar_url?: string;
+    bio?: string;
+    title?: string;
   };
   modules?: Module[];
 }
