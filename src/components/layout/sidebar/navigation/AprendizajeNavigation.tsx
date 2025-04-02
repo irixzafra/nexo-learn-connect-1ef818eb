@@ -1,18 +1,12 @@
 
 import React from 'react';
-import { BookOpen, GraduationCap, FileText, BookMarked } from 'lucide-react';
+import { Lightbulb, FileText, BookOpen, Award } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import MenuItem from './common/MenuItem';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
 
 interface AprendizajeNavigationProps {
   isOpen: boolean;
@@ -26,29 +20,29 @@ const AprendizajeNavigation: React.FC<AprendizajeNavigationProps> = ({ isOpen, o
   return (
     <SidebarGroup
       label="Aprendizaje"
-      icon={BookOpen}
+      icon={Lightbulb}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
       <SidebarMenu>
         <MenuItem
-          to="/my-courses"
-          icon={BookMarked}
-          label="Mis Cursos"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/learning-paths"
-          icon={GraduationCap}
+          to="/learning/paths"
+          icon={FileText}
           label="Rutas de Aprendizaje"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/certificates"
-          icon={FileText}
-          label="Certificados"
+          to="/learning/resources"
+          icon={BookOpen}
+          label="Recursos Educativos"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/learning/achievements"
+          icon={Award}
+          label="Mis Logros"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>
