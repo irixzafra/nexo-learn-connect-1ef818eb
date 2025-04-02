@@ -1,32 +1,47 @@
 
-import React, { ReactNode } from 'react';
+import React, { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import SidebarNavigation from '@/components/layout/SidebarNavigation';
-import ConditionalHeader from '@/components/layout/header/ConditionalHeader';
+import { useAuth } from '@/contexts/AuthContext';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import Sidebar from '@/components/layout/Sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar/sidebar-context';
+import { Loader } from 'lucide-react';
+import GlobalRoleSwitcher from '@/components/layout/GlobalRoleSwitcher';
 
 interface AppLayoutProps {
-  children?: ReactNode;
-  showHeader?: boolean;
+  children?: React.ReactNode;
 }
 
-const AppLayout: React.FC<AppLayoutProps> = ({ 
-  children, 
-  showHeader = true
-}) => {
+const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+  const { isLoading, isAuthenticated } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Loader className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Cargando...</span>
+      </div>
+    );
+  }
+
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <SidebarNavigation />
-        
-        <div className="flex-1 flex flex-col min-h-screen">
-          {showHeader && <ConditionalHeader />}
-          
-          <main className="flex-1 pt-2 px-4 md:px-6 overflow-x-hidden bg-background/70">
-            {children}
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <div className="flex flex-1 overflow-hidden">
+          <Sidebar />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6">
+            {/* Admin Role Switcher - aparece en todas las páginas para administradores */}
+            <div className="mb-4">
+              <GlobalRoleSwitcher />
+            </div>
+            {children || <Outlet />}
           </main>
         </div>
-        
+        <Footer />
         <Toaster position="top-right" />
       </div>
     </SidebarProvider>

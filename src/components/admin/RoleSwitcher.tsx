@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRoleType, toUserRoleType } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Check, UserCog, ArrowLeftRight, Shield, User, Terminal, Ghost, UserRound, GraduationCap } from 'lucide-react';
+import { Check, ArrowLeftRight, Shield, User, Terminal, Ghost, GraduationCap, BookOpen, Users, Lightbulb } from 'lucide-react';
 import { RoleIndicator } from '@/components/layout/header/RoleIndicator';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -32,7 +32,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   }
 
   const getEffectiveRole = () => {
-    if (currentViewRole === 'current') return toUserRoleType(userRole as string);
+    if (currentViewRole === 'current') return userRole as UserRoleType;
     return currentViewRole;
   };
 
@@ -41,8 +41,8 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   const handleRoleChange = (role: UserRoleType | 'current') => {
     if (onChange) {
       if (role === 'current') {
-        onChange(toUserRoleType(userRole as string));
-        toast.success(`Volviendo a tu rol original: ${getRoleLabel(toUserRoleType(userRole as string))}`);
+        onChange(userRole as UserRoleType);
+        toast.success(`Volviendo a tu rol original: ${getRoleLabel(userRole as UserRoleType)}`);
       } else {
         onChange(role);
         toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);
@@ -54,15 +54,20 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     switch (role) {
       case 'admin':
         return <Shield className="h-4 w-4" />;
-      case 'instructor':
-        return <UserCog className="h-4 w-4 text-amber-500" />;
+      case 'profesor':
+        return <BookOpen className="h-4 w-4 text-amber-500" />;
       case 'sistemas':
         return <Terminal className="h-4 w-4 text-blue-500" />;
+      case 'moderator':
+        return <Users className="h-4 w-4 text-purple-500" />;
+      case 'content_creator':
+        return <Lightbulb className="h-4 w-4 text-yellow-500" />;
       case 'anonimo':
+      case 'guest':
         return <Ghost className="h-4 w-4" />;
       case 'student':
       default:
-        return <User className="h-4 w-4 text-emerald-500" />;
+        return <GraduationCap className="h-4 w-4 text-emerald-500" />;
     }
   };
 
@@ -70,12 +75,18 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     switch (role) {
       case 'admin':
         return 'Administrador';
-      case 'instructor':
-        return 'Instructor';
+      case 'profesor':
+        return 'Profesor';
       case 'student':
         return 'Estudiante';
       case 'sistemas':
         return 'Sistemas';
+      case 'moderator':
+        return 'Moderador';
+      case 'content_creator':
+        return 'Creador de Contenido';
+      case 'guest':
+        return 'Invitado';
       case 'anonimo':
         return 'Anónimo';
       default:
@@ -84,9 +95,9 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   };
 
   // Roles disponibles para vista previa
-  const availableRoles: UserRoleType[] = ['admin', 'instructor', 'student', 'sistemas', 'anonimo'];
+  const availableRoles: UserRoleType[] = ['admin', 'profesor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest', 'anonimo'];
   
-  const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== toUserRoleType(userRole as string);
+  const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== userRole;
 
   return (
     <Tooltip>
@@ -95,11 +106,12 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 rounded-full"
+              size="sm" 
+              className="flex items-center gap-2"
             >
-              <GraduationCap className="h-5 w-5" />
-              <span className="sr-only">Cambiar vista de rol</span>
+              <GraduationCap className="h-4 w-4" />
+              <span className="hidden md:inline">Vista como: {getRoleLabel(effectiveRole)}</span>
+              <span className="inline md:hidden">Vista</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
@@ -131,7 +143,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
                   className="flex items-center gap-2 cursor-pointer"
                 >
                   <ArrowLeftRight className="h-4 w-4 mr-2" />
-                  <span>Volver a mi rol ({getRoleLabel(toUserRoleType(userRole as string))})</span>
+                  <span>Volver a mi rol ({getRoleLabel(userRole as UserRoleType)})</span>
                 </DropdownMenuItem>
               </>
             )}
