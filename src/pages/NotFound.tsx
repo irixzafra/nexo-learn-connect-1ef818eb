@@ -22,28 +22,28 @@ const NotFound: React.FC = () => {
             </div>
             
             <h1 className="text-3xl font-bold" id="not-found-title">
-              {t('notFound.title', { default: 'Página no encontrada' })}
+              Página no encontrada
             </h1>
             
             <p className="text-muted-foreground" id="not-found-description">
-              {t('notFound.description', { default: 'Lo sentimos, la página que estás buscando no existe o ha sido movida.' })}
+              Lo sentimos, la página que estás buscando no existe o ha sido movida.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
               <Button 
                 variant="outline" 
                 onClick={() => window.history.back()}
-                aria-label={t('notFound.goBack', { default: 'Volver atrás' })}
+                aria-label="Volver atrás"
               >
-                {t('notFound.goBack', { default: 'Volver atrás' })}
+                Volver atrás
               </Button>
               
               <Button asChild>
                 <Link 
                   to="/"
-                  aria-label={t('notFound.goHome', { default: 'Ir al inicio' })}
+                  aria-label="Ir al inicio"
                 >
-                  {t('notFound.goHome', { default: 'Ir al inicio' })}
+                  Ir al inicio
                 </Link>
               </Button>
             </div>

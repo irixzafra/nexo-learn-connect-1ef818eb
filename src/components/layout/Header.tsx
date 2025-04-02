@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType } from '@/types/auth';
-import { Menu, X, LogOut, Bell, MessageSquare } from 'lucide-react';
+import { Menu, X, Bell, MessageSquare } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { RoleIndicator } from './header/RoleIndicator';
 import { UserMenu } from './header/UserMenu';

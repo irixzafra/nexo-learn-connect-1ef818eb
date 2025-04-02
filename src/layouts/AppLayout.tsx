@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,7 +16,6 @@ interface AppLayoutProps {
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { isLoading, isAuthenticated } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (isLoading) {
     return (
