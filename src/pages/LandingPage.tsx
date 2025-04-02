@@ -1,191 +1,129 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useCoursesCatalog } from '@/features/courses/hooks/useCoursesCatalog';
 import PublicLayout from '@/layouts/PublicLayout';
-import { useAppNavigation } from '@/utils/routeUtils';
-
-// Componentes de la landing
-import LandingHero from '@/components/landing/LandingHero';
-import FeaturedCoursesSection from '@/components/landing/FeaturedCoursesSection';
-import TestimonialsSection from '@/components/landing/TestimonialsSection';
-import FeatureGrid from '@/components/landing/FeatureGrid';
-import CallToActionSection from '@/components/landing/CallToActionSection';
-import PartnersSection from '@/components/landing/PartnersSection';
-import StatsSection from '@/components/landing/StatsSection';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Award, Bookmark, CheckCircle, Clock, Smartphone, Cpu, Database, CloudLightning, Lightbulb, GraduationCap, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
+import { BookOpen, UserPlus, LogIn } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
-  const { courses: featuredCourses, isLoading } = useCoursesCatalog();
-  const { routes } = useAppNavigation();
+  const { isAuthenticated } = useAuth();
   
-  // Obtener solo los primeros 6 cursos para mostrar en la sección destacada
-  const topCourses = featuredCourses?.slice(0, 6) || [];
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <LandingHero isAuthenticated={isAuthenticated} />
-      
-      {/* Estadísticas de la plataforma */}
-      <StatsSection />
-      
-      {/* Next on Roadmap Section */}
-      <section className="py-16 bg-gradient-to-b from-background to-muted/30">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center text-center mb-10">
-            <Badge variant="outline" className="mb-2">Próximamente</Badge>
-            <h2 className="text-3xl font-bold tracking-tight mb-2">Próximas Funcionalidades</h2>
-            <p className="text-muted-foreground max-w-[700px]">
-              Estamos constantemente mejorando nuestra plataforma para brindar la mejor experiencia de aprendizaje
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-primary" />
-                  Certificados Verificables
-                </CardTitle>
-                <CardDescription>Ya disponible</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Nuestros certificados ahora incluyen códigos QR y un sistema de verificación público para validar su autenticidad.
-                </p>
-                <Button asChild variant="outline" size="sm">
-                  <Link to={routes.certificateVerificationPortal}>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Verificar un Certificado
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2">
-                  <Bookmark className="h-5 w-5 text-primary" />
-                  Credenciales Digitales
-                </CardTitle>
-                <CardDescription>En desarrollo</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Integración con blockchain para emitir credenciales digitales permanentes y verificables por cualquier institución.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" />
-                  Aprendizaje Adaptativo
-                </CardTitle>
-                <CardDescription>Próximamente</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Algoritmos de IA que adaptan el contenido según tu ritmo de aprendizaje y fortalezas personales.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  LMS Core Avanzado
-                </CardTitle>
-                <CardDescription>En desarrollo</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Mejoras en el sistema central de cursos, lecciones, evaluaciones y seguimiento del progreso del estudiante.
-                </p>
-                <Button asChild variant="outline" size="sm">
-                  <Link to="/docs/modules/core/lms-core-features.md">
-                    <GraduationCap className="h-4 w-4 mr-2" />
-                    Ver características
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2">
-                  <Smartphone className="h-5 w-5 text-primary" />
-                  Aplicación Móvil Nativa
-                </CardTitle>
-                <CardDescription>Q4 2024</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Accede a tus cursos desde cualquier lugar con nuestra app móvil optimizada para aprendizaje en movimiento, con soporte para modo offline.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2">
-                  <Cpu className="h-5 w-5 text-primary" />
-                  Tutor Virtual Inteligente
-                </CardTitle>
-                <CardDescription>En investigación</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Un asistente de aprendizaje potenciado por IA que resuelve dudas, recomienda recursos y crea planes de estudio personalizados.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="mt-12 text-center">
-            <div className="space-x-4">
-              <Link to="/docs/ROADMAP_ERP_LMS.md">
-                <Button variant="link" className="text-primary">
-                  Ver roadmap completo <Lightbulb className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <Link to="/docs/modules/core/lms-core-features.md">
-                <Button variant="link" className="text-primary">
-                  Documentación LMS Core <BookOpen className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl mb-6">
+            Bienvenido a Nexo Learning
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            La plataforma educativa que conecta conocimiento y personas para una experiencia de aprendizaje transformadora.
+          </p>
         </div>
-      </section>
-      
-      {/* Sección de características */}
-      <FeatureGrid />
-      
-      {/* Cursos destacados */}
-      <FeaturedCoursesSection 
-        courses={topCourses} 
-        isLoading={isLoading} 
-      />
-      
-      {/* Sección de partners y confianza */}
-      <PartnersSection />
-      
-      {/* Testimonios */}
-      <TestimonialsSection />
-      
-      {/* Call to Action */}
-      <CallToActionSection isAuthenticated={isAuthenticated} />
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <BookOpen className="mr-2 h-5 w-5 text-primary" />
+                Cursos
+              </CardTitle>
+              <CardDescription>
+                Explora nuestro catálogo de cursos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Encuentra cursos diseñados por expertos en diversas áreas de conocimiento.
+              </p>
+              <Button asChild variant="outline" className="w-full">
+                <Link to="/courses">Ver cursos</Link>
+              </Button>
+            </CardContent>
+          </Card>
+          
+          {!isAuthenticated ? (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <UserPlus className="mr-2 h-5 w-5 text-primary" />
+                    Registro
+                  </CardTitle>
+                  <CardDescription>
+                    Únete a nuestra plataforma
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="mb-4 text-sm text-muted-foreground">
+                    Crea una cuenta para acceder a todos nuestros recursos educativos.
+                  </p>
+                  <Button asChild className="w-full">
+                    <Link to="/auth/register">Registrarse</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <LogIn className="mr-2 h-5 w-5 text-primary" />
+                    Inicio de Sesión
+                  </CardTitle>
+                  <CardDescription>
+                    Accede a tu cuenta
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="mb-4 text-sm text-muted-foreground">
+                    ¿Ya tienes una cuenta? Inicia sesión para continuar tu aprendizaje.
+                  </p>
+                  <Button asChild variant="outline" className="w-full">
+                    <Link to="/auth/login">Iniciar sesión</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Mi Dashboard</CardTitle>
+                  <CardDescription>
+                    Accede a tu espacio personal
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="mb-4 text-sm text-muted-foreground">
+                    Continúa tu aprendizaje y gestiona tu progreso.
+                  </p>
+                  <Button asChild className="w-full">
+                    <Link to="/dashboard">Mi Dashboard</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Mi Perfil</CardTitle>
+                  <CardDescription>
+                    Gestiona tu información
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="mb-4 text-sm text-muted-foreground">
+                    Actualiza tus datos y configura tus preferencias.
+                  </p>
+                  <Button asChild variant="outline" className="w-full">
+                    <Link to="/profile">Ver perfil</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

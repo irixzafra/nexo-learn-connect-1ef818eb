@@ -6,36 +6,52 @@ import PageRenderer from '@/features/pages/PageRenderer';
 import AdminRoutes from './AdminRoutes';
 import PublicRoutes from './PublicRoutes';
 import AuthRoutes from './AuthRoutes';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
+import LandingPage from '@/pages/LandingPage';
+import PlaceholderPage from '@/components/PlaceholderPage';
+import SafeRouteWrapper from '@/components/SafeRouteWrapper';
 
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Main routes */}
+      {/* Ruta raíz - Página principal */}
+      <Route path="/" element={<LandingPage />} />
+      
+      {/* Rutas públicas */}
       <Route path="/*" element={<PublicRoutes />} />
       
-      {/* Auth routes */}
+      {/* Rutas de autenticación */}
       <Route path="auth/*" element={<AuthRoutes />} />
       
-      {/* Fallback legacy routes - for backward compatibility */}
-      <Route path="login" element={<Login />} />
-      <Route path="register" element={<Register />} />
-
-      {/* Course routes */}
-      <Route path="courses" element={<div>Courses Page</div>} />
-      <Route path="courses/:courseId" element={<div>Course Detail Page</div>} />
+      {/* Placeholders para rutas principales */}
+      <Route path="dashboard" element={
+        <SafeRouteWrapper>
+          <PlaceholderPage title="Dashboard" subtitle="Panel principal del usuario" />
+        </SafeRouteWrapper>
+      } />
       
-      {/* Protected routes */}
-      <Route path="dashboard" element={<div>Dashboard Page</div>} />
-      <Route path="profile/settings" element={<div>Profile Settings Page</div>} />
+      <Route path="profile" element={
+        <SafeRouteWrapper>
+          <PlaceholderPage title="Mi Perfil" subtitle="Información del perfil de usuario" />
+        </SafeRouteWrapper>
+      } />
       
-      {/* Admin routes */}
+      <Route path="settings" element={
+        <SafeRouteWrapper>
+          <PlaceholderPage title="Configuración" subtitle="Opciones y preferencias del usuario" />
+        </SafeRouteWrapper>
+      } />
+      
+      <Route path="courses" element={<PlaceholderPage title="Cursos" subtitle="Catálogo de cursos disponibles" />} />
+      
+      <Route path="courses/:courseId" element={<PlaceholderPage title="Detalle del Curso" subtitle="Información detallada del curso" />} />
+      
+      {/* Rutas de administración */}
       <Route path="admin/*" element={<AdminRoutes />} />
       
-      {/* Dynamic page route - must be after all specific routes */}
+      {/* Ruta dinámica de páginas - debe estar después de todas las rutas específicas */}
       <Route path=":slug" element={<PageRenderer />} />
       
+      {/* Ruta para páginas no encontradas */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

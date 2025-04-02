@@ -21,8 +21,8 @@ const NotFoundLayout: React.FC<NotFoundLayoutProps> = ({
       // Log the broken link to console for debugging
       console.error(`Broken link detected: ${location.pathname}`);
       
-      // In a production environment, we could send this to an analytics service or backend
-      // For now, just show a toast notification for demonstration
+      // En un entorno de producción, podríamos enviar esto a un servicio de analítica o backend
+      // Por ahora, solo mostramos una notificación toast para demostración
       toast.error(
         t('errors.brokenLink', { 
           default: 'Se ha detectado un enlace roto', 
