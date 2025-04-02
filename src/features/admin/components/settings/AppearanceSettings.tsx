@@ -19,12 +19,12 @@ import {
   Moon
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { FeaturesConfig } from '@/contexts/features/types';
+import { FeaturesConfig, ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
 import { Button } from '@/components/ui/button';
 
 interface AppearanceSettingsProps {
   featuresConfig: FeaturesConfig;
-  onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  onToggleFeature: (feature: ExtendedFeatureId | FeatureId, value: boolean) => void | Promise<void>;
   isLoading: boolean;
 }
 

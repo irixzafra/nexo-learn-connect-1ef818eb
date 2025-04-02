@@ -5,12 +5,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import InlineEditingSettings from '@/components/admin/settings/InlineEditingSettings';
-import { ExtendedFeatureId } from '@/contexts/features/types';
+import { ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
 
 // Simplified ContentSettings component with added props
 interface ContentSettingsProps {
   featuresConfig?: any;
-  onToggleFeature?: (featureId: ExtendedFeatureId, value?: boolean) => Promise<void>;
+  onToggleFeature?: (featureId: ExtendedFeatureId | FeatureId, value?: boolean) => Promise<void> | void;
   isLoading?: boolean;
 }
 
