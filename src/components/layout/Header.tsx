@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ui/mode-toggle';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { Menu, Bell, MessageSquare } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { UserMenu } from './header/UserMenu';
@@ -18,7 +18,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { toggleSidebar, state } = useSidebar();
   const { localizeUrl, isMultiLanguageEnabled } = useLocalization();
@@ -26,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
 
   const handleLogout = async () => {
     try {
-      await signOut();
+      await logout();
       navigate(localizeUrl('/auth/login'));
     } catch (error) {
       console.error('Error during logout:', error);
