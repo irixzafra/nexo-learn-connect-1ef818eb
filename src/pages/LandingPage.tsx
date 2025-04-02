@@ -3,6 +3,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCoursesCatalog } from '@/features/courses/hooks/useCoursesCatalog';
 import PublicLayout from '@/layouts/PublicLayout';
+import { useAppNavigation } from '@/utils/routeUtils';
 
 // Componentes de la landing
 import LandingHero from '@/components/landing/LandingHero';
@@ -17,7 +18,6 @@ import { Badge } from '@/components/ui/badge';
 import { Award, Bookmark, CheckCircle, Clock, Smartphone, Cpu, Database, CloudLightning, Lightbulb, GraduationCap, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { useAppNavigation } from '@/utils/routeUtils';
 
 const LandingPage: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
