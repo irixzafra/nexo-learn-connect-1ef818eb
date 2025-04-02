@@ -4,13 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRoleType } from '@/types/auth';
-import { Menu, X, Bell, MessageSquare } from 'lucide-react';
+import { Menu, Bell, MessageSquare } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
-import { RoleIndicator } from './header/RoleIndicator';
 import { UserMenu } from './header/UserMenu';
 import Logo from '@/components/Logo';
 import GlobalRoleSwitcher from './GlobalRoleSwitcher';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   showAuthButtons?: boolean;
@@ -36,8 +35,12 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
       <div className="container flex h-14 items-center justify-between">
         <div className="flex items-center gap-2 md:gap-4">
           {isAuthenticated && (
-            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="md:hidden">
-              {state === "expanded" ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} className={cn(
+              "md:hidden",
+              state === "expanded" ? "text-primary" : ""
+            )}>
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Menú lateral</span>
             </Button>
           )}
           <Link to="/" className="flex items-center space-x-2">
