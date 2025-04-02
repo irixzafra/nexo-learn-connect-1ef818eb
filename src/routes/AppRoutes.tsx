@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import NotFound from '@/pages/NotFound';
 import LandingPage from '@/pages/LandingPage';
 import PlaceholderPage from '@/components/PlaceholderPage';
@@ -61,6 +61,15 @@ const AppRoutes: React.FC = () => {
         </PublicLayout>
       } />
       
+      <Route path="contact" element={
+        <PublicLayout>
+          <PlaceholderPage 
+            title="Contacto" 
+            subtitle="Ponte en contacto con nosotros" 
+          />
+        </PublicLayout>
+      } />
+      
       {/* Rutas de autenticación */}
       <Route path="auth/*" element={
         <AuthLayout>
@@ -68,7 +77,15 @@ const AppRoutes: React.FC = () => {
         </AuthLayout>
       } />
       
-      {/* Rutas de aplicación autenticada - Corregido para usar path="/app/*" */}
+      {/* Ruta para redirigir a /app */}
+      <Route path="dashboard" element={
+        <SafeRouteWrapper>
+          {/* Esto redirigirá al dashboard principal */}
+          <Navigate to="/app/dashboard" replace />
+        </SafeRouteWrapper>
+      } />
+      
+      {/* Rutas de aplicación autenticada */}
       <Route 
         path="/app" 
         element={

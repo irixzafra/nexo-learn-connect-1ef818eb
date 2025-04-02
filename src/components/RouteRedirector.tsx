@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import NotFound from '@/pages/NotFound';
 import { isValidPath } from '@/utils/routeValidation';
 import { toast } from 'sonner';
+import { routeMap } from '@/utils/routeUtils';
 
 export interface RouteRedirectorProps {
   children?: ReactNode;

@@ -143,25 +143,25 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ isCollapsed }) =>
         defaultOpen={true}
       >
         <NavItem 
-          to="/dashboard" 
+          to="/app/dashboard" 
           icon={LayoutDashboard}
           label="Panel Principal"
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/dashboard/stats" 
+          to="/app/dashboard/stats" 
           icon={BarChart}
           label="Estadísticas"
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/dashboard/activity" 
+          to="/app/dashboard/activity" 
           icon={Activity}
           label="Actividad"
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/dashboard/history" 
+          to="/app/dashboard/history" 
           icon={Clock}
           label="Historial"
           isCollapsed={isCollapsed}
@@ -181,19 +181,19 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ isCollapsed }) =>
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/learning-paths" 
+          to="/app/learning-paths" 
           icon={GraduationCap}
           label="Rutas de Aprendizaje"
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/certificates" 
+          to="/app/certificates" 
           icon={Award}
           label="Certificados"
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/course-documents" 
+          to="/app/course-documents" 
           icon={FileText}
           label="Documentos"
           isCollapsed={isCollapsed}
@@ -206,31 +206,31 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ isCollapsed }) =>
         isCollapsed={isCollapsed}
       >
         <NavItem 
-          to="/student/dashboard" 
+          to="/app/dashboard" 
           icon={GraduationCap}
           label="Panel Principal"
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/student/courses" 
+          to="/app/my-courses" 
           icon={BookOpen}
           label="Mis Cursos"
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/student/learning-paths" 
+          to="/app/learning-paths" 
           icon={GraduationCap}
           label="Rutas de Aprendizaje"
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/student/achievements" 
+          to="/app/achievements" 
           icon={Trophy}
           label="Logros y Certificados"
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/student/calendar" 
+          to="/app/calendar" 
           icon={Calendar}
           label="Calendario Académico"
           isCollapsed={isCollapsed}
@@ -243,20 +243,20 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ isCollapsed }) =>
         isCollapsed={isCollapsed}
       >
         <NavItem 
-          to="/community" 
+          to="/app/community" 
           icon={Rss}
           label="Feed"
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/messages" 
+          to="/app/messages" 
           icon={MessageSquare}
           label="Mensajes"
           badge={3}
           isCollapsed={isCollapsed}
         />
         <NavItem 
-          to="/notifications" 
+          to="/app/notifications" 
           icon={Bell}
           label="Notificaciones"
           badge={2}

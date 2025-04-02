@@ -34,41 +34,60 @@ export const routeMap = {
   login: '/auth/login',
   register: '/auth/register',
   resetPassword: '/auth/reset-password',
+  terms: '/terms',
+  privacy: '/privacy',
+  contact: '/contact',
+  aboutUs: '/about-us',
+  courses: '/courses',
   
-  // Rutas de dashboard
-  dashboard: '/dashboard',
-  dashboardStats: '/dashboard/stats',
-  dashboardActivity: '/dashboard/activity',
-  dashboardHistory: '/dashboard/history',
+  // Rutas de aplicación autenticada
+  app: '/app',
+  dashboard: '/app/dashboard',
+  myCourses: '/app/my-courses',
+  dashboardStats: '/app/dashboard/stats',
+  dashboardActivity: '/app/dashboard/activity',
+  dashboardHistory: '/app/dashboard/history',
   
   // Rutas de administración
-  admin: '/admin',
-  adminDashboard: '/admin/dashboard',
-  adminUsers: '/admin/users',
-  adminCourses: '/admin/courses',
-  adminSystemPages: '/admin/system-pages',
-  adminDesignSystem: '/admin/design-system',
-  adminDesignSystemButton: '/admin/design-system/components/button',
+  admin: '/app/admin',
+  adminDashboard: '/app/admin/dashboard',
+  adminUsers: '/app/admin/users',
+  adminCourses: '/app/admin/courses',
+  adminSystemPages: '/app/admin/system-pages',
+  adminDesignSystem: '/app/admin/design-system',
+  adminDesignSystemButton: '/app/admin/design-system/components/button',
+  
+  // Rutas de instructor
+  profesor: '/app/profesor',
+  profesorDashboard: '/app/profesor/dashboard',
+  profesorCourses: '/app/profesor/courses',
+  profesorStudents: '/app/profesor/students',
+  
+  // Rutas de perfil y configuración
+  profile: '/app/profile',
+  settings: '/app/settings',
   
   // Rutas de cursos
-  courses: '/courses',
-  courseDetail: (id: string) => `/course/${id}`,
-  courseLesson: (courseId: string, lessonId: string) => `/course/${courseId}/lesson/${lessonId}`,
+  courseDetail: (id: string) => `/app/course/${id}`,
+  courseLesson: (courseId: string, lessonId: string) => `/app/course/${courseId}/lesson/${lessonId}`,
   
   // Rutas de certificados
-  certificates: '/certificates',
-  certificateDetail: (id: string) => `/certificate/${id}`,
-  certificateVerificationPortal: '/certificates/verify',
+  certificates: '/app/certificates',
+  certificateDetail: (id: string) => `/app/certificate/${id}`,
+  certificateVerificationPortal: '/app/certificates/verify',
   
   // Rutas de perfil
-  profile: '/profile',
-  profileSettings: '/profile/settings',
-  profileAchievements: '/profile/achievements',
+  profileSettings: '/app/profile/settings',
+  profileAchievements: '/app/profile/achievements',
   
   // Otras rutas
-  about: '/about-us',
   help: '/help',
-  settings: '/settings'
+  learningPaths: '/app/learning-paths',
+  achievements: '/app/achievements',
+  calendar: '/app/calendar',
+  community: '/app/community',
+  messages: '/app/messages',
+  notifications: '/app/notifications'
 };
 
 /**

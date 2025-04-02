@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { NexoLogo } from '@/components/ui/logo';
+import { routeMap } from '@/utils/routeUtils';
 
 const MinimalistFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -22,13 +23,13 @@ const MinimalistFooter: React.FC = () => {
           </div>
           
           <nav className="flex items-center space-x-6">
-            <Link to="/terms" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+            <Link to={routeMap.terms} className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
               Términos
             </Link>
-            <Link to="/privacy" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+            <Link to={routeMap.privacy} className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
               Privacidad
             </Link>
-            <Link to="/contact" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+            <Link to={routeMap.contact} className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
               Contacto
             </Link>
           </nav>
