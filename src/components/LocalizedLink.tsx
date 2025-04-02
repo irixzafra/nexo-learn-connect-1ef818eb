@@ -13,6 +13,7 @@ interface LocalizedLinkProps extends Omit<LinkProps, 'to'> {
   /** Additional accessibility props */
   ariaLabel?: string;
   ariaDescribedBy?: string;
+  ariaHidden?: boolean;
 }
 
 /**
@@ -26,6 +27,7 @@ const LocalizedLink: React.FC<LocalizedLinkProps> = ({
   id,
   ariaLabel,
   ariaDescribedBy,
+  ariaHidden,
   ...props
 }) => {
   const { currentLanguage } = useLanguage();
@@ -43,9 +45,13 @@ const LocalizedLink: React.FC<LocalizedLinkProps> = ({
         role: 'link',
         'aria-label': ariaLabel,
         'aria-describedby': ariaDescribedBy,
+        'aria-hidden': ariaHidden,
         id
       }
-    : { id };
+    : { 
+        id,
+        'aria-hidden': ariaHidden
+      };
   
   return (
     <Link 

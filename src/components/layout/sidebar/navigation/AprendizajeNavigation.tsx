@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Lightbulb, FileText, BookOpen, Award } from 'lucide-react';
+import { Lightbulb, BookOpen, Award, GraduationCap } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -27,7 +27,7 @@ const AprendizajeNavigation: React.FC<AprendizajeNavigationProps> = ({ isOpen, o
       <SidebarMenu>
         <MenuItem
           to="/learning/paths"
-          icon={FileText}
+          icon={GraduationCap}
           label="Rutas de Aprendizaje"
           isCollapsed={isCollapsed}
         />
