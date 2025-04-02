@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Book, ListChecks, Clock, GraduationCap } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -20,36 +20,29 @@ const MisCursosNavigation: React.FC<MisCursosNavigationProps> = ({ isOpen, onTog
   return (
     <SidebarGroup
       label="Mis Cursos"
-      icon={Book}
+      icon={BookOpen}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
       <SidebarMenu>
         <MenuItem
           to="/my-courses"
-          icon={Book}
+          icon={BookOpen}
           label="Todos Mis Cursos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
           to="/my-courses/in-progress"
-          icon={Clock}
+          icon={BookOpen}
           label="En Progreso"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
           to="/my-courses/completed"
-          icon={ListChecks}
+          icon={BookOpen}
           label="Completados"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/my-courses/certificates"
-          icon={GraduationCap}
-          label="Certificados"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>

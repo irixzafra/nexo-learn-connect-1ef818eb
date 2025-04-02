@@ -40,6 +40,11 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   // Memoize the home path to avoid recalculations
   const homePath = React.useMemo(() => getHomePath(), [getHomePath]);
 
+  // Determina si el usuario es estudiante (para evitar mostrar navegación duplicada)
+  const isStudent = effectiveRole === 'student';
+  // Determina si el usuario es instructor o admin (para mostrar navegación de profesor)
+  const isTeacher = effectiveRole === 'instructor' || effectiveRole === 'admin';
+
   return (
     <div className="flex-1 overflow-auto py-2">
       {/* Home dashboard navigation for all roles */}
@@ -56,14 +61,14 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         onToggle={() => toggleGroup('general')}
       />
       
-      {/* Courses section for students and admins */}
+      {/* Courses section for all users */}
       <CursosNavigation 
         isOpen={expanded.learning} 
         onToggle={() => toggleGroup('learning')} 
       />
       
       {/* My Courses section for students */}
-      {(effectiveRole === 'student' || effectiveRole === 'admin') && (
+      {isStudent && (
         <MisCursosNavigation 
           isOpen={expanded.learning} 
           onToggle={() => toggleGroup('learning')}
@@ -78,7 +83,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
       />
       
       {/* Learning section for students */}
-      {(effectiveRole === 'student' || effectiveRole === 'admin') && (
+      {isStudent && (
         <AprendizajeNavigation 
           isOpen={expanded.learning} 
           onToggle={() => toggleGroup('learning')}
@@ -86,7 +91,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
       )}
       
       {/* Teaching section for instructors */}
-      {(effectiveRole === 'instructor' || effectiveRole === 'admin') && (
+      {isTeacher && (
         <ProfesorNavigation 
           isOpen={expanded.instructor} 
           onToggle={() => toggleGroup('instructor')}
