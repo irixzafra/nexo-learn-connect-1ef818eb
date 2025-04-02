@@ -55,8 +55,16 @@ const AppRoutes: React.FC = () => {
         <Route path="profile/*" element={<ProfileRoutes />} />
         <Route path="settings/*" element={<SettingsRoutes />} />
         <Route path="course/*" element={<CourseRoutes />} />
-        <Route path="admin/*" element={<AdminRoutes />} />
-        <Route path="profesor/*" element={<InstructorRoutes />} />
+        <Route path="admin/*" element={
+          <SafeRouteWrapper requiredRole={['admin']}>
+            <AdminRoutes />
+          </SafeRouteWrapper>
+        } />
+        <Route path="profesor/*" element={
+          <SafeRouteWrapper requiredRole={['profesor', 'admin']}>
+            <InstructorRoutes />
+          </SafeRouteWrapper>
+        } />
         <Route path="*" element={<NotFound />} />
       </Route>
 
