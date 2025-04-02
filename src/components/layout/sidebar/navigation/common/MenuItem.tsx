@@ -1,53 +1,71 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { useEditMode } from '@/contexts/EditModeContext';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import type { LucideIcon } from 'lucide-react';
 
 interface MenuItemProps {
   to: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   label: string;
-  isCollapsed?: boolean;
-  badge?: React.ReactNode;
-  disabled?: boolean;
+  badge?: number;
+  isCollapsed: boolean;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({
-  to,
-  icon: Icon,
-  label,
-  isCollapsed = false,
-  badge,
-  disabled = false,
+const MenuItem: React.FC<MenuItemProps> = ({ 
+  to, 
+  icon: Icon, 
+  label, 
+  badge, 
+  isCollapsed 
 }) => {
-  const { isEditMode } = useEditMode();
+  const location = useLocation();
+  const isActive = location.pathname.startsWith(to);
   
-  // Simple placeholder for inline editing
-  const handleTitleChange = (newTitle: string) => {
-    console.log(`Menu item title changed to: ${newTitle}`);
-    // In a real implementation, we would save this to the database
-  };
-
-  return (
-    <Button
-      variant="ghost"
-      className={cn("justify-start w-full", disabled && "opacity-60 cursor-not-allowed")}
-      asChild
-      disabled={disabled}
+  const content = (
+    <Link
+      to={to}
+      className={cn(
+        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        isActive 
+          ? "bg-primary/10 text-primary" 
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      )}
     >
-      <Link to={disabled ? "#" : to}>
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center">
-            {Icon && <Icon className="mr-2 h-4 w-4" />}
-            <span>{label}</span>
-          </div>
-          {badge && <div>{badge}</div>}
-        </div>
-      </Link>
-    </Button>
+      <Icon className="h-4 w-4" />
+      {!isCollapsed && (
+        <>
+          <span>{label}</span>
+          {badge !== undefined && badge > 0 && (
+            <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+              {badge > 99 ? '99+' : badge}
+            </span>
+          )}
+        </>
+      )}
+    </Link>
   );
+
+  if (isCollapsed) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {content}
+        </TooltipTrigger>
+        <TooltipContent side="right" className="flex items-center gap-2">
+          {label}
+          {badge !== undefined && badge > 0 && (
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+              {badge > 99 ? '99+' : badge}
+            </span>
+          )}
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return content;
 };
 
 export default MenuItem;
