@@ -22,6 +22,10 @@ export interface Course {
   currency?: 'eur' | 'usd';
   grants_certificate?: boolean;
   level?: string;
+  student_count?: number;
+  original_price?: number;
+  cover_image_url?: string;
+  prerequisites_text?: string;
 }
 
 export interface Instructor {
