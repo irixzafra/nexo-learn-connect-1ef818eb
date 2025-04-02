@@ -8,8 +8,8 @@ import { UserRoleType } from '@/types/auth';
 import { Menu, X, LogOut, Bell, MessageSquare } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { RoleIndicator } from './header/RoleIndicator';
-import UserMenu from './header/UserMenu';
-import { Logo } from '@/components/Logo';
+import { UserMenu } from './header/UserMenu';
+import Logo from '@/components/Logo';
 import GlobalRoleSwitcher from './GlobalRoleSwitcher';
 
 interface HeaderProps {
@@ -19,7 +19,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
   const { isAuthenticated, logout, userRole } = useAuth();
   const navigate = useNavigate();
-  const { toggle, state } = useSidebar();
+  const { toggleSidebar, state } = useSidebar();
   const isAdmin = userRole === 'admin';
 
   const handleLogout = async () => {
@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
       <div className="container flex h-14 items-center justify-between">
         <div className="flex items-center gap-2 md:gap-4">
           {isAuthenticated && (
-            <Button variant="ghost" size="icon" onClick={toggle} className="md:hidden">
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="md:hidden">
               {state === "expanded" ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           )}

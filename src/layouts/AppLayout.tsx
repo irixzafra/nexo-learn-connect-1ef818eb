@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Sidebar from '@/components/layout/Sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar/sidebar-context';
+import { SidebarProvider } from '@/components/ui/sidebar/provider';
 import { Loader } from 'lucide-react';
 import GlobalRoleSwitcher from '@/components/layout/GlobalRoleSwitcher';
 
