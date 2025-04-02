@@ -8,18 +8,18 @@ import { FeaturesConfig, ExtendedFeatureId, FeatureId } from '@/contexts/feature
  * @returns boolean indicating if the feature is enabled
  */
 export const isFeatureEnabled = (
-  config: FeaturesConfig | Record<string, any>, 
+  config: FeaturesConfig, 
   featureId: ExtendedFeatureId | FeatureId
 ): boolean => {
   if (!config) return false;
   
   // If it's a core feature in the features map
   if (featureId.includes('-') && config.features) {
-    return !!config.features[featureId]?.enabled;
+    return !!config.features[featureId as any]?.enabled;
   }
   
   // Check if it's a boolean flag directly on the config object
-  return !!config[featureId];
+  return !!config[featureId as keyof FeaturesConfig];
 };
 
 /**

@@ -8,7 +8,7 @@ import { useFeatures } from '@/hooks/useFeatures';
 import type { FeaturesConfig, ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
 
 interface AnalyticsSettingsProps {
-  featuresConfig: FeaturesConfig | Record<string, any>;
+  featuresConfig: FeaturesConfig;
   onToggleFeature: (feature: ExtendedFeatureId | FeatureId, value: boolean) => void | Promise<void>;
   isLoading?: boolean;
 }
@@ -44,7 +44,7 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
             <Switch
               id="enableAnalytics"
               checked={!!featuresConfig.enableAnalytics}
-              onCheckedChange={(value) => onToggleFeature('enableAnalytics' as ExtendedFeatureId, value)}
+              onCheckedChange={(value) => onToggleFeature('enableAnalytics', value)}
               disabled={isLoading}
             />
           </div>
