@@ -13,13 +13,13 @@ export const SidebarTrigger = React.forwardRef<
   const { toggleSidebar, state, openMobile, setOpenMobile } = useSidebar()
   const isCollapsed = state === "collapsed"
   
-  // Use a ref for this value to avoid re-renders
-  const isMobile = React.useRef(false);
+  // Use a ref for mobile detection to avoid re-renders
+  const isMobileRef = React.useRef(false);
   
   // Set the isMobile value once on mount, or when window is resized
   React.useEffect(() => {
     const handleResize = () => {
-      isMobile.current = window.innerWidth < 768;
+      isMobileRef.current = window.innerWidth < 768;
     };
     
     // Initial call
@@ -34,7 +34,7 @@ export const SidebarTrigger = React.forwardRef<
     };
   }, []);
 
-  const handleToggleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleToggleClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -42,12 +42,12 @@ export const SidebarTrigger = React.forwardRef<
       onClick(e);
     }
 
-    if (isMobile.current) {
+    if (isMobileRef.current) {
       setOpenMobile(!openMobile);
     } else {
       toggleSidebar();
     }
-  }
+  }, [openMobile, toggleSidebar, setOpenMobile, onClick]);
 
   return (
     <Button

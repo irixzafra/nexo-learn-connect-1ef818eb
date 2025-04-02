@@ -1,455 +1,433 @@
 
 import React from 'react';
-import AppLayout from '@/layouts/AppLayout';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useAccessibility } from '@/hooks/useAccessibility';
-import { KeyboardShortcutsHelp } from '@/components/accessibility/KeyboardShortcuts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Slider } from '@/components/ui/slider';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useAccessibility } from '@/hooks/useAccessibility';
+import { useLocalization } from '@/hooks/useLocalization';
 import { Button } from '@/components/ui/button';
-import { MoveHorizontal, ZoomIn, PanelLeft, Eye, Keyboard, Volume2, MousePointer2, Monitor } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
+import { Eye, MousePointer2, VolumeX, Type, Monitor, Braces } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { LanguageIndicator } from '@/components/LanguageIndicator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SafeLink from '@/components/SafeLink';
 
 const AccessibilityPage: React.FC = () => {
-  const { t } = useLocalization();
-  const {
-    isHighContrastEnabled,
-    isReducedMotionEnabled,
+  const { 
+    isHighContrastEnabled, 
+    isReducedMotionEnabled, 
     textSize,
-    isScreenReaderOptimized,
     toggleHighContrast,
     toggleReducedMotion,
     setTextSize
   } = useAccessibility();
+  
+  const { t } = useLocalization();
 
   return (
-    <AppLayout>
-      <div className="container max-w-4xl py-8 px-4 md:px-0">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">
-              {t('accessibility.title', { default: 'Accessibility Settings' })}
-            </h1>
-            <p className="text-muted-foreground">
-              {t('accessibility.description', { default: 'Customize how you interact with our platform' })}
-            </p>
-          </div>
-          <LanguageIndicator size="lg" variant="outline" />
-        </div>
-
-        <Tabs defaultValue="visual" className="w-full space-y-6">
-          <TabsList className="grid grid-cols-3 w-full mb-4">
-            <TabsTrigger value="visual" className="flex items-center gap-2">
-              <Eye className="h-4 w-4" />
-              <span>{t('accessibility.visual', { default: 'Visual' })}</span>
-            </TabsTrigger>
-            <TabsTrigger value="interaction" className="flex items-center gap-2">
-              <MousePointer2 className="h-4 w-4" />
-              <span>{t('accessibility.interaction', { default: 'Interaction' })}</span>
-            </TabsTrigger>
-            <TabsTrigger value="keyboard" className="flex items-center gap-2">
-              <Keyboard className="h-4 w-4" />
-              <span>{t('accessibility.keyboard', { default: 'Keyboard' })}</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="visual" className="space-y-4">
+    <div className="container mx-auto py-6">
+      <PageHeader
+        title={t('accessibility.title', { default: 'Accessibility Settings' })}
+        description={t('accessibility.description', { 
+          default: 'Customize accessibility options to make the platform work better for you.' 
+        })}
+        actions={
+          <SafeLink to="/accessibility/roadmap">
+            <Button variant="outline">
+              {t('accessibility.viewRoadmap', { default: 'View Roadmap' })}
+            </Button>
+          </SafeLink>
+        }
+      />
+      
+      <Tabs defaultValue="visual" className="w-full mt-6">
+        <TabsList className="grid grid-cols-4 w-full max-w-xl mb-6">
+          <TabsTrigger value="visual" className="flex items-center gap-2">
+            <Eye className="h-4 w-4" />
+            <span>{t('accessibility.tabs.visual', { default: 'Visual' })}</span>
+          </TabsTrigger>
+          <TabsTrigger value="motion" className="flex items-center gap-2">
+            <MousePointer2 className="h-4 w-4" />
+            <span>{t('accessibility.tabs.motion', { default: 'Motion' })}</span>
+          </TabsTrigger>
+          <TabsTrigger value="content" className="flex items-center gap-2">
+            <Type className="h-4 w-4" />
+            <span>{t('accessibility.tabs.content', { default: 'Content' })}</span>
+          </TabsTrigger>
+          <TabsTrigger value="advanced" className="flex items-center gap-2">
+            <Braces className="h-4 w-4" />
+            <span>{t('accessibility.tabs.advanced', { default: 'Advanced' })}</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="visual">
+          <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>{t('accessibility.visualSettings', { default: 'Visual Settings' })}</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Monitor className="h-5 w-5 text-primary" />
+                  {t('accessibility.visual.contrast.title', { default: 'Display Settings' })}
+                </CardTitle>
                 <CardDescription>
-                  {t('accessibility.visualSettingsDesc', { default: 'Customize the visual appearance for better readability' })}
+                  {t('accessibility.visual.contrast.description', {
+                    default: 'Adjust contrast and visual appearance'
+                  })}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="highContrast">
-                      {t('accessibility.highContrast', { default: 'High Contrast Mode' })}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="high-contrast" className="flex flex-col">
+                      <span>{t('accessibility.visual.contrast.highContrast', { default: 'High Contrast Mode' })}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {t('accessibility.visual.contrast.highContrastDescription', {
+                          default: 'Increases contrast for better visibility'
+                        })}
+                      </span>
                     </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('accessibility.highContrastDesc', { default: 'Increase contrast for better visibility' })}
-                    </p>
+                    <Switch
+                      id="high-contrast"
+                      checked={isHighContrastEnabled}
+                      onCheckedChange={toggleHighContrast}
+                    />
                   </div>
-                  <Switch 
-                    id="highContrast" 
-                    checked={isHighContrastEnabled}
-                    onCheckedChange={toggleHighContrast}
-                  />
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="reducedMotion">
-                      {t('accessibility.reducedMotion', { default: 'Reduced Motion' })}
+                  
+                  <Separator className="my-4" />
+                  
+                  <div className="space-y-4">
+                    <Label htmlFor="text-size" className="flex flex-col">
+                      <span>{t('accessibility.visual.textSize.title', { default: 'Text Size' })}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {t('accessibility.visual.textSize.description', {
+                          default: 'Adjust the size of text throughout the interface'
+                        })}
+                      </span>
                     </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('accessibility.reducedMotionDesc', { default: 'Minimize or remove animations' })}
-                    </p>
+                    <Select
+                      value={textSize}
+                      onValueChange={(value) => setTextSize(value as any)}
+                    >
+                      <SelectTrigger id="text-size" className="w-full">
+                        <SelectValue placeholder={t('accessibility.visual.textSize.select', { default: 'Select text size' })} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="small">
+                          {t('accessibility.visual.textSize.small', { default: 'Small' })}
+                        </SelectItem>
+                        <SelectItem value="normal">
+                          {t('accessibility.visual.textSize.normal', { default: 'Normal' })}
+                        </SelectItem>
+                        <SelectItem value="large">
+                          {t('accessibility.visual.textSize.large', { default: 'Large' })}
+                        </SelectItem>
+                        <SelectItem value="x-large">
+                          {t('accessibility.visual.textSize.xLarge', { default: 'Extra Large' })}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <Switch 
-                    id="reducedMotion" 
-                    checked={isReducedMotionEnabled}
-                    onCheckedChange={toggleReducedMotion}
-                  />
-                </div>
-
-                <Separator />
-
-                <div className="space-y-3">
-                  <Label>
-                    {t('accessibility.textSize', { default: 'Text Size' })}
-                  </Label>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {t('accessibility.textSizeDesc', { default: 'Adjust the size of text throughout the application' })}
-                  </p>
-
-                  <RadioGroup 
-                    value={textSize}
-                    onValueChange={(value) => 
-                      setTextSize(value as 'small' | 'normal' | 'large' | 'x-large')
-                    }
-                    className="grid grid-cols-2 gap-4 pt-2"
-                  >
-                    <div>
-                      <RadioGroupItem 
-                        value="small" 
-                        id="small" 
-                        className="peer sr-only" 
-                      />
-                      <Label
-                        htmlFor="small"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                      >
-                        <ZoomIn className="mb-3 h-6 w-6" />
-                        <span className="text-xs">
-                          {t('accessibility.textSizeSmall', { default: 'Small' })}
-                        </span>
-                      </Label>
-                    </div>
-                    
-                    <div>
-                      <RadioGroupItem 
-                        value="normal" 
-                        id="normal" 
-                        className="peer sr-only" 
-                      />
-                      <Label
-                        htmlFor="normal"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                      >
-                        <ZoomIn className="mb-3 h-6 w-6" />
-                        <span className="text-sm">
-                          {t('accessibility.textSizeNormal', { default: 'Normal' })}
-                        </span>
-                      </Label>
-                    </div>
-                    
-                    <div>
-                      <RadioGroupItem 
-                        value="large" 
-                        id="large" 
-                        className="peer sr-only" 
-                      />
-                      <Label
-                        htmlFor="large"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                      >
-                        <ZoomIn className="mb-3 h-6 w-6" />
-                        <span className="text-base">
-                          {t('accessibility.textSizeLarge', { default: 'Large' })}
-                        </span>
-                      </Label>
-                    </div>
-                    
-                    <div>
-                      <RadioGroupItem 
-                        value="x-large" 
-                        id="x-large" 
-                        className="peer sr-only" 
-                      />
-                      <Label
-                        htmlFor="x-large"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                      >
-                        <ZoomIn className="mb-3 h-6 w-6" />
-                        <span className="text-lg">
-                          {t('accessibility.textSizeXLarge', { default: 'Extra Large' })}
-                        </span>
-                      </Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="screenReader">
-                      {t('accessibility.screenReader', { default: 'Screen Reader Optimization' })}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('accessibility.screenReaderDesc', { default: 'Improve compatibility with screen readers' })}
-                    </p>
-                  </div>
-                  <Switch 
-                    id="screenReader" 
-                    checked={isScreenReaderOptimized}
-                    onCheckedChange={(checked) => {
-                      // Implementation would be in the hook
-                    }}
-                  />
                 </div>
               </CardContent>
             </Card>
             
             <Card>
               <CardHeader>
-                <CardTitle>{t('accessibility.colorAdjustments', { default: 'Color Adjustments' })}</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Eye className="h-5 w-5 text-primary" />
+                  {t('accessibility.visual.focus.title', { default: 'Focus Indicators' })}
+                </CardTitle>
                 <CardDescription>
-                  {t('accessibility.colorAdjustmentsDesc', { default: 'Additional color settings for visual accessibility' })}
+                  {t('accessibility.visual.focus.description', {
+                    default: 'Customize how focus is displayed on screen'
+                  })}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button variant="outline" className="flex flex-col h-auto py-4 gap-2">
-                    <span className="text-sm font-normal">
-                      {t('accessibility.deuteranopia', { default: 'Deuteranopia Mode' })}
-                    </span>
-                    <div className="w-full h-2 bg-gradient-to-r from-red-500 to-green-500 rounded-full" />
-                  </Button>
-
-                  <Button variant="outline" className="flex flex-col h-auto py-4 gap-2">
-                    <span className="text-sm font-normal">
-                      {t('accessibility.protanopia', { default: 'Protanopia Mode' })}
-                    </span>
-                    <div className="w-full h-2 bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full" />
-                  </Button>
-
-                  <Button variant="outline" className="flex flex-col h-auto py-4 gap-2">
-                    <span className="text-sm font-normal">
-                      {t('accessibility.tritanopia', { default: 'Tritanopia Mode' })}
-                    </span>
-                    <div className="w-full h-2 bg-gradient-to-r from-purple-500 to-green-500 rounded-full" />
-                  </Button>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="focus-outline" className="flex flex-col">
+                      <span>{t('accessibility.visual.focus.enhanced', { default: 'Enhanced Focus Indicators' })}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {t('accessibility.visual.focus.enhancedDescription', {
+                          default: 'Makes focus indicators more visible'
+                        })}
+                      </span>
+                    </Label>
+                    <Switch
+                      id="focus-outline"
+                      defaultChecked={false}
+                    />
+                  </div>
+                  
+                  <Separator className="my-4" />
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="focus-thickness" className="flex flex-col">
+                      <span>{t('accessibility.visual.focus.thickness', { default: 'Focus Outline Thickness' })}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {t('accessibility.visual.focus.thicknessDescription', {
+                          default: 'Adjust the thickness of focus outlines'
+                        })}
+                      </span>
+                    </Label>
+                    <Slider
+                      id="focus-thickness"
+                      defaultValue={[2]}
+                      max={5}
+                      step={1}
+                      className="mt-2"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <span>{t('accessibility.visual.focus.thin', { default: 'Thin' })}</span>
+                      <span>{t('accessibility.visual.focus.thick', { default: 'Thick' })}</span>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-4">
-                  {t('accessibility.colorModeNote', { default: 'Note: Color modes are in beta and may not work perfectly with all content.' })}
-                </p>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          <TabsContent value="interaction" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('accessibility.interactionSettings', { default: 'Interaction Settings' })}</CardTitle>
-                <CardDescription>
-                  {t('accessibility.interactionSettingsDesc', { default: 'Configure how you interact with the platform' })}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="motion">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MousePointer2 className="h-5 w-5 text-primary" />
+                {t('accessibility.motion.title', { default: 'Motion & Animations' })}
+              </CardTitle>
+              <CardDescription>
+                {t('accessibility.motion.description', {
+                  default: 'Control motion and animations on the platform'
+                })}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="focusHighlight">
-                      {t('accessibility.focusHighlight', { default: 'Enhanced Focus Highlighting' })}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('accessibility.focusHighlightDesc', { default: 'Make focus indicators more visible' })}
-                    </p>
-                  </div>
-                  <Switch id="focusHighlight" />
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="clickAssist">
-                      {t('accessibility.clickAssist', { default: 'Click Assistance' })}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('accessibility.clickAssistDesc', { default: 'Increase clickable area of buttons and links' })}
-                    </p>
-                  </div>
-                  <Switch id="clickAssist" />
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="autoComplete">
-                      {t('accessibility.autoComplete', { default: 'Enhanced Auto-Complete' })}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('accessibility.autoCompleteDesc', { default: 'Provide more suggestions when typing in forms' })}
-                    </p>
-                  </div>
-                  <Switch id="autoComplete" />
-                </div>
-
-                <Separator />
-
-                <div className="space-y-3">
-                  <Label>
-                    {t('accessibility.navigationMode', { default: 'Navigation Mode' })}
+                  <Label htmlFor="reduce-motion" className="flex flex-col">
+                    <span>{t('accessibility.motion.reduceMotion', { default: 'Reduce Motion' })}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t('accessibility.motion.reduceMotionDescription', {
+                        default: 'Minimize animations throughout the interface'
+                      })}
+                    </span>
                   </Label>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    {t('accessibility.navigationModeDesc', { default: 'Choose your preferred navigation style' })}
-                  </p>
-
-                  <RadioGroup defaultValue="standard" className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <RadioGroupItem 
-                        value="standard" 
-                        id="nav-standard" 
-                        className="peer sr-only" 
-                      />
-                      <Label
-                        htmlFor="nav-standard"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                      >
-                        <MoveHorizontal className="mb-3 h-6 w-6" />
-                        <span className="text-sm">
-                          {t('accessibility.navStandard', { default: 'Standard' })}
-                        </span>
-                      </Label>
-                    </div>
-                    
-                    <div>
-                      <RadioGroupItem 
-                        value="simplified" 
-                        id="nav-simplified" 
-                        className="peer sr-only" 
-                      />
-                      <Label
-                        htmlFor="nav-simplified"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                      >
-                        <PanelLeft className="mb-3 h-6 w-6" />
-                        <span className="text-sm">
-                          {t('accessibility.navSimplified', { default: 'Simplified' })}
-                        </span>
-                      </Label>
-                    </div>
-                    
-                    <div>
-                      <RadioGroupItem 
-                        value="textOnly" 
-                        id="nav-text-only" 
-                        className="peer sr-only" 
-                      />
-                      <Label
-                        htmlFor="nav-text-only"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                      >
-                        <Monitor className="mb-3 h-6 w-6" />
-                        <span className="text-sm">
-                          {t('accessibility.navTextOnly', { default: 'Text Only' })}
-                        </span>
-                      </Label>
-                    </div>
-                  </RadioGroup>
+                  <Switch
+                    id="reduce-motion"
+                    checked={isReducedMotionEnabled}
+                    onCheckedChange={toggleReducedMotion}
+                  />
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  {t('accessibility.assistiveTechnologies', { default: 'Assistive Technologies' })}
-                </CardTitle>
-                <CardDescription>
-                  {t('accessibility.assistiveTechnologiesDesc', { default: 'Settings for assistive tools and technologies' })}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="textToSpeech">
-                      {t('accessibility.textToSpeech', { default: 'Text-to-Speech' })}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('accessibility.textToSpeechDesc', { default: 'Enable reading text content aloud' })}
-                    </p>
-                  </div>
-                  <div className="flex gap-4 items-center">
-                    <Button variant="outline" size="sm">
-                      <Volume2 className="h-4 w-4 mr-2" />
-                      {t('accessibility.test', { default: 'Test' })}
-                    </Button>
-                    <Switch id="textToSpeech" />
-                  </div>
-                </div>
-
+                
                 <Separator />
-
+                
                 <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="dictation">
-                      {t('accessibility.dictation', { default: 'Dictation' })}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('accessibility.dictationDesc', { default: 'Use voice commands and dictation for input' })}
-                    </p>
-                  </div>
-                  <Switch id="dictation" />
+                  <Label htmlFor="reduce-auto-play" className="flex flex-col">
+                    <span>{t('accessibility.motion.disableAutoplay', { default: 'Disable Autoplay' })}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t('accessibility.motion.disableAutoplayDescription', {
+                        default: 'Prevent videos from playing automatically'
+                      })}
+                    </span>
+                  </Label>
+                  <Switch
+                    id="reduce-auto-play"
+                    defaultChecked={false}
+                  />
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="keyboard" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('accessibility.keyboardAccess', { default: 'Keyboard Access' })}</CardTitle>
-                <CardDescription>
-                  {t('accessibility.keyboardAccessDesc', { default: 'Settings for keyboard navigation and shortcuts' })}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="keyboardNavigation">
-                      {t('accessibility.keyboardNavigation', { default: 'Enhanced Keyboard Navigation' })}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('accessibility.keyboardNavigationDesc', { default: 'Improve navigation with keyboard' })}
-                    </p>
-                  </div>
-                  <Switch id="keyboardNavigation" defaultChecked />
-                </div>
-
+                
                 <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="stickyKeys">
-                      {t('accessibility.stickyKeys', { default: 'Sticky Keys' })}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t('accessibility.stickyKeysDesc', { default: 'Press modifier keys one at a time' })}
-                    </p>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="animation-speed" className="flex flex-col">
+                    <span>{t('accessibility.motion.animationSpeed', { default: 'Animation Speed' })}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t('accessibility.motion.animationSpeedDescription', {
+                        default: 'Adjust the speed of animations'
+                      })}
+                    </span>
+                  </Label>
+                  <Slider
+                    id="animation-speed"
+                    defaultValue={[100]}
+                    max={200}
+                    step={25}
+                    disabled={isReducedMotionEnabled}
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>{t('accessibility.motion.slower', { default: 'Slower' })}</span>
+                    <span>{t('accessibility.motion.normal', { default: 'Normal' })}</span>
+                    <span>{t('accessibility.motion.faster', { default: 'Faster' })}</span>
                   </div>
-                  <Switch id="stickyKeys" />
                 </div>
-
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="content">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Type className="h-5 w-5 text-primary" />
+                {t('accessibility.content.title', { default: 'Content Preferences' })}
+              </CardTitle>
+              <CardDescription>
+                {t('accessibility.content.description', {
+                  default: 'Customize how content is presented'
+                })}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="screen-reader" className="flex flex-col">
+                    <span>{t('accessibility.content.screenReader', { default: 'Screen Reader Optimization' })}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t('accessibility.content.screenReaderDescription', {
+                        default: 'Optimize content for screen readers'
+                      })}
+                    </span>
+                  </Label>
+                  <Switch
+                    id="screen-reader"
+                    defaultChecked={false}
+                  />
+                </div>
+                
                 <Separator />
-
-                <KeyboardShortcutsHelp />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </AppLayout>
+                
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="image-descriptions" className="flex flex-col">
+                    <span>{t('accessibility.content.imageDescriptions', { default: 'Always Show Image Descriptions' })}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t('accessibility.content.imageDescriptionsDescription', {
+                        default: 'Display alt text descriptions for images'
+                      })}
+                    </span>
+                  </Label>
+                  <Switch
+                    id="image-descriptions"
+                    defaultChecked={false}
+                  />
+                </div>
+                
+                <Separator />
+                
+                <div className="space-y-4">
+                  <Label htmlFor="content-density" className="flex flex-col">
+                    <span>{t('accessibility.content.contentDensity', { default: 'Content Density' })}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t('accessibility.content.contentDensityDescription', {
+                        default: 'Adjust spacing between elements'
+                      })}
+                    </span>
+                  </Label>
+                  <Select defaultValue="default">
+                    <SelectTrigger id="content-density">
+                      <SelectValue placeholder={t('accessibility.content.selectDensity', { default: 'Select density' })} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="compact">
+                        {t('accessibility.content.compact', { default: 'Compact' })}
+                      </SelectItem>
+                      <SelectItem value="default">
+                        {t('accessibility.content.default', { default: 'Default' })}
+                      </SelectItem>
+                      <SelectItem value="comfortable">
+                        {t('accessibility.content.comfortable', { default: 'Comfortable' })}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="advanced">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Braces className="h-5 w-5 text-primary" />
+                {t('accessibility.advanced.title', { default: 'Advanced Settings' })}
+              </CardTitle>
+              <CardDescription>
+                {t('accessibility.advanced.description', {
+                  default: 'Additional accessibility settings for advanced users'
+                })}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="keyboard-navigation" className="flex flex-col">
+                    <span>{t('accessibility.advanced.keyboardNavigation', { default: 'Enhanced Keyboard Navigation' })}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t('accessibility.advanced.keyboardNavigationDescription', {
+                        default: 'Enables additional keyboard shortcuts'
+                      })}
+                    </span>
+                  </Label>
+                  <Switch
+                    id="keyboard-navigation"
+                    defaultChecked={false}
+                  />
+                </div>
+                
+                <Separator />
+                
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="audio-cues" className="flex flex-col">
+                    <span>{t('accessibility.advanced.audioCues', { default: 'Audio Cues' })}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t('accessibility.advanced.audioCuesDescription', {
+                        default: 'Plays sounds for important events'
+                      })}
+                    </span>
+                  </Label>
+                  <Switch
+                    id="audio-cues"
+                    defaultChecked={false}
+                  />
+                </div>
+                
+                <Separator />
+                
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="custom-stylesheets" className="flex flex-col">
+                    <span>{t('accessibility.advanced.customStylesheets', { default: 'Custom Stylesheets' })}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t('accessibility.advanced.customStylesheetsDescription', {
+                        default: 'Allow custom CSS for personalization'
+                      })}
+                    </span>
+                  </Label>
+                  <Switch
+                    id="custom-stylesheets"
+                    defaultChecked={false}
+                  />
+                </div>
+                
+                <Separator />
+                
+                <Button variant="outline" className="w-full">
+                  {t('accessibility.advanced.exportSettings', { default: 'Export Settings Configuration' })}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 
