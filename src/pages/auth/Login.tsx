@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { z } from 'zod';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, Mail, LockKeyhole } from 'lucide-react';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useNavigate } from 'react-router-dom';
@@ -24,9 +24,16 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login: React.FC = () => {
   const { t, localizeUrl } = useLocalization();
-  const { signIn } = useAuth();
+  const { session, user, isLoading: authLoading, login } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(false);
+  
+  React.useEffect(() => {
+    // If user is already logged in, redirect to dashboard
+    if (user && session) {
+      navigate('/dashboard');
+    }
+  }, [user, session, navigate]);
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -39,7 +46,8 @@ const Login: React.FC = () => {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      await signIn(data.email, data.password);
+      // Use the login method from AuthContext
+      await login(data.email, data.password);
       toast.success('Inicio de sesión exitoso');
       navigate('/dashboard');
     } catch (error) {
@@ -127,7 +135,7 @@ const Login: React.FC = () => {
               <Button 
                 type="submit" 
                 className="w-full py-6 text-base" 
-                disabled={isLoading}
+                disabled={isLoading || authLoading}
               >
                 {isLoading ? (
                   <>

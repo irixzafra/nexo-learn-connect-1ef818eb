@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
@@ -10,6 +11,7 @@ interface AuthContextType {
   userRole: UserRoleType | null;
   isLoading: boolean;
   logout: () => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   isInitialized: boolean;
   isAuthenticated: boolean;
 }
@@ -157,6 +159,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, []);
 
+  // Add login function
+  const login = async (email: string, password: string): Promise<void> => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('Error signing in:', error);
+        throw error;
+      }
+
+      if (data?.user) {
+        // Auth state change will handle updating the user state
+        console.log('User signed in successfully:', data.user.id);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async (): Promise<void> => {
     try {
       console.info('Logging out user');
@@ -169,26 +197,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const isAuthenticated = !!session && !!user;
 
-  const ensureValidRole = (role: string | null): UserRoleType => {
-    if (!role) return 'student';
-  
-    const validRoles: UserRoleType[] = [
-      'admin', 'profesor', 'student',
-      'instructor', 'moderator', 'content_creator',
-      'guest', 'beta_tester', 'sistemas', 'anonimo'
-    ];
-  
-    return validRoles.includes(role as UserRoleType) 
-      ? (role as UserRoleType) 
-      : 'student';
-  };
-
   const value = {
     user,
     session,
     profile,
     userRole,
     isLoading,
+    login,
     logout,
     isInitialized,
     isAuthenticated
