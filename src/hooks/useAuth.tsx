@@ -1,6 +1,5 @@
 
 import { useState, useEffect, createContext, useContext } from 'react';
-import { supabase } from '@/lib/supabase';
 import { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextProps {
@@ -13,6 +12,7 @@ interface AuthContextProps {
   isAuthenticated: boolean;
 }
 
+// Creamos un contexto mock para el desarrollo
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -21,48 +21,87 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Initial session check
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    // Simulamos la carga inicial y autenticación del usuario
+    const timer = setTimeout(() => {
       setIsLoading(false);
-    });
+    }, 1000);
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => clearTimeout(timer);
   }, []);
 
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setIsLoading(false);
-    if (error) throw error;
+    try {
+      // Simulamos autenticación (reemplazar con implementación real)
+      console.log('Iniciando sesión con:', email, password);
+      const mockUser = {
+        id: '1',
+        email,
+        user_metadata: {
+          name: 'Usuario Demo',
+          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
+          full_name: 'Usuario de Demostración'
+        }
+      } as User;
+      
+      const mockSession = {
+        access_token: 'mock-token',
+        refresh_token: 'mock-refresh',
+        user: mockUser
+      } as Session;
+      
+      setUser(mockUser);
+      setSession(mockSession);
+      
+      // Guardamos en localStorage para persistencia simulada
+      localStorage.setItem('supabase.auth.token', JSON.stringify(mockSession));
+    } catch (error) {
+      console.error('Error en autenticación:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const signUp = async (email: string, password: string, metadata?: any) => {
     setIsLoading(true);
-    const { error } = await supabase.auth.signUp({ 
-      email, 
-      password,
-      options: {
-        data: metadata
-      }
-    });
-    setIsLoading(false);
-    if (error) throw error;
+    try {
+      console.log('Registrando usuario:', email, password, metadata);
+      // Simulación de registro exitoso
+      const mockUser = {
+        id: '2',
+        email,
+        user_metadata: {
+          ...metadata,
+          name: metadata?.name || email.split('@')[0],
+          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
+        }
+      } as User;
+      
+      setUser(mockUser);
+      
+      // En producción: necesitaría confirmar email
+    } catch (error) {
+      console.error('Error en registro:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const signOut = async () => {
     setIsLoading(true);
-    const { error } = await supabase.auth.signOut();
-    setIsLoading(false);
-    if (error) throw error;
+    try {
+      // Simulamos cierre de sesión
+      setUser(null);
+      setSession(null);
+      localStorage.removeItem('supabase.auth.token');
+    } catch (error) {
+      console.error('Error en cierre de sesión:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -85,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth debe usarse dentro de un AuthProvider');
   }
   return context;
 };

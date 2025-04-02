@@ -3,28 +3,30 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ui/mode-toggle';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { Menu, Bell, MessageSquare } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { UserMenu } from './header/UserMenu';
 import Logo from '@/components/Logo';
 import GlobalRoleSwitcher from './GlobalRoleSwitcher';
 import { cn } from '@/lib/utils';
+import { useLocalization } from '@/hooks/useLocalization';
 
 interface HeaderProps {
   showAuthButtons?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
-  const { isAuthenticated, logout, userRole } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { toggleSidebar, state } = useSidebar();
-  const isAdmin = userRole === 'admin';
+  const { localizeUrl } = useLocalization();
+  const isAdmin = user?.email?.includes('admin'); // Simplified check for demo
 
   const handleLogout = async () => {
     try {
-      await logout();
-      navigate('/auth/login');
+      await signOut();
+      navigate(localizeUrl('/auth/login'));
     } catch (error) {
       console.error('Error during logout:', error);
     }
@@ -34,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between">
         <div className="flex items-center gap-2 md:gap-4">
-          {isAuthenticated && (
+          {user && (
             <Button variant="ghost" size="icon" onClick={toggleSidebar} className={cn(
               "md:hidden",
               state === "expanded" ? "text-primary" : ""
@@ -59,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
             </div>
           )}
           
-          {isAuthenticated ? (
+          {user ? (
             <>
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
@@ -77,10 +79,10 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
             </>
           ) : showAuthButtons ? (
             <>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/auth/login')}>
+              <Button variant="ghost" size="sm" onClick={() => navigate(localizeUrl('/auth/login'))}>
                 Iniciar Sesión
               </Button>
-              <Button size="sm" onClick={() => navigate('/auth/register')}>
+              <Button size="sm" onClick={() => navigate(localizeUrl('/auth/register'))}>
                 Registrarse
               </Button>
             </>
