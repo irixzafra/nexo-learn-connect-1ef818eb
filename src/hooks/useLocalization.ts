@@ -27,9 +27,10 @@ export const useLocalization = () => {
   /**
    * Translation function placeholder
    * @param key The translation key
+   * @param options Optional parameters for translation
    * @returns The key itself as fallback
    */
-  const t = (key: string): string => {
+  const t = (key: string, options?: any): string => {
     return key;
   };
 
