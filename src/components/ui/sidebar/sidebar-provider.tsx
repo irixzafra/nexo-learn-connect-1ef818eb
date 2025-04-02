@@ -15,7 +15,7 @@ import {
 } from "./sidebar-context"
 import { ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,
@@ -40,7 +40,8 @@ const SidebarProvider = React.forwardRef<
     const isMobile = useIsMobile()
     const [openMobile, setOpenMobile] = React.useState(false)
 
-    // Try to get saved state from cookie
+    // Try to get saved state from cookie - this is now wrapped in a function to avoid
+    // reading cookies during render
     const getSavedState = React.useCallback(() => {
       if (typeof document === 'undefined') return defaultOpen;
       
@@ -54,11 +55,13 @@ const SidebarProvider = React.forwardRef<
       return defaultOpen
     }, [defaultOpen])
 
-    // This is the internal state of the sidebar.
-    // We use openProp and setOpenProp for control from outside the component.
-    const [_open, _setOpen] = React.useState(getSavedState())
+    // Initialize state with a function to avoid re-computation on every render
+    const [_open, _setOpen] = React.useState(() => getSavedState())
+    
+    // Controlled or uncontrolled open state
     const open = openProp !== undefined ? openProp : _open
     
+    // Memoize setOpen to avoid recreating on every render
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
         const openState = typeof value === "function" ? value(open) : value
@@ -68,7 +71,7 @@ const SidebarProvider = React.forwardRef<
           _setOpen(openState)
         }
 
-        // This sets the cookie to keep the sidebar state.
+        // Only update cookie if in browser environment
         if (typeof document !== 'undefined') {
           document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
         }
@@ -76,15 +79,16 @@ const SidebarProvider = React.forwardRef<
       [setOpenProp, open]
     )
 
-    // Helper to toggle the sidebar.
+    // Memoize toggleSidebar to avoid recreating on every render and prevent infinite loops
     const toggleSidebar = React.useCallback(() => {
-      console.log("Toggling sidebar", isMobile ? "mobile" : "desktop", "Current state:", isMobile ? openMobile : open);
-      return isMobile
-        ? setOpenMobile((prevOpenMobile) => !prevOpenMobile)
-        : setOpen((prevOpen) => !prevOpen)
-    }, [isMobile, setOpen, open, openMobile, setOpenMobile])
+      if (isMobile) {
+        setOpenMobile(prevState => !prevState)
+      } else {
+        setOpen(prevState => !prevState)
+      }
+    }, [isMobile, setOpen])
 
-    // Adds a keyboard shortcut to toggle the sidebar.
+    // Keyboard shortcut effect
     React.useEffect(() => {
       if (typeof window === 'undefined') return;
 
@@ -103,9 +107,9 @@ const SidebarProvider = React.forwardRef<
     }, [toggleSidebar])
 
     // We add a state so that we can do data-state="expanded" or "collapsed".
-    // This makes it easier to style the sidebar with Tailwind classes.
     const state: SidebarState = open ? "expanded" : "collapsed"
 
+    // Memoize context value to avoid recreating on every render
     const contextValue = React.useMemo<SidebarContextType>(
       () => ({
         state,
@@ -139,7 +143,7 @@ const SidebarProvider = React.forwardRef<
           >
             {children}
             
-            {/* Improved expand button when sidebar is collapsed with animation */}
+            {/* Expand button when sidebar is collapsed */}
             {!isMobile && state === "collapsed" && (
               <motion.div 
                 initial={{ opacity: 0 }}
