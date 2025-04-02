@@ -9,7 +9,7 @@ import { FeaturesConfig, ExtendedFeatureId } from '@/contexts/features/types';
  */
 export const isFeatureEnabled = (
   config: FeaturesConfig | Record<string, any>, 
-  featureId: ExtendedFeatureId
+  featureId: ExtendedFeatureId | string
 ): boolean => {
   if (!config) return false;
   
@@ -28,9 +28,9 @@ export const isFeatureEnabled = (
  * @returns A function that always returns a Promise
  */
 export const createSafeToggleFunction = (
-  toggleFn: (featureId: ExtendedFeatureId, value?: boolean) => void | Promise<void>
-): (featureId: ExtendedFeatureId, value?: boolean) => Promise<void> => {
-  return async (featureId: ExtendedFeatureId, value?: boolean): Promise<void> => {
+  toggleFn: (featureId: ExtendedFeatureId | string, value?: boolean) => void | Promise<void>
+): (featureId: ExtendedFeatureId | string, value?: boolean) => Promise<void> => {
+  return async (featureId: ExtendedFeatureId | string, value?: boolean): Promise<void> => {
     const result = toggleFn(featureId, value);
     // Ensure we always return a Promise
     if (result instanceof Promise) {

@@ -8,7 +8,7 @@ import { isFeatureEnabled } from '@/utils/featureUtils';
  * @param featureId The ID of the feature to check
  * @returns boolean indicating if the feature is enabled
  */
-export const useFeature = (featureId: ExtendedFeatureId): boolean => {
+export const useFeature = (featureId: ExtendedFeatureId | string): boolean => {
   const { isFeatureEnabled: contextIsFeatureEnabled, featuresConfig } = useFeatures();
   
   // Use either the context method or the utility function as a fallback

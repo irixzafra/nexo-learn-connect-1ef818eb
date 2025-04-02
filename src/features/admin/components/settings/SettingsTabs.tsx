@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Settings, Code, Database, Globe, Palette, Bell, BarChart, Users } from 'lucide-react';
@@ -11,7 +10,6 @@ import LocalizationSettings from './LocalizationSettings';
 import TestDataSettings from './TestDataSettings';
 import NotificationSettings from './NotificationSettings';
 import { useFeatures } from '@/hooks/useFeatures';
-import { ExtendedFeatureId } from '@/contexts/features/types';
 import { createSafeToggleFunction } from '@/utils/featureUtils';
 
 export const SettingsTabs: React.FC = () => {

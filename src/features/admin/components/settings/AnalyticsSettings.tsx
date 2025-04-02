@@ -8,8 +8,8 @@ import { useFeatures } from '@/hooks/useFeatures';
 import type { FeaturesConfig } from '@/contexts/features/types';
 
 interface AnalyticsSettingsProps {
-  featuresConfig: FeaturesConfig;
-  onToggleFeature: (feature: keyof FeaturesConfig, value: boolean) => void;
+  featuresConfig: FeaturesConfig | Record<string, any>;
+  onToggleFeature: (feature: string, value: boolean) => void | Promise<void>;
   isLoading?: boolean;
 }
 

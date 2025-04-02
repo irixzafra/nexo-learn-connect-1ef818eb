@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
@@ -6,7 +5,6 @@ import PagesManagement from '@/pages/admin/settings/pages';
 import { useFeatures } from '@/hooks/useFeatures';
 import DataSettings from '@/features/admin/components/settings/DataSettings';
 import IntegrationsPage from '@/pages/admin/settings/integrations';
-import { ExtendedFeatureId } from '@/contexts/features/types';
 import AnalyticsSettings from '@/pages/admin/settings/analytics';
 import { createSafeToggleFunction, isFeatureEnabled } from '@/utils/featureUtils';
 
@@ -20,7 +18,7 @@ const SettingsRoutes: React.FC = () => {
   const { featuresConfig, toggleFeature, isFeatureEnabled: contextIsFeatureEnabled } = useFeatures();
 
   // Use either the context method or the utility function as a fallback
-  const checkIfEnabled = (featureId: ExtendedFeatureId): boolean => {
+  const checkIfEnabled = (featureId: string): boolean => {
     if (typeof contextIsFeatureEnabled === 'function') {
       return contextIsFeatureEnabled(featureId);
     }
