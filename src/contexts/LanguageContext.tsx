@@ -1,8 +1,7 @@
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { getTranslation } from '@/services/i18n/translationService';
-import { toast } from 'sonner';
+import { useFeatures } from '@/hooks/useFeatures';
 
 // Supported languages
 export type SupportedLanguage = 'es' | 'en' | 'pt' | 'fr' | 'de';
@@ -49,6 +48,7 @@ interface LanguageContextType {
   formatNumber: (num: number, options?: Intl.NumberFormatOptions) => string;
   formatCurrency: (amount: number, currency?: string) => string;
   supportedLanguages: SupportedLanguage[];
+  isMultiLanguageEnabled: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -58,53 +58,21 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
+  const { featuresConfig } = useFeatures();
+  const isMultiLanguageEnabled = !!featuresConfig.enableMultiLanguage;
   const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>(DEFAULT_LANGUAGE);
-  const location = useLocation();
-  const navigate = useNavigate();
   const isRtl = LANGUAGE_METADATA[currentLanguage].dir === 'rtl';
   const supportedLanguages: SupportedLanguage[] = Object.keys(LANGUAGE_NAMES) as SupportedLanguage[];
 
-  // Update language based on URL path
-  useEffect(() => {
-    const pathParts = location.pathname.split('/').filter(Boolean);
-    
-    if (pathParts.length > 0) {
-      const firstPart = pathParts[0].toLowerCase();
-      
-      // Check if the first part of the path is a supported language
-      if (Object.keys(LANGUAGE_NAMES).includes(firstPart)) {
-        if (firstPart !== currentLanguage) {
-          setCurrentLanguage(firstPart as SupportedLanguage);
-          
-          // Update html lang attribute
-          document.documentElement.lang = LANGUAGE_METADATA[firstPart as SupportedLanguage].htmlLang;
-          document.documentElement.dir = LANGUAGE_METADATA[firstPart as SupportedLanguage].dir;
-        }
-      } else if (!location.pathname.includes('/admin/')) {
-        // If no language in URL and not an admin page, redirect to default language
-        const newPath = `/${DEFAULT_LANGUAGE}${location.pathname}`;
-        navigate(newPath, { replace: true });
-      }
-    }
-  }, [location.pathname, navigate, currentLanguage]);
+  // Update html lang attribute
+  React.useEffect(() => {
+    document.documentElement.lang = LANGUAGE_METADATA[currentLanguage].htmlLang;
+    document.documentElement.dir = LANGUAGE_METADATA[currentLanguage].dir;
+  }, [currentLanguage]);
 
   // Function to change language
   const changeLanguage = (lang: SupportedLanguage) => {
-    if (lang === currentLanguage) return;
-    
-    const pathParts = location.pathname.split('/').filter(Boolean);
-    
-    if (Object.keys(LANGUAGE_NAMES).includes(pathParts[0])) {
-      // If there's already a language in the path, replace it
-      pathParts[0] = lang;
-    } else {
-      // Otherwise, add the new language to the beginning
-      pathParts.unshift(lang);
-    }
-    
-    // Construct new path with the selected language
-    const newPath = `/${pathParts.join('/')}${location.search}`;
-    navigate(newPath);
+    if (!isMultiLanguageEnabled || lang === currentLanguage) return;
     
     // Update language state
     setCurrentLanguage(lang);
@@ -112,9 +80,6 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     // Update html lang attribute
     document.documentElement.lang = LANGUAGE_METADATA[lang].htmlLang;
     document.documentElement.dir = LANGUAGE_METADATA[lang].dir;
-    
-    // Show toast notification
-    toast.success(`${getTranslation('language.change', lang)}: ${LANGUAGE_NAMES[lang]}`);
   };
 
   // Translation function
@@ -129,12 +94,15 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   // Generate hreflang alternates for SEO
   const getSeoAlternates = (path: string) => {
-    const pathWithoutLang = path.split('/').slice(2).join('/');
+    if (!isMultiLanguageEnabled) {
+      return []; // Return empty array when multi-language is disabled
+    }
+    
     const baseUrl = window.location.origin;
     
     return Object.keys(LANGUAGE_NAMES).map(lang => ({
       lang: LANGUAGE_METADATA[lang as SupportedLanguage].hreflang,
-      url: `${baseUrl}/${lang}/${pathWithoutLang}`
+      url: `${baseUrl}/${path}`
     }));
   };
 
@@ -173,7 +141,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     formatDate,
     formatNumber,
     formatCurrency,
-    supportedLanguages
+    supportedLanguages,
+    isMultiLanguageEnabled
   };
 
   return (

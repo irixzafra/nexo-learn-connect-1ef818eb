@@ -34,14 +34,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Simulamos autenticación (reemplazar con implementación real)
       console.log('Iniciando sesión con:', email, password);
+      
+      // Create a mock user with required properties from User interface
       const mockUser = {
         id: '1',
-        email,
+        app_metadata: {},
         user_metadata: {
           name: 'Usuario Demo',
           avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
           full_name: 'Usuario de Demostración'
-        }
+        },
+        aud: 'authenticated',
+        created_at: new Date().toISOString(),
+        email,
       } as User;
       
       const mockSession = {
@@ -70,12 +75,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulación de registro exitoso
       const mockUser = {
         id: '2',
-        email,
+        app_metadata: {},
         user_metadata: {
           ...metadata,
           name: metadata?.name || email.split('@')[0],
           avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
-        }
+        },
+        aud: 'authenticated',
+        created_at: new Date().toISOString(),
+        email,
       } as User;
       
       setUser(mockUser);

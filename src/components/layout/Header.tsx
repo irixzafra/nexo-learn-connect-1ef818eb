@@ -11,6 +11,7 @@ import Logo from '@/components/Logo';
 import GlobalRoleSwitcher from './GlobalRoleSwitcher';
 import { cn } from '@/lib/utils';
 import { useLocalization } from '@/hooks/useLocalization';
+import LanguageSelector from '@/components/LanguageSelector';
 
 interface HeaderProps {
   showAuthButtons?: boolean;
@@ -20,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { toggleSidebar, state } = useSidebar();
-  const { localizeUrl } = useLocalization();
+  const { localizeUrl, isMultiLanguageEnabled } = useLocalization();
   const isAdmin = user?.email?.includes('admin'); // Simplified check for demo
 
   const handleLogout = async () => {
@@ -60,6 +61,9 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
               <GlobalRoleSwitcher />
             </div>
           )}
+          
+          {/* Language Selector - only shown when multi-language is enabled */}
+          {isMultiLanguageEnabled && <LanguageSelector />}
           
           {user ? (
             <>

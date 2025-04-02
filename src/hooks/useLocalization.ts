@@ -1,6 +1,6 @@
 
 import { useLanguage, SupportedLanguage } from '@/contexts/LanguageContext';
-import { getLocalizedUrl, getPathWithoutLanguage } from '@/utils/languageUtils';
+import { getPathWithoutLanguage } from '@/utils/languageUtils';
 
 /**
  * Hook for handling localization and translation of routes and content
@@ -10,16 +10,25 @@ export const useLocalization = () => {
     currentLanguage, 
     t, 
     supportedLanguages, 
-    changeLanguage 
+    changeLanguage,
+    isMultiLanguageEnabled 
   } = useLanguage();
 
   /**
-   * Localizes a URL with the current language
+   * Localizes a URL with the current language if multi-language is enabled
+   * Otherwise returns the original URL
    * @param path The URL path to localize
    * @returns The localized URL
    */
   const localizeUrl = (path: string): string => {
-    return getLocalizedUrl(path, currentLanguage);
+    // If multi-language is disabled, just return the path
+    if (!isMultiLanguageEnabled) {
+      return path.startsWith('/') ? path : `/${path}`;
+    }
+    
+    // If multi-language is enabled, use the language prefix
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return `/${currentLanguage}/${cleanPath}`;
   };
 
   /**
@@ -36,6 +45,8 @@ export const useLocalization = () => {
    * @param language The language to set
    */
   const setLanguage = (language: string) => {
+    if (!isMultiLanguageEnabled) return;
+    
     // Cast to SupportedLanguage only if it's actually supported
     if (supportedLanguages.includes(language as SupportedLanguage)) {
       changeLanguage(language as SupportedLanguage);
@@ -48,7 +59,8 @@ export const useLocalization = () => {
     removeLanguagePrefix,
     t,
     supportedLanguages,
-    setLanguage
+    setLanguage,
+    isMultiLanguageEnabled
   };
 };
 

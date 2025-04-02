@@ -10,7 +10,6 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { KeyboardShortcuts } from './components/accessibility/KeyboardShortcuts';
 import BrokenLinkMonitor from './components/BrokenLinkMonitor';
 import SkipLinks from './components/accessibility/SkipLinks';
-import { LanguageWrapper } from '@/components/LanguageWrapper';
 
 // Create lazy loaded components
 const LazyRouteValidator = React.lazy(() => import('./pages/admin/RouteValidator'));
@@ -27,12 +26,8 @@ const App: React.FC = () => {
           
           <main id="main-content">
             <Routes>
-              {/* Language-specific routes */}
-              <Route path=":language/*" element={<LanguageWrapper />}>
-                <Route path="*" element={<AppRoutes />} />
-              </Route>
-              
               {/* Routes without language prefix */}
+              <Route path="*" element={<AppRoutes />} />
               <Route path="/accessibility" element={<AccessibilityPage />} />
               <Route path="/r/:path" element={<RouteRedirector />} />
               <Route path="/redirect/:path" element={<RouteRedirector />} />
@@ -46,9 +41,6 @@ const App: React.FC = () => {
                   <LazyNavigationDiagram />
                 </Suspense>
               } />
-              
-              {/* Default redirect to preferred language */}
-              <Route path="*" element={<AppRoutes />} />
             </Routes>
           </main>
           

@@ -16,6 +16,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 import type { FeaturesConfig } from '@/contexts/features/types';
 import { useLanguage, DEFAULT_LANGUAGE, FALLBACK_LANGUAGE, SupportedLanguage } from '@/contexts/LanguageContext';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { InfoIcon } from 'lucide-react';
 
 interface LocalizationSettingsProps {
   featuresConfig: FeaturesConfig;
@@ -28,7 +30,7 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
   onToggleFeature,
   isLoading = false
 }) => {
-  const { t, supportedLanguages } = useLanguage();
+  const { t, supportedLanguages, isMultiLanguageEnabled } = useLanguage();
 
   return (
     <Card>
@@ -68,12 +70,22 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {!isMultiLanguageEnabled && (
+              <Alert variant="warning" className="mt-2 bg-amber-50 dark:bg-amber-950/20">
+                <InfoIcon className="h-4 w-4" />
+                <AlertTitle>Funcionalidad desactivada</AlertTitle>
+                <AlertDescription>
+                  El soporte multi-idioma está actualmente desactivado. Actívalo para permitir que los usuarios seleccionen su idioma preferido.
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${!isMultiLanguageEnabled ? 'opacity-50' : ''}`}>
               <div>
                 <Label htmlFor="defaultLanguage" className="mb-2 block">
                   {t('settings.defaultLanguage', { default: 'Idioma predeterminado' })}
                 </Label>
-                <Select defaultValue={DEFAULT_LANGUAGE}>
+                <Select defaultValue={DEFAULT_LANGUAGE} disabled={!isMultiLanguageEnabled}>
                   <SelectTrigger id="defaultLanguage">
                     <SelectValue placeholder={t('settings.selectLanguage', { default: 'Seleccionar idioma' })} />
                   </SelectTrigger>
@@ -94,7 +106,7 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
                 <Label htmlFor="fallbackLanguage" className="mb-2 block">
                   {t('settings.fallbackLanguage', { default: 'Idioma de respaldo' })}
                 </Label>
-                <Select defaultValue={FALLBACK_LANGUAGE}>
+                <Select defaultValue={FALLBACK_LANGUAGE} disabled={!isMultiLanguageEnabled}>
                   <SelectTrigger id="fallbackLanguage">
                     <SelectValue placeholder={t('settings.selectFallbackLanguage', { default: 'Seleccionar idioma de respaldo' })} />
                   </SelectTrigger>
