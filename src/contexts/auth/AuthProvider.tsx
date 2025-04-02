@@ -37,6 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.info('Auth state changed:', event, newSession?.user?.id);
         
         if (event === 'SIGNED_OUT') {
+          console.info('User signed out, clearing state');
           setSession(null);
           setUser(null);
           setProfile(null);
@@ -45,24 +46,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         
         if (newSession?.user) {
+          console.info('New session detected, updating state:', newSession.user.id);
           setSession(newSession);
           setUser(newSession.user);
           
           // Use setTimeout to avoid potential deadlock with Supabase client
           setTimeout(async () => {
+            console.info('Fetching user profile for:', newSession.user.id);
             const userProfile = await ensureUserProfile(newSession.user.id, newSession.user.email || '');
             if (userProfile) {
+              console.info('Profile found/created with role:', userProfile.role);
               setProfile(userProfile);
               setUserRole(userProfile.role || null);
+            } else {
+              console.warn('Failed to get/create profile for user:', newSession.user.id);
             }
           }, 0);
         }
       }
     );
 
+    console.info('About to initialize auth state...');
+    
     const initializeAuth = async () => {
       setIsLoading(true);
       try {
+        console.info('Getting current session...');
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         
         if (currentSession?.user) {
@@ -70,6 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setSession(currentSession);
           setUser(currentSession.user);
           
+          console.info('Fetching profile for user:', currentSession.user.id);
           const userProfile = await ensureUserProfile(currentSession.user.id, currentSession.user.email || '');
           if (userProfile) {
             console.info('Found/created profile with role:', userProfile.role);
@@ -79,19 +89,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             console.warn('No profile found for user:', currentSession.user.id);
           }
         } else {
-          console.info('No active session found');
+          console.info('No active session found during initialization');
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
       } finally {
+        console.info('Auth initialization complete, state:', { 
+          hasUser: !!user, 
+          hasSession: !!session, 
+          userRole 
+        });
         setIsLoading(false);
         setIsInitialized(true);
       }
     };
 
     initializeAuth();
+    console.info('Auth initialization started...');
 
     return () => {
+      console.info('Cleaning up auth subscription');
       subscription.unsubscribe();
     };
   }, []);
@@ -100,7 +117,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
-      console.log('Intentando login con:', email);
+      console.log('Attempting login with:', email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -142,7 +159,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const isAuthenticated = !!session && !!user;
+  // We still calculate isAuthenticated for backwards compatibility
+  const isAuthenticated = !!session;
 
   const value = {
     user,
@@ -155,6 +173,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isInitialized,
     isAuthenticated
   };
+
+  console.log('AuthProvider value:', value);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
