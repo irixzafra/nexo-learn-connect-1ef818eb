@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Graduation, BookOpen, Lightbulb, Trophy, Calendar } from 'lucide-react';
+import { GraduationCap, BookOpen, Lightbulb, Trophy, Calendar } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -23,14 +23,14 @@ const EstudianteNavigation: React.FC<EstudianteNavigationProps> = ({
   return (
     <SidebarGroup
       label="Aprendizaje"
-      icon={Graduation}
+      icon={GraduationCap}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
       <SidebarMenu>
         <MenuItem
           to="/student/dashboard"
-          icon={Graduation}
+          icon={GraduationCap}
           label="Panel Principal"
           isCollapsed={isCollapsed}
         />

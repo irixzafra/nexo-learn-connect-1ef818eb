@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserRoleType } from '@/types/auth';
 
 /**
  * Hook para manejar la navegación personalizada según el rol del usuario
@@ -16,27 +17,15 @@ export const useRoleBasedNavigation = () => {
   useEffect(() => {
     // Determinar la ruta de inicio según el rol
     if (isAuthenticated) {
-      switch (userRole) {
+      switch (userRole as UserRoleType) {
         case 'admin':
           setHomePath('/admin/dashboard');
           break;
-        case 'sistemas':
-          setHomePath('/admin/dashboard');
-          break;
-        case 'instructor':
-          setHomePath('/instructor/dashboard');
-          break;
-        case 'moderator':
-          setHomePath('/moderation/dashboard');
-          break;
-        case 'content_creator':
-          setHomePath('/content/dashboard');
-          break;
-        case 'beta_tester':
-          setHomePath('/beta/dashboard');
+        case 'profesor':
+          setHomePath('/profesor/dashboard');
           break;
         default:
-          setHomePath('/dashboard'); // Usando dashboard en lugar de home
+          setHomePath('/student/dashboard'); // Default for student role
       }
     } else {
       setHomePath('/landing');
