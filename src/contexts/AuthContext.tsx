@@ -165,6 +165,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
+      console.log('Intentando login con:', email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -172,6 +173,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (error) {
         console.error('Error signing in:', error);
+        toast.error('Error al iniciar sesión', {
+          description: 'Verifica tus credenciales e intenta de nuevo',
+        });
         throw error;
       }
 

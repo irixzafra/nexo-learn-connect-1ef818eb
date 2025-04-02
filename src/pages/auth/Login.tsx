@@ -29,6 +29,7 @@ const Login: React.FC = () => {
   React.useEffect(() => {
     // If user is already logged in, redirect to dashboard
     if (user && session) {
+      console.log("Usuario ya autenticado, redirigiendo a dashboard");
       navigate('/dashboard');
     }
   }, [user, session, navigate]);
@@ -44,10 +45,12 @@ const Login: React.FC = () => {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
+      console.log("Intentando iniciar sesión con:", data.email);
       // Use the login method from AuthContext
       await login(data.email, data.password);
-      toast.success('Inicio de sesión exitoso');
-      navigate('/dashboard');
+      
+      // No redireccionamos aquí, dejamos que el useEffect se encargue
+      // cuando la sesión y el usuario se actualicen
     } catch (error) {
       console.error('Error de inicio de sesión:', error);
       toast.error('Error al iniciar sesión', {
