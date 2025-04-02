@@ -9,10 +9,9 @@ import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
 interface AdminPageLayoutProps {
   title: string;
   subtitle?: string;
-  children: ReactNode;
+  children?: ReactNode; // Making children optional
   backHref?: string;
   actions?: ReactNode;
-  // Added these properties to fix type errors
   tabs?: AdminTabItem[];
   defaultTabValue?: string;
   navigationItems?: AdminSubMenuItem[];
@@ -68,9 +67,12 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
         />
       )}
       
-      <div className="pb-6">
-        {children}
-      </div>
+      {/* Only render the children container if there are children */}
+      {children && (
+        <div className="pb-6">
+          {children}
+        </div>
+      )}
     </div>
   );
 };

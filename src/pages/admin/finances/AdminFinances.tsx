@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { 
@@ -78,7 +77,7 @@ interface FinancialAlert {
   isRead: boolean;
 }
 
-const AdminFinances: React.FC = () => {
+export const AdminFinances: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { tab } = useParams<{ tab?: string }>();
