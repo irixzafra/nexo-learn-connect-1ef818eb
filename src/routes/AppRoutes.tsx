@@ -35,13 +35,10 @@ const AppRoutes: React.FC = () => {
       />
       
       {/* Ruta App Base - AppLayout con Outlet para rutas anidadas */}
+      {/* PRUEBA DIAGNÓSTICA: SafeRouteWrapper temporalmente eliminado */}
       <Route 
         path="/app/*" 
-        element={
-          <SafeRouteWrapper>
-            <AppLayout />
-          </SafeRouteWrapper>
-        } 
+        element={<AppLayout />} 
       >
         {/* Rutas anidadas dentro de /app */}
         <Route index element={<StudentDashboard />} />
