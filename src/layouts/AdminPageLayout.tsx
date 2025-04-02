@@ -3,6 +3,8 @@ import React, { ReactNode } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import AdminNavTabs, { AdminTabItem } from '@/components/shared/AdminNavTabs';
+import { AdminSubMenuItem } from '@/components/admin/AdminSubMenu';
 
 interface AdminPageLayoutProps {
   title: string;
@@ -10,6 +12,11 @@ interface AdminPageLayoutProps {
   children: ReactNode;
   backHref?: string;
   actions?: ReactNode;
+  // Added these properties to fix type errors
+  tabs?: AdminTabItem[];
+  defaultTabValue?: string;
+  navigationItems?: AdminSubMenuItem[];
+  baseRoute?: string;
 }
 
 const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
@@ -18,6 +25,10 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
   children,
   backHref = '/app/admin/dashboard',
   actions,
+  tabs,
+  defaultTabValue,
+  navigationItems,
+  baseRoute
 }) => {
   const navigate = useNavigate();
   
@@ -48,6 +59,14 @@ const AdminPageLayout: React.FC<AdminPageLayoutProps> = ({
           </div>
         )}
       </div>
+      
+      {/* Render tabs if provided */}
+      {tabs && defaultTabValue && (
+        <AdminNavTabs 
+          tabs={tabs} 
+          defaultValue={defaultTabValue} 
+        />
+      )}
       
       <div className="pb-6">
         {children}

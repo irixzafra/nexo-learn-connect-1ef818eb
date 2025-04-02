@@ -9,7 +9,12 @@ type FeatureFlag =
   | 'enablePushNotifications'
   | 'enableTestData'
   | 'darkModeDefault'
-  | 'enableContentCreationTools';
+  | 'enableContentCreationTools'
+  | 'enableHreflangTags'
+  | 'enableRegionalContent'
+  | 'enableContextualHelp'
+  | 'enableAccessibility'
+  | 'enableAdvancedAccessibility';
 
 // Mock de configuración de características
 const FEATURES_CONFIG = {
@@ -19,7 +24,12 @@ const FEATURES_CONFIG = {
   enablePushNotifications: false,
   enableTestData: true,
   darkModeDefault: false,
-  enableContentCreationTools: true
+  enableContentCreationTools: true,
+  enableHreflangTags: true,
+  enableRegionalContent: false,
+  enableContextualHelp: true,
+  enableAccessibility: true,
+  enableAdvancedAccessibility: false
 };
 
 /**
