@@ -18,6 +18,10 @@ export interface Course {
   tags?: string[];
   progress?: number;
   learning_objectives?: string[];
+  duration_text?: string;
+  currency?: 'eur' | 'usd';
+  grants_certificate?: boolean;
+  level?: string;
 }
 
 export interface Instructor {
@@ -55,6 +59,7 @@ export interface Lesson {
   is_free?: boolean;
   completed?: boolean;
   duration?: number;
+  is_previewable?: boolean;
 }
 
 export interface Enrollment {
