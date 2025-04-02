@@ -16,15 +16,17 @@ const SafeRouteWrapper: React.FC<SafeRouteWrapperProps> = ({
   const { session, userRole, isLoading, isInitialized } = useAuth();
   const location = useLocation();
   
-  // Logs detallados para facilitar la depuración
+  // Logs ampliados para facilitar la depuración
   console.debug('🛡️ [SafeRoute] Evaluando acceso a ruta:', location.pathname);
-  console.debug('🛡️ [SafeRoute] Estado de autenticación:', { 
+  console.debug('🛡️ [SafeRoute] Estado de autenticación completo:', { 
     isInitialized, 
     isLoading, 
     hasSession: !!session, 
+    sessionExpiry: session?.expires_at ? new Date(session.expires_at * 1000).toISOString() : 'N/A',
     userRole,
     requiredRole,
-    currentPath: location.pathname
+    currentPath: location.pathname,
+    timestamp: new Date().toISOString()
   });
   
   // FASE 1: Verificación de inicialización
@@ -56,6 +58,13 @@ const SafeRouteWrapper: React.FC<SafeRouteWrapperProps> = ({
   if (!session) {
     console.debug('🛡️ [SafeRoute] No hay sesión activa, redirigiendo a login...');
     // Guardamos la ruta actual para redirigir después del login
+    return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />;
+  }
+  
+  // Verificación adicional de la validez de la sesión
+  const now = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
+  if (session.expires_at && session.expires_at < now) {
+    console.debug('🛡️ [SafeRoute] Sesión expirada, redirigiendo a login...');
     return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />;
   }
   

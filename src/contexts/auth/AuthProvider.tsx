@@ -31,15 +31,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     console.info('🔐 [Auth] Iniciando configuración del sistema de autenticación');
+    console.info('🔐 [Auth] Estado inicial:', { 
+      isInitialized, 
+      isLoading, 
+      hasUser: !!user, 
+      hasSession: !!session, 
+      userRole 
+    });
     
     // Primero: Configurar el listener de cambios de estado de autenticación
-    // IMPORTANTE: Este listener debe establecerse primero para capturar eventos futuros
     console.info('🔐 [Auth] Configurando listener de cambios en el estado de autenticación');
     
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
         console.info(`🔐 [Auth] Evento de autenticación detectado: ${event}`);
         console.info(`🔐 [Auth] Usuario en evento: ${newSession?.user?.id || 'ninguno'}`);
+        console.info(`🔐 [Auth] Detalles del evento:`, { event, hasNewSession: !!newSession, userId: newSession?.user?.id });
         
         if (event === 'SIGNED_OUT') {
           console.info('🔐 [Auth] Usuario cerró sesión, limpiando estado de autenticación');
@@ -52,13 +59,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         if (newSession?.user) {
           console.info(`🔐 [Auth] Sesión actualizada para usuario: ${newSession.user.id}`);
+          console.info(`🔐 [Auth] Datos de sesión:`, { 
+            userId: newSession.user.id, 
+            email: newSession.user.email,
+            hasAccessToken: !!newSession.access_token,
+            expiresAt: newSession.expires_at
+          });
           
           // Actualizaciones síncronas - inmediatas para mejorar UX
           setSession(newSession);
           setUser(newSession.user);
           
           // IMPORTANTE: Uso de setTimeout para evitar deadlock potencial con el cliente Supabase
-          // Esto resuelve un problema conocido al realizar operaciones Supabase dentro del callback
           setTimeout(async () => {
             try {
               console.info(`🔐 [Auth] Obteniendo perfil para usuario: ${newSession.user.id}`);
@@ -66,6 +78,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               
               if (userProfile) {
                 console.info(`🔐 [Auth] Perfil obtenido con rol: ${userProfile.role}`);
+                console.info(`🔐 [Auth] Detalles del perfil:`, userProfile);
                 setProfile(userProfile);
                 setUserRole(userProfile.role || null);
               } else {
@@ -87,18 +100,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       
       try {
-        console.info('🔐 [Auth] Consultando sesión actual en Supabase...');
-        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+        console.info('🔐 [Auth] ANTES de consultar sesión actual en Supabase...');
+        console.info('🔐 [Auth] Llamando a supabase.auth.getSession()...');
+        
+        const { data, error } = await supabase.auth.getSession();
+        const currentSession = data?.session;
+        
+        console.info('🔐 [Auth] DESPUÉS de consultar sesión en Supabase');
+        console.info(`🔐 [Auth] Resultado de getSession:`, { 
+          hasSession: !!currentSession, 
+          userId: currentSession?.user?.id,
+          error: error ? error.message : null,
+          rawData: data
+        });
         
         if (error) {
           console.error('❌ [Auth] Error al obtener la sesión:', error);
+          console.error('❌ [Auth] Detalles del error:', { 
+            message: error.message, 
+            status: error.status,
+            name: error.name
+          });
           throw error;
         }
         
-        console.info(`🔐 [Auth] Resultado de getSession: ${currentSession ? 'Sesión activa' : 'Sin sesión'}`);
-        
         if (currentSession?.user) {
           console.info(`🔐 [Auth] Sesión existente encontrada para: ${currentSession.user.id}`);
+          console.info(`🔐 [Auth] Datos de sesión:`, { 
+            userId: currentSession.user.id, 
+            email: currentSession.user.email,
+            hasAccessToken: !!currentSession.access_token,
+            expiresAt: currentSession.expires_at,
+          });
           
           setSession(currentSession);
           setUser(currentSession.user);
@@ -110,6 +143,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             
             if (userProfile) {
               console.info(`🔐 [Auth] Perfil obtenido exitosamente con rol: ${userProfile.role}`);
+              console.info(`🔐 [Auth] Detalles del perfil:`, userProfile);
               setProfile(userProfile);
               setUserRole(userProfile.role || null);
             } else {
@@ -117,25 +151,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
           } catch (profileError) {
             console.error('❌ [Auth] Error al obtener el perfil durante inicialización:', profileError);
+            console.error('❌ [Auth] Detalles del error de perfil:', { 
+              message: profileError instanceof Error ? profileError.message : 'Error desconocido',
+              stack: profileError instanceof Error ? profileError.stack : 'No stack disponible'
+            });
           }
         } else {
           console.info('🔐 [Auth] No hay sesión activa durante la inicialización');
         }
       } catch (error) {
         console.error('❌ [Auth] Error crítico durante inicialización de autenticación:', error);
+        console.error('❌ [Auth] Detalles del error de inicialización:', { 
+          message: error instanceof Error ? error.message : 'Error desconocido',
+          stack: error instanceof Error ? error.stack : 'No stack disponible',
+        });
       } finally {
         console.info('🔐 [Auth] Finalizando inicialización de autenticación');
-        console.info('🔐 [Auth] Estado final:', { 
+        console.info('🔐 [Auth] Estado final antes de marcar como inicializado:', { 
           hasUser: !!user, 
+          userId: user?.id,
           hasSession: !!session, 
+          sessionUserId: session?.user?.id,
           userRole,
-          profile: profile ? 'Cargado' : 'No disponible'
+          profileId: profile?.id,
+          profileLoaded: !!profile
         });
         
         setIsLoading(false);
         
         // CRÍTICO: Marcamos la inicialización como completada independientemente del resultado
-        // Esto permite que la aplicación continúe incluso si hay errores de autenticación
         console.info('🔐 [Auth] Estableciendo isInitialized a true - autenticación lista');
         setIsInitialized(true);
         console.timeEnd('🔐 [Auth] Tiempo total de inicialización');
@@ -164,6 +208,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (error) {
         console.error('❌ [Auth] Error de login:', error.message);
+        console.error('❌ [Auth] Detalles del error de login:', { 
+          message: error.message, 
+          status: error.status,
+          name: error.name
+        });
+        
         toast.error('Error al iniciar sesión', {
           description: 'Verifica tus credenciales e intenta de nuevo',
         });
@@ -173,12 +223,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (data?.user) {
         // El cambio de estado será manejado por el listener onAuthStateChange
         console.info(`🔐 [Auth] Login exitoso para: ${data.user.id}`);
+        console.info(`🔐 [Auth] Datos de login:`, { 
+          userId: data.user.id, 
+          email: data.user.email
+        });
+        
         toast.success('¡Bienvenido!', {
           description: 'Has iniciado sesión correctamente',
         });
       }
     } catch (error) {
       console.error('❌ [Auth] Error durante el proceso de login:', error);
+      console.error('❌ [Auth] Detalles del error de proceso login:', { 
+        message: error instanceof Error ? error.message : 'Error desconocido',
+        stack: error instanceof Error ? error.stack : 'No stack disponible'
+      });
+      
       toast.error('Error al iniciar sesión', {
         description: 'Verifica tus credenciales e intenta de nuevo',
       });
@@ -197,6 +257,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       toast.success('Has cerrado sesión correctamente');
     } catch (error) {
       console.error('❌ [Auth] Error durante el cierre de sesión:', error);
+      console.error('❌ [Auth] Detalles del error de logout:', { 
+        message: error instanceof Error ? error.message : 'Error desconocido',
+        stack: error instanceof Error ? error.stack : 'No stack disponible'
+      });
+      
       toast.error('Error al cerrar sesión');
       throw error;
     }
@@ -222,8 +287,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isInitialized,
     isLoading,
     isAuthenticated,
+    userId: user?.id,
+    sessionUserId: session?.user?.id,
     userRole,
-    hasProfile: !!profile
+    hasProfile: !!profile,
+    timestamp: new Date().toISOString()
   });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
