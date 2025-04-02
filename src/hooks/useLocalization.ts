@@ -1,16 +1,10 @@
 
-import { useLanguage } from '@/contexts/LanguageContext';
-
 /**
- * Hook for handling localization and translation of content
+ * Simplified hook for handling localization without depending on LanguageProvider
  */
 export const useLocalization = () => {
-  const { 
-    currentLanguage, 
-    t, 
-    supportedLanguages,
-    changeLanguage
-  } = useLanguage();
+  // Default language
+  const currentLanguage = 'es'; 
 
   /**
    * Returns the URL as-is (no language prefix)
@@ -31,11 +25,19 @@ export const useLocalization = () => {
   };
 
   /**
-   * Sets the language
-   * @param language The language to set
+   * Translation function placeholder
+   * @param key The translation key
+   * @returns The key itself as fallback
+   */
+  const t = (key: string): string => {
+    return key;
+  };
+
+  /**
+   * Placeholder for setting language
    */
   const setLanguage = (language: string) => {
-    changeLanguage(language as any);
+    console.log('Language setting disabled:', language);
   };
 
   return {
@@ -43,7 +45,7 @@ export const useLocalization = () => {
     localizeUrl,
     removeLanguagePrefix,
     t,
-    supportedLanguages,
+    supportedLanguages: ['es', 'en'],
     setLanguage,
     isMultiLanguageEnabled: false
   };

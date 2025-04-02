@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useLocalization } from '@/hooks/useLocalization';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
@@ -15,7 +14,8 @@ const Logo: React.FC<LogoProps> = ({
   variant = 'color',
   className
 }) => {
-  const { localizeUrl } = useLocalization();
+  // Instead of using localizeUrl from useLocalization, we'll use direct paths
+  const homePath = '/';
   
   const sizeClass = {
     small: 'h-6',
@@ -31,7 +31,7 @@ const Logo: React.FC<LogoProps> = ({
 
   return (
     <Link 
-      to={localizeUrl('/')} 
+      to={homePath} 
       className={cn(`flex items-center gap-2 font-bold ${textColor}`, className)}
     >
       <span className={`${sizeClass} font-heading`}>Nexo Learning</span>
