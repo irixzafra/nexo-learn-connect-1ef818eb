@@ -1,4 +1,5 @@
-import { Language } from '@/types/language';
+
+import { SupportedLanguage } from '@/contexts/LanguageContext';
 
 /**
  * Ensures a URL path has the correct language prefix
@@ -6,12 +7,12 @@ import { Language } from '@/types/language';
  * @param language The current language
  * @returns The path with language prefix
  */
-export const ensureLanguagePrefix = (path: string, language: Language): string => {
+export const ensureLanguagePrefix = (path: string, language: SupportedLanguage): string => {
   // Remove leading slash if present for consistent processing
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   
   // If path already starts with a language code, replace it
-  if (/^(es|en|pt|fr)\b/.test(cleanPath)) {
+  if (/^(es|en|pt|fr|de)\b/.test(cleanPath)) {
     return `/${language}/${cleanPath.substring(3)}`;
   }
   
@@ -29,7 +30,7 @@ export const getPathWithoutLanguage = (path: string): string => {
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   
   // If path starts with a language code, remove it
-  if (/^(es|en|pt|fr)\//.test(cleanPath)) {
+  if (/^(es|en|pt|fr|de)\//.test(cleanPath)) {
     return `/${cleanPath.substring(3)}`;
   }
   
@@ -43,7 +44,7 @@ export const getPathWithoutLanguage = (path: string): string => {
  * @param language The current language
  * @returns The localized URL
  */
-export const getLocalizedUrl = (path: string, language: Language): string => {
+export const getLocalizedUrl = (path: string, language: SupportedLanguage): string => {
   const pathWithoutLanguage = getPathWithoutLanguage(path);
   return ensureLanguagePrefix(pathWithoutLanguage, language);
 };
@@ -53,10 +54,10 @@ export const getLocalizedUrl = (path: string, language: Language): string => {
  * @param path The URL path to check
  * @returns The language found in the URL or null if none
  */
-export const getLanguageFromUrl = (path: string): Language | null => {
-  const match = path.match(/^\/(es|en|pt|fr)\//);
+export const getLanguageFromUrl = (path: string): SupportedLanguage | null => {
+  const match = path.match(/^\/(es|en|pt|fr|de)\//);
   if (match) {
-    return match[1] as Language;
+    return match[1] as SupportedLanguage;
   }
   return null;
 };
@@ -67,5 +68,5 @@ export const getLanguageFromUrl = (path: string): Language | null => {
  * @returns Whether the path has a valid language prefix
  */
 export const hasLanguagePrefix = (path: string): boolean => {
-  return /^\/(es|en|pt|fr)\//.test(path);
+  return /^\/(es|en|pt|fr|de)\//.test(path);
 };

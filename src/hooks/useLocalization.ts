@@ -1,7 +1,6 @@
 
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, SupportedLanguage } from '@/contexts/LanguageContext';
 import { getLocalizedUrl, getPathWithoutLanguage } from '@/utils/languageUtils';
-import { Language } from '@/types/language';
 
 /**
  * Hook for handling localization and translation of routes and content
@@ -20,7 +19,7 @@ export const useLocalization = () => {
    * @returns The localized URL
    */
   const localizeUrl = (path: string): string => {
-    return getLocalizedUrl(path, currentLanguage as Language);
+    return getLocalizedUrl(path, currentLanguage);
   };
 
   /**
@@ -37,7 +36,10 @@ export const useLocalization = () => {
    * @param language The language to set
    */
   const setLanguage = (language: string) => {
-    changeLanguage(language);
+    // Cast to SupportedLanguage only if it's actually supported
+    if (supportedLanguages.includes(language as SupportedLanguage)) {
+      changeLanguage(language as SupportedLanguage);
+    }
   };
 
   return {
