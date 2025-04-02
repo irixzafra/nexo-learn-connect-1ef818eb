@@ -14,7 +14,7 @@ import AprendizajeNavigation from './AprendizajeNavigation';
 import ProfesorNavigation from './ProfesorNavigation';
 import CalendarNavigation from './CalendarNavigation';
 import GamificationNavigation from './GamificationNavigation';
-import MessagesNavigation from './MessagesNavigation';
+// Remove the MessagesNavigation import since it's causing an error and not being used correctly
 import AdministracionNavigation from './AdministracionNavigation';
 import GestionNavigation from './GestionNavigation';
 import HomeNavigation from './HomeNavigation';
@@ -110,12 +110,12 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         onToggle={() => toggleGroup('community')}
       />
       
-      {/* Messages for all roles */}
-      <MessagesNavigation 
+      {/* Messages section - We're commenting this out since there's an import problem */}
+      {/* <MessagesNavigation 
         isOpen={expanded.community} 
         onToggle={() => toggleGroup('community')}
         messagesCount={messagesCount}
-      />
+      /> */}
       
       {/* Configuration for all roles */}
       <ConfiguracionNavigation 

@@ -39,6 +39,17 @@ import {
 
 import { routeMap } from '@/utils/routeUtils';
 
+// Export the DesignComponent type for use in other files
+export type DesignComponent = {
+  id?: string;
+  name: string;
+  category: string;
+  status: 'stable' | 'beta' | 'alpha' | 'experimental' | 'deprecated';
+  path?: string;
+  description: string;
+  usage?: string;
+};
+
 // Definir componentes de UI disponibles
 const uiComponents = [
   { 
@@ -371,7 +382,7 @@ const DesignSystemPage: React.FC = () => {
             <ChevronRight className="h-4 w-4" />
           </BreadcrumbSeparator>
           <BreadcrumbItem>
-            <BreadcrumbLink href={routeMap.adminDesignSystem} isCurrentPage>
+            <BreadcrumbLink href={routeMap.adminDesignSystem} aria-current="page">
               Sistema de Diseño
             </BreadcrumbLink>
           </BreadcrumbItem>

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Shield, Users, BookOpen, FileText, PanelLeft, Palette } from 'lucide-react';
-import { MenuItem } from '@/components/layout/sidebar/navigation/common/MenuItem';
+import MenuItem from '@/components/layout/sidebar/navigation/common/MenuItem';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { UserRoleType } from '@/types/auth';
 

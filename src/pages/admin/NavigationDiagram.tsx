@@ -36,7 +36,7 @@ const NavigationDiagram: React.FC = () => {
             <ChevronRight className="h-4 w-4" />
           </BreadcrumbSeparator>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/admin/navigation-diagram" isCurrentPage>
+            <BreadcrumbLink href="/admin/navigation-diagram" aria-current="page">
               Diagrama de Navegación
             </BreadcrumbLink>
           </BreadcrumbItem>
