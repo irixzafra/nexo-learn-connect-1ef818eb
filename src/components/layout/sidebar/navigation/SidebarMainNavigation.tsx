@@ -18,6 +18,7 @@ import MessagesNavigation from './MessagesNavigation';
 import AdministracionNavigation from './AdministracionNavigation';
 import GestionNavigation from './GestionNavigation';
 import HomeNavigation from './HomeNavigation';
+import ConfiguracionNavigation from './ConfiguracionNavigation';
 
 interface SidebarMainNavigationProps {
   effectiveRole: UserRoleType;
@@ -109,6 +110,12 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         isOpen={expanded.community} 
         onToggle={() => toggleGroup('community')}
         messagesCount={messagesCount}
+      />
+      
+      {/* Configuration for all roles */}
+      <ConfiguracionNavigation 
+        isOpen={expanded.configuration} 
+        onToggle={() => toggleGroup('configuration')}
       />
       
       {/* Administration section for admins */}
