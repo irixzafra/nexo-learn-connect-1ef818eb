@@ -14,7 +14,7 @@ const NotFound: React.FC = () => {
   
   return (
     <AppLayout>
-      <NotFoundLayout>
+      <NotFoundLayout reportBrokenLink={false}>
         <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 text-center">
           <div className={`space-y-6 max-w-md ${isHighContrastEnabled ? 'border border-primary p-8 rounded-lg' : ''}`}>
             <div className="bg-primary/10 p-4 rounded-full inline-block mx-auto">

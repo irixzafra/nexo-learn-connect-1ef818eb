@@ -11,7 +11,7 @@ interface NotFoundLayoutProps {
 
 const NotFoundLayout: React.FC<NotFoundLayoutProps> = ({ 
   children,
-  reportBrokenLink = true
+  reportBrokenLink = false
 }) => {
   const location = useLocation();
   const { t } = useLocalization();

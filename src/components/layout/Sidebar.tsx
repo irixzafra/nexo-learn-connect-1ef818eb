@@ -9,7 +9,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <aside 
-      className={`fixed inset-y-0 left-0 z-30 w-64 transform border-r bg-sidebar text-sidebar-foreground transition-transform duration-200 ease-in-out md:static md:translate-x-0 
+      className={`fixed inset-y-0 left-0 z-30 w-64 transform border-r bg-background transition-transform duration-200 ease-in-out md:static md:translate-x-0 
         ${isExpanded ? 'translate-x-0' : '-translate-x-full'}`}
     >
       <div className="flex h-full flex-col">
