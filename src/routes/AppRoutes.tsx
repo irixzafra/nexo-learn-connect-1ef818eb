@@ -41,6 +41,25 @@ const AppRoutes: React.FC = () => {
           />
         </PublicLayout>
       } />
+
+      {/* Rutas de footer */}
+      <Route path="terms" element={
+        <PublicLayout>
+          <PlaceholderPage 
+            title="Términos de Servicio" 
+            subtitle="Términos y condiciones de uso de Nexo Learning" 
+          />
+        </PublicLayout>
+      } />
+
+      <Route path="privacy" element={
+        <PublicLayout>
+          <PlaceholderPage 
+            title="Política de Privacidad" 
+            subtitle="Información sobre cómo protegemos tus datos" 
+          />
+        </PublicLayout>
+      } />
       
       {/* Rutas de autenticación */}
       <Route path="auth/*" element={
@@ -49,9 +68,9 @@ const AppRoutes: React.FC = () => {
         </AuthLayout>
       } />
       
-      {/* Rutas de aplicación autenticada */}
+      {/* Rutas de aplicación autenticada - Corregido para usar path="/app/*" */}
       <Route 
-        path="app" 
+        path="/app" 
         element={
           <SafeRouteWrapper>
             <AppLayout />
