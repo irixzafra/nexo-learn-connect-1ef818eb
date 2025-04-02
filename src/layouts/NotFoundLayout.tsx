@@ -1,7 +1,5 @@
 
-import React, { ReactNode } from 'react';
-import AppLayout from './AppLayout';
-import { useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -42,9 +40,9 @@ const NotFoundLayout: React.FC<NotFoundLayoutProps> = ({
   }, [location.pathname, reportBrokenLink, t]);
 
   return (
-    <AppLayout>
+    <div className="flex flex-col min-h-screen w-full">
       {children}
-    </AppLayout>
+    </div>
   );
 };
 
