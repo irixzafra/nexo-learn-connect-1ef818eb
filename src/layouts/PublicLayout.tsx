@@ -6,16 +6,22 @@ import { Toaster } from '@/components/ui/toaster';
 
 interface PublicLayoutProps {
   children: ReactNode;
+  hideNav?: boolean;
+  hideFooter?: boolean;
 }
 
-const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
+const PublicLayout: React.FC<PublicLayoutProps> = ({ 
+  children, 
+  hideNav = false, 
+  hideFooter = false 
+}) => {
   return (
     <div className="flex flex-col min-h-screen">
-      <PublicHeader />
+      {!hideNav && <PublicHeader />}
       <main className="flex-grow">
         {children}
       </main>
-      <PublicFooter />
+      {!hideFooter && <PublicFooter />}
       <Toaster />
     </div>
   );
