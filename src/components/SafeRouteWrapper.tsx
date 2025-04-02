@@ -16,23 +16,31 @@ const SafeRouteWrapper: React.FC<SafeRouteWrapperProps> = ({
   const { session, userRole, isLoading, isInitialized } = useAuth();
   const location = useLocation();
   
-  console.log('SafeRouteWrapper evaluating:', location.pathname);
-  console.log('SafeRouteWrapper auth state:', { isLoading, isInitialized, session, userRole });
+  // Logs detallados para facilitar la depuración
+  console.debug('🛡️ [SafeRoute] Evaluando ruta:', location.pathname);
+  console.debug('🛡️ [SafeRoute] Estado de autenticación:', { 
+    isLoading, 
+    isInitialized, 
+    hasSession: !!session, 
+    userRole,
+    requiredRole 
+  });
   
-  // Verificamos primero si la autenticación se ha inicializado
+  // Paso 1: Verificar si la autenticación se ha inicializado
   if (!isInitialized) {
-    console.log('SafeRouteWrapper: isInitialized is false, showing initialization spinner...');
+    console.debug('🛡️ [SafeRoute] isInitialized es false, mostrando spinner de inicialización...');
     return (
-      <div className="h-screen w-full flex justify-center items-center">
-        <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
-        <span className="ml-3 text-primary">Inicializando...</span>
+      <div className="h-screen w-full flex flex-col justify-center items-center">
+        <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
+        <span className="text-primary font-medium">Inicializando autenticación...</span>
+        <span className="text-sm text-muted-foreground mt-2">Esto puede tardar unos segundos</span>
       </div>
     );
   }
   
-  // Show loading spinner while auth state is being determined
+  // Paso 2: Verificar si aún se está cargando el estado de autenticación
   if (isLoading) {
-    console.log('SafeRouteWrapper: isLoading, showing spinner...');
+    console.debug('🛡️ [SafeRoute] isLoading es true, mostrando spinner...');
     return (
       <div className="h-screen w-full flex justify-center items-center">
         <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -40,29 +48,33 @@ const SafeRouteWrapper: React.FC<SafeRouteWrapperProps> = ({
     );
   }
   
-  // If not authenticated (no session after loading), redirect to login
+  // Paso 3: Verificar si hay sesión activa
   if (!session) {
-    console.log('SafeRouteWrapper: No session, redirecting to login...');
+    console.debug('🛡️ [SafeRoute] No hay sesión, redirigiendo a login...');
     return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />;
   }
   
-  // If requiredRole is specified, check if user has the required role
+  // Paso 4: Verificar roles requeridos (si se especificaron)
   if (requiredRole) {
     const hasRequiredRole = Array.isArray(requiredRole)
       ? requiredRole.includes(userRole as UserRoleType)
       : requiredRole === userRole;
     
-    console.log('SafeRouteWrapper: Role check:', { requiredRole, userRole, hasRequiredRole });
+    console.debug('🛡️ [SafeRoute] Verificación de rol:', { 
+      requiredRole, 
+      userRole, 
+      hasRequiredRole 
+    });
     
     if (!hasRequiredRole) {
-      console.log('SafeRouteWrapper: Role check failed, redirecting to app...');
-      // Redirect to the app main page if role doesn't match
+      console.debug('🛡️ [SafeRoute] Verificación de rol fallida, redirigiendo a app...');
+      // Redirigir a la página principal de la aplicación si el rol no coincide
       return <Navigate to="/app" replace />;
     }
   }
   
-  // If session exists and (no role required or role matches), render children
-  console.log('SafeRouteWrapper: All checks passed, rendering children...');
+  // Paso 5: Si la sesión existe y (no se requiere un rol o el rol coincide), renderizar los hijos
+  console.debug('🛡️ [SafeRoute] Todas las verificaciones pasadas, renderizando hijos...');
   return <>{children}</>;
 };
 
