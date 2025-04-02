@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { GraduationCap, Users, BookOpen, Award, LineChart } from 'lucide-react';
+import { Graduation, BookOpen, Lightbulb, Trophy, Calendar } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -8,12 +8,12 @@ import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import MenuItem from './common/MenuItem';
 
-interface ProfesorNavigationProps {
+interface EstudianteNavigationProps {
   isOpen: boolean;
   onToggle: () => void;
 }
 
-const ProfesorNavigation: React.FC<ProfesorNavigationProps> = ({ 
+const EstudianteNavigation: React.FC<EstudianteNavigationProps> = ({ 
   isOpen, 
   onToggle 
 }) => {
@@ -22,37 +22,44 @@ const ProfesorNavigation: React.FC<ProfesorNavigationProps> = ({
 
   return (
     <SidebarGroup
-      label="Profesor"
-      icon={GraduationCap}
+      label="Aprendizaje"
+      icon={Graduation}
       isExpanded={isOpen}
       onToggle={onToggle}
     >
       <SidebarMenu>
         <MenuItem
-          to="/profesor/dashboard"
-          icon={LineChart}
+          to="/student/dashboard"
+          icon={Graduation}
           label="Panel Principal"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/profesor/courses"
+          to="/student/courses"
           icon={BookOpen}
           label="Mis Cursos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/profesor/students"
-          icon={Users}
-          label="Estudiantes"
+          to="/student/learning-paths"
+          icon={Lightbulb}
+          label="Rutas de Aprendizaje"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/profesor/certificates"
-          icon={Award}
-          label="Certificados"
+          to="/student/achievements"
+          icon={Trophy}
+          label="Logros y Certificados"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/student/calendar"
+          icon={Calendar}
+          label="Calendario Académico"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>
@@ -60,4 +67,4 @@ const ProfesorNavigation: React.FC<ProfesorNavigationProps> = ({
   );
 };
 
-export default ProfesorNavigation;
+export default EstudianteNavigation;

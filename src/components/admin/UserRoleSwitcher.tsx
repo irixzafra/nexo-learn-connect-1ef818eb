@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { UserRoleType, toUserRoleType, asUserRoleType } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useToast } from '@/components/ui/use-toast';
-import { UserCog, Shield, User, Terminal, Ghost, ChevronDown } from 'lucide-react';
+import { Shield, BookOpen, GraduationCap, ChevronDown } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface UserRoleSwitcherProps {
@@ -59,14 +59,10 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
     switch (role) {
       case 'admin':
         return <Shield className="h-4 w-4" />;
-      case 'instructor':
-        return <UserCog className="h-4 w-4" />;
-      case 'sistemas':
-        return <Terminal className="h-4 w-4" />;
-      case 'anonimo':
-        return <Ghost className="h-4 w-4" />;
+      case 'profesor':
+        return <BookOpen className="h-4 w-4" />;
       case 'student':
-        return <User className="h-4 w-4" />;
+        return <GraduationCap className="h-4 w-4" />;
       default:
         return null;
     }
@@ -76,14 +72,10 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
     switch (role) {
       case 'admin':
         return 'Administrador';
-      case 'instructor':
-        return 'Instructor';
+      case 'profesor':
+        return 'Profesor';
       case 'student':
         return 'Estudiante';
-      case 'sistemas':
-        return 'Sistemas'; 
-      case 'anonimo':
-        return 'Anónimo';
       default:
         return role;
     }
@@ -91,10 +83,8 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
 
   const availableRoles: UserRoleType[] = [
     'admin', 
-    'instructor', 
-    'student', 
-    'sistemas', 
-    'anonimo'
+    'profesor', 
+    'student'
   ];
 
   return (

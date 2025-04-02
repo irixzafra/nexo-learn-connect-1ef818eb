@@ -8,17 +8,18 @@ import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 // Import specific navigation components
 import DashboardNavigation from './DashboardNavigation';
 import CursosNavigation from './CursosNavigation';
-import MisCursosNavigation from './MisCursosNavigation';
 import ComunidadNavigation from './ComunidadNavigation';
-import AprendizajeNavigation from './AprendizajeNavigation';
-import ProfesorNavigation from './ProfesorNavigation';
 import CalendarNavigation from './CalendarNavigation';
 import GamificationNavigation from './GamificationNavigation';
-// Remove the MessagesNavigation import since it's causing an error and not being used correctly
-import AdministracionNavigation from './AdministracionNavigation';
-import GestionNavigation from './GestionNavigation';
-import HomeNavigation from './HomeNavigation';
 import ConfiguracionNavigation from './ConfiguracionNavigation';
+
+// Import role-specific navigation components
+import EstudianteNavigation from './EstudianteNavigation';
+import ProfesorNavigation from './ProfesorNavigation';
+import AdminNavigation from './AdminNavigation';
+
+// Import home navigation
+import HomeNavigation from './HomeNavigation';
 
 interface SidebarMainNavigationProps {
   effectiveRole: UserRoleType;
@@ -39,11 +40,6 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
 
   // Memoize the home path to avoid recalculations
   const homePath = React.useMemo(() => getHomePath(), [getHomePath]);
-
-  // Determina si el usuario es estudiante (para evitar mostrar navegación duplicada)
-  const isStudent = effectiveRole === 'student';
-  // Determina si el usuario es instructor o admin (para mostrar navegación de profesor)
-  const isTeacher = effectiveRole === 'instructor' || effectiveRole === 'admin';
 
   return (
     <div className="flex-1 overflow-auto py-2">
@@ -67,11 +63,25 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         onToggle={() => toggleGroup('learning')} 
       />
       
-      {/* My Courses section for students */}
-      {isStudent && (
-        <MisCursosNavigation 
+      {/* Role-specific navigation sections */}
+      {effectiveRole === 'student' && (
+        <EstudianteNavigation 
           isOpen={expanded.learning} 
           onToggle={() => toggleGroup('learning')}
+        />
+      )}
+      
+      {effectiveRole === 'profesor' && (
+        <ProfesorNavigation 
+          isOpen={expanded.instructor} 
+          onToggle={() => toggleGroup('instructor')}
+        />
+      )}
+      
+      {effectiveRole === 'admin' && (
+        <AdminNavigation 
+          isOpen={expanded.administration} 
+          onToggle={() => toggleGroup('administration')}
         />
       )}
       
@@ -81,22 +91,6 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         onToggle={() => toggleGroup('community')}
         messagesCount={messagesCount}
       />
-      
-      {/* Learning section for students */}
-      {isStudent && (
-        <AprendizajeNavigation 
-          isOpen={expanded.learning} 
-          onToggle={() => toggleGroup('learning')}
-        />
-      )}
-      
-      {/* Teaching section for instructors */}
-      {isTeacher && (
-        <ProfesorNavigation 
-          isOpen={expanded.instructor} 
-          onToggle={() => toggleGroup('instructor')}
-        />
-      )}
       
       {/* Calendar navigation for all roles */}
       <CalendarNavigation 
@@ -110,31 +104,11 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         onToggle={() => toggleGroup('community')}
       />
       
-      {/* Messages section - We're removing this section completely as it's causing type errors */}
-      
       {/* Configuration for all roles */}
       <ConfiguracionNavigation 
         isOpen={expanded.configuration} 
         onToggle={() => toggleGroup('configuration')}
       />
-      
-      {/* Administration section for admins */}
-      {(effectiveRole === 'admin' || effectiveRole === 'sistemas') && (
-        <AdministracionNavigation 
-          isOpen={expanded.administration} 
-          onToggle={() => toggleGroup('administration')}
-          userRole={effectiveRole}
-        />
-      )}
-      
-      {/* Management section for admins and moderators */}
-      {(effectiveRole === 'admin' || effectiveRole === 'moderator' || effectiveRole === 'sistemas') && (
-        <GestionNavigation 
-          isOpen={expanded.administration} 
-          onToggle={() => toggleGroup('administration')}
-          role={effectiveRole}
-        />
-      )}
     </div>
   );
 };

@@ -12,7 +12,7 @@ import EditLesson from '@/pages/instructor/EditLesson';
 import CourseEditor from '@/pages/instructor/CourseEditor';
 import NotFound from '@/pages/NotFound';
 
-const InstructorRoutes: React.FC = () => {
+const ProfesorRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={
@@ -70,4 +70,4 @@ const InstructorRoutes: React.FC = () => {
   );
 };
 
-export default InstructorRoutes;
+export default ProfesorRoutes;

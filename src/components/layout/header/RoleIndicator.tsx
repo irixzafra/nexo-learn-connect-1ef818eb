@@ -3,7 +3,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { UserRoleType } from '@/types/auth';
 import { getRoleBadgeColor, getRoleName } from '@/utils/roleUtils';
-import { Shield, UserCog, User, Terminal, Ghost } from 'lucide-react';
+import { Shield, BookOpen, GraduationCap } from 'lucide-react';
 
 export interface RoleIndicatorProps {
   role: UserRoleType;
@@ -14,14 +14,12 @@ export const RoleIndicator: React.FC<RoleIndicatorProps> = ({ role }) => {
     switch (role) {
       case 'admin':
         return <Shield className="h-4 w-4 mr-2" />;
-      case 'instructor':
-        return <UserCog className="h-4 w-4 mr-2" />;
-      case 'sistemas':
-        return <Terminal className="h-4 w-4 mr-2" />;
-      case 'anonimo':
-        return <Ghost className="h-4 w-4 mr-2" />;
+      case 'profesor':
+        return <BookOpen className="h-4 w-4 mr-2" />;
+      case 'student':
+        return <GraduationCap className="h-4 w-4 mr-2" />;
       default:
-        return <User className="h-4 w-4 mr-2" />;
+        return <GraduationCap className="h-4 w-4 mr-2" />;
     }
   };
   
