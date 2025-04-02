@@ -5,27 +5,25 @@ import AppRoutes from './routes/AppRoutes';
 import { Toaster } from './components/ui/toaster';
 import { KeyboardShortcuts } from './components/accessibility/KeyboardShortcuts';
 import SkipLinks from './components/accessibility/SkipLinks';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/auth';
 import { LanguageProvider } from './contexts/LanguageContext';
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <AuthProvider>
+    <AuthProvider>
+      <Router>
         <LanguageProvider>
           <div className="app">
             <SkipLinks />
             <KeyboardShortcuts />
             
-            <main id="main-content">
-              <AppRoutes />
-            </main>
+            <AppRoutes />
             
             <Toaster />
           </div>
         </LanguageProvider>
-      </AuthProvider>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 };
 
