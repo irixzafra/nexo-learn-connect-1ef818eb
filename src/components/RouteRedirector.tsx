@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import NotFound from '@/pages/NotFound';
 import { isValidPath } from '@/utils/routeValidation';
 import { toast } from 'sonner';
-import NotFoundLayout from '@/layouts/NotFoundLayout';
 
 export interface RouteRedirectorProps {
   children?: ReactNode;
@@ -15,7 +14,7 @@ export interface RouteRedirectorProps {
 
 const RouteRedirector: React.FC<RouteRedirectorProps> = ({ 
   children,
-  fallback = <NotFoundLayout><NotFound /></NotFoundLayout>,
+  fallback = <NotFound />,
   reportBrokenLinks = true
 }) => {
   const navigate = useNavigate();
