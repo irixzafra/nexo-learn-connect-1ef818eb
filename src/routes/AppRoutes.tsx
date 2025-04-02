@@ -6,16 +6,9 @@ import LandingPage from '@/pages/LandingPage';
 import PlaceholderPage from '@/components/PlaceholderPage';
 import SafeRouteWrapper from '@/components/SafeRouteWrapper';
 import AuthRoutes from './AuthRoutes';
-import AdminRoutes from './AdminRoutes';
-import ProfileRoutes from './ProfileRoutes';
-import CourseRoutes from './CourseRoutes';
-import ProfesorRoutes from './InstructorRoutes';
-import ModeratorRoutes from './ModeratorRoutes';
-import SettingsRoutes from './SettingsRoutes';
-import AccessibilityRoutes from './AccessibilityRoutes';
-import PaymentRoutes from './PaymentRoutes';
-import AppLayout from '@/layouts/AppLayout';
 import PublicLayout from '@/layouts/PublicLayout';
+import AuthLayout from '@/layouts/AuthLayout';
+import AppLayout from '@/layouts/AppLayout';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -23,19 +16,7 @@ const AppRoutes: React.FC = () => {
       {/* Ruta raíz - Página principal */}
       <Route path="/" element={<PublicLayout><LandingPage /></PublicLayout>} />
       
-      {/* Rutas específicas que corresponden a secciones principales */}
-      <Route path="dashboard" element={
-        <SafeRouteWrapper>
-          <AppLayout>
-            <PlaceholderPage 
-              title="Dashboard" 
-              subtitle="Panel principal del usuario" 
-            />
-          </AppLayout>
-        </SafeRouteWrapper>
-      } />
-      
-      {/* Rutas de catálogo de cursos */}
+      {/* Rutas públicas específicas */}
       <Route path="courses" element={
         <PublicLayout>
           <PlaceholderPage 
@@ -45,55 +26,44 @@ const AppRoutes: React.FC = () => {
         </PublicLayout>
       } />
       
-      {/* Rutas anidadas - Autenticadas con wrapper */}
-      <Route path="profile/*" element={
-        <SafeRouteWrapper>
-          <ProfileRoutes />
-        </SafeRouteWrapper>
-      } />
-      
-      <Route path="settings/*" element={
-        <SafeRouteWrapper>
-          <SettingsRoutes />
-        </SafeRouteWrapper>
-      } />
-      
-      <Route path="course/*" element={
-        <SafeRouteWrapper>
-          <CourseRoutes />
-        </SafeRouteWrapper>
-      } />
-      
-      {/* Rutas con roles específicos */}
-      <Route path="admin/*" element={
-        <SafeRouteWrapper requiredRole={['admin']}>
-          <AdminRoutes />
-        </SafeRouteWrapper>
-      } />
-      
-      <Route path="profesor/*" element={
-        <SafeRouteWrapper requiredRole={['profesor', 'admin']}>
-          <ProfesorRoutes />
-        </SafeRouteWrapper>
-      } />
-      
-      <Route path="moderator/*" element={
-        <SafeRouteWrapper>
-          <ModeratorRoutes />
-        </SafeRouteWrapper>
+      <Route path="about-us" element={
+        <PublicLayout>
+          <PlaceholderPage 
+            title="Sobre Nosotros" 
+            subtitle="Conoce más acerca de Nexo Learning" 
+          />
+        </PublicLayout>
       } />
       
       {/* Rutas de autenticación */}
-      <Route path="auth/*" element={<AuthRoutes />} />
-      
-      {/* Otras rutas específicas con wrappers */}
-      <Route path="accessibility/*" element={
-        <SafeRouteWrapper>
-          <AccessibilityRoutes />
-        </SafeRouteWrapper>
+      <Route path="auth/*" element={
+        <AuthLayout>
+          <AuthRoutes />
+        </AuthLayout>
       } />
       
-      <Route path="payment/:status" element={<PaymentRoutes />} />
+      {/* Rutas de aplicación autenticada */}
+      <Route path="app/*" element={
+        <SafeRouteWrapper>
+          <AppLayout>
+            <Routes>
+              <Route path="/" element={
+                <PlaceholderPage 
+                  title="Dashboard" 
+                  subtitle="Panel principal del usuario autenticado" 
+                />
+              } />
+              <Route path="dashboard" element={
+                <PlaceholderPage 
+                  title="Dashboard" 
+                  subtitle="Panel principal del usuario autenticado" 
+                />
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AppLayout>
+        </SafeRouteWrapper>
+      } />
       
       {/* Ruta para páginas no encontradas - siempre debe ser la última */}
       <Route path="*" element={<PublicLayout><NotFound /></PublicLayout>} />

@@ -2,6 +2,7 @@
 import React from 'react';
 import Logo from '@/components/Logo';
 import { Toaster } from '@/components/ui/toaster';
+import { Link } from 'react-router-dom';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -12,7 +13,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
     <div className="min-h-screen flex flex-col">
       <header className="py-4 px-6 border-b">
         <div className="container mx-auto flex justify-center">
-          <Logo />
+          <Link to="/">
+            <Logo />
+          </Link>
         </div>
       </header>
       

@@ -1,21 +1,22 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Toaster } from 'sonner';
+import AuthenticatedHeader from '@/components/layout/AuthenticatedHeader';
 import { useAuth } from '@/contexts/AuthContext';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import Sidebar from '@/components/layout/Sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar/provider';
 import { Loader } from 'lucide-react';
-import GlobalRoleSwitcher from '@/components/layout/GlobalRoleSwitcher';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { isLoading, isAuthenticated } = useAuth();
+  const { isLoading } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prev => !prev);
+  };
 
   if (isLoading) {
     return (
@@ -27,23 +28,29 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   }
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <div className="flex flex-1 overflow-hidden">
-          {isAuthenticated && <Sidebar />}
-          <main className="flex-1 overflow-y-auto p-4 md:p-6">
-            {/* Admin Role Switcher - aparece en todas las páginas para administradores */}
-            <div className="mb-4">
-              <GlobalRoleSwitcher />
+    <div className="flex min-h-screen flex-col">
+      <AuthenticatedHeader onToggleSidebar={toggleSidebar} />
+      <div className="flex flex-1 overflow-hidden">
+        {/* Placeholder para Sidebar */}
+        <div className={`w-64 border-r bg-gray-50 dark:bg-gray-900 transition-all duration-300 ${
+          isSidebarOpen ? 'block' : 'hidden md:block'
+        }`}>
+          {/* El contenido del Sidebar se implementará más adelante */}
+          <div className="p-4">
+            <h3 className="font-medium mb-4">Navegación</h3>
+            <div className="space-y-1">
+              <p className="p-2 text-muted-foreground text-sm rounded-md">
+                Sidebar (placeholder)
+              </p>
             </div>
-            {children || <Outlet />}
-          </main>
+          </div>
         </div>
-        <Footer />
-        <Toaster position="top-right" />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+          {children || <Outlet />}
+        </main>
       </div>
-    </SidebarProvider>
+      <Toaster position="top-right" />
+    </div>
   );
 };
 

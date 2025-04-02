@@ -1,48 +1,21 @@
 
 import React, { ReactNode } from 'react';
-import LandingNav from '@/components/LandingNav';
-import MinimalistFooter from '@/components/landing/MinimalistFooter';
-import { useAuth } from '@/contexts/AuthContext';
+import PublicHeader from '@/components/layout/PublicHeader';
+import PublicFooter from '@/components/layout/PublicFooter';
 import { Toaster } from '@/components/ui/toaster';
-import SectionTag from '@/components/layout/SectionTag';
 
 interface PublicLayoutProps {
   children: ReactNode;
-  hideNav?: boolean;
-  hideFooter?: boolean;
 }
 
-const PublicLayout: React.FC<PublicLayoutProps> = ({ 
-  children, 
-  hideNav = false,
-  hideFooter = false 
-}) => {
-  const { userRole } = useAuth();
-  
+const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen w-full relative">
-      <SectionTag name="PublicLayout" />
-      
-      {!hideNav && (
-        <header className="relative">
-          <SectionTag name="Header" className="z-50" />
-          <LandingNav />
-          <div className="h-16 md:h-20" aria-hidden="true"></div>
-        </header>
-      )}
-      
-      <main className="flex-grow relative w-full">
-        <SectionTag name="MainContent" />
+    <div className="flex flex-col min-h-screen">
+      <PublicHeader />
+      <main className="flex-grow">
         {children}
       </main>
-      
-      {!hideFooter && (
-        <footer className="relative w-full">
-          <SectionTag name="Footer" />
-          <MinimalistFooter />
-        </footer>
-      )}
-      
+      <PublicFooter />
       <Toaster />
     </div>
   );
