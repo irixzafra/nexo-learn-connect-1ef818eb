@@ -12,14 +12,13 @@ import TestDataSettings from './TestDataSettings';
 import NotificationSettings from './NotificationSettings';
 import { useFeatures } from '@/hooks/useFeatures';
 import { ExtendedFeatureId } from '@/contexts/features/types';
+import { createSafeToggleFunction } from '@/utils/featureUtils';
 
 export const SettingsTabs: React.FC = () => {
-  const { isEnabled, toggleFeature, isLoading, featuresConfig } = useFeatures();
+  const { featuresConfig, toggleFeature, isLoading, isFeatureEnabled } = useFeatures();
 
-  // Pass the features config and toggle function to children
-  const handleToggleFeature = (featureId: ExtendedFeatureId, value?: boolean) => {
-    return toggleFeature(featureId, value);
-  };
+  // Create a type-safe toggle function that always returns a Promise
+  const handleToggleFeature = createSafeToggleFunction(toggleFeature);
 
   return (
     <Tabs defaultValue="appearance" className="w-full">

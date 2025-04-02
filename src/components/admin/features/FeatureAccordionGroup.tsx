@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Loader2 } from 'lucide-react';
 import type { ExtendedFeatureId } from '@/contexts/features/types';
+import { isFeatureEnabled, createSafeToggleFunction } from '@/utils/featureUtils';
 
 export interface FeatureAccordionGroupProps {
   title: string;
@@ -26,10 +27,21 @@ export const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({
   title,
   features,
 }) => {
-  const { isEnabled, toggleFeature, isLoading } = useFeatures();
+  const { featuresConfig, toggleFeature, isLoading, isFeatureEnabled: contextIsFeatureEnabled } = useFeatures();
+
+  // Use either the context method or the utility function as a fallback
+  const checkIfEnabled = (featureId: ExtendedFeatureId): boolean => {
+    if (typeof contextIsFeatureEnabled === 'function') {
+      return contextIsFeatureEnabled(featureId);
+    }
+    return isFeatureEnabled(featuresConfig, featureId);
+  };
+
+  // Ensure the toggle function always returns a Promise
+  const safeToggleFeature = createSafeToggleFunction(toggleFeature);
 
   const handleToggle = async (featureId: ExtendedFeatureId, newValue: boolean) => {
-    await toggleFeature(featureId, newValue);
+    await safeToggleFeature(featureId, newValue);
   };
 
   return (
@@ -58,7 +70,7 @@ export const FeatureAccordionGroup: React.FC<FeatureAccordionGroupProps> = ({
                   {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                   <Switch
                     id={String(feature.id)}
-                    checked={isEnabled(feature.id)}
+                    checked={checkIfEnabled(feature.id)}
                     onCheckedChange={(checked) => handleToggle(feature.id, checked)}
                     disabled={isLoading}
                   />

@@ -8,6 +8,7 @@ import DataSettings from '@/features/admin/components/settings/DataSettings';
 import IntegrationsPage from '@/pages/admin/settings/integrations';
 import { ExtendedFeatureId } from '@/contexts/features/types';
 import AnalyticsSettings from '@/pages/admin/settings/analytics';
+import { createSafeToggleFunction, isFeatureEnabled } from '@/utils/featureUtils';
 
 // Placeholder components until actual ones are created
 const GeneralSettings = () => <div>Configuración General</div>;
@@ -16,12 +17,18 @@ const DesignSettings = () => <div>Diseño</div>;
 const RolesSettings = () => <div>Roles y Permisos</div>;
 
 const SettingsRoutes: React.FC = () => {
-  const { isEnabled, toggleFeature, featuresConfig } = useFeatures();
+  const { featuresConfig, toggleFeature, isFeatureEnabled: contextIsFeatureEnabled } = useFeatures();
+
+  // Use either the context method or the utility function as a fallback
+  const checkIfEnabled = (featureId: ExtendedFeatureId): boolean => {
+    if (typeof contextIsFeatureEnabled === 'function') {
+      return contextIsFeatureEnabled(featureId);
+    }
+    return isFeatureEnabled(featuresConfig, featureId);
+  };
 
   // Create a type-safe wrapper for toggleFeature
-  const handleToggleFeature = (feature: string) => {
-    toggleFeature(feature as ExtendedFeatureId);
-  };
+  const handleToggleFeature = createSafeToggleFunction(toggleFeature);
 
   return (
     <Routes>

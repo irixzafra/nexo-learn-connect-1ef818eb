@@ -6,6 +6,7 @@ import { AnalyticsSettings } from '@/features/admin/components/settings/Analytic
 import { useFeatures } from '@/hooks/useFeatures';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle } from 'lucide-react';
+import { createSafeToggleFunction } from '@/utils/featureUtils';
 
 const AnalyticsSettingsPage: React.FC = () => {
   const { featuresConfig, toggleFeature, isLoading } = useFeatures();
@@ -37,9 +38,7 @@ const AnalyticsSettingsPage: React.FC = () => {
     );
   }
 
-  const handleToggleFeature = (feature: keyof typeof featuresConfig, value: boolean) => {
-    toggleFeature(feature as any, value);
-  };
+  const handleToggleFeature = createSafeToggleFunction(toggleFeature);
 
   return (
     <AdminPageLayout 
