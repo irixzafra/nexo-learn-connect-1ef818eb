@@ -17,7 +17,7 @@ export const UserRoleSelector: React.FC<UserRoleSelectorProps> = ({
 }) => {
   const roles = [
     { value: 'admin', label: 'Administrador', icon: Shield },
-    { value: 'instructor', label: 'Instructor', icon: BookOpen },
+    { value: 'profesor', label: 'Profesor', icon: BookOpen },
     { value: 'student', label: 'Estudiante', icon: User }
   ];
 

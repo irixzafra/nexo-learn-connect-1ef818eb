@@ -1,8 +1,14 @@
-
 export type UserRoleType = 
   | 'admin' 
   | 'student' 
-  | 'profesor';
+  | 'profesor'
+  | 'instructor'
+  | 'sistemas'
+  | 'moderator'
+  | 'content_creator'
+  | 'guest'
+  | 'beta_tester'
+  | 'anonimo';
 
 export interface UserRole {
   id: string;
@@ -42,13 +48,24 @@ export function toUserRoleType(role: string): UserRoleType {
     case 'instructor': // For backward compatibility
       return 'profesor';
     case 'student':
+    case 'guest':
+      return 'student';
+    case 'sistemas':
+    case 'moderator':
+    case 'content_creator':
+    case 'beta_tester':
+    case 'anonimo':
+      // Keep legacy roles as-is for now to avoid breaking existing code
+      return role as UserRoleType;
     default:
       return 'student';
   }
 }
 
 export function asUserRoleType(role: string): UserRoleType | null {
-  if (['admin', 'student', 'profesor'].includes(role)) {
+  if (['admin', 'student', 'profesor', 'instructor', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester', 'anonimo'].includes(role)) {
+    // Convert instructor to profesor for consistency
+    if (role === 'instructor') return 'profesor';
     return role as UserRoleType;
   }
   return null;

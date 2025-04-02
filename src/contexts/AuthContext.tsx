@@ -36,7 +36,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Fetch user profile data
   const fetchUserProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
@@ -57,10 +56,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Create or update user profile if it doesn't exist
   const ensureUserProfile = async (userId: string, email: string) => {
     try {
-      // First check if profile exists
       const { data: existingProfile } = await supabase
         .from('profiles')
         .select('*')
@@ -69,13 +66,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
       if (!existingProfile) {
         console.log('No profile found, creating one for user:', userId);
-        // Create a basic profile with default role 'student'
         const { error: createError } = await supabase
           .from('profiles')
           .insert({
             id: userId,
             full_name: email.split('@')[0],
-            role: 'student', // Default role
+            role: 'student',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           });
@@ -85,7 +81,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return null;
         }
         
-        // Now fetch the newly created profile
         return await fetchUserProfile(userId);
       }
       
@@ -96,17 +91,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Set up auth state listener and fetch initial session
   useEffect(() => {
     console.info('Setting up auth state listener');
     
-    // First, set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
         console.info('Auth state changed:', event, newSession?.user?.id);
         
         if (event === 'SIGNED_OUT') {
-          // Clear all auth state when signed out
           setSession(null);
           setUser(null);
           setProfile(null);
@@ -118,7 +110,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setSession(newSession);
           setUser(newSession.user);
           
-          // Use setTimeout to prevent potential deadlock with Supabase client
           setTimeout(async () => {
             const userProfile = await ensureUserProfile(newSession.user.id, newSession.user.email || '');
             if (userProfile) {
@@ -130,7 +121,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     );
 
-    // Then, check for an existing session
     const initializeAuth = async () => {
       setIsLoading(true);
       try {
@@ -162,34 +152,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     initializeAuth();
 
-    // Cleanup the subscription on unmount
     return () => {
       subscription.unsubscribe();
     };
   }, []);
 
-  // Log out function
   const logout = async (): Promise<void> => {
     try {
       console.info('Logging out user');
       await supabase.auth.signOut();
-      // Auth state change listener will handle state clearing
     } catch (error) {
       console.error('Error during logout:', error);
       throw error;
     }
   };
 
-  // Compute the authentication status based on session existence
   const isAuthenticated = !!session && !!user;
 
-  // Helper function to ensure role is a valid UserRoleType
   const ensureValidRole = (role: string | null): UserRoleType => {
     if (!role) return 'student';
   
     const validRoles: UserRoleType[] = [
-      'admin', 'instructor', 'student', 'moderator', 
-      'content_creator', 'guest', 'beta_tester', 'sistemas', 'anonimo'
+      'admin', 'profesor', 'student',
+      'instructor', 'moderator', 'content_creator',
+      'guest', 'beta_tester', 'sistemas', 'anonimo'
     ];
   
     return validRoles.includes(role as UserRoleType) 

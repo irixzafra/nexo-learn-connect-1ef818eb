@@ -12,7 +12,7 @@ import { UserRoleType } from '@/types/auth';
 export const useRoleBasedNavigation = () => {
   const { userRole, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [homePath, setHomePath] = useState<string>('/dashboard'); // Cambio de /home a /dashboard
+  const [homePath, setHomePath] = useState<string>('/dashboard');
 
   useEffect(() => {
     // Determinar la ruta de inicio según el rol
@@ -22,7 +22,20 @@ export const useRoleBasedNavigation = () => {
           setHomePath('/admin/dashboard');
           break;
         case 'profesor':
+        case 'instructor': // For backward compatibility
           setHomePath('/profesor/dashboard');
+          break;
+        case 'sistemas':
+          setHomePath('/admin/dashboard');
+          break;
+        case 'moderator':
+          setHomePath('/moderation/dashboard');
+          break;
+        case 'content_creator':
+          setHomePath('/content/dashboard');
+          break;
+        case 'beta_tester':
+          setHomePath('/beta/dashboard');
           break;
         default:
           setHomePath('/student/dashboard'); // Default for student role

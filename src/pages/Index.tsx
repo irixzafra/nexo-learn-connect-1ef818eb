@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader } from 'lucide-react';
 import { useRoleBasedNavigation } from '@/hooks/useRoleBasedNavigation';
+import { UserRoleType } from '@/types/auth';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -26,9 +27,11 @@ const Index = () => {
           homePath = '/admin/dashboard';
         }
         
-        // Check for instructor users
-        if (userRole === 'instructor' && !homePath.startsWith('/instructor')) {
-          homePath = '/instructor/dashboard';
+        // Check for instructor/profesor users (handle both for compatibility)
+        if ((userRole === 'profesor' || userRole === 'instructor') && 
+            !homePath.startsWith('/profesor') && 
+            !homePath.startsWith('/instructor')) {
+          homePath = '/profesor/dashboard';
         }
         
         console.log('Redirecting authenticated user to:', homePath);

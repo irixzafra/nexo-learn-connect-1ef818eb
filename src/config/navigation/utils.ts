@@ -28,8 +28,9 @@ export const getHomePathByRole = (role: UserRoleType): string => {
   switch (role) {
     case 'admin':
       return '/admin/dashboard';
-    case 'instructor':
-      return '/instructor/dashboard';
+    case 'profesor':
+    case 'instructor': // For backward compatibility
+      return '/profesor/dashboard';
     case 'sistemas':
       return '/admin/systems';
     case 'moderator':
@@ -38,7 +39,10 @@ export const getHomePathByRole = (role: UserRoleType): string => {
       return '/content/dashboard';
     case 'beta_tester':
       return '/beta/dashboard';
+    case 'guest':
+    case 'anonimo':
+      return '/landing';
     default:
-      return '/home';
+      return '/student/dashboard';
   }
 };
