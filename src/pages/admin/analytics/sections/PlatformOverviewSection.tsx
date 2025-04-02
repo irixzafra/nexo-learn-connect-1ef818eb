@@ -1,31 +1,7 @@
 
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Skeleton } from '@/components/ui/skeleton';
-import { 
-  BarChart, 
-  Bar, 
-  LineChart,
-  Line,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer, 
-  PieChart, 
-  Pie, 
-  Cell,
-  AreaChart,
-  Area
-} from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LineChart, BarChart, PieChart } from 'lucide-react';
 import { PlatformStats } from '@/features/admin/analytics/types';
 
 interface PlatformOverviewSectionProps {
@@ -33,204 +9,80 @@ interface PlatformOverviewSectionProps {
   isLoading: boolean;
 }
 
-// Sample data
-const last30DaysData = [
-  { date: '01/06', users: 42, courses: 3 },
-  { date: '05/06', users: 51, courses: 3 },
-  { date: '10/06', users: 63, courses: 4 },
-  { date: '15/06', users: 75, courses: 5 },
-  { date: '20/06', users: 92, courses: 5 },
-  { date: '25/06', users: 105, courses: 7 },
-  { date: '30/06', users: 121, courses: 8 },
-];
-
-const courseDistributionData = [
-  { name: 'Programación', value: 35 },
-  { name: 'Diseño', value: 25 },
-  { name: 'Marketing', value: 20 },
-  { name: 'Negocios', value: 15 },
-  { name: 'Idiomas', value: 5 },
-];
-
-const COLORS = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c'];
-
 const PlatformOverviewSection: React.FC<PlatformOverviewSectionProps> = ({ stats, isLoading }) => {
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-8 w-48" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-80 w-full" />
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  const userActivityData = {
-    totalUsers: stats.total_users,
-    activeUsers: stats.active_users,
-    newUsers: stats.new_users,
-    completionRate: stats.completion_rate,
-    averageRating: stats.average_rating,
-  };
-
-  const courseData = {
-    totalCourses: stats.total_courses,
-    activeCourses: stats.active_courses,
-    totalEnrollments: stats.total_enrollments,
-  };
-
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Growth Overview Card */}
         <Card>
           <CardHeader>
-            <CardTitle>Crecimiento</CardTitle>
-            <CardDescription>Usuarios y cursos en los últimos 30 días</CardDescription>
+            <CardTitle className="flex items-center">
+              <LineChart className="mr-2 h-5 w-5 text-primary" />
+              Crecimiento de Usuarios
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={last30DaysData}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                >
-                  <defs>
-                    <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorCourses" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="users" 
-                    stroke="#8884d8" 
-                    fillOpacity={1} 
-                    fill="url(#colorUsers)" 
-                    name="Usuarios"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="courses" 
-                    stroke="#82ca9d" 
-                    fillOpacity={1} 
-                    fill="url(#colorCourses)" 
-                    name="Cursos"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
+            {isLoading ? (
+              <div className="h-48 flex items-center justify-center">
+                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+              </div>
+            ) : (
+              <div className="h-48 flex flex-col items-center justify-center text-center bg-muted/40 rounded-md">
+                <LineChart className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium mb-2">Total de Usuarios: {stats.total_users}</h3>
+                <p className="text-muted-foreground">
+                  {stats.new_users} nuevos usuarios en los últimos 7 días.
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Course Distribution Card */}
         <Card>
           <CardHeader>
-            <CardTitle>Distribución de Cursos</CardTitle>
-            <CardDescription>Por categoría</CardDescription>
+            <CardTitle className="flex items-center">
+              <BarChart className="mr-2 h-5 w-5 text-primary" />
+              Estadísticas de Cursos
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-80 flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={courseDistributionData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {courseDistributionData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => [`${value} cursos`, 'Cantidad']} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+            {isLoading ? (
+              <div className="h-48 flex items-center justify-center">
+                <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+              </div>
+            ) : (
+              <div className="h-48 flex flex-col items-center justify-center text-center bg-muted/40 rounded-md">
+                <BarChart className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium mb-2">Total de Cursos: {stats.total_courses}</h3>
+                <p className="text-muted-foreground">
+                  {stats.active_courses} cursos activos con una tasa de finalización del {stats.completion_rate}%.
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      {/* User Activity Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Estadísticas de Plataforma</CardTitle>
-          <CardDescription>Resumen global de actividad</CardDescription>
+          <CardTitle className="flex items-center">
+            <PieChart className="mr-2 h-5 w-5 text-primary" />
+            Distribución de Usuarios por Rol
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="users">
-            <TabsList className="mb-4">
-              <TabsTrigger value="users">Usuarios</TabsTrigger>
-              <TabsTrigger value="courses">Cursos</TabsTrigger>
-            </TabsList>
-            <TabsContent value="users">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <div>
-                    <div className="text-sm font-medium text-muted-foreground">Usuarios Totales</div>
-                    <div className="text-2xl font-bold">{userActivityData.totalUsers}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-muted-foreground">Usuarios Activos</div>
-                    <div className="text-2xl font-bold">{userActivityData.activeUsers}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-muted-foreground">Usuarios Nuevos (último mes)</div>
-                    <div className="text-2xl font-bold">{userActivityData.newUsers}</div>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div>
-                    <div className="text-sm font-medium text-muted-foreground">Tasa de Finalización</div>
-                    <div className="text-2xl font-bold">{userActivityData.completionRate}%</div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-muted-foreground">Calificación Promedio</div>
-                    <div className="text-2xl font-bold">{userActivityData.averageRating}/5</div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-            <TabsContent value="courses">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <div>
-                    <div className="text-sm font-medium text-muted-foreground">Cursos Totales</div>
-                    <div className="text-2xl font-bold">{courseData.totalCourses}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-muted-foreground">Cursos Activos</div>
-                    <div className="text-2xl font-bold">{courseData.activeCourses}</div>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div>
-                    <div className="text-sm font-medium text-muted-foreground">Inscripciones Totales</div>
-                    <div className="text-2xl font-bold">{courseData.totalEnrollments}</div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
+          {isLoading ? (
+            <div className="h-48 flex items-center justify-center">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+            </div>
+          ) : (
+            <div className="h-48 flex flex-col items-center justify-center text-center bg-muted/40 rounded-md">
+              <PieChart className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium mb-2">Módulo en Desarrollo</h3>
+              <p className="text-muted-foreground">
+                La distribución de usuarios por rol estará disponible próximamente.
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

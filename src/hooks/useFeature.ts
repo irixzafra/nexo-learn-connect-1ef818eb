@@ -1,22 +1,47 @@
 
-import { useFeatures } from './useFeatures';
-import { ExtendedFeatureId, FeatureId } from '@/contexts/features/types';
-import { isFeatureEnabled } from '@/utils/featureUtils';
+import { useState, useEffect } from 'react';
 
-/**
- * Hook to check if a specific feature is enabled
- * @param featureId The ID of the feature to check
- * @returns boolean indicating if the feature is enabled
- */
-export const useFeature = (featureId: ExtendedFeatureId | FeatureId): boolean => {
-  const { isFeatureEnabled: contextIsFeatureEnabled, featuresConfig } = useFeatures();
-  
-  // Use either the context method or the utility function as a fallback
-  if (typeof contextIsFeatureEnabled === 'function') {
-    return contextIsFeatureEnabled(featureId);
-  }
-  
-  return isFeatureEnabled(featuresConfig, featureId);
+// Tipo para las características disponibles en la aplicación
+type FeatureFlag = 
+  | 'enableAnalytics'
+  | 'enableRealTimeChat'
+  | 'enableAdvancedSearch'
+  | 'enablePushNotifications'
+  | 'enableTestData'
+  | 'darkModeDefault'
+  | 'enableContentCreationTools';
+
+// Mock de configuración de características
+const FEATURES_CONFIG = {
+  enableAnalytics: true,
+  enableRealTimeChat: false,
+  enableAdvancedSearch: true,
+  enablePushNotifications: false,
+  enableTestData: true,
+  darkModeDefault: false,
+  enableContentCreationTools: true
 };
 
-export default useFeature;
+/**
+ * Hook para verificar si una característica está habilitada
+ * @param featureName Nombre de la característica a verificar
+ * @returns Booleano indicando si la característica está habilitada
+ */
+export const useFeature = (featureName: FeatureFlag): boolean => {
+  const [isEnabled, setIsEnabled] = useState<boolean>(false);
+
+  useEffect(() => {
+    // En un entorno real, esto podría obtener las características de la API
+    const checkFeature = async () => {
+      // Simular una solicitud a la API
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Verificar si la característica está habilitada
+      setIsEnabled(FEATURES_CONFIG[featureName] || false);
+    };
+
+    checkFeature();
+  }, [featureName]);
+
+  return isEnabled;
+};

@@ -1,57 +1,54 @@
 
 import { useState, useEffect } from 'react';
-
-interface DashboardStats {
-  total_users: number;
-  active_courses: number;
-  total_enrollments: number;
-  new_users_last_7_days: number;
-  coursesCount: number;
-  publishedCoursesCount: number;
-  completionRate: number;
-}
+import { PlatformStats } from '@/features/admin/analytics/types';
 
 export const useAdminDashboardStats = () => {
-  const [stats, setStats] = useState<DashboardStats>({
+  const [stats, setStats] = useState<PlatformStats>({
     total_users: 0,
+    active_users: 0,
+    new_users: 0,
+    total_courses: 0,
     active_courses: 0,
     total_enrollments: 0,
-    new_users_last_7_days: 0,
-    coursesCount: 0,
-    publishedCoursesCount: 0,
-    completionRate: 0,
+    completion_rate: 0,
+    average_rating: 0
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const fetchDashboardStats = async () => {
+    const fetchStats = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
+        // Simular una petición a la API
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
-        // En un entorno real, aquí habría una llamada a la API
-        // Por ahora, simularemos datos para la demostración
-        setTimeout(() => {
-          setStats({
-            total_users: 1245,
-            active_courses: 87,
-            total_enrollments: 3842,
-            new_users_last_7_days: 42,
-            coursesCount: 90,
-            publishedCoursesCount: 87,
-            completionRate: 68,
-          });
-          setIsLoading(false);
-        }, 800);
+        // Datos simulados para desarrollo
+        const mockStats: PlatformStats = {
+          total_users: 5842,
+          active_users: 2731,
+          new_users: 847,
+          total_courses: 124,
+          active_courses: 87,
+          total_enrollments: 3542,
+          completion_rate: 68,
+          average_rating: 4.2,
+          new_users_last_7_days: 847,
+          coursesCount: 124,
+          publishedCoursesCount: 87,
+          completionRate: 68
+        };
         
+        setStats(mockStats);
       } catch (err) {
+        setError(err instanceof Error ? err : new Error('Error desconocido al cargar estadísticas'));
         console.error('Error fetching dashboard stats:', err);
-        setError(err as Error);
+      } finally {
         setIsLoading(false);
       }
     };
 
-    fetchDashboardStats();
+    fetchStats();
   }, []);
 
   return { stats, isLoading, error };
