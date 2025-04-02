@@ -7,7 +7,12 @@ import { Language } from '@/types/language';
  * Hook for handling localization and translation of routes and content
  */
 export const useLocalization = () => {
-  const { currentLanguage, t } = useLanguage();
+  const { 
+    currentLanguage, 
+    t, 
+    supportedLanguages, 
+    changeLanguage 
+  } = useLanguage();
 
   /**
    * Localizes a URL with the current language
@@ -27,11 +32,21 @@ export const useLocalization = () => {
     return getPathWithoutLanguage(path);
   };
 
+  /**
+   * Sets the language
+   * @param language The language to set
+   */
+  const setLanguage = (language: string) => {
+    changeLanguage(language);
+  };
+
   return {
     currentLanguage,
     localizeUrl,
     removeLanguagePrefix,
     t,
+    supportedLanguages,
+    setLanguage
   };
 };
 
