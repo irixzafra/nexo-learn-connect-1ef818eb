@@ -110,12 +110,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         onToggle={() => toggleGroup('community')}
       />
       
-      {/* Messages section - We're commenting this out since there's an import problem */}
-      {/* <MessagesNavigation 
-        isOpen={expanded.community} 
-        onToggle={() => toggleGroup('community')}
-        messagesCount={messagesCount}
-      /> */}
+      {/* Messages section - We're removing this commented code as it's causing type errors */}
       
       {/* Configuration for all roles */}
       <ConfiguracionNavigation 
