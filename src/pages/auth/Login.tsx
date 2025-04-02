@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, Mail, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
+import AuthLayout from '@/layouts/AuthLayout';
 
 // Esquema de validación
 const loginSchema = z.object({
@@ -21,7 +22,7 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login: React.FC = () => {
-  const { session, user, isLoading: authLoading, login } = useAuth();
+  const { user, session, isLoading: authLoading, login } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(false);
   
@@ -58,7 +59,7 @@ const Login: React.FC = () => {
   };
   
   return (
-    <div className="container mx-auto px-4 py-12 flex justify-center">
+    <AuthLayout>
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Iniciar Sesión</CardTitle>
@@ -156,7 +157,7 @@ const Login: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </AuthLayout>
   );
 };
 

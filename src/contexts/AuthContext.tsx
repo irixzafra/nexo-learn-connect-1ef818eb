@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { UserProfile, UserRole, UserRoleType } from '@/types/auth';
+import { toast } from 'sonner';
 
 interface AuthContextType {
   user: User | null;
@@ -112,6 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setSession(newSession);
           setUser(newSession.user);
           
+          // Use setTimeout to avoid potential deadlock with Supabase client
           setTimeout(async () => {
             const userProfile = await ensureUserProfile(newSession.user.id, newSession.user.email || '');
             if (userProfile) {
@@ -176,9 +178,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (data?.user) {
         // Auth state change will handle updating the user state
         console.log('User signed in successfully:', data.user.id);
+        toast.success('Inicio de sesión exitoso');
       }
     } catch (error) {
       console.error('Login error:', error);
+      toast.error('Error al iniciar sesión', {
+        description: 'Verifica tus credenciales e intenta de nuevo',
+      });
       throw error;
     } finally {
       setIsLoading(false);
@@ -189,8 +195,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       console.info('Logging out user');
       await supabase.auth.signOut();
+      toast.success('Has cerrado sesión correctamente');
     } catch (error) {
       console.error('Error during logout:', error);
+      toast.error('Error al cerrar sesión');
       throw error;
     }
   };
