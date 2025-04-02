@@ -1,27 +1,59 @@
 
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { BookOpen } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Book, ListChecks, Clock, GraduationCap } from 'lucide-react';
+import { 
+  SidebarMenu
+} from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { SidebarGroup } from '../SidebarGroup';
+import MenuItem from './common/MenuItem';
 
-const MisCursosNavigation: React.FC = () => {
-  const location = useLocation();
-  const isActive = location.pathname.includes('/my-courses');
+interface MisCursosNavigationProps {
+  isOpen: boolean;
+  onToggle: () => void;
+}
+
+const MisCursosNavigation: React.FC<MisCursosNavigationProps> = ({ isOpen, onToggle }) => {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   return (
-    <NavLink 
-      to="/my-courses" 
-      className={({ isActive }) => cn(
-        "flex items-center py-2 text-sm hover:text-primary transition-colors",
-        isActive ? "text-primary font-medium" : "text-muted-foreground"
-      )}
+    <SidebarGroup
+      label="Mis Cursos"
+      icon={Book}
+      isExpanded={isOpen}
+      onToggle={onToggle}
     >
-      <BookOpen className={cn(
-        "mr-3 h-5 w-5", 
-        isActive ? "text-primary" : "text-muted-foreground"
-      )} />
-      <span>Mis cursos</span>
-    </NavLink>
+      <SidebarMenu>
+        <MenuItem
+          to="/my-courses"
+          icon={Book}
+          label="Todos Mis Cursos"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/my-courses/in-progress"
+          icon={Clock}
+          label="En Progreso"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/my-courses/completed"
+          icon={ListChecks}
+          label="Completados"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/my-courses/certificates"
+          icon={GraduationCap}
+          label="Certificados"
+          isCollapsed={isCollapsed}
+        />
+      </SidebarMenu>
+    </SidebarGroup>
   );
 };
 
