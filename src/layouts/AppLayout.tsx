@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Toaster } from 'sonner';
 import { Outlet } from 'react-router-dom';
 import AuthenticatedHeader from '@/components/layout/AuthenticatedHeader';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { Loader } from 'lucide-react';
 import AdminSidebar from '@/components/layout/sidebars/AdminSidebar';
 import InstructorSidebar from '@/components/layout/sidebars/InstructorSidebar';
@@ -49,7 +49,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         }`}>
           {renderSidebar()}
         </div>
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+        <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6">
           <Outlet />
         </main>
       </div>
