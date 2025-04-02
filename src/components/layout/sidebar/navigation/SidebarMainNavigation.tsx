@@ -110,7 +110,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         onToggle={() => toggleGroup('community')}
       />
       
-      {/* Messages section - We're removing this commented code as it's causing type errors */}
+      {/* Messages section - We're removing this section completely as it's causing type errors */}
       
       {/* Configuration for all roles */}
       <ConfiguracionNavigation 
