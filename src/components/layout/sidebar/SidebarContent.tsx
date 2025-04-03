@@ -15,6 +15,13 @@ const SidebarContent: React.FC = () => {
       <div className="flex-1 overflow-y-auto py-2 px-3">
         <SidebarNavigation isCollapsed={isCollapsed} />
       </div>
+      {/* --- INDICADOR DEBUG TEMPORAL --- */}
+      {process.env.NODE_ENV === 'development' && (
+        <div style={{ color: 'lime', fontWeight: 'bold', padding: '5px' }}>
+          !!! SidebarContent Rendering Footer !!!
+        </div>
+      )}
+      {/* --- FIN INDICADOR --- */}
       <SidebarFooter isCollapsed={isCollapsed} />
     </div>
   );
