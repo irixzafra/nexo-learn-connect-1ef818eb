@@ -15,7 +15,7 @@ import { Check, ArrowLeftRight, Shield, User, Terminal, Ghost, GraduationCap, Bo
 import RoleIndicator from '@/components/layout/header/RoleIndicator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { supabase } from '@/lib/supabase';
-import { debounce } from 'lodash.debounce';
+import debounce from 'lodash.debounce';
 
 interface UserSearchResult {
   id: string;
@@ -90,7 +90,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ className }) => {
   };
 
   const handleUserSelect = (user: UserSearchResult) => {
-    setSimulatedRole(user.role, user.id, user.fullName);
+    setSimulatedRole(user.role, user.id);
     setSearchTerm('');
     setSearchResults([]);
     setIsOpen(false);

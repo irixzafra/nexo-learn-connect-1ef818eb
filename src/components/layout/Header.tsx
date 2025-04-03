@@ -8,7 +8,6 @@ import { Menu, Bell, MessageSquare } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { UserMenu } from './header/UserMenu';
 import Logo from '@/components/Logo';
-import GlobalRoleSwitcher from './GlobalRoleSwitcher';
 import { cn } from '@/lib/utils';
 import { useLocalization } from '@/hooks/useLocalization';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -22,8 +21,7 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
   const navigate = useNavigate();
   const { toggleSidebar, state } = useSidebar();
   const { localizeUrl, isMultiLanguageEnabled } = useLocalization();
-  const isAdmin = userRole === 'admin';
-
+  
   const handleLogout = async () => {
     try {
       await logout();
@@ -55,13 +53,6 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Global Role Switcher para administradores */}
-          {isAdmin && (
-            <div className="mr-2">
-              <GlobalRoleSwitcher />
-            </div>
-          )}
-          
           {/* Language Selector - only shown when multi-language is enabled */}
           {isMultiLanguageEnabled && <LanguageSelector />}
           

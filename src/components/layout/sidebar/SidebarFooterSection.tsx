@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { UserRoleType } from '@/types/auth';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { PowerIcon, BellIcon } from 'lucide-react';
-import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useAuth } from '@/contexts/auth';
 import { cn } from '@/lib/utils';
@@ -38,12 +37,6 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
 
   return (
     <div className="mt-auto pt-2">
-      {!isCollapsed && userRole === 'admin' && (
-        <div className="px-3 pt-2 pb-4">
-          <RoleSwitcher />
-        </div>
-      )}
-      
       <div className={cn(
         "flex items-center",
         isCollapsed ? "justify-center space-y-4 flex-col" : "justify-between px-3 pb-2"
