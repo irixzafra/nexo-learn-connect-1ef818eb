@@ -1,6 +1,9 @@
 
 export type UserRoleType = 'admin' | 'profesor' | 'instructor' | 'student' | 'sistemas' | 'moderator' | 'content_creator' | 'guest' | 'anonimo' | 'beta_tester';
 
+// Legacy type alias for backward compatibility
+export type UserRole = UserRoleType;
+
 export interface UserProfile {
   id: string;
   user_id: string;

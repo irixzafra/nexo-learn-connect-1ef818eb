@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
@@ -148,7 +149,7 @@ export const ModernNavMenu: React.FC = () => {
 
         <NavigationMenuItem>
           <Button asChild variant="ghost" className={navigationMenuTriggerStyle()}>
-            <Link href="/admin/dashboard">
+            <Link to="/admin/dashboard">
               Dashboard
             </Link>
           </Button>

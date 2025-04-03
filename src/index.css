@@ -1,326 +1,85 @@
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import './styles/material-design.css';
 
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 263 60% 64%;
+
+    --primary: 262 80% 50%; /* Adjusted to match Material 3 */
     --primary-foreground: 210 40% 98%;
-    --secondary: 24 94% 53%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 300 90% 50%; /* Adjusted to match Material 3 */
+    --secondary-foreground: 210 40% 98%;
+
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 199 89% 48%;
+
+    --accent: 330 90% 50%; /* Adjusted to match Material 3 */
     --accent-foreground: 222.2 47.4% 11.2%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
+
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 263 60% 64%;
+    --ring: 222.2 84% 4.9%;
+
     --radius: 0.5rem;
   }
 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
+
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
+
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 263 60% 64%;
+
+    --primary: 262 80% 65%; /* Adjusted for dark theme */
     --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 24 94% 53%;
+
+    --secondary: 300 90% 65%; /* Adjusted for dark theme */
     --secondary-foreground: 210 40% 98%;
+
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 199 89% 48%;
+
+    --accent: 330 90% 65%; /* Adjusted for dark theme */
     --accent-foreground: 210 40% 98%;
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
+
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 263 60% 64%;
+    --ring: 212.7 26.8% 83.9%;
   }
-
-  .futuristic {
-    --background: 230 35% 7%;
-    --foreground: 213 31% 91%;
-    --card: 230 25% 10%;
-    --card-foreground: 213 31% 91%;
-    --popover: 230 25% 10%;
-    --popover-foreground: 213 31% 91%;
-    --primary: 230 100% 67%;
-    --primary-foreground: 213 31% 91%;
-    --secondary: 199 89% 48%;
-    --secondary-foreground: 213 31% 91%;
-    --muted: 230 25% 15%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 263 60% 64%;
-    --accent-foreground: 213 31% 91%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 213 31% 91%;
-    --border: 230 25% 15%;
-    --input: 230 25% 15%;
-    --ring: 230 100% 67%;
+  
+  /* Material theme marker class */
+  .material {
+    --radius: 1rem;
+    /* Other Material specific variables will be applied through material-design.css */
   }
 }
 
 @layer base {
   * {
     @apply border-border;
-    transition: background-color 0.2s, border-color 0.2s, color 0.2s, fill 0.2s, 
-                stroke 0.2s, opacity 0.2s, box-shadow 0.2s, transform 0.15s;
   }
-
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-  }
-
-  .reduced-motion * {
-    transition: none !important;
-    animation: none !important;
-  }
-
-  .animations-disabled * {
-    animation: none !important;
-  }
-}
-
-/* Material Design 3 Styles */
-@layer components {
-  /* Button Styles */
-  .material .md-btn-filled {
-    @apply bg-primary text-primary-foreground rounded-full font-medium 
-           shadow-md hover:shadow-lg active:shadow-sm transition-all
-           flex items-center justify-center relative overflow-hidden;
-  }
-
-  .material .md-btn-filled::before {
-    content: '';
-    @apply absolute inset-0 bg-white opacity-0 transition-opacity
-           pointer-events-none rounded-full;
-  }
-
-  .animations-enabled .material .md-btn-filled:hover::before {
-    @apply opacity-10;
-  }
-
-  .animations-enabled .material .md-btn-filled:active::before {
-    @apply opacity-20;
-  }
-
-  .animations-enabled .material .md-hover-scale {
-    @apply hover:scale-105 active:scale-95 transition-transform;
-  }
-
-  .material .md-btn-tonal {
-    @apply bg-primary/10 text-primary rounded-full font-medium 
-           hover:bg-primary/20 active:bg-primary/30 transition-colors;
-  }
-
-  .material .md-btn-text {
-    @apply bg-transparent text-primary rounded-full font-medium 
-           hover:bg-primary/10 active:bg-primary/20 transition-colors;
-  }
-
-  .material .md-btn-outlined {
-    @apply bg-transparent text-primary rounded-full font-medium 
-           border border-primary/30 hover:bg-primary/10 active:bg-primary/20 transition-colors;
-  }
-
-  /* Card Styles */
-  .material .md-card-elevated {
-    @apply rounded-xl bg-card text-card-foreground shadow-lg hover:shadow-xl
-           transition-all border-none;
-  }
-
-  .animations-enabled .material .md-card-elevated {
-    @apply hover:-translate-y-1 active:translate-y-0;
-  }
-
-  .material .md-card-filled {
-    @apply rounded-xl bg-secondary/10 text-card-foreground shadow-sm
-           transition-all border-none;
-  }
-
-  .material .md-card-outlined {
-    @apply rounded-xl bg-card text-card-foreground 
-           transition-all border border-border;
-  }
-
-  /* Input Styles */
-  .material input.md-input,
-  .material select.md-select,
-  .material textarea.md-textarea {
-    @apply rounded-lg border-0 bg-muted/50 focus:ring-2 focus:ring-primary/50
-           transition-all px-4 py-2 outline-none;
-  }
-
-  .material label.md-label {
-    @apply text-sm font-medium text-foreground/80 mb-1 ml-1;
-  }
-
-  /* Animation Effects */
-  .animations-enabled .md-ripple {
-    @apply relative overflow-hidden;
-  }
-
-  .animations-enabled .md-ripple::after {
-    content: '';
-    @apply absolute inset-0 scale-0 rounded-full bg-white/30
-           pointer-events-none origin-center;
-    transform-origin: center;
-    animation: ripple 0.6s ease-out forwards;
-  }
-
-  @keyframes ripple {
-    0% {
-      transform: scale(0);
-      opacity: 0.5;
-    }
-    100% {
-      transform: scale(2.5);
-      opacity: 0;
-    }
-  }
-
-  .animations-enabled .md-fade-in {
-    animation: fadeIn 0.5s ease forwards;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  .animations-enabled .md-slide-up {
-    animation: slideUp 0.5s ease forwards;
-  }
-
-  @keyframes slideUp {
-    from { 
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to { 
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .animations-enabled .md-slide-in-right {
-    animation: slideInRight 0.5s ease forwards;
-  }
-
-  @keyframes slideInRight {
-    from { 
-      opacity: 0;
-      transform: translateX(20px);
-    }
-    to { 
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  .animations-enabled .md-scale-in {
-    animation: scaleIn 0.3s ease forwards;
-  }
-
-  @keyframes scaleIn {
-    from { 
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to { 
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  /* Staggered animation for lists */
-  .animations-enabled .md-stagger-list > * {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  .animations-enabled .md-stagger-list > *:nth-child(1) {
-    animation: staggerIn 0.3s ease 0.1s forwards;
-  }
-
-  .animations-enabled .md-stagger-list > *:nth-child(2) {
-    animation: staggerIn 0.3s ease 0.2s forwards;
-  }
-
-  .animations-enabled .md-stagger-list > *:nth-child(3) {
-    animation: staggerIn 0.3s ease 0.3s forwards;
-  }
-
-  .animations-enabled .md-stagger-list > *:nth-child(4) {
-    animation: staggerIn 0.3s ease 0.4s forwards;
-  }
-
-  .animations-enabled .md-stagger-list > *:nth-child(5) {
-    animation: staggerIn 0.3s ease 0.5s forwards;
-  }
-
-  .animations-enabled .md-stagger-list > *:nth-child(n+6) {
-    animation: staggerIn 0.3s ease 0.6s forwards;
-  }
-
-  @keyframes staggerIn {
-    to { 
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* 3D Effects */
-  .animations-enabled .md-3d-card {
-    @apply transition-transform duration-300 transform-gpu;
-    transform-style: preserve-3d;
-    perspective: 1000px;
-  }
-
-  .animations-enabled .md-3d-card:hover {
-    transform: rotateX(5deg) rotateY(5deg) scale(1.02);
-  }
-
-  /* Hover Glow Effect */
-  .animations-enabled .md-hover-glow {
-    @apply transition-all;
-  }
-
-  .animations-enabled .md-hover-glow:hover {
-    box-shadow: 0 0 15px 2px var(--color-primary);
-  }
-
-  /* Micro-interactions */
-  .animations-enabled .md-micro-bounce:active {
-    animation: microBounce 0.3s ease;
-  }
-
-  @keyframes microBounce {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(0.95); }
-  }
-
-  /* Background Pulse Animation */
-  .animations-enabled .md-bg-pulse {
-    animation: bgPulse 3s infinite;
-  }
-
-  @keyframes bgPulse {
-    0% { background-color: rgba(var(--primary), 0.1); }
-    50% { background-color: rgba(var(--primary), 0.2); }
-    100% { background-color: rgba(var(--primary), 0.1); }
   }
 }
