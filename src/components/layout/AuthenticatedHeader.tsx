@@ -7,6 +7,7 @@ import { Menu, Bell, MessageSquare } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/lib/utils';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import DatabaseConnectionIndicator from '@/components/DatabaseConnectionIndicator';
 
 interface AuthenticatedHeaderProps {
   onToggleSidebar?: () => void;
@@ -44,6 +45,9 @@ const AuthenticatedHeader: React.FC<AuthenticatedHeaderProps> = ({
         </div>
         
         <div className="flex items-center space-x-1 md:space-x-2">
+          {/* Database Connection Indicator */}
+          <DatabaseConnectionIndicator />
+          
           {/* Theme Switcher */}
           <ThemeSwitcher />
           
