@@ -1,1053 +1,595 @@
 
 import React, { useState } from 'react';
-import { 
-  ChevronDown, 
-  ChevronRight, 
-  Home, 
-  Settings, 
-  Star, 
-  List, 
-  Grid, 
-  User, 
-  Mail, 
-  Bell, 
-  Calendar, 
-  Layers, 
-  Search,
-  Copy,
-  Check
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import {
+  ArrowLeft,
+  Palette,
+  Type,
+  Layers,
+  Box,
+  MoveHorizontal,
+  Sparkles,
+  ChevronRight,
+  Moon,
+  Sun,
+  PanelLeft,
+  Check,
+  X
+} from 'lucide-react';
 
 const MaterialDesign: React.FC = () => {
-  const [activeTheme, setActiveTheme] = useState<'light' | 'dark' | 'material'>('light');
-  const [isCopied, setIsCopied] = useState<Record<string, boolean>>({});
+  const navigate = useNavigate();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [materialTheme, setMaterialTheme] = useState(false);
   
-  // Función para cambiar el tema
-  const changeTheme = (theme: 'light' | 'dark' | 'material') => {
-    // Eliminar todas las clases de tema
-    document.documentElement.classList.remove('light', 'dark', 'material');
-    // Añadir la clase del tema seleccionado
-    document.documentElement.classList.add(theme);
-    // Actualizar el estado
-    setActiveTheme(theme);
-    // Mostrar toast de confirmación
-    toast.success(`Tema ${theme} aplicado`);
+  const toggleDarkMode = () => {
+    if (isDarkMode) {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+    setIsDarkMode(!isDarkMode);
   };
   
-  // Función para copiar al portapapeles
-  const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setIsCopied({...isCopied, [id]: true});
-      setTimeout(() => {
-        setIsCopied({...isCopied, [id]: false});
-      }, 2000);
-      toast.success('Código copiado al portapapeles');
-    });
+  const toggleMaterialTheme = () => {
+    if (materialTheme) {
+      document.documentElement.classList.remove('material');
+    } else {
+      document.documentElement.classList.add('material');
+    }
+    setMaterialTheme(!materialTheme);
   };
   
   return (
-    <div className="container mx-auto max-w-7xl py-10 md-animate-fade">
-      <div className="flex flex-col space-y-6">
-        <header className="flex flex-col space-y-4 md:space-y-6">
-          <div className="flex items-center space-x-2 text-sm">
-            <a href="#" className="text-muted-foreground hover:text-primary">Inicio</a>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            <span className="text-foreground">Material Design System</span>
-          </div>
-          
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight md:text-4xl md-animate-slide-up" style={{animationDelay: '0.1s'}}>
-                Material Design System
-              </h1>
-              <p className="mt-2 text-muted-foreground max-w-2xl md-animate-slide-up" style={{animationDelay: '0.2s'}}>
-                Catálogo interactivo de componentes basados en Material Design 3, con animaciones modernas y microinteracciones.
-              </p>
-            </div>
-            
-            <div className="flex space-x-2 md-animate-slide-up" style={{animationDelay: '0.3s'}}>
-              <Button 
-                className={`${activeTheme === 'light' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
-                onClick={() => changeTheme('light')}
-              >
-                Claro
-              </Button>
-              <Button 
-                className={`${activeTheme === 'dark' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
-                onClick={() => changeTheme('dark')}
-              >
-                Oscuro
-              </Button>
-              <Button 
-                className={`${activeTheme === 'material' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
-                onClick={() => changeTheme('material')}
-              >
-                Material
-              </Button>
-            </div>
-          </div>
-        </header>
+    <div className="container mx-auto py-8 transition-all duration-300">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center">
+          <Button variant="ghost" size="sm" className="mr-2" onClick={() => navigate('/')}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver
+          </Button>
+          <h1 className="text-3xl font-bold">Sistema de Diseño Material</h1>
+        </div>
         
-        <Tabs defaultValue="overview" className="md-animate-fade" style={{animationDelay: '0.4s'}}>
-          <TabsList className="md:w-full mb-4">
-            <TabsTrigger value="overview">Vista General</TabsTrigger>
-            <TabsTrigger value="colors">Colores</TabsTrigger>
-            <TabsTrigger value="typography">Tipografía</TabsTrigger>
-            <TabsTrigger value="components">Componentes</TabsTrigger>
-            <TabsTrigger value="animations">Animaciones</TabsTrigger>
-          </TabsList>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <Sun className="h-4 w-4" />
+            <Switch checked={isDarkMode} onCheckedChange={toggleDarkMode} />
+            <Moon className="h-4 w-4" />
+          </div>
           
-          {/* Vista General */}
-          <TabsContent value="overview" className="space-y-6">
-            <Card className="md-card-elevated md-hover-elevate">
-              <CardHeader>
-                <CardTitle>Introducción a Material Design 3</CardTitle>
-                <CardDescription>Sistema de diseño moderno con enfoque en expresión, personalización y accesibilidad</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Principios Clave</h3>
-                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                      <li>Diseño que prioriza la experiencia del usuario</li>
-                      <li>Personalización y adaptabilidad</li>
-                      <li>Accesibilidad y usabilidad para todos</li>
-                      <li>Interacciones significativas y coherentes</li>
-                      <li>Diseño multiplataforma</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Características</h3>
-                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                      <li>Sistema dinámico de color</li>
-                      <li>Tipografía expresiva</li>
-                      <li>Elevación y sombras</li>
-                      <li>Animaciones y transiciones fluidas</li>
-                      <li>Componentes adaptativos</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card className="md-card-filled md-hover-scale">
-                <CardHeader>
-                  <CardTitle>Colores Dinámicos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Esquemas de color armoniosos que se adaptan a la plataforma y preferencias del usuario, con soporte para temas claros y oscuros.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="md-card-filled md-hover-scale">
-                <CardHeader>
-                  <CardTitle>Tipografía</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Sistema tipográfico flexible que se adapta a diferentes tamaños de pantalla y contextos de uso.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="md-card-filled md-hover-scale">
-                <CardHeader>
-                  <CardTitle>Animaciones</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Transiciones fluidas y animaciones significativas que mejoran la experiencia del usuario y guían la navegación.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-          
-          {/* Colores */}
-          <TabsContent value="colors" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Paleta de Colores</CardTitle>
-                <CardDescription>Esquema de colores basado en Material Design 3</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Colores Primarios</h3>
-                    
-                    <div className="grid gap-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full bg-primary"></div>
-                          <span>Primary</span>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="h-8 w-8 p-0" 
-                          onClick={() => copyToClipboard('bg-primary', 'primary')}
-                        >
-                          {isCopied['primary'] ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full bg-primary-foreground"></div>
-                          <span>Primary Foreground</span>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="h-8 w-8 p-0" 
-                          onClick={() => copyToClipboard('bg-primary-foreground', 'primary-foreground')}
-                        >
-                          {isCopied['primary-foreground'] ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full bg-secondary"></div>
-                          <span>Secondary</span>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="h-8 w-8 p-0" 
-                          onClick={() => copyToClipboard('bg-secondary', 'secondary')}
-                        >
-                          {isCopied['secondary'] ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full bg-accent"></div>
-                          <span>Accent</span>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="h-8 w-8 p-0" 
-                          onClick={() => copyToClipboard('bg-accent', 'accent')}
-                        >
-                          {isCopied['accent'] ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Colores de Superficie</h3>
-                    
-                    <div className="grid gap-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full bg-background border border-border"></div>
-                          <span>Background</span>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="h-8 w-8 p-0" 
-                          onClick={() => copyToClipboard('bg-background', 'background')}
-                        >
-                          {isCopied['background'] ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full bg-card border border-border"></div>
-                          <span>Card</span>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="h-8 w-8 p-0" 
-                          onClick={() => copyToClipboard('bg-card', 'card')}
-                        >
-                          {isCopied['card'] ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full bg-muted"></div>
-                          <span>Muted</span>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="h-8 w-8 p-0" 
-                          onClick={() => copyToClipboard('bg-muted', 'muted')}
-                        >
-                          {isCopied['muted'] ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full border border-border"></div>
-                          <span>Border</span>
-                        </div>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="h-8 w-8 p-0" 
-                          onClick={() => copyToClipboard('border-border', 'border')}
-                        >
-                          {isCopied['border'] ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Elevación y Sombras</CardTitle>
-                <CardDescription>Sistema de elevación para crear profundidad visual</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
-                  <div className="flex flex-col items-center">
-                    <div className="md-elevation-1 h-24 w-full rounded-lg mb-3"></div>
-                    <span className="text-sm font-medium">Elevación 1</span>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="mt-1" 
-                      onClick={() => copyToClipboard('md-elevation-1', 'md-elevation-1')}
-                    >
-                      {isCopied['md-elevation-1'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                      Copiar
-                    </Button>
-                  </div>
-                  
-                  <div className="flex flex-col items-center">
-                    <div className="md-elevation-2 h-24 w-full rounded-lg mb-3"></div>
-                    <span className="text-sm font-medium">Elevación 2</span>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="mt-1" 
-                      onClick={() => copyToClipboard('md-elevation-2', 'md-elevation-2')}
-                    >
-                      {isCopied['md-elevation-2'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                      Copiar
-                    </Button>
-                  </div>
-                  
-                  <div className="flex flex-col items-center">
-                    <div className="md-elevation-3 h-24 w-full rounded-lg mb-3"></div>
-                    <span className="text-sm font-medium">Elevación 3</span>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="mt-1" 
-                      onClick={() => copyToClipboard('md-elevation-3', 'md-elevation-3')}
-                    >
-                      {isCopied['md-elevation-3'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                      Copiar
-                    </Button>
-                  </div>
-                  
-                  <div className="flex flex-col items-center">
-                    <div className="md-elevation-4 h-24 w-full rounded-lg mb-3"></div>
-                    <span className="text-sm font-medium">Elevación 4</span>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="mt-1" 
-                      onClick={() => copyToClipboard('md-elevation-4', 'md-elevation-4')}
-                    >
-                      {isCopied['md-elevation-4'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                      Copiar
-                    </Button>
-                  </div>
-                  
-                  <div className="flex flex-col items-center">
-                    <div className="md-elevation-5 h-24 w-full rounded-lg mb-3"></div>
-                    <span className="text-sm font-medium">Elevación 5</span>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="mt-1" 
-                      onClick={() => copyToClipboard('md-elevation-5', 'md-elevation-5')}
-                    >
-                      {isCopied['md-elevation-5'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                      Copiar
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* Tipografía */}
-          <TabsContent value="typography" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Escala Tipográfica</CardTitle>
-                <CardDescription>Sistema tipográfico basado en Material Design 3</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-8">
-                  <div>
-                    <h1>Headline 1 - Material Design</h1>
-                    <div className="flex justify-between mt-1 text-sm text-muted-foreground">
-                      <span>text-4xl md:text-5xl font-normal tracking-tight leading-tight</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('text-4xl md:text-5xl font-normal tracking-tight leading-tight', 'h1')}
-                      >
-                        {isCopied['h1'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h2>Headline 2 - Material Design</h2>
-                    <div className="flex justify-between mt-1 text-sm text-muted-foreground">
-                      <span>text-3xl md:text-4xl font-normal tracking-tight leading-tight</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('text-3xl md:text-4xl font-normal tracking-tight leading-tight', 'h2')}
-                      >
-                        {isCopied['h2'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3>Headline 3 - Material Design</h3>
-                    <div className="flex justify-between mt-1 text-sm text-muted-foreground">
-                      <span>text-2xl md:text-3xl font-normal tracking-tight leading-tight</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('text-2xl md:text-3xl font-normal tracking-tight leading-tight', 'h3')}
-                      >
-                        {isCopied['h3'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4>Headline 4 - Material Design</h4>
-                    <div className="flex justify-between mt-1 text-sm text-muted-foreground">
-                      <span>text-xl md:text-2xl font-normal tracking-tight leading-tight</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('text-xl md:text-2xl font-normal tracking-tight leading-tight', 'h4')}
-                      >
-                        {isCopied['h4'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h5>Headline 5 - Material Design</h5>
-                    <div className="flex justify-between mt-1 text-sm text-muted-foreground">
-                      <span>text-lg md:text-xl font-medium tracking-tight leading-tight</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('text-lg md:text-xl font-medium tracking-tight leading-tight', 'h5')}
-                      >
-                        {isCopied['h5'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h6>Headline 6 - Material Design</h6>
-                    <div className="flex justify-between mt-1 text-sm text-muted-foreground">
-                      <span>text-base md:text-lg font-medium tracking-tight leading-tight</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('text-base md:text-lg font-medium tracking-tight leading-tight', 'h6')}
-                      >
-                        {isCopied['h6'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <p className="md-text-body">Párrafo con clase md-text-body - Texto de ejemplo para mostrar el estilo de párrafo estándar en Material Design.</p>
-                    <div className="flex justify-between mt-1 text-sm text-muted-foreground">
-                      <span>md-text-body</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('md-text-body', 'body')}
-                      >
-                        {isCopied['body'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <p className="md-text-body-small">Párrafo pequeño con clase md-text-body-small - Texto de ejemplo para mostrar el estilo de párrafo pequeño en Material Design.</p>
-                    <div className="flex justify-between mt-1 text-sm text-muted-foreground">
-                      <span>md-text-body-small</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('md-text-body-small', 'body-small')}
-                      >
-                        {isCopied['body-small'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <p className="md-text-caption">Texto caption con clase md-text-caption - Texto de ejemplo para mostrar el estilo de caption en Material Design.</p>
-                    <div className="flex justify-between mt-1 text-sm text-muted-foreground">
-                      <span>md-text-caption</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('md-text-caption', 'caption')}
-                      >
-                        {isCopied['caption'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* Componentes */}
-          <TabsContent value="components" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Botones</CardTitle>
-                <CardDescription>Variantes de botones en Material Design 3</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-medium mb-3">Botones Estándar</h3>
-                      <div className="flex flex-wrap gap-4">
-                        <button className="md-btn-filled">Filled</button>
-                        <button className="md-btn-tonal">Tonal</button>
-                        <button className="md-btn-outlined">Outlined</button>
-                        <button className="md-btn-text">Text</button>
-                      </div>
-                      <div className="mt-2">
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => copyToClipboard('<button className="md-btn-filled">Filled</button>', 'button-filled')}
-                        >
-                          {isCopied['button-filled'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                          Copiar código
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-medium mb-3">Botones con Iconos</h3>
-                      <div className="flex flex-wrap gap-4">
-                        <button className="md-btn-filled">
-                          <Star className="h-4 w-4 mr-2" />
-                          Favorito
-                        </button>
-                        <button className="md-btn-tonal">
-                          <Settings className="h-4 w-4 mr-2" />
-                          Ajustes
-                        </button>
-                        <button className="md-btn-outlined">
-                          <Mail className="h-4 w-4 mr-2" />
-                          Enviar
-                        </button>
-                      </div>
-                      <div className="mt-2">
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => copyToClipboard('<button className="md-btn-filled"><Star className="h-4 w-4 mr-2" />Favorito</button>', 'button-icon')}
-                        >
-                          {isCopied['button-icon'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                          Copiar código
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-medium mb-3">Botones Animados</h3>
-                      <div className="flex flex-wrap gap-4">
-                        <button className="md-btn-filled md-animate-pulse">Pulse</button>
-                        <button className="md-btn-tonal md-hover-scale">Scale on Hover</button>
-                        <button className="md-btn-outlined md-hover-elevate">Elevate on Hover</button>
-                      </div>
-                      <div className="mt-2">
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => copyToClipboard('<button className="md-btn-filled md-animate-pulse">Pulse</button>', 'button-animated')}
-                        >
-                          {isCopied['button-animated'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                          Copiar código
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-medium mb-3">Botones FAB</h3>
-                      <div className="relative h-48 border rounded-lg overflow-hidden">
-                        <div className="p-4">Contenido de ejemplo</div>
-                        <button className="md-fab bg-primary text-primary-foreground">
-                          <Star className="h-6 w-6" />
-                        </button>
-                      </div>
-                      <div className="mt-2">
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => copyToClipboard('<button className="md-fab bg-primary text-primary-foreground"><Star className="h-6 w-6" /></button>', 'button-fab')}
-                        >
-                          {isCopied['button-fab'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                          Copiar código
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-medium mb-3">Interruptores (Switches)</h3>
-                      <div className="flex flex-wrap gap-6 items-center">
-                        <label className="md-switch">
-                          <input type="checkbox" className="md-switch-input" />
-                          <div className="md-switch-track">
-                            <div className="md-switch-thumb"></div>
-                          </div>
-                        </label>
-                        
-                        <label className="md-switch">
-                          <input type="checkbox" className="md-switch-input" defaultChecked />
-                          <div className="md-switch-track">
-                            <div className="md-switch-thumb"></div>
-                          </div>
-                          <span className="ml-2">Activado</span>
-                        </label>
-                      </div>
-                      <div className="mt-2">
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => copyToClipboard('<label className="md-switch"><input type="checkbox" className="md-switch-input" /><div className="md-switch-track"><div className="md-switch-thumb"></div></div></label>', 'switch')}
-                        >
-                          {isCopied['switch'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                          Copiar código
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Cards y Contenedores</CardTitle>
-                <CardDescription>Variantes de tarjetas en Material Design 3</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="md-card-elevated p-6">
-                    <h3 className="font-medium mb-2">Card Elevada</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Tarjeta con elevación y sombra que se intensifica al hacer hover.
-                    </p>
-                    <div className="mt-4">
-                      <Button 
-                        size="sm" 
-                        onClick={() => copyToClipboard('md-card-elevated', 'card-elevated')}
-                      >
-                        {isCopied['card-elevated'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar clase
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="md-card-outlined p-6">
-                    <h3 className="font-medium mb-2">Card Outlined</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Tarjeta con borde y sin elevación para un estilo más sutil.
-                    </p>
-                    <div className="mt-4">
-                      <Button 
-                        size="sm" 
-                        onClick={() => copyToClipboard('md-card-outlined', 'card-outlined')}
-                      >
-                        {isCopied['card-outlined'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar clase
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="md-card-filled p-6">
-                    <h3 className="font-medium mb-2">Card Filled</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Tarjeta con fondo de color para mayor énfasis visual.
-                    </p>
-                    <div className="mt-4">
-                      <Button 
-                        size="sm" 
-                        onClick={() => copyToClipboard('md-card-filled', 'card-filled')}
-                      >
-                        {isCopied['card-filled'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar clase
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Chips y Badges</CardTitle>
-                <CardDescription>Elementos informativos compactos</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <h3 className="text-lg font-medium mb-3">Chips</h3>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="md-chip-filled">React</span>
-                      <span className="md-chip-filled">TypeScript</span>
-                      <span className="md-chip-outlined">Material Design</span>
-                      <span className="md-chip-outlined">Tailwind CSS</span>
-                    </div>
-                    <div className="mt-3">
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('<span className="md-chip-filled">React</span>', 'chip')}
-                      >
-                        {isCopied['chip'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar código
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-medium mb-3">Navigation</h3>
-                    <div className="md-bottom-nav border rounded-lg">
-                      <a href="#" className="md-bottom-nav-item active">
-                        <Home className="h-5 w-5" />
-                        <span className="text-xs">Inicio</span>
-                      </a>
-                      <a href="#" className="md-bottom-nav-item">
-                        <Search className="h-5 w-5" />
-                        <span className="text-xs">Buscar</span>
-                      </a>
-                      <a href="#" className="md-bottom-nav-item">
-                        <Bell className="h-5 w-5" />
-                        <span className="text-xs">Notificaciones</span>
-                      </a>
-                      <a href="#" className="md-bottom-nav-item">
-                        <User className="h-5 w-5" />
-                        <span className="text-xs">Perfil</span>
-                      </a>
-                    </div>
-                    <div className="mt-3">
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('<div className="md-bottom-nav"><a href="#" className="md-bottom-nav-item active"><Home className="h-5 w-5" /><span className="text-xs">Inicio</span></a></div>', 'bottom-nav')}
-                      >
-                        {isCopied['bottom-nav'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar código
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* Animaciones */}
-          <TabsContent value="animations" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Animaciones Básicas</CardTitle>
-                <CardDescription>Efectos de entrada y salida</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="border rounded-lg p-6 overflow-hidden">
-                    <button
-                      className="w-full mb-4"
-                      onClick={(e) => {
-                        const target = e.currentTarget.nextElementSibling as HTMLElement;
-                        target.style.animation = 'none';
-                        // Force reflow
-                        void target.offsetWidth;
-                        target.style.animation = '';
-                      }}
-                    >
-                      <div className="md-btn-filled w-full">Reiniciar Animación</div>
-                    </button>
-                    <div className="md-animate-fade h-24 flex items-center justify-center bg-muted rounded-lg">
-                      Fade
-                    </div>
-                    <div className="mt-3">
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('md-animate-fade', 'animate-fade')}
-                      >
-                        {isCopied['animate-fade'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar clase
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="border rounded-lg p-6 overflow-hidden">
-                    <button
-                      className="w-full mb-4"
-                      onClick={(e) => {
-                        const target = e.currentTarget.nextElementSibling as HTMLElement;
-                        target.style.animation = 'none';
-                        // Force reflow
-                        void target.offsetWidth;
-                        target.style.animation = '';
-                      }}
-                    >
-                      <div className="md-btn-filled w-full">Reiniciar Animación</div>
-                    </button>
-                    <div className="md-animate-scale h-24 flex items-center justify-center bg-muted rounded-lg">
-                      Scale
-                    </div>
-                    <div className="mt-3">
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('md-animate-scale', 'animate-scale')}
-                      >
-                        {isCopied['animate-scale'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar clase
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="border rounded-lg p-6 overflow-hidden">
-                    <button
-                      className="w-full mb-4"
-                      onClick={(e) => {
-                        const target = e.currentTarget.nextElementSibling as HTMLElement;
-                        target.style.animation = 'none';
-                        // Force reflow
-                        void target.offsetWidth;
-                        target.style.animation = '';
-                      }}
-                    >
-                      <div className="md-btn-filled w-full">Reiniciar Animación</div>
-                    </button>
-                    <div className="md-animate-slide-up h-24 flex items-center justify-center bg-muted rounded-lg">
-                      Slide Up
-                    </div>
-                    <div className="mt-3">
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => copyToClipboard('md-animate-slide-up', 'animate-slide-up')}
-                      >
-                        {isCopied['animate-slide-up'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar clase
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Hover Effects</CardTitle>
-                <CardDescription>Efectos al interactuar con elementos</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="md-card-outlined p-6 md-hover-scale">
-                    <h3 className="font-medium mb-2">Hover Scale</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Escala el elemento al hacer hover sobre él. Prueba pasando el mouse por encima.
-                    </p>
-                    <div className="mt-4">
-                      <Button 
-                        size="sm" 
-                        onClick={() => copyToClipboard('md-hover-scale', 'hover-scale')}
-                      >
-                        {isCopied['hover-scale'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar clase
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="md-card-outlined p-6 md-hover-elevate">
-                    <h3 className="font-medium mb-2">Hover Elevate</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Aumenta la elevación al hacer hover, creando un efecto de "levitación".
-                    </p>
-                    <div className="mt-4">
-                      <Button 
-                        size="sm" 
-                        onClick={() => copyToClipboard('md-hover-elevate', 'hover-elevate')}
-                      >
-                        {isCopied['hover-elevate'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar clase
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="md-card-outlined md-shine p-6">
-                    <h3 className="font-medium mb-2">Shine Effect</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Efecto de brillo que recorre el elemento de forma automática.
-                    </p>
-                    <div className="mt-4">
-                      <Button 
-                        size="sm" 
-                        onClick={() => copyToClipboard('md-shine', 'shine')}
-                      >
-                        {isCopied['shine'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                        Copiar clase
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Animaciones de Estado</CardTitle>
-                <CardDescription>Efectos para indicar estados y transiciones</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-medium mb-3">Pulse Animation</h3>
-                      <button className="md-btn-filled md-animate-pulse w-full py-3">
-                        Botón con Pulso
-                      </button>
-                      <div className="mt-3">
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => copyToClipboard('md-animate-pulse', 'animate-pulse')}
-                        >
-                          {isCopied['animate-pulse'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                          Copiar clase
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-medium mb-3">Rotate Animation</h3>
-                      <div className="flex justify-center">
-                        <div className="md-animate-rotate bg-primary text-primary-foreground h-16 w-16 rounded-full flex items-center justify-center">
-                          <Settings className="h-8 w-8" />
-                        </div>
-                      </div>
-                      <div className="mt-3 text-center">
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => copyToClipboard('md-animate-rotate', 'animate-rotate')}
-                        >
-                          {isCopied['animate-rotate'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                          Copiar clase
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-medium mb-3">Wow Effect Demo</h3>
-                      <div 
-                        className="md-card-elevated md-hover-scale p-6 overflow-hidden relative"
-                        onMouseEnter={(e) => {
-                          const target = e.currentTarget.querySelector('.animation-overlay') as HTMLElement;
-                          if (target) {
-                            target.style.animation = 'none';
-                            void target.offsetWidth;
-                            target.style.animation = '';
-                          }
-                        }}
-                      >
-                        <div className="animation-overlay absolute inset-0 bg-primary/10 md-animate-scale pointer-events-none"></div>
-                        <h4 className="font-medium">Combinación de Efectos</h4>
-                        <p className="text-sm text-muted-foreground mt-2">
-                          Esta tarjeta combina múltiples efectos: elevación, scale en hover y animación al entrar.
-                          Pasa el mouse sobre la tarjeta para ver todos los efectos.
-                        </p>
-                        <button className="md-btn-filled mt-4 md-shine">
-                          Acción Principal
-                        </button>
-                      </div>
-                      <div className="mt-3">
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => copyToClipboard('<div className="md-card-elevated md-hover-scale overflow-hidden relative"><div className="animation-overlay absolute inset-0 bg-primary/10 md-animate-scale pointer-events-none"></div></div>', 'wow-effect')}
-                        >
-                          {isCopied['wow-effect'] ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                          Copiar código
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm">Estándar</span>
+            <Switch checked={materialTheme} onCheckedChange={toggleMaterialTheme} />
+            <span className="text-sm">Material</span>
+          </div>
+        </div>
       </div>
       
-      {/* FAB con efecto de elevación y animación */}
-      <button 
-        className="md-fab bg-primary text-primary-foreground md-animate-fade"
-        onClick={() => {
-          toast.success('¡Acción completada!');
-        }}
-      >
-        <Star className="h-6 w-6" />
-      </button>
+      <div className="mb-6">
+        <p className="text-muted-foreground">
+          Explora nuestro sistema de diseño basado en Material Design 3, con animaciones avanzadas y efectos visuales.
+        </p>
+      </div>
+      
+      <Tabs defaultValue="components" className="space-y-6">
+        <div className="flex overflow-auto pb-2">
+          <TabsList>
+            <TabsTrigger value="components" className="flex items-center">
+              <Box className="mr-2 h-4 w-4" />
+              Componentes
+            </TabsTrigger>
+            <TabsTrigger value="colors" className="flex items-center">
+              <Palette className="mr-2 h-4 w-4" />
+              Colores
+            </TabsTrigger>
+            <TabsTrigger value="typography" className="flex items-center">
+              <Type className="mr-2 h-4 w-4" />
+              Tipografía
+            </TabsTrigger>
+            <TabsTrigger value="animations" className="flex items-center">
+              <Sparkles className="mr-2 h-4 w-4" />
+              Animaciones
+            </TabsTrigger>
+            <TabsTrigger value="spacing" className="flex items-center">
+              <MoveHorizontal className="mr-2 h-4 w-4" />
+              Espaciado
+            </TabsTrigger>
+            <TabsTrigger value="elevation" className="flex items-center">
+              <Layers className="mr-2 h-4 w-4" />
+              Elevación
+            </TabsTrigger>
+          </TabsList>
+        </div>
+        
+        <TabsContent value="components" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Botones</CardTitle>
+              <CardDescription>Diferentes variantes de botones según Material Design 3</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Variantes</h3>
+                <div className="flex flex-wrap gap-4">
+                  <Button variant="filled">Filled</Button>
+                  <Button variant="tonal">Tonal</Button>
+                  <Button variant="outlinedMaterial">Outlined</Button>
+                  <Button variant="text">Text</Button>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Con iconos</h3>
+                <div className="flex flex-wrap gap-4">
+                  <Button variant="filled">
+                    <Check className="mr-2 h-4 w-4" />
+                    Aceptar
+                  </Button>
+                  <Button variant="outlinedMaterial">
+                    <X className="mr-2 h-4 w-4" />
+                    Cancelar
+                  </Button>
+                  <Button variant="tonal">
+                    Siguiente
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Tamaños</h3>
+                <div className="flex flex-wrap items-center gap-4">
+                  <Button variant="filled" size="sm">Small</Button>
+                  <Button variant="filled">Default</Button>
+                  <Button variant="filled" size="lg">Large</Button>
+                  <Button variant="filled" size="icon"><PanelLeft /></Button>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Interacciones</h3>
+                <div className="flex flex-wrap gap-4">
+                  <Button variant="filled" className="md-hover-scale">Escala en Hover</Button>
+                  <Button variant="tonal" className="md-hover-elevate">Elevación en Hover</Button>
+                  <Button variant="filled" className="md-ripple-container">Con Efecto Ripple</Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Formularios</CardTitle>
+              <CardDescription>Componentes de entrada según Material Design 3</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nombre</Label>
+                    <Input id="name" placeholder="Ingresa tu nombre" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="example@nexo.com" />
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 pt-4">
+                    <Switch id="notifications" />
+                    <Label htmlFor="notifications">Recibir notificaciones</Label>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Badges</CardTitle>
+              <CardDescription>Diferentes estilos de badges</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-4">
+                <Badge>Default</Badge>
+                <Badge variant="secondary">Secondary</Badge>
+                <Badge variant="outline">Outline</Badge>
+                <Badge variant="destructive">Destructive</Badge>
+                <Badge className="bg-primary/10 text-primary hover:bg-primary/20">Material</Badge>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="md-card-elevated">
+            <CardHeader>
+              <CardTitle>Cards</CardTitle>
+              <CardDescription>Variantes de tarjetas según Material Design 3</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="md-card">
+                  <div className="p-6">
+                    <h3 className="text-lg font-medium mb-2">Card Básica</h3>
+                    <p className="text-muted-foreground text-sm">Un contenedor versátil para mostrar contenido.</p>
+                  </div>
+                </div>
+                
+                <div className="md-card-elevated">
+                  <div className="p-6">
+                    <h3 className="text-lg font-medium mb-2">Card Elevada</h3>
+                    <p className="text-muted-foreground text-sm">Con sombra para mostrar elevación en la interfaz.</p>
+                  </div>
+                </div>
+                
+                <div className="md-card-outlined">
+                  <div className="p-6">
+                    <h3 className="text-lg font-medium mb-2">Card con Borde</h3>
+                    <p className="text-muted-foreground text-sm">Con un borde sutil para delimitar el contenido.</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <div className="text-center py-4">
+            <Button variant="tonal" onClick={() => navigate('/design-system')} className="md-hover-scale">
+              Ver catálogo completo
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="colors" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Paleta de Colores</CardTitle>
+              <CardDescription>Colores principales y variaciones del sistema Material Design 3</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium">Colores Primarios</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-primary rounded-md"></div>
+                      <p className="text-xs">Primary</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-primary/80 rounded-md"></div>
+                      <p className="text-xs">Primary (80%)</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-primary/60 rounded-md"></div>
+                      <p className="text-xs">Primary (60%)</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-primary/20 rounded-md"></div>
+                      <p className="text-xs">Primary (20%)</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium">Colores Secundarios</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-secondary rounded-md"></div>
+                      <p className="text-xs">Secondary</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-secondary/80 rounded-md"></div>
+                      <p className="text-xs">Secondary (80%)</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-secondary/60 rounded-md"></div>
+                      <p className="text-xs">Secondary (60%)</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-secondary/20 rounded-md"></div>
+                      <p className="text-xs">Secondary (20%)</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium">Colores de Acento</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-accent rounded-md"></div>
+                      <p className="text-xs">Accent</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-accent/80 rounded-md"></div>
+                      <p className="text-xs">Accent (80%)</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-accent/60 rounded-md"></div>
+                      <p className="text-xs">Accent (60%)</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-20 w-full bg-accent/20 rounded-md"></div>
+                      <p className="text-xs">Accent (20%)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="typography" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Tipografía</CardTitle>
+              <CardDescription>Sistema de tipografía según Material Design 3</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium">Encabezados</h3>
+                <div className="space-y-6">
+                  <div>
+                    <h1>Encabezado 1</h1>
+                    <p className="text-xs text-muted-foreground">text-4xl / 5xl (móvil/desktop)</p>
+                  </div>
+                  <div>
+                    <h2>Encabezado 2</h2>
+                    <p className="text-xs text-muted-foreground">text-3xl / 4xl (móvil/desktop)</p>
+                  </div>
+                  <div>
+                    <h3>Encabezado 3</h3>
+                    <p className="text-xs text-muted-foreground">text-2xl / 3xl (móvil/desktop)</p>
+                  </div>
+                  <div>
+                    <h4>Encabezado 4</h4>
+                    <p className="text-xs text-muted-foreground">text-xl / 2xl (móvil/desktop)</p>
+                  </div>
+                  <div>
+                    <h5>Encabezado 5</h5>
+                    <p className="text-xs text-muted-foreground">text-lg / xl (móvil/desktop)</p>
+                  </div>
+                  <div>
+                    <h6>Encabezado 6</h6>
+                    <p className="text-xs text-muted-foreground">text-base / lg (móvil/desktop)</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Separator />
+              
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium">Estilos de Texto</h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="md-text-body">Texto de párrafo estándar</p>
+                    <p className="text-xs text-muted-foreground">md-text-body</p>
+                  </div>
+                  <div>
+                    <p className="md-text-body-small">Texto de párrafo pequeño</p>
+                    <p className="text-xs text-muted-foreground">md-text-body-small</p>
+                  </div>
+                  <div>
+                    <p className="md-text-caption">Texto de leyenda o caption</p>
+                    <p className="text-xs text-muted-foreground">md-text-caption</p>
+                  </div>
+                  <div>
+                    <p className="md-text-title">Texto de título</p>
+                    <p className="text-xs text-muted-foreground">md-text-title</p>
+                  </div>
+                  <div>
+                    <p className="md-text-title-small">Texto de título pequeño</p>
+                    <p className="text-xs text-muted-foreground">md-text-title-small</p>
+                  </div>
+                  <div>
+                    <p className="md-text-headline-small">Texto de encabezado pequeño</p>
+                    <p className="text-xs text-muted-foreground">md-text-headline-small</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="animations" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Animaciones y Transiciones</CardTitle>
+              <CardDescription>Efectos visuales según Material Design 3</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium">Animaciones Básicas</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex flex-col items-center">
+                    <div className="animate-fade-in bg-primary/20 p-6 rounded-md w-full h-32 flex items-center justify-center">
+                      <span>Fade In</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">animate-fade-in</p>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="animate-scale-in bg-secondary/20 p-6 rounded-md w-full h-32 flex items-center justify-center">
+                      <span>Scale In</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">animate-scale-in</p>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="animate-slide-in-right bg-accent/20 p-6 rounded-md w-full h-32 flex items-center justify-center">
+                      <span>Slide In</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">animate-slide-in-right</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium">Efectos Hover</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex flex-col items-center">
+                    <div className="md-hover-scale bg-primary/20 p-6 rounded-md w-full h-32 flex items-center justify-center">
+                      <span>Hover me (Scale)</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">md-hover-scale</p>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="md-hover-elevate bg-secondary/20 p-6 rounded-md w-full h-32 flex items-center justify-center">
+                      <span>Hover me (Elevate)</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">md-hover-elevate</p>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="story-link bg-accent/20 p-6 rounded-md w-full h-32 flex items-center justify-center">
+                      <span>Hover me (Underline)</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">story-link</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium">Animaciones Continuas</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex flex-col items-center">
+                    <div className="md-animate-pulse bg-primary/20 p-6 rounded-md w-full h-32 flex items-center justify-center">
+                      <span>Pulse Animation</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">md-animate-pulse</p>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="md-animate-rotate bg-secondary/20 p-6 rounded-md w-full h-32 flex items-center justify-center">
+                      <Sparkles className="h-6 w-6" />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">md-animate-rotate</p>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="md-shine bg-accent/20 p-6 rounded-md w-full h-32 flex items-center justify-center">
+                      <span>Shine Effect</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">md-shine</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="spacing" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Sistema de Espaciado</CardTitle>
+              <CardDescription>Espaciado consistente según Material Design 3</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-8">
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium">Escala de Espaciado</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center">
+                      <div className="bg-primary/20 h-4 w-4"></div>
+                      <span className="ml-2 text-sm">4px - Espaciado Mínimo (1 unidad)</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="bg-primary/20 h-8 w-8"></div>
+                      <span className="ml-2 text-sm">8px - Espaciado Pequeño (2 unidades)</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="bg-primary/20 h-16 w-16"></div>
+                      <span className="ml-2 text-sm">16px - Espaciado Base (4 unidades)</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="bg-primary/20 h-24 w-24"></div>
+                      <span className="ml-2 text-sm">24px - Espaciado Medio (6 unidades)</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="bg-primary/20 h-32 w-32"></div>
+                      <span className="ml-2 text-sm">32px - Espaciado Grande (8 unidades)</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium">Aplicaciones del Espaciado</h3>
+                  <div className="space-y-4">
+                    <div className="p-4 border border-dashed rounded-md">
+                      <p className="text-sm">Padding 4 (p-4): 16px de padding</p>
+                    </div>
+                    <div className="mt-4 border border-dashed rounded-md">
+                      <p className="text-sm">Margin Top 4 (mt-4): 16px de margen superior</p>
+                    </div>
+                    <div className="flex space-x-4 border border-dashed rounded-md p-4">
+                      <div className="w-8 h-8 bg-primary/20"></div>
+                      <div className="w-8 h-8 bg-primary/40"></div>
+                      <div className="w-8 h-8 bg-primary/60"></div>
+                    </div>
+                    <p className="text-sm">Gap 4 (space-x-4): 16px de separación entre elementos</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="elevation" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Sistema de Elevación</CardTitle>
+              <CardDescription>Niveles de elevación según Material Design 3</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <div className="p-6 rounded-md md-elevation-1 bg-card">
+                      <h3 className="text-lg font-medium">Nivel 1</h3>
+                      <p className="text-sm text-muted-foreground">Elevación sutil</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground">md-elevation-1</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="p-6 rounded-md md-elevation-2 bg-card">
+                      <h3 className="text-lg font-medium">Nivel 2</h3>
+                      <p className="text-sm text-muted-foreground">Elevación moderada</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground">md-elevation-2</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="p-6 rounded-md md-elevation-3 bg-card">
+                      <h3 className="text-lg font-medium">Nivel 3</h3>
+                      <p className="text-sm text-muted-foreground">Elevación media</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground">md-elevation-3</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="p-6 rounded-md md-elevation-4 bg-card">
+                      <h3 className="text-lg font-medium">Nivel 4</h3>
+                      <p className="text-sm text-muted-foreground">Elevación alta</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground">md-elevation-4</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="p-6 rounded-md md-elevation-5 bg-card">
+                      <h3 className="text-lg font-medium">Nivel 5</h3>
+                      <p className="text-sm text-muted-foreground">Elevación máxima</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground">md-elevation-5</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
