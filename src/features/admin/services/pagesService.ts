@@ -1,5 +1,5 @@
 
-import { SitePage, PageStatus } from "@/types/pages";
+import { SitePage, PageStatus, PageBlock } from "@/types/pages";
 
 // Check if a slug is unique
 export const isSlugUnique = async (slug: string, pageId?: string): Promise<boolean> => {

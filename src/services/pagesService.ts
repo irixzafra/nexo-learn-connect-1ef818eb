@@ -1,5 +1,5 @@
 
-import { SitePage, PageContent, PageStatus } from '@/types/pages';
+import { SitePage, PageStatus, PageAccessType, PageLayout, PageContent, PageBlock } from '@/types/pages';
 
 // Mock data for simulating API calls
 const MOCK_PAGES: SitePage[] = [
@@ -110,7 +110,7 @@ export const updatePage = async (id: string, pageData: Partial<SitePage>): Promi
   } as SitePage;
 };
 
-// Update page status - added to fix error
+// Update page status
 export const updatePageStatus = async (id: string, status: PageStatus): Promise<SitePage> => {
   await delay(300);
   
@@ -126,7 +126,7 @@ export const updatePageStatus = async (id: string, status: PageStatus): Promise<
   };
 };
 
-// Delete a page - added to fix error
+// Delete a page
 export const deletePage = async (id: string): Promise<void> => {
   await delay(300);
   console.log(`Deleting page with ID ${id}`);
