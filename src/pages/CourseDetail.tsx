@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCourseDetails } from '@/features/courses/hooks/useCourseDetails';

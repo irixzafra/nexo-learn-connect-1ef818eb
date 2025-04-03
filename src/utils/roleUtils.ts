@@ -2,13 +2,15 @@
 import { UserRoleType } from '@/types/auth';
 
 /**
- * Get user-friendly role display name
+ * Obtiene el nombre para mostrar de un rol
+ * @param role Rol del usuario
+ * @returns String con el nombre legible del rol
  */
-export const getRoleName = (role: UserRoleType): string => {
+export function getRoleName(role: UserRoleType): string {
   switch (role) {
     case 'admin':
       return 'Administrador';
-    case 'instructor': 
+    case 'instructor':
       return 'Instructor';
     case 'student':
       return 'Estudiante';
@@ -20,60 +22,57 @@ export const getRoleName = (role: UserRoleType): string => {
       return 'Creador de Contenido';
     case 'guest':
       return 'Invitado';
-    case 'beta_tester':
-      return 'Beta Tester';
     case 'anonimo':
       return 'Anónimo';
+    case 'beta_tester':
+      return 'Beta Tester';
     default:
       return role;
   }
-};
+}
 
 /**
- * Get badge color for role
+ * Obtiene una clase CSS para colorear un badge de rol
+ * @param role Rol del usuario
+ * @returns String con clase CSS para color
  */
-export const getRoleBadgeColor = (role: UserRoleType): string => {
+export function getRoleBadgeColor(role: UserRoleType): string {
   switch (role) {
     case 'admin':
-      return "bg-red-100 text-red-800 hover:bg-red-100/80";
+      return 'bg-red-100 text-red-800 border-red-300';
     case 'instructor':
-      return "bg-blue-100 text-blue-800 hover:bg-blue-100/80";
-    case 'student':
-      return "bg-green-100 text-green-800 hover:bg-green-100/80";
+      return 'bg-amber-100 text-amber-800 border-amber-300';
     case 'sistemas':
-      return "bg-purple-100 text-purple-800 hover:bg-purple-100/80";
+      return 'bg-blue-100 text-blue-800 border-blue-300';
     case 'moderator':
-      return "bg-amber-100 text-amber-800 hover:bg-amber-100/80";
+      return 'bg-purple-100 text-purple-800 border-purple-300';
     case 'content_creator':
-      return "bg-indigo-100 text-indigo-800 hover:bg-indigo-100/80";
+      return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+    case 'student':
+      return 'bg-emerald-100 text-emerald-800 border-emerald-300';
     case 'beta_tester':
-      return "bg-cyan-100 text-cyan-800 hover:bg-cyan-100/80";
-    case 'anonimo':
+      return 'bg-cyan-100 text-cyan-800 border-cyan-300';
     case 'guest':
-      return "bg-gray-100 text-gray-800 hover:bg-gray-100/80";
+    case 'anonimo':
     default:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-100/80";
+      return 'bg-gray-100 text-gray-800 border-gray-300';
   }
-};
+}
 
 /**
- * Get home page path based on user role
+ * Determina si un rol tiene permisos administrativos
+ * @param role Rol a verificar
+ * @returns Booleano indicando si tiene permisos admin
  */
-export const getHomePath = (role: UserRoleType): string => {
-  switch (role) {
-    case 'admin':
-      return '/admin/dashboard';
-    case 'instructor': 
-      return '/instructor/dashboard';
-    case 'sistemas':
-      return '/admin/dashboard';
-    case 'moderator':
-      return '/moderator/dashboard';
-    case 'content_creator':
-      return '/content/dashboard';
-    case 'beta_tester':
-      return '/beta/dashboard';
-    default:
-      return '/student/dashboard';
-  }
-};
+export function hasAdminPermissions(role: UserRoleType): boolean {
+  return ['admin', 'sistemas'].includes(role);
+}
+
+/**
+ * Determina si un rol tiene permisos de instructor
+ * @param role Rol a verificar
+ * @returns Booleano indicando si tiene permisos de instructor
+ */
+export function hasInstructorPermissions(role: UserRoleType): boolean {
+  return ['admin', 'instructor', 'sistemas'].includes(role);
+}
