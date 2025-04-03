@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,8 +33,10 @@ const SupabaseConnectionTest: React.FC<SupabaseConnectionTestProps> = ({
     try {
       setTesting(true);
       
-      // Simple test query to check if Supabase is connected
-      const { data, error } = await supabase.auth.getSession();
+      // Simple test query to check if Supabase is connected - using a known table
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('count(*)', { count: 'exact', head: true });
       
       if (error) {
         console.error("Supabase connection error:", error);
@@ -49,19 +50,14 @@ const SupabaseConnectionTest: React.FC<SupabaseConnectionTestProps> = ({
       
       // Try to get some database metadata if possible
       try {
-        const { data: metaData, error: metaError } = await supabase
-          .from('pg_stat_database')
-          .select('version(), pg_database_size(current_database())')
-          .limit(1)
-          .single();
+        const { data: userCount, error: countError } = await supabase
+          .from('profiles')
+          .select('count(*)', { count: 'exact', head: true });
           
-        if (!metaError && metaData) {
-          // Fix here: We need to extract the number from the response and pass that to formatBytes
-          const dbSize = metaData.pg_database_size;
-          
+        if (!countError) {
           setDbInfo({
-            version: metaData.version,
-            size: typeof dbSize === 'number' ? formatBytes(dbSize) : 'Unknown'
+            version: "Postgres (Supabase)",
+            size: `${userCount?.count || 0} usuarios registrados`
           });
         }
       } catch (metaErr) {
@@ -83,7 +79,6 @@ const SupabaseConnectionTest: React.FC<SupabaseConnectionTestProps> = ({
     }
   };
 
-  // Helper function to format bytes to human-readable format
   const formatBytes = (bytes: number, decimals = 2) => {
     if (bytes === 0) return '0 Bytes';
     

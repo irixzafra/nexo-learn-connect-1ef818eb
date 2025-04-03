@@ -1,156 +1,52 @@
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
-import { connectionService } from '@/lib/offline/connectionService';
 
-export type SyncStatus = 'idle' | 'syncing' | 'success' | 'error';
+export type ConnectionStatus = 'connected' | 'disconnected' | 'checking';
 
-export const useSupabaseSync = () => {
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [isOnline, setIsOnline] = useState(connectionService.isCurrentlyOnline());
-  const [lastSynced, setLastSynced] = useState<Date | null>(null);
-  const [pendingOperations, setPendingOperations] = useState(0);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'checking'>('checking');
+export function useSupabaseSync() {
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('checking');
   
-  // Check online status
-  useEffect(() => {
-    const unsubscribe = connectionService.addListener(online => {
-      setIsOnline(online);
-    });
-    
-    // Initialize with current status
-    setIsOnline(connectionService.isCurrentlyOnline());
-    
-    return unsubscribe;
-  }, []);
-  
-  // Check Supabase connection on mount
-  useEffect(() => {
-    const checkConnection = async () => {
-      try {
-        setConnectionStatus('checking');
-        const { data, error } = await supabase.from('_view_database_info').select('*').limit(1);
-        
-        if (error) {
-          console.error('Supabase connection error:', error);
-          setConnectionStatus('disconnected');
-          toast.error('No se pudo conectar a la base de datos');
-        } else {
-          console.log('Supabase connection successful');
-          setConnectionStatus('connected');
-        }
-      } catch (err) {
-        console.error('Supabase connection check failed:', err);
-        setConnectionStatus('disconnected');
-      }
-    };
-    
-    checkConnection();
-  }, []);
-  
-  // Función para iniciar la sincronización
-  const startSync = useCallback(async () => {
-    if (connectionStatus !== 'connected') {
-      toast.error('No hay conexión con la base de datos');
-      return false;
-    }
-    
-    setIsLoading(true);
-    setIsSyncing(true);
-    setSyncStatus('syncing');
-    setError(null);
-    
-    try {
-      // Verificar la conexión a Supabase primero
-      const { error: connectionError } = await supabase.auth.getSession();
-      
-      if (connectionError) {
-        throw new Error(`Error de conexión: ${connectionError.message}`);
-      }
-      
-      // Aquí se implementaría la lógica real de sincronización
-      // Por ahora es un simulador que espera 2 segundos
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simulate some pending operations
-      setPendingOperations(Math.max(0, pendingOperations - Math.floor(Math.random() * 3)));
-      setLastSynced(new Date());
-      setSyncStatus('success');
-      return true;
-    } catch (err) {
-      const error = err as Error;
-      console.error('Error en la sincronización:', error);
-      setSyncStatus('error');
-      setError(error);
-      toast.error(`Error al sincronizar: ${error.message}`);
-      return false;
-    } finally {
-      setIsLoading(false);
-      setIsSyncing(false);
-    }
-  }, [pendingOperations, connectionStatus]);
-  
-  // Función para cancelar la sincronización
-  const cancelSync = useCallback(() => {
-    if (syncStatus === 'syncing') {
-      setSyncStatus('idle');
-      setIsLoading(false);
-      setIsSyncing(false);
-    }
-  }, [syncStatus]);
-  
-  // Función para verificar el estado de la base de datos
   const checkDatabaseStatus = useCallback(async () => {
     try {
       setConnectionStatus('checking');
-      const { data, error } = await supabase.from('_view_database_info').select('*').limit(1);
+      
+      // Try a simple query that doesn't require specific tables
+      // Use a query that's guaranteed to work on any Postgres DB
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('count(*)', { count: 'exact', head: true });
       
       if (error) {
+        console.error("Database connection error:", error);
         setConnectionStatus('disconnected');
-        throw error;
+        toast.error("No se puede conectar a la base de datos", {
+          description: "Verifica tu conexión a internet o contacta a soporte."
+        });
+        return false;
       }
       
       setConnectionStatus('connected');
-      return { success: true, data };
+      return true;
     } catch (err) {
-      console.error('Error al verificar estado de la base de datos:', err);
+      console.error('Failed to check database connection:', err);
       setConnectionStatus('disconnected');
-      return { success: false, error: err };
+      return false;
     }
   }, []);
-
-  // For simulation purposes, set random pending operations
-  useEffect(() => {
-    // Initialize with a random number of pending operations for demo
-    if (pendingOperations === 0) {
-      setPendingOperations(Math.floor(Math.random() * 5));
-    }
-  }, [pendingOperations]);
   
-  // Convenience function to trigger sync
-  const syncNow = useCallback(() => {
-    if (!isOnline || isSyncing) return Promise.resolve(false);
-    return startSync();
-  }, [isOnline, isSyncing, startSync]);
-
-  return {
-    syncStatus,
-    isLoading,
-    error,
-    startSync,
-    cancelSync,
-    checkDatabaseStatus,
-    isOnline,
-    lastSynced,
-    pendingOperations,
-    isSyncing,
-    syncNow,
-    connectionStatus
-  };
-};
-
-export default useSupabaseSync;
+  // Check connection status on mount
+  useEffect(() => {
+    checkDatabaseStatus();
+    
+    // Set up a periodic check (every 5 minutes)
+    const interval = setInterval(() => {
+      checkDatabaseStatus();
+    }, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, [checkDatabaseStatus]);
+  
+  return { connectionStatus, checkDatabaseStatus };
+}

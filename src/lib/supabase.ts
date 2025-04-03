@@ -39,7 +39,11 @@ export const mockSignIn = async (email: string, password: string) => {
 // Helper to check database connection
 export const checkDatabaseConnection = async () => {
   try {
-    const { data, error } = await supabase.from('_view_database_info').select('*').limit(1);
+    // Use a more reliable query to check connection - using a known table
+    const { error } = await supabase
+      .from('profiles')
+      .select('id')
+      .limit(1);
     
     if (error) {
       console.error('Database connection error:', error);
