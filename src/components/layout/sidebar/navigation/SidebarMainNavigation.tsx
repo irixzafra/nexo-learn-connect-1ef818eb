@@ -20,7 +20,8 @@ import {
   BarChart3,
   CreditCard,
   ClipboardEdit,
-  Code
+  Code,
+  FileQuestion
 } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
 import { NavItem, NavGroup, NavDivider } from '@/components/navigation';
@@ -191,6 +192,16 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
           title="Foro"
           isCollapsed={isCollapsed}
         />
+        
+        {/* Nuevo ítem para moderadores - Revisión de contenido */}
+        {effectiveRole === 'moderator' && (
+          <NavItem
+            href="/app/moderator/content-review"
+            icon={ClipboardEdit}
+            title="Revisión de Contenido"
+            isCollapsed={isCollapsed}
+          />
+        )}
       </NavGroup>
 
       {/* Admin Group - only for admin and sistemas roles */}
