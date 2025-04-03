@@ -1,19 +1,16 @@
 
-import React, { useState } from 'react';
-import { CodeIcon } from 'lucide-react';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import ErrorBoundary from '@/components/ErrorBoundary';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
+import { AlertTriangle } from 'lucide-react';
 
 interface ComponentPreviewProps {
   componentPath: string;
   componentName: string;
   getRelativePath: (path: string) => string;
   isLoading: boolean;
-  error?: Error | null;
-  children?: React.ReactNode;
+  error: Error | null;
+  children: React.ReactNode;
 }
 
 const ComponentPreview: React.FC<ComponentPreviewProps> = ({
@@ -24,70 +21,56 @@ const ComponentPreview: React.FC<ComponentPreviewProps> = ({
   error,
   children
 }) => {
-  const [showPreview, setShowPreview] = useState(true);
-
-  const toggleView = () => {
-    setShowPreview(!showPreview);
-  };
-
   return (
-    <div className="space-y-4">
-      <div className="bg-muted/30 p-4 rounded-md border">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2">
-            <CodeIcon className="h-4 w-4 text-primary" />
-            <h3 className="font-medium">{componentName}</h3>
+    <div className="space-y-6">
+      <div className="rounded-md border overflow-hidden">
+        <div className="bg-muted p-2 flex items-center justify-between text-xs border-b">
+          <div className="font-mono text-muted-foreground">
+            {getRelativePath(componentPath)}
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={toggleView}
-          >
-            {showPreview ? 'Ver código' : 'Ver componente'}
-          </Button>
+          <div className="bg-background text-muted-foreground px-2 py-1 rounded text-xs">
+            {componentName}
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground font-mono">
-          {getRelativePath(componentPath)}
-        </p>
-      </div>
-
-      {showPreview ? (
-        <div className="p-4 border rounded-md shadow-sm bg-background">
+        <div className="p-4 bg-background">
           {isLoading ? (
             <div className="flex items-center justify-center p-8">
-              <Skeleton className="h-20 w-full rounded-md" />
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <span className="ml-2 text-muted-foreground">Cargando...</span>
             </div>
           ) : error ? (
-            <Alert variant="destructive">
-              <AlertDescription>
-                <div className="font-medium">Error al renderizar el componente:</div>
-                <pre className="text-xs mt-2 overflow-auto">{error.message}</pre>
-              </AlertDescription>
-            </Alert>
+            <div className="flex flex-col items-center justify-center p-8 text-center border border-dashed rounded-md">
+              <AlertTriangle className="h-8 w-8 text-amber-500 mb-2" />
+              <h4 className="font-medium">Error al cargar el componente</h4>
+              <p className="text-sm text-muted-foreground mt-1 max-w-md">
+                {error.message}
+              </p>
+            </div>
           ) : (
-            <ErrorBoundary FallbackComponent={({ error, resetError }) => (
-              <Alert variant="destructive">
-                <AlertDescription>
-                  <div className="font-medium">Error de renderizado:</div>
-                  <pre className="text-xs mt-2 overflow-auto">{error.message}</pre>
-                </AlertDescription>
-              </Alert>
-            )}>
+            <div className="relative">
               {children}
-            </ErrorBoundary>
+            </div>
           )}
         </div>
-      ) : (
-        <div className="bg-muted/50 p-4 rounded-md">
-          <h4 className="text-sm font-medium mb-2">Ejemplo de uso:</h4>
-          <pre className="bg-black text-white p-3 rounded text-xs overflow-x-auto">
-{`import ${componentName} from "@/${getRelativePath(componentPath)}";
+      </div>
 
-// En tu componente
-<${componentName} />`}
+      <Card>
+        <CardHeader className="py-3">
+          <CardTitle className="text-sm">Uso Ejemplo</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <pre className="text-xs font-mono bg-muted p-4 rounded-md overflow-x-auto">
+            {`import { ${componentName} } from "${getRelativePath(componentPath).replace('.tsx', '')}";
+
+// Ejemplo básico de uso
+export const ExampleUsage = () => {
+  return (
+    <${componentName} />
+  );
+};`}
           </pre>
-        </div>
-      )}
+        </CardContent>
+      </Card>
     </div>
   );
 };

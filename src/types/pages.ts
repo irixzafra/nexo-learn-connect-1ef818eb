@@ -1,125 +1,24 @@
 
-// Define possible page layout options
-export type PageLayout = 
-  | "default" 
-  | "full-width" 
-  | "landing" 
-  | "sidebar" 
-  | "marketing" 
-  | "documentation" 
-  | "course"
-  | "grid-2"
-  | "grid-3"
-  | "grid-4"
-  | "row"
-  | "column";
+export type PageStatus = 'published' | 'draft' | 'archived';
 
-// Define possible page status values
-export type PageStatus = 
-  | "draft" 
-  | "published" 
-  | "archived"
-  | "scheduled";
-
-// Define page access types
-export type PageAccessType = 
-  | "public" 
-  | "authenticated" 
-  | "admin" 
-  | "specific-role";
-
-// Define layout for containers
-export type ContainerLayout = 
-  | "row" 
-  | "column" 
-  | "grid"
-  | "masonry"
-  | "grid-2"
-  | "grid-3"
-  | "grid-4";
-
-// Define available block types
-export type PageBlockType = 
-  | "text" 
-  | "image" 
-  | "video" 
-  | "cta" 
-  | "grid" 
-  | "faq" 
-  | "pricing" 
-  | "contact" 
-  | "container" 
-  | "hero"
-  | "features"
-  | "testimonials"
-  | "custom";
-
-// Define a page block structure
-export interface PageBlock {
-  id: string;
-  type: PageBlockType;
-  content: string | Record<string, any>;
-  layout?: ContainerLayout;
-  order?: number;
-  width?: string;
-  height?: string;
-  tags?: string[];
-  isContainer?: boolean;
-}
-
-// Define the site page structure
 export interface SitePage {
   id: string;
   title: string;
   slug: string;
-  description?: string;
-  layout: PageLayout;
-  content: PageContent;
-  is_system_page: boolean;
   status: PageStatus;
-  meta_title?: string;
+  content: string;
   meta_description?: string;
-  created_by?: string;
   created_at: string;
   updated_at: string;
-  accessType?: PageAccessType;
+  is_system_page: boolean;
+  meta_title?: string;
+  meta_keywords?: string;
+  featured_image?: string;
+  author_id?: string;
+  parent_id?: string | null;
 }
 
-// Define page content structure
-export interface PageContent {
-  blocks: PageBlock[];
-  layout?: string;
-  settings?: Record<string, any>;
+export interface PageTreeItem extends SitePage {
+  children?: PageTreeItem[];
+  level: number;
 }
-
-// Utility functions
-export const contentToString = (content: string | object): string => {
-  if (typeof content === 'string') {
-    return content;
-  }
-  try {
-    return JSON.stringify(content);
-  } catch (e) {
-    return '';
-  }
-};
-
-export const getLayoutClass = (layout?: ContainerLayout): string => {
-  switch (layout) {
-    case 'row':
-      return 'flex flex-row gap-4';
-    case 'column':
-      return 'flex flex-col gap-4';
-    case 'grid':
-    case 'grid-2':
-      return 'grid grid-cols-1 sm:grid-cols-2 gap-4';
-    case 'grid-3':
-      return 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4';
-    case 'grid-4':
-      return 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
-    case 'masonry':
-      return 'columns-1 sm:columns-2 md:columns-3 gap-4';
-    default:
-      return 'flex flex-col gap-4';
-  }
-};

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ErrorBoundaryFallbackProps {
@@ -8,31 +8,25 @@ interface ErrorBoundaryFallbackProps {
   resetError: () => void;
 }
 
-const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ error, resetError }) => {
+const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ 
+  error, 
+  resetError 
+}) => {
   return (
-    <div className="p-6 border rounded-lg bg-destructive/5 flex flex-col items-center justify-center text-center space-y-4">
-      <AlertCircle className="h-12 w-12 text-destructive" />
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Algo salió mal</h3>
-        <p className="text-sm text-muted-foreground max-w-md">
-          Se ha producido un error inesperado. Por favor, intenta de nuevo o contacta con soporte si el problema persiste.
+    <div className="flex flex-col items-center justify-center p-6 text-center rounded-md border border-destructive/20 bg-destructive/5">
+      <AlertTriangle className="h-10 w-10 text-destructive mb-2" />
+      <h3 className="text-xl font-semibold text-destructive mb-2">Error al renderizar el componente</h3>
+      <div className="max-w-md mb-4">
+        <p className="text-sm text-muted-foreground mb-2">
+          Se ha producido un error al intentar renderizar este componente:
         </p>
-        {process.env.NODE_ENV !== 'production' && (
-          <div className="mt-4 p-4 bg-muted/50 rounded text-left overflow-auto max-h-[200px] text-xs">
-            <pre className="font-mono">{error.message}</pre>
-            {error.stack && (
-              <pre className="font-mono mt-2 text-muted-foreground">{error.stack}</pre>
-            )}
-          </div>
-        )}
+        <pre className="bg-background/50 p-2 rounded-md text-xs font-mono overflow-x-auto">
+          {error.message}
+        </pre>
       </div>
-      <Button 
-        onClick={resetError} 
-        variant="outline"
-        className="mt-4"
-      >
-        <RefreshCw className="mr-2 h-4 w-4" />
-        Intentar de nuevo
+      <Button size="sm" onClick={resetError} className="flex items-center gap-2">
+        <RefreshCw className="h-4 w-4" />
+        Reintentar
       </Button>
     </div>
   );
