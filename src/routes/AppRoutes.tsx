@@ -44,6 +44,8 @@ import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminDashboard from '@/pages/admin/Dashboard';
 import PagesManagement from '@/pages/admin/settings/pages';
 import OrphanReviewPage from '@/pages/admin/OrphanReviewPage';
+import NavigationDiagram from '@/pages/admin/NavigationDiagram';
+import AnalyticsOverview from '@/pages/admin/analytics/index';
 
 // Import instructor pages
 import InstructorDashboard from '@/pages/instructor/Dashboard';
@@ -123,9 +125,17 @@ const AppRoutes: React.FC = () => {
         <Route path="admin/system-settings" element={<SafeRouteWrapper requiredRole={['admin']}><SystemSettings /></SafeRouteWrapper>} />
         <Route path="admin/roles" element={<SafeRouteWrapper requiredRole={['admin']}><RoleManagement /></SafeRouteWrapper>} />
         <Route path="admin/link-dashboard" element={<SafeRouteWrapper requiredRole={['admin']}><LinkDashboard /></SafeRouteWrapper>} />
+        
+        {/* --- Rutas Admin Analytics --- */}
+        <Route path="admin/analytics" element={<SafeRouteWrapper requiredRole={['admin']}><AnalyticsOverview /></SafeRouteWrapper>} />
         <Route path="admin/analytics/users" element={<SafeRouteWrapper requiredRole={['admin']}><UserAnalytics /></SafeRouteWrapper>} />
         <Route path="admin/analytics/courses" element={<SafeRouteWrapper requiredRole={['admin']}><CourseAnalytics /></SafeRouteWrapper>} />
         <Route path="admin/analytics/revenue" element={<SafeRouteWrapper requiredRole={['admin']}><RevenueAnalytics /></SafeRouteWrapper>} />
+        
+        {/* --- Rutas Admin adicionales --- */}
+        <Route path="admin/navigation-diagram" element={<SafeRouteWrapper requiredRole={['admin']}><NavigationDiagram /></SafeRouteWrapper>} />
+        <Route path="admin/reports" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Informes" subtitle="Sistema de informes en desarrollo" /></SafeRouteWrapper>} />
+        <Route path="admin/payments" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Pagos y Facturación" subtitle="Sistema de pagos en desarrollo" /></SafeRouteWrapper>} />
         <Route path="admin/ai-services" element={<SafeRouteWrapper requiredRole={['admin']}><AIServicesPage /></SafeRouteWrapper>} />
         <Route path="admin/test-data" element={<SafeRouteWrapper requiredRole={['admin']}><TestDataManagement /></SafeRouteWrapper>} />
         <Route path="admin/access-control" element={<SafeRouteWrapper requiredRole={['admin']}><AccessControl /></SafeRouteWrapper>} />
@@ -144,6 +154,11 @@ const AppRoutes: React.FC = () => {
         <Route path="instructor/courses/:id/editor" element={<SafeRouteWrapper requiredRole={['instructor', 'admin']}><InstructorCourseEditor /></SafeRouteWrapper>} />
         <Route path="instructor/courses/:id/structure" element={<SafeRouteWrapper requiredRole={['instructor', 'admin']}><InstructorEditCourseStructure /></SafeRouteWrapper>} />
         <Route path="instructor/courses/:courseId/lessons/:lessonId/edit" element={<SafeRouteWrapper requiredRole={['instructor', 'admin']}><InstructorEditLesson /></SafeRouteWrapper>} />
+        
+        {/* --- Rutas Instructor adicionales --- */}
+        <Route path="instructor/assignments" element={<SafeRouteWrapper requiredRole={['instructor', 'admin']}><PlaceholderPage title="Notas y Tareas" subtitle="Sistema de gestión de tareas en desarrollo" /></SafeRouteWrapper>} />
+        <Route path="instructor/messages" element={<SafeRouteWrapper requiredRole={['instructor', 'admin']}><PlaceholderPage title="Mensajes de Instructor" subtitle="Sistema de mensajería en desarrollo" /></SafeRouteWrapper>} />
+        <Route path="instructor/analytics" element={<SafeRouteWrapper requiredRole={['instructor', 'admin']}><PlaceholderPage title="Analíticas de Instructor" subtitle="Dashboard de analíticas en desarrollo" /></SafeRouteWrapper>} />
         
         {/* Catch-all para rutas no encontradas DENTRO de /app */}
         <Route path="*" element={<NotFound />} /> 

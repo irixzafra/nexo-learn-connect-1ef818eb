@@ -12,7 +12,8 @@ import {
   DollarSign, 
   FileText,
   List,
-  Palette
+  Palette,
+  CreditCard
 } from 'lucide-react';
 
 const AdminSidebar: React.FC = () => {
@@ -24,6 +25,8 @@ const AdminSidebar: React.FC = () => {
     { path: '/app/admin/analytics/users', label: 'Analíticas Usuarios', icon: <LineChart size={18} /> },
     { path: '/app/admin/analytics/courses', label: 'Analíticas Cursos', icon: <BookOpen size={18} /> },
     { path: '/app/admin/analytics/revenue', label: 'Analíticas Ingresos', icon: <DollarSign size={18} /> },
+    { path: '/app/admin/reports', label: 'Informes', icon: <FileText size={18} /> },
+    { path: '/app/admin/payments', label: 'Pagos', icon: <CreditCard size={18} /> },
     { path: '/app/admin/system-pages', label: 'Páginas', icon: <FileText size={18} /> },
     { path: '/app/admin/design-system', label: 'Diseño', icon: <Palette size={18} /> },
     { path: '/app/admin/navigation-diagram', label: 'Navegación', icon: <List size={18} /> },

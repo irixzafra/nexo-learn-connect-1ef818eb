@@ -36,7 +36,7 @@ const NavigationDiagram: React.FC = () => {
             <ChevronRight className="h-4 w-4" />
           </BreadcrumbSeparator>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/admin/navigation-diagram" aria-current="page">
+            <BreadcrumbLink href="/app/admin/navigation-diagram" aria-current="page">
               Diagrama de Navegación
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -85,7 +85,7 @@ const NavigationDiagram: React.FC = () => {
                 <h3 className="font-medium">Herramientas</h3>
                 <ul className="ml-6 list-disc mt-2 space-y-1">
                   <li>
-                    <Link to="/admin/route-validator" className="text-blue-600 hover:underline">
+                    <Link to="/app/admin/route-validator" className="text-blue-600 hover:underline">
                       Validador de Rutas
                     </Link>
                   </li>
@@ -103,25 +103,25 @@ const NavigationDiagram: React.FC = () => {
             <h2 className="text-xl font-semibold mb-4">Accesos Rápidos</h2>
             <div className="grid grid-cols-2 gap-2">
               <Button variant="outline" asChild>
-                <Link to="/admin/design-system">
+                <Link to="/app/admin/design-system">
                   <PanelLeft className="mr-2 h-4 w-4" />
                   Sistema de Diseño
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link to="/admin/route-validator">
+                <Link to="/app/admin/route-validator">
                   <PanelLeft className="mr-2 h-4 w-4" />
                   Validador de Rutas
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link to="/admin/navigation-diagram">
+                <Link to="/app/admin/navigation-diagram">
                   <PanelLeft className="mr-2 h-4 w-4" />
                   Diagrama de Navegación
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link to="/admin/pages">
+                <Link to="/app/admin/pages">
                   <PanelLeft className="mr-2 h-4 w-4" />
                   Gestión de Páginas
                 </Link>
