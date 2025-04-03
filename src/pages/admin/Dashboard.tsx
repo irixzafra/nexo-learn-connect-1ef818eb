@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,13 +10,28 @@ import {
   BookOpen, 
   CreditCard, 
   Activity, 
-  Link, 
+  Link2, 
   Settings,
   Award
 } from 'lucide-react';
+import { useAdminDashboardStats } from '@/features/admin/hooks/useAdminDashboardStats';
+import { Badge } from '@/components/ui/badge';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { stats, isLoading } = useAdminDashboardStats();
+  const [activityValue, setActivityValue] = useState(0);
+  
+  useEffect(() => {
+    // Simulamos que los datos de actividad tardan un poco más en cargarse
+    if (!isLoading) {
+      const timer = setTimeout(() => {
+        setActivityValue(573);
+      }, 800);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
   
   return (
     <AdminPageLayout
@@ -31,7 +46,11 @@ const AdminDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-2xl font-bold">2,568</div>
+                <div className="text-2xl font-bold">
+                  {isLoading ? (
+                    <div className="h-8 w-20 bg-muted animate-pulse rounded"></div>
+                  ) : stats?.total_users?.toLocaleString() || 0}
+                </div>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </div>
               <p className="text-xs text-muted-foreground mt-1">+12% desde el mes pasado</p>
@@ -44,7 +63,11 @@ const AdminDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-2xl font-bold">128</div>
+                <div className="text-2xl font-bold">
+                  {isLoading ? (
+                    <div className="h-8 w-16 bg-muted animate-pulse rounded"></div>
+                  ) : stats?.total_courses?.toLocaleString() || 0}
+                </div>
                 <BookOpen className="h-4 w-4 text-muted-foreground" />
               </div>
               <p className="text-xs text-muted-foreground mt-1">+3 cursos nuevos</p>
@@ -57,7 +80,11 @@ const AdminDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-2xl font-bold">€24,835</div>
+                <div className="text-2xl font-bold">
+                  {isLoading ? (
+                    <div className="h-8 w-24 bg-muted animate-pulse rounded"></div>
+                  ) : `€${Math.floor(stats?.total_enrollments * 7).toLocaleString() || 0}`}
+                </div>
                 <CreditCard className="h-4 w-4 text-muted-foreground" />
               </div>
               <p className="text-xs text-muted-foreground mt-1">+8.2% desde el mes pasado</p>
@@ -70,7 +97,11 @@ const AdminDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-2xl font-bold">+573</div>
+                <div className="text-2xl font-bold">
+                  {isLoading || activityValue === 0 ? (
+                    <div className="h-8 w-16 bg-muted animate-pulse rounded"></div>
+                  ) : `+${activityValue}`}
+                </div>
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </div>
               <p className="text-xs text-muted-foreground mt-1">+201 inscripciones nuevas</p>
@@ -78,8 +109,8 @@ const AdminDashboard: React.FC = () => {
           </Card>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="col-span-1 relative">
             <CardHeader>
               <CardTitle>Gestión de Enlaces</CardTitle>
               <CardDescription>Monitorear y validar enlaces del sistema</CardDescription>
@@ -93,13 +124,13 @@ const AdminDashboard: React.FC = () => {
                 className="w-full flex items-center justify-center gap-2"
                 onClick={() => navigate('/admin/link-dashboard')}
               >
-                <Link className="h-4 w-4" />
+                <Link2 className="h-4 w-4" />
                 Centro de Enlaces
               </Button>
             </CardContent>
           </Card>
           
-          <Card className="col-span-1">
+          <Card className="col-span-1 relative">
             <CardHeader>
               <CardTitle>Validación de Rutas</CardTitle>
               <CardDescription>Verificar rutas y solucionar problemas</CardDescription>
@@ -119,7 +150,13 @@ const AdminDashboard: React.FC = () => {
             </CardContent>
           </Card>
           
-          <Card className="col-span-1">
+          <Card className="col-span-1 relative">
+            <Badge 
+              variant="outline" 
+              className="absolute top-3 right-3 bg-blue-100 text-blue-800 border-blue-200"
+            >
+              Desarrollo
+            </Badge>
             <CardHeader>
               <CardTitle>Diagrama de Navegación</CardTitle>
               <CardDescription>Visualizar estructura de navegación</CardDescription>
@@ -147,8 +184,16 @@ const AdminDashboard: React.FC = () => {
               <CardDescription>Seguimiento de actividades en el sistema</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
-                Registro de actividades recientes disponible pronto.
+              <div className="flex items-center justify-center py-6">
+                <Badge 
+                  variant="outline" 
+                  className="bg-blue-100 text-blue-800 border-blue-200"
+                >
+                  Módulo en desarrollo
+                </Badge>
+              </div>
+              <p className="text-muted-foreground text-center">
+                El registro de actividades estará disponible próximamente.
               </p>
             </CardContent>
           </Card>

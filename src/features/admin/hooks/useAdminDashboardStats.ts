@@ -20,21 +20,21 @@ export const useAdminDashboardStats = () => {
     const fetchStats = async () => {
       setIsLoading(true);
       try {
-        // Simular una petición a la API
+        // Simular una petición a la API con un retraso realista
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         // Datos simulados para desarrollo
         const mockStats: PlatformStats = {
-          total_users: 5842,
-          active_users: 2731,
-          new_users: 847,
-          total_courses: 124,
+          total_users: 2568,
+          active_users: 1874,
+          new_users: 247,
+          total_courses: 128,
           active_courses: 87,
           total_enrollments: 3542,
           completion_rate: 68,
           average_rating: 4.2,
-          new_users_last_7_days: 847,
-          coursesCount: 124,
+          new_users_last_7_days: 247,
+          coursesCount: 128,
           publishedCoursesCount: 87,
           completionRate: 68
         };
@@ -51,5 +51,31 @@ export const useAdminDashboardStats = () => {
     fetchStats();
   }, []);
 
-  return { stats, isLoading, error };
+  const refetchStats = async () => {
+    setIsLoading(true);
+    try {
+      // Simular una actualización de datos
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Generar ligeras variaciones en los datos para simular actualización
+      const randomVariation = (base: number, percentage: number = 5) => {
+        const variation = Math.floor(base * (percentage / 100) * (Math.random() - 0.5));
+        return base + variation;
+      };
+      
+      setStats(prev => ({
+        ...prev,
+        total_users: randomVariation(prev.total_users, 1),
+        active_users: randomVariation(prev.active_users),
+        new_users: randomVariation(prev.new_users, 8),
+        total_enrollments: randomVariation(prev.total_enrollments, 3),
+      }));
+    } catch (err) {
+      console.error('Error refetching stats:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { stats, isLoading, error, refetchStats };
 };

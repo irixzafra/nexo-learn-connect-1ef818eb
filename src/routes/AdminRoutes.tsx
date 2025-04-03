@@ -11,6 +11,9 @@ import OrphanReviewPage from '@/pages/admin/OrphanReviewPage';
 import ReviewElementsPage from '@/pages/admin/ReviewElementsPage';
 import BrokenLinksPage from '@/pages/admin/BrokenLinksPage';
 import PlaceholderPage from '@/components/PlaceholderPage';
+import LinkDashboard from '@/pages/admin/LinkDashboard';
+import RouteValidatorPage from '@/pages/admin/RouteValidatorPage';
+import NavigationDiagramPage from '@/pages/admin/NavigationDiagramPage';
 
 const AdminRoutes = () => {
   return (
@@ -28,6 +31,13 @@ const AdminRoutes = () => {
       
       {/* Monitor de enlaces */}
       <Route path="admin/broken-links" element={<SafeRouteWrapper requiredRole={['admin']}><BrokenLinksPage /></SafeRouteWrapper>} />
+      <Route path="admin/link-dashboard" element={<SafeRouteWrapper requiredRole={['admin']}><LinkDashboard /></SafeRouteWrapper>} />
+      
+      {/* Validador de rutas */}
+      <Route path="admin/route-validator" element={<SafeRouteWrapper requiredRole={['admin']}><RouteValidatorPage /></SafeRouteWrapper>} />
+      
+      {/* Diagrama de navegación */}
+      <Route path="admin/navigation-diagram" element={<SafeRouteWrapper requiredRole={['admin']}><NavigationDiagramPage /></SafeRouteWrapper>} />
     </>
   );
 };
