@@ -8,6 +8,7 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
+import { useAuth } from '@/contexts/auth';
 
 interface SidebarFooterSectionProps {
   userRole: UserRoleType;
@@ -31,21 +32,37 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   currentLanguage,
   languages,
   changeLanguage,
-  userRole,
+  userRole: propUserRole,
   effectiveRole,
   logout,
   resetToOriginalRole
 }) => {
+  // Get userRole directly from context for debugging
+  const { userRole } = useAuth();
   const unreadNotifications = 3; // Example count - replace with actual state
   
   console.log('>>> DEBUG SidebarFooterSection:', { 
     userRole, 
+    propUserRole,
     effectiveRole,
     isConditionMet: userRole === 'admin' 
   });
 
   // Verificar si el usuario es administrador y si está viendo como otro rol
   const isViewingAsOtherRole = userRole === 'admin' && effectiveRole !== userRole;
+
+  // --- BLOQUE DE DEPURACIÓN TEMPORAL ---
+  if (process.env.NODE_ENV === 'development') { // Solo en desarrollo
+    return (
+      <div style={{ border: '2px solid red', padding: '5px', margin: '5px', backgroundColor: 'lightyellow', color: 'black' }}>
+        <p>DEBUG SidebarFooterSection:</p>
+        <p>userRole (from context): {JSON.stringify(userRole)}</p>
+        <p>userRole (from props): {JSON.stringify(propUserRole)}</p>
+        <p>Condition (userRole === 'admin'): {JSON.stringify(userRole === 'admin')}</p>
+      </div>
+    );
+  }
+  // --- FIN BLOQUE DE DEPURACIÓN ---
 
   return (
     <div className="mt-auto pt-2">
