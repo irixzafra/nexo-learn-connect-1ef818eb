@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { getRoleIcon, getRoleName, getRoleBadgeColor } from './roleUtils';
 import { UserRoleType } from '@/types/auth';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
 interface UserSearchProps {
   userResults: UserSearchResult[];
