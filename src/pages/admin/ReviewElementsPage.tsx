@@ -1,188 +1,295 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileWarning, Link2, FileX, FileQuestion, AlertTriangle } from 'lucide-react';
-import OrphanReviewPage from './OrphanReviewPage';
-import BrokenLinkMonitor from '@/components/error-tracking/BrokenLinkMonitor';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { FileText, Package, FileQuestion, AlertTriangle, Code, FolderOpen } from 'lucide-react';
+import { StyledAccordion, StyledAccordionItem } from '@/components/ui/styled-accordion';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 
-const ReviewElementsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>('broken-links');
-  
+const ComponentInventoryPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>('ui-components');
+  const [components, setComponents] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isDevelopment, setIsDevelopment] = useState<boolean>(false);
+
+  // Check if we're in development mode
+  useEffect(() => {
+    // In Vite, we can check if we're in development mode
+    setIsDevelopment(import.meta.env.MODE === 'development');
+    // Load components
+    loadComponents();
+  }, []);
+
+  const loadComponents = async () => {
+    setLoading(true);
+
+    try {
+      // Use import.meta.glob to dynamically scan component directories
+      const uiComponents = import.meta.glob('/src/components/ui/**/*.tsx', { eager: false });
+      const navigationComponents = import.meta.glob('/src/components/navigation/**/*.tsx', { eager: false });
+      const commonComponents = import.meta.glob('/src/components/common/**/*.tsx', { eager: false, import: 'default' });
+
+      setComponents({
+        ui: uiComponents,
+        navigation: navigationComponents,
+        common: commonComponents,
+      });
+    } catch (error) {
+      console.error('Error loading components:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Extract component name from file path
+  const extractComponentName = (path: string) => {
+    const fileName = path.split('/').pop() || '';
+    const nameWithoutExtension = fileName.replace(/\.tsx$/, '');
+    
+    // Try to convert kebab-case or snake_case to PascalCase
+    if (nameWithoutExtension.includes('-') || nameWithoutExtension.includes('_')) {
+      return nameWithoutExtension
+        .split(/[-_]/)
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .join('');
+    }
+    
+    return nameWithoutExtension;
+  };
+
+  // Get file path relative to src
+  const getRelativePath = (path: string) => {
+    return path.replace(/^\/src\//, '');
+  };
+
+  // Group components by directory
+  const groupComponentsByDirectory = (components: Record<string, any>) => {
+    const grouped: Record<string, any[]> = {};
+    
+    Object.entries(components).forEach(([path, module]) => {
+      const pathParts = path.split('/');
+      const directoryPath = pathParts.slice(0, -1).join('/');
+      const directory = directoryPath.split('/').slice(3, 4).join('/'); // Get the main directory
+      
+      if (!grouped[directory]) {
+        grouped[directory] = [];
+      }
+      
+      grouped[directory].push({
+        path,
+        module,
+        name: extractComponentName(path),
+      });
+    });
+    
+    return grouped;
+  };
+
+  if (!isDevelopment) {
+    return (
+      <AdminPageLayout 
+        title="Inventario de Componentes"
+        subtitle="Esta herramienta solo está disponible en modo desarrollo"
+        backHref="/app/admin/dashboard"
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle>Herramienta de Desarrollo</CardTitle>
+            <CardDescription>
+              El Inventario de Componentes solo está disponible en modo desarrollo.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center py-10">
+            <AlertTriangle className="h-16 w-16 text-amber-500 mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Acceso Restringido</h3>
+            <p className="text-muted-foreground text-center max-w-md">
+              Esta herramienta está diseñada para ayudar a los desarrolladores a visualizar componentes durante el desarrollo.
+              No está disponible en el entorno de producción.
+            </p>
+          </CardContent>
+        </Card>
+      </AdminPageLayout>
+    );
+  }
+
   return (
     <AdminPageLayout 
-      title="Revisión de Elementos" 
-      subtitle="Identifica y gestiona elementos problemáticos en toda la plataforma"
+      title="Inventario Dinámico de Componentes" 
+      subtitle="Visualización de componentes de UI reutilizables para desarrollo"
       backHref="/app/admin/dashboard"
     >
       <Card className="mb-6">
         <CardHeader className="pb-3">
-          <CardTitle className="text-amber-500 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5" />
-            Información Importante
+          <CardTitle className="text-primary flex items-center gap-2">
+            <Package className="h-5 w-5" />
+            Inventario Dinámico de Componentes
           </CardTitle>
           <CardDescription>
-            Esta sección muestra elementos problemáticos que requieren revisión. Puedes filtrar por 
-            tipo de problema y realizar acciones como marcar como revisado, archivar o eliminar.
+            Esta herramienta muestra todos los componentes de UI disponibles en el proyecto.
+            Use las pestañas para filtrar por categorías de componentes.
           </CardDescription>
         </CardHeader>
       </Card>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full md:w-auto md:inline-flex grid-cols-2 md:grid-cols-none mb-6">
-          <TabsTrigger value="broken-links" className="flex items-center gap-2">
-            <Link2 className="h-4 w-4" />
-            <span className="hidden md:inline">Enlaces Rotos</span>
-            <span className="md:hidden">Enlaces</span>
+        <TabsList className="grid w-full md:w-auto md:inline-flex grid-cols-3 md:grid-cols-none mb-6">
+          <TabsTrigger value="ui-components" className="flex items-center gap-2">
+            <Package className="h-4 w-4" />
+            <span className="hidden md:inline">Componentes UI</span>
+            <span className="md:hidden">UI</span>
           </TabsTrigger>
-          <TabsTrigger value="orphan-pages" className="flex items-center gap-2">
-            <FileQuestion className="h-4 w-4" />
-            <span className="hidden md:inline">Páginas Huérfanas</span>
-            <span className="md:hidden">Páginas</span>
+          <TabsTrigger value="navigation-components" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            <span className="hidden md:inline">Componentes Navegación</span>
+            <span className="md:hidden">Navegación</span>
           </TabsTrigger>
-          <TabsTrigger value="unused-components" className="flex items-center gap-2">
-            <FileX className="h-4 w-4" />
-            <span className="hidden md:inline">Componentes Sin Usar</span>
-            <span className="md:hidden">Componentes</span>
-          </TabsTrigger>
-          <TabsTrigger value="general-issues" className="flex items-center gap-2">
-            <FileWarning className="h-4 w-4" />
-            <span className="hidden md:inline">Problemas Generales</span>
-            <span className="md:hidden">Problemas</span>
+          <TabsTrigger value="common-components" className="flex items-center gap-2">
+            <FolderOpen className="h-4 w-4" />
+            <span className="hidden md:inline">Componentes Comunes</span>
+            <span className="md:hidden">Comunes</span>
           </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="broken-links" className="mt-0">
-          <BrokenLinkMonitor />
+        <TabsContent value="ui-components" className="mt-0">
+          <ComponentsTab 
+            componentType="ui" 
+            components={components.ui || {}} 
+            loading={loading} 
+          />
         </TabsContent>
         
-        <TabsContent value="orphan-pages" className="mt-0">
-          <OrphanReviewPage />
+        <TabsContent value="navigation-components" className="mt-0">
+          <ComponentsTab 
+            componentType="navigation" 
+            components={components.navigation || {}} 
+            loading={loading} 
+          />
         </TabsContent>
         
-        <TabsContent value="unused-components" className="mt-0">
-          <UnusedComponentsTab />
-        </TabsContent>
-        
-        <TabsContent value="general-issues" className="mt-0">
-          <GeneralIssuesTab />
+        <TabsContent value="common-components" className="mt-0">
+          <ComponentsTab 
+            componentType="common" 
+            components={components.common || {}} 
+            loading={loading} 
+          />
         </TabsContent>
       </Tabs>
     </AdminPageLayout>
   );
 };
 
-// Componente provisional para la pestaña de componentes sin usar
-const UnusedComponentsTab: React.FC = () => {
-  const unusedComponents = [
-    { path: 'src/components/admin/AdminNavigation.tsx', reason: 'Componente obsoleto, reemplazado por layout/sidebar/navigation/AdminNavigation' },
-    { path: 'src/components/layout/sidebar/AdminSection.tsx', reason: 'Componente vacío, reemplazado por AdminNavigation' },
-    { path: 'src/components/layout/sidebars/AdminSidebar.tsx', reason: 'Duplicado de funcionalidad (actualizar o eliminar)' },
-    { path: 'src/components/shared/AdminDataTable.tsx', reason: 'Posible duplicado con EditableDataTable' },
-  ];
+interface ComponentsTabProps {
+  componentType: string;
+  components: Record<string, any>;
+  loading: boolean;
+}
+
+const ComponentsTab: React.FC<ComponentsTabProps> = ({ componentType, components, loading }) => {
+  if (loading) {
+    return <ComponentsLoadingState />;
+  }
+  
+  if (Object.keys(components).length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>No hay componentes disponibles</CardTitle>
+          <CardDescription>
+            No se encontraron componentes en esta categoría
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center justify-center py-10">
+          <FileQuestion className="h-16 w-16 text-muted-foreground mb-4" />
+          <p className="text-muted-foreground">No hay componentes para mostrar</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const groupedComponents = groupComponentsByDirectory(components);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Componentes Sin Usar</CardTitle>
+        <CardTitle>
+          {componentType === 'ui' && 'Componentes de UI'}
+          {componentType === 'navigation' && 'Componentes de Navegación'}
+          {componentType === 'common' && 'Componentes Comunes'}
+        </CardTitle>
         <CardDescription>
-          Componentes que podrían ser obsoletos o no estar siendo utilizados en la aplicación.
+          {Object.keys(components).length} componentes encontrados
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-3">
-          {unusedComponents.map((component, index) => (
-            <div 
-              key={index} 
-              className="flex items-start p-4 rounded-md border border-border bg-card/50 hover:bg-muted/50 transition-colors"
+        <StyledAccordion type="multiple" collapsible>
+          {Object.entries(groupedComponents).map(([directory, dirComponents]) => (
+            <StyledAccordionItem 
+              key={directory} 
+              value={directory}
+              title={directory}
+              description={`${dirComponents.length} componentes`}
+              icon={<FolderOpen className="h-5 w-5" />}
             >
-              <FileX className="h-5 w-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
-              <div>
-                <div className="font-mono text-sm">{component.path}</div>
-                <p className="text-sm text-muted-foreground mt-1">{component.reason}</p>
-                <div className="flex gap-2 mt-2">
-                  <button className="text-xs text-blue-500 hover:text-blue-700">Ver código</button>
-                  <button className="text-xs text-green-500 hover:text-green-700">Marcar como revisado</button>
-                  <button className="text-xs text-red-500 hover:text-red-700">Eliminar</button>
-                </div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Componente</TableHead>
+                      <TableHead>Ruta</TableHead>
+                      <TableHead>Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {dirComponents.map((component) => (
+                      <TableRow key={component.path}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <Code className="h-4 w-4 text-primary" />
+                            <span>{component.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground font-mono text-xs">
+                          {getRelativePath(component.path)}
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="outline" size="sm" className="h-7 px-2">
+                            Detalles
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
-            </div>
+            </StyledAccordionItem>
           ))}
-        </div>
+        </StyledAccordion>
       </CardContent>
     </Card>
   );
 };
 
-// Componente provisional para la pestaña de problemas generales
-const GeneralIssuesTab: React.FC = () => {
-  const generalIssues = [
-    { 
-      type: 'warning', 
-      title: 'Componentes demasiado grandes', 
-      description: 'Algunos componentes exceden el tamaño recomendado de 250 líneas',
-      items: [
-        'src/components/error-tracking/BrokenLinkMonitor.tsx (272 líneas)',
-        'src/pages/admin/dashboard/index.tsx (348 líneas)'
-      ]
-    },
-    { 
-      type: 'error', 
-      title: 'Posibles conflictos de estilos', 
-      description: 'Componentes que podrían tener conflictos de estilos',
-      items: [
-        'Conflicto entre .sidebar-nav y .side-navigation',
-        'Anidación excesiva de contenedores flexbox'
-      ]
-    },
-    { 
-      type: 'info', 
-      title: 'Optimizaciones pendientes', 
-      description: 'Componentes que podrían beneficiarse de optimización',
-      items: [
-        'Los componentes de tabla no implementan virtualización',
-        'Faltan lazy loading en secciones grandes de la navegación'
-      ]
-    }
-  ];
+// Loading state component
+const ComponentsLoadingState: React.FC = () => (
+  <Card>
+    <CardHeader>
+      <Skeleton className="h-8 w-64" />
+      <Skeleton className="h-4 w-48 mt-2" />
+    </CardHeader>
+    <CardContent>
+      <Skeleton className="h-10 w-full mb-4" />
+      <Skeleton className="h-10 w-full mb-4" />
+      <Skeleton className="h-10 w-full mb-4" />
+      <Skeleton className="h-10 w-full mb-4" />
+      <Skeleton className="h-10 w-full" />
+    </CardContent>
+  </Card>
+);
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Problemas Generales</CardTitle>
-        <CardDescription>
-          Problemas de código, arquitectura o rendimiento detectados en la aplicación.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          {generalIssues.map((issue, index) => (
-            <div key={index} className="border rounded-lg overflow-hidden">
-              <div className={`px-4 py-3 ${
-                issue.type === 'error' ? 'bg-red-50 text-red-800 border-b border-red-200' :
-                issue.type === 'warning' ? 'bg-amber-50 text-amber-800 border-b border-amber-200' :
-                'bg-blue-50 text-blue-800 border-b border-blue-200'
-              }`}>
-                <h3 className="font-medium">{issue.title}</h3>
-                <p className="text-sm">{issue.description}</p>
-              </div>
-              <div className="p-4 bg-card">
-                <ul className="space-y-2">
-                  {issue.items.map((item, itemIndex) => (
-                    <li key={itemIndex} className="text-sm flex items-start">
-                      <span className="mr-2">•</span>
-                      <span className="font-mono">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-export default ReviewElementsPage;
+export default ComponentInventoryPage;
