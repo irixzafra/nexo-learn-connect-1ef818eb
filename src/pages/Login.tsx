@@ -49,7 +49,7 @@ const Login: React.FC = () => {
   };
   
   return (
-    <PublicLayout hideNav={false} hideFooter={false}>
+    <PublicLayout hideNavigation={false} hideFooter={false}>
       <div className="min-h-[calc(100vh-170px)] flex flex-col md:flex-row">
         {/* Sección de Bienvenida / Imagen - Lado izquierdo */}
         <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 text-white flex-col justify-center items-center p-10 relative overflow-hidden">
