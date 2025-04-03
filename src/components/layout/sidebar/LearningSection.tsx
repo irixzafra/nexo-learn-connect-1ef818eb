@@ -23,3 +23,5 @@ export const LearningSection: React.FC<LearningSectionProps> = ({ expanded, onTo
     </SidebarGroup>
   );
 };
+
+export default LearningSection;

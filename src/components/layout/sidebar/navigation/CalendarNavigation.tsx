@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, Clock, PlusCircle } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { 
   SidebarMenu
 } from '@/components/ui/sidebar';
@@ -28,21 +28,7 @@ const CalendarNavigation: React.FC<CalendarNavigationProps> = ({ isOpen, onToggl
         <MenuItem
           to="/app/calendar"
           icon={Calendar}
-          label="Mi Calendario"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/app/calendar/schedule"
-          icon={Clock}
-          label="Programación"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/app/calendar/create"
-          icon={PlusCircle}
-          label="Crear Evento"
+          label="Calendario"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>
