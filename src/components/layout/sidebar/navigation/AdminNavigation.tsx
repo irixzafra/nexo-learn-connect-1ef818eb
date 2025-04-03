@@ -7,7 +7,8 @@ import {
   Layers, 
   FileText, 
   BarChart3, 
-  CreditCard
+  CreditCard,
+  ClipboardX
 } from 'lucide-react';
 import { 
   SidebarMenu
@@ -68,6 +69,13 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({
           to="/app/admin/payments"
           icon={CreditCard}
           label="Pagos y Facturación"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/app/admin/review-elements"
+          icon={ClipboardX}
+          label="Revisión Elementos"
           isCollapsed={isCollapsed}
         />
         

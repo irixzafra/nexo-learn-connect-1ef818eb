@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Shield, Users, BookOpen, FileText, PanelLeft, Palette } from 'lucide-react';
+import { Shield, Users, BookOpen, FileText, PanelLeft, Palette, ClipboardX } from 'lucide-react';
 import MenuItem from '@/components/layout/sidebar/navigation/common/MenuItem';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { UserRoleType } from '@/types/auth';
@@ -68,6 +68,12 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({
             to="/app/admin/navigation-diagram"
             icon={PanelLeft}
             label="Diagrama de Navegación" 
+            isCollapsed={isCollapsed}
+          />
+          <MenuItem
+            to="/app/admin/review-elements"
+            icon={ClipboardX}
+            label="Revisión Elementos" 
             isCollapsed={isCollapsed}
           />
           {isSistemas && (

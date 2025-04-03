@@ -13,7 +13,8 @@ import {
   FileText,
   List,
   Palette,
-  CreditCard
+  CreditCard,
+  ClipboardX
 } from 'lucide-react';
 
 const AdminSidebar: React.FC = () => {
@@ -30,6 +31,7 @@ const AdminSidebar: React.FC = () => {
     { path: '/app/admin/system-pages', label: 'Páginas', icon: <FileText size={18} /> },
     { path: '/app/admin/design-system', label: 'Diseño', icon: <Palette size={18} /> },
     { path: '/app/admin/navigation-diagram', label: 'Navegación', icon: <List size={18} /> },
+    { path: '/app/admin/review-elements', label: 'Revisión Elementos', icon: <ClipboardX size={18} /> },
     { path: '/app/settings', label: 'Configuración', icon: <Settings size={18} /> },
   ];
 
