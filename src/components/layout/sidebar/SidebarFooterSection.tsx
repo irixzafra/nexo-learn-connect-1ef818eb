@@ -42,12 +42,12 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
 }) => {
   const unreadNotifications = 3; // Example count - replace with actual state
   
-  console.log('>>> DEBUG SidebarFooterSection:', { 
+  console.log('>>> DEBUG SidebarFooterSection RENDERING:', { 
     userRole, 
     effectiveRole,
     isViewingAsOtherRole,
-    isConditionMet: userRole === 'admin',
-    isRoleSwitcherVisible: userRole === 'admin' || false
+    isRoleSwitcherVisible: userRole === 'admin',
+    userRoleType: typeof userRole
   });
 
   return (

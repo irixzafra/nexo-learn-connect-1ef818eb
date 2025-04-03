@@ -76,13 +76,9 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     effectiveRoleProp: effectiveRole,
     currentLanguageProp: currentLanguage,
     languagesProp: languages,
-    isViewingAsOtherRole
+    isViewingAsOtherRole,
+    userRoleType: typeof userRole
   });
-
-  // Usamos useEffect para el log después del renderizado
-  React.useEffect(() => {
-    console.log('>>> DEBUG SidebarFooter: Finished rendering SidebarFooterSection');
-  }, []);
 
   return (
     <div className="border-t border-border p-3">
