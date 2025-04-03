@@ -1,254 +1,277 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
-  ChevronDown, 
-  Menu, 
-  Home, 
-  Settings, 
-  User, 
-  Book, 
-  LayoutDashboard, 
-  LogOut, 
-  Bell,
-  Search,
-  Bookmark,
-  Calendar,
-  LineChart,
-  HelpCircle
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger 
+} from "@/components/ui/accordion";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 import { 
-  Tabs, 
-  TabsList, 
-  TabsTrigger, 
-  TabsContent 
-} from '@/components/ui/tabs';
-import {
-  Collapsible,
-  CollapsibleTrigger,
-  CollapsibleContent
-} from '@/components/ui/collapsible';
-import {
-  StyledAccordion,
-  StyledAccordionItem
-} from '@/components/ui/styled-accordion';
+  Collapsible, 
+  CollapsibleContent, 
+  CollapsibleTrigger 
+} from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Palette, Layers, ChevronDown, Settings, LayoutDashboard } from "lucide-react";
+import Link from "next/link";
 
-// Modern Horizontal Navigation Menu
 export const ModernNavMenu: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  
   return (
-    <div className="bg-background border-b">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link to="/" className="text-xl font-bold">
-              Nexo Learning
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Diseño</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
+              <li className="row-span-3">
+                <NavigationMenuLink asChild>
+                  <a
+                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                    href="/admin/design-system"
+                  >
+                    <Palette className="h-6 w-6 text-primary" />
+                    <div className="mb-2 mt-4 text-lg font-medium">
+                      Sistema de Diseño
+                    </div>
+                    <p className="text-sm leading-tight text-muted-foreground">
+                      Configuración central de los elementos visuales de la plataforma
+                    </p>
+                  </a>
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <a
+                  href="/admin/settings/design"
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                >
+                  <div className="text-sm font-medium leading-none">Temas</div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Personalización de temas visuales
+                  </p>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/components-showcase"
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                >
+                  <div className="text-sm font-medium leading-none">Componentes</div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Catálogo de componentes disponibles
+                  </p>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/admin/settings/customization"
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                >
+                  <div className="text-sm font-medium leading-none">Personalización</div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Ajustes avanzados de personalización visual
+                  </p>
+                </a>
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Contenido</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+              <li>
+                <NavigationMenuLink asChild>
+                  <a
+                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                    href="/admin/content/pages"
+                  >
+                    <div className="text-sm font-medium leading-none">Páginas</div>
+                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                      Gestión de páginas de contenido
+                    </p>
+                  </a>
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink asChild>
+                  <a
+                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                    href="/admin/content/blocks"
+                  >
+                    <div className="text-sm font-medium leading-none">Bloques</div>
+                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                      Bloques de contenido reutilizables
+                    </p>
+                  </a>
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink asChild>
+                  <a
+                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                    href="/admin/content/media"
+                  >
+                    <div className="text-sm font-medium leading-none">Media</div>
+                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                      Biblioteca de imágenes y archivos
+                    </p>
+                  </a>
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink asChild>
+                  <a
+                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                    href="/admin/content/settings"
+                  >
+                    <div className="text-sm font-medium leading-none">Ajustes</div>
+                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                      Configuración de contenido
+                    </p>
+                  </a>
+                </NavigationMenuLink>
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <Button asChild variant="ghost" className={navigationMenuTriggerStyle()}>
+            <Link href="/admin/dashboard">
+              Dashboard
             </Link>
-          </div>
-          
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/" className="px-3 py-2 rounded-md hover:bg-accent transition-colors">
-              Inicio
-            </Link>
-            <Link to="/courses" className="px-3 py-2 rounded-md hover:bg-accent transition-colors">
-              Cursos
-            </Link>
-            <Link to="/material-design" className="px-3 py-2 rounded-md hover:bg-accent transition-colors">
-              Material Design
-            </Link>
-            <Link to="/about" className="px-3 py-2 rounded-md hover:bg-accent transition-colors">
-              Nosotros
-            </Link>
-            <Link to="/contact" className="px-3 py-2 rounded-md hover:bg-accent transition-colors">
-              Contacto
-            </Link>
-          </div>
-          
-          {/* User Actions */}
-          <div className="hidden md:flex items-center space-x-2">
-            <Button variant="ghost" size="icon">
-              <Search className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
-            </Button>
-            <Button variant="default">
-              Iniciar Sesión
-            </Button>
-          </div>
-          
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
-              <Menu className="h-6 w-6" />
-            </Button>
-          </div>
-        </div>
-      </div>
-      
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden p-4 space-y-3 border-t">
-          <Link to="/" className="block px-3 py-2 rounded-md hover:bg-accent transition-colors">
-            Inicio
-          </Link>
-          <Link to="/courses" className="block px-3 py-2 rounded-md hover:bg-accent transition-colors">
-            Cursos
-          </Link>
-          <Link to="/material-design" className="block px-3 py-2 rounded-md hover:bg-accent transition-colors">
-            Material Design
-          </Link>
-          <Link to="/about" className="block px-3 py-2 rounded-md hover:bg-accent transition-colors">
-            Nosotros
-          </Link>
-          <Link to="/contact" className="block px-3 py-2 rounded-md hover:bg-accent transition-colors">
-            Contacto
-          </Link>
-          <div className="pt-3 border-t flex justify-end">
-            <Button size="sm">
-              Iniciar Sesión
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
+          </Button>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 };
 
-// Modern Navigation Tabs
 export const ModernNavTabs: React.FC = () => {
   return (
-    <Tabs defaultValue="dashboard" className="w-full">
-      <TabsList className="grid grid-cols-5 mb-6 h-auto">
-        <TabsTrigger value="dashboard" className="flex items-center gap-2 py-3">
+    <Tabs defaultValue="general" className="w-full">
+      <TabsList className="grid w-full grid-cols-4">
+        <TabsTrigger value="general" className="flex items-center gap-2">
+          <Settings className="h-4 w-4" />
+          <span>General</span>
+        </TabsTrigger>
+        <TabsTrigger value="design" className="flex items-center gap-2">
+          <Palette className="h-4 w-4" />
+          <span>Diseño</span>
+        </TabsTrigger>
+        <TabsTrigger value="pages" className="flex items-center gap-2">
+          <Layers className="h-4 w-4" />
+          <span>Páginas</span>
+        </TabsTrigger>
+        <TabsTrigger value="admin" className="flex items-center gap-2">
           <LayoutDashboard className="h-4 w-4" />
-          <span>Dashboard</span>
-        </TabsTrigger>
-        <TabsTrigger value="courses" className="flex items-center gap-2 py-3">
-          <Book className="h-4 w-4" />
-          <span>Mis Cursos</span>
-        </TabsTrigger>
-        <TabsTrigger value="calendar" className="flex items-center gap-2 py-3">
-          <Calendar className="h-4 w-4" />
-          <span>Calendario</span>
-        </TabsTrigger>
-        <TabsTrigger value="stats" className="flex items-center gap-2 py-3">
-          <LineChart className="h-4 w-4" />
-          <span>Estadísticas</span>
-        </TabsTrigger>
-        <TabsTrigger value="profile" className="flex items-center gap-2 py-3">
-          <User className="h-4 w-4" />
-          <span>Perfil</span>
+          <span>Admin</span>
         </TabsTrigger>
       </TabsList>
-      
-      <TabsContent value="dashboard">
-        <div className="p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-medium mb-4">Dashboard</h3>
-          <p>Contenido del dashboard.</p>
-        </div>
+      <TabsContent value="general" className="p-4 border rounded-md mt-2">
+        <h3 className="text-lg font-medium mb-2">Configuración General</h3>
+        <p className="text-muted-foreground">
+          Ajustes generales de la plataforma y preferencias globales.
+        </p>
       </TabsContent>
-      <TabsContent value="courses">
-        <div className="p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-medium mb-4">Mis Cursos</h3>
-          <p>Listado de cursos inscritos.</p>
-        </div>
+      <TabsContent value="design" className="p-4 border rounded-md mt-2">
+        <h3 className="text-lg font-medium mb-2">Sistema de Diseño</h3>
+        <p className="text-muted-foreground">
+          Personalización de temas, colores, fuentes y componentes visuales.
+        </p>
       </TabsContent>
-      <TabsContent value="calendar">
-        <div className="p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-medium mb-4">Calendario</h3>
-          <p>Calendario de eventos y fechas importantes.</p>
-        </div>
+      <TabsContent value="pages" className="p-4 border rounded-md mt-2">
+        <h3 className="text-lg font-medium mb-2">Gestión de Páginas</h3>
+        <p className="text-muted-foreground">
+          Administra las páginas del sistema y su contenido.
+        </p>
       </TabsContent>
-      <TabsContent value="stats">
-        <div className="p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-medium mb-4">Estadísticas</h3>
-          <p>Visualización de estadísticas de aprendizaje.</p>
-        </div>
-      </TabsContent>
-      <TabsContent value="profile">
-        <div className="p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-medium mb-4">Perfil</h3>
-          <p>Información del perfil de usuario.</p>
-        </div>
+      <TabsContent value="admin" className="p-4 border rounded-md mt-2">
+        <h3 className="text-lg font-medium mb-2">Panel de Administración</h3>
+        <p className="text-muted-foreground">
+          Herramientas y ajustes para administradores del sistema.
+        </p>
       </TabsContent>
     </Tabs>
   );
 };
 
-// Modern Accordion Content Container
 export const ModernAccordionContainer: React.FC = () => {
   return (
-    <StyledAccordion type="single" collapsible gap="md" className="w-full">
-      <StyledAccordionItem 
-        value="item-1" 
-        title="Introducción al Curso" 
-        icon={<Book className="h-5 w-5" />}
-      >
-        <div className="space-y-2">
-          <p>Este módulo introduce los conceptos básicos del curso.</p>
-          <ul className="space-y-1">
-            <li className="flex items-center gap-2">
-              <Bookmark className="h-4 w-4 text-primary" />
-              <span>Lección 1: Fundamentos</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <Bookmark className="h-4 w-4 text-primary" />
-              <span>Lección 2: Conceptos clave</span>
-            </li>
-          </ul>
-        </div>
-      </StyledAccordionItem>
-      
-      <StyledAccordionItem 
-        value="item-2" 
-        title="Herramientas Avanzadas" 
-        icon={<Settings className="h-5 w-5" />}
-      >
-        <div className="space-y-2">
-          <p>Explora herramientas avanzadas para mejorar tu experiencia de aprendizaje.</p>
-          <ul className="space-y-1">
-            <li className="flex items-center gap-2">
-              <Bookmark className="h-4 w-4 text-primary" />
-              <span>Lección 1: Configuración personalizada</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <Bookmark className="h-4 w-4 text-primary" />
-              <span>Lección 2: Optimización</span>
-            </li>
-          </ul>
-        </div>
-      </StyledAccordionItem>
-      
-      <StyledAccordionItem 
-        value="item-3" 
-        title="Recursos Adicionales" 
-        icon={<HelpCircle className="h-5 w-5" />}
-      >
-        <div className="space-y-2">
-          <p>Recursos complementarios para profundizar en el tema.</p>
-          <ul className="space-y-1">
-            <li className="flex items-center gap-2">
-              <Bookmark className="h-4 w-4 text-primary" />
-              <span>Material de lectura recomendado</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <Bookmark className="h-4 w-4 text-primary" />
-              <span>Ejercicios prácticos</span>
-            </li>
-          </ul>
-        </div>
-      </StyledAccordionItem>
-    </StyledAccordion>
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger className="flex items-center">
+          <div className="flex items-center gap-2">
+            <Settings className="h-5 w-5 text-primary" />
+            <span>Configuración General</span>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="p-4 space-y-4">
+            <p className="text-muted-foreground">
+              Aquí puedes configurar los ajustes generales del sistema.
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="outline" size="sm">Ajustes Básicos</Button>
+              <Button variant="outline" size="sm">Preferencias</Button>
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger className="flex items-center">
+          <div className="flex items-center gap-2">
+            <Palette className="h-5 w-5 text-primary" />
+            <span>Sistema de Diseño</span>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="p-4 space-y-4">
+            <p className="text-muted-foreground">
+              Personalización del aspecto visual de la plataforma.
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="outline" size="sm">Temas</Button>
+              <Button variant="outline" size="sm">Componentes</Button>
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-3">
+        <AccordionTrigger className="flex items-center">
+          <div className="flex items-center gap-2">
+            <Layers className="h-5 w-5 text-primary" />
+            <span>Contenido</span>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent>
+          <div className="p-4 space-y-4">
+            <p className="text-muted-foreground">
+              Gestión de contenido y páginas del sistema.
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="outline" size="sm">Páginas</Button>
+              <Button variant="outline" size="sm">Bloques</Button>
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
 
-// Collapsible Section
 export const CollapsibleSection: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   
@@ -256,38 +279,31 @@ export const CollapsibleSection: React.FC = () => {
     <Collapsible
       open={isOpen}
       onOpenChange={setIsOpen}
-      className="w-full border rounded-lg overflow-hidden"
+      className="w-full border rounded-md"
     >
-      <CollapsibleTrigger asChild>
-        <Button 
-          variant="ghost" 
-          className="flex items-center justify-between w-full p-4 text-left rounded-none border-b"
-        >
-          <div className="flex items-center gap-2">
-            <Book className="h-5 w-5 text-primary" />
-            <span className="font-medium">Módulo de aprendizaje</span>
+      <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center gap-2">
+          <Palette className="h-5 w-5 text-primary" />
+          <h4 className="text-sm font-medium">Sistema de Diseño</h4>
+        </div>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" size="sm">
+            <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "transform rotate-180")} />
+            <span className="sr-only">Toggle</span>
+          </Button>
+        </CollapsibleTrigger>
+      </div>
+      <CollapsibleContent className="p-4">
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            El sistema de diseño permite personalizar la apariencia visual de la plataforma.
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="outline" size="sm" className="w-full">Temas</Button>
+            <Button variant="outline" size="sm" className="w-full">Colores</Button>
+            <Button variant="outline" size="sm" className="w-full">Tipografía</Button>
+            <Button variant="outline" size="sm" className="w-full">Componentes</Button>
           </div>
-          <ChevronDown 
-            className={cn(
-              "h-4 w-4 transition-transform duration-200",
-              isOpen ? "rotate-180" : "rotate-0"
-            )}
-          />
-        </Button>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <div className="p-4 space-y-2">
-          <p>Este módulo contiene recursos y materiales de aprendizaje.</p>
-          <ul className="space-y-1">
-            <li className="flex items-center gap-2">
-              <Bookmark className="h-4 w-4 text-primary" />
-              <span>Recurso 1</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <Bookmark className="h-4 w-4 text-primary" />
-              <span>Recurso 2</span>
-            </li>
-          </ul>
         </div>
       </CollapsibleContent>
     </Collapsible>
