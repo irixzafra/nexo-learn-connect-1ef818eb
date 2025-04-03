@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Shield, Users, BookOpen, FileText, PanelLeft, Palette } from 'lucide-react';
+import { Shield, Users, BookOpen, FileText, PanelLeft, Palette, Navigation } from 'lucide-react';
 import MenuItem from '@/components/layout/sidebar/navigation/common/MenuItem';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { UserRoleType } from '@/types/auth';
@@ -66,7 +66,7 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({
           />
           <MenuItem
             to="/admin/navigation-diagram"
-            icon={PanelLeft}
+            icon={Navigation}
             label="Diagrama de Navegación" 
             isCollapsed={isCollapsed}
           />

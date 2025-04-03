@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import NotFound from '@/pages/NotFound';
@@ -44,6 +43,8 @@ import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminDashboard from '@/pages/admin/Dashboard';
 import PagesManagement from '@/pages/admin/settings/pages';
 import OrphanReviewPage from '@/pages/admin/OrphanReviewPage';
+import NavigationDiagram from '@/pages/admin/NavigationDiagram';
+import NavigationExplorer from '@/pages/admin/navigation/NavigationExplorer';
 
 // Import instructor pages
 import InstructorDashboard from '@/pages/instructor/Dashboard';
@@ -132,6 +133,8 @@ const AppRoutes: React.FC = () => {
         <Route path="admin/system-pages" element={<SafeRouteWrapper requiredRole={['admin']}><PagesManagement /></SafeRouteWrapper>} />
         <Route path="admin/orphan-review" element={<SafeRouteWrapper requiredRole={['admin']}><OrphanReviewPage /></SafeRouteWrapper>} />
         <Route path="admin/design-system" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Design System" /></SafeRouteWrapper>} />
+        <Route path="admin/navigation-diagram" element={<SafeRouteWrapper requiredRole={['admin']}><NavigationDiagram /></SafeRouteWrapper>} />
+        <Route path="admin/navigation-explorer" element={<SafeRouteWrapper requiredRole={['admin']}><NavigationExplorer /></SafeRouteWrapper>} />
         
         {/* --- Rutas Profesor (con wrapper individual) --- */}
         <Route path="profesor" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorDashboard /></SafeRouteWrapper>} />
