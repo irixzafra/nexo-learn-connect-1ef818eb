@@ -7,52 +7,52 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', userId)
+      .eq('user_id', userId)
       .single();
-
+      
     if (error) {
       console.error('Error fetching user profile:', error);
       return null;
     }
-
+    
     return data as UserProfile;
   } catch (error) {
-    console.error('Error in fetchUserProfile:', error);
+    console.error('Exception fetching user profile:', error);
     return null;
   }
 };
 
 export const ensureUserProfile = async (userId: string, email: string): Promise<UserProfile | null> => {
   try {
-    const { data: existingProfile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-      
-    if (!existingProfile) {
-      console.log('No profile found, creating one for user:', userId);
-      const { error: createError } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          full_name: email.split('@')[0],
-          role: 'student',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        });
-        
-      if (createError) {
-        console.error('Error creating user profile:', createError);
-        return null;
-      }
-      
-      return await fetchUserProfile(userId);
+    // First, try to get existing profile
+    const existingProfile = await fetchUserProfile(userId);
+    
+    if (existingProfile) {
+      return existingProfile;
     }
     
-    return existingProfile as UserProfile;
+    // If no profile exists, create one with default values
+    const newProfile: Partial<UserProfile> = {
+      user_id: userId,
+      email: email,
+      role: 'student', // Default role
+      created_at: new Date().toISOString()
+    };
+    
+    const { data, error } = await supabase
+      .from('profiles')
+      .insert([newProfile])
+      .select('*')
+      .single();
+      
+    if (error) {
+      console.error('Error creating user profile:', error);
+      return null;
+    }
+    
+    return data as UserProfile;
   } catch (error) {
-    console.error('Error in ensureUserProfile:', error);
+    console.error('Exception ensuring user profile:', error);
     return null;
   }
 };
