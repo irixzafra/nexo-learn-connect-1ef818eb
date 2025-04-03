@@ -53,7 +53,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </div>
         <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6">
           <SafeRouteWrapper>
-            <Outlet />
+            {children || <Outlet />}
           </SafeRouteWrapper>
         </main>
       </div>

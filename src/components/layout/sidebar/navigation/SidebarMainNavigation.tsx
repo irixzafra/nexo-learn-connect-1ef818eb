@@ -214,6 +214,12 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Gestión Cursos"
             isCollapsed={isCollapsed}
           />
+          <NavItem
+            href="/app/admin/review-elements"
+            icon={FileText}
+            title="Revisión Elementos"
+            isCollapsed={isCollapsed}
+          />
         </NavGroup>
       )}
 

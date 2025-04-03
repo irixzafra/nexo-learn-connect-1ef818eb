@@ -41,7 +41,7 @@ const LogoContainer: React.FC<LogoContainerProps> = ({
         
         {!isCollapsed && (
           <div className="flex flex-col">
-            <span className="font-bold leading-tight text-foreground">{title}</span>
+            <span className="font-bold leading-tight text-foreground">Logo Animado Nexo Learning</span>
             <span className="text-[11px] text-muted-foreground">{subtitle}</span>
           </div>
         )}

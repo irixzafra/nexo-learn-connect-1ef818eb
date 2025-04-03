@@ -36,7 +36,7 @@ const AuthenticatedHeader: React.FC<AuthenticatedHeaderProps> = ({
               <span className="text-sm font-bold">N</span>
             </div>
             <div className="ml-2.5 flex flex-col">
-              <span className="font-semibold text-lg hidden md:inline-block">Nexo Learning</span>
+              <div className="font-semibold text-lg hidden md:inline-block">Logo Animado Nexo Learning</div>
               <span className="text-[10px] text-muted-foreground hidden md:inline-block">ecosistema educativo</span>
             </div>
           </Link>
