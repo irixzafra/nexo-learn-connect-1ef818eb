@@ -1,6 +1,8 @@
-
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { SafeRouteWrapper } from '@/components/SafeRouteWrapper';
+import PlaceholderPage from '@/components/PlaceholderPage';
+
 import NotFound from '@/pages/NotFound';
 import LandingPage from '@/pages/LandingPage';
 import Login from '@/pages/auth/Login'; 
@@ -66,7 +68,7 @@ import DataManagementPage from '@/pages/admin/settings/data';
 import AnalyticsSettingsPage from '@/pages/admin/settings/analytics';
 import RolesAndPermissions from '@/pages/admin/settings/roles';
 
-const AppRoutes: React.FC = () => {
+const AppRoutes = () => {
   return (
     <Routes>
       {/* Ruta Raíz - SOLO LandingPage en PublicLayout */}
@@ -168,12 +170,7 @@ const AppRoutes: React.FC = () => {
         <Route path="admin/design-system" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Design System" /></SafeRouteWrapper>} />
         
         {/* --- Nueva ruta para revisión de elementos obsoletos --- */}
-        <Route path="admin/review-elements" element={<SafeRouteWrapper requiredRole={['admin']}>
-          <PlaceholderPage 
-            title="Revisión de Elementos Obsoletos/Rotos" 
-            subtitle="Esta sección listará componentes, páginas o diseños antiguos/problemáticos para su evaluación."
-          />
-        </SafeRouteWrapper>} />
+        <Route path="admin/review-elements" element={<SafeRouteWrapper requiredRole={['admin']}><ReviewElementsPage /></SafeRouteWrapper>} />
         
         {/* --- Rutas Instructor (con wrapper individual) --- */}
         <Route path="instructor" element={<SafeRouteWrapper requiredRole={['instructor', 'admin']}><InstructorDashboard /></SafeRouteWrapper>} />
