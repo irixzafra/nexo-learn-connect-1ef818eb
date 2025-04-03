@@ -3,24 +3,23 @@ import { User, Session } from '@supabase/supabase-js';
 import { UserProfile, UserRoleType } from '@/types/auth';
 
 export interface AuthContextType {
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  isInitialized: boolean;
   user: User | null;
   session: Session | null;
-  profile: UserProfile | null;
+  userProfile: UserProfile | null;
+  profile: UserProfile | null; // Adding alias for backward compatibility
   userRole: UserRoleType | null;
-  
-  // Role simulation properties
   simulatedRole: UserRoleType | null;
   effectiveRole: UserRoleType | null;
   isViewingAsOtherRole: boolean;
-  
-  isLoading: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: any }>;
   logout: () => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
-  isInitialized: boolean;
-  isAuthenticated: boolean;
-  forceUpdateRole: (email: string, roleToSet: UserRoleType) => Promise<void>;
-  
-  // Role simulation methods
+  signup: (email: string, password: string, userData?: Partial<UserProfile>) => Promise<{ success: boolean; error?: any }>;
+  updateProfile: (profileData: Partial<UserProfile>) => Promise<{ success: boolean; error?: any }>;
+  updatePassword: (password: string) => Promise<{ success: boolean; error?: any }>;
+  forceUpdateRole: (email: string, roleToSet: UserRoleType) => Promise<{ success: boolean; error?: any }>;
   setSimulatedRole: (role: UserRoleType | null) => void;
   resetToOriginalRole: () => void;
 }
