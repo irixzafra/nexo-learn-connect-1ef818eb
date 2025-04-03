@@ -7,21 +7,17 @@ import { PowerIcon, BellIcon, ShieldCheck } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
 
 interface SidebarFooterSectionProps {
   userRole: UserRoleType;
   effectiveRole: UserRoleType;
   isCollapsed: boolean;
   currentViewRole: UserRoleType | null;
-  handleRoleChange: (role: UserRoleType) => void;
   getRoleName: (role: UserRoleType) => string;
   currentLanguage: string;
   languages: Array<{ code: string; name: string }>;
   changeLanguage: (language: string) => void;
   logout: () => void;
-  resetToOriginalRole: () => void;
-  isViewingAsOtherRole: boolean;
   forceAdminRole?: () => void;
 }
 
@@ -30,14 +26,11 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   effectiveRole,
   isCollapsed,
   currentViewRole,
-  handleRoleChange,
   getRoleName,
   currentLanguage,
   languages,
   changeLanguage,
   logout,
-  resetToOriginalRole,
-  isViewingAsOtherRole,
   forceAdminRole
 }) => {
   const unreadNotifications = 3; // Example count - replace with actual state
@@ -45,36 +38,20 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   console.log('>>> DEBUG SidebarFooterSection RENDERING:', { 
     userRole, 
     effectiveRole,
-    isViewingAsOtherRole,
-    isRoleSwitcherVisible: userRole === 'admin',
     userRoleType: typeof userRole,
     userRoleExactValue: JSON.stringify(userRole)
   });
 
-  // Verificamos explícitamente si el rol es exactamente 'admin'
-  const showRoleSwitcher = userRole === 'admin';
-  
-  console.log('>>> DEBUG SidebarFooterSection: shouldShowRoleSwitcher?', showRoleSwitcher);
-
   return (
     <div className="mt-auto pt-2">
-      {/* Add RoleSwitcher for admin users */}
+      {/* User Role Information */}
       <div className={cn(
         "px-3 pb-3 border-b border-border",
         isCollapsed ? "flex justify-center" : ""
       )}>
-        {showRoleSwitcher ? (
-          <RoleSwitcher 
-            className={cn(
-              "w-full",
-              isCollapsed ? "scale-75" : ""
-            )}
-          />
-        ) : (
-          <div className="text-xs text-muted-foreground py-2">
-            Role: {userRole}
-          </div>
-        )}
+        <div className="text-xs text-muted-foreground py-2">
+          Role: {userRole}
+        </div>
       </div>
       
       <div className={cn(
@@ -112,18 +89,6 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
                 <p>Forzar rol admin</p>
               </TooltipContent>
             </Tooltip>
-          )}
-          
-          {/* Reset role button (visible only when viewing as another role) */}
-          {isViewingAsOtherRole && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs"
-              onClick={resetToOriginalRole}
-            >
-              Volver a admin
-            </Button>
           )}
         </div>
         

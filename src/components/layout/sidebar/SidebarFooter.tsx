@@ -14,16 +14,12 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     userRole, 
     effectiveRole, 
     logout, 
-    setSimulatedRole, 
-    resetToOriginalRole, 
-    isViewingAsOtherRole,
     forceUpdateRole
   } = useAuth();
 
   console.log('>>> DEBUG SidebarFooter AUTH VALUES:', { 
     userRole, 
     effectiveRole, 
-    isViewingAsOtherRole,
     userRoleType: typeof userRole,
     userRoleExactValue: JSON.stringify(userRole),
   });
@@ -52,18 +48,6 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     }
   };
 
-  // Handler para cambio de rol
-  const handleRoleChange = (role: UserRoleType) => {
-    console.log('>>> DEBUG SidebarFooter: Changing role to', role);
-    setSimulatedRole(role);
-  };
-
-  // Handler para volver al rol original
-  const handleResetRole = () => {
-    console.log('>>> DEBUG SidebarFooter: Resetting to original role');
-    resetToOriginalRole();
-  };
-
   // Handler for forcing admin role
   const handleForceAdminRole = async () => {
     console.log('>>> DEBUG SidebarFooter: Forcing admin role');
@@ -84,7 +68,6 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     effectiveRoleProp: effectiveRole,
     currentLanguageProp: currentLanguage,
     languagesProp: languages,
-    isViewingAsOtherRole,
     userRoleType: typeof userRole
   });
 
@@ -95,14 +78,11 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
         isCollapsed={isCollapsed}
         effectiveRole={effectiveRole as UserRoleType}
         currentViewRole={effectiveRole as UserRoleType}
-        handleRoleChange={handleRoleChange}
         getRoleName={getRoleName}
         currentLanguage={currentLanguage}
         languages={languages}
         changeLanguage={changeLanguage}
         logout={logout}
-        resetToOriginalRole={handleResetRole}
-        isViewingAsOtherRole={isViewingAsOtherRole}
         forceAdminRole={handleForceAdminRole}
       />
     </div>

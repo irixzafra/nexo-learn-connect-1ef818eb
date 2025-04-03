@@ -14,16 +14,11 @@ export interface AuthContextType {
   profile: UserProfile | null; // Adding alias for backward compatibility
   userRole: UserRoleType | null;
   effectiveRole: UserRoleType | null;
-  isViewingAsOtherRole: boolean;
-  simulatedUserId: string | null;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: any }>;
   logout: () => Promise<void>;
   signup: (email: string, password: string, userData?: Partial<UserProfile>) => Promise<{ success: boolean; error?: any }>;
   updateProfile: (profileData: Partial<UserProfile>) => Promise<{ success: boolean; error?: any }>;
   updatePassword: (password: string) => Promise<{ success: boolean; error?: any }>;
-  setSimulatedRole: (role: UserRoleType, userId?: string) => void;
-  resetToOriginalRole: () => void;
-  simulatedRole: UserRoleType | null;
   forceUpdateRole: (email: string, roleToSet: UserRoleType) => Promise<{ success: boolean; error?: any }>;
 }
 
@@ -37,16 +32,11 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   userRole: null,
   effectiveRole: null,
-  isViewingAsOtherRole: false,
-  simulatedUserId: null,
   login: async () => ({ success: false }),
   logout: async () => {},
   signup: async () => ({ success: false }),
   updateProfile: async () => ({ success: false }),
   updatePassword: async () => ({ success: false }),
-  setSimulatedRole: () => {},
-  resetToOriginalRole: () => {},
-  simulatedRole: null,
   forceUpdateRole: async () => ({ success: false }),
 });
 
@@ -65,20 +55,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userRole, setUserRole] = useState<UserRoleType | null>(null);
-  const [simulatedRole, setSimulatedRoleState] = useState<UserRoleType | null>(null);
-  const [simulatedUserId, setSimulatedUserId] = useState<string | null>(null);
 
-  // The effective role is either the simulated role or the user's actual role
-  const effectiveRole = simulatedRole || userRole;
-  const isViewingAsOtherRole = simulatedRole !== null;
+  // El rol efectivo ahora es simplemente el rol del usuario
+  const effectiveRole = userRole;
   const isAuthenticated = !!session && !!user;
 
   // Debug the state on each render
   console.log('>>> DEBUG AuthProvider RENDER:', {
     userRole,
     effectiveRole,
-    isViewingAsOtherRole,
-    simulatedRole,
     isAuthenticated,
     userRoleType: typeof userRole,
     userRoleExactValue: JSON.stringify(userRole),
@@ -208,8 +193,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (event === 'SIGNED_OUT') {
             setUserProfile(null);
             setUserRole(null);
-            setSimulatedRoleState(null);
-            setSimulatedUserId(null);
           }
         }
       );
@@ -242,7 +225,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initAuth();
   }, []);
 
-  // Mock authentication functions (replace with actual implementation)
+  // Authentication functions
   const login = async (email: string, password: string) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -262,8 +245,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     await supabase.auth.signOut();
-    setSimulatedRoleState(null);
-    setSimulatedUserId(null);
   };
 
   const signup = async (email: string, password: string, userData?: Partial<UserProfile>) => {
@@ -344,20 +325,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Function to set simulated role for role switching
-  const setSimulatedRole = (role: UserRoleType, userId?: string) => {
-    console.log('Setting simulated role:', role, userId);
-    setSimulatedRoleState(role);
-    setSimulatedUserId(userId || null);
-  };
-
-  // Function to reset to original role
-  const resetToOriginalRole = () => {
-    console.log('Resetting to original role');
-    setSimulatedRoleState(null);
-    setSimulatedUserId(null);
-  };
-
   const value = {
     isLoading,
     isAuthenticated,
@@ -368,16 +335,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     profile: userProfile, // Add alias for backward compatibility
     userRole,
     effectiveRole,
-    isViewingAsOtherRole,
-    simulatedUserId,
     login,
     logout,
     signup,
     updateProfile,
     updatePassword,
-    setSimulatedRole,
-    resetToOriginalRole,
-    simulatedRole,
     forceUpdateRole
   };
 

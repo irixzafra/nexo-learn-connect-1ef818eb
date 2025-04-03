@@ -7,15 +7,11 @@ export interface AuthContextType {
   session: Session | null;
   profile: UserProfile | null;
   userRole: UserRoleType | null;
-  simulatedRole: UserRoleType | null;
-  simulatedUserId: string | null;
   effectiveRole: UserRoleType | null;
   isLoading: boolean;
   logout: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   isInitialized: boolean;
   isAuthenticated: boolean;
-  setSimulatedRole: (role: UserRoleType | null, userId?: string | null) => void;
-  isViewingAsOtherRole: boolean;
-  resetToOriginalRole: () => void;
+  forceUpdateRole: (email: string, roleToSet: UserRoleType) => Promise<void>;
 }
