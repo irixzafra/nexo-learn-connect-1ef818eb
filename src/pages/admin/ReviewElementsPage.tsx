@@ -85,9 +85,19 @@ const ReviewElementsPage: React.FC = () => {
           setLoadingNav(false);
         } else if (activeTab === 'site-pages') {
           setLoadingPages(true);
-          const data = await getSitePages();
-          setSitePages(data);
+          setLoadingOrphan(true);
+          
+          // Cargamos tanto las páginas del sitio como las huérfanas
+          const [siteData, orphanData] = await Promise.all([
+            getSitePages(),
+            getOrphanPages()
+          ]);
+          
+          setSitePages(siteData);
+          setOrphanPages(orphanData);
+          
           setLoadingPages(false);
+          setLoadingOrphan(false);
         } else if (activeTab === 'common-components') {
           // Por ahora no cargamos datos para esta pestaña
           // Esta sección cargaría datos de componentes comunes en el futuro
@@ -162,6 +172,28 @@ const ReviewElementsPage: React.FC = () => {
       return element.path;
     }
     return undefined;
+  };
+
+  // Filtrar las páginas huérfanas para mostrarlas en la tabla
+  const filteredPages = () => {
+    const allPages: (SitePage | (OrphanPage & { type: 'orphan' }))[] = [
+      ...sitePages.map(page => ({ ...page, type: 'page' as const })),
+      ...orphanPages.map(page => ({ ...page, type: 'orphan' as const }))
+    ];
+
+    if (!searchQuery) return allPages;
+    
+    return allPages.filter(page => {
+      const title = 'title' in page ? page.title.toLowerCase() : '';
+      const path = 'path' in page ? page.path.toLowerCase() : '';
+      const slug = 'slug' in page ? page.slug.toLowerCase() : '';
+      
+      return (
+        title.includes(searchQuery.toLowerCase()) ||
+        path.includes(searchQuery.toLowerCase()) ||
+        slug.includes(searchQuery.toLowerCase())
+      );
+    });
   };
   
   return (
@@ -345,17 +377,17 @@ const ReviewElementsPage: React.FC = () => {
             </Card>
           </TabsContent>
 
-          {/* Site Pages Tab */}
+          {/* Site Pages Tab (now includes both site pages and orphan pages) */}
           <TabsContent value="site-pages" className="space-y-4">
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle>Páginas</CardTitle>
                 <CardDescription>
-                  Páginas disponibles en el sitio web
+                  Todas las páginas disponibles en el sitio web y páginas huérfanas
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {loadingPages ? (
+                {loadingPages || loadingOrphan ? (
                   renderLoadingSkeleton()
                 ) : (
                   <Table>
@@ -365,28 +397,42 @@ const ReviewElementsPage: React.FC = () => {
                           <Checkbox />
                         </TableHead>
                         <TableHead>Título</TableHead>
-                        <TableHead>URL</TableHead>
+                        <TableHead>Ruta</TableHead>
                         <TableHead>Tipo</TableHead>
                         <TableHead>Estado</TableHead>
                         <TableHead className="text-right">Acciones</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {sitePages.map((page) => (
+                      {filteredPages().map((page) => (
                         <TableRow 
                           key={page.id} 
                           className="cursor-pointer hover:bg-muted/50" 
-                          onClick={() => handleElementSelect({...page, type: 'page'})}
+                          onClick={() => handleElementSelect(page)}
                         >
                           <TableCell>
                             <Checkbox onClick={(e) => e.stopPropagation()} />
                           </TableCell>
                           <TableCell className="font-medium">{page.title}</TableCell>
-                          <TableCell>/{page.slug}</TableCell>
-                          <TableCell>{page.is_system_page ? 'Sistema' : 'Contenido'}</TableCell>
                           <TableCell>
-                            <Badge variant={page.status === 'published' ? 'success' : 'warning'}>
-                              {page.status === 'published' ? 'Publicada' : 'Borrador'}
+                            {'slug' in page ? `/${page.slug}` : page.path}
+                          </TableCell>
+                          <TableCell>
+                            {page.type === 'orphan' ? (
+                              <Badge variant="outline" className="bg-amber-100 text-amber-800">Huérfana</Badge>
+                            ) : (
+                              page.is_system_page ? 
+                                <Badge variant="outline" className="bg-blue-100 text-blue-800">Sistema</Badge> : 
+                                <Badge variant="outline" className="bg-green-100 text-green-800">Contenido</Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              'status' in page && (page.status === 'published' || page.status === 'Activo') 
+                                ? 'success' 
+                                : 'warning'
+                            }>
+                              {page.status}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right">
@@ -395,7 +441,7 @@ const ReviewElementsPage: React.FC = () => {
                               size="sm" 
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleElementSelect({...page, type: 'page'});
+                                handleElementSelect(page);
                               }}
                             >
                               <Eye className="h-4 w-4" />
