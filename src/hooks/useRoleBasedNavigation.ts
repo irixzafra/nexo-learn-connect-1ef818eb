@@ -21,9 +21,8 @@ export const useRoleBasedNavigation = () => {
         case 'admin':
           setHomePath('/admin/dashboard');
           break;
-        case 'profesor':
-        case 'instructor': // For backward compatibility
-          setHomePath('/profesor/dashboard');
+        case 'instructor': 
+          setHomePath('/instructor/dashboard');
           break;
         case 'sistemas':
           setHomePath('/admin/dashboard');

@@ -17,9 +17,9 @@ export const InstructorSection: React.FC<InstructorSectionProps> = ({ expanded, 
       isExpanded={expanded} 
       onToggle={onToggle}
     >
-      <MenuItem to="/instructor/dashboard" icon={Presentation} label="Panel Instructor" />
-      <MenuItem to="/instructor/courses" icon={BookOpen} label="Mis Cursos" />
-      <MenuItem to="/instructor/students" icon={School} label="Estudiantes" />
+      <MenuItem to="/app/instructor/dashboard" icon={Presentation} label="Panel Instructor" />
+      <MenuItem to="/app/instructor/courses" icon={BookOpen} label="Mis Cursos" />
+      <MenuItem to="/app/instructor/students" icon={School} label="Estudiantes" />
     </SidebarGroup>
   );
 };

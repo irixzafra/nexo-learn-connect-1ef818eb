@@ -27,11 +27,10 @@ const Index = () => {
           homePath = '/admin/dashboard';
         }
         
-        // Check for instructor/profesor users (handle both for compatibility)
-        if ((userRole === 'profesor' || userRole === 'instructor') && 
-            !homePath.startsWith('/profesor') && 
+        // Check for instructor users
+        if (userRole === 'instructor' && 
             !homePath.startsWith('/instructor')) {
-          homePath = '/profesor/dashboard';
+          homePath = '/instructor/dashboard';
         }
         
         console.log('Redirecting authenticated user to:', homePath);

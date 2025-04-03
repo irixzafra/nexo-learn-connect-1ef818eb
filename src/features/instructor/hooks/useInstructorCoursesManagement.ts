@@ -62,7 +62,7 @@ export const useInstructorCoursesManagement = (userId?: string) => {
   };
   
   const createNewCourse = () => {
-    navigate('/app/profesor/courses/create');
+    navigate('/app/instructor/courses/create');
   };
   
   const navigateToCourse = (courseId: string) => {
@@ -70,19 +70,19 @@ export const useInstructorCoursesManagement = (userId?: string) => {
   };
   
   const navigateToEditor = (courseId: string) => {
-    navigate(`/app/profesor/courses/${courseId}/editor`);
+    navigate(`/app/instructor/courses/${courseId}/editor`);
   };
   
   const navigateToStructure = (courseId: string) => {
-    navigate(`/app/profesor/courses/${courseId}/structure`);
+    navigate(`/app/instructor/courses/${courseId}/structure`);
   };
   
   const navigateToEdit = (courseId: string) => {
-    navigate(`/app/profesor/courses/${courseId}/edit`);
+    navigate(`/app/instructor/courses/${courseId}/edit`);
   };
   
   const navigateToAnalytics = (courseId: string) => {
-    navigate(`/app/profesor/courses/${courseId}/analytics`);
+    navigate(`/app/instructor/courses/${courseId}/analytics`);
   };
 
   return {

@@ -8,7 +8,7 @@ import {
 import { MenuItem } from './types';
 
 /**
- * Menú para profesores
+ * Menú para instructores
  */
 export const instructorNavigation: MenuItem[] = [
   {

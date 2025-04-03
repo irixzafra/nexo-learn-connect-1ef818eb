@@ -6,15 +6,15 @@ import { LayoutDashboard, BookOpen, Users, UserCircle } from 'lucide-react';
 
 const InstructorSidebar: React.FC = () => {
   const navItems = [
-    { path: '/app/profesor/dashboard', label: 'Dashboard Profesor', icon: <LayoutDashboard size={18} /> },
-    { path: '/app/profesor/courses', label: 'Mis Cursos (Prof.)', icon: <BookOpen size={18} /> },
-    { path: '/app/profesor/students', label: 'Estudiantes', icon: <Users size={18} /> },
+    { path: '/app/instructor/dashboard', label: 'Dashboard Instructor', icon: <LayoutDashboard size={18} /> },
+    { path: '/app/instructor/courses', label: 'Mis Cursos (Instr.)', icon: <BookOpen size={18} /> },
+    { path: '/app/instructor/students', label: 'Estudiantes', icon: <Users size={18} /> },
     { path: '/app/profile', label: 'Perfil', icon: <UserCircle size={18} /> },
   ];
 
   return (
     <nav className="p-4">
-      <h3 className="font-medium mb-4 text-lg">Panel de Profesor</h3>
+      <h3 className="font-medium mb-4 text-lg">Panel de Instructor</h3>
       <ul className="space-y-2">
         {navItems.map((item) => (
           <li key={item.path}>

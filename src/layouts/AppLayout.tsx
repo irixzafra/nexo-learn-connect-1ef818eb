@@ -34,7 +34,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const renderSidebar = () => {
     if (userRole === 'admin') {
       return <AdminSidebar />;
-    } else if (userRole === 'profesor') {
+    } else if (userRole === 'instructor') {
       return <InstructorSidebar />;
     } else {
       return <StudentSidebar />;

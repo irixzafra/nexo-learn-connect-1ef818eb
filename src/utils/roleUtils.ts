@@ -8,9 +8,8 @@ export const getRoleName = (role: UserRoleType): string => {
   switch (role) {
     case 'admin':
       return 'Administrador';
-    case 'profesor':
-    case 'instructor': // For backward compatibility
-      return 'Profesor';
+    case 'instructor': 
+      return 'Instructor';
     case 'student':
       return 'Estudiante';
     case 'sistemas':
@@ -37,8 +36,7 @@ export const getRoleBadgeColor = (role: UserRoleType): string => {
   switch (role) {
     case 'admin':
       return "bg-red-100 text-red-800 hover:bg-red-100/80";
-    case 'profesor':
-    case 'instructor': // For backward compatibility
+    case 'instructor':
       return "bg-blue-100 text-blue-800 hover:bg-blue-100/80";
     case 'student':
       return "bg-green-100 text-green-800 hover:bg-green-100/80";
@@ -65,9 +63,8 @@ export const getHomePath = (role: UserRoleType): string => {
   switch (role) {
     case 'admin':
       return '/admin/dashboard';
-    case 'profesor':
-    case 'instructor': // For backward compatibility
-      return '/profesor/dashboard';
+    case 'instructor': 
+      return '/instructor/dashboard';
     case 'sistemas':
       return '/admin/dashboard';
     case 'moderator':

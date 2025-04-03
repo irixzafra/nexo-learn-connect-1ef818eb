@@ -15,7 +15,7 @@ import ConfiguracionNavigation from './ConfiguracionNavigation';
 
 // Import role-specific navigation components
 import EstudianteNavigation from './EstudianteNavigation';
-import ProfesorNavigation from './ProfesorNavigation';
+import InstructorNavigation from './InstructorNavigation';
 import AdminNavigation from './AdminNavigation';
 
 // Import home navigation
@@ -71,8 +71,8 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         />
       )}
       
-      {effectiveRole === 'profesor' && (
-        <ProfesorNavigation 
+      {effectiveRole === 'instructor' && (
+        <InstructorNavigation 
           isOpen={expanded.instructor} 
           onToggle={() => toggleGroup('instructor')}
         />

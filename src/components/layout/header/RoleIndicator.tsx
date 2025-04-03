@@ -14,8 +14,7 @@ export const RoleIndicator: React.FC<RoleIndicatorProps> = ({ role }) => {
     switch (role) {
       case 'admin':
         return <Shield className="h-4 w-4 mr-2" />;
-      case 'profesor':
-      case 'instructor': // For backward compatibility
+      case 'instructor': 
         return <BookOpen className="h-4 w-4 mr-2" />;
       case 'student':
         return <GraduationCap className="h-4 w-4 mr-2" />;
