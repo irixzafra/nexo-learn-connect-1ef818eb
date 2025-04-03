@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from './AuthContext';
+import { useAuth } from '@/contexts/auth'; // Updated import path
 import { toast } from 'sonner';
 
 type ThemeMode = 'light' | 'dark' | 'system' | 'futuristic';
