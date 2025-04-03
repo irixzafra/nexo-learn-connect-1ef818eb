@@ -2,7 +2,7 @@
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, LogOut, User } from 'lucide-react';
+import { ChevronDown, LogOut } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,17 +56,6 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
         >
           <LogOut className="h-4 w-4" />
         </Button>
-        
-        {isViewingAsOtherRole && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={resetToOriginalRole}
-            className="w-full h-8 border-yellow-500"
-          >
-            <User className="h-4 w-4 text-yellow-500" />
-          </Button>
-        )}
       </div>
     );
   }
@@ -93,21 +82,6 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {/* Show viewing as badge and reset button if simulating a role */}
-      {isViewingAsOtherRole && (
-        <div className="bg-yellow-100 dark:bg-yellow-900 p-2 rounded-md text-xs flex justify-between items-center">
-          <span>Viendo como: <strong>{getRoleName(effectiveRole)}</strong></span>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={resetToOriginalRole}
-            className="h-6 text-xs"
-          >
-            Restablecer
-          </Button>
-        </div>
-      )}
 
       {/* Logout Button */}
       <Button 
