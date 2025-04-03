@@ -34,7 +34,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
     isCollapsed,
     currentViewRole,
     currentLanguage,
-    handleRoleChange,
     changeLanguage
   } = useSidebarNavigation(toUserRoleType(userRole as string), viewAsRole, onRoleChange);
 
@@ -62,7 +61,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       currentViewRole={currentViewRole}
       currentLanguage={currentLanguage}
       languages={languages}
-      handleRoleChange={handleRoleChange}
       getRoleName={getRoleName}
       getHomePath={getHomePath}
       changeLanguage={changeLanguage}
