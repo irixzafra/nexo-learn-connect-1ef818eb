@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogOut, Menu, X, Home, Palette, User } from 'lucide-react';
+import { LogOut, Menu, X, Home, Palette, User, Shield, LayoutDashboard } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,9 +17,13 @@ import {
 const AppLayout: React.FC = () => {
   const { user, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const location = useLocation();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
+
+  // Check if the current route is an admin route
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -40,6 +44,32 @@ const AppLayout: React.FC = () => {
             <Link to="/design-system" className="font-medium transition-colors hover:text-primary">
               Design System
             </Link>
+            
+            {/* Admin Links */}
+            {user && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-1">
+                    <Shield size={16} />
+                    <span>Admin</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin/dashboard" className="flex items-center">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Panel Admin
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin/design-system" className="flex items-center">
+                      <Palette className="mr-2 h-4 w-4" />
+                      Sistema de Diseño
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </nav>
           
           {/* Mobile Menu Button */}
@@ -126,6 +156,30 @@ const AppLayout: React.FC = () => {
               <Palette size={20} />
               Design System
             </Link>
+            
+            {/* Admin Links on Mobile */}
+            {user && (
+              <>
+                <div className="border-t my-4"></div>
+                <h3 className="text-sm font-medium text-muted-foreground px-2">Administración</h3>
+                <Link 
+                  to="/admin/dashboard" 
+                  className="flex items-center gap-2 text-lg font-medium p-2 hover:bg-muted rounded-md"
+                  onClick={closeMenu}
+                >
+                  <LayoutDashboard size={20} />
+                  Panel Admin
+                </Link>
+                <Link 
+                  to="/admin/design-system" 
+                  className="flex items-center gap-2 text-lg font-medium p-2 hover:bg-muted rounded-md"
+                  onClick={closeMenu}
+                >
+                  <Palette size={20} />
+                  Sistema de Diseño
+                </Link>
+              </>
+            )}
           </nav>
           
           {user && (

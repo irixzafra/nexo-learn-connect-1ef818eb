@@ -84,7 +84,7 @@ const LoginPage: React.FC = () => {
               </Button>
               <div className="text-center text-sm">
                 ¿No tienes una cuenta?{' '}
-                <Link to="/auth/register" className="text-primary hover:underline">
+                <Link to="/register" className="text-primary hover:underline">
                   Regístrate
                 </Link>
               </div>

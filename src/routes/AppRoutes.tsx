@@ -59,6 +59,12 @@ const AppRoutesContent: React.FC = () => {
         <Route path="/design-system" element={<DesignSystemPage />} />
         <Route path="/design-system/components/button" element={<ButtonPage />} />
         
+        {/* Admin Routes */}
+        <Route path="/admin">
+          <Route path="design-system" element={<DesignSystemPage />} />
+          <Route path="design-system/components/button" element={<ButtonPage />} />
+        </Route>
+        
         {/* 404 Route */}
         <Route path="*" element={<NotFound />} />
       </Route>
