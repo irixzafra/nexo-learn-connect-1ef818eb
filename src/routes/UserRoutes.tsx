@@ -12,6 +12,7 @@ import LessonView from '@/pages/student/LessonView';
 import CourseLearn from '@/pages/student/CourseLearn';
 import Preferences from '@/pages/user/Preferences';
 import Profile from '@/pages/Profile';
+import ComponentsShowcase from '@/pages/ComponentsShowcase';
 
 const UserRoutes = () => {
   return (
@@ -72,6 +73,10 @@ const UserRoutes = () => {
               <Profile />
             </ProtectedRouteWrapper>
           }
+        />
+        <Route
+          path="components-showcase"
+          element={<ComponentsShowcase />}
         />
         <Route
           path="course/:courseId/learn"
