@@ -19,6 +19,8 @@ interface SidebarFooterSectionProps {
   currentLanguage: string;
   languages: Array<{ code: string; name: string }>;
   changeLanguage: (language: string) => void;
+  logout: () => void;
+  resetToOriginalRole: () => void;
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
@@ -30,16 +32,10 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   languages,
   changeLanguage,
   userRole,
-  effectiveRole
+  effectiveRole,
+  logout,
+  resetToOriginalRole
 }) => {
-  // Eliminamos la llamada redundante a useAuth() y usamos las props directamente
-  const logout = () => {
-    // Implementar una función de logout para usar como callback
-    // Si necesitamos funcionalidad real de logout, deberíamos pasar esta función como prop
-    console.log('Logout clicked');
-    window.location.href = '/auth/login'; // Redirección simple como ejemplo
-  };
-  
   const unreadNotifications = 3; // Example count - replace with actual state
   
   console.log('>>> DEBUG SidebarFooterSection:', { 
@@ -47,6 +43,9 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
     effectiveRole,
     isConditionMet: userRole === 'admin' 
   });
+
+  // Verificar si el usuario es administrador y si está viendo como otro rol
+  const isViewingAsOtherRole = userRole === 'admin' && effectiveRole !== userRole;
 
   return (
     <div className="mt-auto pt-2">
@@ -56,10 +55,12 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
           "px-3 pb-3 border-b border-border",
           isCollapsed ? "flex justify-center" : ""
         )}>
-          <RoleSwitcher className={cn(
-            "w-full",
-            isCollapsed ? "scale-75" : ""
-          )} />
+          <RoleSwitcher 
+            className={cn(
+              "w-full",
+              isCollapsed ? "scale-75" : ""
+            )}
+          />
         </div>
       )}
       
@@ -80,6 +81,18 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
           >
             <PowerIcon className="h-4 w-4 text-muted-foreground" />
           </Button>
+          
+          {/* Reset role button (visible only when viewing as another role) */}
+          {isViewingAsOtherRole && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs"
+              onClick={resetToOriginalRole}
+            >
+              Volver a admin
+            </Button>
+          )}
         </div>
         
         {/* Tools Group - Always aligned (right or centered when collapsed) */}
