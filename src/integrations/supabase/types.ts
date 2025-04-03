@@ -1646,6 +1646,45 @@ export type Database = {
           },
         ]
       }
+      navigation_components: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          path: string
+          status: string | null
+          type: string | null
+          updated_at: string | null
+          usage: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          path: string
+          status?: string | null
+          type?: string | null
+          updated_at?: string | null
+          usage?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          path?: string
+          status?: string | null
+          type?: string | null
+          updated_at?: string | null
+          usage?: string | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           action_url: string | null
@@ -1682,6 +1721,39 @@ export type Database = {
           title?: string
           type?: Database["public"]["Enums"]["notification_type"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      orphan_pages: {
+        Row: {
+          access_count: number | null
+          created_at: string | null
+          id: string
+          last_accessed: string | null
+          path: string
+          status: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          access_count?: number | null
+          created_at?: string | null
+          id?: string
+          last_accessed?: string | null
+          path: string
+          status: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          access_count?: number | null
+          created_at?: string | null
+          id?: string
+          last_accessed?: string | null
+          path?: string
+          status?: string
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -2539,6 +2611,48 @@ export type Database = {
           name?: string
           type?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      ui_components: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_system: boolean | null
+          name: string
+          path: string
+          status: string | null
+          type: string
+          updated_at: string | null
+          usage: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_system?: boolean | null
+          name: string
+          path: string
+          status?: string | null
+          type: string
+          updated_at?: string | null
+          usage?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_system?: boolean | null
+          name?: string
+          path?: string
+          status?: string | null
+          type?: string
+          updated_at?: string | null
+          usage?: string | null
         }
         Relationships: []
       }

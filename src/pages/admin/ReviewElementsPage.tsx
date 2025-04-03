@@ -17,84 +17,16 @@ import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from '@/components/ui/drawer';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SitePage } from '@/types/pages';
-
-type ComponentModule = {
-  path: string;
-  module: () => Promise<any>;
-  name: string;
-};
-
-type GroupedComponents = {
-  [key: string]: ComponentModule[];
-};
-
-// Mock data for Site Pages
-const mockSitePages: SitePage[] = [
-  {
-    id: '1',
-    title: 'Página de inicio',
-    slug: 'home',
-    status: 'published',
-    content: '<h1>Bienvenido a Nexo Learning</h1>',
-    meta_description: 'Página principal de Nexo Learning',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    is_system_page: true,
-    layout: 'landing'
-  },
-  {
-    id: '2',
-    title: 'Acerca de nosotros',
-    slug: 'about',
-    status: 'published',
-    content: '<h1>Sobre Nexo Learning</h1>',
-    meta_description: 'Conoce más sobre nuestra plataforma',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    is_system_page: false,
-    layout: 'default'
-  },
-  {
-    id: '3',
-    title: 'Términos y Condiciones',
-    slug: 'terms',
-    status: 'draft',
-    content: '<h1>Términos y Condiciones</h1>',
-    meta_description: 'Términos legales de uso',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    is_system_page: true,
-    layout: 'documentation'
-  }
-];
-
-// Mock data for Orphan Pages
-const mockOrphanPages = [
-  {
-    id: '4',
-    title: 'Página antigua de promociones',
-    path: '/old/promotions',
-    lastAccessed: '2024-01-15',
-    accessCount: 3,
-    status: 'no referrer'
-  },
-  {
-    id: '5',
-    title: 'Guía de inicio (versión beta)',
-    path: '/guides/getting-started-beta',
-    lastAccessed: '2024-02-20',
-    accessCount: 12,
-    status: 'no links'
-  },
-  {
-    id: '6',
-    title: 'Blog post borrador',
-    path: '/blog/draft-post-123',
-    lastAccessed: '2024-03-05',
-    accessCount: 0,
-    status: 'unreachable'
-  }
-];
+import { toast } from 'sonner';
+import { 
+  getUIComponents, 
+  getNavigationComponents, 
+  getSitePages, 
+  getOrphanPages,
+  UIComponent,
+  NavigationComponent,
+  OrphanPage
+} from '@/features/admin/services/componentsService';
 
 // Simple component to render preview placeholders
 const ComponentPreview: React.FC<{componentPath: string}> = ({componentPath}) => {
@@ -118,17 +50,82 @@ const ComponentPreview: React.FC<{componentPath: string}> = ({componentPath}) =>
   );
 };
 
+// Tipo para los elementos seleccionados
+type ElementType = 
+  | (UIComponent & { type: 'ui' })
+  | (NavigationComponent & { type: 'navigation' })
+  | (OrphanPage & { type: 'orphan' })
+  | (SitePage & { type: 'page' });
+
 const ReviewElementsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('ui-components');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedElement, setSelectedElement] = useState<any | null>(null);
+  const [selectedElement, setSelectedElement] = useState<ElementType | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [filterCategory, setFilterCategory] = useState('all');
   
-  const handleElementSelect = (element: any) => {
+  // Estados para datos de la base de datos
+  const [uiComponents, setUIComponents] = useState<UIComponent[]>([]);
+  const [navComponents, setNavComponents] = useState<NavigationComponent[]>([]);
+  const [sitePages, setSitePages] = useState<SitePage[]>([]);
+  const [orphanPages, setOrphanPages] = useState<OrphanPage[]>([]);
+  
+  // Estados de carga
+  const [loadingUI, setLoadingUI] = useState(false);
+  const [loadingNav, setLoadingNav] = useState(false);
+  const [loadingPages, setLoadingPages] = useState(false);
+  const [loadingOrphan, setLoadingOrphan] = useState(false);
+  
+  // Cargar datos al iniciar o cambiar de pestaña
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        if (activeTab === 'ui-components') {
+          setLoadingUI(true);
+          const data = await getUIComponents();
+          setUIComponents(data);
+          setLoadingUI(false);
+        } else if (activeTab === 'navigation-components') {
+          setLoadingNav(true);
+          const data = await getNavigationComponents();
+          setNavComponents(data);
+          setLoadingNav(false);
+        } else if (activeTab === 'site-pages') {
+          setLoadingPages(true);
+          const data = await getSitePages();
+          setSitePages(data);
+          setLoadingPages(false);
+        } else if (activeTab === 'orphan-pages') {
+          setLoadingOrphan(true);
+          const data = await getOrphanPages();
+          setOrphanPages(data);
+          setLoadingOrphan(false);
+        }
+      } catch (error) {
+        console.error(`Error loading data for ${activeTab}:`, error);
+        toast.error(`Error al cargar datos: ${(error as Error).message}`);
+      }
+    };
+    
+    loadData();
+  }, [activeTab]);
+  
+  const handleElementSelect = (element: ElementType) => {
     setSelectedElement(element);
     setIsDrawerOpen(true);
   };
+  
+  // Función auxiliar para renderizar el esqueleto de carga
+  const renderLoadingSkeleton = () => (
+    <div className="space-y-4">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="flex items-center space-x-4">
+          <Skeleton className="h-4 w-4" />
+          <Skeleton className="h-4 w-full" />
+        </div>
+      ))}
+    </div>
+  );
   
   return (
     <AdminPageLayout title="Revisión de Elementos">
@@ -196,96 +193,55 @@ const ReviewElementsPage: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[50px]">
-                        <Checkbox />
-                      </TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Categoría</TableHead>
-                      <TableHead>Uso</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => handleElementSelect({
-                      id: '1',
-                      name: 'Button',
-                      category: 'ui',
-                      usage: 'Alto',
-                      status: 'Activo',
-                      description: 'Componente de botón estándar',
-                      type: 'ui',
-                      path: '/components/ui/button.tsx'
-                    })}>
-                      <TableCell>
-                        <Checkbox />
-                      </TableCell>
-                      <TableCell className="font-medium">Button</TableCell>
-                      <TableCell>Básico</TableCell>
-                      <TableCell>Alto</TableCell>
-                      <TableCell>
-                        <Badge variant="success">Activo</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={(e) => {
-                          e.stopPropagation();
-                          handleElementSelect({
-                            id: '1',
-                            name: 'Button',
-                            category: 'ui',
-                            usage: 'Alto',
-                            status: 'Activo',
-                            description: 'Componente de botón estándar',
-                            type: 'ui',
-                            path: '/components/ui/button.tsx'
-                          });
-                        }}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => handleElementSelect({
-                      id: '2',
-                      name: 'Card',
-                      category: 'ui',
-                      usage: 'Medio',
-                      status: 'Activo',
-                      description: 'Componente de tarjeta para mostrar contenido',
-                      type: 'ui',
-                      path: '/components/ui/card.tsx'
-                    })}>
-                      <TableCell>
-                        <Checkbox />
-                      </TableCell>
-                      <TableCell className="font-medium">Card</TableCell>
-                      <TableCell>Contenedor</TableCell>
-                      <TableCell>Medio</TableCell>
-                      <TableCell>
-                        <Badge variant="success">Activo</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={(e) => {
-                          e.stopPropagation();
-                          handleElementSelect({
-                            id: '2',
-                            name: 'Card',
-                            category: 'ui',
-                            usage: 'Medio',
-                            status: 'Activo',
-                            description: 'Componente de tarjeta para mostrar contenido',
-                            type: 'ui',
-                            path: '/components/ui/card.tsx'
-                          });
-                        }}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                {loadingUI ? (
+                  renderLoadingSkeleton()
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">
+                          <Checkbox />
+                        </TableHead>
+                        <TableHead>Nombre</TableHead>
+                        <TableHead>Categoría</TableHead>
+                        <TableHead>Uso</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead className="text-right">Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {uiComponents.map((component) => (
+                        <TableRow 
+                          key={component.id} 
+                          className="cursor-pointer hover:bg-muted/50" 
+                          onClick={() => handleElementSelect({...component, type: 'ui'})}
+                        >
+                          <TableCell>
+                            <Checkbox onClick={(e) => e.stopPropagation()} />
+                          </TableCell>
+                          <TableCell className="font-medium">{component.name}</TableCell>
+                          <TableCell>{component.category}</TableCell>
+                          <TableCell>{component.usage}</TableCell>
+                          <TableCell>
+                            <Badge variant="success">{component.status}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleElementSelect({...component, type: 'ui'});
+                              }}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -300,96 +256,55 @@ const ReviewElementsPage: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[50px]">
-                        <Checkbox />
-                      </TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Uso</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => handleElementSelect({
-                      id: '3',
-                      name: 'Sidebar',
-                      category: 'navigation',
-                      usage: 'Alto',
-                      status: 'Activo',
-                      description: 'Barra lateral de navegación principal',
-                      type: 'navigation',
-                      path: '/components/layout/Sidebar.tsx'
-                    })}>
-                      <TableCell>
-                        <Checkbox />
-                      </TableCell>
-                      <TableCell className="font-medium">Sidebar</TableCell>
-                      <TableCell>Principal</TableCell>
-                      <TableCell>Alto</TableCell>
-                      <TableCell>
-                        <Badge variant="success">Activo</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={(e) => {
-                          e.stopPropagation();
-                          handleElementSelect({
-                            id: '3',
-                            name: 'Sidebar',
-                            category: 'navigation',
-                            usage: 'Alto',
-                            status: 'Activo',
-                            description: 'Barra lateral de navegación principal',
-                            type: 'navigation',
-                            path: '/components/layout/Sidebar.tsx'
-                          });
-                        }}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => handleElementSelect({
-                      id: '4',
-                      name: 'Tabs',
-                      category: 'navigation',
-                      usage: 'Medio',
-                      status: 'Activo',
-                      description: 'Componente de pestañas para navegación en página',
-                      type: 'navigation',
-                      path: '/components/ui/tabs.tsx'
-                    })}>
-                      <TableCell>
-                        <Checkbox />
-                      </TableCell>
-                      <TableCell className="font-medium">Tabs</TableCell>
-                      <TableCell>Secundario</TableCell>
-                      <TableCell>Medio</TableCell>
-                      <TableCell>
-                        <Badge variant="success">Activo</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={(e) => {
-                          e.stopPropagation();
-                          handleElementSelect({
-                            id: '4',
-                            name: 'Tabs',
-                            category: 'navigation',
-                            usage: 'Medio',
-                            status: 'Activo',
-                            description: 'Componente de pestañas para navegación en página',
-                            type: 'navigation',
-                            path: '/components/ui/tabs.tsx'
-                          });
-                        }}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                {loadingNav ? (
+                  renderLoadingSkeleton()
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">
+                          <Checkbox />
+                        </TableHead>
+                        <TableHead>Nombre</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Uso</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead className="text-right">Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {navComponents.map((component) => (
+                        <TableRow 
+                          key={component.id} 
+                          className="cursor-pointer hover:bg-muted/50" 
+                          onClick={() => handleElementSelect({...component, type: 'navigation'})}
+                        >
+                          <TableCell>
+                            <Checkbox onClick={(e) => e.stopPropagation()} />
+                          </TableCell>
+                          <TableCell className="font-medium">{component.name}</TableCell>
+                          <TableCell>{component.category}</TableCell>
+                          <TableCell>{component.usage}</TableCell>
+                          <TableCell>
+                            <Badge variant="success">{component.status}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleElementSelect({...component, type: 'navigation'});
+                              }}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -404,96 +319,18 @@ const ReviewElementsPage: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[50px]">
-                        <Checkbox />
-                      </TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Categoría</TableHead>
-                      <TableHead>Uso</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => handleElementSelect({
-                      id: '5',
-                      name: 'Table',
-                      category: 'common',
-                      usage: 'Alto',
-                      status: 'Activo',
-                      description: 'Componente de tabla para mostrar datos',
-                      type: 'common',
-                      path: '/components/ui/table.tsx'
-                    })}>
-                      <TableCell>
-                        <Checkbox />
-                      </TableCell>
-                      <TableCell className="font-medium">Table</TableCell>
-                      <TableCell>Datos</TableCell>
-                      <TableCell>Alto</TableCell>
-                      <TableCell>
-                        <Badge variant="success">Activo</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={(e) => {
-                          e.stopPropagation();
-                          handleElementSelect({
-                            id: '5',
-                            name: 'Table',
-                            category: 'common',
-                            usage: 'Alto',
-                            status: 'Activo',
-                            description: 'Componente de tabla para mostrar datos',
-                            type: 'common',
-                            path: '/components/ui/table.tsx'
-                          });
-                        }}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => handleElementSelect({
-                      id: '6',
-                      name: 'DataTable',
-                      category: 'common',
-                      usage: 'Alto',
-                      status: 'Activo',
-                      description: 'Tabla avanzada con ordenamiento y filtrado',
-                      type: 'common',
-                      path: '/components/shared/DataTable.tsx'
-                    })}>
-                      <TableCell>
-                        <Checkbox />
-                      </TableCell>
-                      <TableCell className="font-medium">DataTable</TableCell>
-                      <TableCell>Datos</TableCell>
-                      <TableCell>Alto</TableCell>
-                      <TableCell>
-                        <Badge variant="success">Activo</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={(e) => {
-                          e.stopPropagation();
-                          handleElementSelect({
-                            id: '6',
-                            name: 'DataTable',
-                            category: 'common',
-                            usage: 'Alto',
-                            status: 'Activo',
-                            description: 'Tabla avanzada con ordenamiento y filtrado',
-                            type: 'common',
-                            path: '/components/shared/DataTable.tsx'
-                          });
-                        }}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                {/* Este tab podría usar otra tabla en el futuro o unificar con componentes UI */}
+                <div className="flex flex-col items-center justify-center p-8 text-center">
+                  <FileQuestion className="h-16 w-16 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No hay componentes comunes registrados</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Los componentes comunes se mostrarán aquí una vez que sean registrados en el sistema.
+                  </p>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Registrar componente común
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -508,51 +345,57 @@ const ReviewElementsPage: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[50px]">
-                        <Checkbox />
-                      </TableHead>
-                      <TableHead>Título</TableHead>
-                      <TableHead>URL</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockSitePages.map((page) => (
-                      <TableRow key={page.id} className="cursor-pointer hover:bg-muted/50" onClick={() => handleElementSelect({
-                        ...page,
-                        type: 'page'
-                      })}>
-                        <TableCell>
+                {loadingPages ? (
+                  renderLoadingSkeleton()
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">
                           <Checkbox />
-                        </TableCell>
-                        <TableCell className="font-medium">{page.title}</TableCell>
-                        <TableCell>/{page.slug}</TableCell>
-                        <TableCell>{page.is_system_page ? 'Sistema' : 'Contenido'}</TableCell>
-                        <TableCell>
-                          <Badge variant={page.status === 'published' ? 'success' : 'warning'}>
-                            {page.status === 'published' ? 'Publicada' : 'Borrador'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="sm" onClick={(e) => {
-                            e.stopPropagation();
-                            handleElementSelect({
-                              ...page,
-                              type: 'page'
-                            });
-                          }}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
+                        </TableHead>
+                        <TableHead>Título</TableHead>
+                        <TableHead>URL</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead className="text-right">Acciones</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {sitePages.map((page) => (
+                        <TableRow 
+                          key={page.id} 
+                          className="cursor-pointer hover:bg-muted/50" 
+                          onClick={() => handleElementSelect({...page, type: 'page'})}
+                        >
+                          <TableCell>
+                            <Checkbox onClick={(e) => e.stopPropagation()} />
+                          </TableCell>
+                          <TableCell className="font-medium">{page.title}</TableCell>
+                          <TableCell>/{page.slug}</TableCell>
+                          <TableCell>{page.is_system_page ? 'Sistema' : 'Contenido'}</TableCell>
+                          <TableCell>
+                            <Badge variant={page.status === 'published' ? 'success' : 'warning'}>
+                              {page.status === 'published' ? 'Publicada' : 'Borrador'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleElementSelect({...page, type: 'page'});
+                              }}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -567,51 +410,57 @@ const ReviewElementsPage: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[50px]">
-                        <Checkbox />
-                      </TableHead>
-                      <TableHead>Título</TableHead>
-                      <TableHead>Ruta</TableHead>
-                      <TableHead>Último acceso</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockOrphanPages.map((page) => (
-                      <TableRow key={page.id} className="cursor-pointer hover:bg-muted/50" onClick={() => handleElementSelect({
-                        ...page,
-                        type: 'orphan'
-                      })}>
-                        <TableCell>
+                {loadingOrphan ? (
+                  renderLoadingSkeleton()
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">
                           <Checkbox />
-                        </TableCell>
-                        <TableCell className="font-medium">{page.title}</TableCell>
-                        <TableCell>{page.path}</TableCell>
-                        <TableCell>{page.lastAccessed}</TableCell>
-                        <TableCell>
-                          <Badge variant="warning">
-                            {page.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="sm" onClick={(e) => {
-                            e.stopPropagation();
-                            handleElementSelect({
-                              ...page,
-                              type: 'orphan'
-                            });
-                          }}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
+                        </TableHead>
+                        <TableHead>Título</TableHead>
+                        <TableHead>Ruta</TableHead>
+                        <TableHead>Último acceso</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead className="text-right">Acciones</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {orphanPages.map((page) => (
+                        <TableRow 
+                          key={page.id} 
+                          className="cursor-pointer hover:bg-muted/50" 
+                          onClick={() => handleElementSelect({...page, type: 'orphan'})}
+                        >
+                          <TableCell>
+                            <Checkbox onClick={(e) => e.stopPropagation()} />
+                          </TableCell>
+                          <TableCell className="font-medium">{page.title}</TableCell>
+                          <TableCell>{page.path}</TableCell>
+                          <TableCell>{new Date(page.last_accessed).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <Badge variant="warning">
+                              {page.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleElementSelect({...page, type: 'orphan'});
+                              }}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -679,13 +528,13 @@ const ReviewElementsPage: React.FC = () => {
                     <h4 className="text-sm font-medium text-muted-foreground mb-1">
                       Último acceso
                     </h4>
-                    <p className="text-sm">{selectedElement.lastAccessed}</p>
+                    <p className="text-sm">{new Date(selectedElement.last_accessed).toLocaleDateString()}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-muted-foreground mb-1">
                       Número de accesos
                     </h4>
-                    <p className="text-sm">{selectedElement.accessCount}</p>
+                    <p className="text-sm">{selectedElement.access_count}</p>
                   </div>
                 </>
               )}
@@ -695,13 +544,17 @@ const ReviewElementsPage: React.FC = () => {
               <h3 className="text-lg font-medium mb-3">Vista previa</h3>
               
               <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
-                {selectedElement?.type === 'ui' || selectedElement?.type === 'navigation' || selectedElement?.type === 'common' ? (
+                {selectedElement?.type === 'ui' || selectedElement?.type === 'navigation' ? (
                   <div className="border rounded-md p-4 bg-background">
                     <ComponentPreview componentPath={selectedElement.path} />
                   </div>
                 ) : selectedElement?.type === 'page' ? (
                   <div className="border rounded-md p-4 bg-background">
-                    <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: selectedElement.content }} />
+                    <div className="prose max-w-none" dangerouslySetInnerHTML={{ 
+                      __html: typeof selectedElement.content === 'string' 
+                        ? selectedElement.content 
+                        : JSON.stringify(selectedElement.content, null, 2) 
+                    }} />
                   </div>
                 ) : selectedElement?.type === 'orphan' ? (
                   <div className="flex flex-col items-center justify-center border rounded-md p-6 bg-background">
@@ -725,4 +578,3 @@ const ReviewElementsPage: React.FC = () => {
 };
 
 export default ReviewElementsPage;
-
