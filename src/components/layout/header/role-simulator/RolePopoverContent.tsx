@@ -39,6 +39,12 @@ export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
     };
   }, [setSearchQuery]);
 
+  const handleSelectUser = (userId: string, userRole: string) => {
+    if (userRole) {
+      handleSwitchRole(userRole as UserRoleType);
+    }
+  };
+
   return (
     <Command className="rounded-lg shadow-lg border-none overflow-hidden">
       <CommandInput 
@@ -57,12 +63,13 @@ export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
           effectiveRole={effectiveRole} 
           handleSwitchRole={handleSwitchRole} 
           availableRoles={availableRoles}
+          handleClose={handleClose}
         />
         
         {/* User search results */}
         <UserSearch 
-          userResults={userResults} 
-          handleSwitchRole={handleSwitchRole} 
+          onSelectUser={handleSelectUser} 
+          handleClose={handleClose} 
         />
         
         {/* Reset option when viewing as another role */}

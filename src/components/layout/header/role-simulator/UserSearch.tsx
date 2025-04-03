@@ -12,6 +12,7 @@ import { Loader2, UserIcon } from 'lucide-react';
 import { useUserSearch } from './useUserSearch';
 import { cn } from '@/lib/utils';
 import { getRoleBadgeColor } from './roleUtils';
+import { UserRoleType } from '@/types/auth';
 
 interface UserSearchProps {
   onSelectUser: (userId: string, userRole: string) => void;
@@ -61,14 +62,14 @@ export const UserSearch: React.FC<UserSearchProps> = ({
                   }
                 }}
                 className={cn(
-                  "flex items-center gap-2 cursor-pointer py-2 px-1",
+                  "flex items-center gap-3 cursor-pointer py-3 px-3",
                   "hover:bg-accent hover:text-accent-foreground rounded-md transition-colors",
                   "border-l-2 border-transparent hover:border-l-primary"
                 )}
                 disabled={!user.role}
               >
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted">
-                  <UserIcon className="h-4 w-4 text-muted-foreground" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-foreground font-semibold">
+                  {user.full_name ? user.full_name.substring(0, 2).toUpperCase() : 'US'}
                 </div>
                 
                 <div className="flex flex-col flex-1 min-w-0">
@@ -83,7 +84,7 @@ export const UserSearch: React.FC<UserSearchProps> = ({
                 {user.role ? (
                   <Badge className={cn(
                     "ml-auto px-2 py-0.5 text-xs",
-                    getRoleBadgeColor(user.role)
+                    getRoleBadgeColor(user.role as UserRoleType)
                   )}>
                     {user.role}
                   </Badge>
