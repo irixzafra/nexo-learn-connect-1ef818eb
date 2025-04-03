@@ -9,30 +9,18 @@ import AdminSidebar from '@/components/layout/sidebars/AdminSidebar';
 import InstructorSidebar from '@/components/layout/sidebars/InstructorSidebar';
 import StudentSidebar from '@/components/layout/sidebars/StudentSidebar';
 import SafeRouteWrapper from '@/components/SafeRouteWrapper';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { getRoleName } from '@/utils/roleUtils';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { isLoading, effectiveRole, userRole, isViewingAsOtherRole, resetToOriginalRole } = useAuth();
+  const { isLoading, effectiveRole } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev);
   };
-
-  // Debug logs para identificar el problema
-  console.log('>>> DEBUG AppLayout: Role simulation:', {
-    effectiveRole,
-    userRole,
-    isViewingAsOtherRole,
-    effectiveRoleType: typeof effectiveRole,
-    userRoleType: typeof userRole,
-  });
 
   if (isLoading) {
     return (
@@ -56,25 +44,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <div className="flex min-h-screen flex-col">
       <AuthenticatedHeader onToggleSidebar={toggleSidebar} />
-      
-      {/* Role simulation alert banner - Asegurarse de que siempre aparezca cuando debería */}
-      {isViewingAsOtherRole && (
-        <Alert variant="warning" className="mb-0 rounded-none border-x-0 border-t-0 px-4 py-2 shadow-sm">
-          <AlertDescription className="flex items-center justify-between">
-            <div>
-              Estás viendo como: <strong>{getRoleName(effectiveRole!)}</strong>
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={resetToOriginalRole}
-              className="ml-2 border-yellow-500 text-yellow-700"
-            >
-              Volver a mi rol ({getRoleName(userRole!)})
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
       
       <div className="flex flex-1 overflow-hidden">
         <div className={`w-64 border-r bg-gray-50 dark:bg-gray-900 transition-all duration-300 ${
