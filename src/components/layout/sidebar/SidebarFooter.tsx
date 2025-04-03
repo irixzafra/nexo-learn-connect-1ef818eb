@@ -10,7 +10,7 @@ interface SidebarFooterProps {
 
 const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
   console.log('>>> DEBUG SidebarFooter RENDERING');
-  const { userRole, effectiveRole } = useAuth();
+  const { userRole, effectiveRole, logout } = useAuth();
 
   // Get role name function
   const getRoleName = (role: UserRoleType): string => {

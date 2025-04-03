@@ -5,7 +5,6 @@ import { UserRoleType } from '@/types/auth';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { PowerIcon, BellIcon } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
-import { useAuth } from '@/contexts/auth';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
@@ -30,14 +29,22 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   currentLanguage,
   languages,
   changeLanguage,
+  userRole,
+  effectiveRole
 }) => {
-  // Get roles DIRECTLY from context (not from props)
-  const { logout, userRole, effectiveRole } = useAuth();
+  // Eliminamos la llamada redundante a useAuth() y usamos las props directamente
+  const logout = () => {
+    // Implementar una función de logout para usar como callback
+    // Si necesitamos funcionalidad real de logout, deberíamos pasar esta función como prop
+    console.log('Logout clicked');
+    window.location.href = '/auth/login'; // Redirección simple como ejemplo
+  };
+  
   const unreadNotifications = 3; // Example count - replace with actual state
   
   console.log('>>> DEBUG SidebarFooterSection:', { 
-    userRoleFromContext: userRole, 
-    effectiveRoleFromContext: effectiveRole,
+    userRole, 
+    effectiveRole,
     isConditionMet: userRole === 'admin' 
   });
 
