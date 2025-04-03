@@ -1,51 +1,81 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useSupabaseSync } from '@/hooks/useSupabaseSync';
 
-type ConnectionStatus = 'connected' | 'disconnected' | 'checking';
+interface SupabaseConnectionTestProps {
+  showCard?: boolean;
+  autoTest?: boolean;
+}
 
-const SupabaseConnectionTest: React.FC = () => {
-  const [status, setStatus] = useState<ConnectionStatus>('checking');
-  const [lastChecked, setLastChecked] = useState<Date | null>(null);
-  const [error, setError] = useState<string | null>(null);
+const SupabaseConnectionTest: React.FC<SupabaseConnectionTestProps> = ({ 
+  showCard = true,
+  autoTest = true
+}) => {
+  const { connectionStatus, lastSyncAttempt, error, checkDatabaseStatus } = useSupabaseSync();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Comprobar la conexión a Supabase
-  const checkConnection = async () => {
-    setIsLoading(true);
-    setStatus('checking');
-    setError(null);
-    
-    try {
-      // Intenta hacer una consulta simple para verificar la conexión
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id')
-        .limit(1);
-      
-      if (error) {
-        throw error;
-      }
-      
-      setStatus('connected');
-    } catch (err: any) {
-      console.error('Error al verificar la conexión a Supabase:', err);
-      setStatus('disconnected');
-      setError(err.message || 'No se pudo conectar a Supabase');
-    } finally {
-      setLastChecked(new Date());
-      setIsLoading(false);
+  // Verificar la conexión al montar el componente si autoTest está habilitado
+  React.useEffect(() => {
+    if (autoTest) {
+      checkDatabaseStatus();
     }
+  }, [autoTest, checkDatabaseStatus]);
+
+  const handleCheckConnection = async () => {
+    setIsLoading(true);
+    await checkDatabaseStatus();
+    setIsLoading(false);
   };
 
-  // Verificar la conexión al montar el componente
-  React.useEffect(() => {
-    checkConnection();
-  }, []);
+  const getContent = () => (
+    <>
+      {connectionStatus === 'connected' ? (
+        <Alert variant="success">
+          <CheckCircle className="h-4 w-4" />
+          <AlertTitle>Conectado a Supabase</AlertTitle>
+          <AlertDescription>
+            La conexión a la base de datos está funcionando correctamente.
+            {lastSyncAttempt && (
+              <p className="text-xs mt-1">
+                Última verificación: {lastSyncAttempt.toLocaleString()}
+              </p>
+            )}
+          </AlertDescription>
+        </Alert>
+      ) : connectionStatus === 'disconnected' ? (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error de Conexión</AlertTitle>
+          <AlertDescription>
+            No se pudo establecer conexión con Supabase.
+            {error && <p className="font-mono text-xs mt-1 break-all">{error.message}</p>}
+            {lastSyncAttempt && (
+              <p className="text-xs mt-1">
+                Última verificación: {lastSyncAttempt.toLocaleString()}
+              </p>
+            )}
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <Alert>
+          <RefreshCw className="h-4 w-4 animate-spin" />
+          <AlertTitle>Verificando conexión...</AlertTitle>
+          <AlertDescription>
+            Comprobando el estado de la conexión con Supabase...
+          </AlertDescription>
+        </Alert>
+      )}
+    </>
+  );
+
+  if (!showCard) {
+    return getContent();
+  }
 
   return (
     <Card>
@@ -56,47 +86,12 @@ const SupabaseConnectionTest: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {status === 'connected' ? (
-          <Alert variant="success">
-            <CheckCircle className="h-4 w-4" />
-            <AlertTitle>Conectado a Supabase</AlertTitle>
-            <AlertDescription>
-              La conexión a la base de datos está funcionando correctamente.
-              {lastChecked && (
-                <p className="text-xs mt-1">
-                  Última verificación: {lastChecked.toLocaleString()}
-                </p>
-              )}
-            </AlertDescription>
-          </Alert>
-        ) : status === 'disconnected' ? (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error de Conexión</AlertTitle>
-            <AlertDescription>
-              No se pudo establecer conexión con Supabase.
-              {error && <p className="font-mono text-xs mt-1 break-all">{error}</p>}
-              {lastChecked && (
-                <p className="text-xs mt-1">
-                  Última verificación: {lastChecked.toLocaleString()}
-                </p>
-              )}
-            </AlertDescription>
-          </Alert>
-        ) : (
-          <Alert>
-            <RefreshCw className="h-4 w-4 animate-spin" />
-            <AlertTitle>Verificando conexión...</AlertTitle>
-            <AlertDescription>
-              Comprobando el estado de la conexión con Supabase...
-            </AlertDescription>
-          </Alert>
-        )}
+        {getContent()}
       </CardContent>
       <CardFooter className="justify-end">
         <Button 
           variant="outline" 
-          onClick={checkConnection} 
+          onClick={handleCheckConnection} 
           disabled={isLoading}
         >
           {isLoading ? (

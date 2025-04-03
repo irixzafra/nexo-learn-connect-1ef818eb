@@ -77,7 +77,7 @@ const PublicRoutes: React.FC = () => {
         </AppLayout>
       } />
       
-      {/* Catch-all route para rutas públicas no encontradas */}
+      {/* Catch-all route for public routes - without layout since NotFound is a standalone page */}
       <Route path="*" element={<PublicLayout><NotFound /></PublicLayout>} />
     </Routes>
   );
