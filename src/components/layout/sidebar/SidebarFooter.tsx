@@ -2,7 +2,6 @@
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { useAuth } from '@/contexts/auth';
-import RoleSwitcher from '@/components/admin/RoleSwitcher';
 import SidebarFooterSection from './SidebarFooterSection';
 
 interface SidebarFooterProps {
@@ -42,18 +41,11 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
 
   return (
     <div className="border-t border-border p-3">
-      {/* RoleSwitcher - Only visible for admin users */}
-      {userRole === 'admin' && (
-        <div className={isCollapsed ? "mb-4 flex justify-center" : "mb-4"}>
-          <RoleSwitcher className="w-full" />
-        </div>
-      )}
-      
       <SidebarFooterSection
         userRole={userRole as UserRoleType}
         isCollapsed={isCollapsed}
         effectiveRole={effectiveRole as UserRoleType}
-        currentViewRole={null} // Changed from "current" to null
+        currentViewRole={null}
         handleRoleChange={() => {}}
         getRoleName={getRoleName}
         currentLanguage={currentLanguage}
