@@ -628,42 +628,6 @@ export type Database = {
         }
         Relationships: []
       }
-      design_system_settings: {
-        Row: {
-          animations_enabled: boolean
-          color_palette: Json | null
-          created_at: string | null
-          id: string
-          reduced_motion: boolean
-          theme_mode: Database["public"]["Enums"]["theme_mode"]
-          updated_at: string | null
-          use_material_design: boolean
-          user_id: string | null
-        }
-        Insert: {
-          animations_enabled?: boolean
-          color_palette?: Json | null
-          created_at?: string | null
-          id?: string
-          reduced_motion?: boolean
-          theme_mode?: Database["public"]["Enums"]["theme_mode"]
-          updated_at?: string | null
-          use_material_design?: boolean
-          user_id?: string | null
-        }
-        Update: {
-          animations_enabled?: boolean
-          color_palette?: Json | null
-          created_at?: string | null
-          id?: string
-          reduced_motion?: boolean
-          theme_mode?: Database["public"]["Enums"]["theme_mode"]
-          updated_at?: string | null
-          use_material_design?: boolean
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       educational_resources: {
         Row: {
           author: string | null
@@ -2779,10 +2743,6 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
-      get_design_system_settings: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
       get_payment_statistics: {
         Args: {
           days_back?: number
@@ -2903,16 +2863,6 @@ export type Database = {
         }
         Returns: unknown
       }
-      update_design_system_settings: {
-        Args: {
-          p_theme_mode?: string
-          p_use_material_design?: boolean
-          p_color_palette?: Json
-          p_animations_enabled?: boolean
-          p_reduced_motion?: boolean
-        }
-        Returns: Json
-      }
     }
     Enums: {
       application_status: "pending" | "reviewing" | "accepted" | "rejected"
@@ -2949,7 +2899,6 @@ export type Database = {
         | "short_answer"
         | "essay"
       scholarship_status: "active" | "closed" | "upcoming"
-      theme_mode: "light" | "dark" | "system"
       user_role: "student" | "instructor" | "admin"
     }
     CompositeTypes: {

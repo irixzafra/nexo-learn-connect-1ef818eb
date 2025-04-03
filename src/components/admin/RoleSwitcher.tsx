@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/auth';
+import { useAuth } from '@/contexts/AuthContext';
 import { UserRoleType } from '@/types/auth';
 import { 
   DropdownMenu,
@@ -14,22 +14,17 @@ import { Check, ArrowLeftRight, Shield, User, Terminal, Ghost, GraduationCap, Bo
 import { RoleIndicator } from '@/components/layout/header/RoleIndicator';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
 
 interface RoleSwitcherProps {
   onChange?: (role: UserRoleType) => void;
   currentViewRole: UserRoleType | 'current';
-  showLabel?: boolean;
-  size?: 'default' | 'sm';
 }
 
 export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ 
   onChange,
-  currentViewRole,
-  showLabel = true,
-  size = 'default'
+  currentViewRole
 }) => {
-  const { userRole, setViewAsRole } = useAuth();
+  const { userRole } = useAuth();
   
   // Solo los administradores pueden cambiar roles
   if (userRole !== 'admin') {
@@ -44,16 +39,14 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   const effectiveRole = getEffectiveRole();
   
   const handleRoleChange = (role: UserRoleType | 'current') => {
-    if (role === 'current') {
-      setViewAsRole('current');
-      toast.success(`Volviendo a tu rol original: ${getRoleLabel(userRole as UserRoleType)}`);
-    } else {
-      setViewAsRole(role);
-      toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);
-    }
-    
     if (onChange) {
-      onChange(role === 'current' ? userRole as UserRoleType : role);
+      if (role === 'current') {
+        onChange(userRole as UserRoleType);
+        toast.success(`Volviendo a tu rol original: ${getRoleLabel(userRole as UserRoleType)}`);
+      } else {
+        onChange(role);
+        toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);
+      }
     }
   };
 
@@ -113,19 +106,12 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              size={size} 
-              className={cn(
-                "flex items-center gap-2",
-                !showLabel && "justify-center"
-              )}
+              size="sm" 
+              className="flex items-center gap-2"
             >
-              {getRoleIcon(effectiveRole)}
-              {showLabel && (
-                <>
-                  <span className="hidden md:inline">Vista como: {getRoleLabel(effectiveRole)}</span>
-                  <span className="inline md:hidden">Vista</span>
-                </>
-              )}
+              <GraduationCap className="h-4 w-4" />
+              <span className="hidden md:inline">Vista como: {getRoleLabel(effectiveRole)}</span>
+              <span className="inline md:hidden">Vista</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">

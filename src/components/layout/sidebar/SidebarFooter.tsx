@@ -8,22 +8,19 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import GlobalRoleSwitcher from '@/components/layout/GlobalRoleSwitcher';
-import { Separator } from '@/components/ui/separator';
 
 interface SidebarFooterProps {
   isCollapsed: boolean;
 }
 
 const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
-  const { user, userRole, logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   
   // Get avatar image and name from user profile if available
   const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.avatarUrl;
   const displayName = user?.user_metadata?.name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Usuario';
   const userEmail = user?.email || '';
-  const isAdmin = userRole === 'admin';
   
   const handleLogout = async () => {
     try {
@@ -39,25 +36,6 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
       "mt-auto border-t border-border pt-4 px-3",
       isCollapsed ? "text-center" : ""
     )}>
-      {/* Admin Role Switcher - Always visible for admins */}
-      {isAdmin && (
-        <div className={cn(
-          "mb-3",
-          isCollapsed ? "flex justify-center" : ""
-        )}>
-          <GlobalRoleSwitcher 
-            showLabel={!isCollapsed}
-            compact={isCollapsed}
-            className={cn(
-              "w-full",
-              isCollapsed ? "flex justify-center" : ""
-            )}
-          />
-        </div>
-      )}
-
-      <Separator className="my-2" />
-
       <div className={cn(
         "flex items-center",
         isCollapsed ? "flex-col space-y-2" : "justify-between"

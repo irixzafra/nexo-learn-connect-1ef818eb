@@ -2,27 +2,18 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
-import { Toaster } from 'sonner';
+import { Toaster } from 'sonner'; // Usando sonner ya que está importado en el archivo original
 import { AuthProvider } from './contexts/auth';
-import { LanguageProvider } from './contexts/LanguageContext';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { FeaturesProvider } from './contexts/features';
-import { TestDataProvider } from './contexts/test-data';
+import { LanguageProvider } from './contexts/LanguageContext'; // Importamos LanguageProvider
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
+    <AuthProvider> {/* AuthProvider es el más externo */}
       <Router>
-        <ThemeProvider>
-          <LanguageProvider>
-            <FeaturesProvider>
-              <TestDataProvider>
-                <AppRoutes />
-                <Toaster />
-              </TestDataProvider>
-            </FeaturesProvider>
-          </LanguageProvider>
-        </ThemeProvider>
+        <LanguageProvider> {/* LanguageProvider envuelve AppRoutes */}
+          <AppRoutes />
+          <Toaster />
+        </LanguageProvider>
       </Router>
     </AuthProvider>
   );
