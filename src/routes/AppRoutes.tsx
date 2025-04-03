@@ -43,6 +43,7 @@ import TestDataManagement from '@/pages/admin/TestDataManagement';
 import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminDashboard from '@/pages/admin/Dashboard';
 import PagesManagement from '@/pages/admin/settings/pages';
+import OrphanReviewPage from '@/pages/admin/OrphanReviewPage';
 
 // Import instructor pages
 import InstructorDashboard from '@/pages/instructor/Dashboard';
@@ -129,6 +130,7 @@ const AppRoutes: React.FC = () => {
         <Route path="admin/test-data" element={<SafeRouteWrapper requiredRole={['admin']}><TestDataManagement /></SafeRouteWrapper>} />
         <Route path="admin/access-control" element={<SafeRouteWrapper requiredRole={['admin']}><AccessControl /></SafeRouteWrapper>} />
         <Route path="admin/system-pages" element={<SafeRouteWrapper requiredRole={['admin']}><PagesManagement /></SafeRouteWrapper>} />
+        <Route path="admin/orphan-review" element={<SafeRouteWrapper requiredRole={['admin']}><OrphanReviewPage /></SafeRouteWrapper>} />
         <Route path="admin/design-system" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Design System" /></SafeRouteWrapper>} />
         
         {/* --- Rutas Profesor (con wrapper individual) --- */}
