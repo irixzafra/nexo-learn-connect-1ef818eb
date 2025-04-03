@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/tooltip';
 
 interface SidebarNavItemProps {
-  to: string;
+  href: string;
   icon: React.ElementType;
   label: string;
   badge?: number;
@@ -18,7 +18,7 @@ interface SidebarNavItemProps {
 }
 
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ 
-  to, 
+  href, 
   icon: Icon, 
   label, 
   badge, 
@@ -30,7 +30,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
       <Tooltip>
         <TooltipTrigger asChild>
           <NavLink 
-            to={to}
+            to={href}
             className={({ isActive }) => cn(
               "flex h-10 w-10 items-center justify-center rounded-full relative transition-all duration-200",
               isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
@@ -55,7 +55,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
 
   return (
     <NavLink
-      to={to}
+      to={href}
       className={({ isActive }) => cn(
         "flex items-center py-2.5 px-3 text-sm transition-colors rounded-md group gap-3",
         isActive 

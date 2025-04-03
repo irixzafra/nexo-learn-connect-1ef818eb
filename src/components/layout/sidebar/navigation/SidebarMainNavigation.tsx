@@ -59,9 +59,9 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
     <div className="space-y-1">
       {/* Home link - always visible */}
       <NavItem 
-        to={getHomePath()}
+        href={getHomePath()}
         icon={Home} 
-        label="Inicio" 
+        title="Inicio" 
         isCollapsed={isCollapsed}
       />
 
@@ -75,17 +75,17 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         isCollapsed={isCollapsed}
       >
         <NavItem
-          to="/app/dashboard"
+          href="/app/dashboard"
           icon={LayoutDashboard}
-          label="Panel Principal"
+          title="Panel Principal"
           isCollapsed={isCollapsed}
         />
         
         {effectiveRole === 'admin' && (
           <NavItem
-            to="/app/admin/analytics"
+            href="/app/admin/analytics"
             icon={Compass}
-            label="Analíticas"
+            title="Analíticas"
             isCollapsed={isCollapsed}
           />
         )}
@@ -99,27 +99,27 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         isCollapsed={isCollapsed}
       >
         <NavItem
-          to="/app/courses"
+          href="/app/courses"
           icon={BookOpen}
-          label="Mis Cursos"
+          title="Mis Cursos"
           isCollapsed={isCollapsed}
         />
         <NavItem
-          to="/app/discover"
+          href="/app/discover"
           icon={Compass}
-          label="Descubrir Cursos"
+          title="Descubrir Cursos"
           isCollapsed={isCollapsed}
         />
         <NavItem
-          to="/app/calendar"
+          href="/app/calendar"
           icon={Calendar}
-          label="Calendario"
+          title="Calendario"
           isCollapsed={isCollapsed}
         />
         <NavItem
-          to="/app/resources"
+          href="/app/resources"
           icon={FileText}
-          label="Recursos"
+          title="Recursos"
           isCollapsed={isCollapsed}
         />
       </NavGroup>
@@ -133,27 +133,27 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
           isCollapsed={isCollapsed}
         >
           <NavItem
-            to="/app/instructor/dashboard"
+            href="/app/instructor/dashboard"
             icon={LayoutDashboard}
-            label="Panel Instructor"
+            title="Panel Instructor"
             isCollapsed={isCollapsed}
           />
           <NavItem
-            to="/app/instructor/courses"
+            href="/app/instructor/courses"
             icon={BookOpen}
-            label="Mis Cursos"
+            title="Mis Cursos"
             isCollapsed={isCollapsed}
           />
           <NavItem
-            to="/app/instructor/students"
+            href="/app/instructor/students"
             icon={Users}
-            label="Estudiantes"
+            title="Estudiantes"
             isCollapsed={isCollapsed}
           />
           <NavItem
-            to="/app/instructor/content"
+            href="/app/instructor/content"
             icon={Video}
-            label="Contenido"
+            title="Contenido"
             isCollapsed={isCollapsed}
           />
         </NavGroup>
@@ -167,23 +167,23 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         isCollapsed={isCollapsed}
       >
         <NavItem
-          to="/app/messages"
+          href="/app/messages"
           icon={MessageSquare}
-          label="Mensajes"
+          title="Mensajes"
           badge={messagesCount}
           isCollapsed={isCollapsed}
         />
         <NavItem
-          to="/app/notifications"
+          href="/app/notifications"
           icon={Bell}
-          label="Notificaciones"
+          title="Notificaciones"
           badge={notificationsCount}
           isCollapsed={isCollapsed}
         />
         <NavItem
-          to="/app/forum"
+          href="/app/forum"
           icon={Newspaper}
-          label="Foro"
+          title="Foro"
           isCollapsed={isCollapsed}
         />
       </NavGroup>
@@ -197,21 +197,21 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
           isCollapsed={isCollapsed}
         >
           <NavItem
-            to="/app/admin/dashboard"
+            href="/app/admin/dashboard"
             icon={Shield}
-            label="Panel Admin"
+            title="Panel Admin"
             isCollapsed={isCollapsed}
           />
           <NavItem
-            to="/app/admin/users"
+            href="/app/admin/users"
             icon={Users}
-            label="Usuarios"
+            title="Usuarios"
             isCollapsed={isCollapsed}
           />
           <NavItem
-            to="/app/admin/courses"
+            href="/app/admin/courses"
             icon={BookOpen}
-            label="Gestión Cursos"
+            title="Gestión Cursos"
             isCollapsed={isCollapsed}
           />
         </NavGroup>
@@ -227,24 +227,24 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         isCollapsed={isCollapsed}
       >
         <NavItem
-          to="/app/docs"
+          href="/app/docs"
           icon={FileText}
-          label="Documentación"
+          title="Documentación"
           isCollapsed={isCollapsed}
         />
         <NavItem
-          to="/app/help"
+          href="/app/help"
           icon={Lightbulb}
-          label="Ayuda"
+          title="Ayuda"
           isCollapsed={isCollapsed}
         />
       </NavGroup>
 
       {/* Settings - at the bottom */}
       <NavItem
-        to="/app/settings"
+        href="/app/settings"
         icon={Settings}
-        label="Configuración"
+        title="Configuración"
         isCollapsed={isCollapsed}
       />
     </div>
