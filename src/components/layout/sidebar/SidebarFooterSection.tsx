@@ -8,12 +8,13 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { useAuth } from '@/contexts/auth';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
 
 interface SidebarFooterSectionProps {
   userRole: UserRoleType;
   isCollapsed: boolean;
   effectiveRole: UserRoleType;
-  currentViewRole: UserRoleType | null; // Changed from 'current' | UserRoleType
+  currentViewRole: UserRoleType | null;
   handleRoleChange: (role: UserRoleType) => void;
   getRoleName: (role: UserRoleType) => string;
   currentLanguage: string;
@@ -37,6 +38,19 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
 
   return (
     <div className="mt-auto pt-2">
+      {/* Add RoleSwitcher for admin users */}
+      {userRole === 'admin' && (
+        <div className={cn(
+          "px-3 pb-3 border-b border-border",
+          isCollapsed ? "flex justify-center" : ""
+        )}>
+          <RoleSwitcher className={cn(
+            "w-full",
+            isCollapsed ? "scale-75" : ""
+          )} />
+        </div>
+      )}
+      
       <div className={cn(
         "flex items-center",
         isCollapsed ? "justify-center space-y-4 flex-col" : "justify-between px-3 pb-2"
