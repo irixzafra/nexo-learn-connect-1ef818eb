@@ -18,6 +18,7 @@ interface RolePopoverContentProps {
   resetToOriginalRole: () => void;
   handleClose: () => void;
   availableRoles?: UserRoleType[];
+  isSearching?: boolean;
 }
 
 export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
@@ -31,6 +32,7 @@ export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
   resetToOriginalRole,
   handleClose,
   availableRoles = [],
+  isSearching = false,
 }) => {
   // Reset search results when component unmounts
   useEffect(() => {
@@ -62,7 +64,8 @@ export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
         {/* User search results */}
         <UserSearch 
           userResults={userResults} 
-          handleSwitchRole={handleSwitchRole} 
+          handleSwitchRole={handleSwitchRole}
+          isSearching={isSearching}
         />
         
         {/* Reset option when viewing as another role */}

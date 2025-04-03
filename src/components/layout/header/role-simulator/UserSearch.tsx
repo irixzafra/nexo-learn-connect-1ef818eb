@@ -7,14 +7,34 @@ import { getRoleIcon, getRoleName, getRoleBadgeColor } from './roleUtils';
 import { UserRoleType } from '@/types/auth';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 interface UserSearchProps {
   userResults: UserSearchResult[];
   handleSwitchRole: (role: UserRoleType) => void;
+  isSearching?: boolean;
 }
 
-export const UserSearch: React.FC<UserSearchProps> = ({ userResults, handleSwitchRole }) => {
+export const UserSearch: React.FC<UserSearchProps> = ({ 
+  userResults, 
+  handleSwitchRole,
+  isSearching = false 
+}) => {
   console.log('🔍 Renderizando UserSearch con resultados:', userResults);
+  
+  if (isSearching) {
+    return (
+      <>
+        <CommandSeparator />
+        <CommandGroup heading="Buscando usuarios...">
+          <div className="flex items-center justify-center py-4">
+            <Loader2 className="h-4 w-4 animate-spin text-primary mr-2" />
+            <span className="text-sm text-muted-foreground">Buscando...</span>
+          </div>
+        </CommandGroup>
+      </>
+    );
+  }
   
   if (userResults.length === 0) {
     console.log('⚠️ Sin resultados de usuarios para mostrar');
@@ -58,15 +78,17 @@ export const UserSearch: React.FC<UserSearchProps> = ({ userResults, handleSwitc
                 <span className="text-sm truncate">{user.full_name || 'Sin nombre'}</span>
                 <span className="text-xs text-muted-foreground truncate">{user.email || 'No email'}</span>
               </div>
-              <Badge 
-                variant="outline" 
-                className={cn(
-                  "ml-auto text-xs px-1.5 py-0.5", 
-                  getRoleBadgeColor(user.role || '').replace('bg-', 'border-')
-                )}
-              >
-                {getRoleName(user.role || '')}
-              </Badge>
+              {user.role && (
+                <Badge 
+                  variant="outline" 
+                  className={cn(
+                    "ml-auto text-xs px-1.5 py-0.5", 
+                    getRoleBadgeColor(user.role).replace('bg-', 'border-')
+                  )}
+                >
+                  {getRoleName(user.role)}
+                </Badge>
+              )}
             </CommandItem>
           );
         })}

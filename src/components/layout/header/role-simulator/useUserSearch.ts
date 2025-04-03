@@ -34,7 +34,7 @@ export const useUserSearch = () => {
         throw error;
       }
       
-      if (data?.data) {
+      if (data?.data && Array.isArray(data.data)) {
         // Mapear los resultados a formato compatible con UserSearchResult
         const formattedResults: UserSearchResult[] = data.data.map((user: any) => ({
           id: user.id,
@@ -46,12 +46,13 @@ export const useUserSearch = () => {
         console.log('✅ Resultados de búsqueda formateados:', formattedResults);
         setUserResults(formattedResults);
       } else {
-        console.log('⚠️ No se encontraron resultados o formato de respuesta inesperado');
+        console.log('⚠️ No se encontraron resultados o formato de respuesta inesperado', data);
         setUserResults([]);
       }
     } catch (error) {
       console.error('🔴 Error completo en searchUsers:', error);
       toast.error('Error al buscar usuarios');
+      setUserResults([]);
     } finally {
       setIsSearching(false);
     }
@@ -60,7 +61,7 @@ export const useUserSearch = () => {
   // When search query changes, search for users
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (searchQuery) {
+      if (searchQuery && searchQuery.length >= 2) {
         console.log('⏱️ Ejecutando búsqueda después de debounce:', searchQuery);
         searchUsers(searchQuery);
       } else {
@@ -69,7 +70,6 @@ export const useUserSearch = () => {
     }, 300);
     
     return () => {
-      console.log('🧹 Limpiando timeout de debounce');
       clearTimeout(timeoutId);
     }
   }, [searchQuery]);

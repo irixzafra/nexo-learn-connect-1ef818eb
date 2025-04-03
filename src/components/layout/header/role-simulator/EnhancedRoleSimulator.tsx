@@ -11,13 +11,14 @@ import { supabase } from '@/lib/supabase';
 export const EnhancedRoleSimulator = () => {
   const { userRole, effectiveRole, isViewingAsOtherRole, setSimulatedRole, resetToOriginalRole } = useAuth();
   const [open, setOpen] = useState(false);
-  const { searchQuery, setSearchQuery, userResults } = useUserSearch();
+  const { searchQuery, setSearchQuery, userResults, isSearching } = useUserSearch();
   const [availableRoles, setAvailableRoles] = useState<UserRoleType[]>([]);
   
   // Fetch roles from database
   useEffect(() => {
     const fetchRoles = async () => {
       try {
+        console.log('🔄 Fetching available roles...');
         // First try to get roles from the roles table
         let { data, error } = await supabase
           .from('roles')
@@ -25,6 +26,7 @@ export const EnhancedRoleSimulator = () => {
           .order('name', { ascending: true });
           
         if (error || !data || data.length === 0) {
+          console.log('⚠️ No roles table or no data, falling back to profiles...');
           // If no roles table or no data, fall back to getting distinct roles from profiles
           const { data: profileRoles, error: profileError } = await supabase
             .from('profiles')
@@ -34,17 +36,20 @@ export const EnhancedRoleSimulator = () => {
           if (!profileError && profileRoles && profileRoles.length > 0) {
             // Extract unique roles from profiles
             const uniqueRoles = [...new Set(profileRoles.map(p => p.role))];
+            console.log('✅ Found roles from profiles:', uniqueRoles);
             setAvailableRoles(uniqueRoles as UserRoleType[]);
           } else {
+            console.log('⚠️ Using fallback default roles');
             // Fallback to default roles
             setAvailableRoles(['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']);
           }
         } else {
           // Use roles from the roles table
+          console.log('✅ Found roles from roles table:', data.map(role => role.name));
           setAvailableRoles(data.map(role => role.name as UserRoleType));
         }
       } catch (error) {
-        console.error('Error in fetchRoles:', error);
+        console.error('❌ Error in fetchRoles:', error);
         // Fallback to default roles
         setAvailableRoles(['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']);
       }
@@ -77,6 +82,7 @@ export const EnhancedRoleSimulator = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           userResults={userResults}
+          isSearching={isSearching}
           handleSwitchRole={handleSwitchRole}
           resetToOriginalRole={resetToOriginalRole}
           handleClose={() => setOpen(false)}
