@@ -10,7 +10,7 @@ interface SidebarFooterProps {
 
 const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
   console.log('>>> DEBUG SidebarFooter RENDERING');
-  const { userRole, effectiveRole, logout, setSimulatedRole, resetToOriginalRole } = useAuth();
+  const { userRole, effectiveRole, logout, setSimulatedRole, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
 
   // Get role name function
   const getRoleName = (role: UserRoleType): string => {
@@ -61,7 +61,8 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     isCollapsedProp: isCollapsed,
     effectiveRoleProp: effectiveRole,
     currentLanguageProp: currentLanguage,
-    languagesProp: languages
+    languagesProp: languages,
+    isViewingAsOtherRole
   });
 
   // Usamos useEffect para el log después del renderizado
@@ -83,6 +84,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
         changeLanguage={changeLanguage}
         logout={logout}
         resetToOriginalRole={handleResetRole}
+        isViewingAsOtherRole={isViewingAsOtherRole}
       />
     </div>
   );

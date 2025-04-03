@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth';
-import { UserRoleType } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Check, ArrowLeftRight, Shield, User, Terminal, Ghost, GraduationCap, BookOpen, Users, Lightbulb, Search, Loader } from 'lucide-react';
-import RoleIndicator from '@/components/layout/header/RoleIndicator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { supabase } from '@/lib/supabase';
 import debounce from 'lodash.debounce';
@@ -42,7 +41,9 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ className }) => {
   });
   
   // Solo los administradores pueden cambiar roles
-  if (userRole !== 'admin') {
+  const actualUserRole = toUserRoleType(userRole as string);
+  if (actualUserRole !== 'admin') {
+    console.log('>>> DEBUG RoleSwitcher: User is not admin, not rendering component');
     return null;
   }
 
@@ -149,6 +150,8 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ className }) => {
   // Roles disponibles para vista previa
   const availableRoles: UserRoleType[] = ['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest', 'anonimo'];
   
+  console.log('>>> DEBUG RoleSwitcher: Rendering component with userRole:', userRole);
+  
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -160,7 +163,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ className }) => {
               className={`flex items-center gap-2 ${className}`}
             >
               <GraduationCap className="h-4 w-4" />
-              <span className="hidden md:inline">Vista como: {getRoleLabel(effectiveRole as UserRoleType)}</span>
+              <span className="hidden md:inline">Vista como: {getRoleLabelFunction(effectiveRole as UserRoleType)}</span>
               <span className="inline md:hidden">Vista</span>
             </Button>
           </DropdownMenuTrigger>
@@ -259,5 +262,29 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ className }) => {
     </Tooltip>
   );
 };
+
+// Helper function outside the component to avoid recreating it on every render
+function getRoleLabelFunction(role: UserRoleType): string {
+  switch (role) {
+    case 'admin':
+      return 'Administrador';
+    case 'instructor':
+      return 'Instructor';
+    case 'student':
+      return 'Estudiante';
+    case 'sistemas':
+      return 'Sistemas';
+    case 'moderator':
+      return 'Moderador';
+    case 'content_creator':
+      return 'Creador de Contenido';
+    case 'guest':
+      return 'Invitado';
+    case 'anonimo':
+      return 'Anónimo';
+    default:
+      return role;
+  }
+}
 
 export default RoleSwitcher;

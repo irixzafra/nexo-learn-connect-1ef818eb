@@ -6,9 +6,12 @@ import { Session, User } from '@supabase/supabase-js';
 
 interface AuthContextType {
   isLoading: boolean;
+  isAuthenticated: boolean;
+  isInitialized: boolean;
   user: User | null;
   session: Session | null;
   userProfile: UserProfile | null;
+  profile: UserProfile | null; // Adding alias for backward compatibility
   userRole: UserRoleType | null;
   effectiveRole: UserRoleType | null;
   isViewingAsOtherRole: boolean;
@@ -25,9 +28,12 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   isLoading: true,
+  isAuthenticated: false,
+  isInitialized: false,
   user: null,
   session: null,
   userProfile: null,
+  profile: null,
   userRole: null,
   effectiveRole: null,
   isViewingAsOtherRole: false,
@@ -52,6 +58,7 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -62,14 +69,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // The effective role is either the simulated role or the user's actual role
   const effectiveRole = simulatedRole || userRole;
   const isViewingAsOtherRole = simulatedRole !== null;
+  const isAuthenticated = !!session && !!user;
 
   // Fetch user profile from database
   const fetchUserProfile = async (userId: string) => {
     try {
+      console.log('Fetching user profile for:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('userId', userId)
+        .eq('id', userId)
         .single();
 
       if (error) {
@@ -78,8 +87,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data) {
+        console.log('Profile data received:', data);
         setUserProfile(data as UserProfile);
         setUserRole(toUserRoleType(data.role || 'student'));
+        console.log('User role set to:', data.role);
       }
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
@@ -126,6 +137,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       setIsLoading(false);
+      setIsInitialized(true);
       
       // Cleanup subscription on unmount
       return () => {
@@ -254,9 +266,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const value = {
     isLoading,
+    isAuthenticated,
+    isInitialized,
     user,
     session,
     userProfile,
+    profile: userProfile, // Add alias for backward compatibility
     userRole,
     effectiveRole,
     isViewingAsOtherRole,
