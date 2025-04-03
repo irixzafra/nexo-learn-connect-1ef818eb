@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -65,14 +64,10 @@ const CourseDetail: React.FC = () => {
       }
       
       return data as Course;
-    },
-    onSuccess: (data) => {
-      console.log('➡️ CourseDetail Query SUCCESS:', data);
-    },
-    onError: (err) => {
-      console.error('❌ CourseDetail Query ERROR:', err);
     }
   });
+  
+  // Log query state to help with debugging
   console.log('➡️ CourseDetail Query State:', { isLoading, status, queryError, courseData: course });
   
   // Fetch enrollment status

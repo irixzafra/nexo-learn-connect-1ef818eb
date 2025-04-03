@@ -59,7 +59,7 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
     switch (role) {
       case 'admin':
         return <Shield className="h-4 w-4" />;
-      case 'profesor':
+      case 'instructor':
         return <BookOpen className="h-4 w-4" />;
       case 'student':
         return <GraduationCap className="h-4 w-4" />;
@@ -72,8 +72,8 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
     switch (role) {
       case 'admin':
         return 'Administrador';
-      case 'profesor':
-        return 'Profesor';
+      case 'instructor':
+        return 'Instructor';
       case 'student':
         return 'Estudiante';
       default:
@@ -83,7 +83,7 @@ export const UserRoleSwitcher: React.FC<UserRoleSwitcherProps> = ({
 
   const availableRoles: UserRoleType[] = [
     'admin', 
-    'profesor', 
+    'instructor', 
     'student'
   ];
 

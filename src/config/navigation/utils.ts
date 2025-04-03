@@ -28,9 +28,8 @@ export const getHomePathByRole = (role: UserRoleType): string => {
   switch (role) {
     case 'admin':
       return '/admin/dashboard';
-    case 'profesor':
-    case 'instructor': // For backward compatibility
-      return '/profesor/dashboard';
+    case 'instructor':
+      return '/instructor/dashboard';
     case 'sistemas':
       return '/admin/systems';
     case 'moderator':

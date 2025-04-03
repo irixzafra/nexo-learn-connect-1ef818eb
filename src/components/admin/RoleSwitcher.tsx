@@ -54,7 +54,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     switch (role) {
       case 'admin':
         return <Shield className="h-4 w-4" />;
-      case 'profesor':
+      case 'instructor':
         return <BookOpen className="h-4 w-4 text-amber-500" />;
       case 'sistemas':
         return <Terminal className="h-4 w-4 text-blue-500" />;
@@ -75,8 +75,8 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
     switch (role) {
       case 'admin':
         return 'Administrador';
-      case 'profesor':
-        return 'Profesor';
+      case 'instructor':
+        return 'Instructor';
       case 'student':
         return 'Estudiante';
       case 'sistemas':
@@ -95,7 +95,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   };
 
   // Roles disponibles para vista previa
-  const availableRoles: UserRoleType[] = ['admin', 'profesor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest', 'anonimo'];
+  const availableRoles: UserRoleType[] = ['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest', 'anonimo'];
   
   const isViewingAsOtherRole = currentViewRole !== 'current' && currentViewRole !== userRole;
 

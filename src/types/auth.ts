@@ -1,7 +1,9 @@
+
 export type UserRoleType = 
   | 'admin' 
   | 'student' 
   | 'instructor'
+  | 'profesor' // Include for backward compatibility
   | 'sistemas'
   | 'moderator'
   | 'content_creator'
@@ -44,6 +46,7 @@ export function toUserRoleType(role: string): UserRoleType {
     case 'admin':
       return 'admin';
     case 'instructor':
+    case 'profesor': // Handle both for backward compatibility
       return 'instructor';
     case 'student':
     case 'guest':
@@ -61,7 +64,7 @@ export function toUserRoleType(role: string): UserRoleType {
 }
 
 export function asUserRoleType(role: string): UserRoleType | null {
-  if (['admin', 'student', 'instructor', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester', 'anonimo'].includes(role)) {
+  if (['admin', 'student', 'instructor', 'profesor', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester', 'anonimo'].includes(role)) {
     return role as UserRoleType;
   }
   return null;

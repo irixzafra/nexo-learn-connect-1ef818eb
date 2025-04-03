@@ -165,9 +165,9 @@ const LandingNav: React.FC = () => {
                         <span>Panel de control</span>
                       </Link>
                     </DropdownMenuItem>
-                    {userRole === 'profesor' || userRole === 'instructor' && (
+                    {(userRole === 'instructor') && (
                       <DropdownMenuItem asChild className="rounded-lg cursor-pointer hover:bg-gray-50 focus:bg-gray-50 py-2">
-                        <Link to="/profesor/courses" className="flex items-center" aria-label="Ver mis cursos">
+                        <Link to="/instructor/courses" className="flex items-center" aria-label="Ver mis cursos">
                           <BookOpen className="mr-2 h-4 w-4 text-blue-600" aria-hidden="true" />
                           <span>Mis cursos</span>
                         </Link>
