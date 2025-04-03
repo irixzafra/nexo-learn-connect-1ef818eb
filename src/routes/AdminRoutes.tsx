@@ -9,6 +9,7 @@ import UserManagement from '@/pages/admin/UserManagement';
 import CourseManagement from '@/pages/admin/AdminCourses';
 import OrphanReviewPage from '@/pages/admin/OrphanReviewPage';
 import ReviewElementsPage from '@/pages/admin/ReviewElementsPage';
+import BrokenLinksPage from '@/pages/admin/BrokenLinksPage';
 import PlaceholderPage from '@/components/PlaceholderPage';
 
 const AdminRoutes = () => {
@@ -24,6 +25,9 @@ const AdminRoutes = () => {
       
       {/* Revisión de elementos */}
       <Route path="admin/review-elements" element={<SafeRouteWrapper requiredRole={['admin']}><ReviewElementsPage /></SafeRouteWrapper>} />
+      
+      {/* Monitor de enlaces */}
+      <Route path="admin/broken-links" element={<SafeRouteWrapper requiredRole={['admin']}><BrokenLinksPage /></SafeRouteWrapper>} />
     </>
   );
 };

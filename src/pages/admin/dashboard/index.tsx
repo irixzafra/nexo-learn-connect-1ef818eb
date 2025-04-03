@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   BarChart3, 
@@ -14,7 +13,8 @@ import {
   MessageSquare,
   Bell,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Link2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,6 @@ const AdminDashboard: React.FC = () => {
   const { stats, isLoading } = useAdminDashboardStats();
   const navigate = useNavigate();
 
-  // Actividad reciente con datos realistas
   const recentActivity = [
     { 
       id: 1, 
@@ -51,7 +50,6 @@ const AdminDashboard: React.FC = () => {
     }
   ];
 
-  // Alertas del sistema
   const systemAlerts = [
     {
       id: 1,
@@ -79,7 +77,6 @@ const AdminDashboard: React.FC = () => {
     }
   ];
 
-  // Recursos de soporte
   const supportResources = [
     {
       id: 1,
@@ -122,8 +119,7 @@ const AdminDashboard: React.FC = () => {
   return (
     <AdminPageLayout title="Panel de Administración" subtitle="Gestión centralizada de la plataforma">
       <div className="space-y-6">
-        {/* Estadísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <StatCard 
             title="Usuarios" 
             value={isLoading ? "-" : stats?.total_users?.toLocaleString() || "0"} 
@@ -147,7 +143,6 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Estado del Sistema */}
           <Card>
             <CardHeader>
               <CardTitle>Estado del Sistema</CardTitle>
@@ -193,7 +188,6 @@ const AdminDashboard: React.FC = () => {
             </CardContent>
           </Card>
           
-          {/* Alertas del Sistema */}
           <Card>
             <CardHeader>
               <CardTitle>Alertas del Sistema</CardTitle>
@@ -218,8 +212,7 @@ const AdminDashboard: React.FC = () => {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Actividad Reciente */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Actividad Reciente</CardTitle>
@@ -243,7 +236,6 @@ const AdminDashboard: React.FC = () => {
             </CardContent>
           </Card>
           
-          {/* Recursos y Soporte */}
           <Card>
             <CardHeader>
               <CardTitle>Recursos y Soporte</CardTitle>
@@ -274,9 +266,29 @@ const AdminDashboard: React.FC = () => {
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Monitor de Enlaces</CardTitle>
+              <CardDescription>Verificación de integridad de enlaces</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col space-y-4">
+                <div className="flex items-start gap-3">
+                  <Link2 className="h-5 w-5 text-red-500 mt-0.5" />
+                  <div>
+                    <div className="font-medium">Enlaces rotos</div>
+                    <p className="text-sm text-muted-foreground">5 enlaces requieren atención</p>
+                  </div>
+                </div>
+                <Button variant="outline" onClick={() => navigate('/app/admin/broken-links')} className="w-full">
+                  Ver monitor de enlaces
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Acceso a Módulos */}
         <Card id="allMenuItems">
           <CardHeader>
             <CardTitle>Acceso a Módulos</CardTitle>
