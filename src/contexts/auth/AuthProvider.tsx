@@ -4,6 +4,7 @@ import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { UserProfile, UserRoleType } from '@/types/auth';
 import { toast } from 'sonner';
+import { fetchUserProfile, ensureUserProfile } from './profileUtils';
 import { AuthContextType } from './types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,11 +31,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     console.info('🔐 [Auth] Iniciando configuración del sistema de autenticación');
+    console.info('🔐 [Auth] Estado inicial:', { 
+      isInitialized, 
+      isLoading, 
+      hasUser: !!user, 
+      hasSession: !!session, 
+      userRole 
+    });
     
     // Primero: Configurar el listener de cambios de estado de autenticación
+    console.info('🔐 [Auth] Configurando listener de cambios en el estado de autenticación');
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
         console.info(`🔐 [Auth] Evento de autenticación detectado: ${event}`);
+        console.info(`🔐 [Auth] Usuario en evento: ${newSession?.user?.id || 'ninguno'}`);
+        console.info(`🔐 [Auth] Detalles del evento:`, { event, hasNewSession: !!newSession, userId: newSession?.user?.id });
         
         if (event === 'SIGNED_OUT') {
           console.info('🔐 [Auth] Usuario cerró sesión, limpiando estado de autenticación');
@@ -47,26 +59,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         if (newSession?.user) {
           console.info(`🔐 [Auth] Sesión actualizada para usuario: ${newSession.user.id}`);
+          console.info(`🔐 [Auth] Datos de sesión:`, { 
+            userId: newSession.user.id, 
+            email: newSession.user.email,
+            hasAccessToken: !!newSession.access_token,
+            expiresAt: newSession.expires_at
+          });
           
           // Actualizaciones síncronas - inmediatas para mejorar UX
           setSession(newSession);
           setUser(newSession.user);
           
-          // Uso de setTimeout para evitar deadlock potencial con el cliente Supabase
+          // IMPORTANTE: Uso de setTimeout para evitar deadlock potencial con el cliente Supabase
           setTimeout(async () => {
             try {
               console.info(`🔐 [Auth] Obteniendo perfil para usuario: ${newSession.user.id}`);
-              // Fetch profile data from database
-              const { data: userProfile } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('user_id', newSession.user.id)
-                .single();
+              const userProfile = await ensureUserProfile(newSession.user.id, newSession.user.email || '');
               
               if (userProfile) {
                 console.info(`🔐 [Auth] Perfil obtenido con rol: ${userProfile.role}`);
+                console.info(`🔐 [Auth] Detalles del perfil:`, userProfile);
                 setProfile(userProfile);
-                setUserRole(userProfile.role || 'student');
+                setUserRole(userProfile.role || null);
               } else {
                 console.warn(`⚠️ [Auth] No se pudo obtener perfil para: ${newSession.user.id}`);
               }
@@ -80,50 +94,95 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // Segundo: Inicializar el estado de autenticación inicial
     const initializeAuth = async () => {
+      console.time('🔐 [Auth] Tiempo total de inicialización');
+      console.info('🔐 [Auth] Comenzando inicialización de estado de autenticación...');
+      
       setIsLoading(true);
       
       try {
-        console.info('🔐 [Auth] Obteniendo sesión actual...');
+        console.info('🔐 [Auth] ANTES de consultar sesión actual en Supabase...');
+        console.info('🔐 [Auth] Llamando a supabase.auth.getSession()...');
         
         const { data, error } = await supabase.auth.getSession();
         const currentSession = data?.session;
         
+        console.info('🔐 [Auth] DESPUÉS de consultar sesión en Supabase');
+        console.info(`🔐 [Auth] Resultado de getSession:`, { 
+          hasSession: !!currentSession, 
+          userId: currentSession?.user?.id,
+          error: error ? error.message : null,
+          rawData: data
+        });
+        
         if (error) {
           console.error('❌ [Auth] Error al obtener la sesión:', error);
+          console.error('❌ [Auth] Detalles del error:', { 
+            message: error.message, 
+            status: error.status,
+            name: error.name
+          });
           throw error;
         }
         
         if (currentSession?.user) {
           console.info(`🔐 [Auth] Sesión existente encontrada para: ${currentSession.user.id}`);
+          console.info(`🔐 [Auth] Datos de sesión:`, { 
+            userId: currentSession.user.id, 
+            email: currentSession.user.email,
+            hasAccessToken: !!currentSession.access_token,
+            expiresAt: currentSession.expires_at,
+          });
           
           setSession(currentSession);
           setUser(currentSession.user);
           
+          console.info(`🔐 [Auth] Obteniendo datos de perfil para: ${currentSession.user.id}`);
+          
           try {
-            const { data: userProfile } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('user_id', currentSession.user.id)
-              .single();
+            const userProfile = await ensureUserProfile(currentSession.user.id, currentSession.user.email || '');
             
             if (userProfile) {
               console.info(`🔐 [Auth] Perfil obtenido exitosamente con rol: ${userProfile.role}`);
+              console.info(`🔐 [Auth] Detalles del perfil:`, userProfile);
               setProfile(userProfile);
-              setUserRole(userProfile.role || 'student');
+              setUserRole(userProfile.role || null);
             } else {
-              console.warn(`⚠️ [Auth] No se pudo encontrar perfil para: ${currentSession.user.id}`);
+              console.warn(`⚠️ [Auth] No se pudo encontrar/crear perfil para: ${currentSession.user.id}`);
             }
           } catch (profileError) {
             console.error('❌ [Auth] Error al obtener el perfil durante inicialización:', profileError);
+            console.error('❌ [Auth] Detalles del error de perfil:', { 
+              message: profileError instanceof Error ? profileError.message : 'Error desconocido',
+              stack: profileError instanceof Error ? profileError.stack : 'No stack disponible'
+            });
           }
         } else {
           console.info('🔐 [Auth] No hay sesión activa durante la inicialización');
         }
       } catch (error) {
         console.error('❌ [Auth] Error crítico durante inicialización de autenticación:', error);
+        console.error('❌ [Auth] Detalles del error de inicialización:', { 
+          message: error instanceof Error ? error.message : 'Error desconocido',
+          stack: error instanceof Error ? error.stack : 'No stack disponible',
+        });
       } finally {
+        console.info('🔐 [Auth] Finalizando inicialización de autenticación');
+        console.info('🔐 [Auth] Estado final antes de marcar como inicializado:', { 
+          hasUser: !!user, 
+          userId: user?.id,
+          hasSession: !!session, 
+          sessionUserId: session?.user?.id,
+          userRole,
+          profileId: profile?.id,
+          profileLoaded: !!profile
+        });
+        
         setIsLoading(false);
+        
+        // CRÍTICO: Marcamos la inicialización como completada independientemente del resultado
+        console.info('🔐 [Auth] Estableciendo isInitialized a true - autenticación lista');
         setIsInitialized(true);
+        console.timeEnd('🔐 [Auth] Tiempo total de inicialización');
       }
     };
 
@@ -132,11 +191,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     // Limpiar suscripción al desmontar
     return () => {
+      console.info('🔐 [Auth] Limpiando suscripción de autenticación');
       subscription.unsubscribe();
     };
   }, []);
 
-  // Function for login - supports backward compatibility with signIn
+  // Función de login mejorada con mejor manejo de errores
   const login = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
@@ -148,6 +208,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (error) {
         console.error('❌ [Auth] Error de login:', error.message);
+        console.error('❌ [Auth] Detalles del error de login:', { 
+          message: error.message, 
+          status: error.status,
+          name: error.name
+        });
+        
         toast.error('Error al iniciar sesión', {
           description: 'Verifica tus credenciales e intenta de nuevo',
         });
@@ -155,13 +221,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       if (data?.user) {
+        // El cambio de estado será manejado por el listener onAuthStateChange
         console.info(`🔐 [Auth] Login exitoso para: ${data.user.id}`);
+        console.info(`🔐 [Auth] Datos de login:`, { 
+          userId: data.user.id, 
+          email: data.user.email
+        });
+        
         toast.success('¡Bienvenido!', {
           description: 'Has iniciado sesión correctamente',
         });
       }
     } catch (error) {
       console.error('❌ [Auth] Error durante el proceso de login:', error);
+      console.error('❌ [Auth] Detalles del error de proceso login:', { 
+        message: error instanceof Error ? error.message : 'Error desconocido',
+        stack: error instanceof Error ? error.stack : 'No stack disponible'
+      });
+      
       toast.error('Error al iniciar sesión', {
         description: 'Verifica tus credenciales e intenta de nuevo',
       });
@@ -171,7 +248,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Function for logout - supports backward compatibility with signOut
+  // Función de logout mejorada
   const logout = async (): Promise<void> => {
     try {
       console.info('🔐 [Auth] Iniciando proceso de cierre de sesión');
@@ -180,29 +257,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       toast.success('Has cerrado sesión correctamente');
     } catch (error) {
       console.error('❌ [Auth] Error durante el cierre de sesión:', error);
-      toast.error('Error al cerrar sesión');
-      throw error;
-    }
-  };
-
-  // Legacy functions for backward compatibility
-  const signIn = login;
-  const signOut = logout;
-  const signUp = async (email: string, password: string, fullName: string): Promise<void> => {
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
+      console.error('❌ [Auth] Detalles del error de logout:', { 
+        message: error instanceof Error ? error.message : 'Error desconocido',
+        stack: error instanceof Error ? error.stack : 'No stack disponible'
       });
-      if (error) throw error;
-      toast.success('¡Registro exitoso! Verifica tu correo electrónico.');
-    } catch (error: any) {
-      toast.error(`Error al registrarse: ${error.message}`);
+      
+      toast.error('Error al cerrar sesión');
       throw error;
     }
   };
@@ -211,20 +271,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isAuthenticated = !!session;
 
   // Objeto de contexto con todos los valores necesarios
-  const value: AuthContextType = {
+  const value = {
     user,
     session,
     profile,
     userRole,
     isLoading,
     login,
-    signIn,
     logout,
-    signOut,
-    signUp,
     isInitialized,
     isAuthenticated
   };
+
+  console.debug('🔐 [Auth] Estado actual del proveedor:', {
+    isInitialized,
+    isLoading,
+    isAuthenticated,
+    userId: user?.id,
+    sessionUserId: session?.user?.id,
+    userRole,
+    hasProfile: !!profile,
+    timestamp: new Date().toISOString()
+  });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

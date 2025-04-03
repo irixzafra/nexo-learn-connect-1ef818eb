@@ -1,101 +1,68 @@
 
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import UserDashboard from '@/pages/student/Dashboard';
-import AppLayout from '@/layouts/AppLayout';
-import CourseDetail from '@/pages/CourseDetail';
-import Courses from '@/pages/Courses';
-import ProtectedRouteWrapper from '@/components/ProtectedRouteWrapper';
-import NotFound from '@/pages/NotFound';
-import MyCourses from '@/pages/student/MyCourses';
-import LessonView from '@/pages/student/LessonView';
-import CourseLearn from '@/pages/student/CourseLearn';
-import Preferences from '@/pages/user/Preferences';
-import Profile from '@/pages/Profile';
-import ComponentsShowcase from '@/pages/ComponentsShowcase';
+import { Routes, Route } from 'react-router-dom';
+import ProtectedRoute from "@/components/ProtectedRoute";
+import NotFound from "@/pages/NotFound";
+import AppLayout from "@/layouts/AppLayout";
 
-const UserRoutes = () => {
+// Student pages
+import StudentDashboard from "@/pages/student/Dashboard";
+import StudentCourses from "@/pages/student/Courses";
+import Invoices from "@/pages/student/Invoices";
+import Calendar from "@/pages/placeholder/Calendar";
+import Messages from "@/pages/placeholder/Messages";
+import Settings from "@/pages/placeholder/Settings";
+import Preferences from "@/pages/user/Preferences";
+
+const UserRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<AppLayout />}>
-        <Route
-          path="dashboard"
-          element={
-            <ProtectedRouteWrapper>
-              <UserDashboard />
-            </ProtectedRouteWrapper>
-          }
-        />
-        <Route
-          path="courses"
-          element={
-            <ProtectedRouteWrapper>
-              <Courses />
-            </ProtectedRouteWrapper>
-          }
-        />
-        <Route
-          path="courses/:courseId"
-          element={
-            <ProtectedRouteWrapper>
-              <CourseDetail />
-            </ProtectedRouteWrapper>
-          }
-        />
-        <Route
-          path="inbox"
-          element={
-            <ProtectedRouteWrapper>
-              <div>Inbox</div>
-            </ProtectedRouteWrapper>
-          }
-        />
-        <Route
-          path="my-courses"
-          element={
-            <ProtectedRouteWrapper>
-              <MyCourses />
-            </ProtectedRouteWrapper>
-          }
-        />
-        <Route
-          path="preferences"
-          element={
-            <ProtectedRouteWrapper>
-              <Preferences />
-            </ProtectedRouteWrapper>
-          }
-        />
-        <Route
-          path="profile"
-          element={
-            <ProtectedRouteWrapper>
-              <Profile />
-            </ProtectedRouteWrapper>
-          }
-        />
-        <Route
-          path="components-showcase"
-          element={<ComponentsShowcase />}
-        />
-        <Route
-          path="course/:courseId/learn"
-          element={
-            <ProtectedRouteWrapper>
-              <CourseLearn />
-            </ProtectedRouteWrapper>
-          }
-        />
-        <Route
-          path="course/:courseId/lesson/:lessonId"
-          element={
-            <ProtectedRouteWrapper>
-              <LessonView />
-            </ProtectedRouteWrapper>
-          }
-        />
-        <Route path="*" element={<NotFound />} />
-      </Route>
+      <Route path="/" element={
+        <AppLayout>
+          <StudentDashboard />
+        </AppLayout>
+      } />
+      <Route path="/dashboard" element={
+        <AppLayout>
+          <StudentDashboard />
+        </AppLayout>
+      } />
+      <Route path="/my-courses" element={
+        <AppLayout>
+          <StudentCourses />
+        </AppLayout>
+      } />
+      <Route path="/invoices" element={
+        <AppLayout>
+          <Invoices />
+        </AppLayout>
+      } />
+      <Route path="/calendar" element={
+        <AppLayout>
+          <Calendar />
+        </AppLayout>
+      } />
+      <Route path="/messages" element={
+        <AppLayout>
+          <Messages />
+        </AppLayout>
+      } />
+      <Route path="/settings" element={
+        <AppLayout>
+          <Settings />
+        </AppLayout>
+      } />
+      <Route path="/preferences" element={
+        <AppLayout>
+          <Preferences />
+        </AppLayout>
+      } />
+      {/* Catch-all route para rutas de usuario no encontradas */}
+      <Route path="*" element={
+        <AppLayout>
+          <NotFound />
+        </AppLayout>
+      } />
     </Routes>
   );
 };

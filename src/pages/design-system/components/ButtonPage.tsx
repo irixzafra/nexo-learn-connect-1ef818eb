@@ -50,22 +50,12 @@ const ButtonPage: React.FC = () => {
                 <h3 className="text-lg font-medium mb-4">Variantes</h3>
                 <div className="flex flex-wrap gap-4">
                   <Button>Default</Button>
-                  <Button variant="default">Default Explicit</Button>
+                  <Button variant="primary">Primary</Button>
                   <Button variant="secondary">Secondary</Button>
                   <Button variant="destructive">Destructive</Button>
                   <Button variant="outline">Outline</Button>
                   <Button variant="ghost">Ghost</Button>
                   <Button variant="link">Link</Button>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-medium mb-4">Material Design Variants</h3>
-                <div className="flex flex-wrap gap-4">
-                  <Button variant="filled">Filled</Button>
-                  <Button variant="tonal">Tonal</Button>
-                  <Button variant="text">Text</Button>
-                  <Button variant="outlinedMaterial">Outlined</Button>
                 </div>
               </div>
               
@@ -118,18 +108,12 @@ import { Button } from "@/components/ui/button"
 
 // Ejemplos básicos
 <Button>Default</Button>
-<Button variant="default">Default Explicit</Button>
+<Button variant="primary">Primary</Button>
 <Button variant="secondary">Secondary</Button>
 <Button variant="destructive">Destructive</Button>
 <Button variant="outline">Outline</Button>
 <Button variant="ghost">Ghost</Button>
 <Button variant="link">Link</Button>
-
-// Material Design Variants
-<Button variant="filled">Filled</Button>
-<Button variant="tonal">Tonal</Button>
-<Button variant="text">Text</Button>
-<Button variant="outlinedMaterial">Outlined</Button>
 
 // Tamaños
 <Button size="lg">Large</Button>
@@ -176,7 +160,7 @@ import { Button } from "@/components/ui/button"
                     <td className="p-2 align-top">variant</td>
                     <td className="p-2 align-top text-sm">
                       <code className="bg-muted px-1 py-0.5 rounded">
-                        'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'filled' | 'tonal' | 'text' | 'outlinedMaterial'
+                        'default' | 'primary' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'minimal'
                       </code>
                     </td>
                     <td className="p-2 align-top text-sm"><code>'default'</code></td>
