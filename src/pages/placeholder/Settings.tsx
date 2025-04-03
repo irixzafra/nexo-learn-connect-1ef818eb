@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import AppLayout from "@/layouts/AppLayout";
 import { UserRoleSwitcher } from "@/components/admin/UserRoleSwitcher";
@@ -13,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { useTheme } from "@/contexts/ThemeContext";
 import { 
   BellRing, 
   Globe, 
@@ -28,20 +29,26 @@ import {
   Phone,
   Bell,
   Info,
-  Users
+  Users,
+  Palette
 } from "lucide-react";
 
 const Settings: React.FC = () => {
   const { userRole } = useAuth();
+  const { theme, setTheme } = useTheme();
   const isAdmin = userRole === 'admin';
 
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [language, setLanguage] = useState('en');
 
-  const handleThemeChange = (newTheme: 'light' | 'dark') => {
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system' | 'futuristic') => {
     setTheme(newTheme);
-    toast.success(`Tema cambiado a ${newTheme === 'dark' ? 'oscuro' : 'claro'}`);
+    toast.success(`Tema cambiado a ${
+      newTheme === 'dark' ? 'oscuro' : 
+      newTheme === 'light' ? 'claro' : 
+      newTheme === 'futuristic' ? 'futurista' :
+      'sistema'
+    }`);
   };
 
   const handleNotificationsChange = (enabled: boolean) => {
@@ -60,6 +67,57 @@ const Settings: React.FC = () => {
         <div className="mb-6">
           <h1 className="text-3xl font-bold">Configuración</h1>
           <p className="text-muted-foreground">Personaliza tu experiencia en la plataforma</p>
+          
+          <Card className="mt-4 border-2 border-primary/20 shadow-lg">
+            <CardHeader className="bg-primary/5">
+              <CardTitle className="flex items-center gap-2">
+                <Palette className="h-5 w-5 text-primary" />
+                Selector de Tema
+              </CardTitle>
+              <CardDescription>
+                Cambia el aspecto visual de la plataforma según tus preferencias
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <Button 
+                  variant={theme === 'light' ? "default" : "outline"} 
+                  className="flex flex-col items-center justify-center h-24 gap-2"
+                  onClick={() => handleThemeChange('light')}
+                >
+                  <Sun className="h-8 w-8 text-amber-500" />
+                  <span>Tema Claro</span>
+                </Button>
+                
+                <Button 
+                  variant={theme === 'dark' ? "default" : "outline"} 
+                  className="flex flex-col items-center justify-center h-24 gap-2"
+                  onClick={() => handleThemeChange('dark')}
+                >
+                  <Moon className="h-8 w-8 text-indigo-400" />
+                  <span>Tema Oscuro</span>
+                </Button>
+                
+                <Button 
+                  variant={theme === 'futuristic' ? "default" : "outline"} 
+                  className="flex flex-col items-center justify-center h-24 gap-2"
+                  onClick={() => handleThemeChange('futuristic')}
+                >
+                  <Zap className="h-8 w-8 text-cyan-400" />
+                  <span>Tema Futurista</span>
+                </Button>
+                
+                <Button 
+                  variant={theme === 'system' ? "default" : "outline"} 
+                  className="flex flex-col items-center justify-center h-24 gap-2"
+                  onClick={() => handleThemeChange('system')}
+                >
+                  <Monitor className="h-8 w-8 text-gray-500" />
+                  <span>Tema Sistema</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
         
         <Tabs defaultValue="general" className="w-full">
@@ -111,21 +169,7 @@ const Settings: React.FC = () => {
                             Selecciona el tema de la interfaz
                           </p>
                         </div>
-                        <Select value={theme} onValueChange={handleThemeChange}>
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Selecciona un tema" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="light">
-                              <Sun className="mr-2 h-4 w-4" />
-                              Claro
-                            </SelectItem>
-                            <SelectItem value="dark">
-                              <Moon className="mr-2 h-4 w-4" />
-                              Oscuro
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <ThemeSwitcher showTooltip={false} variant="outline" size="sm" />
                       </div>
                       <Separator />
                       <div className="flex items-center justify-between">

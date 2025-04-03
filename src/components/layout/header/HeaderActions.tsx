@@ -6,7 +6,8 @@ import { useAppNavigation } from '@/utils/routeUtils';
 import { 
   User, 
   Settings, 
-  HelpCircle
+  HelpCircle,
+  Palette
 } from 'lucide-react';
 import { 
   DropdownMenu, 
@@ -33,8 +34,21 @@ const HeaderActions: React.FC = () => {
 
   return (
     <div className="flex items-center space-x-4">
-      {/* Theme Toggle */}
-      <ThemeSwitcher />
+      {/* Theme Toggle - Hacemos más visible el botón y le añadimos un tooltip más descriptivo */}
+      <div className="relative">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="flex items-center gap-2 bg-primary/5 border-primary/20"
+          onClick={handleNavigate("/app/settings")}
+        >
+          <Palette className="h-4 w-4 text-primary" />
+          <span className="hidden md:inline">Tema</span>
+        </Button>
+        <div className="absolute top-0 right-0 -mt-1 -mr-1">
+          <ThemeSwitcher />
+        </div>
+      </div>
 
       {/* Navigation Links */}
       {navLinks.map((link) => (
@@ -45,7 +59,7 @@ const HeaderActions: React.FC = () => {
           onClick={handleNavigate(link.href)}
         >
           {link.icon}
-          {link.label}
+          <span className="hidden md:inline ml-2">{link.label}</span>
         </Button>
       ))}
     </div>
