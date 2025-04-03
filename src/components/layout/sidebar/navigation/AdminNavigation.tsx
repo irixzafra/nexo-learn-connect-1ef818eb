@@ -1,20 +1,8 @@
 
 import React from 'react';
-import { 
-  Shield, 
-  Users, 
-  Settings, 
-  Layers, 
-  FileText, 
-  BarChart3, 
-  CreditCard
-} from 'lucide-react';
-import { 
-  SidebarMenu
-} from '@/components/ui/sidebar';
+import { Shield, Users, BookOpen, FileText, PanelLeft, Navigation } from 'lucide-react';
+import MenuItem from '@/components/layout/sidebar/navigation/common/MenuItem';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
-import { SidebarGroup } from '../SidebarGroup';
-import MenuItem from './common/MenuItem';
 
 interface AdminNavigationProps {
   isOpen: boolean;
@@ -22,63 +10,59 @@ interface AdminNavigationProps {
 }
 
 const AdminNavigation: React.FC<AdminNavigationProps> = ({ 
-  isOpen, 
-  onToggle 
+  isOpen,
+  onToggle
 }) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   return (
-    <SidebarGroup
-      label="Administración"
-      icon={Shield}
-      isExpanded={isOpen}
-      onToggle={onToggle}
-    >
-      <SidebarMenu>
-        <MenuItem
-          to="/admin/dashboard"
-          icon={BarChart3}
-          label="Panel Principal"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/users"
-          icon={Users}
-          label="Gestión de Usuarios"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/courses"
-          icon={Layers}
-          label="Gestión de Cursos"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/reports"
-          icon={FileText}
-          label="Informes"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/payments"
-          icon={CreditCard}
-          label="Pagos y Facturación"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/admin/settings"
-          icon={Settings}
-          label="Configuración del Sistema"
-          isCollapsed={isCollapsed}
-        />
-      </SidebarMenu>
-    </SidebarGroup>
+    <div className="px-3 py-2">
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+      >
+        <div className="flex items-center gap-2">
+          <Shield className="h-4 w-4" />
+          <span>Administración</span>
+        </div>
+      </button>
+      
+      {isOpen && (
+        <div className="mt-1 space-y-1 px-1">
+          <MenuItem
+            to="/admin/dashboard"
+            icon={Shield}
+            label="Panel Admin"
+            isCollapsed={isCollapsed}
+          />
+          <MenuItem
+            to="/admin/users"
+            icon={Users}
+            label="Usuarios"
+            isCollapsed={isCollapsed}
+          />
+          <MenuItem
+            to="/admin/courses"
+            icon={BookOpen}
+            label="Cursos"
+            isCollapsed={isCollapsed}
+          />
+          <MenuItem
+            to="/admin/system-pages"
+            icon={FileText}
+            label="Páginas del Sistema"
+            isCollapsed={isCollapsed}
+          />
+          <MenuItem
+            to="/admin/navigation-diagram"
+            icon={Navigation}
+            label="Diagrama de Navegación" 
+            isCollapsed={isCollapsed}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 
