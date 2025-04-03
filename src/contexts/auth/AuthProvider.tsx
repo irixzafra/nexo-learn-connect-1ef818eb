@@ -21,12 +21,20 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+interface SimulatedUserData {
+  role: UserRoleType | null;
+  userId: string | null;
+  userName?: string | null;
+}
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userRole, setUserRole] = useState<UserRoleType | null>(null);
   const [simulatedRole, setSimulatedRoleState] = useState<UserRoleType | null>(null);
+  const [simulatedUserId, setSimulatedUserId] = useState<string | null>(null);
+  const [simulatedUserName, setSimulatedUserName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -35,14 +43,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isViewingAsOtherRole = simulatedRole !== null && userRole !== simulatedRole;
 
   // Function to set simulated role with localStorage persistence
-  const setSimulatedRole = (role: UserRoleType | null) => {
+  const setSimulatedRole = (role: UserRoleType | null, userId: string | null = null, userName: string | null = null) => {
     setSimulatedRoleState(role);
+    setSimulatedUserId(userId);
+    setSimulatedUserName(userName);
+    
+    const simulatedData: SimulatedUserData = {
+      role,
+      userId,
+      userName
+    };
     
     if (role) {
-      localStorage.setItem('viewAsRole', role);
-      toast.success(`Vista cambiada a: ${role}`);
+      localStorage.setItem('simulatedUserData', JSON.stringify(simulatedData));
+      
+      if (userId) {
+        toast.success(`Vista cambiada a usuario: ${userName || userId} (${role})`);
+      } else {
+        toast.success(`Vista cambiada a: ${role}`);
+      }
     } else {
-      localStorage.setItem('viewAsRole', 'current');
+      localStorage.setItem('simulatedUserData', JSON.stringify({ role: null, userId: null }));
       toast.success(`Volviendo a tu rol original: ${userRole}`);
     }
   };
@@ -60,13 +81,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       hasUser: !!user, 
       hasSession: !!session, 
       userRole,
-      simulatedRole 
+      simulatedRole,
+      simulatedUserId
     });
     
     // Initialize simulated role from localStorage if available
-    const storedRole = localStorage.getItem('viewAsRole');
-    if (storedRole && storedRole !== 'current') {
-      setSimulatedRoleState(storedRole as UserRoleType);
+    try {
+      const storedData = localStorage.getItem('simulatedUserData');
+      if (storedData) {
+        const parsedData: SimulatedUserData = JSON.parse(storedData);
+        if (parsedData.role && parsedData.role !== 'current') {
+          setSimulatedRoleState(parsedData.role);
+          setSimulatedUserId(parsedData.userId || null);
+          setSimulatedUserName(parsedData.userName || null);
+        }
+      } else {
+        // Legacy support for older format
+        const storedRole = localStorage.getItem('viewAsRole');
+        if (storedRole && storedRole !== 'current') {
+          setSimulatedRoleState(storedRole as UserRoleType);
+        }
+      }
+    } catch (error) {
+      console.error('Error al recuperar datos de simulación:', error);
+      // Clear potentially corrupted data
+      localStorage.removeItem('simulatedUserData');
+      localStorage.removeItem('viewAsRole');
     }
     
     // Primero: Configurar el listener de cambios de estado de autenticación
@@ -309,6 +349,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     profile,
     userRole,
     simulatedRole,
+    simulatedUserId,
     effectiveRole,
     isLoading,
     login,
@@ -328,6 +369,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     sessionUserId: session?.user?.id,
     userRole,
     simulatedRole,
+    simulatedUserId,
     effectiveRole,
     isViewingAsOtherRole,
     hasProfile: !!profile,

@@ -1,1 +1,16 @@
+
 project_id = "yydtceuhpvfsenlwuvmn"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "auth"]
+
+[db]
+port = 54322
+
+[realtime]
+enabled = true
+
+[functions.search-users-simulation]
+verify_jwt = true
