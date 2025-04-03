@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
@@ -22,7 +23,10 @@ const PlaceholderPage: React.FC<PlaceholderPageProps> = ({
     <div className="container mx-auto py-8 px-4">
       <Card className="mx-auto max-w-3xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">{title}</CardTitle>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <CardTitle className="text-2xl font-bold">{title}</CardTitle>
+            <Badge variant="warning" className="text-xs">En Desarrollo</Badge>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="bg-muted p-8 rounded-lg text-center">
