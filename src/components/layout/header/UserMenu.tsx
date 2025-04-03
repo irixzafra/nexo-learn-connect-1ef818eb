@@ -10,14 +10,14 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { User, LogOut, Settings, Sliders, ShieldAlert } from 'lucide-react';
+import { User, LogOut, Settings, Sliders } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth';
 import { toast } from 'sonner';
 import RoleIndicator from './RoleIndicator';
 
 export const UserMenu: React.FC = () => {
-  const { user, profile, logout, isViewingAsOtherRole, resetToOriginalRole } = useAuth();
+  const { user, profile, logout } = useAuth();
   const navigate = useNavigate();
 
   // Get user initials for avatar fallback
@@ -40,21 +40,8 @@ export const UserMenu: React.FC = () => {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Role Indicator Badge */}
-      <RoleIndicator />
-      
-      {/* Reset to original role button - only shown when viewing as other role */}
-      {isViewingAsOtherRole && (
-        <Button 
-          size="sm" 
-          variant="outline" 
-          onClick={resetToOriginalRole}
-          className="hidden sm:flex items-center border-yellow-500 text-yellow-700"
-        >
-          <ShieldAlert className="mr-1 h-4 w-4" />
-          Volver a mi rol
-        </Button>
-      )}
+      {/* Role Indicator/Toggler Badge */}
+      <RoleIndicator asToggler={true} />
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -80,17 +67,6 @@ export const UserMenu: React.FC = () => {
               </p>
             </div>
           </div>
-          
-          {/* Show reset role option in dropdown menu on mobile */}
-          {isViewingAsOtherRole && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={resetToOriginalRole} className="sm:hidden text-yellow-700">
-                <ShieldAlert className="mr-2 h-4 w-4" />
-                <span>Volver a mi rol</span>
-              </DropdownMenuItem>
-            </>
-          )}
           
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>

@@ -3,13 +3,21 @@ import React from 'react';
 import { useAuth } from '@/contexts/auth';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { Shield, BookOpen, GraduationCap, User, ShieldAlert } from 'lucide-react';
 
 interface RoleIndicatorProps {
   className?: string;
+  asToggler?: boolean;
 }
 
-const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className }) => {
-  const { userRole, effectiveRole, isViewingAsOtherRole } = useAuth();
+const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className, asToggler = false }) => {
+  const { userRole, effectiveRole, isViewingAsOtherRole, setSimulatedRole, resetToOriginalRole } = useAuth();
   
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -36,21 +44,75 @@ const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className }) => {
         return role.charAt(0).toUpperCase() + role.slice(1);
     }
   };
+
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return <Shield className="h-4 w-4" />;
+      case 'instructor':
+        return <BookOpen className="h-4 w-4" />;
+      case 'student':
+        return <GraduationCap className="h-4 w-4" />;
+      default:
+        return <User className="h-4 w-4" />;
+    }
+  };
+  
+  const handleSwitchRole = (role: string) => {
+    if (role === 'original') {
+      resetToOriginalRole();
+    } else {
+      setSimulatedRole(role as any);
+    }
+  };
   
   if (!effectiveRole) return null;
   
+  const roleBadge = (
+    <Badge 
+      className={cn(
+        "capitalize font-semibold cursor-pointer", 
+        getRoleBadgeColor(effectiveRole),
+        isViewingAsOtherRole && "border-2 border-yellow-500",
+        className
+      )}
+    >
+      {getRoleName(effectiveRole)}
+      {isViewingAsOtherRole && " (Vista)"}
+    </Badge>
+  );
+  
+  if (!asToggler) {
+    return <div className={cn("flex items-center space-x-2", className)}>{roleBadge}</div>;
+  }
+  
   return (
     <div className={cn("flex items-center space-x-2", className)}>
-      <Badge 
-        className={cn(
-          "capitalize font-semibold", 
-          getRoleBadgeColor(effectiveRole),
-          isViewingAsOtherRole && "border-2 border-yellow-500"
-        )}
-      >
-        {getRoleName(effectiveRole)}
-        {isViewingAsOtherRole && " (Vista)"}
-      </Badge>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          {roleBadge}
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => handleSwitchRole('admin')} className="gap-2">
+            <Shield className="h-4 w-4" />
+            <span>Ver como Administrador</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleSwitchRole('instructor')} className="gap-2">
+            <BookOpen className="h-4 w-4" />
+            <span>Ver como Instructor</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleSwitchRole('student')} className="gap-2">
+            <GraduationCap className="h-4 w-4" />
+            <span>Ver como Estudiante</span>
+          </DropdownMenuItem>
+          {isViewingAsOtherRole && (
+            <DropdownMenuItem onClick={() => handleSwitchRole('original')} className="gap-2 text-yellow-600">
+              <ShieldAlert className="h-4 w-4" />
+              <span>Volver a mi rol</span>
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };
