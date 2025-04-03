@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import ComponentPreview from '@/components/admin/ComponentPreview';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from '@/components/ui/drawer';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -97,6 +96,28 @@ const mockOrphanPages = [
   }
 ];
 
+// Simple component to render preview placeholders
+const ComponentPreview: React.FC<{componentPath: string}> = ({componentPath}) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  
+  const getRelativePath = (path: string) => {
+    // Simple function to format the path for display
+    return path.startsWith('/') ? path.substring(1) : path;
+  };
+  
+  return (
+    <div className="p-4 border rounded">
+      <div className="text-sm text-muted-foreground mb-2">
+        {getRelativePath(componentPath)}
+      </div>
+      <div className="p-4 bg-muted/20 rounded flex items-center justify-center min-h-[100px]">
+        <p className="text-muted-foreground">Vista previa del componente</p>
+      </div>
+    </div>
+  );
+};
+
 const ReviewElementsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('ui-components');
   const [searchQuery, setSearchQuery] = useState('');
@@ -110,7 +131,7 @@ const ReviewElementsPage: React.FC = () => {
   };
   
   return (
-    <AdminPageLayout>
+    <AdminPageLayout title="Revisión de Elementos">
       <div className="container mx-auto py-6">
         <h1 className="text-3xl font-bold mb-6">Revisión de Elementos</h1>
         
@@ -704,3 +725,4 @@ const ReviewElementsPage: React.FC = () => {
 };
 
 export default ReviewElementsPage;
+
