@@ -7,12 +7,44 @@ Este directorio contiene la documentación detallada de cada módulo funcional (
 
 Cada módulo tiene su propio subdirectorio con documentación detallada:
 
-- [📊 Admin](admin/README.md): Panel de administración
+- [📊 Admin](admin/README.md): Panel de administración organizado por dominios funcionales
+- [👨‍🏫 Instructor](instructor/README.md): Sistema para instructores organizado por flujo de trabajo
 - [🔐 Authentication](authentication/README.md): Sistema de autenticación
 - [📚 Courses](courses/README.md): Gestión de cursos
 - [👥 Users](users/README.md): Gestión de usuarios
 - [📃 Pages](pages/README.md): Sistema de páginas
 - [💬 Community](community/README.md): Funcionalidades de comunidad
+
+## Estructura de Navegación por Roles
+
+### Admin (Organizado por Dominios Funcionales)
+- **Panel Principal**: Visión ejecutiva y KPIs
+- **Académico (LMS)**: Gestión de cursos, contenido y certificaciones
+- **Personas (CRM)**: Gestión de usuarios, roles y comunicaciones
+- **Finanzas**: Pagos, facturación y suscripciones
+- **Analíticas/Reportes**: Dashboards e informes personalizados
+- **Plataforma (Sistema)**: Configuración, diseño e integraciones
+- **Herramientas Técnicas**: Funcionalidades avanzadas para administradores técnicos
+
+### Instructor (Organizado por Flujo de Trabajo)
+- **Panel Principal**: Vista general y actividad reciente
+- **Mis Cursos**: Creación y gestión de contenido educativo
+- **Mis Estudiantes**: Seguimiento y comunicación con estudiantes
+- **Analíticas**: Estadísticas de cursos y estudiantes
+- **Recursos**: Materiales y herramientas didácticas
+- **Perfil**: Información profesional y configuración
+
+### Estudiante
+- **Dashboard**: Panel personalizado de aprendizaje
+- **Aprendizaje**: Cursos, rutas, calendario, recursos
+- **Comunidad**: Mensajes, foros, notificaciones
+- **Perfil**: Configuración personal y certificados
+
+### Usuario no Autenticado
+- **Exploración**: Home, cursos, rutas de aprendizaje
+- **Información**: Sobre nosotros, ayuda, contacto
+- **Legal**: Términos, privacidad, cookies
+- **Autenticación**: Login, registro, recuperación
 
 ## Convenciones de Documentación
 

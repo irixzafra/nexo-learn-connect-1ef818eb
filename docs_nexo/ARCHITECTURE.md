@@ -73,30 +73,45 @@ La aplicación está estructurada alrededor de dominios funcionales (features) e
 - Mayor cohesión y menor acoplamiento
 - Evolución independiente de cada característica
 
-## Navegación y Rutas
+## Sistema de Navegación y Rutas
 
-El sistema implementa un patrón de rutas anidadas:
+### Principios de Navegación
 
-- `/app/*`: Contenido autenticado
-- `/auth/*`: Flujo de autenticación
-- `/admin/*`: Panel de administración
-- `/app/course/*`: Gestión de cursos
-- `/app/profile/*`: Gestión de perfil
+1. **Organizados por Dominio/Flujo**: Navegación estructurada según contexto del usuario
+2. **Simplicidad**: Máximo 2 niveles de navegación para mantener usabilidad
+3. **Contextualidad**: Elementos específicos al rol y situación del usuario
+4. **Consistencia**: Patrones similares en toda la aplicación
 
-## Principios de Diseño
+### Estructura de Navegación por Rol
 
-1. **Modularidad**: Cada módulo debe ser independiente y evolucionable separadamente
-2. **Reutilización**: Componentes comunes extraídos para uso entre módulos
-3. **Adaptabilidad**: Sistema de roles para adaptar la UI a diferentes perfiles de usuario
-4. **Escalabilidad**: Estructura que permite crecer sin comprometer la mantenibilidad
-5. **Performance**: Uso de estrategias de caché, lazy loading y code splitting
+#### Admin (Organizado por Dominios Funcionales)
+- **Panel Principal**: Visión ejecutiva y KPIs
+- **Académico (LMS)**: Gestión de cursos, contenido y certificaciones
+- **Personas (CRM)**: Gestión de usuarios, roles y comunicaciones
+- **Finanzas**: Pagos, facturación y suscripciones
+- **Analíticas/Reportes**: Dashboards e informes personalizados
+- **Plataforma (Sistema)**: Configuración, diseño e integraciones
+- **Herramientas Técnicas**: Funcionalidades avanzadas para administradores técnicos
 
-## Patrones Importantes
+#### Instructor (Organizado por Flujo de Trabajo)
+- **Panel Principal**: Vista general y actividad reciente
+- **Mis Cursos**: Creación y gestión de contenido educativo
+- **Mis Estudiantes**: Seguimiento y comunicación con estudiantes
+- **Analíticas**: Estadísticas de cursos y estudiantes
+- **Recursos**: Materiales y herramientas didácticas
+- **Perfil**: Información profesional y configuración
 
-- **Compound Components**: Para UI complejos y reutilizables
-- **Render Props/HOCs**: Para lógica reutilizable entre componentes
-- **Custom Hooks**: Para extraer lógica de negocio de componentes
-- **Context + Reducer**: Para gestión de estado más compleja
+#### Estudiante
+- **Dashboard**: Panel personalizado de aprendizaje
+- **Aprendizaje**: Cursos, rutas, calendario, recursos
+- **Comunidad**: Mensajes, foros, notificaciones
+- **Perfil**: Configuración personal y certificados
+
+#### Usuario no Autenticado
+- **Exploración**: Home, cursos, rutas de aprendizaje
+- **Información**: Sobre nosotros, ayuda, contacto
+- **Legal**: Términos, privacidad, cookies
+- **Autenticación**: Login, registro, recuperación
 
 ## Flujo de Datos
 
