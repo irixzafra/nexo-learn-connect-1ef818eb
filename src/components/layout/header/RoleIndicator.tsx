@@ -1,6 +1,6 @@
 
 import React from 'react';
-import EnhancedRoleSimulator from './EnhancedRoleSimulator';
+import EnhancedRoleSimulator from './role-simulator/EnhancedRoleSimulator';
 
 interface RoleIndicatorProps {
   className?: string;
