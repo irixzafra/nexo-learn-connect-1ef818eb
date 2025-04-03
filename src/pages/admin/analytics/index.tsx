@@ -190,6 +190,31 @@ const AnalyticsOverview: React.FC = () => {
                 <span>Ingresos</span>
               </TabsTrigger>
             </TabsList>
+
+            {/* Contenido de pestañas - Moved inside the Tabs component */}
+            <TabsContent value="overview">
+              <div className="mt-6">
+                <PlatformOverviewSection stats={stats} isLoading={false} />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="users">
+              <div className="mt-6">
+                <UserAnalyticsSection />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="courses">
+              <div className="mt-6">
+                <CoursesAnalyticsSection />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="revenue">
+              <div className="mt-6">
+                <RevenueAnalyticsSection />
+              </div>
+            </TabsContent>
           </Tabs>
           
           <div className="flex gap-2">
@@ -202,25 +227,6 @@ const AnalyticsOverview: React.FC = () => {
               <span>Exportar</span>
             </Button>
           </div>
-        </div>
-
-        {/* Contenido de pestañas */}
-        <div className="mt-6">
-          <TabsContent value="overview">
-            <PlatformOverviewSection stats={stats} isLoading={false} />
-          </TabsContent>
-          
-          <TabsContent value="users">
-            <UserAnalyticsSection />
-          </TabsContent>
-          
-          <TabsContent value="courses">
-            <CoursesAnalyticsSection />
-          </TabsContent>
-          
-          <TabsContent value="revenue">
-            <RevenueAnalyticsSection />
-          </TabsContent>
         </div>
       </div>
     </AdminPageLayout>
