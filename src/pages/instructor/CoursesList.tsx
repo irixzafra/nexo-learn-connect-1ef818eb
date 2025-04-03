@@ -217,7 +217,7 @@ const CoursesList: React.FC = () => {
                         <FileEdit className="h-4 w-4 mr-2" />
                         Editor de contenido
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => window.open(`/courses/${course.slug || course.id}`, '_blank')}>
+                      <DropdownMenuItem onClick={() => navigate(`/app/course/${course.id}`)}>
                         <Eye className="h-4 w-4 mr-2" />
                         Ver curso
                       </DropdownMenuItem>

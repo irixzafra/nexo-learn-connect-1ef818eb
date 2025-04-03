@@ -138,6 +138,7 @@ const AppRoutes: React.FC = () => {
         <Route path="profesor/students" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorStudents /></SafeRouteWrapper>} />
         <Route path="profesor/courses/create" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><CreateCourse /></SafeRouteWrapper>} />
         <Route path="profesor/courses/:id/edit" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><EditCourseDetails /></SafeRouteWrapper>} />
+        <Route path="profesor/courses/:id/analytics" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><PlaceholderPage title="Analíticas del Curso (Profesor)" /></SafeRouteWrapper>} />
         <Route path="profesor/courses/:id/editor" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorCourseEditor /></SafeRouteWrapper>} />
         <Route path="profesor/courses/:id/structure" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorEditCourseStructure /></SafeRouteWrapper>} />
         <Route path="profesor/courses/:courseId/lessons/:lessonId/edit" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorEditLesson /></SafeRouteWrapper>} />
