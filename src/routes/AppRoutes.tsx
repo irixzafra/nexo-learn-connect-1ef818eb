@@ -44,6 +44,14 @@ import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminDashboard from '@/pages/admin/Dashboard';
 import PagesManagement from '@/pages/admin/settings/pages';
 
+// Import instructor pages
+import InstructorDashboard from '@/pages/instructor/Dashboard';
+import InstructorCoursesList from '@/pages/instructor/CoursesList';
+import InstructorStudents from '@/pages/instructor/Students';
+import InstructorCourseEditor from '@/pages/instructor/CourseEditor';
+import InstructorEditCourseStructure from '@/pages/instructor/EditCourseStructure';
+import InstructorEditLesson from '@/pages/instructor/EditLesson';
+
 // Import settings pages
 import GeneralSettingsPage from '@/pages/settings/GeneralSettingsPage';
 import FeatureSettingsPage from '@/pages/settings/FeatureSettingsPage';
@@ -122,13 +130,13 @@ const AppRoutes: React.FC = () => {
         <Route path="admin/design-system" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Design System" /></SafeRouteWrapper>} />
         
         {/* --- Rutas Profesor (con wrapper individual) --- */}
-        <Route path="profesor" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><PlaceholderPage title="Panel de Profesor" /></SafeRouteWrapper>} />
-        <Route path="profesor/dashboard" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><PlaceholderPage title="Dashboard Profesor" /></SafeRouteWrapper>} />
-        <Route path="profesor/courses" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><PlaceholderPage title="Mis Cursos (Profesor)" /></SafeRouteWrapper>} />
-        <Route path="profesor/students" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><PlaceholderPage title="Mis Estudiantes" /></SafeRouteWrapper>} />
-        <Route path="profesor/content" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><PlaceholderPage title="Gestión de Contenido" /></SafeRouteWrapper>} />
-        <Route path="profesor/lessons" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><PlaceholderPage title="Lecciones" /></SafeRouteWrapper>} />
-        <Route path="profesor/assignments" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><PlaceholderPage title="Tareas" /></SafeRouteWrapper>} />
+        <Route path="profesor" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorDashboard /></SafeRouteWrapper>} />
+        <Route path="profesor/dashboard" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorDashboard /></SafeRouteWrapper>} />
+        <Route path="profesor/courses" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorCoursesList /></SafeRouteWrapper>} />
+        <Route path="profesor/students" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorStudents /></SafeRouteWrapper>} />
+        <Route path="profesor/courses/:id/editor" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorCourseEditor /></SafeRouteWrapper>} />
+        <Route path="profesor/courses/:id/structure" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorEditCourseStructure /></SafeRouteWrapper>} />
+        <Route path="profesor/courses/:courseId/lessons/:lessonId/edit" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorEditLesson /></SafeRouteWrapper>} />
         
         {/* Catch-all para rutas no encontradas DENTRO de /app */}
         <Route path="*" element={<NotFound />} /> 
