@@ -26,7 +26,7 @@ const CursosNavigation: React.FC<CursosNavigationProps> = ({ isOpen, onToggle })
     >
       <SidebarMenu>
         <MenuItem
-          to="/courses"
+          to="/app/course"
           icon={Compass}
           label="Oferta Académica"
           isCollapsed={isCollapsed}

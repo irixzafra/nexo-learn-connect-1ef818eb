@@ -1,6 +1,7 @@
 
 import { UserRoleType } from '@/types/auth';
 import { MenuItem } from './types';
+import { getHomePath } from '@/utils/roleUtils';
 
 /**
  * Filtra un array de ítems de menú según el rol del usuario
@@ -24,24 +25,4 @@ export const filterMenuItemsByRole = (items: MenuItem[], role: UserRoleType): Me
  * Obtiene la ruta de inicio según el rol del usuario
  * @param role Rol del usuario
  */
-export const getHomePathByRole = (role: UserRoleType): string => {
-  switch (role) {
-    case 'admin':
-      return '/admin/dashboard';
-    case 'instructor':
-      return '/instructor/dashboard';
-    case 'sistemas':
-      return '/admin/systems';
-    case 'moderator':
-      return '/moderation/dashboard';
-    case 'content_creator':
-      return '/content/dashboard';
-    case 'beta_tester':
-      return '/beta/dashboard';
-    case 'guest':
-    case 'anonimo':
-      return '/landing';
-    default:
-      return '/student/dashboard';
-  }
-};
+export const getHomePathByRole = getHomePath;

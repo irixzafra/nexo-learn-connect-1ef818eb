@@ -1,10 +1,8 @@
 
 import React from 'react';
-import { SlidersHorizontal, HelpCircle, Info, Construction } from 'lucide-react';
+import { SlidersHorizontal, HelpCircle, Info } from 'lucide-react';
 import { 
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton
+  SidebarMenu
 } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
