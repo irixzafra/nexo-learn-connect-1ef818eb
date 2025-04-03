@@ -42,13 +42,14 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   changeLanguage
 }) => {
   const { toggleSidebar } = useSidebar();
-  const { logout, resetToOriginalRole } = useAuth();
+  const { logout, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
 
   console.log('>>> DEBUG ConditionalSidebar:', {
     userRoleProp: userRole,
     effectiveRoleProp: effectiveRole,
     isCollapsed,
-    currentViewRole
+    currentViewRole,
+    isViewingAsOtherRole
   });
 
   return (
@@ -66,6 +67,8 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       
       {/* Footer Section with Role Switcher and Language Selector */}
       <SidebarFooterSection 
+        userRole={userRole}
+        effectiveRole={effectiveRole}
         isCollapsed={isCollapsed}
         currentViewRole={currentViewRole}
         handleRoleChange={handleRoleChange}
@@ -75,6 +78,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
         changeLanguage={changeLanguage}
         logout={logout}
         resetToOriginalRole={resetToOriginalRole}
+        isViewingAsOtherRole={isViewingAsOtherRole}
       />
     </div>
   );

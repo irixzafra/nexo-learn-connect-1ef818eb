@@ -22,6 +22,14 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
   
+  // Log initial props and context values for debugging
+  console.log('>>> DEBUG SidebarNavigation INIT with:', {
+    userRoleFromContext: userRole,
+    effectiveRoleFromContext: effectiveRole,
+    viewAsRoleProp: viewAsRole,
+    sidebarState: state
+  });
+
   const {
     isCollapsed,
     currentViewRole,

@@ -8,9 +8,10 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
-import { useAuth } from '@/contexts/auth';
 
 interface SidebarFooterSectionProps {
+  userRole: UserRoleType;
+  effectiveRole: UserRoleType;
   isCollapsed: boolean;
   currentViewRole: UserRoleType | null;
   handleRoleChange: (role: UserRoleType) => void;
@@ -20,9 +21,12 @@ interface SidebarFooterSectionProps {
   changeLanguage: (language: string) => void;
   logout: () => void;
   resetToOriginalRole: () => void;
+  isViewingAsOtherRole: boolean;
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
+  userRole,
+  effectiveRole,
   isCollapsed,
   currentViewRole,
   handleRoleChange,
@@ -31,17 +35,17 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   languages,
   changeLanguage,
   logout,
-  resetToOriginalRole
+  resetToOriginalRole,
+  isViewingAsOtherRole
 }) => {
-  // Obtenemos el userRole y effectiveRole directamente del contexto de autenticación
-  const { userRole, effectiveRole, isViewingAsOtherRole } = useAuth();
   const unreadNotifications = 3; // Example count - replace with actual state
   
   console.log('>>> DEBUG SidebarFooterSection:', { 
-    userRoleContext: userRole, 
-    effectiveRoleContext: effectiveRole,
+    userRole, 
+    effectiveRole,
     isViewingAsOtherRole,
-    isConditionMet: userRole === 'admin' 
+    isConditionMet: userRole === 'admin',
+    isRoleSwitcherVisible: userRole === 'admin' || false
   });
 
   return (
