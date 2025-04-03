@@ -35,6 +35,8 @@ import RevenueAnalytics from '@/pages/admin/analytics/RevenueAnalytics';
 import AIServicesPage from '@/pages/admin/ai/AIServicesPage';
 import TestDataManagement from '@/pages/admin/TestDataManagement';
 import AccessControl from '@/pages/admin/access/AccessControl';
+import AdminDashboard from '@/pages/admin/Dashboard';
+import PagesManagement from '@/pages/admin/settings/pages';
 
 // Import settings pages
 import GeneralSettingsPage from '@/pages/settings/GeneralSettingsPage';
@@ -42,7 +44,6 @@ import FeatureSettingsPage from '@/pages/settings/FeatureSettingsPage';
 import DesignSettingsPage from '@/pages/settings/DesignSettingsPage';
 import IntegrationsPage from '@/pages/admin/settings/integrations';
 import DataManagementPage from '@/pages/admin/settings/data';
-import PagesManagement from '@/pages/admin/settings/pages';
 import AnalyticsSettingsPage from '@/pages/admin/settings/analytics';
 import RolesAndPermissions from '@/pages/admin/settings/roles';
 
@@ -97,8 +98,8 @@ const AppRoutes: React.FC = () => {
         <Route path="course/:courseId/students" element={<PlaceholderPage title="Estudiantes del Curso" />} />
         
         {/* --- Rutas Admin (con wrapper individual) --- */}
-        <Route path="admin" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Panel de Administración" /></SafeRouteWrapper>} />
-        <Route path="admin/dashboard" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Dashboard Admin" /></SafeRouteWrapper>} />
+        <Route path="admin" element={<SafeRouteWrapper requiredRole={['admin']}><AdminDashboard /></SafeRouteWrapper>} />
+        <Route path="admin/dashboard" element={<SafeRouteWrapper requiredRole={['admin']}><AdminDashboard /></SafeRouteWrapper>} />
         <Route path="admin/users" element={<SafeRouteWrapper requiredRole={['admin']}><UserManagement /></SafeRouteWrapper>} />
         <Route path="admin/courses" element={<SafeRouteWrapper requiredRole={['admin']}><AdminCourses /></SafeRouteWrapper>} />
         <Route path="admin/features" element={<SafeRouteWrapper requiredRole={['admin']}><Features /></SafeRouteWrapper>} />
@@ -112,7 +113,7 @@ const AppRoutes: React.FC = () => {
         <Route path="admin/ai-services" element={<SafeRouteWrapper requiredRole={['admin']}><AIServicesPage /></SafeRouteWrapper>} />
         <Route path="admin/test-data" element={<SafeRouteWrapper requiredRole={['admin']}><TestDataManagement /></SafeRouteWrapper>} />
         <Route path="admin/access-control" element={<SafeRouteWrapper requiredRole={['admin']}><AccessControl /></SafeRouteWrapper>} />
-        <Route path="admin/system-pages" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Páginas del Sistema" /></SafeRouteWrapper>} />
+        <Route path="admin/system-pages" element={<SafeRouteWrapper requiredRole={['admin']}><PagesManagement /></SafeRouteWrapper>} />
         <Route path="admin/design-system" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Design System" /></SafeRouteWrapper>} />
         
         {/* --- Rutas Profesor (con wrapper individual) --- */}
