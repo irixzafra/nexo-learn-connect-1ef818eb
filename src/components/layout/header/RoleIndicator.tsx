@@ -9,7 +9,7 @@ interface RoleIndicatorProps {
 }
 
 const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className }) => {
-  const { userRole, effectiveRole, isViewingAsOtherRole } = useAuth();
+  const { userRole, effectiveRole } = useAuth();
   
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -41,11 +41,6 @@ const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className }) => {
   
   return (
     <div className={cn("flex items-center space-x-2", className)}>
-      {isViewingAsOtherRole && (
-        <Badge variant="outline" className="font-normal">
-          Vista simulada
-        </Badge>
-      )}
       <Badge className={cn("capitalize font-semibold", getRoleBadgeColor(effectiveRole))}>
         {getRoleName(effectiveRole)}
       </Badge>

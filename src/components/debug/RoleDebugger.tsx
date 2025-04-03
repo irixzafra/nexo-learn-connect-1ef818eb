@@ -7,7 +7,6 @@ export const RoleDebugger: React.FC = () => {
   const { 
     userRole, 
     effectiveRole, 
-    isViewingAsOtherRole,
     user,
     userProfile,
     forceUpdateRole
@@ -30,7 +29,6 @@ export const RoleDebugger: React.FC = () => {
           <div><strong>User ID:</strong> {user?.id || 'None'}</div>
           <div><strong>User Role:</strong> {userRole || 'None'}</div>
           <div><strong>Effective Role:</strong> {effectiveRole || 'None'}</div>
-          <div><strong>Is Viewing As Other:</strong> {isViewingAsOtherRole ? 'Yes' : 'No'}</div>
           <div><strong>Profile ID:</strong> {userProfile?.id || 'None'}</div>
           <div><strong>Profile Role:</strong> {userProfile?.role || 'None'}</div>
         </div>

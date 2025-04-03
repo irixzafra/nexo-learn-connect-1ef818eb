@@ -17,10 +17,9 @@ interface ConditionalSidebarProps {
   currentViewRole: UserRoleType | null;
   currentLanguage: string;
   languages: Array<{ code: string; name: string }>;
-  handleRoleChange: (role: UserRoleType) => void;
+  changeLanguage: (code: string) => void;
   getRoleName: (role: UserRoleType) => string;
   getHomePath: (role: UserRoleType) => string;
-  changeLanguage: (code: string) => void;
 }
 
 /**
@@ -36,20 +35,18 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   currentViewRole,
   currentLanguage,
   languages,
-  handleRoleChange,
   getRoleName,
   getHomePath,
   changeLanguage
 }) => {
   const { toggleSidebar } = useSidebar();
-  const { logout, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
+  const { logout } = useAuth();
 
   console.log('>>> DEBUG ConditionalSidebar:', {
     userRoleProp: userRole,
     effectiveRoleProp: effectiveRole,
     isCollapsed,
-    currentViewRole,
-    isViewingAsOtherRole
+    currentViewRole
   });
 
   return (
@@ -71,14 +68,11 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
         effectiveRole={effectiveRole}
         isCollapsed={isCollapsed}
         currentViewRole={currentViewRole}
-        handleRoleChange={handleRoleChange}
         getRoleName={getRoleName}
         currentLanguage={currentLanguage}
         languages={languages}
         changeLanguage={changeLanguage}
         logout={logout}
-        resetToOriginalRole={resetToOriginalRole}
-        isViewingAsOtherRole={isViewingAsOtherRole}
       />
     </div>
   );

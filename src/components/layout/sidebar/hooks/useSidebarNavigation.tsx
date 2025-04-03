@@ -14,7 +14,6 @@ export function useSidebarNavigation(
   const isCollapsed = state === "collapsed";
   const [currentViewRole, setCurrentViewRole] = useState<UserRoleType | null>(viewAsRole || null);
   const [currentLanguage, setCurrentLanguage] = useState('es');
-  const { setSimulatedRole } = useAuth();
 
   // Debug the incoming props and state
   console.log('>>> DEBUG useSidebarNavigation: INIT with:', { 
@@ -32,10 +31,7 @@ export function useSidebarNavigation(
     if (onRoleChange) {
       onRoleChange(role);
     }
-    
-    // Use the auth context to set the simulated role
-    setSimulatedRole(role);
-  }, [onRoleChange, setSimulatedRole]);
+  }, [onRoleChange]);
 
   const changeLanguage = useCallback((language: string) => {
     console.log('>>> DEBUG useSidebarNavigation: changeLanguage called with:', language);
