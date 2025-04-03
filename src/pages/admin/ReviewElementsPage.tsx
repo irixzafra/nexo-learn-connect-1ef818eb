@@ -4,14 +4,16 @@ import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { FileText, Package, FileQuestion, AlertTriangle, Code, FolderOpen, Eye } from 'lucide-react';
+import { FileText, Package, FileQuestion, AlertTriangle, Code, FolderOpen, Eye, Filter } from 'lucide-react';
 import { StyledAccordion, StyledAccordionItem } from '@/components/ui/styled-accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import ComponentPreview from '@/components/admin/ComponentPreview';
 
 type ComponentModule = {
   path: string;
@@ -28,6 +30,9 @@ const ComponentInventoryPage: React.FC = () => {
   const [components, setComponents] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [isDevelopment, setIsDevelopment] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [locationFilter, setLocationFilter] = useState<string>('all');
+  const [availableLocations, setAvailableLocations] = useState<string[]>([]);
 
   // Check if we're in development mode
   useEffect(() => {
@@ -45,17 +50,49 @@ const ComponentInventoryPage: React.FC = () => {
       const uiComponents = import.meta.glob('/src/components/ui/**/*.tsx', { eager: false });
       const navigationComponents = import.meta.glob('/src/components/navigation/**/*.tsx', { eager: false });
       const commonComponents = import.meta.glob('/src/components/common/**/*.tsx', { eager: false, import: 'default' });
+      const adminComponents = import.meta.glob('/src/components/admin/**/*.tsx', { eager: false });
+      const layoutComponents = import.meta.glob('/src/components/layout/**/*.tsx', { eager: false });
+      const sharedComponents = import.meta.glob('/src/components/shared/**/*.tsx', { eager: false });
+
+      // Collect all unique component locations
+      const allComponents = {
+        ...uiComponents,
+        ...navigationComponents,
+        ...commonComponents,
+        ...adminComponents,
+        ...layoutComponents,
+        ...sharedComponents
+      };
+
+      const locations = extractUniqueLocations(allComponents);
+      setAvailableLocations(['all', ...locations]);
 
       setComponents({
         ui: uiComponents,
         navigation: navigationComponents,
         common: commonComponents,
+        admin: adminComponents,
+        layout: layoutComponents,
+        shared: sharedComponents
       });
     } catch (error) {
       console.error('Error loading components:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Extract unique locations from component paths
+  const extractUniqueLocations = (componentsObj: Record<string, any>): string[] => {
+    const locations = Object.keys(componentsObj).map(path => {
+      const pathParts = path.split('/');
+      if (pathParts.length >= 4) {
+        return pathParts.slice(0, 4).join('/').replace('/src/', '');
+      }
+      return '';
+    }).filter(Boolean);
+    
+    return [...new Set(locations)];
   };
 
   // Extract component name from file path
@@ -79,6 +116,18 @@ const ComponentInventoryPage: React.FC = () => {
     return path.replace(/^\/src\//, '');
   };
 
+  // Filter components by location
+  const filterComponentsByLocation = (components: Record<string, any>, location: string): Record<string, any> => {
+    if (location === 'all') return components;
+    
+    return Object.entries(components).reduce((filtered, [path, module]) => {
+      if (path.includes(location)) {
+        filtered[path] = module;
+      }
+      return filtered;
+    }, {} as Record<string, any>);
+  };
+
   // Group components by directory
   const groupComponentsByDirectory = (components: Record<string, any>): GroupedComponents => {
     const grouped: GroupedComponents = {};
@@ -100,6 +149,26 @@ const ComponentInventoryPage: React.FC = () => {
     });
     
     return grouped;
+  };
+
+  // Filter components by search term
+  const filterComponentsBySearchTerm = (components: Record<string, any>, searchTerm: string): Record<string, any> => {
+    if (!searchTerm) return components;
+    
+    const lowercaseSearchTerm = searchTerm.toLowerCase();
+    
+    return Object.entries(components).reduce((filtered, [path, module]) => {
+      const componentName = extractComponentName(path);
+      
+      if (
+        componentName.toLowerCase().includes(lowercaseSearchTerm) ||
+        path.toLowerCase().includes(lowercaseSearchTerm)
+      ) {
+        filtered[path] = module;
+      }
+      
+      return filtered;
+    }, {} as Record<string, any>);
   };
 
   if (!isDevelopment) {
@@ -148,6 +217,47 @@ const ComponentInventoryPage: React.FC = () => {
         </CardHeader>
       </Card>
       
+      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Input
+            placeholder="Buscar componentes..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm">Ubicación:</span>
+          <Select value={locationFilter} onValueChange={setLocationFilter}>
+            <SelectTrigger className="w-[220px]">
+              <SelectValue placeholder="Todas las ubicaciones" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableLocations.map((location) => (
+                <SelectItem key={location} value={location}>
+                  {location === 'all' ? 'Todas las ubicaciones' : location}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full md:w-auto md:inline-flex grid-cols-3 md:grid-cols-none mb-6">
           <TabsTrigger value="ui-components" className="flex items-center gap-2">
@@ -170,7 +280,7 @@ const ComponentInventoryPage: React.FC = () => {
         <TabsContent value="ui-components" className="mt-0">
           <ComponentsTab 
             componentType="ui" 
-            components={components.ui || {}} 
+            components={filterComponentsBySearchTerm(filterComponentsByLocation(components.ui || {}, locationFilter), searchTerm)} 
             loading={loading} 
             groupComponentsByDirectory={groupComponentsByDirectory}
             getRelativePath={getRelativePath}
@@ -180,7 +290,7 @@ const ComponentInventoryPage: React.FC = () => {
         <TabsContent value="navigation-components" className="mt-0">
           <ComponentsTab 
             componentType="navigation" 
-            components={components.navigation || {}} 
+            components={filterComponentsBySearchTerm(filterComponentsByLocation(components.navigation || {}, locationFilter), searchTerm)} 
             loading={loading}
             groupComponentsByDirectory={groupComponentsByDirectory}
             getRelativePath={getRelativePath}
@@ -190,7 +300,7 @@ const ComponentInventoryPage: React.FC = () => {
         <TabsContent value="common-components" className="mt-0">
           <ComponentsTab 
             componentType="common" 
-            components={components.common || {}} 
+            components={filterComponentsBySearchTerm(filterComponentsByLocation(components.common || {}, locationFilter), searchTerm)} 
             loading={loading} 
             groupComponentsByDirectory={groupComponentsByDirectory}
             getRelativePath={getRelativePath}
@@ -219,6 +329,7 @@ const ComponentsTab: React.FC<ComponentsTabProps> = ({
   const [selectedComponent, setSelectedComponent] = useState<ComponentModule | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
   const [previewLoading, setPreviewLoading] = useState<boolean>(false);
+  const [previewError, setPreviewError] = useState<Error | null>(null);
   const [previewContent, setPreviewContent] = useState<React.ReactNode | null>(null);
 
   const handleShowPreview = async (component: ComponentModule) => {
@@ -226,6 +337,7 @@ const ComponentsTab: React.FC<ComponentsTabProps> = ({
     setIsPreviewOpen(true);
     setPreviewLoading(true);
     setPreviewContent(null);
+    setPreviewError(null);
 
     try {
       // Intentar cargar el componente para la vista previa
@@ -234,37 +346,13 @@ const ComponentsTab: React.FC<ComponentsTabProps> = ({
       
       // Solo intentar renderizar si es un componente válido
       if (typeof ComponentToRender === 'function') {
-        setPreviewContent(
-          <ErrorBoundary FallbackComponent={({ error }) => (
-            <div className="p-4 border rounded bg-destructive/10 text-destructive">
-              <p className="font-medium">Error al renderizar el componente:</p>
-              <pre className="text-xs mt-2 overflow-auto">{error.message}</pre>
-            </div>
-          )}>
-            <div className="p-4 border rounded">
-              <h3 className="text-sm font-medium mb-4">Vista previa del componente</h3>
-              <div className="bg-background p-6 rounded-md shadow-inner">
-                <ComponentToRender />
-              </div>
-            </div>
-          </ErrorBoundary>
-        );
+        setPreviewContent(<ComponentToRender />);
       } else {
-        setPreviewContent(
-          <div className="p-4 border rounded bg-amber-50 text-amber-800">
-            <p>No se pudo generar una vista previa para este componente.</p>
-            <p className="text-xs mt-2">Este archivo puede no exportar un componente React válido o podría requerir props específicas.</p>
-          </div>
-        );
+        setPreviewError(new Error('Este componente no exporta un valor por defecto válido o requiere props específicas.'));
       }
     } catch (error) {
       console.error('Error loading component preview:', error);
-      setPreviewContent(
-        <div className="p-4 border rounded bg-destructive/10 text-destructive">
-          <p className="font-medium">Error al cargar el componente:</p>
-          <pre className="text-xs mt-2 overflow-auto">{error instanceof Error ? error.message : 'Error desconocido'}</pre>
-        </div>
-      );
+      setPreviewError(error instanceof Error ? error : new Error('Error desconocido al cargar el componente'));
     } finally {
       setPreviewLoading(false);
     }
@@ -280,7 +368,7 @@ const ComponentsTab: React.FC<ComponentsTabProps> = ({
         <CardHeader>
           <CardTitle>No hay componentes disponibles</CardTitle>
           <CardDescription>
-            No se encontraron componentes en esta categoría
+            No se encontraron componentes en esta categoría o con los filtros aplicados
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center py-10">
@@ -373,25 +461,19 @@ const ComponentsTab: React.FC<ComponentsTabProps> = ({
           </DialogHeader>
 
           <div className="py-2">
-            {previewLoading ? (
-              <div className="flex items-center justify-center p-10">
-                <Skeleton className="h-24 w-full rounded-md" />
-              </div>
-            ) : (
-              <div className="max-h-[60vh] overflow-auto">
-                {previewContent}
-              </div>
+            {selectedComponent && (
+              <ComponentPreview
+                componentPath={selectedComponent.path}
+                componentName={selectedComponent.name}
+                getRelativePath={getRelativePath}
+                isLoading={previewLoading}
+                error={previewError}
+              >
+                <ErrorBoundary>
+                  {previewContent}
+                </ErrorBoundary>
+              </ComponentPreview>
             )}
-          </div>
-
-          <div className="bg-muted/50 p-4 rounded-md mt-2">
-            <h4 className="text-sm font-medium mb-2">Cómo usar este componente:</h4>
-            <pre className="bg-black text-white p-3 rounded text-xs overflow-x-auto">
-              {selectedComponent ? `import ${selectedComponent.name} from "@/${getRelativePath(selectedComponent.path)}";
-
-// En tu componente
-<${selectedComponent.name} />` : ''}
-            </pre>
           </div>
         </DialogContent>
       </Dialog>
@@ -417,3 +499,4 @@ const ComponentsLoadingState: React.FC = () => (
 );
 
 export default ComponentInventoryPage;
+
