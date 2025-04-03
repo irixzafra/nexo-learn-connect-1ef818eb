@@ -1,9 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SitePage, PageBlock, PageBlockType } from '@/types/pages';
 import { Loader2 } from 'lucide-react';
-import { useEditMode } from '@/contexts/EditModeContext';
 
 const getPageBySlug = async (slug: string): Promise<SitePage | null> => {
   return new Promise((resolve) => {
@@ -17,8 +15,7 @@ const getPageBySlug = async (slug: string): Promise<SitePage | null> => {
             blocks: [
               { id: 'block-1', type: 'text', content: 'Welcome to our platform!' },
               { id: 'block-2', type: 'hero', content: 'Learn and Grow With Us' }
-            ],
-            layout: 'default' 
+            ]
           },
           status: 'published',
           layout: 'default',
@@ -100,19 +97,26 @@ const PageRenderer: React.FC = () => {
     );
   }
 
+  const getBlocks = (content: string | { blocks: PageBlock[] }): PageBlock[] => {
+    if (typeof content === 'string') {
+      return [];
+    }
+    return content.blocks || [];
+  };
+
   return (
     <div className={`page-container page-layout-${page.layout}`}>
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold mb-6">{page.title}</h1>
         
         <div className="page-content py-8">
-          {page.content.blocks.length === 0 ? (
+          {getBlocks(page.content).length === 0 ? (
             <div className="text-center text-muted-foreground py-12">
               <p>Esta página no tiene contenido.</p>
             </div>
           ) : (
             <div className="blocks-container space-y-8">
-              {page.content.blocks.map((block: PageBlock, index: number) => (
+              {getBlocks(page.content).map((block: PageBlock, index: number) => (
                 <div key={block.id || index} className="block">
                   {block.type === 'text' && (
                     <div className="prose max-w-none">

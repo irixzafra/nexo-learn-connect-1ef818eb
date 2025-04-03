@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -111,7 +110,6 @@ export const useCreatePageForm = () => {
         content: generatedContent || { blocks: [] }, // Use AI-generated content
         layout: layoutValue as PageLayout,
         status: 'draft',
-        created_by: user.id,
         is_system_page: false
       };
       

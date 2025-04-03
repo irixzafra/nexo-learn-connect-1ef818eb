@@ -1,4 +1,3 @@
-
 // Define possible page layout options
 export type PageLayout = 
   | "default" 
@@ -8,7 +7,6 @@ export type PageLayout =
   | "marketing" 
   | "documentation" 
   | "course"
-  | "grid"
   | "column"
   | "row"
   | "grid-2"
