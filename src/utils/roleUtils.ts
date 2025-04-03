@@ -76,3 +76,30 @@ export function hasAdminPermissions(role: UserRoleType): boolean {
 export function hasInstructorPermissions(role: UserRoleType): boolean {
   return ['admin', 'instructor', 'sistemas'].includes(role);
 }
+
+/**
+ * Obtiene la ruta de inicio según el rol del usuario
+ * @param role Rol del usuario
+ * @returns Ruta de inicio para el rol específico
+ */
+export function getHomePath(role: UserRoleType): string {
+  switch (role) {
+    case 'admin':
+      return '/admin/dashboard';
+    case 'instructor':
+      return '/instructor/dashboard';
+    case 'sistemas':
+      return '/admin/dashboard';
+    case 'moderator':
+      return '/moderation/dashboard';
+    case 'content_creator':
+      return '/content/dashboard';
+    case 'beta_tester':
+      return '/beta/dashboard';
+    case 'guest':
+    case 'anonimo':
+      return '/landing';
+    default:
+      return '/student/dashboard';
+  }
+}
