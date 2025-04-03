@@ -35,3 +35,20 @@ export const mockSignIn = async (email: string, password: string) => {
   
   return { data: { user: mockUser }, error: null };
 };
+
+// Helper to check database connection
+export const checkDatabaseConnection = async () => {
+  try {
+    const { data, error } = await supabase.from('_view_database_info').select('*').limit(1);
+    
+    if (error) {
+      console.error('Database connection error:', error);
+      return false;
+    }
+    
+    return true;
+  } catch (err) {
+    console.error('Failed to check database connection:', err);
+    return false;
+  }
+};

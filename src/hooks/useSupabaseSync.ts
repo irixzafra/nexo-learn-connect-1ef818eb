@@ -1,6 +1,6 @@
 
 import { useState, useCallback, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { connectionService } from '@/lib/offline/connectionService';
 
@@ -14,6 +14,7 @@ export const useSupabaseSync = () => {
   const [lastSynced, setLastSynced] = useState<Date | null>(null);
   const [pendingOperations, setPendingOperations] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'checking'>('checking');
   
   // Check online status
   useEffect(() => {
@@ -27,8 +28,37 @@ export const useSupabaseSync = () => {
     return unsubscribe;
   }, []);
   
+  // Check Supabase connection on mount
+  useEffect(() => {
+    const checkConnection = async () => {
+      try {
+        setConnectionStatus('checking');
+        const { data, error } = await supabase.from('_view_database_info').select('*').limit(1);
+        
+        if (error) {
+          console.error('Supabase connection error:', error);
+          setConnectionStatus('disconnected');
+          toast.error('No se pudo conectar a la base de datos');
+        } else {
+          console.log('Supabase connection successful');
+          setConnectionStatus('connected');
+        }
+      } catch (err) {
+        console.error('Supabase connection check failed:', err);
+        setConnectionStatus('disconnected');
+      }
+    };
+    
+    checkConnection();
+  }, []);
+  
   // Función para iniciar la sincronización
   const startSync = useCallback(async () => {
+    if (connectionStatus !== 'connected') {
+      toast.error('No hay conexión con la base de datos');
+      return false;
+    }
+    
     setIsLoading(true);
     setIsSyncing(true);
     setSyncStatus('syncing');
@@ -62,7 +92,7 @@ export const useSupabaseSync = () => {
       setIsLoading(false);
       setIsSyncing(false);
     }
-  }, [pendingOperations]);
+  }, [pendingOperations, connectionStatus]);
   
   // Función para cancelar la sincronización
   const cancelSync = useCallback(() => {
@@ -76,15 +106,19 @@ export const useSupabaseSync = () => {
   // Función para verificar el estado de la base de datos
   const checkDatabaseStatus = useCallback(async () => {
     try {
+      setConnectionStatus('checking');
       const { data, error } = await supabase.from('_view_database_info').select('*').limit(1);
       
       if (error) {
+        setConnectionStatus('disconnected');
         throw error;
       }
       
+      setConnectionStatus('connected');
       return { success: true, data };
     } catch (err) {
       console.error('Error al verificar estado de la base de datos:', err);
+      setConnectionStatus('disconnected');
       return { success: false, error: err };
     }
   }, []);
@@ -114,7 +148,8 @@ export const useSupabaseSync = () => {
     lastSynced,
     pendingOperations,
     isSyncing,
-    syncNow
+    syncNow,
+    connectionStatus
   };
 };
 

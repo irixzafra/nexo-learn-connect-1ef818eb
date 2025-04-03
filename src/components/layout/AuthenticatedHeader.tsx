@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Menu, Bell, MessageSquare } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/lib/utils';
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 
 interface AuthenticatedHeaderProps {
   onToggleSidebar?: () => void;
@@ -43,15 +44,8 @@ const AuthenticatedHeader: React.FC<AuthenticatedHeaderProps> = ({
         </div>
         
         <div className="flex items-center space-x-1 md:space-x-2">
-          <div className="hidden md:flex space-x-1">
-            <Button 
-              variant="ghost" 
-              asChild 
-              className="px-3 py-2 h-9 rounded-full hover:bg-primary/10 font-medium transition-colors"
-            >
-              <Link to="/app/courses">Mis Cursos</Link>
-            </Button>
-          </div>
+          {/* Theme Switcher */}
+          <ThemeSwitcher />
           
           {/* Notification & Messages buttons */}
           <Button 
