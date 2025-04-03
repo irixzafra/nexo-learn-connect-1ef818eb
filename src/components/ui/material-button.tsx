@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Button, ButtonProps } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -47,9 +47,13 @@ const materialButtonVariants = cva(
   }
 );
 
-export interface MaterialButtonProps
-  extends ButtonProps,
-    VariantProps<typeof materialButtonVariants> {
+// Separate the variant props to avoid conflicts
+type MaterialVariantProps = Omit<VariantProps<typeof materialButtonVariants>, 'variant'> & {
+  materialVariant?: 'filled' | 'tonal' | 'outlinedMaterial' | 'text';
+};
+
+// We're extending Button props but using our own variant system
+export interface MaterialButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, MaterialVariantProps {
   ripple?: boolean;
   elevation?: "none" | "low" | "medium" | "high";
 }
@@ -57,7 +61,7 @@ export interface MaterialButtonProps
 const MaterialButton = React.forwardRef<HTMLButtonElement, MaterialButtonProps>(
   ({ 
     className, 
-    variant, 
+    materialVariant,
     size, 
     ripple = false,
     elevation,
@@ -86,6 +90,9 @@ const MaterialButton = React.forwardRef<HTMLButtonElement, MaterialButtonProps>(
         props.onClick(e);
       }
     };
+    
+    // Map our materialVariant to the cva variant
+    const variant = materialVariant ? materialVariant : props.variant;
     
     return (
       <Button

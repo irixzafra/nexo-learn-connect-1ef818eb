@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
-import { UserRole } from "@/types/auth";
+import { UserRole } from "@/types/auth/UserRole";
 import { EditableDataTable } from "@/components/shared/EditableDataTable";
 import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
 import { Check, X, Shield, Key, Users } from "lucide-react";
 import { createColumn, createActionsColumn } from "@/components/shared/DataTableUtils";
 import { Button } from "@/components/ui/button";
@@ -109,6 +108,8 @@ export const RolesListTab: React.FC = () => {
   };
 
   const renderRoleForm = ({ data, onChange }: { data: UserRole | null; onChange: (data: UserRole) => void }) => {
+    if (!data) return null;
+    
     return (
       <div className="space-y-4">
         <div className="space-y-2">
@@ -116,8 +117,8 @@ export const RolesListTab: React.FC = () => {
           <input
             type="text"
             className="w-full p-2 border rounded-md"
-            value={data?.name || ""}
-            onChange={(e) => onChange({ ...data, name: e.target.value } as UserRole)}
+            value={data.name || ""}
+            onChange={(e) => onChange({ ...data, name: e.target.value })}
           />
         </div>
 
@@ -125,8 +126,8 @@ export const RolesListTab: React.FC = () => {
           <label className="text-sm font-medium">Descripción</label>
           <textarea
             className="w-full p-2 border rounded-md"
-            value={data?.description || ""}
-            onChange={(e) => onChange({ ...data, description: e.target.value } as UserRole)}
+            value={data.description || ""}
+            onChange={(e) => onChange({ ...data, description: e.target.value })}
             rows={4}
           />
         </div>
@@ -144,7 +145,7 @@ export const RolesListTab: React.FC = () => {
     );
   };
 
-  const columns: ColumnDef<UserRole, any>[] = [
+  const columns: ColumnDef<UserRole>[] = [
     createColumn<UserRole>({
       accessorKey: "name",
       header: "Nombre",
@@ -187,7 +188,7 @@ export const RolesListTab: React.FC = () => {
         </Button>
       </CardHeader>
       <CardContent>
-        <EditableDataTable
+        <EditableDataTable<UserRole>
           columns={columns}
           data={roles}
           title="Rol"

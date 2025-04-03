@@ -1,10 +1,10 @@
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import ProtectedRoute from './ProtectedRoute';
 import { UserRoleType } from '@/types/auth';
 
 interface ProtectedRouteWrapperProps {
-  children: React.ReactNode;
+  children: ReactNode;
   requiredRole?: UserRoleType;
   roles?: UserRoleType[];
   requiredRoles?: UserRoleType[];

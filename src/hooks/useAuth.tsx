@@ -5,14 +5,12 @@ import { useAuth as useAuthContext } from '@/contexts/auth';
 export const useAuth = () => {
   const auth = useAuthContext();
   
-  // If there's an error, it means the original context is missing properties
-  // This serves as a compatibility layer for components expecting these properties
+  // Make sure all required properties are available
   return {
     ...auth,
-    // Add any missing properties that components might be expecting
     profile: auth.profile || null,
     userRole: auth.userRole || null,
-    logout: auth.logout || (() => console.warn('logout not implemented')),
+    logout: auth.logout || auth.signOut || (() => console.warn('logout not implemented')),
     isAuthenticated: auth.isAuthenticated || false
   };
 };
