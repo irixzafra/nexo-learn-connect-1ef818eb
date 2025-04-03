@@ -1,103 +1,69 @@
 
 import React from 'react';
-import { 
-  CommandInput, 
-  CommandList, 
-  CommandEmpty, 
-  CommandGroup, 
-  CommandItem 
-} from '@/components/ui/command';
+import { UserSearchResult } from './types';
+import { CommandSeparator, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, UserIcon } from 'lucide-react';
-import { useUserSearch } from './useUserSearch';
-import { cn } from '@/lib/utils';
-import { getRoleBadgeColor } from './roleUtils';
+import { getRoleIcon, getRoleName, getRoleBadgeColor } from './roleUtils';
 import { UserRoleType } from '@/types/auth';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
 interface UserSearchProps {
-  onSelectUser: (userId: string, userRole: string) => void;
-  handleClose: () => void;
+  userResults: UserSearchResult[];
+  handleSwitchRole: (role: UserRoleType) => void;
 }
 
-export const UserSearch: React.FC<UserSearchProps> = ({ 
-  onSelectUser,
-  handleClose
-}) => {
-  const { searchQuery, setSearchQuery, userResults, isSearching } = useUserSearch();
+export const UserSearch: React.FC<UserSearchProps> = ({ userResults, handleSwitchRole }) => {
+  if (userResults.length === 0) {
+    return null;
+  }
+
+  const getInitials = (name: string): string => {
+    if (!name) return '?';
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   return (
-    <div className="py-2">
-      <CommandInput
-        placeholder="Buscar usuario por nombre o email..."
-        value={searchQuery}
-        onValueChange={setSearchQuery}
-        className="h-9 px-3"
-      />
-      
-      <CommandList className="mt-2 max-h-[300px]">
-        <CommandEmpty className="py-6">
-          {isSearching ? (
-            <div className="flex flex-col items-center justify-center text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin mb-2" />
-              <p>Buscando usuarios...</p>
+    <>
+      <CommandSeparator />
+      <CommandGroup heading="Usuarios encontrados">
+        {userResults.map((user) => (
+          <CommandItem
+            key={user.id}
+            onSelect={() => {
+              // Simulate this user's role
+              if (user.role) {
+                handleSwitchRole(user.role as UserRoleType);
+              }
+            }}
+            className="flex items-center gap-2 py-2"
+          >
+            <Avatar className="h-6 w-6">
+              <AvatarFallback className="text-xs">
+                {getInitials(user.full_name || '')}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col flex-1 min-w-0">
+              <span className="text-sm truncate">{user.full_name || 'Sin nombre'}</span>
+              <span className="text-xs text-muted-foreground truncate">{user.email || 'No email'}</span>
             </div>
-          ) : (
-            searchQuery.length > 0 ? (
-              <p className="text-sm text-muted-foreground">No se encontraron usuarios.</p>
-            ) : (
-              <p className="text-sm text-muted-foreground">Comienza a escribir para buscar usuarios.</p>
-            )
-          )}
-        </CommandEmpty>
-        
-        {userResults.length > 0 && (
-          <CommandGroup heading="Resultados">
-            {userResults.map((user) => (
-              <CommandItem
-                key={user.id}
-                onSelect={() => {
-                  if (user.role) {
-                    onSelectUser(user.id, user.role);
-                    handleClose();
-                  }
-                }}
-                className={cn(
-                  "flex items-center gap-3 cursor-pointer py-3 px-3",
-                  "hover:bg-accent hover:text-accent-foreground rounded-md transition-colors",
-                  "border-l-2 border-transparent hover:border-l-primary"
-                )}
-                disabled={!user.role}
-              >
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-foreground font-semibold">
-                  {user.full_name ? user.full_name.substring(0, 2).toUpperCase() : 'US'}
-                </div>
-                
-                <div className="flex flex-col flex-1 min-w-0">
-                  <span className="font-medium truncate">
-                    {user.full_name || 'Usuario sin nombre'}
-                  </span>
-                  <span className="text-xs text-muted-foreground truncate">
-                    {user.email || 'Sin email'}
-                  </span>
-                </div>
-                
-                {user.role ? (
-                  <Badge className={cn(
-                    "ml-auto px-2 py-0.5 text-xs",
-                    getRoleBadgeColor(user.role as UserRoleType)
-                  )}>
-                    {user.role}
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="ml-auto px-2 py-0.5 text-xs">
-                    Sin rol
-                  </Badge>
-                )}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        )}
-      </CommandList>
-    </div>
+            <Badge 
+              variant="outline" 
+              className={cn(
+                "ml-auto text-xs px-1.5 py-0.5", 
+                getRoleBadgeColor(user.role || '').replace('bg-', 'border-')
+              )}
+            >
+              {getRoleName(user.role || '')}
+            </Badge>
+          </CommandItem>
+        ))}
+      </CommandGroup>
+    </>
   );
 };

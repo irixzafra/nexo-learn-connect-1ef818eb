@@ -1,58 +1,60 @@
 
 import React from 'react';
-import { CommandSeparator, CommandGroup, CommandItem } from '@/components/ui/command';
+import { CommandGroup, CommandItem } from '@/components/ui/command';
 import { UserRoleType } from '@/types/auth';
-import { Shield, User } from 'lucide-react';
+import { getRoleIcon, getRoleName, getRoleBadgeColor } from './roleUtils';
+import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getRoleName } from './roleUtils';
+import { Badge } from '@/components/ui/badge';
 
 interface QuickRoleSelectorProps {
   effectiveRole: string;
   handleSwitchRole: (role: UserRoleType) => void;
-  handleClose: () => void;
   availableRoles?: UserRoleType[];
 }
 
-export const QuickRoleSelector: React.FC<QuickRoleSelectorProps> = ({
-  effectiveRole,
+export const QuickRoleSelector: React.FC<QuickRoleSelectorProps> = ({ 
+  effectiveRole, 
   handleSwitchRole,
-  handleClose,
-  availableRoles = ['admin', 'instructor', 'student', 'moderator', 'content_creator']
+  availableRoles = ['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest'],
 }) => {
-  // Filter out current role
-  const roleOptions = availableRoles.filter(role => role !== effectiveRole);
-
-  if (roleOptions.length === 0) {
-    return null;
-  }
-
   return (
-    <>
-      <CommandGroup heading="Cambiar a rol">
-        {roleOptions.map((role) => (
-          <CommandItem
-            key={role}
-            onSelect={() => {
-              handleSwitchRole(role);
-              handleClose();
-            }}
-            className="flex items-center gap-3 py-3 px-3 cursor-pointer"
-          >
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              {role === 'admin' ? (
-                <Shield className="h-4 w-4 text-primary" />
-              ) : (
-                <User className="h-4 w-4 text-primary" />
+    <CommandGroup heading="Roles disponibles" className="pb-2">
+      <div className="grid grid-cols-2 gap-1.5 p-2">
+        {availableRoles.map((role) => {
+          const isActive = role === effectiveRole;
+          
+          return (
+            <CommandItem
+              key={role}
+              onSelect={() => handleSwitchRole(role as UserRoleType)}
+              className={cn(
+                "flex items-center gap-2 text-sm py-2 px-3 rounded-md",
+                "transition-all duration-200 border",
+                isActive 
+                  ? "bg-primary/10 border-primary/20" 
+                  : "hover:bg-accent/20 border-transparent hover:border-accent/10"
               )}
-            </div>
-            <div className="flex flex-col">
-              <span className="font-medium">{role}</span>
-              <span className="text-xs text-muted-foreground">{getRoleName(role)}</span>
-            </div>
-          </CommandItem>
-        ))}
-      </CommandGroup>
-      <CommandSeparator className="my-2" />
-    </>
+            >
+              <div className="flex items-center gap-2 flex-1">
+                <span className={cn(
+                  "flex-shrink-0 w-4 h-4",
+                  isActive ? "text-primary" : "text-muted-foreground"
+                )}>
+                  {getRoleIcon(role)}
+                </span>
+                <span className={cn(
+                  "text-xs font-medium",
+                  isActive && "font-semibold text-primary"
+                )}>
+                  {getRoleName(role)}
+                </span>
+              </div>
+              {isActive && <Check className="h-3.5 w-3.5 text-primary" />}
+            </CommandItem>
+          );
+        })}
+      </div>
+    </CommandGroup>
   );
 };

@@ -30,12 +30,10 @@ export const ResetRoleOption: React.FC<ResetRoleOptionProps> = ({
             resetToOriginalRole();
             handleClose();
           }}
-          className="flex items-center gap-3 text-red-600 dark:text-red-400 py-3 px-3 rounded-md cursor-pointer"
+          className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 my-1 px-3 py-2.5 rounded-md"
         >
-          <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-            <RotateCcw className="h-4 w-4 text-red-600 dark:text-red-400" />
-          </div>
-          <span className="font-medium">Cerrar Sesión</span>
+          <RotateCcw className="h-4 w-4" />
+          <span className="font-medium">Volver a mi rol original: {getRoleName(userRole || '')}</span>
         </CommandItem>
       </CommandGroup>
     </>
