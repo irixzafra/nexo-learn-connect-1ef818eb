@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import NotFound from '@/pages/NotFound';
@@ -38,6 +39,7 @@ import UserAnalytics from '@/pages/admin/UserAnalytics';
 import CourseAnalytics from '@/pages/admin/analytics/CourseAnalytics';
 import RevenueAnalytics from '@/pages/admin/analytics/RevenueAnalytics';
 import AIServicesPage from '@/pages/admin/ai/AIServicesPage';
+import AIAdvancedServicesPage from '@/pages/admin/ai/AIAdvancedServicesPage';
 import TestDataManagement from '@/pages/admin/TestDataManagement';
 import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminDashboard from '@/pages/admin/Dashboard';
@@ -45,6 +47,7 @@ import PagesManagement from '@/pages/admin/settings/pages';
 import OrphanReviewPage from '@/pages/admin/OrphanReviewPage';
 import NavigationDiagram from '@/pages/admin/NavigationDiagram';
 import NavigationExplorer from '@/pages/admin/navigation/NavigationExplorer';
+import SeoSettingsPage from '@/pages/admin/settings/SeoSettingsPage';
 
 // Import instructor pages
 import InstructorDashboard from '@/pages/instructor/Dashboard';
@@ -107,6 +110,7 @@ const AppRoutes: React.FC = () => {
         <Route path="settings/pages" element={<PagesManagement />} />
         <Route path="settings/analytics" element={<AnalyticsSettingsPage />} />
         <Route path="settings/roles" element={<RolesAndPermissions />} />
+        <Route path="settings/seo" element={<SafeRouteWrapper requiredRole={['admin']}><SeoSettingsPage /></SafeRouteWrapper>} />
         
         {/* --- Rutas Course --- */}
         <Route path="course" element={<CourseCatalog />} />
@@ -128,6 +132,7 @@ const AppRoutes: React.FC = () => {
         <Route path="admin/analytics/courses" element={<SafeRouteWrapper requiredRole={['admin']}><CourseAnalytics /></SafeRouteWrapper>} />
         <Route path="admin/analytics/revenue" element={<SafeRouteWrapper requiredRole={['admin']}><RevenueAnalytics /></SafeRouteWrapper>} />
         <Route path="admin/ai-services" element={<SafeRouteWrapper requiredRole={['admin']}><AIServicesPage /></SafeRouteWrapper>} />
+        <Route path="admin/ai-advanced" element={<SafeRouteWrapper requiredRole={['admin']}><AIAdvancedServicesPage /></SafeRouteWrapper>} />
         <Route path="admin/test-data" element={<SafeRouteWrapper requiredRole={['admin']}><TestDataManagement /></SafeRouteWrapper>} />
         <Route path="admin/access-control" element={<SafeRouteWrapper requiredRole={['admin']}><AccessControl /></SafeRouteWrapper>} />
         <Route path="admin/system-pages" element={<SafeRouteWrapper requiredRole={['admin']}><PagesManagement /></SafeRouteWrapper>} />

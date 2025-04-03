@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Shield, Users, BookOpen, FileText, PanelLeft, Palette, Navigation } from 'lucide-react';
+import { Shield, Users, BookOpen, FileText, PanelLeft, Palette, Navigation, Search, Brain, Wand2 } from 'lucide-react';
 import MenuItem from '@/components/layout/sidebar/navigation/common/MenuItem';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { UserRoleType } from '@/types/auth';
@@ -68,6 +68,24 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({
             to="/admin/navigation-diagram"
             icon={Navigation}
             label="Diagrama de Navegación" 
+            isCollapsed={isCollapsed}
+          />
+          <MenuItem
+            to="/settings/seo"
+            icon={Search}
+            label="Configuración SEO" 
+            isCollapsed={isCollapsed}
+          />
+          <MenuItem
+            to="/admin/ai-services"
+            icon={Brain}
+            label="IA Básica" 
+            isCollapsed={isCollapsed}
+          />
+          <MenuItem
+            to="/admin/ai-advanced"
+            icon={Wand2}
+            label="IA Avanzada" 
             isCollapsed={isCollapsed}
           />
           {isSistemas && (
