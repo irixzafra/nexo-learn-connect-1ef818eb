@@ -13,7 +13,6 @@ Cada módulo tiene su propio subdirectorio con documentación detallada:
 - [👥 Users](users/README.md): Gestión de usuarios
 - [📃 Pages](pages/README.md): Sistema de páginas
 - [💬 Community](community/README.md): Funcionalidades de comunidad
-- [🧭 Navigation](navigation/README.md): Sistema de navegación y enlaces
 
 ## Convenciones de Documentación
 
@@ -33,24 +32,6 @@ Para cada módulo, documentamos:
 - **Diseñadores**: Revisa los componentes disponibles y sus variantes
 - **QA**: Usa esta documentación para verificar la conformidad con los requisitos
 
-## Sistema de Navegación
-
-El sistema de navegación de Nexo Learning está compuesto por varios componentes interrelacionados:
-
-- **Rutas**: Definidas centralmente en `routeUtils.ts`
-- **Enlaces**: Componentes como `SafeLink`, `NavigationLink` y `LocalizedLink`
-- **Validación**: Utilidades para validar y monitorear enlaces
-- **Redirección**: Sistema para gestionar redirecciones y URLs obsoletas
-
-### Estado Actual de Navegación
-
-- ✅ **Sistema de rutas centralizadas**: Implementado a través de `routeMap`
-- ✅ **Componentes de enlace seguros**: Implementados (`SafeLink`, etc.)
-- 🚧 **Validación de rutas**: En desarrollo, parcialmente funcional
-- 🚧 **Monitoreo de enlaces rotos**: Herramientas básicas implementadas
-- ⏱️ **Sistema de redirecciones**: Pendiente
-- ⏱️ **Breadcrumbs dinámicos**: Pendiente
-
 ## Cómo Contribuir
 
 Para actualizar la documentación de un módulo:
@@ -62,4 +43,3 @@ Para actualizar la documentación de un módulo:
 ---
 
 **Nota**: Esta documentación debe mantenerse actualizada junto con el código. Cualquier cambio significativo en un módulo debe reflejarse en su documentación.
-
