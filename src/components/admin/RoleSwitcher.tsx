@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
@@ -39,18 +38,19 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ className }) => {
     effectiveRole,
     simulatedRole,
     isViewingAsOtherRole,
-    userRoleType: typeof userRole
+    userRoleType: typeof userRole,
+    userRoleExactValue: JSON.stringify(userRole),
+    typeCast: toUserRoleType(userRole as string)
   });
   
-  // Convertir el userRole a un tipo seguro
-  const actualUserRole = toUserRoleType(userRole as string);
-  
-  // Solo los administradores pueden cambiar roles
-  if (actualUserRole !== 'admin') {
-    console.log('>>> DEBUG RoleSwitcher: User is not admin, not rendering component. Role:', actualUserRole);
+  // Importante: Solo renderizar si el usuario es admin
+  if (userRole !== 'admin') {
+    console.log(`>>> DEBUG RoleSwitcher: NOT rendering - userRole is "${userRole}" (type: ${typeof userRole}), not "admin"`);
     return null;
   }
 
+  console.log(`>>> DEBUG RoleSwitcher: IS rendering - userRole IS "admin" (${userRole})`);
+  
   // Función para buscar usuarios (debounced)
   const searchUsers = async (term: string) => {
     if (term.length < 2) {
@@ -153,8 +153,6 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ className }) => {
 
   // Roles disponibles para vista previa
   const availableRoles: UserRoleType[] = ['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest', 'anonimo'];
-  
-  console.log('>>> DEBUG RoleSwitcher: Rendering component with userRole:', userRole);
   
   return (
     <Tooltip>
@@ -269,6 +267,52 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ className }) => {
 
 // Helper function outside the component to avoid recreating it on every render
 function getRoleLabelFunction(role: UserRoleType): string {
+  switch (role) {
+    case 'admin':
+      return 'Administrador';
+    case 'instructor':
+      return 'Instructor';
+    case 'student':
+      return 'Estudiante';
+    case 'sistemas':
+      return 'Sistemas';
+    case 'moderator':
+      return 'Moderador';
+    case 'content_creator':
+      return 'Creador de Contenido';
+    case 'guest':
+      return 'Invitado';
+    case 'anonimo':
+      return 'Anónimo';
+    default:
+      return role;
+  }
+}
+
+// Function to get the appropriate icon for a role
+function getRoleIcon(role: UserRoleType) {
+  switch (role) {
+    case 'admin':
+      return <Shield className="h-4 w-4" />;
+    case 'instructor':
+      return <BookOpen className="h-4 w-4 text-amber-500" />;
+    case 'sistemas':
+      return <Terminal className="h-4 w-4 text-blue-500" />;
+    case 'moderator':
+      return <Users className="h-4 w-4 text-purple-500" />;
+    case 'content_creator':
+      return <Lightbulb className="h-4 w-4 text-yellow-500" />;
+    case 'anonimo':
+    case 'guest':
+      return <Ghost className="h-4 w-4" />;
+    case 'student':
+    default:
+      return <GraduationCap className="h-4 w-4 text-emerald-500" />;
+  }
+}
+
+// Function to get a human-readable label for a role
+function getRoleLabel(role: UserRoleType) {
   switch (role) {
     case 'admin':
       return 'Administrador';

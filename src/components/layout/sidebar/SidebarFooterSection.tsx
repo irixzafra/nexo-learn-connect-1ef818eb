@@ -47,25 +47,35 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
     effectiveRole,
     isViewingAsOtherRole,
     isRoleSwitcherVisible: userRole === 'admin',
-    userRoleType: typeof userRole
+    userRoleType: typeof userRole,
+    userRoleExactValue: JSON.stringify(userRole)
   });
+
+  // Verificamos explícitamente si el rol es exactamente 'admin'
+  const showRoleSwitcher = userRole === 'admin';
+  
+  console.log('>>> DEBUG SidebarFooterSection: shouldShowRoleSwitcher?', showRoleSwitcher);
 
   return (
     <div className="mt-auto pt-2">
       {/* Add RoleSwitcher for admin users */}
-      {userRole === 'admin' && (
-        <div className={cn(
-          "px-3 pb-3 border-b border-border",
-          isCollapsed ? "flex justify-center" : ""
-        )}>
+      <div className={cn(
+        "px-3 pb-3 border-b border-border",
+        isCollapsed ? "flex justify-center" : ""
+      )}>
+        {showRoleSwitcher ? (
           <RoleSwitcher 
             className={cn(
               "w-full",
               isCollapsed ? "scale-75" : ""
             )}
           />
-        </div>
-      )}
+        ) : (
+          <div className="text-xs text-muted-foreground py-2">
+            Role: {userRole}
+          </div>
+        )}
+      </div>
       
       <div className={cn(
         "flex items-center",

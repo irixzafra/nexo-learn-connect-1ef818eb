@@ -1,3 +1,4 @@
+
 export type UserRoleType = 
   | 'admin' 
   | 'student' 
@@ -40,29 +41,44 @@ export interface UserProfile {
 }
 
 export function toUserRoleType(role: string): UserRoleType {
-  switch (role) {
+  if (!role) return 'student';
+  
+  // Normalize string to avoid case issues
+  const normalizedRole = String(role).toLowerCase().trim();
+  
+  switch (normalizedRole) {
     case 'admin':
       return 'admin';
     case 'instructor':
       return 'instructor';
     case 'student':
-    case 'guest':
       return 'student';
+    case 'guest':
+      return 'guest';
     case 'sistemas':
+      return 'sistemas';
     case 'moderator':
+      return 'moderator';
     case 'content_creator':
+      return 'content_creator';
     case 'beta_tester':
+      return 'beta_tester';
     case 'anonimo':
-      // Keep legacy roles as-is for now to avoid breaking existing code
-      return role as UserRoleType;
+      return 'anonimo';
     default:
+      console.warn(`Unknown role type: "${role}", defaulting to student`);
       return 'student';
   }
 }
 
 export function asUserRoleType(role: string): UserRoleType | null {
-  if (['admin', 'student', 'instructor', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester', 'anonimo'].includes(role)) {
-    return role as UserRoleType;
+  if (!role) return null;
+  
+  // Normalize the role to lowercase and trim whitespace
+  const normalizedRole = String(role).toLowerCase().trim();
+  
+  if (['admin', 'student', 'instructor', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester', 'anonimo'].includes(normalizedRole)) {
+    return normalizedRole as UserRoleType;
   }
   return null;
 }

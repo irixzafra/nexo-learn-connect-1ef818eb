@@ -5,14 +5,25 @@ import AppLayout from '@/layouts/AppLayout';
 import RoleDebugger from '@/components/layout/RoleDebugger';
 
 const Dashboard: React.FC = () => {
-  const { userRole, effectiveRole } = useAuth();
+  const { userRole, effectiveRole, user, forceUpdateRole } = useAuth();
   
   console.log('Dashboard - Current roles:', { 
     userRole, 
     effectiveRole,
     userRoleType: typeof userRole,
-    effectiveRoleType: typeof effectiveRole
+    effectiveRoleType: typeof effectiveRole,
+    userRoleExactValue: JSON.stringify(userRole),
+    userObject: user
   });
+
+  const handleDirectForceAdmin = async () => {
+    console.log('Dashboard: Forcing admin role directly');
+    if (user?.email) {
+      await forceUpdateRole(user.email, 'admin');
+    } else {
+      await forceUpdateRole('admin@nexo.com', 'admin');
+    }
+  };
 
   return (
     <AppLayout>
@@ -28,6 +39,16 @@ const Dashboard: React.FC = () => {
             <p>Este es tu panel de control personalizado.</p>
             <p className="mt-2">Tu rol actual es: <strong>{effectiveRole}</strong></p>
             <p className="mt-2">Tipo de rol: <strong>{typeof userRole}</strong></p>
+            <p className="mt-2">Valor exacto del rol: <strong>"{userRole}"</strong></p>
+            
+            <div className="mt-4">
+              <button 
+                onClick={handleDirectForceAdmin}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Forzar rol admin directamente
+              </button>
+            </div>
           </div>
           
           {/* You can add more dashboard cards here */}

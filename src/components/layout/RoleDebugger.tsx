@@ -17,10 +17,13 @@ export const RoleDebugger: React.FC = () => {
 
   const handleForceAdmin = async () => {
     if (user?.email) {
+      console.log('>>> DEBUG RoleDebugger: Forcing admin role for', user.email);
       await forceUpdateRole(user.email, 'admin');
     } else if (userProfile?.email) {
+      console.log('>>> DEBUG RoleDebugger: Forcing admin role for profile email', userProfile.email);
       await forceUpdateRole(userProfile.email, 'admin');
     } else {
+      console.log('>>> DEBUG RoleDebugger: Forcing admin role for default email admin@nexo.com');
       await forceUpdateRole('admin@nexo.com', 'admin');
     }
   };
@@ -38,11 +41,12 @@ export const RoleDebugger: React.FC = () => {
           <div><strong>User Email:</strong> {user?.email || 'Not logged in'}</div>
           <div><strong>User ID:</strong> {user?.id || 'None'}</div>
           <div><strong>User Role:</strong> {userRole || 'None'}</div>
+          <div><strong>User Role Type:</strong> {typeof userRole}</div>
+          <div><strong>User Role (Exact Value):</strong> "{userRole}"</div>
           <div><strong>Effective Role:</strong> {effectiveRole || 'None'}</div>
           <div><strong>Is Viewing As Other:</strong> {isViewingAsOtherRole ? 'Yes' : 'No'}</div>
           <div><strong>Profile ID:</strong> {userProfile?.id || 'None'}</div>
           <div><strong>Profile Role:</strong> {userProfile?.role || 'None'}</div>
-          <div><strong>Type of userRole:</strong> {typeof userRole}</div>
         </div>
         <div className="mt-2 flex flex-col gap-2">
           <Button 

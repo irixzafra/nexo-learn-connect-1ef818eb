@@ -73,6 +73,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isViewingAsOtherRole = simulatedRole !== null;
   const isAuthenticated = !!session && !!user;
 
+  // Debug the state on each render
+  console.log('>>> DEBUG AuthProvider RENDER:', {
+    userRole,
+    effectiveRole,
+    isViewingAsOtherRole,
+    simulatedRole,
+    isAuthenticated,
+    userRoleType: typeof userRole,
+    userRoleExactValue: JSON.stringify(userRole),
+    userProfileRole: userProfile?.role,
+  });
+
   // Fetch user profile from database
   const fetchUserProfile = async (userId: string) => {
     try {
@@ -91,8 +103,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data) {
         console.log('Profile data received:', data);
         setUserProfile(data as UserProfile);
-        setUserRole(toUserRoleType(data.role || 'student'));
-        console.log('User role set to:', data.role);
+        
+        // Ensure role is properly formatted (all lowercase)
+        const normalizedRole = data.role ? String(data.role).toLowerCase().trim() : 'student';
+        console.log(`Setting userRole to: "${normalizedRole}" (original: "${data.role}")`);
+        setUserRole(toUserRoleType(normalizedRole));
       }
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
@@ -104,7 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log(`Attempting to force update role for ${email} to ${roleToSet}`);
       
-      // First try to find the user by email in auth.users
+      // First try to find the user by email in profiles table
       const { data: userData, error: userError } = await supabase
         .from('profiles')
         .select('id, email, role')
@@ -113,6 +128,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (userError) {
         console.error('Error finding user by email:', userError);
+        
+        // If we couldn't find by email, let's try the current user
+        if (user) {
+          console.log('Attempting to update role for current user:', user.id);
+          
+          const { error: currentUserError } = await supabase
+            .from('profiles')
+            .update({ role: roleToSet })
+            .eq('id', user.id);
+            
+          if (currentUserError) {
+            console.error('Error updating role for current user:', currentUserError);
+            return { success: false, error: currentUserError.message };
+          }
+          
+          console.log(`Updated role to ${roleToSet} for current user`);
+          setUserRole(roleToSet);
+          setUserProfile(prev => prev ? { ...prev, role: roleToSet } : null);
+          return { success: true };
+        }
+        
         return { success: false, error: userError.message };
       }
       
@@ -162,7 +198,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(newSession?.user || null);
           
           // When user signs in, fetch their profile
-          if (newSession?.user && event === 'SIGNED_IN') {
+          if (newSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
             setTimeout(() => {
               fetchUserProfile(newSession.user.id);
             }, 0);

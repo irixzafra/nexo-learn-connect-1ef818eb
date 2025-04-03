@@ -20,6 +20,14 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     forceUpdateRole
   } = useAuth();
 
+  console.log('>>> DEBUG SidebarFooter AUTH VALUES:', { 
+    userRole, 
+    effectiveRole, 
+    isViewingAsOtherRole,
+    userRoleType: typeof userRole,
+    userRoleExactValue: JSON.stringify(userRole),
+  });
+
   // Get role name function
   const getRoleName = (role: UserRoleType): string => {
     switch (role) {
