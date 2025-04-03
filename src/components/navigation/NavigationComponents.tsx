@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
@@ -24,7 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Palette, Layers, ChevronDown, Settings, LayoutDashboard } from "lucide-react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 export const ModernNavMenu: React.FC = () => {
   return (
