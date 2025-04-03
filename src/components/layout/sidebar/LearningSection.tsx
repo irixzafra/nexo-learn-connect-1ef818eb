@@ -17,9 +17,9 @@ export const LearningSection: React.FC<LearningSectionProps> = ({ expanded, onTo
       isExpanded={expanded} 
       onToggle={onToggle}
     >
-      <MenuItem to="/scholarships" icon={FileText} label="Becas" />
-      <MenuItem to="/profile" icon={UserCog} label="Mi Perfil" />
-      <MenuItem to="/settings" icon={Settings} label="Configuración" />
+      <MenuItem to="/app/scholarships" icon={FileText} label="Becas" />
+      <MenuItem to="/app/profile" icon={UserCog} label="Mi Perfil" />
+      <MenuItem to="/app/settings" icon={Settings} label="Configuración" />
     </SidebarGroup>
   );
 };

@@ -115,6 +115,30 @@ const AppRoutes: React.FC = () => {
         <Route path="course/:courseId/enroll" element={<CourseEnrollment />} />
         <Route path="course/:courseId/lesson/:lessonId" element={<LessonView />} />
         
+        {/* --- Rutas Student adicionales --- */}
+        <Route path="student/dashboard" element={<SafeRouteWrapper requiredRole={['student', 'admin']}><StudentDashboard /></SafeRouteWrapper>} />
+        <Route path="student/courses" element={<SafeRouteWrapper requiredRole={['student', 'admin']}><StudentMyCourses /></SafeRouteWrapper>} />
+        <Route path="student/learning-paths" element={<SafeRouteWrapper requiredRole={['student', 'admin']}><PlaceholderPage title="Rutas de Aprendizaje" subtitle="Explora rutas de aprendizaje diseñadas para tu desarrollo profesional" /></SafeRouteWrapper>} />
+        <Route path="student/achievements" element={<SafeRouteWrapper requiredRole={['student', 'admin']}><PlaceholderPage title="Logros y Certificados" subtitle="Visualiza tus logros y certificados obtenidos" /></SafeRouteWrapper>} />
+        <Route path="student/calendar" element={<SafeRouteWrapper requiredRole={['student', 'admin']}><PlaceholderPage title="Calendario Académico" subtitle="Gestiona tus eventos y fechas importantes" /></SafeRouteWrapper>} />
+        
+        {/* --- Rutas adicionales de aprendizaje --- */}
+        <Route path="learning-paths" element={<SafeRouteWrapper requiredRole={['student', 'instructor', 'admin']}><PlaceholderPage title="Rutas de Aprendizaje" subtitle="Explora rutas de aprendizaje personalizadas" /></SafeRouteWrapper>} />
+        <Route path="certificates" element={<SafeRouteWrapper requiredRole={['student', 'instructor', 'admin']}><PlaceholderPage title="Certificados" subtitle="Gestiona tus certificados obtenidos" /></SafeRouteWrapper>} />
+        <Route path="achievements" element={<SafeRouteWrapper requiredRole={['student', 'admin']}><PlaceholderPage title="Logros" subtitle="Visualiza tus logros en la plataforma" /></SafeRouteWrapper>} />
+        <Route path="leaderboard" element={<SafeRouteWrapper requiredRole={['student', 'admin']}><PlaceholderPage title="Tabla de Posiciones" subtitle="Compara tu rendimiento con otros estudiantes" /></SafeRouteWrapper>} />
+        <Route path="challenges" element={<SafeRouteWrapper requiredRole={['student', 'admin']}><PlaceholderPage title="Desafíos" subtitle="Participa en desafíos para mejorar tus habilidades" /></SafeRouteWrapper>} />
+        <Route path="calendar" element={<SafeRouteWrapper requiredRole={['student', 'instructor', 'admin']}><PlaceholderPage title="Calendario" subtitle="Gestiona tus eventos y fechas importantes" /></SafeRouteWrapper>} />
+        <Route path="help" element={<SafeRouteWrapper requiredRole={['student', 'instructor', 'admin']}><PlaceholderPage title="Ayuda" subtitle="Centro de ayuda y soporte" /></SafeRouteWrapper>} />
+        <Route path="recommendations" element={<SafeRouteWrapper requiredRole={['student', 'instructor', 'admin']}><PlaceholderPage title="Recomendaciones" subtitle="Cursos y contenido recomendado para ti" /></SafeRouteWrapper>} />
+        <Route path="community" element={<SafeRouteWrapper requiredRole={['student', 'instructor', 'admin']}><PlaceholderPage title="Comunidad" subtitle="Conecta con otros estudiantes y profesores" /></SafeRouteWrapper>} />
+        <Route path="messages" element={<SafeRouteWrapper requiredRole={['student', 'instructor', 'admin']}><PlaceholderPage title="Mensajes" subtitle="Centro de mensajería interna" /></SafeRouteWrapper>} />
+        <Route path="notifications" element={<SafeRouteWrapper requiredRole={['student', 'instructor', 'admin']}><PlaceholderPage title="Notificaciones" subtitle="Gestiona tus notificaciones" /></SafeRouteWrapper>} />
+        <Route path="preferences" element={<SafeRouteWrapper requiredRole={['student', 'instructor', 'admin']}><PlaceholderPage title="Preferencias" subtitle="Configura tus preferencias de aprendizaje" /></SafeRouteWrapper>} />
+        <Route path="analytics/personal" element={<SafeRouteWrapper requiredRole={['student', 'instructor', 'admin']}><PlaceholderPage title="Analíticas Personales" subtitle="Visualiza tu progreso y estadísticas" /></SafeRouteWrapper>} />
+        <Route path="my-courses/in-progress" element={<SafeRouteWrapper requiredRole={['student', 'admin']}><PlaceholderPage title="Cursos en Progreso" subtitle="Tus cursos actuales" /></SafeRouteWrapper>} />
+        <Route path="my-courses/completed" element={<SafeRouteWrapper requiredRole={['student', 'admin']}><PlaceholderPage title="Cursos Completados" subtitle="Cursos que has finalizado" /></SafeRouteWrapper>} />
+        
         {/* --- Rutas Admin (con wrapper individual) --- */}
         <Route path="admin" element={<SafeRouteWrapper requiredRole={['admin']}><AdminDashboard /></SafeRouteWrapper>} />
         <Route path="admin/dashboard" element={<SafeRouteWrapper requiredRole={['admin']}><AdminDashboard /></SafeRouteWrapper>} />
