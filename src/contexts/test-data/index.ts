@@ -30,14 +30,16 @@ export const TestDataProvider = ({ children }: { children: ReactNode }) => {
     setTestDataState(prev => ({ ...prev, [key]: value }));
   };
 
+  const contextValue = {
+    isTestMode, 
+    enableTestMode, 
+    disableTestMode, 
+    testData, 
+    setTestData
+  };
+
   return (
-    <TestDataContext.Provider value={{ 
-      isTestMode, 
-      enableTestMode, 
-      disableTestMode, 
-      testData, 
-      setTestData 
-    }}>
+    <TestDataContext.Provider value={contextValue}>
       {children}
     </TestDataContext.Provider>
   );

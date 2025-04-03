@@ -43,8 +43,16 @@ export const FeaturesProvider = ({ children }: { children: ReactNode }) => {
     setFeatures((prev) => ({ ...prev, [featureName]: !prev[featureName] }));
   };
 
+  const contextValue = { 
+    features, 
+    isEnabled, 
+    enableFeature, 
+    disableFeature, 
+    toggleFeature 
+  };
+
   return (
-    <FeaturesContext.Provider value={{ features, isEnabled, enableFeature, disableFeature, toggleFeature }}>
+    <FeaturesContext.Provider value={contextValue}>
       {children}
     </FeaturesContext.Provider>
   );
