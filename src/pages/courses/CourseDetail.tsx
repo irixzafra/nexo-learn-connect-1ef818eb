@@ -20,15 +20,17 @@ import {
 
 const CourseDetail: React.FC = () => {
   const { courseId, slug } = useParams<{ courseId?: string; slug?: string }>();
+  console.log('➡️ CourseDetail: Rendering with params:', { courseId, slug });
   const navigate = useNavigate();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  console.log('➡️ CourseDetail: Initial state set');
   
   // Determine if we're using ID or slug
   const usingSlug = !courseId && !!slug;
   
   // Fetch course details
-  const { data: course, isLoading } = useQuery({
+  const { data: course, isLoading, error: queryError, status } = useQuery({
     queryKey: ['courseDetail', courseId || slug],
     queryFn: async () => {
       let query = supabase
@@ -63,8 +65,15 @@ const CourseDetail: React.FC = () => {
       }
       
       return data as Course;
+    },
+    onSuccess: (data) => {
+      console.log('➡️ CourseDetail Query SUCCESS:', data);
+    },
+    onError: (err) => {
+      console.error('❌ CourseDetail Query ERROR:', err);
     }
   });
+  console.log('➡️ CourseDetail Query State:', { isLoading, status, queryError, courseData: course });
   
   // Fetch enrollment status
   const { isEnrolled, isEnrolling, handleEnroll } = useEnrollment(course?.id || '');

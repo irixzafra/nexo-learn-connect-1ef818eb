@@ -21,15 +21,18 @@ export const CoursesList: React.FC<CoursesListProps> = ({ courses, isLoading = f
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {courses.map((course) => (
-        <Link 
-          key={course.id} 
-          to={`/app/course/${course.id}`}
-          className="transition-all hover:scale-[1.01]"
-        >
-          <CourseCard course={course} />
-        </Link>
-      ))}
+      {courses.map((course) => {
+        console.log('➡️ CoursesList: Rendering Link for course:', { id: course.id, title: course.title });
+        return (
+          <Link 
+            key={course.id} 
+            to={`/app/course/${course.id}`}
+            className="transition-all hover:scale-[1.01]"
+          >
+            <CourseCard course={course} />
+          </Link>
+        );
+      })}
     </div>
   );
 };
