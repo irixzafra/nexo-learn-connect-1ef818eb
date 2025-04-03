@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
@@ -64,10 +63,8 @@ const CoursesList: React.FC = () => {
   });
   
   const filteredCourses = courses?.filter(course => {
-    // Filter by search term
     const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Filter by tab
     if (activeTab === 'all') return matchesSearch;
     if (activeTab === 'published') return matchesSearch && course.is_published;
     if (activeTab === 'drafts') return matchesSearch && !course.is_published;
@@ -86,10 +83,8 @@ const CoursesList: React.FC = () => {
       
       if (error) throw error;
       
-      // Refresh courses list
       await refetch();
       
-      // Reset state
       setCourseToDelete(null);
     } catch (error) {
       console.error('Error deleting course:', error);
@@ -288,7 +283,6 @@ const CoursesList: React.FC = () => {
         </div>
       )}
       
-      {/* Delete Confirmation Dialog */}
       <Dialog open={!!courseToDelete} onOpenChange={(open) => !open && setCourseToDelete(null)}>
         <DialogContent>
           <DialogHeader>
