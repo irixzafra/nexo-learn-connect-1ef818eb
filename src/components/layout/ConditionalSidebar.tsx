@@ -40,7 +40,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   changeLanguage
 }) => {
   const { toggleSidebar } = useSidebar();
-  const { logout } = useAuth();
+  const { logout, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
 
   console.log('>>> DEBUG ConditionalSidebar:', {
     userRoleProp: userRole,
@@ -73,6 +73,8 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
         languages={languages}
         changeLanguage={changeLanguage}
         logout={logout}
+        isViewingAsOtherRole={isViewingAsOtherRole}
+        resetToOriginalRole={resetToOriginalRole}
       />
     </div>
   );

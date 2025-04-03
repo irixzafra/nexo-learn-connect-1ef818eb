@@ -1,12 +1,14 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { UserRoleType } from '@/types/auth';
-import { ModeToggle } from '@/components/ui/mode-toggle';
-import { PowerIcon, BellIcon, ShieldCheck } from 'lucide-react';
-import { LanguageSelector } from '@/components/LanguageSelector';
-import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, LogOut, User } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface SidebarFooterSectionProps {
   userRole: UserRoleType;
@@ -16,9 +18,10 @@ interface SidebarFooterSectionProps {
   getRoleName: (role: UserRoleType) => string;
   currentLanguage: string;
   languages: Array<{ code: string; name: string }>;
-  changeLanguage: (language: string) => void;
-  logout: () => void;
-  forceAdminRole?: () => void;
+  changeLanguage: (code: string) => void;
+  logout: () => Promise<void>;
+  isViewingAsOtherRole: boolean;
+  resetToOriginalRole: () => void;
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
@@ -31,100 +34,89 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   languages,
   changeLanguage,
   logout,
-  forceAdminRole
+  isViewingAsOtherRole,
+  resetToOriginalRole
 }) => {
-  const unreadNotifications = 3; // Example count - replace with actual state
-  
-  console.log('>>> DEBUG SidebarFooterSection RENDERING:', { 
-    userRole, 
-    effectiveRole,
-    userRoleType: typeof userRole,
-    userRoleExactValue: JSON.stringify(userRole)
-  });
+  // Language selector
+  const selectedLanguage = languages.find(lang => lang.code === currentLanguage) || languages[0];
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
+  if (isCollapsed) {
+    return (
+      <div className="mt-auto p-2 flex flex-col items-center space-y-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleLogout}
+          className="w-full h-8"
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
+        
+        {isViewingAsOtherRole && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={resetToOriginalRole}
+            className="w-full h-8 border-yellow-500"
+          >
+            <User className="h-4 w-4 text-yellow-500" />
+          </Button>
+        )}
+      </div>
+    );
+  }
 
   return (
-    <div className="mt-auto pt-2">
-      {/* User Role Information */}
-      <div className={cn(
-        "px-3 pb-3 border-b border-border",
-        isCollapsed ? "flex justify-center" : ""
-      )}>
-        <div className="text-xs text-muted-foreground py-2">
-          Role: {userRole}
-        </div>
-      </div>
-      
-      <div className={cn(
-        "flex items-center",
-        isCollapsed ? "justify-center space-y-4 flex-col" : "justify-between px-3 pb-2"
-      )}>
-        {/* User Menu - Always at the left (or centered when collapsed) */}
-        <div className={cn(
-          "flex items-center",
-          isCollapsed ? "flex-col space-y-3" : "space-x-2"
-        )}>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-full"
-            onClick={logout}
-          >
-            <PowerIcon className="h-4 w-4 text-muted-foreground" />
+    <div className="mt-auto p-2 space-y-2">
+      {/* Language Selector */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="w-full justify-between">
+            {selectedLanguage.name}
+            <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
-          
-          {/* Force admin role button - for debugging */}
-          {forceAdminRole && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded-full"
-                  onClick={forceAdminRole}
-                >
-                  <ShieldCheck className="h-4 w-4 text-red-500" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>Forzar rol admin</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          {languages.map((lang) => (
+            <DropdownMenuItem
+              key={lang.code}
+              onClick={() => changeLanguage(lang.code)}
+              className={currentLanguage === lang.code ? "bg-muted" : ""}
+            >
+              {lang.name}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Show viewing as badge and reset button if simulating a role */}
+      {isViewingAsOtherRole && (
+        <div className="bg-yellow-100 dark:bg-yellow-900 p-2 rounded-md text-xs flex justify-between items-center">
+          <span>Viendo como: <strong>{getRoleName(effectiveRole)}</strong></span>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={resetToOriginalRole}
+            className="h-6 text-xs"
+          >
+            Restablecer
+          </Button>
         </div>
-        
-        {/* Tools Group - Always aligned (right or centered when collapsed) */}
-        <div className={cn(
-          "flex items-center",
-          isCollapsed ? "flex-col space-y-3" : "space-x-2"
-        )}>
-          {/* Notifications Button */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-full relative"
-              >
-                <BellIcon className="h-4 w-4 text-muted-foreground" />
-                {unreadNotifications > 0 && (
-                  <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full flex items-center justify-center text-[8px] text-white">
-                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
-                  </span>
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>Notificaciones</p>
-            </TooltipContent>
-          </Tooltip>
-          
-          {/* Language Selector */}
-          <LanguageSelector variant={isCollapsed ? 'minimal' : 'icon'} />
-          
-          {/* Theme Toggle */}
-          <ModeToggle />
-        </div>
-      </div>
+      )}
+
+      {/* Logout Button */}
+      <Button 
+        variant="outline" 
+        onClick={handleLogout}
+        className="w-full"
+      >
+        <LogOut className="mr-2 h-4 w-4" />
+        Cerrar Sesión
+      </Button>
     </div>
   );
 };

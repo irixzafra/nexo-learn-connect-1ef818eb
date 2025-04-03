@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserRoleType, UserProfile, toUserRoleType } from '@/types/auth';
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
+import { toast } from '@/hooks/use-toast';
 
 export interface AuthContextType {
   isLoading: boolean;
@@ -13,13 +14,17 @@ export interface AuthContextType {
   userProfile: UserProfile | null;
   profile: UserProfile | null; // Adding alias for backward compatibility
   userRole: UserRoleType | null;
+  simulatedRole: UserRoleType | null;
   effectiveRole: UserRoleType | null;
+  isViewingAsOtherRole: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: any }>;
   logout: () => Promise<void>;
   signup: (email: string, password: string, userData?: Partial<UserProfile>) => Promise<{ success: boolean; error?: any }>;
   updateProfile: (profileData: Partial<UserProfile>) => Promise<{ success: boolean; error?: any }>;
   updatePassword: (password: string) => Promise<{ success: boolean; error?: any }>;
   forceUpdateRole: (email: string, roleToSet: UserRoleType) => Promise<{ success: boolean; error?: any }>;
+  setSimulatedRole: (role: UserRoleType | null) => void;
+  resetToOriginalRole: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -31,13 +36,17 @@ const AuthContext = createContext<AuthContextType>({
   userProfile: null,
   profile: null,
   userRole: null,
+  simulatedRole: null,
   effectiveRole: null,
+  isViewingAsOtherRole: false,
   login: async () => ({ success: false }),
   logout: async () => {},
   signup: async () => ({ success: false }),
   updateProfile: async () => ({ success: false }),
   updatePassword: async () => ({ success: false }),
   forceUpdateRole: async () => ({ success: false }),
+  setSimulatedRole: () => {},
+  resetToOriginalRole: () => {},
 });
 
 export const useAuth = () => {
@@ -55,20 +64,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userRole, setUserRole] = useState<UserRoleType | null>(null);
+  const [simulatedRole, setSimulatedRoleState] = useState<UserRoleType | null>(null);
 
-  // El rol efectivo ahora es simplemente el rol del usuario
-  const effectiveRole = userRole;
+  // Calculate derived values
+  const effectiveRole = simulatedRole || userRole;
+  const isViewingAsOtherRole = simulatedRole !== null;
   const isAuthenticated = !!session && !!user;
 
   // Debug the state on each render
   console.log('>>> DEBUG AuthProvider RENDER:', {
     userRole,
+    simulatedRole,
     effectiveRole,
+    isViewingAsOtherRole,
     isAuthenticated,
     userRoleType: typeof userRole,
     userRoleExactValue: JSON.stringify(userRole),
     userProfileRole: userProfile?.role,
   });
+
+  // Implementation of setSimulatedRole
+  const setSimulatedRole = (role: UserRoleType | null) => {
+    const currentRole = userRole; // Capture real role before changing
+    setSimulatedRoleState(role);
+    
+    // Simple persistence with 'viewAsRole' key
+    if (role) {
+      localStorage.setItem('viewAsRole', role);
+      toast({
+        title: "Vista cambiada",
+        description: `Ahora estás viendo como: ${role}`,
+      });
+    } else {
+      localStorage.removeItem('viewAsRole'); // Clean up when returning to original
+      if (currentRole) {
+        toast({
+          title: "Vista restablecida",
+          description: `Volviendo a tu rol original: ${currentRole}`,
+        });
+      }
+    }
+  };
+
+  // Implementation of resetToOriginalRole
+  const resetToOriginalRole = () => {
+    setSimulatedRole(null);
+  };
 
   // Fetch user profile from database
   const fetchUserProfile = async (userId: string) => {
@@ -193,6 +234,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (event === 'SIGNED_OUT') {
             setUserProfile(null);
             setUserRole(null);
+            setSimulatedRoleState(null);
+            localStorage.removeItem('viewAsRole');
           }
         }
       );
@@ -211,6 +254,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (existingSession?.user && existingSession.user.email === 'admin@nexo.com') {
         console.log('Found admin@nexo.com user, ensuring admin role');
         await forceUpdateRole('admin@nexo.com', 'admin');
+      }
+      
+      // Initialize simulated role from localStorage
+      try {
+        const storedRole = localStorage.getItem('viewAsRole');
+        // Ensure the stored role is valid before using it
+        if (storedRole && storedRole !== 'current') {
+          // Check if the stored role is a valid UserRoleType
+          if (['admin', 'student', 'instructor', 'sistemas', 'moderator', 
+               'content_creator', 'guest', 'beta_tester', 'anonimo'].includes(storedRole)) {
+            setSimulatedRoleState(toUserRoleType(storedRole));
+          } else {
+            // Clean up if invalid
+            localStorage.removeItem('viewAsRole');
+          }
+        }
+      } catch (error) {
+        console.error("Error reading simulated role from localStorage", error);
+        localStorage.removeItem('viewAsRole');
       }
       
       setIsLoading(false);
@@ -244,6 +306,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
+    // Clear simulated role before signing out
+    setSimulatedRoleState(null);
+    localStorage.removeItem('viewAsRole');
     await supabase.auth.signOut();
   };
 
@@ -334,13 +399,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     userProfile,
     profile: userProfile, // Add alias for backward compatibility
     userRole,
+    simulatedRole,
     effectiveRole,
+    isViewingAsOtherRole,
     login,
     logout,
     signup,
     updateProfile,
     updatePassword,
-    forceUpdateRole
+    forceUpdateRole,
+    setSimulatedRole,
+    resetToOriginalRole
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
