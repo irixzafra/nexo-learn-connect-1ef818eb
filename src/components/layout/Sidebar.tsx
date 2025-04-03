@@ -13,7 +13,8 @@ const Sidebar: React.FC = () => {
       className={cn(
         "fixed inset-y-0 left-0 z-30 w-64 transform border-r border-border transition-all duration-300 ease-in-out bg-background",
         "md:static md:translate-x-0",
-        isExpanded ? 'translate-x-0' : '-translate-x-full md:w-16'
+        isExpanded ? 'translate-x-0 shadow-md' : '-translate-x-full md:w-16',
+        "focus-within:outline-none focus-within:ring-0"
       )}
     >
       <div className="flex h-full flex-col">

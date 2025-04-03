@@ -50,7 +50,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   });
 
   return (
-    <div className="h-full flex flex-col py-4 bg-background border-r border-border">
+    <div className="h-full flex flex-col pb-2 bg-background border-r border-border">
       {/* Logo at the top with full title and subtitle */}
       <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
 
@@ -63,19 +63,21 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       />
       
       {/* Footer Section with Role Switcher and Language Selector */}
-      <SidebarFooterSection 
-        userRole={userRole}
-        effectiveRole={effectiveRole}
-        isCollapsed={isCollapsed}
-        currentViewRole={currentViewRole}
-        getRoleName={getRoleName}
-        currentLanguage={currentLanguage}
-        languages={languages}
-        changeLanguage={changeLanguage}
-        logout={logout}
-        isViewingAsOtherRole={isViewingAsOtherRole}
-        resetToOriginalRole={resetToOriginalRole}
-      />
+      <div className="mt-auto">
+        <SidebarFooterSection 
+          userRole={userRole}
+          effectiveRole={effectiveRole}
+          isCollapsed={isCollapsed}
+          currentViewRole={currentViewRole}
+          getRoleName={getRoleName}
+          currentLanguage={currentLanguage}
+          languages={languages}
+          changeLanguage={changeLanguage}
+          logout={logout}
+          isViewingAsOtherRole={isViewingAsOtherRole}
+          resetToOriginalRole={resetToOriginalRole}
+        />
+      </div>
     </div>
   );
 };

@@ -23,18 +23,18 @@ const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({
 
   return (
     <div className={cn(
-      "flex items-center justify-between",
-      isCollapsed ? "px-3 mb-4" : "px-4 mb-6"
+      "flex items-center justify-between mb-6 pt-4",
+      isCollapsed ? "px-3" : "px-4"
     )}>
-      <Link to="/" className="flex items-center gap-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          <span className="text-lg font-bold">N</span>
+      <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
+          <span className="text-base font-bold">N</span>
         </div>
         
         {!isCollapsed && (
           <div className="flex flex-col">
             <span className="font-bold leading-tight">Nexo</span>
-            <span className="text-xs text-muted-foreground">ecosistema creativo</span>
+            <span className="text-[11px] text-muted-foreground">ecosistema creativo</span>
           </div>
         )}
       </Link>
@@ -44,10 +44,10 @@ const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({
           variant="ghost" 
           size="icon" 
           onClick={handleToggle}
-          className="text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground hover:bg-muted/60 rounded-full h-8 w-8"
+          aria-label="Colapsar sidebar"
         >
           <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Colapsar menú</span>
         </Button>
       )}
     </div>

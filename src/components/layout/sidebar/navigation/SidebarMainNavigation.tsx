@@ -1,114 +1,162 @@
 
-import React from 'react';
-import { useAuth } from '@/contexts/auth';
+import React, { useState } from 'react';
+import { 
+  Home, 
+  LayoutDashboard, 
+  BookOpen, 
+  Users,
+  Shield,
+  Settings,
+  MessageSquare,
+  Bell
+} from 'lucide-react';
+import { SidebarMenu } from '@/components/ui/sidebar';
+import MenuItem from './common/MenuItem';
 import { UserRoleType } from '@/types/auth';
-import { useSidebarState } from '@/components/layout/sidebar/useSidebarState';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
-
-// Import specific navigation components
-import DashboardNavigation from './DashboardNavigation';
-import CursosNavigation from './CursosNavigation';
-import ComunidadNavigation from './ComunidadNavigation';
-import CalendarNavigation from './CalendarNavigation';
-import GamificationNavigation from './GamificationNavigation';
-import ConfiguracionNavigation from './ConfiguracionNavigation';
-
-// Import role-specific navigation components
-import EstudianteNavigation from './EstudianteNavigation';
-import InstructorNavigation from './InstructorNavigation';
-import AdminNavigation from './AdminNavigation';
-
-// Import home navigation
-import HomeNavigation from './HomeNavigation';
+import { SidebarGroup } from '../SidebarGroup';
 
 interface SidebarMainNavigationProps {
   effectiveRole: UserRoleType;
-  messagesCount: number;
-  notificationsCount: number;
+  messagesCount?: number;
+  notificationsCount?: number;
   getHomePath: () => string;
 }
 
 const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   effectiveRole,
-  messagesCount,
-  notificationsCount,
+  messagesCount = 0,
+  notificationsCount = 0,
   getHomePath
 }) => {
-  const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
-  const { expanded, toggleGroup } = useSidebarState();
+  // Expanded state for navigation groups
+  const [expandedGroups, setExpandedGroups] = useState({
+    dashboard: true,
+    courses: true,
+    community: false,
+    admin: effectiveRole === 'admin',
+    settings: false
+  });
 
-  // Memoize the home path to avoid recalculations
-  const homePath = React.useMemo(() => getHomePath(), [getHomePath]);
+  // Toggle function for expanding/collapsing groups
+  const toggleGroup = (group: keyof typeof expandedGroups) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [group]: !prev[group]
+    }));
+  };
 
   return (
-    <div className="flex-1 overflow-auto py-2">
-      {/* Home dashboard navigation for all roles */}
-      <HomeNavigation 
-        role={effectiveRole}
-        homePath={homePath}
-        isCollapsed={isCollapsed}
-        notificationsCount={notificationsCount}
-      />
-      
-      {/* Dashboard section for all roles */}
-      <DashboardNavigation 
-        isOpen={expanded.general} 
-        onToggle={() => toggleGroup('general')}
-      />
-      
-      {/* Courses section for all users */}
-      <CursosNavigation 
-        isOpen={expanded.learning} 
-        onToggle={() => toggleGroup('learning')} 
-      />
-      
-      {/* Role-specific navigation sections */}
-      {effectiveRole === 'student' && (
-        <EstudianteNavigation 
-          isOpen={expanded.learning} 
-          onToggle={() => toggleGroup('learning')}
+    <div className="px-1 space-y-1">
+      {/* Home link - always visible */}
+      <SidebarMenu>
+        <MenuItem 
+          to={getHomePath()}
+          icon={Home} 
+          label="Inicio" 
+          isCollapsed={false}
         />
-      )}
-      
-      {effectiveRole === 'instructor' && (
-        <InstructorNavigation 
-          isOpen={expanded.instructor} 
-          onToggle={() => toggleGroup('instructor')}
-        />
-      )}
-      
-      {effectiveRole === 'admin' && (
-        <AdminNavigation 
-          isOpen={expanded.administration} 
-          onToggle={() => toggleGroup('administration')}
-        />
-      )}
-      
-      {/* Community section for all roles */}
-      <ComunidadNavigation 
-        isOpen={expanded.community} 
+      </SidebarMenu>
+
+      {/* Dashboard Group */}
+      <SidebarGroup
+        label="Dashboard"
+        icon={LayoutDashboard}
+        isExpanded={expandedGroups.dashboard}
+        onToggle={() => toggleGroup('dashboard')}
+      >
+        <SidebarMenu>
+          <MenuItem
+            to="/app/dashboard"
+            icon={LayoutDashboard}
+            label="Panel Principal"
+            isCollapsed={false}
+          />
+        </SidebarMenu>
+      </SidebarGroup>
+
+      {/* Courses Group */}
+      <SidebarGroup
+        label="Cursos"
+        icon={BookOpen}
+        isExpanded={expandedGroups.courses}
+        onToggle={() => toggleGroup('courses')}
+      >
+        <SidebarMenu>
+          <MenuItem
+            to="/app/courses"
+            icon={BookOpen}
+            label="Mis Cursos"
+            isCollapsed={false}
+          />
+        </SidebarMenu>
+      </SidebarGroup>
+
+      {/* Community Group */}
+      <SidebarGroup
+        label="Comunidad"
+        icon={Users}
+        isExpanded={expandedGroups.community}
         onToggle={() => toggleGroup('community')}
-        messagesCount={messagesCount}
-      />
-      
-      {/* Calendar navigation for all roles */}
-      <CalendarNavigation 
-        isOpen={expanded.general} 
-        onToggle={() => toggleGroup('general')}
-      />
-      
-      {/* Gamification for all roles */}
-      <GamificationNavigation 
-        isOpen={expanded.community} 
-        onToggle={() => toggleGroup('community')}
-      />
-      
-      {/* Configuration for all roles */}
-      <ConfiguracionNavigation 
-        isOpen={expanded.configuration} 
-        onToggle={() => toggleGroup('configuration')}
-      />
+      >
+        <SidebarMenu>
+          <MenuItem
+            to="/app/messages"
+            icon={MessageSquare}
+            label="Mensajes"
+            badge={messagesCount}
+            isCollapsed={false}
+          />
+          <MenuItem
+            to="/app/notifications"
+            icon={Bell}
+            label="Notificaciones"
+            badge={notificationsCount}
+            isCollapsed={false}
+          />
+        </SidebarMenu>
+      </SidebarGroup>
+
+      {/* Admin Group - only for admin role */}
+      {(effectiveRole === 'admin' || effectiveRole === 'sistemas') && (
+        <SidebarGroup
+          label="Administración"
+          icon={Shield}
+          isExpanded={expandedGroups.admin}
+          onToggle={() => toggleGroup('admin')}
+        >
+          <SidebarMenu>
+            <MenuItem
+              to="/app/admin/dashboard"
+              icon={Shield}
+              label="Panel Admin"
+              isCollapsed={false}
+            />
+            <MenuItem
+              to="/app/admin/users"
+              icon={Users}
+              label="Usuarios"
+              isCollapsed={false}
+            />
+          </SidebarMenu>
+        </SidebarGroup>
+      )}
+
+      {/* Settings Group */}
+      <SidebarGroup
+        label="Configuración"
+        icon={Settings}
+        isExpanded={expandedGroups.settings}
+        onToggle={() => toggleGroup('settings')}
+      >
+        <SidebarMenu>
+          <MenuItem
+            to="/app/settings"
+            icon={Settings}
+            label="Configuración"
+            isCollapsed={false}
+          />
+        </SidebarMenu>
+      </SidebarGroup>
     </div>
   );
 };

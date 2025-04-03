@@ -10,18 +10,18 @@ const SidebarContent: React.FC = () => {
   const isCollapsed = state === "collapsed";
 
   return (
-    <div className="flex h-full flex-col py-4">
+    <div className="flex h-full flex-col py-2">
       <SidebarLogoSection />
-      <div className="flex-1 overflow-y-auto py-2 px-3">
+      <div className="flex-1 overflow-y-auto py-2 px-2">
         <SidebarNavigation isCollapsed={isCollapsed} />
       </div>
-      {/* --- INDICADOR DEBUG TEMPORAL --- */}
+      
       {process.env.NODE_ENV === 'development' && (
-        <div style={{ color: 'lime', fontWeight: 'bold', padding: '5px' }}>
-          !!! SidebarContent Rendering Footer !!!
+        <div className="text-xs text-green-500 font-medium px-3 py-1 mb-1 border-t border-dashed border-green-200/30">
+          SidebarContent rendering
         </div>
       )}
-      {/* --- FIN INDICADOR --- */}
+      
       <SidebarFooter isCollapsed={isCollapsed} />
     </div>
   );

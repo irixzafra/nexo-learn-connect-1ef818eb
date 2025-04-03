@@ -63,12 +63,13 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
 
   if (isCollapsed) {
     return (
-      <div className="mt-auto p-2 flex flex-col items-center space-y-2">
+      <div className="mt-auto p-3 flex flex-col items-center space-y-3">
         <Button
           variant="ghost"
           size="icon"
           onClick={handleLogout}
-          className="w-full h-8"
+          className="w-8 h-8 rounded-full hover:bg-destructive/10 hover:text-destructive"
+          aria-label="Cerrar sesión"
         >
           <LogOut className="h-4 w-4" />
         </Button>
@@ -77,21 +78,24 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   }
 
   return (
-    <div className="mt-auto p-2 space-y-2">
+    <div className="mt-auto p-3 space-y-2">
       {/* Language Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="w-full justify-between">
+          <Button variant="outline" className="w-full justify-between rounded-lg border-muted bg-transparent">
             {selectedLanguage.name}
             <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="w-full bg-popover shadow-md border border-border rounded-lg">
           {languages.map((lang) => (
             <DropdownMenuItem
               key={lang.code}
               onClick={() => changeLanguage(lang.code)}
-              className={currentLanguage === lang.code ? "bg-muted" : ""}
+              className={cn(
+                "px-3 py-2 text-sm cursor-pointer rounded-md transition-colors",
+                currentLanguage === lang.code ? "bg-muted font-medium" : "hover:bg-muted/50"
+              )}
             >
               {lang.name}
             </DropdownMenuItem>
@@ -103,7 +107,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
       <Button 
         variant="ghost" 
         onClick={handleTestRoleSimulation}
-        className="w-full text-xs"
+        className="w-full text-xs justify-start py-2 px-3 rounded-lg hover:bg-yellow-500/10 hover:text-yellow-600"
         title="Esto es solo para pruebas"
       >
         <ShieldAlert className="mr-2 h-4 w-4 text-yellow-500" />
@@ -114,7 +118,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
       <Button 
         variant="outline" 
         onClick={handleLogout}
-        className="w-full"
+        className="w-full rounded-lg py-2 border-muted bg-transparent hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20"
       >
         <LogOut className="mr-2 h-4 w-4" />
         Cerrar Sesión
