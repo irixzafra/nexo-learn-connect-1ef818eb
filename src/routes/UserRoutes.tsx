@@ -7,7 +7,6 @@ import CourseDetail from '@/pages/CourseDetail';
 import Courses from '@/pages/Courses';
 import ProtectedRouteWrapper from '@/components/ProtectedRouteWrapper';
 import NotFound from '@/pages/NotFound';
-import StudentInbox from '@/pages/student/Inbox';
 import MyCourses from '@/pages/student/MyCourses';
 import LessonView from '@/pages/student/LessonView';
 import CourseLearn from '@/pages/student/CourseLearn';
@@ -46,7 +45,7 @@ const UserRoutes = () => {
           path="inbox"
           element={
             <ProtectedRouteWrapper>
-              <StudentInbox />
+              <div>Inbox</div>
             </ProtectedRouteWrapper>
           }
         />

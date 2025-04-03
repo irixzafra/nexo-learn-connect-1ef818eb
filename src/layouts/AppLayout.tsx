@@ -3,7 +3,7 @@ import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
-import { useAuth } from '@/contexts/auth'; // Update import path
+import { useAuth } from '@/contexts/auth'; // Use the proper import path
 import { LogOut, Menu, X, Home, Palette, User, Shield, LayoutDashboard } from 'lucide-react';
 import {
   DropdownMenu,
