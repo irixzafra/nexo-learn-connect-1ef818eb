@@ -4,7 +4,7 @@ import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { FileText, Package, FileQuestion, AlertTriangle, Code, FolderOpen, Eye, Filter, BookOpen, FileX } from 'lucide-react';
+import { FileText, Package, FileQuestion, AlertTriangle, Code, FolderOpen, Eye, Filter, BookOpen, FileX, Plus } from 'lucide-react';
 import { StyledAccordion, StyledAccordionItem } from '@/components/ui/styled-accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -126,6 +126,44 @@ const ReviewElementsPage: React.FC = () => {
       ))}
     </div>
   );
+
+  // Función para obtener el nombre o título del elemento según su tipo
+  const getElementName = (element: ElementType): string => {
+    if (element.type === 'ui' || element.type === 'navigation') {
+      return element.name;
+    } else if (element.type === 'page' || element.type === 'orphan') {
+      return element.title;
+    }
+    return '';
+  };
+
+  // Función para obtener la descripción del elemento según su tipo
+  const getElementDescription = (element: ElementType): string | undefined => {
+    if (element.type === 'ui' || element.type === 'navigation') {
+      return element.description;
+    } else if (element.type === 'page') {
+      return element.description;
+    }
+    return undefined;
+  };
+
+  // Función para obtener la categoría del elemento según su tipo
+  const getElementCategory = (element: ElementType): string | undefined => {
+    if (element.type === 'ui' || element.type === 'navigation') {
+      return element.category;
+    } else if (element.type === 'page') {
+      return element.is_system_page ? 'Sistema' : 'Contenido';
+    }
+    return undefined;
+  };
+
+  // Función para obtener la ruta del elemento según su tipo
+  const getElementPath = (element: ElementType): string | undefined => {
+    if (element.type === 'ui' || element.type === 'navigation' || element.type === 'orphan') {
+      return element.path;
+    }
+    return undefined;
+  };
   
   return (
     <AdminPageLayout title="Revisión de Elementos">
@@ -471,9 +509,9 @@ const ReviewElementsPage: React.FC = () => {
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
         <DrawerContent className="max-h-[90vh]">
           <DrawerHeader>
-            <DrawerTitle>{selectedElement?.name || selectedElement?.title}</DrawerTitle>
+            <DrawerTitle>{getElementName(selectedElement!)}</DrawerTitle>
             <DrawerDescription>
-              {selectedElement?.description || 
+              {getElementDescription(selectedElement!) || 
                (selectedElement?.type === 'page' ? 'Página del sitio' : 
                 selectedElement?.type === 'orphan' ? 'Página huérfana' : 
                 'Componente del sistema')}
@@ -487,9 +525,8 @@ const ReviewElementsPage: React.FC = () => {
                   Tipo
                 </h4>
                 <p className="text-sm">
-                  {selectedElement?.category || 
-                   (selectedElement?.type === 'page' ? (selectedElement?.is_system_page ? 'Sistema' : 'Contenido') : 
-                    selectedElement?.type === 'orphan' ? 'Huérfana' : '')}
+                  {getElementCategory(selectedElement!) || 
+                   (selectedElement?.type === 'orphan' ? 'Huérfana' : '')}
                 </p>
               </div>
               <div>
@@ -502,13 +539,13 @@ const ReviewElementsPage: React.FC = () => {
                   {selectedElement?.status}
                 </Badge>
               </div>
-              {selectedElement?.path && (
+              {getElementPath(selectedElement!) && (
                 <div className="col-span-2">
                   <h4 className="text-sm font-medium text-muted-foreground mb-1">
                     Ruta
                   </h4>
                   <p className="text-sm font-mono bg-muted p-2 rounded">
-                    {selectedElement.path}
+                    {getElementPath(selectedElement!)}
                   </p>
                 </div>
               )}
