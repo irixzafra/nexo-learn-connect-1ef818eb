@@ -4,20 +4,17 @@ import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { FileText, Package, FileQuestion, AlertTriangle, Code, FolderOpen, Eye, Filter, BookOpen, FileX, Plus } from 'lucide-react';
-import { StyledAccordion, StyledAccordionItem } from '@/components/ui/styled-accordion';
+import { Package, FolderOpen, Code, FileText, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'sonner';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from '@/components/ui/drawer';
-import { Checkbox } from '@/components/ui/checkbox';
 import { SitePage } from '@/types/pages';
-import { toast } from 'sonner';
 import { 
   getUIComponents, 
   getNavigationComponents, 
@@ -30,9 +27,6 @@ import {
 
 // Simple component to render preview placeholders
 const ComponentPreview: React.FC<{componentPath: string}> = ({componentPath}) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  
   const getRelativePath = (path: string) => {
     // Simple function to format the path for display
     return path.startsWith('/') ? path.substring(1) : path;
@@ -62,7 +56,6 @@ const ReviewElementsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedElement, setSelectedElement] = useState<ElementType | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [filterCategory, setFilterCategory] = useState('all');
   
   // Estados para datos de la base de datos
   const [uiComponents, setUIComponents] = useState<UIComponent[]>([]);
@@ -95,11 +88,9 @@ const ReviewElementsPage: React.FC = () => {
           const data = await getSitePages();
           setSitePages(data);
           setLoadingPages(false);
-        } else if (activeTab === 'orphan-pages') {
-          setLoadingOrphan(true);
-          const data = await getOrphanPages();
-          setOrphanPages(data);
-          setLoadingOrphan(false);
+        } else if (activeTab === 'common-components') {
+          // Por ahora no cargamos datos para esta pestaña
+          // Esta sección cargaría datos de componentes comunes en el futuro
         }
       } catch (error) {
         console.error(`Error loading data for ${activeTab}:`, error);
@@ -178,31 +169,13 @@ const ReviewElementsPage: React.FC = () => {
       <div className="container mx-auto py-6">
         <h1 className="text-3xl font-bold mb-6">Revisión de Elementos</h1>
         
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center space-x-2">
-            <Input
-              placeholder="Buscar elementos..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-64"
-            />
-            <Select value={filterCategory} onValueChange={setFilterCategory}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Categoría" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas</SelectItem>
-                <SelectItem value="ui">Interfaz</SelectItem>
-                <SelectItem value="navigation">Navegación</SelectItem>
-                <SelectItem value="common">Comunes</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            Filtros avanzados
-          </Button>
+        <div className="mb-6">
+          <Input
+            placeholder="Buscar elementos..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="max-w-md"
+          />
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
@@ -221,11 +194,7 @@ const ReviewElementsPage: React.FC = () => {
             </TabsTrigger>
             <TabsTrigger value="site-pages" className="flex items-center">
               <FileText className="h-4 w-4 mr-2" />
-              Páginas del Sitio
-            </TabsTrigger>
-            <TabsTrigger value="orphan-pages" className="flex items-center">
-              <FileQuestion className="h-4 w-4 mr-2" />
-              Páginas Huérfanas
+              Páginas
             </TabsTrigger>
           </TabsList>
 
@@ -365,17 +334,12 @@ const ReviewElementsPage: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {/* Este tab podría usar otra tabla en el futuro o unificar con componentes UI */}
                 <div className="flex flex-col items-center justify-center p-8 text-center">
-                  <FileQuestion className="h-16 w-16 text-muted-foreground mb-4" />
+                  <Code className="h-16 w-16 text-muted-foreground mb-4" />
                   <h3 className="text-lg font-medium mb-2">No hay componentes comunes registrados</h3>
                   <p className="text-muted-foreground mb-4">
                     Los componentes comunes se mostrarán aquí una vez que sean registrados en el sistema.
                   </p>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Registrar componente común
-                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -385,7 +349,7 @@ const ReviewElementsPage: React.FC = () => {
           <TabsContent value="site-pages" className="space-y-4">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle>Páginas del Sitio</CardTitle>
+                <CardTitle>Páginas</CardTitle>
                 <CardDescription>
                   Páginas disponibles en el sitio web
                 </CardDescription>
@@ -432,71 +396,6 @@ const ReviewElementsPage: React.FC = () => {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleElementSelect({...page, type: 'page'});
-                              }}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Orphan Pages Tab */}
-          <TabsContent value="orphan-pages" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Páginas Huérfanas</CardTitle>
-                <CardDescription>
-                  Páginas sin referencias o enlaces en el sitio
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {loadingOrphan ? (
-                  renderLoadingSkeleton()
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[50px]">
-                          <Checkbox />
-                        </TableHead>
-                        <TableHead>Título</TableHead>
-                        <TableHead>Ruta</TableHead>
-                        <TableHead>Último acceso</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead className="text-right">Acciones</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {orphanPages.map((page) => (
-                        <TableRow 
-                          key={page.id} 
-                          className="cursor-pointer hover:bg-muted/50" 
-                          onClick={() => handleElementSelect({...page, type: 'orphan'})}
-                        >
-                          <TableCell>
-                            <Checkbox onClick={(e) => e.stopPropagation()} />
-                          </TableCell>
-                          <TableCell className="font-medium">{page.title}</TableCell>
-                          <TableCell>{page.path}</TableCell>
-                          <TableCell>{new Date(page.last_accessed).toLocaleDateString()}</TableCell>
-                          <TableCell>
-                            <Badge variant="warning">
-                              {page.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleElementSelect({...page, type: 'orphan'});
                               }}
                             >
                               <Eye className="h-4 w-4" />
@@ -604,9 +503,8 @@ const ReviewElementsPage: React.FC = () => {
                         }} />
                       </div>
                     ) : selectedElement.type === 'orphan' ? (
-                      <div className="flex flex-col items-center justify-center border rounded-md p-6 bg-background">
-                        <FileX className="h-12 w-12 text-muted-foreground mb-2" />
-                        <p className="text-muted-foreground">Esta página no tiene contenido disponible para previsualizar.</p>
+                      <div className="border rounded-md p-4 bg-background">
+                        <p className="text-muted-foreground text-center py-6">No hay vista previa disponible para esta página huérfana.</p>
                       </div>
                     ) : null}
                   </ErrorBoundary>
