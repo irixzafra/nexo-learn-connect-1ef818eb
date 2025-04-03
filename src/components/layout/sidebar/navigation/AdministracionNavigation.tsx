@@ -55,7 +55,7 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({
           <MenuItem
             to="/app/admin/system-pages"
             icon={FileText}
-            label="Páginas del Sistema"
+            label="Páginas"
             isCollapsed={isCollapsed}
           />
           <MenuItem
@@ -73,7 +73,7 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({
           <MenuItem
             to="/app/admin/review-elements"
             icon={ClipboardX}
-            label="Revisión Elementos" 
+            label="Revisar Componentes" 
             isCollapsed={isCollapsed}
           />
           {isSistemas && (

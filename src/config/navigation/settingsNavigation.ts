@@ -48,8 +48,8 @@ export const settingsNavigation: MenuItem[] = [
   },
   {
     icon: FileText,
-    label: 'Páginas',
-    path: '/app/admin/settings/pages',
+    label: 'Gestión de Páginas',
+    path: '/app/admin/system-pages',
     requiredRole: ['admin', 'sistemas', 'content_creator']
   },
   {

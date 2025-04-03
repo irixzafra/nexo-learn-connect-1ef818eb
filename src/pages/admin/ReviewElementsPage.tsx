@@ -4,7 +4,7 @@ import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Package, FolderOpen, Code, FileText, Eye } from 'lucide-react';
+import { Package, FolderOpen, Code } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,15 +14,11 @@ import { toast } from 'sonner';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from '@/components/ui/drawer';
-import { SitePage } from '@/types/pages';
 import { 
   getUIComponents, 
   getNavigationComponents, 
-  getSitePages, 
-  getOrphanPages,
   UIComponent,
-  NavigationComponent,
-  OrphanPage
+  NavigationComponent
 } from '@/features/admin/services/componentsService';
 
 // Simple component to render preview placeholders
@@ -47,9 +43,7 @@ const ComponentPreview: React.FC<{componentPath: string}> = ({componentPath}) =>
 // Tipo para los elementos seleccionados
 type ElementType = 
   | (UIComponent & { type: 'ui' })
-  | (NavigationComponent & { type: 'navigation' })
-  | (OrphanPage & { type: 'orphan' })
-  | (SitePage & { type: 'page' });
+  | (NavigationComponent & { type: 'navigation' });
 
 const ReviewElementsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('ui-components');
@@ -60,14 +54,10 @@ const ReviewElementsPage: React.FC = () => {
   // Estados para datos de la base de datos
   const [uiComponents, setUIComponents] = useState<UIComponent[]>([]);
   const [navComponents, setNavComponents] = useState<NavigationComponent[]>([]);
-  const [sitePages, setSitePages] = useState<SitePage[]>([]);
-  const [orphanPages, setOrphanPages] = useState<OrphanPage[]>([]);
   
   // Estados de carga
   const [loadingUI, setLoadingUI] = useState(false);
   const [loadingNav, setLoadingNav] = useState(false);
-  const [loadingPages, setLoadingPages] = useState(false);
-  const [loadingOrphan, setLoadingOrphan] = useState(false);
   
   // Cargar datos al iniciar o cambiar de pestaña
   useEffect(() => {
@@ -83,21 +73,6 @@ const ReviewElementsPage: React.FC = () => {
           const data = await getNavigationComponents();
           setNavComponents(data);
           setLoadingNav(false);
-        } else if (activeTab === 'site-pages') {
-          setLoadingPages(true);
-          setLoadingOrphan(true);
-          
-          // Cargamos tanto las páginas del sitio como las huérfanas
-          const [siteData, orphanData] = await Promise.all([
-            getSitePages(),
-            getOrphanPages()
-          ]);
-          
-          setSitePages(siteData);
-          setOrphanPages(orphanData);
-          
-          setLoadingPages(false);
-          setLoadingOrphan(false);
         } else if (activeTab === 'common-components') {
           // Por ahora no cargamos datos para esta pestaña
           // Esta sección cargaría datos de componentes comunes en el futuro
@@ -134,8 +109,6 @@ const ReviewElementsPage: React.FC = () => {
     
     if (element.type === 'ui' || element.type === 'navigation') {
       return element.name;
-    } else if (element.type === 'page' || element.type === 'orphan') {
-      return element.title;
     }
     return '';
   };
@@ -145,8 +118,6 @@ const ReviewElementsPage: React.FC = () => {
     if (!element) return undefined;
     
     if (element.type === 'ui' || element.type === 'navigation') {
-      return element.description;
-    } else if (element.type === 'page') {
       return element.description;
     }
     return undefined;
@@ -158,8 +129,6 @@ const ReviewElementsPage: React.FC = () => {
     
     if (element.type === 'ui' || element.type === 'navigation') {
       return element.category;
-    } else if (element.type === 'page') {
-      return element.is_system_page ? 'Sistema' : 'Contenido';
     }
     return undefined;
   };
@@ -168,42 +137,20 @@ const ReviewElementsPage: React.FC = () => {
   const getElementPath = (element: ElementType | null): string | undefined => {
     if (!element) return undefined;
     
-    if (element.type === 'ui' || element.type === 'navigation' || element.type === 'orphan') {
+    if (element.type === 'ui' || element.type === 'navigation') {
       return element.path;
     }
     return undefined;
   };
-
-  // Filtrar las páginas huérfanas para mostrarlas en la tabla
-  const filteredPages = () => {
-    const allPages: (SitePage | (OrphanPage & { type: 'orphan' }))[] = [
-      ...sitePages.map(page => ({ ...page, type: 'page' as const })),
-      ...orphanPages.map(page => ({ ...page, type: 'orphan' as const }))
-    ];
-
-    if (!searchQuery) return allPages;
-    
-    return allPages.filter(page => {
-      const title = 'title' in page ? page.title.toLowerCase() : '';
-      const path = 'path' in page ? page.path.toLowerCase() : '';
-      const slug = 'slug' in page ? page.slug.toLowerCase() : '';
-      
-      return (
-        title.includes(searchQuery.toLowerCase()) ||
-        path.includes(searchQuery.toLowerCase()) ||
-        slug.includes(searchQuery.toLowerCase())
-      );
-    });
-  };
   
   return (
-    <AdminPageLayout title="Revisión de Elementos">
+    <AdminPageLayout title="Revisión de Componentes">
       <div className="container mx-auto py-6">
-        <h1 className="text-3xl font-bold mb-6">Revisión de Elementos</h1>
+        <h1 className="text-3xl font-bold mb-6">Revisión de Componentes</h1>
         
         <div className="mb-6">
           <Input
-            placeholder="Buscar elementos..."
+            placeholder="Buscar componentes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="max-w-md"
@@ -223,10 +170,6 @@ const ReviewElementsPage: React.FC = () => {
             <TabsTrigger value="common-components" className="flex items-center">
               <Code className="h-4 w-4 mr-2" />
               Componentes Comunes
-            </TabsTrigger>
-            <TabsTrigger value="site-pages" className="flex items-center">
-              <FileText className="h-4 w-4 mr-2" />
-              Páginas
             </TabsTrigger>
           </TabsList>
 
@@ -281,7 +224,8 @@ const ReviewElementsPage: React.FC = () => {
                                 handleElementSelect({...component, type: 'ui'});
                               }}
                             >
-                              <Eye className="h-4 w-4" />
+                              <span className="sr-only">Ver</span>
+                              👁️
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -344,7 +288,8 @@ const ReviewElementsPage: React.FC = () => {
                                 handleElementSelect({...component, type: 'navigation'});
                               }}
                             >
-                              <Eye className="h-4 w-4" />
+                              <span className="sr-only">Ver</span>
+                              👁️
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -376,85 +321,6 @@ const ReviewElementsPage: React.FC = () => {
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Site Pages Tab (now includes both site pages and orphan pages) */}
-          <TabsContent value="site-pages" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Páginas</CardTitle>
-                <CardDescription>
-                  Todas las páginas disponibles en el sitio web y páginas huérfanas
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {loadingPages || loadingOrphan ? (
-                  renderLoadingSkeleton()
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[50px]">
-                          <Checkbox />
-                        </TableHead>
-                        <TableHead>Título</TableHead>
-                        <TableHead>Ruta</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead className="text-right">Acciones</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredPages().map((page) => (
-                        <TableRow 
-                          key={page.id} 
-                          className="cursor-pointer hover:bg-muted/50" 
-                          onClick={() => handleElementSelect(page)}
-                        >
-                          <TableCell>
-                            <Checkbox onClick={(e) => e.stopPropagation()} />
-                          </TableCell>
-                          <TableCell className="font-medium">{page.title}</TableCell>
-                          <TableCell>
-                            {'slug' in page ? `/${page.slug}` : page.path}
-                          </TableCell>
-                          <TableCell>
-                            {page.type === 'orphan' ? (
-                              <Badge variant="outline" className="bg-amber-100 text-amber-800">Huérfana</Badge>
-                            ) : (
-                              page.is_system_page ? 
-                                <Badge variant="outline" className="bg-blue-100 text-blue-800">Sistema</Badge> : 
-                                <Badge variant="outline" className="bg-green-100 text-green-800">Contenido</Badge>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant={
-                              'status' in page && (page.status === 'published' || page.status === 'Activo') 
-                                ? 'success' 
-                                : 'warning'
-                            }>
-                              {page.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleElementSelect(page);
-                              }}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
       </div>
 
@@ -467,9 +333,7 @@ const ReviewElementsPage: React.FC = () => {
                 <DrawerTitle>{getElementName(selectedElement)}</DrawerTitle>
                 <DrawerDescription>
                   {getElementDescription(selectedElement) || 
-                  (selectedElement.type === 'page' ? 'Página del sitio' : 
-                    selectedElement.type === 'orphan' ? 'Página huérfana' : 
-                      'Componente del sistema')}
+                  (selectedElement.type === 'navigation' ? 'Componente de navegación' : 'Componente del sistema')}
                 </DrawerDescription>
               </DrawerHeader>
               
@@ -480,8 +344,7 @@ const ReviewElementsPage: React.FC = () => {
                       Tipo
                     </h4>
                     <p className="text-sm">
-                      {getElementCategory(selectedElement) || 
-                      (selectedElement.type === 'orphan' ? 'Huérfana' : '')}
+                      {getElementCategory(selectedElement)}
                     </p>
                   </div>
                   <div>
@@ -504,55 +367,17 @@ const ReviewElementsPage: React.FC = () => {
                       </p>
                     </div>
                   )}
-                  {selectedElement.type === 'page' && (
-                    <div className="col-span-2">
-                      <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                        URL
-                      </h4>
-                      <p className="text-sm font-mono bg-muted p-2 rounded">
-                        /{selectedElement.slug}
-                      </p>
-                    </div>
-                  )}
-                  {selectedElement.type === 'orphan' && (
-                    <>
-                      <div>
-                        <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                          Último acceso
-                        </h4>
-                        <p className="text-sm">{new Date(selectedElement.last_accessed).toLocaleDateString()}</p>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                          Número de accesos
-                        </h4>
-                        <p className="text-sm">{selectedElement.access_count}</p>
-                      </div>
-                    </>
-                  )}
                 </div>
 
                 <div className="border-t pt-4 mt-4">
                   <h3 className="text-lg font-medium mb-3">Vista previa</h3>
                   
                   <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
-                    {selectedElement.type === 'ui' || selectedElement.type === 'navigation' ? (
+                    {(selectedElement.type === 'ui' || selectedElement.type === 'navigation') && (
                       <div className="border rounded-md p-4 bg-background">
                         <ComponentPreview componentPath={selectedElement.path} />
                       </div>
-                    ) : selectedElement.type === 'page' ? (
-                      <div className="border rounded-md p-4 bg-background">
-                        <div className="prose max-w-none" dangerouslySetInnerHTML={{ 
-                          __html: typeof selectedElement.content === 'string' 
-                            ? selectedElement.content 
-                            : JSON.stringify(selectedElement.content, null, 2) 
-                        }} />
-                      </div>
-                    ) : selectedElement.type === 'orphan' ? (
-                      <div className="border rounded-md p-4 bg-background">
-                        <p className="text-muted-foreground text-center py-6">No hay vista previa disponible para esta página huérfana.</p>
-                      </div>
-                    ) : null}
+                    )}
                   </ErrorBoundary>
                 </div>
               </div>
