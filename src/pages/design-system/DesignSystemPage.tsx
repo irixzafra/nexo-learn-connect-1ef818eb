@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { 
   Tabs, 
   TabsContent, 
@@ -12,7 +13,8 @@ import {
   CardContent, 
   CardDescription, 
   CardHeader, 
-  CardTitle 
+  CardTitle, 
+  CardFooter 
 } from "@/components/ui/card";
 import { 
   Breadcrumb,
@@ -24,6 +26,14 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from '@/components/ui/separator';
 import { 
   Home, 
   Search, 
@@ -34,333 +44,492 @@ import {
   Layers, 
   Component, 
   Puzzle, 
-  ChevronRight 
+  ChevronRight,
+  BookOpen,
+  Type,
+  Maximize,
+  Box,
+  LayoutGrid,
+  Shapes,
+  Info
 } from 'lucide-react';
 
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import { routeMap } from '@/utils/routeUtils';
+import ComponentsGrid from '@/features/design-system/components/ComponentsGrid';
+import ComponentsList from '@/features/design-system/components/ComponentsList';
+import { getComponentsData } from '@/features/design-system/data/componentsData';
 
-// Export the DesignComponent type for use in other files
+// Component types
 export type DesignComponent = {
   id?: string;
   name: string;
   category: string;
-  status: 'stable' | 'beta' | 'alpha' | 'experimental' | 'deprecated';
+  status: 'stable' | 'beta' | 'experimental' | 'deprecated';
   path?: string;
   description: string;
   usage?: string;
 };
 
-// Definir componentes de UI disponibles
-const uiComponents = [
-  { 
-    name: 'Accordion', 
-    category: 'Disclosure',
-    status: 'stable',
-    path: '/admin/design-system/components/accordion',
-    description: 'Un componente que muestra contenido expandible en secciones.',
-  },
-  { 
-    name: 'Alert', 
-    category: 'Feedback',
-    status: 'stable',
-    path: '/admin/design-system/components/alert',
-    description: 'Displays a callout for user attention.',
-  },
-  { 
-    name: 'Alert Dialog', 
-    category: 'Overlay',
-    status: 'stable',
-    path: '/admin/design-system/components/alert-dialog',
-    description: 'A modal dialog that interrupts the user with important content.',
-  },
-  { 
-    name: 'Aspect Ratio', 
-    category: 'Layout',
-    status: 'stable',
-    path: '/admin/design-system/components/aspect-ratio',
-    description: 'Displays content within a desired ratio.',
-  },
-  { 
-    name: 'Avatar', 
-    category: 'Data Display',
-    status: 'stable',
-    path: '/admin/design-system/components/avatar',
-    description: 'An image element with a fallback for representing the user.',
-  },
-  { 
-    name: 'Badge', 
-    category: 'Data Display',
-    status: 'stable',
-    path: '/admin/design-system/components/badge',
-    description: 'Displays a small badge count or status.',
-  },
-  { 
-    name: 'Breadcrumb', 
-    category: 'Navigation',
-    status: 'stable',
-    path: '/admin/design-system/components/breadcrumb',
-    description: 'Displays the path to the current resource.',
-  },
-  { 
-    name: 'Button', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/button',
-    description: 'Allows users to perform an action.',
-  },
-  { 
-    name: 'Calendar', 
-    category: 'Date',
-    status: 'stable',
-    path: '/admin/design-system/components/calendar',
-    description: 'A calendar component for picking dates.',
-  },
-  { 
-    name: 'Card', 
-    category: 'Layout',
-    status: 'stable',
-    path: '/admin/design-system/components/card',
-    description: 'Displays content in a card format.',
-  },
-  { 
-    name: 'Checkbox', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/checkbox',
-    description: 'Allow users to select multiple items from a list.',
-  },
-  { 
-    name: 'Collapsible', 
-    category: 'Disclosure',
-    status: 'stable',
-    path: '/admin/design-system/components/collapsible',
-    description: 'An interactive component that expands/collapses content.',
-  },
-  { 
-    name: 'Command', 
-    category: 'Navigation',
-    status: 'stable',
-    path: '/admin/design-system/components/command',
-    description: 'Fast and accessible command menu for application actions.',
-  },
-  { 
-    name: 'Dialog', 
-    category: 'Overlay',
-    status: 'stable',
-    path: '/admin/design-system/components/dialog',
-    description: 'A modal dialog that appears in front of app content.',
-  },
-  { 
-    name: 'Dropdown Menu', 
-    category: 'Navigation',
-    status: 'stable',
-    path: '/admin/design-system/components/dropdown-menu',
-    description: 'Displays a menu to the user.',
-  },
-  { 
-    name: 'Form', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/form',
-    description: 'Validation and Accessible forms.',
-  },
-  { 
-    name: 'Hover Card', 
-    category: 'Overlay',
-    status: 'stable',
-    path: '/admin/design-system/components/hover-card',
-    description: 'For sighted users to preview content available behind a link.',
-  },
-  { 
-    name: 'Input', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/input',
-    description: 'Allows users to input text into a UI.',
-  },
-  { 
-    name: 'Label', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/label',
-    description: 'Renders an accessible label associated with controls.',
-  },
-  { 
-    name: 'Menubar', 
-    category: 'Navigation',
-    status: 'stable',
-    path: '/admin/design-system/components/menubar',
-    description: 'A horizontal menu with support for dropdown menus.',
-  },
-  { 
-    name: 'Navigation Menu', 
-    category: 'Navigation',
-    status: 'stable',
-    path: '/admin/design-system/components/navigation-menu',
-    description: 'A responsive navigation component with subnav support.',
-  },
-  { 
-    name: 'Pagination', 
-    category: 'Navigation',
-    status: 'beta',
-    path: '/admin/design-system/components/pagination',
-    description: 'Navigate between pages of content.',
-  },
-  { 
-    name: 'Progress', 
-    category: 'Feedback',
-    status: 'stable',
-    path: '/admin/design-system/components/progress',
-    description: 'Displays an indicator showing progress of a task.',
-  },
-  { 
-    name: 'Radio Group', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/radio-group',
-    description: 'A set of checkable buttons where only one can be checked.',
-  },
-  { 
-    name: 'Scroll Area', 
-    category: 'Layout',
-    status: 'stable',
-    path: '/admin/design-system/components/scroll-area',
-    description: 'A scrollable area with custom scrollbars.',
-  },
-  { 
-    name: 'Select', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/select',
-    description: 'Displays a list of options for the user to select.',
-  },
-  { 
-    name: 'Separator', 
-    category: 'Layout',
-    status: 'stable',
-    path: '/admin/design-system/components/separator',
-    description: 'A visual divider between content.',
-  },
-  { 
-    name: 'Sheet', 
-    category: 'Overlay',
-    status: 'stable',
-    path: '/admin/design-system/components/sheet',
-    description: 'Extends the Dialog component to display content from the edge of the screen.',
-  },
-  { 
-    name: 'Sidebar', 
-    category: 'Layout',
-    status: 'stable',
-    path: '/admin/design-system/components/sidebar',
-    description: 'A collapsible side navigation component.',
-  },
-  { 
-    name: 'Skeleton', 
-    category: 'Feedback',
-    status: 'stable',
-    path: '/admin/design-system/components/skeleton',
-    description: 'Used to show a placeholder while content is loading.',
-  },
-  { 
-    name: 'Slider', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/slider',
-    description: 'Allows users to select a value from a range.',
-  },
-  { 
-    name: 'Switch', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/switch',
-    description: 'A control that toggles between enabled or disabled states.',
-  },
-  { 
-    name: 'Table', 
-    category: 'Data Display',
-    status: 'stable',
-    path: '/admin/design-system/components/table',
-    description: 'Displays tabular data with rows and columns.',
-  },
-  { 
-    name: 'Tabs', 
-    category: 'Navigation',
-    status: 'stable',
-    path: '/admin/design-system/components/tabs',
-    description: 'Organizes content into multiple sections to be viewed one at a time.',
-  },
-  { 
-    name: 'Textarea', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/textarea',
-    description: 'Allows users to input multi-line text.',
-  },
-  { 
-    name: 'Toast', 
-    category: 'Feedback',
-    status: 'stable',
-    path: '/admin/design-system/components/toast',
-    description: 'A succinct message that is displayed temporarily.',
-  },
-  { 
-    name: 'Toggle', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/toggle',
-    description: 'A two-state button that can be either on or off.',
-  },
-  { 
-    name: 'Toggle Group', 
-    category: 'Forms',
-    status: 'stable',
-    path: '/admin/design-system/components/toggle-group',
-    description: 'A group of toggle controls.',
-  },
-  { 
-    name: 'Tooltip', 
-    category: 'Overlay',
-    status: 'stable',
-    path: '/admin/design-system/components/tooltip',
-    description: 'A popup that displays information when hovering over an element.',
-  },
-];
-
 const DesignSystemPage: React.FC = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('components');
+  const [components, setComponents] = useState<DesignComponent[]>([]);
 
-  // Filtrar componentes según búsqueda y filtros
-  const filteredComponents = uiComponents.filter(component => {
-    const matchesSearch = component.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          component.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter ? component.category === categoryFilter : true;
-    const matchesStatus = statusFilter ? component.status === statusFilter : true;
-    
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
+  useEffect(() => {
+    // Load components data
+    const componentsData = getComponentsData();
+    setComponents(componentsData);
+  }, []);
 
-  // Obtener lista única de categorías para filtrado
-  const categories = Array.from(new Set(uiComponents.map(comp => comp.category)));
+  // Get unique categories for filtering
+  const categories = Array.from(new Set(components.map(comp => comp.category)));
   
-  // Obtener lista única de estados para filtrado
-  const statuses = Array.from(new Set(uiComponents.map(comp => comp.status)));
+  // Get unique statuses for filtering
+  const statuses = Array.from(new Set(components.map(comp => comp.status)));
 
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case 'stable': return 'bg-green-500';
-      case 'beta': return 'bg-blue-500';
-      case 'alpha': return 'bg-amber-500';
-      case 'deprecated': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    toast({
+      title: "Copiado al portapapeles",
+      description: "El código ha sido copiado correctamente.",
+    });
   };
 
+  const handleCategoryChange = (value: string) => {
+    setCategoryFilter(value || null);
+  };
+
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value || null);
+  };
+
+  const renderColorsSection = () => (
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-xl font-semibold mb-4">Colores Primarios</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {[
+            { name: 'Primary', color: 'bg-primary', text: 'text-primary-foreground', value: 'hsl(var(--primary))' },
+            { name: 'Secondary', color: 'bg-secondary', text: 'text-secondary-foreground', value: 'hsl(var(--secondary))' },
+            { name: 'Accent', color: 'bg-accent', text: 'text-accent-foreground', value: 'hsl(var(--accent))' },
+            { name: 'Destructive', color: 'bg-destructive', text: 'text-destructive-foreground', value: 'hsl(var(--destructive))' },
+          ].map((item) => (
+            <div key={item.name} className="space-y-1.5">
+              <div 
+                className={`${item.color} ${item.text} h-20 rounded-md flex items-center justify-center relative group cursor-pointer`}
+                onClick={() => handleCopyCode(item.value)}
+              >
+                <span className="font-medium">{item.name}</span>
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-md transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <span className="text-xs font-mono bg-black/70 text-white px-2 py-1 rounded">
+                    {item.value}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">{item.name}</span>
+                <span className="font-mono">{item.value}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold mb-4">Escala de Grises</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {[
+            { name: 'Background', color: 'bg-background', text: 'text-foreground', value: 'hsl(var(--background))' },
+            { name: 'Foreground', color: 'bg-foreground', text: 'text-background', value: 'hsl(var(--foreground))' },
+            { name: 'Card', color: 'bg-card', text: 'text-card-foreground', value: 'hsl(var(--card))' },
+            { name: 'Muted', color: 'bg-muted', text: 'text-muted-foreground', value: 'hsl(var(--muted))' },
+            { name: 'Border', color: 'bg-border', text: 'text-foreground', value: 'hsl(var(--border))' },
+            { name: 'Input', color: 'bg-input', text: 'text-foreground', value: 'hsl(var(--input))' },
+            { name: 'Popover', color: 'bg-popover', text: 'text-popover-foreground', value: 'hsl(var(--popover))' },
+            { name: 'Ring', color: 'bg-ring/30', text: 'text-foreground', value: 'hsl(var(--ring))' },
+          ].map((item) => (
+            <div key={item.name} className="space-y-1.5">
+              <div 
+                className={`${item.color} ${item.text} h-16 rounded-md flex items-center justify-center relative group cursor-pointer`}
+                onClick={() => handleCopyCode(item.value)}
+              >
+                <span className="font-medium">{item.name}</span>
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-md transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <span className="text-xs font-mono bg-black/70 text-white px-2 py-1 rounded">
+                    {item.value}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">{item.name}</span>
+                <span className="font-mono">{item.value}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderTypographySection = () => (
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-xl font-semibold mb-4">Escala de Tipografía</h3>
+        <Card>
+          <CardContent className="p-6 space-y-8">
+            {[
+              { name: 'h1', element: 'h1', className: 'text-4xl font-bold', sample: 'Título Principal (h1)', description: 'Encabezados principales de páginas' },
+              { name: 'h2', element: 'h2', className: 'text-3xl font-bold', sample: 'Título de Sección (h2)', description: 'Encabezados de secciones importantes' },
+              { name: 'h3', element: 'h3', className: 'text-2xl font-bold', sample: 'Subtítulo (h3)', description: 'Encabezados de subsecciones' },
+              { name: 'h4', element: 'h4', className: 'text-xl font-semibold', sample: 'Título Menor (h4)', description: 'Títulos de componentes o grupos' },
+              { name: 'p', element: 'p', className: 'text-base', sample: 'Texto de Párrafo (p) - El contenido principal del sitio utiliza este tamaño para mantener la legibilidad óptima en bloques de texto grandes.', description: 'Texto principal de contenido' },
+              { name: 'small', element: 'p', className: 'text-sm', sample: 'Texto Pequeño - Utilizado para información secundaria o metadatos.', description: 'Información secundaria, etiquetas' },
+              { name: 'xsmall', element: 'p', className: 'text-xs', sample: 'Texto Muy Pequeño - Para notas al pie, descargos de responsabilidad y textos legales.', description: 'Notas al pie, texto legal' }
+            ].map((item) => (
+              <div key={item.name} className="pb-4 border-b last:border-b-0">
+                <div className="mb-2">
+                  <Badge variant="outline" className="font-mono">{item.name}</Badge>
+                  <span className="ml-2 text-muted-foreground text-sm">{item.description}</span>
+                </div>
+                <div className={cn(item.className)}>{item.sample}</div>
+                <div className="mt-2 bg-muted/30 rounded-md p-3">
+                  <code className="text-sm">{`<${item.element} className="${item.className}">${item.sample}</${item.element}>`}</code>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold mb-4">Pesos de Fuente</h3>
+        <Card>
+          <CardContent className="p-6 space-y-6">
+            {[
+              { name: 'font-normal', weight: '400', sample: 'Texto con peso Normal (400)' },
+              { name: 'font-medium', weight: '500', sample: 'Texto con peso Medium (500)' },
+              { name: 'font-semibold', weight: '600', sample: 'Texto con peso Semibold (600)' },
+              { name: 'font-bold', weight: '700', sample: 'Texto con peso Bold (700)' }
+            ].map((item) => (
+              <div key={item.name} className="flex flex-col md:flex-row md:items-center gap-4 pb-4 border-b last:border-b-0">
+                <div className="md:w-1/4">
+                  <Badge variant="outline" className="font-mono">{item.name}</Badge>
+                  <div className="text-sm text-muted-foreground mt-1">weight: {item.weight}</div>
+                </div>
+                <div className={`text-xl ${item.name} md:w-3/4`}>{item.sample}</div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const renderSpacingSection = () => {
+    const spacingSizes = [
+      { name: '1', value: '0.25rem (4px)', description: 'Espaciado mínimo' },
+      { name: '2', value: '0.5rem (8px)', description: 'Espaciado entre elementos relacionados' },
+      { name: '3', value: '0.75rem (12px)', description: 'Espaciado pequeño' },
+      { name: '4', value: '1rem (16px)', description: 'Espaciado estándar' },
+      { name: '5', value: '1.25rem (20px)', description: 'Espaciado medio-pequeño' },
+      { name: '6', value: '1.5rem (24px)', description: 'Espaciado medio' },
+      { name: '8', value: '2rem (32px)', description: 'Espaciado grande' },
+      { name: '10', value: '2.5rem (40px)', description: 'Espaciado muy grande' },
+      { name: '12', value: '3rem (48px)', description: 'Espaciado entre secciones' },
+      { name: '16', value: '4rem (64px)', description: 'Espaciado extra grande' }
+    ];
+
+    return (
+      <div className="space-y-8">
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Sistema de Espaciado</h3>
+          <p className="text-muted-foreground mb-6">
+            Nuestro sistema de espaciado utiliza una escala de incrementos consistentes basada en múltiplos de 4px. 
+            Esto proporciona una jerarquía visual clara y coherente en toda la interfaz.
+          </p>
+          
+          <div className="bg-card rounded-lg border overflow-hidden">
+            <div className="grid grid-cols-[1fr_2fr_1fr] text-sm font-medium bg-muted/50 p-3">
+              <div>Clase</div>
+              <div>Ejemplo</div>
+              <div>Valor / Uso</div>
+            </div>
+            <Separator />
+            
+            {spacingSizes.map((size, index) => (
+              <React.Fragment key={size.name}>
+                <div className="grid grid-cols-[1fr_2fr_1fr] p-3 items-center">
+                  <div className="font-mono text-sm">
+                    p-{size.name} / m-{size.name}<br />
+                    gap-{size.name} / space-{size.name}
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <div className={`bg-primary/20 border-2 border-primary/40 rounded flex items-center justify-center p-${size.name}`}>
+                      <div className="bg-primary text-primary-foreground px-2 py-1 rounded text-xs">
+                        p-{size.name}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-sm">
+                    <div className="font-medium">{size.value}</div>
+                    <div className="text-muted-foreground text-xs">{size.description}</div>
+                  </div>
+                </div>
+                {index < spacingSizes.length - 1 && <Separator />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPatternsSection = () => (
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-xl font-semibold mb-4">Patrones de Diseño</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[
+            {
+              title: "Card con Acción",
+              description: "Tarjeta con contenido y acción principal",
+              code: `<Card>
+  <CardHeader>
+    <CardTitle>Título de la tarjeta</CardTitle>
+    <CardDescription>Descripción breve del contenido</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p>Contenido principal de la tarjeta...</p>
+  </CardContent>
+  <CardFooter>
+    <Button>Acción Principal</Button>
+  </CardFooter>
+</Card>`,
+              component: (
+                <Card className="w-full">
+                  <CardHeader>
+                    <CardTitle>Título de la tarjeta</CardTitle>
+                    <CardDescription>Descripción breve del contenido</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p>Contenido principal de la tarjeta...</p>
+                  </CardContent>
+                  <CardFooter>
+                    <Button>Acción Principal</Button>
+                  </CardFooter>
+                </Card>
+              )
+            },
+            {
+              title: "Form Field",
+              description: "Campo de formulario con etiqueta y mensaje de error",
+              code: `<div className="space-y-2">
+  <label className="text-sm font-medium" htmlFor="name">
+    Nombre completo
+  </label>
+  <Input id="name" placeholder="Introduce tu nombre" />
+  <p className="text-sm text-muted-foreground">
+    Introduce tu nombre completo
+  </p>
+</div>`,
+              component: (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="name">
+                    Nombre completo
+                  </label>
+                  <Input id="name" placeholder="Introduce tu nombre" />
+                  <p className="text-sm text-muted-foreground">
+                    Introduce tu nombre completo
+                  </p>
+                </div>
+              )
+            },
+            {
+              title: "Data List",
+              description: "Lista de datos con acciones por elemento",
+              code: `<div className="rounded-md border">
+  {items.map((item) => (
+    <div key={item.id} className="flex items-center justify-between p-4 border-b last:border-0">
+      <div>
+        <div className="font-medium">{item.title}</div>
+        <div className="text-sm text-muted-foreground">{item.description}</div>
+      </div>
+      <Button variant="ghost" size="sm">Action</Button>
+    </div>
+  ))}
+</div>`,
+              component: (
+                <div className="rounded-md border">
+                  {[
+                    { id: 1, title: "Elemento 1", description: "Descripción del elemento 1" },
+                    { id: 2, title: "Elemento 2", description: "Descripción del elemento 2" },
+                    { id: 3, title: "Elemento 3", description: "Descripción del elemento 3" }
+                  ].map((item) => (
+                    <div key={item.id} className="flex items-center justify-between p-4 border-b last:border-0">
+                      <div>
+                        <div className="font-medium">{item.title}</div>
+                        <div className="text-sm text-muted-foreground">{item.description}</div>
+                      </div>
+                      <Button variant="ghost" size="sm">Action</Button>
+                    </div>
+                  ))}
+                </div>
+              )
+            },
+            {
+              title: "Page Header",
+              description: "Encabezado de página con título, descripción y acciones",
+              code: `<div className="flex items-center justify-between pb-4 mb-4 border-b">
+  <div>
+    <h1 className="text-2xl font-bold tracking-tight">Título de Página</h1>
+    <p className="text-muted-foreground">Descripción de la página o sección</p>
+  </div>
+  <div className="flex gap-2">
+    <Button variant="outline">Acción Secundaria</Button>
+    <Button>Acción Principal</Button>
+  </div>
+</div>`,
+              component: (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b w-full">
+                  <div>
+                    <h1 className="text-2xl font-bold tracking-tight">Título de Página</h1>
+                    <p className="text-muted-foreground">Descripción de la página o sección</p>
+                  </div>
+                  <div className="flex gap-2 mt-4 sm:mt-0">
+                    <Button variant="outline">Acción Secundaria</Button>
+                    <Button>Acción Principal</Button>
+                  </div>
+                </div>
+              )
+            }
+          ].map((pattern) => (
+            <Card key={pattern.title} className="overflow-hidden">
+              <CardHeader>
+                <CardTitle>{pattern.title}</CardTitle>
+                <CardDescription>{pattern.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="border-y bg-muted/40 p-6">
+                {pattern.component}
+              </CardContent>
+              <CardFooter className="p-0">
+                <div className="w-full relative font-mono text-sm overflow-x-auto bg-muted/70 p-4">
+                  <pre className="text-xs">{pattern.code}</pre>
+                  <Button 
+                    size="sm" 
+                    variant="ghost" 
+                    className="absolute top-2 right-2 h-8 w-8 p-0"
+                    onClick={() => handleCopyCode(pattern.code)}
+                  >
+                    <Code className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPrinciplesSection = () => (
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-xl font-semibold mb-4">Principios de Diseño</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            {
+              title: "Simplicidad",
+              icon: <Layers className="h-6 w-6 text-primary" />,
+              description: "Interfaces claras y directas que no sobrecargan al usuario con complejidad innecesaria."
+            },
+            {
+              title: "Consistencia",
+              icon: <Shapes className="h-6 w-6 text-primary" />,
+              description: "Patrones repetibles que crean familiaridad y reducen la curva de aprendizaje."
+            },
+            {
+              title: "Adaptabilidad",
+              icon: <Maximize className="h-6 w-6 text-primary" />,
+              description: "Componentes flexibles que funcionan en diversos contextos y dispositivos."
+            },
+            {
+              title: "Claridad",
+              icon: <Type className="h-6 w-6 text-primary" />,
+              description: "Comunicación clara con tipografía legible y jerarquía visual bien definida."
+            },
+            {
+              title: "Accesibilidad",
+              icon: <Info className="h-6 w-6 text-primary" />,
+              description: "Diseño inclusivo que funciona para todos los usuarios, independientemente de sus capacidades."
+            },
+            {
+              title: "Propósito",
+              icon: <Box className="h-6 w-6 text-primary" />,
+              description: "Cada elemento tiene una razón para existir y cumple una función específica."
+            }
+          ].map((principle) => (
+            <Card key={principle.title} className="overflow-hidden">
+              <CardHeader className="flex flex-row items-center gap-4 pb-2">
+                {principle.icon}
+                <CardTitle>{principle.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">{principle.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold mb-4">Documentación Completa</h3>
+        <Card>
+          <CardContent className="p-6">
+            <p className="mb-4">Para una documentación completa del sistema de diseño, consulta los siguientes recursos:</p>
+            <ul className="space-y-2">
+              <li className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-primary" />
+                <Link to="/docs/design-system" className="text-primary hover:underline">
+                  Guía Completa del Sistema de Diseño
+                </Link>
+              </li>
+              <li className="flex items-center gap-2">
+                <Component className="h-4 w-4 text-primary" />
+                <Link to="/docs/components" className="text-primary hover:underline">
+                  Biblioteca de Componentes
+                </Link>
+              </li>
+              <li className="flex items-center gap-2">
+                <LayoutGrid className="h-4 w-4 text-primary" />
+                <Link to="/docs/templates" className="text-primary hover:underline">
+                  Plantillas y Layouts
+                </Link>
+              </li>
+              <li className="flex items-center gap-2">
+                <Code className="h-4 w-4 text-primary" />
+                <Link to="/docs/development" className="text-primary hover:underline">
+                  Guía de Desarrollo
+                </Link>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="container py-8 max-w-7xl mx-auto">
+    <AdminPageLayout 
+      title="Sistema de Diseño" 
+      subtitle="Guía completa de componentes, estilos y patrones de la plataforma"
+    >
       {/* Breadcrumb navigation */}
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
@@ -393,34 +562,42 @@ const DesignSystemPage: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Sistema de Diseño</h1>
           <p className="text-muted-foreground mt-2">
-            Explorador de componentes y patrones de diseño utilizados en la plataforma.
+            Guía completa de componentes, estilos y patrones visuales utilizados en la plataforma.
           </p>
         </div>
 
-        <Tabs defaultValue="components">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-4">
             <TabsTrigger value="components">
               <Component className="h-4 w-4 mr-2" />
               Componentes
             </TabsTrigger>
-            <TabsTrigger value="foundations">
+            <TabsTrigger value="colors">
               <Palette className="h-4 w-4 mr-2" />
-              Fundamentos
+              Colores
+            </TabsTrigger>
+            <TabsTrigger value="typography">
+              <Type className="h-4 w-4 mr-2" />
+              Tipografía
+            </TabsTrigger>
+            <TabsTrigger value="spacing">
+              <Maximize className="h-4 w-4 mr-2" />
+              Espaciado
             </TabsTrigger>
             <TabsTrigger value="patterns">
               <Puzzle className="h-4 w-4 mr-2" />
               Patrones
             </TabsTrigger>
-            <TabsTrigger value="code">
-              <Code className="h-4 w-4 mr-2" />
-              Código
+            <TabsTrigger value="principles">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Principios
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="components" className="space-y-4">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle>Componentes de UI</CardTitle>
+                <CardTitle>Biblioteca de Componentes</CardTitle>
                 <CardDescription>
                   Explora los componentes reutilizables disponibles en el sistema de diseño.
                 </CardDescription>
@@ -438,27 +615,29 @@ const DesignSystemPage: React.FC = () => {
                   </div>
                   
                   <div className="flex gap-3 flex-wrap">
-                    <select 
-                      className="border rounded px-3 py-2 text-sm bg-background"
-                      onChange={(e) => setCategoryFilter(e.target.value || null)}
-                      value={categoryFilter || ''}
-                    >
-                      <option value="">Todas las categorías</option>
-                      {categories.map((category) => (
-                        <option key={category} value={category}>{category}</option>
-                      ))}
-                    </select>
+                    <Select value={categoryFilter || ''} onValueChange={handleCategoryChange}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Todas las categorías" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Todas las categorías</SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>{category}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     
-                    <select 
-                      className="border rounded px-3 py-2 text-sm bg-background"
-                      onChange={(e) => setStatusFilter(e.target.value || null)}
-                      value={statusFilter || ''}
-                    >
-                      <option value="">Todos los estados</option>
-                      {statuses.map((status) => (
-                        <option key={status} value={status}>{status}</option>
-                      ))}
-                    </select>
+                    <Select value={statusFilter || ''} onValueChange={handleStatusChange}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Todos los estados" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Todos los estados</SelectItem>
+                        {statuses.map((status) => (
+                          <SelectItem key={status} value={status}>{status}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     
                     <div className="flex border rounded">
                       <Button 
@@ -479,280 +658,93 @@ const DesignSystemPage: React.FC = () => {
                   </div>
                 </div>
 
-                {filteredComponents.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <Layers className="h-12 w-12 text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium">No se encontraron componentes</h3>
-                    <p className="text-muted-foreground mt-2">
-                      Intenta con otra búsqueda o elimina los filtros.
-                    </p>
-                  </div>
-                ) : viewMode === 'grid' ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredComponents.map((component) => (
-                      <Card key={component.name} className="h-full">
-                        <CardHeader className="pb-2">
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="text-base">{component.name}</CardTitle>
-                            <Badge className={getStatusBadgeColor(component.status)}>
-                              {component.status}
-                            </Badge>
-                          </div>
-                          <Badge variant="outline" className="mt-1 font-normal">
-                            {component.category}
-                          </Badge>
-                        </CardHeader>
-                        <CardContent className="pt-2">
-                          <p className="text-sm text-muted-foreground mb-4">
-                            {component.description}
-                          </p>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            asChild
-                            className="w-full mt-2"
-                          >
-                            <Link to={component.path}>
-                              Ver componente
-                              <ChevronRight className="ml-1 h-4 w-4" />
-                            </Link>
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                {viewMode === 'grid' ? (
+                  <ComponentsGrid 
+                    searchTerm={searchTerm} 
+                    categoryFilter={categoryFilter} 
+                  />
                 ) : (
-                  <div className="space-y-2">
-                    {filteredComponents.map((component) => (
-                      <div key={component.name} className="flex items-center justify-between p-3 border rounded hover:bg-muted/30">
-                        <div className="flex items-center gap-3">
-                          <span className="font-medium">{component.name}</span>
-                          <Badge variant="outline">{component.category}</Badge>
-                          <Badge className={getStatusBadgeColor(component.status)}>
-                            {component.status}
-                          </Badge>
-                        </div>
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link to={component.path}>
-                            <span className="sr-only">Ver {component.name}</span>
-                            <ChevronRight className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
+                  <ComponentsList 
+                    searchTerm={searchTerm} 
+                    categoryFilter={categoryFilter} 
+                  />
                 )}
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="foundations">
+          <TabsContent value="colors" className="space-y-4">
             <Card>
-              <CardHeader>
-                <CardTitle>Fundamentos de Diseño</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle>Paleta de Colores</CardTitle>
                 <CardDescription>
-                  Principios fundamentales de diseño que guían nuestro sistema.
+                  Sistema de colores de la plataforma para mantener una apariencia consistente.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Colores</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Paleta de colores primarios, secundarios y variantes para la plataforma.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Tipografía</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Sistema tipográfico, tamaños, pesos y jerarquía.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Espaciado</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Sistema de espaciado y grid para mantener consistencia.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Iconografía</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Conjunto de iconos y guías de uso.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Elevación y Sombras</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Sistema de elevación para indicar jerarquía visual.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Bordes y Radios</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Sistema de bordes y radios para elementos UI.
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
+                {renderColorsSection()}
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="patterns">
+          <TabsContent value="typography" className="space-y-4">
             <Card>
-              <CardHeader>
+              <CardHeader className="pb-3">
+                <CardTitle>Sistema Tipográfico</CardTitle>
+                <CardDescription>
+                  Jerarquía tipográfica y estilos de texto para uso consistente.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {renderTypographySection()}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="spacing" className="space-y-4">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle>Sistema de Espaciado</CardTitle>
+                <CardDescription>
+                  Escala de espaciado para mantener consistencia en márgenes y rellenos.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {renderSpacingSection()}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="patterns" className="space-y-4">
+            <Card>
+              <CardHeader className="pb-3">
                 <CardTitle>Patrones de Diseño</CardTitle>
                 <CardDescription>
-                  Soluciones recurrentes para problemas comunes de diseño.
+                  Soluciones reutilizables para problemas comunes de diseño e interfaces.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Formularios</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Patrones para construir formularios accesibles y usables.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Tablas y Listados</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Patrones para presentar datos tabulares y listas.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Navegación</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Patrones de navegación principal, secundaria y utility.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Manejo de Errores</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Patrones para mostrar errores y validación de datos.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Estados Vacíos</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Patrones para manejar estados vacíos y primeras interacciones.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Accesibilidad</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Pautas para garantizar accesibilidad en todos los componentes.
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
+                {renderPatternsSection()}
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="code">
+          <TabsContent value="principles" className="space-y-4">
             <Card>
-              <CardHeader>
-                <CardTitle>Guías de Código</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle>Principios de Diseño</CardTitle>
                 <CardDescription>
-                  Recursos para desarrolladores que trabajan con el sistema de diseño.
+                  Fundamentos y filosofía que guían todas las decisiones de diseño.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Cómo usar Componentes</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Guía para implementar componentes correctamente en el código.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Theming</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Cómo personalizar temas y aplicar variables CSS.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Optimización</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Buenas prácticas para optimizar el rendimiento.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Contribución</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        Cómo contribuir nuevos componentes al sistema de diseño.
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
+                {renderPrinciplesSection()}
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </AdminPageLayout>
   );
 };
 
