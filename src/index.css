@@ -5,596 +5,322 @@
 
 @layer base {
   :root {
-    /* Material Design 3 Light Theme */
-    --md-sys-color-primary: 103 80 164; /* Purple */
-    --md-sys-color-on-primary: 255 255 255;
-    --md-sys-color-primary-container: 234 221 255;
-    --md-sys-color-on-primary-container: 33 0 93;
-    
-    --md-sys-color-secondary: 98 91 113;
-    --md-sys-color-on-secondary: 255 255 255;
-    --md-sys-color-secondary-container: 232 222 248;
-    --md-sys-color-on-secondary-container: 30 25 43;
-    
-    --md-sys-color-tertiary: 125 82 96;
-    --md-sys-color-on-tertiary: 255 255 255;
-    --md-sys-color-tertiary-container: 255 216 228;
-    --md-sys-color-on-tertiary-container: 49 17 29;
-    
-    --md-sys-color-error: 186 26 26;
-    --md-sys-color-on-error: 255 255 255;
-    --md-sys-color-error-container: 255 218 214;
-    --md-sys-color-on-error-container: 65 0 2;
-    
-    --md-sys-color-background: 255 251 254;
-    --md-sys-color-on-background: 28 27 31;
-    --md-sys-color-surface: 255 251 254;
-    --md-sys-color-on-surface: 28 27 31;
-    
-    --md-sys-color-surface-variant: 231 224 236;
-    --md-sys-color-on-surface-variant: 73 69 78;
-    --md-sys-color-outline: 121 116 126;
-    --md-sys-color-outline-variant: 204 196 206;
-    
-    --md-sys-color-shadow: 0 0 0;
-    --md-sys-color-scrim: 0 0 0;
-    --md-sys-color-inverse-surface: 49 48 51;
-    --md-sys-color-inverse-on-surface: 244 239 244;
-    --md-sys-color-inverse-primary: 208 188 255;
-
-    /* Mapping to our existing design system variables */
-    --background: var(--md-sys-color-background);
-    --foreground: var(--md-sys-color-on-background);
-
-    --card: var(--md-sys-color-surface);
-    --card-foreground: var(--md-sys-color-on-surface);
-
-    --popover: var(--md-sys-color-surface);
-    --popover-foreground: var(--md-sys-color-on-surface);
-
-    --primary: var(--md-sys-color-primary);
-    --primary-foreground: var(--md-sys-color-on-primary);
-
-    --secondary: var(--md-sys-color-secondary);
-    --secondary-foreground: var(--md-sys-color-on-secondary);
-
-    --muted: var(--md-sys-color-surface-variant);
-    --muted-foreground: var(--md-sys-color-on-surface-variant);
-
-    --accent: var(--md-sys-color-tertiary);
-    --accent-foreground: var(--md-sys-color-on-tertiary);
-
-    --destructive: var(--md-sys-color-error);
-    --destructive-foreground: var(--md-sys-color-on-error);
-
-    --border: var(--md-sys-color-outline-variant);
-    --input: var(--md-sys-color-outline);
-    --ring: var(--md-sys-color-primary);
-
-    --radius: 1rem;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 263 60% 64%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 24 94% 53%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 263 60% 64%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    /* Material Design 3 Dark Theme */
-    --md-sys-color-primary: 208 188 255; /* Purple in dark mode */
-    --md-sys-color-on-primary: 55 30 115;
-    --md-sys-color-primary-container: 79 55 139;
-    --md-sys-color-on-primary-container: 234 221 255;
-    
-    --md-sys-color-secondary: 204 194 220;
-    --md-sys-color-on-secondary: 51 45 65;
-    --md-sys-color-secondary-container: 74 68 88;
-    --md-sys-color-on-secondary-container: 232 222 248;
-    
-    --md-sys-color-tertiary: 239 184 200;
-    --md-sys-color-on-tertiary: 73 37 50;
-    --md-sys-color-tertiary-container: 99 59 72;
-    --md-sys-color-on-tertiary-container: 255 216 228;
-    
-    --md-sys-color-error: 255 180 171;
-    --md-sys-color-on-error: 105 0 5;
-    --md-sys-color-error-container: 147 0 10;
-    --md-sys-color-on-error-container: 255 218 214;
-    
-    --md-sys-color-background: 28 27 31;
-    --md-sys-color-on-background: 230 225 229;
-    --md-sys-color-surface: 28 27 31;
-    --md-sys-color-on-surface: 230 225 229;
-    
-    --md-sys-color-surface-variant: 73 69 79;
-    --md-sys-color-on-surface-variant: 204 196 206;
-    --md-sys-color-outline: 148 143 153;
-    --md-sys-color-outline-variant: 73 69 79;
-    
-    --md-sys-color-shadow: 0 0 0;
-    --md-sys-color-scrim: 0 0 0;
-    --md-sys-color-inverse-surface: 230 225 229;
-    --md-sys-color-inverse-on-surface: 49 48 51;
-    --md-sys-color-inverse-primary: 103 80 164;
-
-    /* Mapping to our existing design system variables */
-    --background: var(--md-sys-color-background);
-    --foreground: var(--md-sys-color-on-background);
-
-    --card: var(--md-sys-color-surface);
-    --card-foreground: var(--md-sys-color-on-surface);
-
-    --popover: var(--md-sys-color-surface);
-    --popover-foreground: var(--md-sys-color-on-surface);
-
-    --primary: var(--md-sys-color-primary);
-    --primary-foreground: var(--md-sys-color-on-primary);
-
-    --secondary: var(--md-sys-color-secondary);
-    --secondary-foreground: var(--md-sys-color-on-secondary);
-
-    --muted: var(--md-sys-color-surface-variant);
-    --muted-foreground: var(--md-sys-color-on-surface-variant);
-
-    --accent: var(--md-sys-color-tertiary);
-    --accent-foreground: var(--md-sys-color-on-tertiary);
-
-    --destructive: var(--md-sys-color-error);
-    --destructive-foreground: var(--md-sys-color-on-error);
-
-    --border: var(--md-sys-color-outline);
-    --input: var(--md-sys-color-outline);
-    --ring: var(--md-sys-color-primary);
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 263 60% 64%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 24 94% 53%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 263 60% 64%;
   }
 
-  /* Material theme (colorful version) */
-  .material {
-    /* Vibrant Material Design Theme */
-    --md-sys-color-primary: 232 90 89; /* Vibrant Red */
-    --md-sys-color-on-primary: 255 255 255;
-    --md-sys-color-primary-container: 255 218 217;
-    --md-sys-color-on-primary-container: 105 0 0;
-    
-    --md-sys-color-secondary: 0 132 226; /* Vibrant Blue */
-    --md-sys-color-on-secondary: 255 255 255;
-    --md-sys-color-secondary-container: 219 238 255;
-    --md-sys-color-on-secondary-container: 0 57 105;
-    
-    --md-sys-color-tertiary: 32 172 23; /* Vibrant Green */
-    --md-sys-color-on-tertiary: 255 255 255;
-    --md-sys-color-tertiary-container: 190 255 184;
-    --md-sys-color-on-tertiary-container: 0 62 0;
-    
-    --md-sys-color-error: 255 85 0;
-    --md-sys-color-on-error: 255 255 255;
-    --md-sys-color-error-container: 255 220 208;
-    --md-sys-color-on-error-container: 105 25 0;
-    
-    --md-sys-color-background: 250 253 255;
-    --md-sys-color-on-background: 18 21 23;
-    --md-sys-color-surface: 250 253 255;
-    --md-sys-color-on-surface: 18 21 23;
-    
-    --md-sys-color-surface-variant: 237 240 245;
-    --md-sys-color-on-surface-variant: 65 73 85;
-    --md-sys-color-outline: 112 120 132;
-    --md-sys-color-outline-variant: 211 214 219;
-    
-    --background: var(--md-sys-color-background);
-    --foreground: var(--md-sys-color-on-background);
-    --card: var(--md-sys-color-surface);
-    --card-foreground: var(--md-sys-color-on-surface);
-    --popover: var(--md-sys-color-surface);
-    --popover-foreground: var(--md-sys-color-on-surface);
-    --primary: var(--md-sys-color-primary);
-    --primary-foreground: var(--md-sys-color-on-primary);
-    --secondary: var(--md-sys-color-secondary);
-    --secondary-foreground: var(--md-sys-color-on-secondary);
-    --muted: var(--md-sys-color-surface-variant);
-    --muted-foreground: var(--md-sys-color-on-surface-variant);
-    --accent: var(--md-sys-color-tertiary);
-    --accent-foreground: var(--md-sys-color-on-tertiary);
-    --destructive: var(--md-sys-color-error);
-    --destructive-foreground: var(--md-sys-color-on-error);
-    --border: var(--md-sys-color-outline-variant);
-    --input: var(--md-sys-color-outline);
-    --ring: var(--md-sys-color-primary);
-    
-    --radius: 1.5rem;
+  .futuristic {
+    --background: 230 35% 7%;
+    --foreground: 213 31% 91%;
+    --card: 230 25% 10%;
+    --card-foreground: 213 31% 91%;
+    --popover: 230 25% 10%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 230 100% 67%;
+    --primary-foreground: 213 31% 91%;
+    --secondary: 199 89% 48%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 230 25% 15%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 263 60% 64%;
+    --accent-foreground: 213 31% 91%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 213 31% 91%;
+    --border: 230 25% 15%;
+    --input: 230 25% 15%;
+    --ring: 230 100% 67%;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s, fill 0.2s, 
+                stroke 0.2s, opacity 0.2s, box-shadow 0.2s, transform 0.15s;
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  /* Material Design Typography */
-  h1 {
-    @apply text-4xl md:text-5xl font-normal tracking-tight leading-tight mb-4;
-  }
-  
-  h2 {
-    @apply text-3xl md:text-4xl font-normal tracking-tight leading-tight mb-3;
-  }
-  
-  h3 {
-    @apply text-2xl md:text-3xl font-normal tracking-tight leading-tight mb-2;
-  }
-  
-  h4 {
-    @apply text-xl md:text-2xl font-normal tracking-tight leading-tight mb-2;
-  }
-  
-  h5 {
-    @apply text-lg md:text-xl font-medium tracking-tight leading-tight mb-1;
-  }
-  
-  h6 {
-    @apply text-base md:text-lg font-medium tracking-tight leading-tight mb-1;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Añadir transiciones suaves para cambios de tema */
-  *, ::before, ::after {
-    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
+  .reduced-motion * {
+    transition: none !important;
+    animation: none !important;
   }
-  
-  /* Define Material Design elevation shadows */
-  .md-elevation-1 {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  }
-  
-  .md-elevation-2 {
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-  }
-  
-  .md-elevation-3 {
-    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-  }
-  
-  .md-elevation-4 {
-    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-  }
-  
-  .md-elevation-5 {
-    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+
+  .animations-disabled * {
+    animation: none !important;
   }
 }
 
-@layer utilities {
-  /* Material Design utilities */
-  .md-rounded-xs {
-    border-radius: 0.25rem;
+/* Material Design 3 Styles */
+@layer components {
+  /* Button Styles */
+  .material .md-btn-filled {
+    @apply bg-primary text-primary-foreground rounded-full font-medium 
+           shadow-md hover:shadow-lg active:shadow-sm transition-all
+           flex items-center justify-center relative overflow-hidden;
   }
-  
-  .md-rounded-sm {
-    border-radius: 0.5rem;
-  }
-  
-  .md-rounded {
-    border-radius: 1rem;
-  }
-  
-  .md-rounded-lg {
-    border-radius: 1.5rem;
-  }
-  
-  .md-rounded-xl {
-    border-radius: 2rem;
-  }
-  
-  /* Material Design States */
-  .md-state-layer {
-    @apply relative overflow-hidden;
-  }
-  
-  .md-state-layer::before {
+
+  .material .md-btn-filled::before {
     content: '';
-    @apply absolute inset-0 bg-current opacity-0 pointer-events-none transition-opacity duration-200;
+    @apply absolute inset-0 bg-white opacity-0 transition-opacity
+           pointer-events-none rounded-full;
   }
-  
-  .md-state-layer:hover::before {
-    @apply opacity-5;
-  }
-  
-  .md-state-layer:focus-within::before {
+
+  .animations-enabled .material .md-btn-filled:hover::before {
     @apply opacity-10;
   }
-  
-  .md-state-layer:active::before {
-    @apply opacity-15;
+
+  .animations-enabled .material .md-btn-filled:active::before {
+    @apply opacity-20;
   }
-  
-  /* Material Design text and element utilities */
-  .md-text-caption {
-    @apply text-xs leading-4 font-normal;
+
+  .animations-enabled .material .md-hover-scale {
+    @apply hover:scale-105 active:scale-95 transition-transform;
   }
-  
-  .md-text-body-small {
-    @apply text-sm leading-5 font-normal;
+
+  .material .md-btn-tonal {
+    @apply bg-primary/10 text-primary rounded-full font-medium 
+           hover:bg-primary/20 active:bg-primary/30 transition-colors;
   }
-  
-  .md-text-body {
-    @apply text-base leading-6 font-normal;
+
+  .material .md-btn-text {
+    @apply bg-transparent text-primary rounded-full font-medium 
+           hover:bg-primary/10 active:bg-primary/20 transition-colors;
   }
-  
-  .md-text-title-small {
-    @apply text-sm leading-5 font-medium;
+
+  .material .md-btn-outlined {
+    @apply bg-transparent text-primary rounded-full font-medium 
+           border border-primary/30 hover:bg-primary/10 active:bg-primary/20 transition-colors;
   }
-  
-  .md-text-title {
-    @apply text-base leading-6 font-medium;
+
+  /* Card Styles */
+  .material .md-card-elevated {
+    @apply rounded-xl bg-card text-card-foreground shadow-lg hover:shadow-xl
+           transition-all border-none;
   }
-  
-  .md-text-headline-small {
-    @apply text-lg leading-7 font-medium;
+
+  .animations-enabled .material .md-card-elevated {
+    @apply hover:-translate-y-1 active:translate-y-0;
   }
-  
-  /* Animation utilities */  
-  .md-animate-fade {
-    animation: mdFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .material .md-card-filled {
+    @apply rounded-xl bg-secondary/10 text-card-foreground shadow-sm
+           transition-all border-none;
   }
-  
-  .md-animate-scale {
-    animation: mdScale 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .material .md-card-outlined {
+    @apply rounded-xl bg-card text-card-foreground 
+           transition-all border border-border;
   }
-  
-  .md-animate-slide-up {
-    animation: mdSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Input Styles */
+  .material input.md-input,
+  .material select.md-select,
+  .material textarea.md-textarea {
+    @apply rounded-lg border-0 bg-muted/50 focus:ring-2 focus:ring-primary/50
+           transition-all px-4 py-2 outline-none;
   }
-  
-  .md-animate-slide-down {
-    animation: mdSlideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .material label.md-label {
+    @apply text-sm font-medium text-foreground/80 mb-1 ml-1;
   }
-  
-  .md-animate-slide-left {
-    animation: mdSlideLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .md-animate-slide-right {
-    animation: mdSlideRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  /* Hover effects */
-  .md-hover-scale {
-    @apply transition-transform duration-300;
-  }
-  
-  .md-hover-scale:hover {
-    @apply transform scale-105;
-  }
-  
-  .md-hover-elevate {
-    @apply transition-shadow duration-300;
-  }
-  
-  .md-hover-elevate:hover {
-    @apply md-elevation-3;
-  }
-  
-  /* Ripple effect container */
-  .md-ripple-container {
+
+  /* Animation Effects */
+  .animations-enabled .md-ripple {
     @apply relative overflow-hidden;
   }
-}
 
-/* Define keyframes for animations */
-@keyframes mdFade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+  .animations-enabled .md-ripple::after {
+    content: '';
+    @apply absolute inset-0 scale-0 rounded-full bg-white/30
+           pointer-events-none origin-center;
+    transform-origin: center;
+    animation: ripple 0.6s ease-out forwards;
+  }
 
-@keyframes mdScale {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
 
-@keyframes mdSlideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+  .animations-enabled .md-fade-in {
+    animation: fadeIn 0.5s ease forwards;
+  }
 
-@keyframes mdSlideDown {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 
-@keyframes mdSlideLeft {
-  from { transform: translateX(20px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
+  .animations-enabled .md-slide-up {
+    animation: slideUp 0.5s ease forwards;
+  }
 
-@keyframes mdSlideRight {
-  from { transform: translateX(-20px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-/* Ripple effect animation */
-@keyframes mdRipple {
-  to {
-    transform: scale(4);
+  .animations-enabled .md-slide-in-right {
+    animation: slideInRight 0.5s ease forwards;
+  }
+
+  @keyframes slideInRight {
+    from { 
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animations-enabled .md-scale-in {
+    animation: scaleIn 0.3s ease forwards;
+  }
+
+  @keyframes scaleIn {
+    from { 
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to { 
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Staggered animation for lists */
+  .animations-enabled .md-stagger-list > * {
     opacity: 0;
+    transform: translateY(10px);
   }
-}
 
-/* Advanced animations for wow effect */
-@keyframes mdPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-@keyframes mdRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes mdShine {
-  from {
-    background-position: -200% center;
+  .animations-enabled .md-stagger-list > *:nth-child(1) {
+    animation: staggerIn 0.3s ease 0.1s forwards;
   }
-  to {
-    background-position: 200% center;
+
+  .animations-enabled .md-stagger-list > *:nth-child(2) {
+    animation: staggerIn 0.3s ease 0.2s forwards;
   }
-}
 
-.md-animate-pulse {
-  animation: mdPulse 1.5s ease-in-out infinite;
-}
+  .animations-enabled .md-stagger-list > *:nth-child(3) {
+    animation: staggerIn 0.3s ease 0.3s forwards;
+  }
 
-.md-animate-rotate {
-  animation: mdRotate 3s linear infinite;
-}
+  .animations-enabled .md-stagger-list > *:nth-child(4) {
+    animation: staggerIn 0.3s ease 0.4s forwards;
+  }
 
-.md-shine {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  background-size: 200% 100%;
-  animation: mdShine 2s infinite;
-}
+  .animations-enabled .md-stagger-list > *:nth-child(5) {
+    animation: staggerIn 0.3s ease 0.5s forwards;
+  }
 
-/* Material floating action button styles */
-.md-fab {
-  @apply fixed right-6 bottom-6 rounded-full w-14 h-14 flex items-center justify-center md-elevation-2;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  .animations-enabled .md-stagger-list > *:nth-child(n+6) {
+    animation: staggerIn 0.3s ease 0.6s forwards;
+  }
 
-.md-fab:hover {
-  @apply md-elevation-3 transform -translate-y-1;
-}
+  @keyframes staggerIn {
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-.md-fab:active {
-  @apply transform scale-95;
-}
+  /* 3D Effects */
+  .animations-enabled .md-3d-card {
+    @apply transition-transform duration-300 transform-gpu;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
 
-/* Material Design Cards */
-.md-card {
-  @apply bg-card rounded-lg overflow-hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  .animations-enabled .md-3d-card:hover {
+    transform: rotateX(5deg) rotateY(5deg) scale(1.02);
+  }
 
-.md-card-elevated {
-  @apply md-card md-elevation-1;
-}
+  /* Hover Glow Effect */
+  .animations-enabled .md-hover-glow {
+    @apply transition-all;
+  }
 
-.md-card-elevated:hover {
-  @apply md-elevation-3;
-}
+  .animations-enabled .md-hover-glow:hover {
+    box-shadow: 0 0 15px 2px var(--color-primary);
+  }
 
-.md-card-outlined {
-  @apply md-card border border-border;
-}
+  /* Micro-interactions */
+  .animations-enabled .md-micro-bounce:active {
+    animation: microBounce 0.3s ease;
+  }
 
-.md-card-filled {
-  @apply md-card bg-secondary/10;
-}
+  @keyframes microBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+  }
 
-/* Material Design buttons */
-.md-btn {
-  @apply rounded-full inline-flex items-center justify-center relative overflow-hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  /* Background Pulse Animation */
+  .animations-enabled .md-bg-pulse {
+    animation: bgPulse 3s infinite;
+  }
 
-.md-btn-filled {
-  @apply md-btn bg-primary text-primary-foreground px-6 py-2;
-}
-
-.md-btn-tonal {
-  @apply md-btn bg-primary/10 text-primary px-6 py-2;
-}
-
-.md-btn-outlined {
-  @apply md-btn border border-primary text-primary bg-transparent px-6 py-2;
-}
-
-.md-btn-text {
-  @apply md-btn text-primary bg-transparent px-4 py-2;
-}
-
-/* Material Design Inputs */
-.md-input-container {
-  @apply relative;
-}
-
-.md-input {
-  @apply w-full border-0 border-b-2 border-input bg-transparent px-0 py-2 text-foreground focus:outline-none focus:border-primary;
-}
-
-.md-input-label {
-  @apply absolute left-0 top-2 text-muted-foreground pointer-events-none transition-all duration-200;
-}
-
-.md-input:focus ~ .md-input-label,
-.md-input:not(:placeholder-shown) ~ .md-input-label {
-  @apply transform -translate-y-6 scale-75 text-primary;
-}
-
-/* Material Design Chips */
-.md-chip {
-  @apply inline-flex items-center rounded-full py-1 px-3 text-sm;
-}
-
-.md-chip-filled {
-  @apply md-chip bg-primary/10 text-primary;
-}
-
-.md-chip-outlined {
-  @apply md-chip border border-primary text-primary;
-}
-
-/* Material Design Bottom Navigation */
-.md-bottom-nav {
-  @apply fixed bottom-0 left-0 right-0 bg-background border-t border-border flex justify-around items-center h-16;
-}
-
-.md-bottom-nav-item {
-  @apply flex flex-col items-center justify-center text-muted-foreground px-2 py-1;
-}
-
-.md-bottom-nav-item.active {
-  @apply text-primary;
-}
-
-/* Material Design Navigation Rail */
-.md-nav-rail {
-  @apply fixed left-0 top-0 bottom-0 bg-background border-r border-border flex flex-col items-center pt-16 pb-4 w-16;
-}
-
-.md-nav-rail-item {
-  @apply flex flex-col items-center justify-center text-muted-foreground my-2 p-2 rounded-full;
-}
-
-.md-nav-rail-item.active {
-  @apply bg-primary/10 text-primary;
-}
-
-/* Materal Design Switch */
-.md-switch {
-  @apply relative inline-flex items-center cursor-pointer;
-}
-
-.md-switch-input {
-  @apply sr-only;
-}
-
-.md-switch-track {
-  @apply w-11 h-6 bg-muted rounded-full transition-colors duration-200;
-}
-
-.md-switch-thumb {
-  @apply absolute left-1 top-1 w-4 h-4 bg-muted-foreground rounded-full transition-transform duration-200;
-}
-
-.md-switch-input:checked ~ .md-switch-track {
-  @apply bg-primary/60;
-}
-
-.md-switch-input:checked ~ .md-switch-thumb {
-  @apply transform translate-x-5 bg-primary;
+  @keyframes bgPulse {
+    0% { background-color: rgba(var(--primary), 0.1); }
+    50% { background-color: rgba(var(--primary), 0.2); }
+    100% { background-color: rgba(var(--primary), 0.1); }
+  }
 }

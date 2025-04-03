@@ -8,26 +8,45 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 
-const LoginPage: React.FC = () => {
+const RegisterPage: React.FC = () => {
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  
+  const { signUp } = useAuth();
   const navigate = useNavigate();
+
+  const validatePasswords = () => {
+    if (password !== confirmPassword) {
+      setPasswordError('Las contraseñas no coinciden');
+      return false;
+    }
+    
+    if (password.length < 6) {
+      setPasswordError('La contraseña debe tener al menos 6 caracteres');
+      return false;
+    }
+    
+    setPasswordError('');
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password) {
+    if (!validatePasswords()) {
       return;
     }
     
     setIsLoading(true);
     try {
-      await signIn(email, password);
-      navigate('/');
+      await signUp(email, password, fullName);
+      navigate('/login');
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Registration error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -38,13 +57,24 @@ const LoginPage: React.FC = () => {
       <div className="w-full max-w-md p-6">
         <Card className="md-card-elevated w-full">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Iniciar Sesión</CardTitle>
+            <CardTitle className="text-2xl font-bold">Crear Cuenta</CardTitle>
             <CardDescription>
-              Ingresa tus credenciales para acceder a tu cuenta
+              Ingresa tus datos para registrarte en la plataforma
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Nombre Completo</Label>
+                <Input 
+                  id="fullName" 
+                  type="text" 
+                  placeholder="Tu nombre completo" 
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input 
@@ -57,12 +87,7 @@ const LoginPage: React.FC = () => {
                 />
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Contraseña</Label>
-                  <Link to="/auth/reset-password" className="text-sm text-primary hover:underline">
-                    ¿Olvidaste tu contraseña?
-                  </Link>
-                </div>
+                <Label htmlFor="password">Contraseña</Label>
                 <Input 
                   id="password" 
                   type="password" 
@@ -70,6 +95,19 @@ const LoginPage: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
+                <Input 
+                  id="confirmPassword" 
+                  type="password" 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+                {passwordError && (
+                  <p className="text-sm text-red-500">{passwordError}</p>
+                )}
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
@@ -80,12 +118,12 @@ const LoginPage: React.FC = () => {
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Iniciar Sesión
+                Registrarse
               </Button>
               <div className="text-center text-sm">
-                ¿No tienes una cuenta?{' '}
-                <Link to="/auth/register" className="text-primary hover:underline">
-                  Regístrate
+                ¿Ya tienes una cuenta?{' '}
+                <Link to="/login" className="text-primary hover:underline">
+                  Iniciar Sesión
                 </Link>
               </div>
             </CardFooter>
@@ -96,4 +134,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
