@@ -169,6 +169,14 @@ export const EnhancedRoleSimulator = () => {
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
+  // Reseteamos los resultados cuando se cierra el popover
+  useEffect(() => {
+    if (!open) {
+      setSearchQuery('');
+      setUserResults([]);
+    }
+  }, [open]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -191,7 +199,7 @@ export const EnhancedRoleSimulator = () => {
             value={searchQuery}
             onValueChange={setSearchQuery}
           />
-          <CommandList>
+          <CommandList className="max-h-[300px] overflow-y-auto">
             <CommandEmpty>No se encontraron resultados</CommandEmpty>
             
             {/* Quick role selection */}

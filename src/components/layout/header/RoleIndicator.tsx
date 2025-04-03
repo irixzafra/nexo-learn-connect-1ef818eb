@@ -7,7 +7,7 @@ interface RoleIndicatorProps {
   asToggler?: boolean;
 }
 
-const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className }) => {
+const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className, asToggler }) => {
   return <EnhancedRoleSimulator />;
 };
 
