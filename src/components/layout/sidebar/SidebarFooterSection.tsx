@@ -23,9 +23,7 @@ interface SidebarFooterSectionProps {
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
-  userRole,
   isCollapsed,
-  effectiveRole,
   currentViewRole,
   handleRoleChange,
   getRoleName,
@@ -33,22 +31,20 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   languages,
   changeLanguage,
 }) => {
-  const { logout } = useAuth();
+  // Get roles DIRECTLY from context (not from props)
+  const { logout, userRole, effectiveRole } = useAuth();
   const unreadNotifications = 3; // Example count - replace with actual state
   
-  // Get roles directly from context for debugging
-  const { userRole: userRoleFromContext } = useAuth();
-  
   console.log('>>> DEBUG SidebarFooterSection:', { 
-    userRoleFromContext, 
-    userRoleFromProps: userRole,
-    isConditionMet: userRoleFromContext === 'admin' 
+    userRoleFromContext: userRole, 
+    effectiveRoleFromContext: effectiveRole,
+    isConditionMet: userRole === 'admin' 
   });
 
   return (
     <div className="mt-auto pt-2">
       {/* Add RoleSwitcher for admin users */}
-      {userRoleFromContext === 'admin' && (
+      {userRole === 'admin' && (
         <div className={cn(
           "px-3 pb-3 border-b border-border",
           isCollapsed ? "flex justify-center" : ""
