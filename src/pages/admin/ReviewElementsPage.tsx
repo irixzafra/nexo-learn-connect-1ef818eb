@@ -127,8 +127,10 @@ const ReviewElementsPage: React.FC = () => {
     </div>
   );
 
-  // Función para obtener el nombre o título del elemento según su tipo
-  const getElementName = (element: ElementType): string => {
+  // Función para obtener el nombre o título del elemento según su tipo - con comprobación de nulos
+  const getElementName = (element: ElementType | null): string => {
+    if (!element) return '';
+    
     if (element.type === 'ui' || element.type === 'navigation') {
       return element.name;
     } else if (element.type === 'page' || element.type === 'orphan') {
@@ -137,8 +139,10 @@ const ReviewElementsPage: React.FC = () => {
     return '';
   };
 
-  // Función para obtener la descripción del elemento según su tipo
-  const getElementDescription = (element: ElementType): string | undefined => {
+  // Función para obtener la descripción del elemento según su tipo - con comprobación de nulos
+  const getElementDescription = (element: ElementType | null): string | undefined => {
+    if (!element) return undefined;
+    
     if (element.type === 'ui' || element.type === 'navigation') {
       return element.description;
     } else if (element.type === 'page') {
@@ -147,8 +151,10 @@ const ReviewElementsPage: React.FC = () => {
     return undefined;
   };
 
-  // Función para obtener la categoría del elemento según su tipo
-  const getElementCategory = (element: ElementType): string | undefined => {
+  // Función para obtener la categoría del elemento según su tipo - con comprobación de nulos
+  const getElementCategory = (element: ElementType | null): string | undefined => {
+    if (!element) return undefined;
+    
     if (element.type === 'ui' || element.type === 'navigation') {
       return element.category;
     } else if (element.type === 'page') {
@@ -157,8 +163,10 @@ const ReviewElementsPage: React.FC = () => {
     return undefined;
   };
 
-  // Función para obtener la ruta del elemento según su tipo
-  const getElementPath = (element: ElementType): string | undefined => {
+  // Función para obtener la ruta del elemento según su tipo - con comprobación de nulos
+  const getElementPath = (element: ElementType | null): string | undefined => {
+    if (!element) return undefined;
+    
     if (element.type === 'ui' || element.type === 'navigation' || element.type === 'orphan') {
       return element.path;
     }
@@ -508,106 +516,110 @@ const ReviewElementsPage: React.FC = () => {
       {/* Element Details Drawer */}
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
         <DrawerContent className="max-h-[90vh]">
-          <DrawerHeader>
-            <DrawerTitle>{getElementName(selectedElement!)}</DrawerTitle>
-            <DrawerDescription>
-              {getElementDescription(selectedElement!) || 
-               (selectedElement?.type === 'page' ? 'Página del sitio' : 
-                selectedElement?.type === 'orphan' ? 'Página huérfana' : 
-                'Componente del sistema')}
-            </DrawerDescription>
-          </DrawerHeader>
-          
-          <div className="px-4 py-2">
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                  Tipo
-                </h4>
-                <p className="text-sm">
-                  {getElementCategory(selectedElement!) || 
-                   (selectedElement?.type === 'orphan' ? 'Huérfana' : '')}
-                </p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                  Estado
-                </h4>
-                <Badge variant={
-                  selectedElement?.status === 'Activo' || selectedElement?.status === 'published' ? 'success' : 'warning'
-                }>
-                  {selectedElement?.status}
-                </Badge>
-              </div>
-              {getElementPath(selectedElement!) && (
-                <div className="col-span-2">
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                    Ruta
-                  </h4>
-                  <p className="text-sm font-mono bg-muted p-2 rounded">
-                    {getElementPath(selectedElement!)}
-                  </p>
-                </div>
-              )}
-              {selectedElement?.type === 'page' && (
-                <div className="col-span-2">
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                    URL
-                  </h4>
-                  <p className="text-sm font-mono bg-muted p-2 rounded">
-                    /{selectedElement.slug}
-                  </p>
-                </div>
-              )}
-              {selectedElement?.type === 'orphan' && (
-                <>
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                      Último acceso
-                    </h4>
-                    <p className="text-sm">{new Date(selectedElement.last_accessed).toLocaleDateString()}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                      Número de accesos
-                    </h4>
-                    <p className="text-sm">{selectedElement.access_count}</p>
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="border-t pt-4 mt-4">
-              <h3 className="text-lg font-medium mb-3">Vista previa</h3>
+          {selectedElement && (
+            <>
+              <DrawerHeader>
+                <DrawerTitle>{getElementName(selectedElement)}</DrawerTitle>
+                <DrawerDescription>
+                  {getElementDescription(selectedElement) || 
+                  (selectedElement.type === 'page' ? 'Página del sitio' : 
+                    selectedElement.type === 'orphan' ? 'Página huérfana' : 
+                      'Componente del sistema')}
+                </DrawerDescription>
+              </DrawerHeader>
               
-              <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
-                {selectedElement?.type === 'ui' || selectedElement?.type === 'navigation' ? (
-                  <div className="border rounded-md p-4 bg-background">
-                    <ComponentPreview componentPath={selectedElement.path} />
+              <div className="px-4 py-2">
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                      Tipo
+                    </h4>
+                    <p className="text-sm">
+                      {getElementCategory(selectedElement) || 
+                      (selectedElement.type === 'orphan' ? 'Huérfana' : '')}
+                    </p>
                   </div>
-                ) : selectedElement?.type === 'page' ? (
-                  <div className="border rounded-md p-4 bg-background">
-                    <div className="prose max-w-none" dangerouslySetInnerHTML={{ 
-                      __html: typeof selectedElement.content === 'string' 
-                        ? selectedElement.content 
-                        : JSON.stringify(selectedElement.content, null, 2) 
-                    }} />
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                      Estado
+                    </h4>
+                    <Badge variant={
+                      selectedElement.status === 'Activo' || selectedElement.status === 'published' ? 'success' : 'warning'
+                    }>
+                      {selectedElement.status}
+                    </Badge>
                   </div>
-                ) : selectedElement?.type === 'orphan' ? (
-                  <div className="flex flex-col items-center justify-center border rounded-md p-6 bg-background">
-                    <FileX className="h-12 w-12 text-muted-foreground mb-2" />
-                    <p className="text-muted-foreground">Esta página no tiene contenido disponible para previsualizar.</p>
-                  </div>
-                ) : null}
-              </ErrorBoundary>
-            </div>
-          </div>
+                  {getElementPath(selectedElement) && (
+                    <div className="col-span-2">
+                      <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                        Ruta
+                      </h4>
+                      <p className="text-sm font-mono bg-muted p-2 rounded">
+                        {getElementPath(selectedElement)}
+                      </p>
+                    </div>
+                  )}
+                  {selectedElement.type === 'page' && (
+                    <div className="col-span-2">
+                      <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                        URL
+                      </h4>
+                      <p className="text-sm font-mono bg-muted p-2 rounded">
+                        /{selectedElement.slug}
+                      </p>
+                    </div>
+                  )}
+                  {selectedElement.type === 'orphan' && (
+                    <>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                          Último acceso
+                        </h4>
+                        <p className="text-sm">{new Date(selectedElement.last_accessed).toLocaleDateString()}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                          Número de accesos
+                        </h4>
+                        <p className="text-sm">{selectedElement.access_count}</p>
+                      </div>
+                    </>
+                  )}
+                </div>
 
-          <DrawerFooter>
-            <Button variant="outline" onClick={() => setIsDrawerOpen(false)}>
-              Cerrar
-            </Button>
-          </DrawerFooter>
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-lg font-medium mb-3">Vista previa</h3>
+                  
+                  <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+                    {selectedElement.type === 'ui' || selectedElement.type === 'navigation' ? (
+                      <div className="border rounded-md p-4 bg-background">
+                        <ComponentPreview componentPath={selectedElement.path} />
+                      </div>
+                    ) : selectedElement.type === 'page' ? (
+                      <div className="border rounded-md p-4 bg-background">
+                        <div className="prose max-w-none" dangerouslySetInnerHTML={{ 
+                          __html: typeof selectedElement.content === 'string' 
+                            ? selectedElement.content 
+                            : JSON.stringify(selectedElement.content, null, 2) 
+                        }} />
+                      </div>
+                    ) : selectedElement.type === 'orphan' ? (
+                      <div className="flex flex-col items-center justify-center border rounded-md p-6 bg-background">
+                        <FileX className="h-12 w-12 text-muted-foreground mb-2" />
+                        <p className="text-muted-foreground">Esta página no tiene contenido disponible para previsualizar.</p>
+                      </div>
+                    ) : null}
+                  </ErrorBoundary>
+                </div>
+              </div>
+
+              <DrawerFooter>
+                <Button variant="outline" onClick={() => setIsDrawerOpen(false)}>
+                  Cerrar
+                </Button>
+              </DrawerFooter>
+            </>
+          )}
         </DrawerContent>
       </Drawer>
     </AdminPageLayout>
