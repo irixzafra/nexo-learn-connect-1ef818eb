@@ -31,7 +31,8 @@ export const useUserSearch = () => {
       if (error) {
         console.error('❌ Error al invocar search-users-simulation:', error);
         toast.error('Error al buscar usuarios');
-        throw error;
+        setUserResults([]);
+        return;
       }
       
       if (data?.data && Array.isArray(data.data)) {
