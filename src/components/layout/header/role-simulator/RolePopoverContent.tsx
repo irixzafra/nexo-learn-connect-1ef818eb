@@ -40,15 +40,17 @@ export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
   }, [setSearchQuery]);
 
   return (
-    <Command className="rounded-md">
+    <Command className="rounded-lg shadow-lg border-none overflow-hidden">
       <CommandInput 
         placeholder="Buscar rol o usuario..." 
         value={searchQuery}
         onValueChange={setSearchQuery}
-        className="border-0 focus:ring-0"
+        className="border-0 focus:ring-1 focus:ring-primary/30 py-3"
       />
-      <CommandList className="max-h-[300px] overflow-y-auto">
-        <CommandEmpty>No se encontraron resultados</CommandEmpty>
+      <CommandList className="max-h-[350px] overflow-y-auto px-1">
+        <CommandEmpty className="py-4 text-center text-sm text-muted-foreground">
+          No se encontraron resultados
+        </CommandEmpty>
         
         {/* Quick role selection */}
         <QuickRoleSelector 

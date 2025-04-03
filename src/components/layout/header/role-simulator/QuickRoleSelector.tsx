@@ -19,28 +19,38 @@ export const QuickRoleSelector: React.FC<QuickRoleSelectorProps> = ({
   availableRoles = ['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest'],
 }) => {
   return (
-    <CommandGroup heading="Roles disponibles">
-      <div className="grid grid-cols-2 gap-1 p-2">
+    <CommandGroup heading="Roles disponibles" className="pb-2">
+      <div className="grid grid-cols-2 gap-1.5 p-2">
         {availableRoles.map((role) => {
           const isActive = role === effectiveRole;
-          const badgeColor = getRoleBadgeColor(role).replace('bg-', '');
           
           return (
             <CommandItem
               key={role}
               onSelect={() => handleSwitchRole(role as UserRoleType)}
               className={cn(
-                "flex items-center gap-2 text-sm py-2 px-2 rounded-md",
-                isActive ? "bg-accent/30" : "hover:bg-accent/10"
+                "flex items-center gap-2 text-sm py-2 px-3 rounded-md",
+                "transition-all duration-200 border",
+                isActive 
+                  ? "bg-primary/10 border-primary/20" 
+                  : "hover:bg-accent/20 border-transparent hover:border-accent/10"
               )}
             >
               <div className="flex items-center gap-2 flex-1">
-                <span className="flex-shrink-0 w-4 h-4 text-muted-foreground">
+                <span className={cn(
+                  "flex-shrink-0 w-4 h-4",
+                  isActive ? "text-primary" : "text-muted-foreground"
+                )}>
                   {getRoleIcon(role)}
                 </span>
-                <span className="text-xs font-medium">{getRoleName(role)}</span>
+                <span className={cn(
+                  "text-xs font-medium",
+                  isActive && "font-semibold text-primary"
+                )}>
+                  {getRoleName(role)}
+                </span>
               </div>
-              {isActive && <Check className="h-3 w-3 text-primary" />}
+              {isActive && <Check className="h-3.5 w-3.5 text-primary" />}
             </CommandItem>
           );
         })}

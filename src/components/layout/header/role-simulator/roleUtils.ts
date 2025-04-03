@@ -1,6 +1,6 @@
 
 import { UserRoleType } from '@/types/auth';
-import { Shield, BookOpen, GraduationCap, Terminal, Ghost, UserCog, Users } from 'lucide-react';
+import { Shield, BookOpen, GraduationCap, Terminal, Ghost, UserCog, Users, Sparkles } from 'lucide-react';
 import React from 'react';
 
 /**
@@ -41,23 +41,23 @@ export function getRoleName(role: UserRoleType | string): string {
 export function getRoleBadgeColor(role: UserRoleType | string): string {
   switch (role) {
     case 'admin':
-      return 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400';
+      return 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30';
     case 'instructor':
-      return 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400';
+      return 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30';
     case 'sistemas':
-      return 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400';
+      return 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30';
     case 'moderator':
-      return 'bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-400';
+      return 'bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30';
     case 'content_creator':
-      return 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950/50 dark:text-yellow-400';
+      return 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950/50 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/30';
     case 'student':
-      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400';
+      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30';
     case 'beta_tester':
-      return 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-400';
+      return 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-400 hover:bg-cyan-100 dark:hover:bg-cyan-900/30';
     case 'guest':
     case 'anonimo':
     default:
-      return 'bg-gray-50 text-gray-700 dark:bg-gray-900/50 dark:text-gray-400';
+      return 'bg-gray-50 text-gray-700 dark:bg-gray-900/50 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/30';
   }
 }
 
@@ -80,6 +80,8 @@ export const getRoleIcon = (role: string): React.ReactElement => {
       return React.createElement(UserCog, { className: "h-4 w-4" });
     case 'content_creator':
       return React.createElement(Users, { className: "h-4 w-4" });
+    case 'beta_tester':
+      return React.createElement(Sparkles, { className: "h-4 w-4" });
     case 'anonimo':
     case 'guest':
       return React.createElement(Ghost, { className: "h-4 w-4" });

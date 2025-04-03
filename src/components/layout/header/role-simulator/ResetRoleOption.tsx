@@ -23,17 +23,17 @@ export const ResetRoleOption: React.FC<ResetRoleOptionProps> = ({
 
   return (
     <>
-      <CommandSeparator />
+      <CommandSeparator className="my-2" />
       <CommandGroup>
         <CommandItem
           onSelect={() => {
             resetToOriginalRole();
             handleClose();
           }}
-          className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400"
+          className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 my-1 px-3 py-2.5 rounded-md"
         >
           <RotateCcw className="h-4 w-4" />
-          <span>Volver a mi rol original: {getRoleName(userRole || '')}</span>
+          <span className="font-medium">Volver a mi rol original: {getRoleName(userRole || '')}</span>
         </CommandItem>
       </CommandGroup>
     </>

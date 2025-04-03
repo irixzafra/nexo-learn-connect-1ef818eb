@@ -37,7 +37,7 @@ export const EnhancedRoleSimulator = () => {
             setAvailableRoles(uniqueRoles as UserRoleType[]);
           } else {
             // Fallback to default roles
-            setAvailableRoles(['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest']);
+            setAvailableRoles(['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']);
           }
         } else {
           // Use roles from the roles table
@@ -46,7 +46,7 @@ export const EnhancedRoleSimulator = () => {
       } catch (error) {
         console.error('Error in fetchRoles:', error);
         // Fallback to default roles
-        setAvailableRoles(['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest']);
+        setAvailableRoles(['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']);
       }
     };
     
@@ -69,7 +69,7 @@ export const EnhancedRoleSimulator = () => {
           />
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-72 p-0 rounded-md shadow-md border border-muted/30" align="end">
+      <PopoverContent className="w-80 p-0 rounded-lg shadow-lg border-0" align="end">
         <RolePopoverContent
           effectiveRole={effectiveRole || ''}
           isViewingAsOtherRole={isViewingAsOtherRole}
