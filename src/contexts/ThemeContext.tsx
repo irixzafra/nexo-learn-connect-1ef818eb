@@ -1,47 +1,22 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-
-type Theme = 'light' | 'dark' | 'futuristic' | 'system';
+import React, { createContext, useContext } from 'react';
+import { useThemeManager, ThemeMode } from '@/hooks/useThemeManager';
 
 interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
+  resolvedTheme: 'light' | 'dark' | 'futuristic';
+  isDark: boolean;
+  isFuturistic: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    // Recuperar tema guardado del localStorage
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    // Si no hay tema guardado, usar preferencia del sistema o 'light' por defecto
-    return savedTheme || 
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  });
-
-  useEffect(() => {
-    // Guardar el tema en localStorage
-    localStorage.setItem('theme', theme);
-    
-    // Si el tema es "system", detectar la preferencia del sistema
-    const effectiveTheme = theme === 'system'
-      ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      : theme;
-    
-    // Aplicar clase de tema al elemento html
-    const root = document.documentElement;
-    
-    // Eliminar todas las clases de tema
-    root.classList.remove('light', 'dark', 'futuristic');
-    
-    // Añadir la clase del tema efectivo
-    root.classList.add(effectiveTheme);
-    
-    console.log('Theme applied:', effectiveTheme);
-  }, [theme]);
+  const themeManager = useThemeManager();
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={themeManager}>
       {children}
     </ThemeContext.Provider>
   );
