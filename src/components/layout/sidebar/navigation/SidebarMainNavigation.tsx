@@ -16,10 +16,15 @@ import {
   Lightbulb,
   Newspaper,
   Github,
-  Video
+  Video,
+  BarChart3,
+  CreditCard,
+  ClipboardEdit,
+  Code
 } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
 import { NavItem, NavGroup, NavDivider } from '@/components/navigation';
+import { routeMap } from '@/utils/routeUtils';
 
 interface SidebarMainNavigationProps {
   effectiveRole: UserRoleType;
@@ -81,17 +86,17 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
           isCollapsed={isCollapsed}
         />
         
-        {effectiveRole === 'admin' && (
+        {(effectiveRole === 'admin' || effectiveRole === 'sistemas') && (
           <NavItem
             href="/app/admin/analytics"
-            icon={Compass}
+            icon={BarChart3}
             title="Analíticas"
             isCollapsed={isCollapsed}
           />
         )}
       </NavGroup>
 
-      {/* Learning Group */}
+      {/* Learning Group - for all users */}
       <NavGroup
         title="Aprendizaje"
         icon={Lightbulb}
@@ -124,7 +129,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         />
       </NavGroup>
 
-      {/* Teaching Group - only for instructor role */}
+      {/* Teaching Group - only for instructor and admin roles */}
       {(effectiveRole === 'instructor' || effectiveRole === 'admin') && (
         <NavGroup
           title="Enseñanza"
@@ -159,7 +164,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         </NavGroup>
       )}
 
-      {/* Community Group */}
+      {/* Community Group - for all users */}
       <NavGroup
         title="Comunidad"
         icon={Users}
@@ -170,14 +175,14 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
           href="/app/messages"
           icon={MessageSquare}
           title="Mensajes"
-          badge={messagesCount}
+          badge={messagesCount > 0 ? messagesCount : undefined}
           isCollapsed={isCollapsed}
         />
         <NavItem
           href="/app/notifications"
           icon={Bell}
           title="Notificaciones"
-          badge={notificationsCount}
+          badge={notificationsCount > 0 ? notificationsCount : undefined}
           isCollapsed={isCollapsed}
         />
         <NavItem
@@ -188,7 +193,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         />
       </NavGroup>
 
-      {/* Admin Group - only for admin role */}
+      {/* Admin Group - only for admin and sistemas roles */}
       {(effectiveRole === 'admin' || effectiveRole === 'sistemas') && (
         <NavGroup
           title="Administración"
@@ -216,14 +221,28 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
           />
           <NavItem
             href="/app/admin/review-elements"
-            icon={FileText}
+            icon={ClipboardEdit}
             title="Revisión Elementos"
+            isCollapsed={isCollapsed}
+          />
+          {effectiveRole === 'sistemas' && (
+            <NavItem
+              href="/app/admin/system"
+              icon={Code}
+              title="Configuración Sistema"
+              isCollapsed={isCollapsed}
+            />
+          )}
+          <NavItem
+            href="/app/admin/payments"
+            icon={CreditCard}
+            title="Pagos"
             isCollapsed={isCollapsed}
           />
         </NavGroup>
       )}
 
-      {/* Resources Group - at the bottom */}
+      {/* Resources Group - for all users */}
       <NavDivider />
       
       <NavGroup
@@ -246,7 +265,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         />
       </NavGroup>
 
-      {/* Settings - at the bottom */}
+      {/* Settings - at the bottom for all users */}
       <NavItem
         href="/app/settings"
         icon={Settings}
