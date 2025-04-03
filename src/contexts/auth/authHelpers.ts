@@ -73,17 +73,11 @@ export const forceUpdateUserRole = async (email: string, roleToSet: UserRoleType
 export const saveSimulatedRole = (role: UserRoleType | null, currentRole: UserRoleType | null) => {
   if (role) {
     localStorage.setItem('viewAsRole', role);
-    toast({
-      title: "Vista cambiada",
-      description: `Ahora estás viendo como: ${role}`,
-    });
+    toast(`Ahora estás viendo como: ${role}`);
   } else {
     localStorage.removeItem('viewAsRole'); // Clean up when returning to original
     if (currentRole) {
-      toast({
-        title: "Vista restablecida",
-        description: `Volviendo a tu rol original: ${currentRole}`,
-      });
+      toast(`Volviendo a tu rol original: ${currentRole}`);
     }
   }
 };
