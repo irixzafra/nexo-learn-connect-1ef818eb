@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { UserRoleType, toUserRoleType } from '@/types/auth';
+import { UserRoleType } from '@/types/auth';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { PowerIcon, BellIcon } from 'lucide-react';
 import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
 import { LanguageSelector } from '@/components/LanguageSelector';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -38,12 +38,9 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
 
   return (
     <div className="mt-auto pt-2">
-      {!isCollapsed && (
+      {!isCollapsed && userRole === 'admin' && (
         <div className="px-3 pt-2 pb-4">
-          <RoleSwitcher
-            onChange={handleRoleChange}
-            currentViewRole={currentViewRole}
-          />
+          <RoleSwitcher />
         </div>
       )}
       

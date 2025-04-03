@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { UserRoleType, toUserRoleType } from '@/types/auth';
-import { useAuth } from '@/contexts/AuthContext';
+import { UserRoleType } from '@/types/auth';
+import { useAuth } from '@/contexts/auth';
 import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,7 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
   viewAsRole,
   onRoleChange
 }) => {
-  const { user, profile, logout } = useAuth();
+  const { user, profile, logout, userRole } = useAuth();
   const navigate = useNavigate();
   
   // Formato para iniciales del avatar
@@ -44,10 +44,7 @@ const SidebarFooterContent: React.FC<SidebarFooterContentProps> = ({
     <div className="flex flex-col gap-4">
       {/* Componente Role Switcher - Solo visible para admins */}
       {user && profile?.role === 'admin' && (
-        <RoleSwitcher 
-          currentViewRole={viewAsRole} 
-          onChange={onRoleChange} 
-        />
+        <RoleSwitcher />
       )}
       
       {/* Info de Usuario */}
