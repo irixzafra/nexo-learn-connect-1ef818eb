@@ -1,52 +1,62 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-import { toast } from 'sonner';
 
 export type ConnectionStatus = 'connected' | 'disconnected' | 'checking';
 
-export function useSupabaseSync() {
+/**
+ * Hook para gestionar la sincronización y estado de conexión con Supabase
+ */
+export const useSupabaseSync = () => {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('checking');
-  
+  const [lastSyncAttempt, setLastSyncAttempt] = useState<Date | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+
+  /**
+   * Verifica el estado de la conexión a la base de datos
+   */
   const checkDatabaseStatus = useCallback(async () => {
+    setConnectionStatus('checking');
+    setError(null);
+    
     try {
-      setConnectionStatus('checking');
-      
-      // Try a simple query that doesn't require specific tables
-      // Use a query that's guaranteed to work on any Postgres DB
+      // Realizamos una consulta simple para verificar la conexión
       const { data, error } = await supabase
         .from('profiles')
-        .select('count(*)', { count: 'exact', head: true });
+        .select('id')
+        .limit(1);
       
       if (error) {
-        console.error("Database connection error:", error);
-        setConnectionStatus('disconnected');
-        toast.error("No se puede conectar a la base de datos", {
-          description: "Verifica tu conexión a internet o contacta a soporte."
-        });
-        return false;
+        throw new Error(error.message);
       }
       
+      console.log('Conexión a Supabase verificada exitosamente');
       setConnectionStatus('connected');
-      return true;
     } catch (err) {
-      console.error('Failed to check database connection:', err);
+      console.error('Error al verificar la conexión a Supabase:', err);
       setConnectionStatus('disconnected');
-      return false;
+      setError(err instanceof Error ? err : new Error('Error desconocido'));
+    } finally {
+      setLastSyncAttempt(new Date());
     }
   }, []);
-  
-  // Check connection status on mount
+
+  // Verificar la conexión al montar el componente
   useEffect(() => {
     checkDatabaseStatus();
     
-    // Set up a periodic check (every 5 minutes)
+    // Verificar cada 5 minutos
     const interval = setInterval(() => {
       checkDatabaseStatus();
     }, 5 * 60 * 1000);
     
     return () => clearInterval(interval);
   }, [checkDatabaseStatus]);
-  
-  return { connectionStatus, checkDatabaseStatus };
-}
+
+  return {
+    connectionStatus,
+    lastSyncAttempt,
+    error,
+    checkDatabaseStatus
+  };
+};
