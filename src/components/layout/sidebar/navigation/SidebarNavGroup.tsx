@@ -64,7 +64,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
         {visibleItems.map(item => (
           <SidebarNavItem
             key={item.path || item.url}
-            to={item.path || item.url || '#'}
+            href={item.path || item.url || '#'}
             icon={item.icon as React.ElementType}
             label={item.label}
             badge={typeof item.badge === 'number' ? item.badge : undefined}
@@ -105,7 +105,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
         {visibleItems.map(item => (
           <SidebarNavItem
             key={item.path || item.url}
-            to={item.path || item.url || '#'}
+            href={item.path || item.url || '#'}
             icon={item.icon as React.ElementType}
             label={item.label}
             badge={typeof item.badge === 'number' ? item.badge : undefined}
