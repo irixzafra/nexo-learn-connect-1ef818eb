@@ -56,8 +56,7 @@ export const SidebarTrigger = React.forwardRef<
       variant="ghost"
       size="icon"
       className={cn(
-        "h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300",
-        "z-50",
+        "h-10 w-10 rounded-full bg-background hover:bg-muted/40 text-foreground transition-all duration-300 fixed left-5 bottom-6 shadow-md hover:shadow-lg border border-border/30 z-50",
         className
       )}
       onClick={handleToggleClick}

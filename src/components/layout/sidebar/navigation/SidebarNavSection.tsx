@@ -16,11 +16,11 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
   return (
     <div className="mb-4">
       {!isCollapsed && (
-        <h3 className="mb-2 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        <h3 className="mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           {title}
         </h3>
       )}
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         {children}
       </div>
     </div>

@@ -58,11 +58,12 @@ const MenuItem: React.FC<MenuItemProps> = ({
     <Link
       to={to}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
         isActive 
-          ? "bg-primary/10 text-primary" 
-          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
-        disabled && "opacity-50 cursor-not-allowed pointer-events-none"
+          ? "bg-primary/10 text-primary border-l-[3px] border-l-primary pl-[calc(0.75rem-3px)]" 
+          : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
+        disabled && "opacity-50 cursor-not-allowed pointer-events-none",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
       )}
       onClick={(e) => disabled && e.preventDefault()}
       aria-disabled={disabled}

@@ -12,7 +12,7 @@ const SidebarContent: React.FC = () => {
   return (
     <div className="flex h-full flex-col py-2">
       <SidebarLogoSection />
-      <div className="flex-1 overflow-y-auto py-2 px-2">
+      <div className="flex-1 overflow-y-auto py-2 px-3 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
         <SidebarNavigation isCollapsed={isCollapsed} />
       </div>
       

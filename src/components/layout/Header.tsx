@@ -32,39 +32,52 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between">
-        <div className="flex items-center gap-2 md:gap-4">
+    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm shadow-sm">
+      <div className="container flex h-16 items-center justify-between px-4">
+        <div className="flex items-center gap-3 md:gap-4">
           {user && (
-            <Button variant="ghost" size="icon" onClick={toggleSidebar} className={cn(
-              "md:hidden",
-              state === "expanded" ? "text-primary" : ""
-            )}>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleSidebar} 
+              className={cn(
+                "md:hidden rounded-full hover:bg-primary/10 transition-colors",
+                state === "expanded" ? "text-primary" : ""
+              )}
+            >
               <Menu className="h-5 w-5" />
               <span className="sr-only">Menú lateral</span>
             </Button>
           )}
           <Link to="/" className="flex items-center space-x-2">
-            <Logo className="h-6 w-6" />
-            <span className="hidden font-bold sm:inline-block">
+            <Logo className="h-7 w-7" />
+            <span className="hidden font-bold text-lg sm:inline-block">
               Nexo Educativo
             </span>
           </Link>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* Language Selector - only shown when multi-language is enabled */}
           {isMultiLanguageEnabled && <LanguageSelector />}
           
           {user ? (
             <>
-              <Button variant="ghost" size="icon" className="relative">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative rounded-full hover:bg-muted/40 transition-colors"
+              >
                 <Bell className="h-5 w-5" />
                 <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
                   2
                 </span>
               </Button>
-              <Button variant="ghost" size="icon" className="relative">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative rounded-full hover:bg-muted/40 transition-colors"
+              >
                 <MessageSquare className="h-5 w-5" />
                 <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
                   3
@@ -74,10 +87,19 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
             </>
           ) : showAuthButtons ? (
             <>
-              <Button variant="ghost" size="sm" onClick={() => navigate(localizeUrl('/auth/login'))}>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate(localizeUrl('/auth/login'))}
+                className="rounded-full hover:bg-muted/40 transition-colors"
+              >
                 Iniciar Sesión
               </Button>
-              <Button size="sm" onClick={() => navigate(localizeUrl('/auth/register'))}>
+              <Button 
+                size="sm" 
+                onClick={() => navigate(localizeUrl('/auth/register'))}
+                className="rounded-full transition-transform hover:scale-105 active:scale-95"
+              >
                 Registrarse
               </Button>
             </>

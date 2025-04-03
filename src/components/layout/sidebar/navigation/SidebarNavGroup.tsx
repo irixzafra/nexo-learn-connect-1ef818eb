@@ -60,7 +60,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
 
   if (isCollapsed) {
     return (
-      <div className="mb-4">
+      <div className="mb-4 space-y-1.5">
         {visibleItems.map(item => (
           <SidebarNavItem
             key={item.path || item.url}
@@ -80,26 +80,26 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
     <div className="mb-4">
       <button
         onClick={handleToggleExpand}
-        className="flex items-center justify-between w-full px-3 py-2 mb-1 text-sm font-medium text-muted-foreground hover:text-foreground rounded-md transition-colors"
+        className="flex items-center justify-between w-full px-3 py-2.5 mb-1 text-sm font-medium text-muted-foreground hover:text-foreground rounded-md transition-colors hover:bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-1"
         aria-expanded={isExpanded}
       >
-        <div className="flex items-center">
-          {Icon && <Icon className="mr-2 h-4 w-4 text-muted-foreground" />}
+        <div className="flex items-center gap-3">
+          {Icon && <Icon className="h-4.5 w-4.5 text-muted-foreground" />}
           <span>{title}</span>
         </div>
         <div>
           {isExpanded ? (
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="h-4 w-4 transition-transform duration-200" />
           ) : (
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 transition-transform duration-200" />
           )}
         </div>
       </button>
       
       <div
         className={cn(
-          "overflow-hidden transition-all space-y-1",
-          isExpanded ? "max-h-96" : "max-h-0"
+          "overflow-hidden transition-all duration-200 space-y-1.5 ml-2",
+          isExpanded ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
         )}
       >
         {visibleItems.map(item => (

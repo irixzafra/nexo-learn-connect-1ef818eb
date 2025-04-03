@@ -44,12 +44,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({
         <Link 
           to={disabled ? "#" : to} 
           className={cn(
-            "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-gray-500 dark:text-gray-400 font-medium text-[15px] transition-all duration-200",
+            "flex items-center justify-between group gap-2 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200",
             isActive ? 
               "bg-primary/10 text-primary border-l-[3px] border-l-primary pl-[calc(0.75rem-3px)]" : 
-              "hover:bg-muted/40 hover:text-foreground",
+              "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
             disabled && "opacity-60 cursor-not-allowed hover:bg-transparent",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
           )}
           onClick={(e) => {
             if (disabled) {

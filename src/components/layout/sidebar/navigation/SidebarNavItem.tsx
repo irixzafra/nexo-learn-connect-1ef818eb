@@ -32,20 +32,21 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           <NavLink 
             to={to}
             className={({ isActive }) => cn(
-              "flex h-10 w-10 items-center justify-center rounded-md relative",
-              isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500",
-              disabled && "opacity-50 cursor-not-allowed"
+              "flex h-10 w-10 items-center justify-center rounded-full relative transition-all duration-200",
+              isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
+              disabled && "opacity-50 cursor-not-allowed pointer-events-none",
+              "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
             )}
           >
             <Icon className="h-5 w-5" />
-            {badge && (
-              <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-blue-500 text-[10px] font-medium text-white flex items-center justify-center">
+            {badge && badge > 0 && (
+              <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-primary text-[10px] font-medium text-primary-foreground flex items-center justify-center">
                 {badge > 99 ? '99+' : badge}
               </span>
             )}
           </NavLink>
         </TooltipTrigger>
-        <TooltipContent side="right">
+        <TooltipContent side="right" className="py-1.5 px-3 shadow-md">
           <p>{label}</p>
         </TooltipContent>
       </Tooltip>
@@ -56,15 +57,18 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
     <NavLink
       to={to}
       className={({ isActive }) => cn(
-        "flex items-center py-2 px-3 text-sm transition-colors rounded-md",
-        isActive ? "text-blue-500 bg-blue-50 dark:bg-blue-900/20" : "text-gray-700 hover:text-blue-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800/50",
-        disabled && "opacity-50 cursor-not-allowed"
+        "flex items-center py-2.5 px-3 text-sm transition-colors rounded-md group gap-3",
+        isActive 
+          ? "bg-primary/10 text-primary border-l-[3px] border-l-primary pl-[calc(0.75rem-3px)]" 
+          : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
+        disabled && "opacity-50 cursor-not-allowed pointer-events-none",
+        "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
       )}
     >
-      <Icon className="mr-3 h-5 w-5 text-blue-500" />
-      <span>{label}</span>
-      {badge && (
-        <span className="ml-auto bg-blue-500 text-xs rounded-full h-5 min-w-5 px-1 flex items-center justify-center text-white">
+      <Icon className={cn("h-5 w-5", ({ isActive }: {isActive: boolean}) => isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+      <span className="font-medium">{label}</span>
+      {badge && badge > 0 && (
+        <span className="ml-auto bg-primary text-xs rounded-full h-5 min-w-5 px-1.5 flex items-center justify-center text-primary-foreground">
           {badge > 99 ? '99+' : badge}
         </span>
       )}

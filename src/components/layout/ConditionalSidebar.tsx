@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import { UserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import SidebarMainNavigation from './sidebar/navigation/SidebarMainNavigation';
 import SidebarLogoSection from './sidebar/SidebarLogoSection';
 import SidebarFooterSection from './sidebar/SidebarFooterSection';
 import { useAuth } from '@/contexts/auth';
+import { cn } from '@/lib/utils';
 
 interface ConditionalSidebarProps {
   userRole: UserRoleType;
@@ -50,20 +50,25 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   });
 
   return (
-    <div className="h-full flex flex-col pb-2 bg-background border-r border-border">
+    <div className={cn(
+      "h-full flex flex-col pb-2 bg-background border-r border-border/70 transition-all",
+      isCollapsed ? "w-20" : "w-64"
+    )}>
       {/* Logo at the top with full title and subtitle */}
       <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
 
       {/* Navegación principal para todas las rutas */}
-      <SidebarMainNavigation 
-        effectiveRole={effectiveRole}
-        messagesCount={messagesCount}
-        notificationsCount={notificationsCount}
-        getHomePath={() => getHomePath(effectiveRole)}
-      />
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent px-2">
+        <SidebarMainNavigation 
+          effectiveRole={effectiveRole}
+          messagesCount={messagesCount}
+          notificationsCount={notificationsCount}
+          getHomePath={() => getHomePath(effectiveRole)}
+        />
+      </div>
       
       {/* Footer Section with Role Switcher and Language Selector */}
-      <div className="mt-auto">
+      <div className="mt-auto border-t border-border/50">
         <SidebarFooterSection 
           userRole={userRole}
           effectiveRole={effectiveRole}

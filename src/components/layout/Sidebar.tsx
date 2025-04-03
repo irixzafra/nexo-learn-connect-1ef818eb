@@ -11,9 +11,9 @@ const Sidebar: React.FC = () => {
   return (
     <aside 
       className={cn(
-        "fixed inset-y-0 left-0 z-30 w-64 transform border-r border-border transition-all duration-300 ease-in-out bg-background",
+        "fixed inset-y-0 left-0 z-30 transform border-r border-border/70 transition-all duration-300 ease-in-out bg-background",
         "md:static md:translate-x-0",
-        isExpanded ? 'translate-x-0 shadow-md' : '-translate-x-full md:w-16',
+        isExpanded ? 'translate-x-0 shadow-md w-72' : '-translate-x-full md:w-20 md:translate-x-0',
         "focus-within:outline-none focus-within:ring-0"
       )}
     >

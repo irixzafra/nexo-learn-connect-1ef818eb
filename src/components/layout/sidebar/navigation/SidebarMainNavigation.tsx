@@ -46,7 +46,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   };
 
   return (
-    <div className="px-1 space-y-1">
+    <div className="px-1 space-y-2">
       {/* Home link - always visible */}
       <SidebarMenu>
         <MenuItem 

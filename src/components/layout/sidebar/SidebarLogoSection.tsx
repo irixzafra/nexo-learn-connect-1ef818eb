@@ -23,17 +23,17 @@ const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({
 
   return (
     <div className={cn(
-      "flex items-center justify-between mb-6 pt-4",
+      "flex items-center justify-between py-4",
       isCollapsed ? "px-3" : "px-4"
     )}>
       <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/90 text-primary-foreground shadow-sm">
           <span className="text-base font-bold">N</span>
         </div>
         
         {!isCollapsed && (
           <div className="flex flex-col">
-            <span className="font-bold leading-tight">Nexo</span>
+            <span className="font-bold leading-tight text-foreground">Nexo</span>
             <span className="text-[11px] text-muted-foreground">ecosistema creativo</span>
           </div>
         )}

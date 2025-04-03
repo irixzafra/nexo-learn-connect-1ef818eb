@@ -20,10 +20,10 @@ export const SidebarGroup: React.FC<SidebarGroupProps> = ({
   children,
 }) => {
   return (
-    <div className="mb-2 px-3">
+    <div className="mb-3">
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between py-2.5 px-3 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg transition-colors hover:bg-muted/50"
+        className="flex w-full items-center justify-between py-2.5 px-3 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg transition-colors hover:bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-1"
         aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-3">
@@ -39,7 +39,7 @@ export const SidebarGroup: React.FC<SidebarGroupProps> = ({
       </button>
       <div
         className={cn(
-          "overflow-hidden transition-all duration-200 ease-in-out pl-2",
+          "overflow-hidden transition-all duration-200 ease-in-out pl-3",
           isExpanded ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
         )}
       >

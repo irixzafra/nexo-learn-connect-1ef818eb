@@ -3,7 +3,7 @@ import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, LogOut, ShieldAlert } from 'lucide-react';
-import { cn } from '@/lib/utils'; // Added the missing import
+import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -83,19 +83,22 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
       {/* Language Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="w-full justify-between rounded-lg border-muted bg-transparent">
+          <Button 
+            variant="outline" 
+            className="w-full justify-between rounded-lg border-muted bg-background/80 hover:bg-muted/20 transition-colors"
+          >
             {selectedLanguage.name}
             <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-full bg-popover shadow-md border border-border rounded-lg">
+        <DropdownMenuContent className="w-full min-w-[180px] bg-popover shadow-md border border-border rounded-lg">
           {languages.map((lang) => (
             <DropdownMenuItem
               key={lang.code}
               onClick={() => changeLanguage(lang.code)}
               className={cn(
                 "px-3 py-2 text-sm cursor-pointer rounded-md transition-colors",
-                currentLanguage === lang.code ? "bg-muted font-medium" : "hover:bg-muted/50"
+                currentLanguage === lang.code ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50"
               )}
             >
               {lang.name}
@@ -108,7 +111,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
       <Button 
         variant="ghost" 
         onClick={handleTestRoleSimulation}
-        className="w-full text-xs justify-start py-2 px-3 rounded-lg hover:bg-yellow-500/10 hover:text-yellow-600"
+        className="w-full text-xs justify-start py-2 px-3 rounded-lg hover:bg-yellow-500/10 hover:text-yellow-600 transition-colors"
         title="Esto es solo para pruebas"
       >
         <ShieldAlert className="mr-2 h-4 w-4 text-yellow-500" />
@@ -119,7 +122,7 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
       <Button 
         variant="outline" 
         onClick={handleLogout}
-        className="w-full rounded-lg py-2 border-muted bg-transparent hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20"
+        className="w-full rounded-lg py-2 border-muted bg-background/80 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-colors"
       >
         <LogOut className="mr-2 h-4 w-4" />
         Cerrar Sesión
