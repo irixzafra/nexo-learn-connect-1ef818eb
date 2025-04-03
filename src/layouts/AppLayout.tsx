@@ -25,6 +25,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     setIsSidebarOpen(prev => !prev);
   };
 
+  // Debug logs para identificar el problema
+  console.log('>>> DEBUG AppLayout: Role simulation:', {
+    effectiveRole,
+    userRole,
+    isViewingAsOtherRole,
+    effectiveRoleType: typeof effectiveRole,
+    userRoleType: typeof userRole,
+  });
+
   if (isLoading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
@@ -48,7 +57,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     <div className="flex min-h-screen flex-col">
       <AuthenticatedHeader onToggleSidebar={toggleSidebar} />
       
-      {/* Role simulation alert banner */}
+      {/* Role simulation alert banner - Asegurarse de que siempre aparezca cuando debería */}
       {isViewingAsOtherRole && (
         <Alert variant="warning" className="mb-0 rounded-none border-x-0 border-t-0 px-4 py-2 shadow-sm">
           <AlertDescription className="flex items-center justify-between">

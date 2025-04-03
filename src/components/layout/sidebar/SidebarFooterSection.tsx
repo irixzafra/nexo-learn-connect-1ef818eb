@@ -2,7 +2,7 @@
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, LogOut } from 'lucide-react';
+import { ChevronDown, LogOut, ShieldAlert } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +22,7 @@ interface SidebarFooterSectionProps {
   logout: () => Promise<void>;
   isViewingAsOtherRole: boolean;
   resetToOriginalRole: () => void;
-  forceAdminRole?: () => Promise<void>; // Added this optional prop
+  forceAdminRole?: () => Promise<void>; // Optional prop
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
@@ -36,13 +36,29 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   changeLanguage,
   logout,
   isViewingAsOtherRole,
-  resetToOriginalRole
+  resetToOriginalRole,
+  forceAdminRole
 }) => {
   // Language selector
   const selectedLanguage = languages.find(lang => lang.code === currentLanguage) || languages[0];
 
   const handleLogout = async () => {
     await logout();
+  };
+
+  // Botón para activar el modo de simulación (SOLO PARA DEPURACIÓN)
+  const handleTestRoleSimulation = () => {
+    // Puedes ajustar esto según cómo hayas configurado setSimulatedRole
+    if (window.confirm('¿Activar simulación de rol?')) {
+      // Buscar un rol diferente al actual para simular
+      const availableRoles: UserRoleType[] = ['admin', 'instructor', 'student'];
+      const differentRole = availableRoles.find(role => role !== userRole) || 'admin';
+      
+      // Esto debería estar disponible a través de AuthContext
+      // pero como es solo para pruebas, lo hacemos simple
+      localStorage.setItem('viewAsRole', differentRole);
+      window.location.reload();
+    }
   };
 
   if (isCollapsed) {
@@ -82,6 +98,17 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* Botón para activar/probar el modo de simulación (solo para depuración) */}
+      <Button 
+        variant="ghost" 
+        onClick={handleTestRoleSimulation}
+        className="w-full text-xs"
+        title="Esto es solo para pruebas"
+      >
+        <ShieldAlert className="mr-2 h-4 w-4 text-yellow-500" />
+        Probar simulación rol
+      </Button>
 
       {/* Logout Button */}
       <Button 
