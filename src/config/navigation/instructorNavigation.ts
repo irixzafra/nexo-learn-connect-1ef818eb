@@ -14,25 +14,25 @@ export const instructorNavigation: MenuItem[] = [
   {
     icon: BookOpen,
     label: 'Mis Cursos',
-    path: '/instructor/courses',
+    path: '/app/instructor/courses',
     requiredRole: ['instructor', 'admin', 'sistemas']
   },
   {
     icon: ClipboardList,
     label: 'Notas y Tareas',
-    path: '/instructor/assignments',
+    path: '/app/instructor/assignments',
     requiredRole: ['instructor', 'admin', 'sistemas']
   },
   {
     icon: MessageSquare,
     label: 'Mensajes',
-    path: '/instructor/messages',
+    path: '/app/instructor/messages',
     requiredRole: ['instructor', 'admin', 'sistemas']
   },
   {
     icon: BarChart,
     label: 'Analíticas',
-    path: '/instructor/analytics',
+    path: '/app/instructor/analytics',
     requiredRole: ['instructor', 'admin', 'sistemas']
   }
 ];

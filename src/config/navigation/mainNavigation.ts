@@ -21,56 +21,56 @@ export const mainNavigation: MenuItem[] = [
   {
     icon: Home,
     label: 'Dashboard',
-    path: '/home',
+    path: '/app/home',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']
   },
   {
     icon: User,
     label: 'Mi Perfil',
-    path: '/profile',
+    path: '/app/profile',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
   },
   {
     icon: BookOpen,
     label: 'Mis Cursos',
-    path: '/my-courses',
+    path: '/app/my-courses',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester'],
     isHighlighted: true
   },
   {
     icon: Award,
     label: 'Certificados',
-    path: '/certificates',
+    path: '/app/certificates',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas']
   },
   {
     icon: Lightbulb,
     label: 'Recomendaciones',
-    path: '/recommendations',
+    path: '/app/recommendations',
     requiredRole: ['student', 'instructor', 'admin']
   },
   {
     icon: MessageSquare,
     label: 'Mensajes',
-    path: '/messages',
+    path: '/app/messages',
     requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
     icon: Calendar,
     label: 'Calendario',
-    path: '/calendar',
+    path: '/app/calendar',
     requiredRole: ['student', 'instructor', 'admin']
   },
   {
     icon: Settings,
     label: 'Preferencias',
-    path: '/preferences',
+    path: '/app/preferences',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
   },
   {
     icon: BarChart,
     label: 'Analíticas',
-    path: '/analytics/personal',
+    path: '/app/analytics/personal',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas']
   }
 ];

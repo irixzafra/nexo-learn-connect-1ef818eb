@@ -19,55 +19,55 @@ export const settingsNavigation: MenuItem[] = [
   {
     icon: Settings,
     label: 'Configuración General',
-    path: '/admin/settings',
+    path: '/app/admin/settings',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: ToggleLeft,
     label: 'Funcionalidades',
-    path: '/admin/settings/features',
+    path: '/app/admin/settings/features',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: Palette,
     label: 'Diseño',
-    path: '/admin/settings/design',
+    path: '/app/admin/settings/design',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: Plug,
     label: 'Conexiones',
-    path: '/admin/settings/integrations',
+    path: '/app/admin/settings/integrations',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: Database,
     label: 'Datos',
-    path: '/admin/settings/data',
+    path: '/app/admin/settings/data',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: FileText,
     label: 'Páginas',
-    path: '/admin/settings/pages',
+    path: '/app/admin/settings/pages',
     requiredRole: ['admin', 'sistemas', 'content_creator']
   },
   {
     icon: BarChart,
     label: 'Analíticas',
-    path: '/admin/settings/analytics',
+    path: '/app/admin/settings/analytics',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: Shield,
     label: 'Roles y Permisos',
-    path: '/admin/settings/roles',
+    path: '/app/admin/settings/roles',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: Navigation,
     label: 'Diagrama de Navegación',
-    path: '/admin/navigation-diagram',
+    path: '/app/admin/navigation-diagram',
     requiredRole: ['admin', 'sistemas', 'content_creator']
   }
 ];

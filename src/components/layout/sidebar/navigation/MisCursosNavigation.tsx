@@ -26,21 +26,21 @@ const MisCursosNavigation: React.FC<MisCursosNavigationProps> = ({ isOpen, onTog
     >
       <SidebarMenu>
         <MenuItem
-          to="/my-courses"
+          to="/app/my-courses"
           icon={BookOpen}
           label="Todos Mis Cursos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/my-courses/in-progress"
+          to="/app/my-courses/in-progress"
           icon={BookOpen}
           label="En Progreso"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/my-courses/completed"
+          to="/app/my-courses/completed"
           icon={BookOpen}
           label="Completados"
           isCollapsed={isCollapsed}

@@ -21,31 +21,31 @@ export const exploreNavigation: MenuItem[] = [
   {
     icon: Briefcase,
     label: 'Carreras',
-    path: '/careers',
+    path: '/app/careers',
     requiredRole: ['student', 'instructor', 'admin']
   },
   {
     icon: Route,
     label: 'Rutas de aprendizaje',
-    path: '/learning-paths',
+    path: '/app/learning-paths',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas']
   },
   {
     icon: Briefcase,
     label: 'Empleo',
-    path: '/job-board',
+    path: '/app/job-board',
     requiredRole: ['student', 'instructor', 'admin']
   },
   {
     icon: Trophy,
     label: 'Leader Board',
-    path: '/leaderboard',
+    path: '/app/leaderboard',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas']
   },
   {
     icon: Users,
     label: 'Grupos',
-    path: '/groups',
+    path: '/app/groups',
     disabled: true,
     requiredRole: ['student', 'instructor', 'admin', 'sistemas']
   }

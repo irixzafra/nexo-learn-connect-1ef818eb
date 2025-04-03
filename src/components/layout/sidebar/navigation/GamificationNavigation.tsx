@@ -26,21 +26,21 @@ const GamificationNavigation: React.FC<GamificationNavigationProps> = ({ isOpen,
     >
       <SidebarMenu>
         <MenuItem
-          to="/profile/achievements"
+          to="/app/profile/achievements"
           icon={Trophy}
           label="Mis Logros"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/leaderboard"
+          to="/app/leaderboard"
           icon={BarChart}
           label="Tabla de Posiciones"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/challenges"
+          to="/app/challenges"
           icon={Star}
           label="Desafíos"
           isCollapsed={isCollapsed}

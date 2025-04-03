@@ -31,14 +31,14 @@ const PerfilNavigation: React.FC<PerfilNavigationProps> = ({
     >
       <SidebarMenu>
         <MenuItem
-          to="/profile"
+          to="/app/profile"
           icon={User}
           label="Mi Perfil"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/notifications"
+          to="/app/notifications"
           icon={Bell}
           label="Notificaciones"
           badge={notificationsCount}
@@ -46,14 +46,14 @@ const PerfilNavigation: React.FC<PerfilNavigationProps> = ({
         />
         
         <MenuItem
-          to="/achievements"
+          to="/app/achievements"
           icon={Award}
           label="Mis Logros"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/history"
+          to="/app/history"
           icon={Clock}
           label="Historial"
           isCollapsed={isCollapsed}

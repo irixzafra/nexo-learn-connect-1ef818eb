@@ -33,21 +33,21 @@ const CursosNavigation: React.FC<CursosNavigationProps> = ({ isOpen, onToggle })
         />
         
         <MenuItem
-          to="/learning-paths"
+          to="/app/learning-paths"
           icon={GraduationCap}
           label="Rutas de Aprendizaje"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/certificates"
+          to="/app/certificates"
           icon={Award}
           label="Certificados"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/course-documents"
+          to="/app/course-documents"
           icon={FileText}
           label="Documentos"
           isCollapsed={isCollapsed}

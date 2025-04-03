@@ -31,19 +31,19 @@ const AprendizajeNavigation: React.FC<AprendizajeNavigationProps> = ({
       {isOpen && (
         <div className="mt-1 space-y-1 px-1">
           <MenuItem
-            to="/learning/path"
+            to="/app/learning/path"
             icon={BookOpen}
             label="Rutas de Aprendizaje"
             isCollapsed={isCollapsed}
           />
           <MenuItem
-            to="/certificates"
+            to="/app/certificates"
             icon={Award}
             label="Certificados"
             isCollapsed={isCollapsed}
           />
           <MenuItem
-            to="/recommendations"
+            to="/app/recommendations"
             icon={Lightbulb}
             label="Recomendaciones"
             isCollapsed={isCollapsed}

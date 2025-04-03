@@ -35,16 +35,16 @@ const EnsenanzaNavigation: React.FC<EnsenanzaNavigationProps> = ({ isOpen, onTog
       {isCollapsed ? (
         // Versión colapsada
         <>
-          <CollapsedMenuItem to="/instructor/dashboard" icon={CaseSensitive} label="Panel Instructor" />
-          <CollapsedMenuItem to="/instructor/courses" icon={BookOpen} label="Gestionar Mis Cursos" />
-          <CollapsedMenuItem to="/instructor/students" icon={School} label="Estudiantes" />
+          <CollapsedMenuItem to="/app/instructor/dashboard" icon={CaseSensitive} label="Panel Instructor" />
+          <CollapsedMenuItem to="/app/instructor/courses" icon={BookOpen} label="Gestionar Mis Cursos" />
+          <CollapsedMenuItem to="/app/instructor/students" icon={School} label="Estudiantes" />
         </>
       ) : (
         // Versión expandida
         <>
-          <MenuItem to="/instructor/dashboard" icon={CaseSensitive} label="Panel Instructor" />
-          <MenuItem to="/instructor/courses" icon={BookOpen} label="Gestionar Mis Cursos" />
-          <MenuItem to="/instructor/students" icon={School} label="Estudiantes" />
+          <MenuItem to="/app/instructor/dashboard" icon={CaseSensitive} label="Panel Instructor" />
+          <MenuItem to="/app/instructor/courses" icon={BookOpen} label="Gestionar Mis Cursos" />
+          <MenuItem to="/app/instructor/students" icon={School} label="Estudiantes" />
           <DisabledMenuItem
             icon={CheckSquare}
             label="Quizzes"

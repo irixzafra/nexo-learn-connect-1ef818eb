@@ -15,31 +15,31 @@ export const gamificationNavigation: MenuItem[] = [
   {
     icon: Award,
     label: 'Logros',
-    path: '/gamification/achievements',
+    path: '/app/gamification/achievements',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'beta_tester']
   },
   {
     icon: Trophy,
     label: 'Ranking',
-    path: '/gamification/ranking',
+    path: '/app/gamification/ranking',
     requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'beta_tester']
   },
   {
     icon: Target,
     label: 'Objetivos',
-    path: '/gamification/goals',
+    path: '/app/gamification/goals',
     requiredRole: ['student', 'admin', 'sistemas', 'beta_tester']
   },
   {
     icon: Zap,
     label: 'Puntos',
-    path: '/gamification/points',
+    path: '/app/gamification/points',
     requiredRole: ['student', 'admin', 'sistemas', 'beta_tester']
   },
   {
     icon: Star,
     label: 'Recompensas',
-    path: '/gamification/rewards',
+    path: '/app/gamification/rewards',
     requiredRole: ['student', 'admin', 'sistemas', 'beta_tester']
   }
 ];

@@ -31,7 +31,7 @@ const MessagesNavigation: React.FC<MessagesNavigationProps> = ({
     >
       <SidebarMenu>
         <MenuItem
-          to="/messages"
+          to="/app/messages"
           icon={MessageSquare}
           label="Chats"
           badge={messagesCount}
@@ -39,21 +39,21 @@ const MessagesNavigation: React.FC<MessagesNavigationProps> = ({
         />
         
         <MenuItem
-          to="/messages/inbox"
+          to="/app/messages/inbox"
           icon={Mail}
           label="Bandeja de entrada"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/messages/groups"
+          to="/app/messages/groups"
           icon={Users}
           label="Grupos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/messages/important"
+          to="/app/messages/important"
           icon={Star}
           label="Destacados"
           isCollapsed={isCollapsed}

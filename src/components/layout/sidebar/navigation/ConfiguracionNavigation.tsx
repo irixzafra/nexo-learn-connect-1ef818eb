@@ -28,14 +28,14 @@ const ConfiguracionNavigation: React.FC<ConfiguracionNavigationProps> = ({ isOpe
     >
       <SidebarMenu>
         <MenuItem
-          to="/settings"
+          to="/app/settings"
           icon={SlidersHorizontal}
           label="Configuración"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/help"
+          to="/app/help"
           icon={HelpCircle}
           label="Ayuda / Soporte"
           isCollapsed={isCollapsed}

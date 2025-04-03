@@ -33,28 +33,28 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
     >
       <SidebarMenu>
         <MenuItem
-          to="/community"
+          to="/app/community"
           icon={Rss}
           label="Feed"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/community?tab=popular"
+          to="/app/community?tab=popular"
           icon={Newspaper}
           label="Popular"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/community?tab=leaderboard"
+          to="/app/community?tab=leaderboard"
           icon={Trophy}
           label="Leaderboard"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/messages"
+          to="/app/messages"
           icon={MessageSquare}
           label="Mensajes"
           badge={messagesCount}
@@ -62,7 +62,7 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
         />
         
         <MenuItem
-          to="/notifications"
+          to="/app/notifications"
           icon={Bell}
           label="Notificaciones"
           badge={notificationsCount}
@@ -70,7 +70,7 @@ const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({
         />
         
         <MenuItem
-          to="/community?tab=groups"
+          to="/app/community?tab=groups"
           icon={UsersRound}
           label="Grupos"
           disabled={false}

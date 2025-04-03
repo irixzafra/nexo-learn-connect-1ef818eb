@@ -26,37 +26,37 @@ const AccessibilityNavigation: React.FC<AccessibilityNavigationProps> = ({ isOpe
   // Accessibility routes
   const routes = [
     {
-      to: '/accessibility',
+      to: '/app/accessibility',
       icon: Sliders,
       label: t('accessibility.navigation.settings', { default: 'Settings' })
     },
     {
-      to: '/accessibility/visual',
+      to: '/app/accessibility/visual',
       icon: Eye,
       label: t('accessibility.navigation.visual', { default: 'Visual' })
     },
     {
-      to: '/accessibility/keyboard',
+      to: '/app/accessibility/keyboard',
       icon: Braces,
       label: t('accessibility.navigation.keyboard', { default: 'Keyboard' })
     },
     {
-      to: '/accessibility/content',
+      to: '/app/accessibility/content',
       icon: BookOpen,
       label: t('accessibility.navigation.content', { default: 'Content' })
     },
     {
-      to: '/accessibility/performance',
+      to: '/app/accessibility/performance',
       icon: Leaf,
       label: t('accessibility.navigation.performance', { default: 'Performance' })
     },
     {
-      to: '/accessibility/analytics',
+      to: '/app/accessibility/analytics',
       icon: BarChart,
       label: t('accessibility.navigation.analytics', { default: 'Analytics' })
     },
     {
-      to: '/accessibility/roadmap',
+      to: '/app/accessibility/roadmap',
       icon: PieChart,
       label: t('accessibility.navigation.roadmap', { default: 'Roadmap' })
     }

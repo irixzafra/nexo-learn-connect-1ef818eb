@@ -35,44 +35,44 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({
       {isOpen && (
         <div className="mt-1 space-y-1 px-1">
           <MenuItem
-            to="/admin/dashboard"
+            to="/app/admin/dashboard"
             icon={Shield}
             label="Panel Admin"
             isCollapsed={isCollapsed}
           />
           <MenuItem
-            to="/admin/users"
+            to="/app/admin/users"
             icon={Users}
             label="Usuarios"
             isCollapsed={isCollapsed}
           />
           <MenuItem
-            to="/admin/courses"
+            to="/app/admin/courses"
             icon={BookOpen}
             label="Cursos"
             isCollapsed={isCollapsed}
           />
           <MenuItem
-            to="/admin/system-pages"
+            to="/app/admin/system-pages"
             icon={FileText}
             label="Páginas del Sistema"
             isCollapsed={isCollapsed}
           />
           <MenuItem
-            to="/admin/design-system"
+            to="/app/admin/design-system"
             icon={Palette}
             label="Sistema de Diseño"
             isCollapsed={isCollapsed}
           />
           <MenuItem
-            to="/admin/navigation-diagram"
+            to="/app/admin/navigation-diagram"
             icon={PanelLeft}
             label="Diagrama de Navegación" 
             isCollapsed={isCollapsed}
           />
           {isSistemas && (
             <MenuItem
-              to="/admin/route-validator"
+              to="/app/admin/route-validator"
               icon={FileText}
               label="Validador de Rutas"
               isCollapsed={isCollapsed}

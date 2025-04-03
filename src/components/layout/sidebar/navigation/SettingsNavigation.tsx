@@ -24,56 +24,56 @@ const SettingsNavigation: React.FC<SettingsNavigationProps> = ({ isOpen, onToggl
     >
       <SidebarMenu>
         <MenuItem
-          to="/admin/settings"
+          to="/app/admin/settings"
           icon={Settings}
           label="General"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/settings/features"
+          to="/app/admin/settings/features"
           icon={FileCode}
           label="Funcionalidades"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/settings/design"
+          to="/app/admin/settings/design"
           icon={PaintBucket}
           label="Diseño"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/settings/users"
+          to="/app/admin/settings/users"
           icon={Users}
           label="Usuarios"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/settings/analytics"
+          to="/app/admin/settings/analytics"
           icon={BarChart}
           label="Analíticas"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/settings/notifications"
+          to="/app/admin/settings/notifications"
           icon={Bell}
           label="Notificaciones"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/settings/data"
+          to="/app/admin/settings/data"
           icon={Database}
           label="Datos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/settings/localization"
+          to="/app/admin/settings/localization"
           icon={Globe}
           label="Localización"
           isCollapsed={isCollapsed}

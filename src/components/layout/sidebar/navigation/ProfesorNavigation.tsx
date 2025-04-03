@@ -29,28 +29,28 @@ const ProfesorNavigation: React.FC<ProfesorNavigationProps> = ({
     >
       <SidebarMenu>
         <MenuItem
-          to="/profesor/dashboard"
+          to="/app/profesor/dashboard"
           icon={LineChart}
           label="Panel Principal"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/profesor/courses"
+          to="/app/profesor/courses"
           icon={BookOpen}
           label="Mis Cursos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/profesor/students"
+          to="/app/profesor/students"
           icon={Users}
           label="Estudiantes"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/profesor/certificates"
+          to="/app/profesor/certificates"
           icon={Award}
           label="Certificados"
           isCollapsed={isCollapsed}

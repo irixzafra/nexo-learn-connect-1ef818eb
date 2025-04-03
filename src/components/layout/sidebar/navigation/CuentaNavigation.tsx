@@ -35,15 +35,15 @@ const CuentaNavigation: React.FC<CuentaNavigationProps> = ({ isOpen, onToggle })
       {isCollapsed ? (
         // Versión colapsada
         <>
-          <CollapsedMenuItem to="/settings" icon={Settings} label="Configuración" />
-          <CollapsedMenuItem to="/help" icon={HelpCircle} label="Ayuda" />
+          <CollapsedMenuItem to="/app/settings" icon={Settings} label="Configuración" />
+          <CollapsedMenuItem to="/app/help" icon={HelpCircle} label="Ayuda" />
           <CollapsedMenuItem to="/about-us" icon={Info} label="Acerca de Nosotros" />
         </>
       ) : (
         // Versión expandida
         <>
-          <MenuItem to="/settings" icon={Settings} label="Configuración" />
-          <MenuItem to="/help" icon={HelpCircle} label="Ayuda / Soporte" />
+          <MenuItem to="/app/settings" icon={Settings} label="Configuración" />
+          <MenuItem to="/app/help" icon={HelpCircle} label="Ayuda / Soporte" />
           <MenuItem to="/about-us" icon={Info} label="Acerca de Nosotros" />
         </>
       )}

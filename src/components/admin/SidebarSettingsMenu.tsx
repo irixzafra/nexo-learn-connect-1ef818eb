@@ -22,11 +22,11 @@ const SidebarSettingsMenu: React.FC = () => {
       </h3>
       
       <NavLink
-        to="/admin/settings"
+        to="/app/admin/settings"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-            isActive && location.pathname === "/admin/settings"
+            isActive && location.pathname === "/app/admin/settings"
               ? "bg-primary/10 text-primary"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )
@@ -38,7 +38,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/settings/features"
+        to="/app/admin/settings/features"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -53,7 +53,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/settings/design"
+        to="/app/admin/settings/design"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -68,7 +68,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/settings/integrations"
+        to="/app/admin/settings/integrations"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -83,7 +83,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/settings/data"
+        to="/app/admin/settings/data"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -98,7 +98,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/settings/pages"
+        to="/app/admin/settings/pages"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -113,7 +113,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/settings/analytics"
+        to="/app/admin/settings/analytics"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -128,7 +128,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/settings/roles"
+        to="/app/admin/settings/roles"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -143,7 +143,7 @@ const SidebarSettingsMenu: React.FC = () => {
       </NavLink>
       
       <NavLink
-        to="/admin/navigation-diagram"
+        to="/app/admin/navigation-diagram"
         className={({ isActive }) =>
           cn(
             "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",

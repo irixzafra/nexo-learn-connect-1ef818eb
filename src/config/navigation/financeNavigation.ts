@@ -17,43 +17,43 @@ export const financeNavigation: MenuItem[] = [
   {
     icon: CreditCard,
     label: 'Finanzas',
-    path: '/admin/finance',
+    path: '/app/admin/finance',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: Receipt,
     label: 'Facturas',
-    path: '/admin/finance/invoices',
+    path: '/app/admin/finance/invoices',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: Star,
     label: 'Suscripciones',
-    path: '/admin/finance/subscriptions',
+    path: '/app/admin/finance/subscriptions',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: Banknote,
     label: 'Bancos',
-    path: '/admin/finance/banks',
+    path: '/app/admin/finance/banks',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: TrendingUp,
     label: 'Cash-flow',
-    path: '/admin/finance/cash-flow',
+    path: '/app/admin/finance/cash-flow',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: Bell,
     label: 'Alertas',
-    path: '/admin/finance/alerts',
+    path: '/app/admin/finance/alerts',
     requiredRole: ['admin', 'sistemas']
   },
   {
     icon: BarChart,
     label: 'Analíticas',
-    path: '/admin/finance/analytics',
+    path: '/app/admin/finance/analytics',
     requiredRole: ['admin', 'sistemas']
   }
 ];

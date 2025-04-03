@@ -37,42 +37,42 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({
     >
       <SidebarMenu>
         <MenuItem
-          to="/admin/dashboard"
+          to="/app/admin/dashboard"
           icon={BarChart3}
           label="Panel Principal"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/users"
+          to="/app/admin/users"
           icon={Users}
           label="Gestión de Usuarios"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/courses"
+          to="/app/admin/courses"
           icon={Layers}
           label="Gestión de Cursos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/reports"
+          to="/app/admin/reports"
           icon={FileText}
           label="Informes"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/payments"
+          to="/app/admin/payments"
           icon={CreditCard}
           label="Pagos y Facturación"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/admin/settings"
+          to="/app/admin/settings"
           icon={Settings}
           label="Configuración del Sistema"
           isCollapsed={isCollapsed}

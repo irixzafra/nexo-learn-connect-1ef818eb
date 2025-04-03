@@ -26,21 +26,21 @@ const CalendarNavigation: React.FC<CalendarNavigationProps> = ({ isOpen, onToggl
     >
       <SidebarMenu>
         <MenuItem
-          to="/calendar"
+          to="/app/calendar"
           icon={Calendar}
           label="Mi Calendario"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/calendar/schedule"
+          to="/app/calendar/schedule"
           icon={Clock}
           label="Programación"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/calendar/create"
+          to="/app/calendar/create"
           icon={PlusCircle}
           label="Crear Evento"
           isCollapsed={isCollapsed}

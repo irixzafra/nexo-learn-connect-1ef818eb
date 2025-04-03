@@ -29,35 +29,35 @@ const EstudianteNavigation: React.FC<EstudianteNavigationProps> = ({
     >
       <SidebarMenu>
         <MenuItem
-          to="/student/dashboard"
+          to="/app/student/dashboard"
           icon={GraduationCap}
           label="Panel Principal"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/student/courses"
+          to="/app/student/courses"
           icon={BookOpen}
           label="Mis Cursos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/student/learning-paths"
+          to="/app/student/learning-paths"
           icon={Lightbulb}
           label="Rutas de Aprendizaje"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/student/achievements"
+          to="/app/student/achievements"
           icon={Trophy}
           label="Logros y Certificados"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/student/calendar"
+          to="/app/student/calendar"
           icon={Calendar}
           label="Calendario Académico"
           isCollapsed={isCollapsed}

@@ -26,28 +26,28 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ isOpen, onTog
     >
       <SidebarMenu>
         <MenuItem
-          to="/dashboard"
+          to="/app/dashboard"
           icon={LayoutDashboard}
           label="Panel Principal"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/dashboard/stats"
+          to="/app/dashboard/stats"
           icon={BarChart}
           label="Estadísticas"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/dashboard/activity"
+          to="/app/dashboard/activity"
           icon={Activity}
           label="Actividad"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/dashboard/history"
+          to="/app/dashboard/history"
           icon={Clock}
           label="Historial"
           isCollapsed={isCollapsed}
