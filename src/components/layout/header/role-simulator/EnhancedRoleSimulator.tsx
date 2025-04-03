@@ -21,10 +21,12 @@ export const EnhancedRoleSimulator = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <RoleBadge 
-          role={effectiveRole || ''} 
-          isSimulated={isViewingAsOtherRole}
-        />
+        <div className="flex">
+          <RoleBadge 
+            role={effectiveRole || ''} 
+            isSimulated={isViewingAsOtherRole}
+          />
+        </div>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end">
         <RolePopoverContent
