@@ -51,6 +51,8 @@ import InstructorStudents from '@/pages/instructor/Students';
 import InstructorCourseEditor from '@/pages/instructor/CourseEditor';
 import InstructorEditCourseStructure from '@/pages/instructor/EditCourseStructure';
 import InstructorEditLesson from '@/pages/instructor/EditLesson';
+import CreateCourse from '@/pages/instructor/CreateCourse';
+import EditCourseDetails from '@/pages/instructor/EditCourseDetails';
 
 // Import settings pages
 import GeneralSettingsPage from '@/pages/settings/GeneralSettingsPage';
@@ -134,6 +136,8 @@ const AppRoutes: React.FC = () => {
         <Route path="profesor/dashboard" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorDashboard /></SafeRouteWrapper>} />
         <Route path="profesor/courses" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorCoursesList /></SafeRouteWrapper>} />
         <Route path="profesor/students" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorStudents /></SafeRouteWrapper>} />
+        <Route path="profesor/courses/create" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><CreateCourse /></SafeRouteWrapper>} />
+        <Route path="profesor/courses/:id/edit" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><EditCourseDetails /></SafeRouteWrapper>} />
         <Route path="profesor/courses/:id/editor" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorCourseEditor /></SafeRouteWrapper>} />
         <Route path="profesor/courses/:id/structure" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorEditCourseStructure /></SafeRouteWrapper>} />
         <Route path="profesor/courses/:courseId/lessons/:lessonId/edit" element={<SafeRouteWrapper requiredRole={['profesor', 'admin']}><InstructorEditLesson /></SafeRouteWrapper>} />

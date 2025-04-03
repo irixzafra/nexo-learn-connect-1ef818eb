@@ -97,7 +97,7 @@ const CoursesList: React.FC = () => {
   };
   
   const createNewCourse = () => {
-    navigate('/instructor/courses/create');
+    navigate('/app/profesor/courses/create');
   };
   
   return (
@@ -205,15 +205,15 @@ const CoursesList: React.FC = () => {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => navigate(`/instructor/courses/${course.id}/edit`)}>
+                      <DropdownMenuItem onClick={() => navigate(`/app/profesor/courses/${course.id}/edit`)}>
                         <Edit className="h-4 w-4 mr-2" />
                         Editar curso
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate(`/instructor/courses/${course.id}/structure`)}>
+                      <DropdownMenuItem onClick={() => navigate(`/app/profesor/courses/${course.id}/structure`)}>
                         <BookCopy className="h-4 w-4 mr-2" />
                         Editar estructura
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate(`/instructor/courses/${course.id}/editor`)}>
+                      <DropdownMenuItem onClick={() => navigate(`/app/profesor/courses/${course.id}/editor`)}>
                         <FileEdit className="h-4 w-4 mr-2" />
                         Editor de contenido
                       </DropdownMenuItem>
@@ -268,7 +268,7 @@ const CoursesList: React.FC = () => {
                   variant="outline"
                   size="sm"
                   className="w-full"
-                  onClick={() => navigate(`/instructor/courses/${course.id}/analytics`)}
+                  onClick={() => navigate(`/app/profesor/courses/${course.id}/analytics`)}
                 >
                   <BarChart className="h-4 w-4 mr-2" />
                   Analíticas
@@ -277,7 +277,7 @@ const CoursesList: React.FC = () => {
                   variant="default"
                   size="sm"
                   className="w-full"
-                  onClick={() => navigate(`/instructor/courses/${course.id}/edit`)}
+                  onClick={() => navigate(`/app/profesor/courses/${course.id}/edit`)}
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Editar
