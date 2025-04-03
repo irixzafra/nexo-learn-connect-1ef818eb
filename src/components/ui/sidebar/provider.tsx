@@ -1,8 +1,6 @@
 
 import { useMediaQuery } from "@/hooks/use-media-query"
 import * as React from "react"
-import type { KeyboardEvent } from "react"
-import { createContext, useContext, useEffect, useState } from "react"
 import { useHotkeys } from "react-hotkeys-hook"
 
 import {
@@ -26,7 +24,7 @@ export interface SidebarContextType {
   toggleSidebar: () => void
 }
 
-export const SidebarContext = createContext<SidebarContextType | undefined>(
+export const SidebarContext = React.createContext<SidebarContextType | undefined>(
   undefined
 )
 
@@ -45,9 +43,9 @@ export function SidebarProvider({
   onStateChange,
   enableHotkey = true,
 }: SidebarProviderProps) {
-  const [state, setStateInternal] = useState<SidebarState>(defaultState)
-  const [open, setOpen] = useState<boolean>(defaultOpen)
-  const [openMobile, setOpenMobile] = useState<boolean>(false)
+  const [state, setStateInternal] = React.useState<SidebarState>(defaultState)
+  const [open, setOpen] = React.useState<boolean>(defaultOpen)
+  const [openMobile, setOpenMobile] = React.useState<boolean>(false)
   const isMobile = useMediaQuery("(max-width: 768px)")
 
   const setState = (newState: SidebarState) => {
@@ -67,7 +65,7 @@ export function SidebarProvider({
   }
 
   // Initialize state from cookie or localStorage
-  useEffect(() => {
+  React.useEffect(() => {
     const cookieValue = document.cookie
       .split("; ")
       .find((row) => row.startsWith(`${SIDEBAR_COOKIE_NAME}=`))
@@ -83,9 +81,8 @@ export function SidebarProvider({
     Array.isArray(SIDEBAR_KEYBOARD_SHORTCUT) 
       ? SIDEBAR_KEYBOARD_SHORTCUT.join("+") 
       : SIDEBAR_KEYBOARD_SHORTCUT,
-    (event: KeyboardEvent) => {
+    () => {
       if (enableHotkey) {
-        event.preventDefault()
         toggleSidebar()
       }
     },
@@ -112,7 +109,7 @@ export function SidebarProvider({
 }
 
 export function useSidebar() {
-  const context = useContext(SidebarContext)
+  const context = React.useContext(SidebarContext)
 
   if (!context) {
     throw new Error("useSidebar must be used within a SidebarProvider")

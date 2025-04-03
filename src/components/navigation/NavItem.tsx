@@ -3,9 +3,10 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { LucideIcon } from 'lucide-react';
 
 export interface NavItemProps {
-  icon?: React.ReactNode;
+  icon?: React.ReactNode | LucideIcon;
   title: string;
   href: string;
   onClick?: () => void;
@@ -18,7 +19,7 @@ export interface NavItemProps {
 }
 
 const NavItem: React.FC<NavItemProps> = ({
-  icon,
+  icon: Icon,
   title,
   href,
   onClick,
@@ -53,8 +54,12 @@ const NavItem: React.FC<NavItemProps> = ({
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
     >
-      {icon && <span className="shrink-0 text-foreground/50">{icon}</span>}
-      {(!isCollapsed || !icon) && <span>{title}</span>}
+      {Icon && (
+        <span className="shrink-0 text-foreground/50">
+          {React.isValidElement(Icon) ? Icon : typeof Icon === 'function' ? React.createElement(Icon as LucideIcon, { size: 20 }) : Icon}
+        </span>
+      )}
+      {(!isCollapsed || !Icon) && <span>{title}</span>}
       {badge && <span className="ml-auto">{badge}</span>}
     </Link>
   );
