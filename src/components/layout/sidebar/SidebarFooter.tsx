@@ -48,6 +48,11 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     languagesProp: languages
   });
 
+  // Usamos useEffect para el log después del renderizado
+  React.useEffect(() => {
+    console.log('>>> DEBUG SidebarFooter: Finished rendering SidebarFooterSection');
+  }, []);
+
   return (
     <div className="border-t border-border p-3">
       <SidebarFooterSection
@@ -61,10 +66,6 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
         languages={languages}
         changeLanguage={changeLanguage}
       />
-      {/* Use a React fragment with an effect instead of inline console.log */}
-      {React.useEffect(() => {
-        console.log('>>> DEBUG SidebarFooter: Finished rendering SidebarFooterSection');
-      }, [])}
     </div>
   );
 };
