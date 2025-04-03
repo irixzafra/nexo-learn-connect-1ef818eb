@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { UserRoleType } from '@/types/auth';
 import { ModeToggle } from '@/components/ui/mode-toggle';
-import { PowerIcon, BellIcon } from 'lucide-react';
+import { PowerIcon, BellIcon, ShieldCheck } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -22,6 +22,7 @@ interface SidebarFooterSectionProps {
   logout: () => void;
   resetToOriginalRole: () => void;
   isViewingAsOtherRole: boolean;
+  forceAdminRole?: () => void;
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
@@ -36,7 +37,8 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   changeLanguage,
   logout,
   resetToOriginalRole,
-  isViewingAsOtherRole
+  isViewingAsOtherRole,
+  forceAdminRole
 }) => {
   const unreadNotifications = 3; // Example count - replace with actual state
   
@@ -82,6 +84,25 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
           >
             <PowerIcon className="h-4 w-4 text-muted-foreground" />
           </Button>
+          
+          {/* Force admin role button - for debugging */}
+          {forceAdminRole && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full"
+                  onClick={forceAdminRole}
+                >
+                  <ShieldCheck className="h-4 w-4 text-red-500" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p>Forzar rol admin</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
           
           {/* Reset role button (visible only when viewing as another role) */}
           {isViewingAsOtherRole && (

@@ -4,7 +4,7 @@ import { UserRoleType, UserProfile, toUserRoleType } from '@/types/auth';
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
 
-interface AuthContextType {
+export interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   isInitialized: boolean;
@@ -24,6 +24,7 @@ interface AuthContextType {
   setSimulatedRole: (role: UserRoleType, userId?: string) => void;
   resetToOriginalRole: () => void;
   simulatedRole: UserRoleType | null;
+  forceUpdateRole: (email: string, roleToSet: UserRoleType) => Promise<{ success: boolean; error?: any }>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -46,6 +47,7 @@ const AuthContext = createContext<AuthContextType>({
   setSimulatedRole: () => {},
   resetToOriginalRole: () => {},
   simulatedRole: null,
+  forceUpdateRole: async () => ({ success: false }),
 });
 
 export const useAuth = () => {
@@ -97,6 +99,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Force update a user's role by email
+  const forceUpdateRole = async (email: string, roleToSet: UserRoleType) => {
+    try {
+      console.log(`Attempting to force update role for ${email} to ${roleToSet}`);
+      
+      // First try to find the user by email in auth.users
+      const { data: userData, error: userError } = await supabase
+        .from('profiles')
+        .select('id, email, role')
+        .eq('email', email)
+        .single();
+      
+      if (userError) {
+        console.error('Error finding user by email:', userError);
+        return { success: false, error: userError.message };
+      }
+      
+      if (userData) {
+        console.log('Found user:', userData);
+        
+        // Update the role in profiles
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ role: roleToSet })
+          .eq('id', userData.id);
+          
+        if (updateError) {
+          console.error('Error updating role:', updateError);
+          return { success: false, error: updateError.message };
+        }
+        
+        console.log(`Successfully updated role for ${email} to ${roleToSet}`);
+        
+        // If this is the current user, update the local state
+        if (user && userData.id === user.id) {
+          setUserRole(roleToSet);
+          setUserProfile(prev => prev ? { ...prev, role: roleToSet } : null);
+        }
+        
+        return { success: true };
+      } else {
+        console.error('User not found');
+        return { success: false, error: 'User not found' };
+      }
+    } catch (error: any) {
+      console.error('Error in forceUpdateRole:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   // Initialize auth state
   useEffect(() => {
     const initAuth = async () => {
@@ -134,6 +186,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // If there's a user, fetch their profile
       if (existingSession?.user) {
         await fetchUserProfile(existingSession.user.id);
+      }
+      
+      // Special case: If the user is admin@nexo.com, ensure they have admin role
+      if (existingSession?.user && existingSession.user.email === 'admin@nexo.com') {
+        console.log('Found admin@nexo.com user, ensuring admin role');
+        await forceUpdateRole('admin@nexo.com', 'admin');
       }
       
       setIsLoading(false);
@@ -284,6 +342,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSimulatedRole,
     resetToOriginalRole,
     simulatedRole,
+    forceUpdateRole
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

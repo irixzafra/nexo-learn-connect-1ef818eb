@@ -10,7 +10,15 @@ interface SidebarFooterProps {
 
 const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
   console.log('>>> DEBUG SidebarFooter RENDERING');
-  const { userRole, effectiveRole, logout, setSimulatedRole, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
+  const { 
+    userRole, 
+    effectiveRole, 
+    logout, 
+    setSimulatedRole, 
+    resetToOriginalRole, 
+    isViewingAsOtherRole,
+    forceUpdateRole
+  } = useAuth();
 
   // Get role name function
   const getRoleName = (role: UserRoleType): string => {
@@ -46,6 +54,12 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
   const handleResetRole = () => {
     console.log('>>> DEBUG SidebarFooter: Resetting to original role');
     resetToOriginalRole();
+  };
+
+  // Handler for forcing admin role
+  const handleForceAdminRole = async () => {
+    console.log('>>> DEBUG SidebarFooter: Forcing admin role');
+    await forceUpdateRole('admin@nexo.com', 'admin');
   };
 
   // Mock data for language selector
@@ -85,6 +99,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
         logout={logout}
         resetToOriginalRole={handleResetRole}
         isViewingAsOtherRole={isViewingAsOtherRole}
+        forceAdminRole={handleForceAdminRole}
       />
     </div>
   );
