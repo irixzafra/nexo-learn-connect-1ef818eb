@@ -4,13 +4,14 @@ import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { FileText, Package, FileQuestion, AlertTriangle, Code, FolderOpen } from 'lucide-react';
+import { FileText, Package, FileQuestion, AlertTriangle, Code, FolderOpen, Eye } from 'lucide-react';
 import { StyledAccordion, StyledAccordionItem } from '@/components/ui/styled-accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 type ComponentModule = {
   path: string;
@@ -215,6 +216,60 @@ const ComponentsTab: React.FC<ComponentsTabProps> = ({
   groupComponentsByDirectory,
   getRelativePath
 }) => {
+  const [selectedComponent, setSelectedComponent] = useState<ComponentModule | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
+  const [previewLoading, setPreviewLoading] = useState<boolean>(false);
+  const [previewContent, setPreviewContent] = useState<React.ReactNode | null>(null);
+
+  const handleShowPreview = async (component: ComponentModule) => {
+    setSelectedComponent(component);
+    setIsPreviewOpen(true);
+    setPreviewLoading(true);
+    setPreviewContent(null);
+
+    try {
+      // Intentar cargar el componente para la vista previa
+      const importedModule = await component.module();
+      const ComponentToRender = importedModule.default;
+      
+      // Solo intentar renderizar si es un componente válido
+      if (typeof ComponentToRender === 'function') {
+        setPreviewContent(
+          <ErrorBoundary FallbackComponent={({ error }) => (
+            <div className="p-4 border rounded bg-destructive/10 text-destructive">
+              <p className="font-medium">Error al renderizar el componente:</p>
+              <pre className="text-xs mt-2 overflow-auto">{error.message}</pre>
+            </div>
+          )}>
+            <div className="p-4 border rounded">
+              <h3 className="text-sm font-medium mb-4">Vista previa del componente</h3>
+              <div className="bg-background p-6 rounded-md shadow-inner">
+                <ComponentToRender />
+              </div>
+            </div>
+          </ErrorBoundary>
+        );
+      } else {
+        setPreviewContent(
+          <div className="p-4 border rounded bg-amber-50 text-amber-800">
+            <p>No se pudo generar una vista previa para este componente.</p>
+            <p className="text-xs mt-2">Este archivo puede no exportar un componente React válido o podría requerir props específicas.</p>
+          </div>
+        );
+      }
+    } catch (error) {
+      console.error('Error loading component preview:', error);
+      setPreviewContent(
+        <div className="p-4 border rounded bg-destructive/10 text-destructive">
+          <p className="font-medium">Error al cargar el componente:</p>
+          <pre className="text-xs mt-2 overflow-auto">{error instanceof Error ? error.message : 'Error desconocido'}</pre>
+        </div>
+      );
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
   if (loading) {
     return <ComponentsLoadingState />;
   }
@@ -239,63 +294,108 @@ const ComponentsTab: React.FC<ComponentsTabProps> = ({
   const groupedComponents = groupComponentsByDirectory(components);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          {componentType === 'ui' && 'Componentes de UI'}
-          {componentType === 'navigation' && 'Componentes de Navegación'}
-          {componentType === 'common' && 'Componentes Comunes'}
-        </CardTitle>
-        <CardDescription>
-          {Object.keys(components).length} componentes encontrados
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <StyledAccordion type="multiple" collapsible>
-          {Object.entries(groupedComponents).map(([directory, dirComponents]) => (
-            <StyledAccordionItem 
-              key={directory} 
-              value={directory}
-              title={directory}
-              description={`${dirComponents.length} componentes`}
-              icon={<FolderOpen className="h-5 w-5" />}
-            >
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Componente</TableHead>
-                      <TableHead>Ruta</TableHead>
-                      <TableHead>Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {dirComponents.map((component) => (
-                      <TableRow key={component.path}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <Code className="h-4 w-4 text-primary" />
-                            <span>{component.name}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground font-mono text-xs">
-                          {getRelativePath(component.path)}
-                        </TableCell>
-                        <TableCell>
-                          <Button variant="outline" size="sm" className="h-7 px-2">
-                            Detalles
-                          </Button>
-                        </TableCell>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {componentType === 'ui' && 'Componentes de UI'}
+            {componentType === 'navigation' && 'Componentes de Navegación'}
+            {componentType === 'common' && 'Componentes Comunes'}
+          </CardTitle>
+          <CardDescription>
+            {Object.keys(components).length} componentes encontrados
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <StyledAccordion type="multiple" collapsible>
+            {Object.entries(groupedComponents).map(([directory, dirComponents]) => (
+              <StyledAccordionItem 
+                key={directory} 
+                value={directory}
+                title={directory}
+                description={`${dirComponents.length} componentes`}
+                icon={<FolderOpen className="h-5 w-5" />}
+              >
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Componente</TableHead>
+                        <TableHead>Ruta</TableHead>
+                        <TableHead>Acciones</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {dirComponents.map((component) => (
+                        <TableRow key={component.path}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <Code className="h-4 w-4 text-primary" />
+                              <span>{component.name}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-muted-foreground font-mono text-xs">
+                            {getRelativePath(component.path)}
+                          </TableCell>
+                          <TableCell>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-7 px-2"
+                              onClick={() => handleShowPreview(component)}
+                            >
+                              <Eye className="h-3.5 w-3.5 mr-1" />
+                              Vista Previa
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </StyledAccordionItem>
+            ))}
+          </StyledAccordion>
+        </CardContent>
+      </Card>
+
+      {/* Modal para la vista previa del componente */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Code className="h-5 w-5" />
+              {selectedComponent?.name}
+            </DialogTitle>
+            <DialogDescription className="font-mono text-xs">
+              {selectedComponent ? getRelativePath(selectedComponent.path) : ''}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-2">
+            {previewLoading ? (
+              <div className="flex items-center justify-center p-10">
+                <Skeleton className="h-24 w-full rounded-md" />
               </div>
-            </StyledAccordionItem>
-          ))}
-        </StyledAccordion>
-      </CardContent>
-    </Card>
+            ) : (
+              <div className="max-h-[60vh] overflow-auto">
+                {previewContent}
+              </div>
+            )}
+          </div>
+
+          <div className="bg-muted/50 p-4 rounded-md mt-2">
+            <h4 className="text-sm font-medium mb-2">Cómo usar este componente:</h4>
+            <pre className="bg-black text-white p-3 rounded text-xs overflow-x-auto">
+              {selectedComponent ? `import ${selectedComponent.name} from "@/${getRelativePath(selectedComponent.path)}";
+
+// En tu componente
+<${selectedComponent.name} />` : ''}
+            </pre>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
