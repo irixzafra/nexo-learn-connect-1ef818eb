@@ -1,5 +1,5 @@
 
-// Re-export from the central auth context
+// Re-export from the centralized auth context
 import { useAuth } from '@/contexts/auth';
 
 export { useAuth };

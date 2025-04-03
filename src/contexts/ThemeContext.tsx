@@ -1,7 +1,6 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/contexts/auth'; // Updated import path
+import { useAuth } from '@/contexts/auth';
 import { toast } from 'sonner';
 
 type ThemeMode = 'light' | 'dark' | 'system' | 'futuristic';
@@ -55,7 +54,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Load theme settings from localStorage first
     const savedTheme = localStorage.getItem('theme') as ThemeMode;
     const savedUseMaterial = localStorage.getItem('useMaterialDesign');
     const savedColors = localStorage.getItem('colorPalette');
@@ -68,7 +66,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (savedAnimations !== null) setAnimationsEnabledState(savedAnimations === 'true');
     if (savedReducedMotion !== null) setReducedMotionState(savedReducedMotion === 'true');
 
-    // Then load from database if user is logged in
     loadSettings();
   }, [user]);
 
@@ -80,7 +77,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       setIsLoading(true);
 
-      // If not logged in, use local settings
       if (!user) {
         setIsLoading(false);
         return;
@@ -103,7 +99,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setAnimationsEnabledState(settings.animations_enabled ?? true);
         setReducedMotionState(settings.reduced_motion ?? false);
 
-        // Save to localStorage as well
         localStorage.setItem('theme', settings.theme_mode || 'system');
         localStorage.setItem('useMaterialDesign', String(settings.use_material_design ?? true));
         localStorage.setItem('colorPalette', JSON.stringify(settings.color_palette || defaultColors));
@@ -118,14 +113,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const saveSettings = async () => {
-    // Always save to localStorage
     localStorage.setItem('theme', theme);
     localStorage.setItem('useMaterialDesign', String(useMaterialDesign));
     localStorage.setItem('colorPalette', JSON.stringify(colors));
     localStorage.setItem('animationsEnabled', String(animationsEnabled));
     localStorage.setItem('reducedMotion', String(reducedMotion));
 
-    // If not logged in, don't save to database
     if (!user) return;
 
     try {
@@ -175,7 +168,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const root = document.documentElement;
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    // Determine resolved theme
     let currentTheme: 'light' | 'dark' | 'futuristic' = 'light';
     if (theme === 'system') {
       currentTheme = prefersDark ? 'dark' : 'light';
@@ -183,32 +175,27 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       currentTheme = theme;
     }
 
-    // Apply classes to html element
     root.classList.remove('light', 'dark', 'futuristic');
     root.classList.add(currentTheme);
     
-    // Apply Material Design classes if enabled
     if (useMaterialDesign) {
       root.classList.add('material');
     } else {
       root.classList.remove('material');
     }
 
-    // Apply reduced motion if enabled
     if (reducedMotion) {
       root.classList.add('reduced-motion');
     } else {
       root.classList.remove('reduced-motion');
     }
 
-    // Apply animations if enabled
     if (animationsEnabled) {
       root.classList.add('animations-enabled');
     } else {
       root.classList.remove('animations-enabled');
     }
 
-    // Apply colors to CSS variables
     Object.entries(colors).forEach(([key, value]) => {
       if (value) {
         root.style.setProperty(`--${key}`, value);
@@ -216,7 +203,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   };
 
-  // Calculate whether we're in dark mode for easy consumption
   const resolvedTheme = 
     theme === 'system' 
       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')

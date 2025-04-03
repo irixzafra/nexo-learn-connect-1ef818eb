@@ -6,7 +6,7 @@ import AppLayout from '@/layouts/AppLayout';
 import CourseDetail from '@/pages/CourseDetail';
 import Courses from '@/pages/Courses';
 import ProtectedRouteWrapper from '@/components/ProtectedRouteWrapper';
-import NotFoundPage from '@/pages/NotFoundPage';
+import NotFound from '@/pages/NotFound';
 import StudentInbox from '@/pages/student/Inbox';
 import MyCourses from '@/pages/student/MyCourses';
 import LessonView from '@/pages/student/LessonView';
@@ -90,7 +90,7 @@ const UserRoutes = () => {
             </ProtectedRouteWrapper>
           }
         />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
