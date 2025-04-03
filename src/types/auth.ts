@@ -1,5 +1,5 @@
 
-export type UserRoleType = 'admin' | 'profesor' | 'instructor' | 'student' | 'sistemas' | 'moderator' | 'content_creator' | 'guest' | 'anonimo';
+export type UserRoleType = 'admin' | 'profesor' | 'instructor' | 'student' | 'sistemas' | 'moderator' | 'content_creator' | 'guest' | 'anonimo' | 'beta_tester';
 
 export interface UserProfile {
   id: string;
@@ -24,6 +24,7 @@ export const toUserRoleType = (role?: string | null): UserRoleType => {
     case 'content_creator':
     case 'guest':
     case 'anonimo':
+    case 'beta_tester':
       return role as UserRoleType;
     default:
       return 'student'; // Default role
