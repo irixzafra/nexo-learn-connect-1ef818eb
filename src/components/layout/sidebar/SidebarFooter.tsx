@@ -14,7 +14,9 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     userRole, 
     effectiveRole, 
     logout, 
-    forceUpdateRole
+    forceUpdateRole,
+    isViewingAsOtherRole,
+    resetToOriginalRole
   } = useAuth();
 
   console.log('>>> DEBUG SidebarFooter AUTH VALUES:', { 
@@ -83,6 +85,8 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
         languages={languages}
         changeLanguage={changeLanguage}
         logout={logout}
+        isViewingAsOtherRole={isViewingAsOtherRole}
+        resetToOriginalRole={resetToOriginalRole}
         forceAdminRole={handleForceAdminRole}
       />
     </div>

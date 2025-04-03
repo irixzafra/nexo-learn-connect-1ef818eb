@@ -22,6 +22,7 @@ interface SidebarFooterSectionProps {
   logout: () => Promise<void>;
   isViewingAsOtherRole: boolean;
   resetToOriginalRole: () => void;
+  forceAdminRole?: () => Promise<void>; // Added this optional prop
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
