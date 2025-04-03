@@ -37,11 +37,10 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   const unreadNotifications = 3; // Example count - replace with actual state
   
   // Get roles directly from context for debugging
-  const { userRole: userRoleFromContext, effectiveRole: effectiveRoleFromContext } = useAuth();
+  const { userRole: userRoleFromContext } = useAuth();
   
   console.log('>>> DEBUG SidebarFooterSection:', { 
     userRoleFromContext, 
-    effectiveRoleFromContext,
     userRoleFromProps: userRole,
     isConditionMet: userRoleFromContext === 'admin' 
   });
