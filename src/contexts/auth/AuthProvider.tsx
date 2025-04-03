@@ -1,382 +1,277 @@
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Session, User } from '@supabase/supabase-js';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { UserRoleType, UserProfile, toUserRoleType } from '@/types/auth';
 import { supabase } from '@/lib/supabase';
-import { UserProfile, UserRoleType } from '@/types/auth';
-import { toast } from 'sonner';
-import { fetchUserProfile, ensureUserProfile } from './profileUtils';
-import { AuthContextType } from './types';
+import { Session, User } from '@supabase/supabase-js';
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+interface AuthContextType {
+  isLoading: boolean;
+  user: User | null;
+  session: Session | null;
+  userProfile: UserProfile | null;
+  userRole: UserRoleType | null;
+  effectiveRole: UserRoleType | null;
+  isViewingAsOtherRole: boolean;
+  simulatedUserId: string | null;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: any }>;
+  logout: () => Promise<void>;
+  signup: (email: string, password: string, userData?: Partial<UserProfile>) => Promise<{ success: boolean; error?: any }>;
+  updateProfile: (profileData: Partial<UserProfile>) => Promise<{ success: boolean; error?: any }>;
+  updatePassword: (password: string) => Promise<{ success: boolean; error?: any }>;
+  setSimulatedRole: (role: UserRoleType, userId?: string) => void;
+  resetToOriginalRole: () => void;
+  simulatedRole: UserRoleType | null;
+}
 
-export const useAuth = (): AuthContextType => {
+const AuthContext = createContext<AuthContextType>({
+  isLoading: true,
+  user: null,
+  session: null,
+  userProfile: null,
+  userRole: null,
+  effectiveRole: null,
+  isViewingAsOtherRole: false,
+  simulatedUserId: null,
+  login: async () => ({ success: false }),
+  logout: async () => {},
+  signup: async () => ({ success: false }),
+  updateProfile: async () => ({ success: false }),
+  updatePassword: async () => ({ success: false }),
+  setSimulatedRole: () => {},
+  resetToOriginalRole: () => {},
+  simulatedRole: null,
+});
+
+export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-interface SimulatedUserData {
-  role: UserRoleType | null;
-  userId: string | null;
-  userName?: string | null;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userRole, setUserRole] = useState<UserRoleType | null>(null);
   const [simulatedRole, setSimulatedRoleState] = useState<UserRoleType | null>(null);
   const [simulatedUserId, setSimulatedUserId] = useState<string | null>(null);
-  const [simulatedUserName, setSimulatedUserName] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Calculate effective role based on simulated role
+  // The effective role is either the simulated role or the user's actual role
   const effectiveRole = simulatedRole || userRole;
-  const isViewingAsOtherRole = simulatedRole !== null && userRole !== simulatedRole;
+  const isViewingAsOtherRole = simulatedRole !== null;
 
-  // Function to set simulated role with localStorage persistence
-  const setSimulatedRole = (role: UserRoleType | null, userId: string | null = null, userName: string | null = null) => {
-    setSimulatedRoleState(role);
-    setSimulatedUserId(userId);
-    setSimulatedUserName(userName);
-    
-    const simulatedData: SimulatedUserData = {
-      role,
-      userId,
-      userName
-    };
-    
-    if (role) {
-      localStorage.setItem('simulatedUserData', JSON.stringify(simulatedData));
-      
-      if (userId) {
-        toast.success(`Vista cambiada a usuario: ${userName || userId} (${role})`);
-      } else {
-        toast.success(`Vista cambiada a: ${role}`);
-      }
-    } else {
-      localStorage.setItem('simulatedUserData', JSON.stringify({ role: null, userId: null }));
-      toast.success(`Volviendo a tu rol original: ${userRole}`);
-    }
-  };
-
-  // Function to reset to original role
-  const resetToOriginalRole = () => {
-    setSimulatedRole(null);
-  };
-
-  useEffect(() => {
-    console.info('🔐 [Auth] Iniciando configuración del sistema de autenticación');
-    console.info('🔐 [Auth] Estado inicial:', { 
-      isInitialized, 
-      isLoading, 
-      hasUser: !!user, 
-      hasSession: !!session, 
-      userRole,
-      simulatedRole,
-      simulatedUserId
-    });
-    
-    // Initialize simulated role from localStorage if available
+  // Fetch user profile from database
+  const fetchUserProfile = async (userId: string) => {
     try {
-      const storedData = localStorage.getItem('simulatedUserData');
-      if (storedData) {
-        const parsedData: SimulatedUserData = JSON.parse(storedData);
-        if (parsedData.role) {
-          setSimulatedRoleState(parsedData.role);
-          setSimulatedUserId(parsedData.userId || null);
-          setSimulatedUserName(parsedData.userName || null);
-        }
-      } else {
-        // Legacy support for older format
-        const storedRole = localStorage.getItem('viewAsRole');
-        // Fix: This is line causing TypeScript error - checking if a UserRoleType equals "current"
-        // Change this comparison to check if storedRole is not "current" and not null/undefined
-        if (storedRole && storedRole !== 'current') {
-          setSimulatedRoleState(storedRole as UserRoleType);
-        }
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('userId', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return;
+      }
+
+      if (data) {
+        setUserProfile(data as UserProfile);
+        setUserRole(toUserRoleType(data.role || 'student'));
       }
     } catch (error) {
-      console.error('Error al recuperar datos de simulación:', error);
-      // Clear potentially corrupted data
-      localStorage.removeItem('simulatedUserData');
-      localStorage.removeItem('viewAsRole');
+      console.error('Error in fetchUserProfile:', error);
     }
-    
-    // Primero: Configurar el listener de cambios de estado de autenticación
-    console.info('🔐 [Auth] Configurando listener de cambios en el estado de autenticación');
-    
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
-        console.info(`🔐 [Auth] Evento de autenticación detectado: ${event}`);
-        console.info(`🔐 [Auth] Usuario en evento: ${newSession?.user?.id || 'ninguno'}`);
-        console.info(`🔐 [Auth] Detalles del evento:`, { event, hasNewSession: !!newSession, userId: newSession?.user?.id });
-        
-        if (event === 'SIGNED_OUT') {
-          console.info('🔐 [Auth] Usuario cerró sesión, limpiando estado de autenticación');
-          setSession(null);
-          setUser(null);
-          setProfile(null);
-          setUserRole(null);
-          setSimulatedRoleState(null);
-          localStorage.removeItem('viewAsRole');
-          return;
-        }
-        
-        if (newSession?.user) {
-          console.info(`🔐 [Auth] Sesión actualizada para usuario: ${newSession.user.id}`);
-          console.info(`🔐 [Auth] Datos de sesión:`, { 
-            userId: newSession.user.id, 
-            email: newSession.user.email,
-            hasAccessToken: !!newSession.access_token,
-            expiresAt: newSession.expires_at
-          });
-          
-          // Actualizaciones síncronas - inmediatas para mejorar UX
-          setSession(newSession);
-          setUser(newSession.user);
-          
-          // IMPORTANTE: Uso de setTimeout para evitar deadlock potencial con el cliente Supabase
-          setTimeout(async () => {
-            try {
-              console.info(`🔐 [Auth] Obteniendo perfil para usuario: ${newSession.user.id}`);
-              const userProfile = await ensureUserProfile(newSession.user.id, newSession.user.email || '');
-              
-              if (userProfile) {
-                console.info(`🔐 [Auth] Perfil obtenido con rol: ${userProfile.role}`);
-                console.info(`🔐 [Auth] Detalles del perfil:`, userProfile);
-                setProfile(userProfile);
-                setUserRole(userProfile.role || null);
-              } else {
-                console.warn(`⚠️ [Auth] No se pudo obtener perfil para: ${newSession.user.id}`);
-              }
-            } catch (error) {
-              console.error('❌ [Auth] Error al obtener el perfil:', error);
-            }
-          }, 0);
-        }
-      }
-    );
+  };
 
-    // Segundo: Inicializar el estado de autenticación inicial
-    const initializeAuth = async () => {
-      console.time('🔐 [Auth] Tiempo total de inicialización');
-      console.info('🔐 [Auth] Comenzando inicialización de estado de autenticación...');
-      
+  // Initialize auth state
+  useEffect(() => {
+    const initAuth = async () => {
       setIsLoading(true);
       
-      try {
-        console.info('🔐 [Auth] ANTES de consultar sesión actual en Supabase...');
-        console.info('🔐 [Auth] Llamando a supabase.auth.getSession()...');
-        
-        const { data, error } = await supabase.auth.getSession();
-        const currentSession = data?.session;
-        
-        console.info('🔐 [Auth] DESPUÉS de consultar sesión en Supabase');
-        console.info(`🔐 [Auth] Resultado de getSession:`, { 
-          hasSession: !!currentSession, 
-          userId: currentSession?.user?.id,
-          error: error ? error.message : null,
-          rawData: data
-        });
-        
-        if (error) {
-          console.error('❌ [Auth] Error al obtener la sesión:', error);
-          console.error('❌ [Auth] Detalles del error:', { 
-            message: error.message, 
-            status: error.status,
-            name: error.name
-          });
-          throw error;
-        }
-        
-        if (currentSession?.user) {
-          console.info(`🔐 [Auth] Sesión existente encontrada para: ${currentSession.user.id}`);
-          console.info(`🔐 [Auth] Datos de sesión:`, { 
-            userId: currentSession.user.id, 
-            email: currentSession.user.email,
-            hasAccessToken: !!currentSession.access_token,
-            expiresAt: currentSession.expires_at,
-          });
+      // First set up the auth state listener
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        (event, newSession) => {
+          console.log('Auth state changed:', event, newSession?.user?.id);
+          setSession(newSession);
+          setUser(newSession?.user || null);
           
-          setSession(currentSession);
-          setUser(currentSession.user);
-          
-          console.info(`🔐 [Auth] Obteniendo datos de perfil para: ${currentSession.user.id}`);
-          
-          try {
-            const userProfile = await ensureUserProfile(currentSession.user.id, currentSession.user.email || '');
-            
-            if (userProfile) {
-              console.info(`🔐 [Auth] Perfil obtenido exitosamente con rol: ${userProfile.role}`);
-              console.info(`🔐 [Auth] Detalles del perfil:`, userProfile);
-              setProfile(userProfile);
-              setUserRole(userProfile.role || null);
-            } else {
-              console.warn(`⚠️ [Auth] No se pudo encontrar/crear perfil para: ${currentSession.user.id}`);
-            }
-          } catch (profileError) {
-            console.error('❌ [Auth] Error al obtener el perfil durante inicialización:', profileError);
-            console.error('❌ [Auth] Detalles del error de perfil:', { 
-              message: profileError instanceof Error ? profileError.message : 'Error desconocido',
-              stack: profileError instanceof Error ? profileError.stack : 'No stack disponible'
-            });
+          // When user signs in, fetch their profile
+          if (newSession?.user && event === 'SIGNED_IN') {
+            setTimeout(() => {
+              fetchUserProfile(newSession.user.id);
+            }, 0);
           }
-        } else {
-          console.info('🔐 [Auth] No hay sesión activa durante la inicialización');
+          
+          // When user signs out, clear profile and role
+          if (event === 'SIGNED_OUT') {
+            setUserProfile(null);
+            setUserRole(null);
+            setSimulatedRoleState(null);
+            setSimulatedUserId(null);
+          }
         }
-      } catch (error) {
-        console.error('❌ [Auth] Error crítico durante inicialización de autenticación:', error);
-        console.error('❌ [Auth] Detalles del error de inicialización:', { 
-          message: error instanceof Error ? error.message : 'Error desconocido',
-          stack: error instanceof Error ? error.stack : 'No stack disponible',
-        });
-      } finally {
-        console.info('🔐 [Auth] Finalizando inicialización de autenticación');
-        console.info('🔐 [Auth] Estado final antes de marcar como inicializado:', { 
-          hasUser: !!user, 
-          userId: user?.id,
-          hasSession: !!session, 
-          sessionUserId: session?.user?.id,
-          userRole,
-          profileId: profile?.id,
-          profileLoaded: !!profile
-        });
-        
-        setIsLoading(false);
-        
-        // CRÍTICO: Marcamos la inicialización como completada independientemente del resultado
-        console.info('🔐 [Auth] Estableciendo isInitialized a true - autenticación lista');
-        setIsInitialized(true);
-        console.timeEnd('🔐 [Auth] Tiempo total de inicialización');
+      );
+      
+      // Then check for existing session
+      const { data: { session: existingSession } } = await supabase.auth.getSession();
+      setSession(existingSession);
+      setUser(existingSession?.user || null);
+      
+      // If there's a user, fetch their profile
+      if (existingSession?.user) {
+        await fetchUserProfile(existingSession.user.id);
       }
+      
+      setIsLoading(false);
+      
+      // Cleanup subscription on unmount
+      return () => {
+        subscription.unsubscribe();
+      };
     };
-
-    // Ejecutar inicialización
-    initializeAuth();
     
-    // Limpiar suscripción al desmontar
-    return () => {
-      console.info('🔐 [Auth] Limpiando suscripción de autenticación');
-      subscription.unsubscribe();
-    };
+    initAuth();
   }, []);
 
-  // Función de login mejorada con mejor manejo de errores
-  const login = async (email: string, password: string): Promise<void> => {
-    setIsLoading(true);
+  // Mock authentication functions (replace with actual implementation)
+  const login = async (email: string, password: string) => {
     try {
-      console.info(`🔐 [Auth] Iniciando login para: ${email}`);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-
+      
       if (error) {
-        console.error('❌ [Auth] Error de login:', error.message);
-        console.error('❌ [Auth] Detalles del error de login:', { 
-          message: error.message, 
-          status: error.status,
-          name: error.name
-        });
-        
-        toast.error('Error al iniciar sesión', {
-          description: 'Verifica tus credenciales e intenta de nuevo',
-        });
-        throw error;
+        return { success: false, error: error.message };
       }
-
-      if (data?.user) {
-        // El cambio de estado será manejado por el listener onAuthStateChange
-        console.info(`🔐 [Auth] Login exitoso para: ${data.user.id}`);
-        console.info(`🔐 [Auth] Datos de login:`, { 
-          userId: data.user.id, 
-          email: data.user.email
-        });
-        
-        toast.success('¡Bienvenido!', {
-          description: 'Has iniciado sesión correctamente',
-        });
-      }
-    } catch (error) {
-      console.error('❌ [Auth] Error durante el proceso de login:', error);
-      console.error('❌ [Auth] Detalles del error de proceso login:', { 
-        message: error instanceof Error ? error.message : 'Error desconocido',
-        stack: error instanceof Error ? error.stack : 'No stack disponible'
-      });
       
-      toast.error('Error al iniciar sesión', {
-        description: 'Verifica tus credenciales e intenta de nuevo',
-      });
-      throw error;
-    } finally {
-      setIsLoading(false);
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
     }
   };
 
-  // Función de logout mejorada
-  const logout = async (): Promise<void> => {
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setSimulatedRoleState(null);
+    setSimulatedUserId(null);
+  };
+
+  const signup = async (email: string, password: string, userData?: Partial<UserProfile>) => {
     try {
-      console.info('🔐 [Auth] Iniciando proceso de cierre de sesión');
-      await supabase.auth.signOut();
-      console.info('🔐 [Auth] Sesión cerrada exitosamente');
-      toast.success('Has cerrado sesión correctamente');
-    } catch (error) {
-      console.error('❌ [Auth] Error durante el cierre de sesión:', error);
-      console.error('❌ [Auth] Detalles del error de logout:', { 
-        message: error instanceof Error ? error.message : 'Error desconocido',
-        stack: error instanceof Error ? error.stack : 'No stack disponible'
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
       });
       
-      toast.error('Error al cerrar sesión');
-      throw error;
+      if (error) {
+        return { success: false, error: error.message };
+      }
+      
+      // Create profile after signup
+      if (data.user) {
+        const profile = {
+          userId: data.user.id,
+          email: data.user.email,
+          role: 'student' as UserRoleType,
+          ...userData,
+        };
+        
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([profile]);
+          
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+        }
+      }
+      
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
     }
   };
 
-  // Calculamos isAuthenticated para compatibilidad
-  const isAuthenticated = !!session;
+  const updateProfile = async (profileData: Partial<UserProfile>) => {
+    if (!user) return { success: false, error: 'No user logged in' };
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(profileData)
+        .eq('userId', user.id);
+        
+      if (error) {
+        return { success: false, error: error.message };
+      }
+      
+      // Update local state
+      setUserProfile(prev => prev ? { ...prev, ...profileData } : null);
+      
+      // Update role if it's changed
+      if (profileData.role) {
+        setUserRole(toUserRoleType(profileData.role));
+      }
+      
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  };
 
-  // Objeto de contexto con todos los valores necesarios
+  const updatePassword = async (password: string) => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password,
+      });
+      
+      if (error) {
+        return { success: false, error: error.message };
+      }
+      
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  // Function to set simulated role for role switching
+  const setSimulatedRole = (role: UserRoleType, userId?: string) => {
+    console.log('Setting simulated role:', role, userId);
+    setSimulatedRoleState(role);
+    setSimulatedUserId(userId || null);
+  };
+
+  // Function to reset to original role
+  const resetToOriginalRole = () => {
+    console.log('Resetting to original role');
+    setSimulatedRoleState(null);
+    setSimulatedUserId(null);
+  };
+
   const value = {
+    isLoading,
     user,
     session,
-    profile,
+    userProfile,
     userRole,
-    simulatedRole,
-    simulatedUserId,
     effectiveRole,
-    isLoading,
+    isViewingAsOtherRole,
+    simulatedUserId,
     login,
     logout,
-    isInitialized,
-    isAuthenticated,
+    signup,
+    updateProfile,
+    updatePassword,
     setSimulatedRole,
-    isViewingAsOtherRole,
-    resetToOriginalRole
-  };
-
-  console.debug('🔐 [Auth] Estado actual del proveedor:', {
-    isInitialized,
-    isLoading,
-    isAuthenticated,
-    userId: user?.id,
-    sessionUserId: session?.user?.id,
-    userRole,
+    resetToOriginalRole,
     simulatedRole,
-    simulatedUserId,
-    effectiveRole,
-    isViewingAsOtherRole,
-    hasProfile: !!profile,
-    timestamp: new Date().toISOString()
-  });
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export default AuthProvider;

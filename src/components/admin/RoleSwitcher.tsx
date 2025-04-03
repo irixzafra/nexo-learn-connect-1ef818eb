@@ -35,6 +35,12 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ className }) => {
   const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   
+  console.log('>>> DEBUG RoleSwitcher:', {
+    userRole,
+    effectiveRole,
+    isViewingAsOtherRole
+  });
+  
   // Solo los administradores pueden cambiar roles
   if (userRole !== 'admin') {
     return null;

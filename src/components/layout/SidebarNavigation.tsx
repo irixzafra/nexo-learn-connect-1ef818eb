@@ -6,6 +6,7 @@ import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
 import ConditionalSidebar from './ConditionalSidebar';
+import { getRoleName, getHomePath } from '@/utils/roleUtils';
 
 interface SidebarNavigationProps {
   viewAsRole?: UserRoleType | null;
@@ -26,8 +27,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
     currentViewRole,
     currentLanguage,
     handleRoleChange,
-    getRoleName,
-    getHomePath,
     changeLanguage
   } = useSidebarNavigation(toUserRoleType(userRole as string), viewAsRole, onRoleChange);
 
@@ -37,6 +36,13 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
     { code: 'en', name: 'English' },
     { code: 'pt', name: 'Português' }
   ];
+
+  console.log('>>> DEBUG SidebarNavigation rendering with:', {
+    userRole,
+    effectiveRole,
+    isCollapsed,
+    currentViewRole
+  });
 
   return (
     <ConditionalSidebar

@@ -44,6 +44,13 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   const { toggleSidebar } = useSidebar();
   const { logout, resetToOriginalRole } = useAuth();
 
+  console.log('>>> DEBUG ConditionalSidebar:', {
+    userRoleProp: userRole,
+    effectiveRoleProp: effectiveRole,
+    isCollapsed,
+    currentViewRole
+  });
+
   return (
     <div className="h-full flex flex-col py-4 bg-background border-r border-border">
       {/* Logo at the top with full title and subtitle */}
@@ -59,9 +66,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       
       {/* Footer Section with Role Switcher and Language Selector */}
       <SidebarFooterSection 
-        userRole={userRole}
         isCollapsed={isCollapsed}
-        effectiveRole={effectiveRole}
         currentViewRole={currentViewRole}
         handleRoleChange={handleRoleChange}
         getRoleName={getRoleName}

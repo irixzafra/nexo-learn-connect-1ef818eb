@@ -11,9 +11,7 @@ import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
 import { useAuth } from '@/contexts/auth';
 
 interface SidebarFooterSectionProps {
-  userRole: UserRoleType;
   isCollapsed: boolean;
-  effectiveRole: UserRoleType;
   currentViewRole: UserRoleType | null;
   handleRoleChange: (role: UserRoleType) => void;
   getRoleName: (role: UserRoleType) => string;
