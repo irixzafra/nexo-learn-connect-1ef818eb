@@ -12,11 +12,11 @@ import { UserRoleType } from '@/types/auth';
 
 interface HeaderLogoProps {
   pageTitle?: string;
-  viewAsRole?: UserRoleType | 'current';
+  viewAsRole?: UserRoleType | null;
 }
 
 const HeaderLogo: React.FC<HeaderLogoProps> = ({ 
-  viewAsRole = 'current' 
+  viewAsRole = null 
 }) => {
   const isMobile = useIsMobile();
   
