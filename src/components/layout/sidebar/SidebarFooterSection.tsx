@@ -3,6 +3,7 @@ import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, LogOut, ShieldAlert } from 'lucide-react';
+import { cn } from '@/lib/utils'; // Added the missing import
 import {
   DropdownMenu,
   DropdownMenuContent,
