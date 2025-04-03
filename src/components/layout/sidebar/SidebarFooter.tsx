@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { GlobalRoleSwitcher } from '@/components/layout/GlobalRoleSwitcher';
+import GlobalRoleSwitcher from '@/components/layout/GlobalRoleSwitcher';
+import { Separator } from '@/components/ui/separator';
 
 interface SidebarFooterProps {
   isCollapsed: boolean;
@@ -46,6 +47,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
         )}>
           <GlobalRoleSwitcher 
             showLabel={!isCollapsed}
+            compact={isCollapsed}
             className={cn(
               "w-full",
               isCollapsed ? "flex justify-center" : ""
@@ -53,6 +55,8 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
           />
         </div>
       )}
+
+      <Separator className="my-2" />
 
       <div className={cn(
         "flex items-center",

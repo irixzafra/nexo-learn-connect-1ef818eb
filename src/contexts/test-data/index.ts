@@ -31,15 +31,13 @@ export const TestDataProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <TestDataContext.Provider
-      value={{ 
-        isTestMode, 
-        enableTestMode, 
-        disableTestMode, 
-        testData, 
-        setTestData 
-      }}
-    >
+    <TestDataContext.Provider value={{ 
+      isTestMode, 
+      enableTestMode, 
+      disableTestMode, 
+      testData, 
+      setTestData 
+    }}>
       {children}
     </TestDataContext.Provider>
   );

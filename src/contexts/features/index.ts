@@ -44,9 +44,7 @@ export const FeaturesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <FeaturesContext.Provider
-      value={{ features, isEnabled, enableFeature, disableFeature, toggleFeature }}
-    >
+    <FeaturesContext.Provider value={{ features, isEnabled, enableFeature, disableFeature, toggleFeature }}>
       {children}
     </FeaturesContext.Provider>
   );
