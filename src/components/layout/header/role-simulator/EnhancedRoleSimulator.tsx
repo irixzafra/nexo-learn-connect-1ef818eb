@@ -18,23 +18,35 @@ export const EnhancedRoleSimulator = () => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const { data, error } = await supabase
+        // First try to get roles from the roles table
+        let { data, error } = await supabase
           .from('roles')
           .select('name')
           .order('name', { ascending: true });
           
-        if (error) {
-          console.error('Error fetching roles:', error);
-          return;
-        }
-        
-        if (data) {
-          // Map the returned role names to UserRoleType
-          const roles = data.map(role => role.name as UserRoleType);
-          setAvailableRoles(roles);
+        if (error || !data || data.length === 0) {
+          // If no roles table or no data, fall back to getting distinct roles from profiles
+          const { data: profileRoles, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .limit(20);
+            
+          if (!profileError && profileRoles && profileRoles.length > 0) {
+            // Extract unique roles from profiles
+            const uniqueRoles = [...new Set(profileRoles.map(p => p.role))];
+            setAvailableRoles(uniqueRoles as UserRoleType[]);
+          } else {
+            // Fallback to default roles
+            setAvailableRoles(['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest']);
+          }
+        } else {
+          // Use roles from the roles table
+          setAvailableRoles(data.map(role => role.name as UserRoleType));
         }
       } catch (error) {
         console.error('Error in fetchRoles:', error);
+        // Fallback to default roles
+        setAvailableRoles(['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest']);
       }
     };
     
@@ -50,14 +62,14 @@ export const EnhancedRoleSimulator = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div className="flex">
+        <div className="flex items-center">
           <RoleBadge 
             role={effectiveRole || ''} 
             isSimulated={isViewingAsOtherRole}
           />
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-72 p-0 rounded-md shadow-md border-0" align="end">
+      <PopoverContent className="w-72 p-0 rounded-md shadow-md border border-muted/30" align="end">
         <RolePopoverContent
           effectiveRole={effectiveRole || ''}
           isViewingAsOtherRole={isViewingAsOtherRole}

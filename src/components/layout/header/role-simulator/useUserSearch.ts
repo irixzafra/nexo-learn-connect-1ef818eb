@@ -39,6 +39,8 @@ export const useUserSearch = () => {
     const timeoutId = setTimeout(() => {
       if (searchQuery) {
         searchUsers(searchQuery);
+      } else {
+        setUserResults([]);
       }
     }, 300);
     

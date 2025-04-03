@@ -3,8 +3,9 @@ import React from 'react';
 import { UserSearchResult } from './types';
 import { CommandSeparator, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Badge } from '@/components/ui/badge';
-import { getRoleIcon, getRoleName } from './roleUtils';
+import { getRoleIcon, getRoleName, getRoleBadgeColor } from './roleUtils';
 import { UserRoleType } from '@/types/auth';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface UserSearchProps {
   userResults: UserSearchResult[];
@@ -15,6 +16,16 @@ export const UserSearch: React.FC<UserSearchProps> = ({ userResults, handleSwitc
   if (userResults.length === 0) {
     return null;
   }
+
+  const getInitials = (name: string): string => {
+    if (!name) return '?';
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   return (
     <>
@@ -29,15 +40,25 @@ export const UserSearch: React.FC<UserSearchProps> = ({ userResults, handleSwitc
                 handleSwitchRole(user.role as UserRoleType);
               }
             }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 py-2"
           >
-            {getRoleIcon(user.role)}
-            <div className="flex flex-col">
-              <span className="text-sm">{user.full_name}</span>
-              <span className="text-xs text-muted-foreground">{user.email || 'No email'}</span>
+            <Avatar className="h-6 w-6">
+              <AvatarFallback className="text-xs">
+                {getInitials(user.full_name || '')}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col flex-1 min-w-0">
+              <span className="text-sm truncate">{user.full_name || 'Sin nombre'}</span>
+              <span className="text-xs text-muted-foreground truncate">{user.email || 'No email'}</span>
             </div>
-            <Badge variant="outline" className="ml-auto text-xs">
-              {getRoleName(user.role)}
+            <Badge 
+              variant="outline" 
+              className={cn(
+                "ml-auto text-xs px-1.5 py-0.5", 
+                getRoleBadgeColor(user.role || '').replace('bg-', 'border-')
+              )}
+            >
+              {getRoleName(user.role || '')}
             </Badge>
           </CommandItem>
         ))}

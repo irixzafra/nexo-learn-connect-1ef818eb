@@ -17,20 +17,20 @@ export const RoleBadge = forwardRef<HTMLDivElement, RoleBadgeProps>(
       <div 
         ref={ref}
         className={cn(
-          "cursor-pointer",
+          "cursor-pointer flex items-center gap-1 hover:opacity-90 transition-opacity",
           className
         )}
         {...props}
       >
         <Badge 
           className={cn(
-            "flex items-center gap-1 px-2 py-1 transition-colors duration-200",
-            "text-sm font-medium border-0",
+            "flex items-center px-2 py-1 transition-colors duration-200",
+            "text-xs font-medium border border-transparent rounded-md",
             getRoleBadgeColor(role || ''),
-            isSimulated && "ring-1 ring-yellow-500"
+            isSimulated && "ring-1 ring-yellow-400/50"
           )}
         >
-          {isSimulated && <Eye className="h-3 w-3 mr-1 text-yellow-500" />}
+          {isSimulated && <Eye className="h-3 w-3 mr-1 text-yellow-400 animate-pulse" />}
           <span>{getRoleName(role || '')}</span>
         </Badge>
       </div>
