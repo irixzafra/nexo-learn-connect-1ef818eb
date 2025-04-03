@@ -19,24 +19,38 @@ export const useUserSearch = () => {
     setIsSearching(true);
     
     try {
-      console.log('Searching for users with query:', query);
+      console.log('🔍 Iniciando búsqueda de usuarios con término:', query);
       
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, role')
-        .or(`full_name.ilike.%${query}%,email.ilike.%${query}%`)
-        .limit(5);
+      // Llamada a la Edge Function para buscar usuarios
+      const { data, error } = await supabase.functions.invoke('search-users-simulation', {
+        body: { searchTerm: query }
+      });
+      
+      console.log('📊 Respuesta de la búsqueda de usuarios:', { data, error });
       
       if (error) {
-        console.error('Error searching users:', error);
+        console.error('❌ Error al invocar search-users-simulation:', error);
         toast.error('Error al buscar usuarios');
         throw error;
       }
       
-      console.log('Search results:', data);
-      setUserResults(data || []);
+      if (data?.data) {
+        // Mapear los resultados a formato compatible con UserSearchResult
+        const formattedResults: UserSearchResult[] = data.data.map((user: any) => ({
+          id: user.id,
+          full_name: user.fullName || 'Sin nombre',
+          email: user.email || 'No email',
+          role: user.role || ''
+        }));
+        
+        console.log('✅ Resultados de búsqueda formateados:', formattedResults);
+        setUserResults(formattedResults);
+      } else {
+        console.log('⚠️ No se encontraron resultados o formato de respuesta inesperado');
+        setUserResults([]);
+      }
     } catch (error) {
-      console.error('Error searching users:', error);
+      console.error('🔴 Error completo en searchUsers:', error);
       toast.error('Error al buscar usuarios');
     } finally {
       setIsSearching(false);
@@ -47,13 +61,17 @@ export const useUserSearch = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchQuery) {
+        console.log('⏱️ Ejecutando búsqueda después de debounce:', searchQuery);
         searchUsers(searchQuery);
       } else {
         setUserResults([]);
       }
     }, 300);
     
-    return () => clearTimeout(timeoutId);
+    return () => {
+      console.log('🧹 Limpiando timeout de debounce');
+      clearTimeout(timeoutId);
+    }
   }, [searchQuery]);
 
   return {

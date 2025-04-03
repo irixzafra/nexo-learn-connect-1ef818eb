@@ -14,7 +14,10 @@ interface UserSearchProps {
 }
 
 export const UserSearch: React.FC<UserSearchProps> = ({ userResults, handleSwitchRole }) => {
+  console.log('🔍 Renderizando UserSearch con resultados:', userResults);
+  
   if (userResults.length === 0) {
+    console.log('⚠️ Sin resultados de usuarios para mostrar');
     return null;
   }
 
@@ -32,37 +35,41 @@ export const UserSearch: React.FC<UserSearchProps> = ({ userResults, handleSwitc
     <>
       <CommandSeparator />
       <CommandGroup heading="Usuarios encontrados">
-        {userResults.map((user) => (
-          <CommandItem
-            key={user.id}
-            onSelect={() => {
-              // Simulate this user's role
-              if (user.role) {
-                handleSwitchRole(user.role as UserRoleType);
-              }
-            }}
-            className="flex items-center gap-2 py-2"
-          >
-            <Avatar className="h-6 w-6">
-              <AvatarFallback className="text-xs">
-                {getInitials(user.full_name || '')}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="text-sm truncate">{user.full_name || 'Sin nombre'}</span>
-              <span className="text-xs text-muted-foreground truncate">{user.email || 'No email'}</span>
-            </div>
-            <Badge 
-              variant="outline" 
-              className={cn(
-                "ml-auto text-xs px-1.5 py-0.5", 
-                getRoleBadgeColor(user.role || '').replace('bg-', 'border-')
-              )}
+        {userResults.map((user) => {
+          console.log('👤 Renderizando usuario en resultados:', user);
+          return (
+            <CommandItem
+              key={user.id}
+              onSelect={() => {
+                console.log('🔄 Usuario seleccionado para simular rol:', user);
+                // Simulate this user's role
+                if (user.role) {
+                  handleSwitchRole(user.role as UserRoleType);
+                }
+              }}
+              className="flex items-center gap-2 py-2"
             >
-              {getRoleName(user.role || '')}
-            </Badge>
-          </CommandItem>
-        ))}
+              <Avatar className="h-6 w-6">
+                <AvatarFallback className="text-xs">
+                  {getInitials(user.full_name || '')}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="text-sm truncate">{user.full_name || 'Sin nombre'}</span>
+                <span className="text-xs text-muted-foreground truncate">{user.email || 'No email'}</span>
+              </div>
+              <Badge 
+                variant="outline" 
+                className={cn(
+                  "ml-auto text-xs px-1.5 py-0.5", 
+                  getRoleBadgeColor(user.role || '').replace('bg-', 'border-')
+                )}
+              >
+                {getRoleName(user.role || '')}
+              </Badge>
+            </CommandItem>
+          );
+        })}
       </CommandGroup>
     </>
   );
