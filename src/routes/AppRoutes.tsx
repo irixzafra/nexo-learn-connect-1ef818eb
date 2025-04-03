@@ -1,13 +1,12 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { SafeRouteWrapper } from '@/components/SafeRouteWrapper';
+import SafeRouteWrapper from '@/components/SafeRouteWrapper';
 import PlaceholderPage from '@/components/PlaceholderPage';
+import ReviewElementsPage from '@/pages/admin/ReviewElementsPage';
 
 import NotFound from '@/pages/NotFound';
 import LandingPage from '@/pages/LandingPage';
 import Login from '@/pages/auth/Login'; 
-import PlaceholderPage from '@/components/PlaceholderPage';
-import SafeRouteWrapper from '@/components/SafeRouteWrapper';
 import PublicLayout from '@/layouts/PublicLayout';
 import AuthLayout from '@/layouts/AuthLayout';
 import AppLayout from '@/layouts/AppLayout';

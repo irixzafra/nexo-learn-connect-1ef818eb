@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { SafeRouteWrapper } from '@/components/SafeRouteWrapper';
+import SafeRouteWrapper from '@/components/SafeRouteWrapper';
 
 // Admin Pages
 import AdminDashboard from '@/pages/admin/dashboard';
-import UserManagement from '@/pages/admin/users/UserManagement';
-import CourseManagement from '@/pages/admin/courses/CourseManagement';
+import UserManagement from '@/pages/admin/UserManagement';
+import CourseManagement from '@/pages/admin/AdminCourses';
 import OrphanReviewPage from '@/pages/admin/OrphanReviewPage';
 import ReviewElementsPage from '@/pages/admin/ReviewElementsPage';
 import PlaceholderPage from '@/components/PlaceholderPage';
