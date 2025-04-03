@@ -17,6 +17,7 @@ interface RolePopoverContentProps {
   handleSwitchRole: (role: UserRoleType) => void;
   resetToOriginalRole: () => void;
   handleClose: () => void;
+  availableRoles?: UserRoleType[];
 }
 
 export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
@@ -29,6 +30,7 @@ export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
   handleSwitchRole,
   resetToOriginalRole,
   handleClose,
+  availableRoles = [],
 }) => {
   // Reset search results when component unmounts
   useEffect(() => {
@@ -38,11 +40,12 @@ export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
   }, [setSearchQuery]);
 
   return (
-    <Command>
+    <Command className="rounded-md">
       <CommandInput 
         placeholder="Buscar rol o usuario..." 
         value={searchQuery}
         onValueChange={setSearchQuery}
+        className="border-0 focus:ring-0"
       />
       <CommandList className="max-h-[300px] overflow-y-auto">
         <CommandEmpty>No se encontraron resultados</CommandEmpty>
@@ -51,6 +54,7 @@ export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
         <QuickRoleSelector 
           effectiveRole={effectiveRole} 
           handleSwitchRole={handleSwitchRole} 
+          availableRoles={availableRoles}
         />
         
         {/* User search results */}

@@ -41,36 +41,25 @@ export function getRoleName(role: UserRoleType | string): string {
 export function getRoleBadgeColor(role: UserRoleType | string): string {
   switch (role) {
     case 'admin':
-      return 'bg-red-100 text-red-800 border-red-300';
+      return 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400';
     case 'instructor':
-      return 'bg-amber-100 text-amber-800 border-amber-300';
+      return 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400';
     case 'sistemas':
-      return 'bg-blue-100 text-blue-800 border-blue-300';
+      return 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400';
     case 'moderator':
-      return 'bg-purple-100 text-purple-800 border-purple-300';
+      return 'bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-400';
     case 'content_creator':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      return 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950/50 dark:text-yellow-400';
     case 'student':
-      return 'bg-emerald-100 text-emerald-800 border-emerald-300';
+      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400';
     case 'beta_tester':
-      return 'bg-cyan-100 text-cyan-800 border-cyan-300';
+      return 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-400';
     case 'guest':
     case 'anonimo':
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-300';
+      return 'bg-gray-50 text-gray-700 dark:bg-gray-900/50 dark:text-gray-400';
   }
 }
-
-// Available roles for quick selection
-export const availableRoles: UserRoleType[] = [
-  'admin', 
-  'instructor', 
-  'student', 
-  'sistemas',
-  'moderator',
-  'content_creator',
-  'guest'
-];
 
 /**
  * Returns the appropriate icon component for a role
