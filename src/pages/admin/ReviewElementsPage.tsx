@@ -12,6 +12,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 
+type ComponentModule = {
+  path: string;
+  module: () => Promise<any>;
+  name: string;
+};
+
+type GroupedComponents = {
+  [key: string]: ComponentModule[];
+};
+
 const ComponentInventoryPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('ui-components');
   const [components, setComponents] = useState<Record<string, any>>({});
@@ -69,8 +79,8 @@ const ComponentInventoryPage: React.FC = () => {
   };
 
   // Group components by directory
-  const groupComponentsByDirectory = (components: Record<string, any>) => {
-    const grouped: Record<string, any[]> = {};
+  const groupComponentsByDirectory = (components: Record<string, any>): GroupedComponents => {
+    const grouped: GroupedComponents = {};
     
     Object.entries(components).forEach(([path, module]) => {
       const pathParts = path.split('/');
@@ -161,6 +171,8 @@ const ComponentInventoryPage: React.FC = () => {
             componentType="ui" 
             components={components.ui || {}} 
             loading={loading} 
+            groupComponentsByDirectory={groupComponentsByDirectory}
+            getRelativePath={getRelativePath}
           />
         </TabsContent>
         
@@ -168,7 +180,9 @@ const ComponentInventoryPage: React.FC = () => {
           <ComponentsTab 
             componentType="navigation" 
             components={components.navigation || {}} 
-            loading={loading} 
+            loading={loading}
+            groupComponentsByDirectory={groupComponentsByDirectory}
+            getRelativePath={getRelativePath}
           />
         </TabsContent>
         
@@ -177,6 +191,8 @@ const ComponentInventoryPage: React.FC = () => {
             componentType="common" 
             components={components.common || {}} 
             loading={loading} 
+            groupComponentsByDirectory={groupComponentsByDirectory}
+            getRelativePath={getRelativePath}
           />
         </TabsContent>
       </Tabs>
@@ -188,9 +204,17 @@ interface ComponentsTabProps {
   componentType: string;
   components: Record<string, any>;
   loading: boolean;
+  groupComponentsByDirectory: (components: Record<string, any>) => GroupedComponents;
+  getRelativePath: (path: string) => string;
 }
 
-const ComponentsTab: React.FC<ComponentsTabProps> = ({ componentType, components, loading }) => {
+const ComponentsTab: React.FC<ComponentsTabProps> = ({ 
+  componentType, 
+  components, 
+  loading,
+  groupComponentsByDirectory,
+  getRelativePath
+}) => {
   if (loading) {
     return <ComponentsLoadingState />;
   }
