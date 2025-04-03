@@ -5,125 +5,197 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 240 10% 3.9%;
+    /* Material Design 3 Light Theme */
+    --md-sys-color-primary: 103 80 164; /* Purple */
+    --md-sys-color-on-primary: 255 255 255;
+    --md-sys-color-primary-container: 234 221 255;
+    --md-sys-color-on-primary-container: 33 0 93;
+    
+    --md-sys-color-secondary: 98 91 113;
+    --md-sys-color-on-secondary: 255 255 255;
+    --md-sys-color-secondary-container: 232 222 248;
+    --md-sys-color-on-secondary-container: 30 25 43;
+    
+    --md-sys-color-tertiary: 125 82 96;
+    --md-sys-color-on-tertiary: 255 255 255;
+    --md-sys-color-tertiary-container: 255 216 228;
+    --md-sys-color-on-tertiary-container: 49 17 29;
+    
+    --md-sys-color-error: 186 26 26;
+    --md-sys-color-on-error: 255 255 255;
+    --md-sys-color-error-container: 255 218 214;
+    --md-sys-color-on-error-container: 65 0 2;
+    
+    --md-sys-color-background: 255 251 254;
+    --md-sys-color-on-background: 28 27 31;
+    --md-sys-color-surface: 255 251 254;
+    --md-sys-color-on-surface: 28 27 31;
+    
+    --md-sys-color-surface-variant: 231 224 236;
+    --md-sys-color-on-surface-variant: 73 69 78;
+    --md-sys-color-outline: 121 116 126;
+    --md-sys-color-outline-variant: 204 196 206;
+    
+    --md-sys-color-shadow: 0 0 0;
+    --md-sys-color-scrim: 0 0 0;
+    --md-sys-color-inverse-surface: 49 48 51;
+    --md-sys-color-inverse-on-surface: 244 239 244;
+    --md-sys-color-inverse-primary: 208 188 255;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    /* Mapping to our existing design system variables */
+    --background: var(--md-sys-color-background);
+    --foreground: var(--md-sys-color-on-background);
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --card: var(--md-sys-color-surface);
+    --card-foreground: var(--md-sys-color-on-surface);
 
-    --primary: 210 100% 50%;
-    --primary-foreground: 0 0% 98%;
+    --popover: var(--md-sys-color-surface);
+    --popover-foreground: var(--md-sys-color-on-surface);
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --primary: var(--md-sys-color-primary);
+    --primary-foreground: var(--md-sys-color-on-primary);
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --secondary: var(--md-sys-color-secondary);
+    --secondary-foreground: var(--md-sys-color-on-secondary);
 
-    --accent: 210 100% 50%;
-    --accent-foreground: 0 0% 98%;
+    --muted: var(--md-sys-color-surface-variant);
+    --muted-foreground: var(--md-sys-color-on-surface-variant);
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --accent: var(--md-sys-color-tertiary);
+    --accent-foreground: var(--md-sys-color-on-tertiary);
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 210 100% 50%;
+    --destructive: var(--md-sys-color-error);
+    --destructive-foreground: var(--md-sys-color-on-error);
 
-    --radius: 0.5rem;
+    --border: var(--md-sys-color-outline-variant);
+    --input: var(--md-sys-color-outline);
+    --ring: var(--md-sys-color-primary);
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 210 100% 50%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 210 100% 50%;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 210 100% 50%;
-    --primary-foreground: 0 0% 98%;
-
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-
-    --accent: 210 100% 52%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 210 100% 50%;
+    /* Material Design 3 Dark Theme */
+    --md-sys-color-primary: 208 188 255; /* Purple in dark mode */
+    --md-sys-color-on-primary: 55 30 115;
+    --md-sys-color-primary-container: 79 55 139;
+    --md-sys-color-on-primary-container: 234 221 255;
     
-    --sidebar-background: 240 10% 3.9%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 210 100% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 210 100% 50%;
+    --md-sys-color-secondary: 204 194 220;
+    --md-sys-color-on-secondary: 51 45 65;
+    --md-sys-color-secondary-container: 74 68 88;
+    --md-sys-color-on-secondary-container: 232 222 248;
+    
+    --md-sys-color-tertiary: 239 184 200;
+    --md-sys-color-on-tertiary: 73 37 50;
+    --md-sys-color-tertiary-container: 99 59 72;
+    --md-sys-color-on-tertiary-container: 255 216 228;
+    
+    --md-sys-color-error: 255 180 171;
+    --md-sys-color-on-error: 105 0 5;
+    --md-sys-color-error-container: 147 0 10;
+    --md-sys-color-on-error-container: 255 218 214;
+    
+    --md-sys-color-background: 28 27 31;
+    --md-sys-color-on-background: 230 225 229;
+    --md-sys-color-surface: 28 27 31;
+    --md-sys-color-on-surface: 230 225 229;
+    
+    --md-sys-color-surface-variant: 73 69 79;
+    --md-sys-color-on-surface-variant: 204 196 206;
+    --md-sys-color-outline: 148 143 153;
+    --md-sys-color-outline-variant: 73 69 79;
+    
+    --md-sys-color-shadow: 0 0 0;
+    --md-sys-color-scrim: 0 0 0;
+    --md-sys-color-inverse-surface: 230 225 229;
+    --md-sys-color-inverse-on-surface: 49 48 51;
+    --md-sys-color-inverse-primary: 103 80 164;
+
+    /* Mapping to our existing design system variables */
+    --background: var(--md-sys-color-background);
+    --foreground: var(--md-sys-color-on-background);
+
+    --card: var(--md-sys-color-surface);
+    --card-foreground: var(--md-sys-color-on-surface);
+
+    --popover: var(--md-sys-color-surface);
+    --popover-foreground: var(--md-sys-color-on-surface);
+
+    --primary: var(--md-sys-color-primary);
+    --primary-foreground: var(--md-sys-color-on-primary);
+
+    --secondary: var(--md-sys-color-secondary);
+    --secondary-foreground: var(--md-sys-color-on-secondary);
+
+    --muted: var(--md-sys-color-surface-variant);
+    --muted-foreground: var(--md-sys-color-on-surface-variant);
+
+    --accent: var(--md-sys-color-tertiary);
+    --accent-foreground: var(--md-sys-color-on-tertiary);
+
+    --destructive: var(--md-sys-color-error);
+    --destructive-foreground: var(--md-sys-color-on-error);
+
+    --border: var(--md-sys-color-outline);
+    --input: var(--md-sys-color-outline);
+    --ring: var(--md-sys-color-primary);
   }
 
-  /* Tema futurista cambiado a tonos grises */
-  .futuristic {
-    --background: 220 10% 10%;
-    --foreground: 0 0% 90%;
-
-    --card: 220 10% 15%;
-    --card-foreground: 0 0% 90%;
-
-    --popover: 220 10% 15%;
-    --popover-foreground: 0 0% 90%;
-
-    --primary: 0 0% 80%;
-    --primary-foreground: 220 10% 10%;
-
-    --secondary: 220 10% 20%;
-    --secondary-foreground: 0 0% 90%;
-
-    --muted: 220 10% 20%;
-    --muted-foreground: 220 10% 70%;
-
-    --accent: 220 5% 60%;
-    --accent-foreground: 220 10% 5%;
-
-    --destructive: 0 50% 50%;
-    --destructive-foreground: 0 0% 90%;
-
-    --border: 220 10% 25%;
-    --input: 220 10% 20%;
-    --ring: 220 5% 65%;
-
-    --radius: 0.25rem;
-
-    --sidebar-background: 220 10% 12%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 0 0% 75%;
-    --sidebar-primary-foreground: 220 10% 10%;
-    --sidebar-accent: 220 5% 25%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 220 10% 25%;
-    --sidebar-ring: 220 5% 65%;
+  /* Material theme (colorful version) */
+  .material {
+    /* Vibrant Material Design Theme */
+    --md-sys-color-primary: 232 90 89; /* Vibrant Red */
+    --md-sys-color-on-primary: 255 255 255;
+    --md-sys-color-primary-container: 255 218 217;
+    --md-sys-color-on-primary-container: 105 0 0;
+    
+    --md-sys-color-secondary: 0 132 226; /* Vibrant Blue */
+    --md-sys-color-on-secondary: 255 255 255;
+    --md-sys-color-secondary-container: 219 238 255;
+    --md-sys-color-on-secondary-container: 0 57 105;
+    
+    --md-sys-color-tertiary: 32 172 23; /* Vibrant Green */
+    --md-sys-color-on-tertiary: 255 255 255;
+    --md-sys-color-tertiary-container: 190 255 184;
+    --md-sys-color-on-tertiary-container: 0 62 0;
+    
+    --md-sys-color-error: 255 85 0;
+    --md-sys-color-on-error: 255 255 255;
+    --md-sys-color-error-container: 255 220 208;
+    --md-sys-color-on-error-container: 105 25 0;
+    
+    --md-sys-color-background: 250 253 255;
+    --md-sys-color-on-background: 18 21 23;
+    --md-sys-color-surface: 250 253 255;
+    --md-sys-color-on-surface: 18 21 23;
+    
+    --md-sys-color-surface-variant: 237 240 245;
+    --md-sys-color-on-surface-variant: 65 73 85;
+    --md-sys-color-outline: 112 120 132;
+    --md-sys-color-outline-variant: 211 214 219;
+    
+    --background: var(--md-sys-color-background);
+    --foreground: var(--md-sys-color-on-background);
+    --card: var(--md-sys-color-surface);
+    --card-foreground: var(--md-sys-color-on-surface);
+    --popover: var(--md-sys-color-surface);
+    --popover-foreground: var(--md-sys-color-on-surface);
+    --primary: var(--md-sys-color-primary);
+    --primary-foreground: var(--md-sys-color-on-primary);
+    --secondary: var(--md-sys-color-secondary);
+    --secondary-foreground: var(--md-sys-color-on-secondary);
+    --muted: var(--md-sys-color-surface-variant);
+    --muted-foreground: var(--md-sys-color-on-surface-variant);
+    --accent: var(--md-sys-color-tertiary);
+    --accent-foreground: var(--md-sys-color-on-tertiary);
+    --destructive: var(--md-sys-color-error);
+    --destructive-foreground: var(--md-sys-color-on-error);
+    --border: var(--md-sys-color-outline-variant);
+    --input: var(--md-sys-color-outline);
+    --ring: var(--md-sys-color-primary);
+    
+    --radius: 1.5rem;
   }
 }
 
@@ -137,114 +209,392 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
   
-  /* Establecer nueva tipografía */
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold tracking-tight;
-  }
-  
+  /* Material Design Typography */
   h1 {
-    @apply text-3xl md:text-4xl;
+    @apply text-4xl md:text-5xl font-normal tracking-tight leading-tight mb-4;
   }
   
   h2 {
-    @apply text-2xl md:text-3xl;
+    @apply text-3xl md:text-4xl font-normal tracking-tight leading-tight mb-3;
   }
   
   h3 {
-    @apply text-xl md:text-2xl;
+    @apply text-2xl md:text-3xl font-normal tracking-tight leading-tight mb-2;
+  }
+  
+  h4 {
+    @apply text-xl md:text-2xl font-normal tracking-tight leading-tight mb-2;
+  }
+  
+  h5 {
+    @apply text-lg md:text-xl font-medium tracking-tight leading-tight mb-1;
+  }
+  
+  h6 {
+    @apply text-base md:text-lg font-medium tracking-tight leading-tight mb-1;
   }
 
   /* Añadir transiciones suaves para cambios de tema */
   *, ::before, ::after {
-    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+    transition-duration: 200ms;
+  }
+  
+  /* Define Material Design elevation shadows */
+  .md-elevation-1 {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  }
+  
+  .md-elevation-2 {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  }
+  
+  .md-elevation-3 {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  }
+  
+  .md-elevation-4 {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  }
+  
+  .md-elevation-5 {
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
   }
 }
 
 @layer utilities {
-  /* Utilidades de texto */
-  .text-gradient {
-    @apply bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent;
-  }
-
-  .text-gradient-accent {
-    @apply bg-gradient-to-br from-purple-600 via-primary to-purple-500 bg-clip-text text-transparent;
+  /* Material Design utilities */
+  .md-rounded-xs {
+    border-radius: 0.25rem;
   }
   
-  /* Utilidades de fondo */
-  .bg-gradient-card {
-    @apply bg-gradient-to-br from-white via-white to-secondary/30 dark:from-secondary dark:via-card dark:to-card;
+  .md-rounded-sm {
+    border-radius: 0.5rem;
   }
   
-  /* Microinteracciones */
-  .hover-scale {
-    @apply transition-transform duration-200 hover:scale-105;
+  .md-rounded {
+    border-radius: 1rem;
   }
   
-  .hover-lift {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-md;
+  .md-rounded-lg {
+    border-radius: 1.5rem;
   }
   
-  .hover-accent {
-    @apply transition-colors duration-200 hover:border-accent;
+  .md-rounded-xl {
+    border-radius: 2rem;
   }
   
-  /* Estilos de tarjeta mejorados */
-  .card-minimal {
-    @apply bg-card border-none shadow-sm dark:bg-secondary/30 transition-all duration-300 hover:shadow-md;
+  /* Material Design States */
+  .md-state-layer {
+    @apply relative overflow-hidden;
   }
   
-  .card-interactive {
-    @apply bg-card border-none shadow-sm hover:shadow-md hover:border-l-4 hover:border-l-accent transition-all duration-300;
+  .md-state-layer::before {
+    content: '';
+    @apply absolute inset-0 bg-current opacity-0 pointer-events-none transition-opacity duration-200;
   }
   
-  .icon-accent {
-    @apply text-accent;
+  .md-state-layer:hover::before {
+    @apply opacity-5;
   }
   
-  /* Animaciones */
-  .animate-fade-in {
-    @apply animate-[fade-in_0.3s_ease-out];
+  .md-state-layer:focus-within::before {
+    @apply opacity-10;
   }
   
-  .animate-scale-in {
-    @apply animate-[scale-in_0.2s_ease-out];
-  }
-
-  /* Futuristic theme utilities */
-  .futuristic-shadow {
-    box-shadow: 0 0 10px rgba(150, 150, 150, 0.2), 0 0 20px rgba(150, 150, 150, 0.1);
+  .md-state-layer:active::before {
+    @apply opacity-15;
   }
   
-  .futuristic-glow {
-    filter: drop-shadow(0 0 5px rgba(200, 200, 200, 0.4));
+  /* Material Design text and element utilities */
+  .md-text-caption {
+    @apply text-xs leading-4 font-normal;
   }
   
-  .futuristic-border {
-    border: 1px solid rgba(150, 150, 150, 0.2);
+  .md-text-body-small {
+    @apply text-sm leading-5 font-normal;
+  }
+  
+  .md-text-body {
+    @apply text-base leading-6 font-normal;
+  }
+  
+  .md-text-title-small {
+    @apply text-sm leading-5 font-medium;
+  }
+  
+  .md-text-title {
+    @apply text-base leading-6 font-medium;
+  }
+  
+  .md-text-headline-small {
+    @apply text-lg leading-7 font-medium;
+  }
+  
+  /* Animation utilities */  
+  .md-animate-fade {
+    animation: mdFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .md-animate-scale {
+    animation: mdScale 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .md-animate-slide-up {
+    animation: mdSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .md-animate-slide-down {
+    animation: mdSlideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .md-animate-slide-left {
+    animation: mdSlideLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .md-animate-slide-right {
+    animation: mdSlideRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Hover effects */
+  .md-hover-scale {
+    @apply transition-transform duration-300;
+  }
+  
+  .md-hover-scale:hover {
+    @apply transform scale-105;
+  }
+  
+  .md-hover-elevate {
+    @apply transition-shadow duration-300;
+  }
+  
+  .md-hover-elevate:hover {
+    @apply md-elevation-3;
+  }
+  
+  /* Ripple effect container */
+  .md-ripple-container {
+    @apply relative overflow-hidden;
   }
 }
 
-/* Definición de las animaciones */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
+/* Define keyframes for animations */
+@keyframes mdFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes mdScale {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes mdSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes mdSlideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes mdSlideLeft {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes mdSlideRight {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Ripple effect animation */
+@keyframes mdRipple {
   to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: scale(4);
+    opacity: 0;
   }
 }
 
-@keyframes scale-in {
+/* Advanced animations for wow effect */
+@keyframes mdPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes mdRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes mdShine {
   from {
-    transform: scale(0.95);
-    opacity: 0;
+    background-position: -200% center;
   }
   to {
-    transform: scale(1);
-    opacity: 1;
+    background-position: 200% center;
   }
+}
+
+.md-animate-pulse {
+  animation: mdPulse 1.5s ease-in-out infinite;
+}
+
+.md-animate-rotate {
+  animation: mdRotate 3s linear infinite;
+}
+
+.md-shine {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: mdShine 2s infinite;
+}
+
+/* Material floating action button styles */
+.md-fab {
+  @apply fixed right-6 bottom-6 rounded-full w-14 h-14 flex items-center justify-center md-elevation-2;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.md-fab:hover {
+  @apply md-elevation-3 transform -translate-y-1;
+}
+
+.md-fab:active {
+  @apply transform scale-95;
+}
+
+/* Material Design Cards */
+.md-card {
+  @apply bg-card rounded-lg overflow-hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.md-card-elevated {
+  @apply md-card md-elevation-1;
+}
+
+.md-card-elevated:hover {
+  @apply md-elevation-3;
+}
+
+.md-card-outlined {
+  @apply md-card border border-border;
+}
+
+.md-card-filled {
+  @apply md-card bg-secondary/10;
+}
+
+/* Material Design buttons */
+.md-btn {
+  @apply rounded-full inline-flex items-center justify-center relative overflow-hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.md-btn-filled {
+  @apply md-btn bg-primary text-primary-foreground px-6 py-2;
+}
+
+.md-btn-tonal {
+  @apply md-btn bg-primary/10 text-primary px-6 py-2;
+}
+
+.md-btn-outlined {
+  @apply md-btn border border-primary text-primary bg-transparent px-6 py-2;
+}
+
+.md-btn-text {
+  @apply md-btn text-primary bg-transparent px-4 py-2;
+}
+
+/* Material Design Inputs */
+.md-input-container {
+  @apply relative;
+}
+
+.md-input {
+  @apply w-full border-0 border-b-2 border-input bg-transparent px-0 py-2 text-foreground focus:outline-none focus:border-primary;
+}
+
+.md-input-label {
+  @apply absolute left-0 top-2 text-muted-foreground pointer-events-none transition-all duration-200;
+}
+
+.md-input:focus ~ .md-input-label,
+.md-input:not(:placeholder-shown) ~ .md-input-label {
+  @apply transform -translate-y-6 scale-75 text-primary;
+}
+
+/* Material Design Chips */
+.md-chip {
+  @apply inline-flex items-center rounded-full py-1 px-3 text-sm;
+}
+
+.md-chip-filled {
+  @apply md-chip bg-primary/10 text-primary;
+}
+
+.md-chip-outlined {
+  @apply md-chip border border-primary text-primary;
+}
+
+/* Material Design Bottom Navigation */
+.md-bottom-nav {
+  @apply fixed bottom-0 left-0 right-0 bg-background border-t border-border flex justify-around items-center h-16;
+}
+
+.md-bottom-nav-item {
+  @apply flex flex-col items-center justify-center text-muted-foreground px-2 py-1;
+}
+
+.md-bottom-nav-item.active {
+  @apply text-primary;
+}
+
+/* Material Design Navigation Rail */
+.md-nav-rail {
+  @apply fixed left-0 top-0 bottom-0 bg-background border-r border-border flex flex-col items-center pt-16 pb-4 w-16;
+}
+
+.md-nav-rail-item {
+  @apply flex flex-col items-center justify-center text-muted-foreground my-2 p-2 rounded-full;
+}
+
+.md-nav-rail-item.active {
+  @apply bg-primary/10 text-primary;
+}
+
+/* Materal Design Switch */
+.md-switch {
+  @apply relative inline-flex items-center cursor-pointer;
+}
+
+.md-switch-input {
+  @apply sr-only;
+}
+
+.md-switch-track {
+  @apply w-11 h-6 bg-muted rounded-full transition-colors duration-200;
+}
+
+.md-switch-thumb {
+  @apply absolute left-1 top-1 w-4 h-4 bg-muted-foreground rounded-full transition-transform duration-200;
+}
+
+.md-switch-input:checked ~ .md-switch-track {
+  @apply bg-primary/60;
+}
+
+.md-switch-input:checked ~ .md-switch-thumb {
+  @apply transform translate-x-5 bg-primary;
 }
