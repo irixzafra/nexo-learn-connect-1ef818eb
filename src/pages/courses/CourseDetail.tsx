@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
@@ -106,13 +106,13 @@ const CourseDetail: React.FC = () => {
       const firstModule = course.modules[0];
       if (firstModule.lessons && firstModule.lessons.length > 0) {
         const firstLesson = firstModule.lessons[0];
-        navigate(`/courses/${course.id}/learn/${firstLesson.id}`);
+        navigate(`/app/course/${course.id}/lesson/${firstLesson.id}`);
         return;
       }
     }
     
     // No lessons found
-    navigate(`/courses/${course.id}`);
+    navigate(`/app/course/${course.id}`);
   };
   
   if (isLoading) {
@@ -301,36 +301,41 @@ const CourseDetail: React.FC = () => {
                       <AccordionContent className="px-0">
                         <div className="space-y-1 pb-1">
                           {module.lessons?.map((lesson) => (
-                            <div 
+                            <Link 
                               key={lesson.id} 
-                              className="flex items-center justify-between px-6 py-2 hover:bg-gray-50"
+                              to={`/app/course/${course.id}/lesson/${lesson.id}`}
+                              className="block"
                             >
-                              <div className="flex items-center gap-3">
-                                {lesson.content_type === 'video' ? (
-                                  <PlayCircle className="h-4 w-4 text-blue-500" />
-                                ) : (
-                                  <BookOpen className="h-4 w-4 text-blue-500" />
-                                )}
-                                <span className="text-sm">{lesson.title}</span>
-                                {lesson.is_previewable && (
-                                  <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600">
-                                    Vista previa
-                                  </Badge>
-                                )}
+                              <div 
+                                className="flex items-center justify-between px-6 py-2 hover:bg-gray-50"
+                              >
+                                <div className="flex items-center gap-3">
+                                  {lesson.content_type === 'video' ? (
+                                    <PlayCircle className="h-4 w-4 text-blue-500" />
+                                  ) : (
+                                    <BookOpen className="h-4 w-4 text-blue-500" />
+                                  )}
+                                  <span className="text-sm">{lesson.title}</span>
+                                  {lesson.is_previewable && (
+                                    <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600">
+                                      Vista previa
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {lesson.duration && (
+                                    <span className="text-xs text-gray-500">
+                                      {Math.floor(lesson.duration / 60)}:{(lesson.duration % 60).toString().padStart(2, '0')}
+                                    </span>
+                                  )}
+                                  {!isEnrolled && !lesson.is_previewable ? (
+                                    <LockIcon className="h-3.5 w-3.5 text-gray-400" />
+                                  ) : (
+                                    <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
+                                  )}
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                {lesson.duration && (
-                                  <span className="text-xs text-gray-500">
-                                    {Math.floor(lesson.duration / 60)}:{(lesson.duration % 60).toString().padStart(2, '0')}
-                                  </span>
-                                )}
-                                {!isEnrolled && !lesson.is_previewable ? (
-                                  <LockIcon className="h-3.5 w-3.5 text-gray-400" />
-                                ) : (
-                                  <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-                                )}
-                              </div>
-                            </div>
+                            </Link>
                           ))}
                         </div>
                       </AccordionContent>
