@@ -30,7 +30,7 @@ const Login: React.FC = () => {
     // If user is already logged in, redirect to dashboard
     if (user && session) {
       console.log("Usuario ya autenticado, redirigiendo a dashboard");
-      navigate('/dashboard');
+      navigate('/app/dashboard', { replace: true });
     }
   }, [user, session, navigate]);
   
@@ -53,8 +53,9 @@ const Login: React.FC = () => {
       // Si llegamos hasta aquí, el inicio de sesión fue exitoso
       toast.success('Inicio de sesión exitoso');
       
-      // No redireccionamos aquí, dejamos que el useEffect se encargue
-      // cuando la sesión y el usuario se actualicen
+      // Redirigimos al dashboard inmediatamente después del login exitoso
+      navigate('/app/dashboard', { replace: true });
+      
     } catch (error) {
       console.error('Error de inicio de sesión:', error);
       
@@ -70,7 +71,7 @@ const Login: React.FC = () => {
         
         if (!result.error) {
           toast.success('Inicio de sesión simulado exitoso (modo desarrollo)');
-          navigate('/dashboard');
+          navigate('/app/dashboard', { replace: true });
         }
       } catch (mockError) {
         console.log('No se pudo usar autenticación simulada');
