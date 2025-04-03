@@ -31,7 +31,7 @@ export const TestDataProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <TestDataContext.Provider 
+    <TestDataContext.Provider
       value={{ 
         isTestMode, 
         enableTestMode, 

@@ -7,9 +7,13 @@ import { toast } from 'sonner';
 
 interface GlobalRoleSwitcherProps {
   className?: string;
+  showLabel?: boolean;
 }
 
-const GlobalRoleSwitcher: React.FC<GlobalRoleSwitcherProps> = ({ className }) => {
+const GlobalRoleSwitcher: React.FC<GlobalRoleSwitcherProps> = ({ 
+  className,
+  showLabel = true
+}) => {
   const { userRole, viewAsRole, setViewAsRole } = useAuth();
   
   // Si no es admin, no mostrar el componente
@@ -27,6 +31,7 @@ const GlobalRoleSwitcher: React.FC<GlobalRoleSwitcherProps> = ({ className }) =>
       <RoleSwitcher 
         currentViewRole={viewAsRole} 
         onChange={handleRoleChange}
+        showLabel={showLabel}
       />
     </div>
   );

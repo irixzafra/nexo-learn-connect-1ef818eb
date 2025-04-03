@@ -14,15 +14,20 @@ import { Check, ArrowLeftRight, Shield, User, Terminal, Ghost, GraduationCap, Bo
 import { RoleIndicator } from '@/components/layout/header/RoleIndicator';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 interface RoleSwitcherProps {
   onChange?: (role: UserRoleType) => void;
   currentViewRole: UserRoleType | 'current';
+  showLabel?: boolean;
+  size?: 'default' | 'sm';
 }
 
 export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({ 
   onChange,
-  currentViewRole
+  currentViewRole,
+  showLabel = true,
+  size = 'default'
 }) => {
   const { userRole, setViewAsRole } = useAuth();
   
@@ -108,12 +113,19 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              size="sm" 
-              className="flex items-center gap-2"
+              size={size} 
+              className={cn(
+                "flex items-center gap-2",
+                !showLabel && "justify-center"
+              )}
             >
-              <GraduationCap className="h-4 w-4" />
-              <span className="hidden md:inline">Vista como: {getRoleLabel(effectiveRole)}</span>
-              <span className="inline md:hidden">Vista</span>
+              {getRoleIcon(effectiveRole)}
+              {showLabel && (
+                <>
+                  <span className="hidden md:inline">Vista como: {getRoleLabel(effectiveRole)}</span>
+                  <span className="inline md:hidden">Vista</span>
+                </>
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">

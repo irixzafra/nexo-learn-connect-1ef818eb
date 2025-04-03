@@ -35,11 +35,16 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
 }) => {
   const { logout } = useAuth();
   const unreadNotifications = 3; // Example count - replace with actual state
+  const isAdmin = userRole === 'admin';
 
   return (
     <div className="mt-auto pt-2">
-      {!isCollapsed && (
-        <div className="px-3 pt-2 pb-4">
+      {/* Role Switcher - Always visible for admins */}
+      {isAdmin && (
+        <div className={cn(
+          "px-3 pb-3",
+          isCollapsed ? "flex justify-center" : ""
+        )}>
           <RoleSwitcher
             onChange={handleRoleChange}
             currentViewRole={currentViewRole}
