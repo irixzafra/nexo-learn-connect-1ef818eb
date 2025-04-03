@@ -77,24 +77,24 @@ export const availableRoles: UserRoleType[] = [
  * @param role The user role
  * @returns A React element with the appropriate icon
  */
-export const getRoleIcon = (role: string) => {
+export const getRoleIcon = (role: string): React.ReactElement => {
   switch (role) {
     case 'admin':
-      return <Shield className="h-4 w-4" />;
+      return React.createElement(Shield, { className: "h-4 w-4" });
     case 'instructor':
-      return <BookOpen className="h-4 w-4" />;
+      return React.createElement(BookOpen, { className: "h-4 w-4" });
     case 'student':
-      return <GraduationCap className="h-4 w-4" />;
+      return React.createElement(GraduationCap, { className: "h-4 w-4" });
     case 'sistemas':
-      return <Terminal className="h-4 w-4" />;
+      return React.createElement(Terminal, { className: "h-4 w-4" });
     case 'moderator':
-      return <UserCog className="h-4 w-4" />;
+      return React.createElement(UserCog, { className: "h-4 w-4" });
     case 'content_creator':
-      return <Users className="h-4 w-4" />;
+      return React.createElement(Users, { className: "h-4 w-4" });
     case 'anonimo':
     case 'guest':
-      return <Ghost className="h-4 w-4" />;
+      return React.createElement(Ghost, { className: "h-4 w-4" });
     default:
-      return <Users className="h-4 w-4" />;
+      return React.createElement(Users, { className: "h-4 w-4" });
   }
 };
