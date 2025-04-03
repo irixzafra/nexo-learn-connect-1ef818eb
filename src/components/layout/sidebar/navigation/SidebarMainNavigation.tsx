@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { UserRoleType } from '@/types/auth';
 import { useSidebarState } from '@/components/layout/sidebar/useSidebarState';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';

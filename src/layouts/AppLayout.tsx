@@ -15,7 +15,7 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { isLoading, userRole } = useAuth();
+  const { isLoading, effectiveRole } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -32,9 +32,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   }
 
   const renderSidebar = () => {
-    if (userRole === 'admin') {
+    if (effectiveRole === 'admin') {
       return <AdminSidebar />;
-    } else if (userRole === 'instructor') {
+    } else if (effectiveRole === 'instructor') {
       return <InstructorSidebar />;
     } else {
       return <StudentSidebar />;

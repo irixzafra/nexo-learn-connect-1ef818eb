@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -16,7 +16,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   viewAsRole,
   onRoleChange 
 }) => {
-  const { userRole } = useAuth();
+  const { userRole, effectiveRole } = useAuth();
   const { state } = useSidebar();
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
@@ -25,7 +25,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
     isCollapsed,
     currentViewRole,
     currentLanguage,
-    effectiveRole,
     handleRoleChange,
     getRoleName,
     getHomePath,
@@ -42,7 +41,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   return (
     <ConditionalSidebar
       userRole={toUserRoleType(userRole as string)}
-      effectiveRole={effectiveRole}
+      effectiveRole={effectiveRole || toUserRoleType(userRole as string)}
       messagesCount={messagesCount}
       notificationsCount={notificationsCount}
       isCollapsed={isCollapsed}

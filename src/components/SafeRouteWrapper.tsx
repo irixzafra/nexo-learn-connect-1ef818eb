@@ -13,7 +13,7 @@ const SafeRouteWrapper: React.FC<SafeRouteWrapperProps> = ({
   children, 
   requiredRole 
 }) => {
-  const { session, userRole, isLoading, isInitialized } = useAuth();
+  const { session, effectiveRole, isLoading, isInitialized } = useAuth();
   const location = useLocation();
   
   // Logs ampliados para facilitar la depuración
@@ -23,7 +23,7 @@ const SafeRouteWrapper: React.FC<SafeRouteWrapperProps> = ({
     isLoading, 
     hasSession: !!session, 
     sessionExpiry: session?.expires_at ? new Date(session.expires_at * 1000).toISOString() : 'N/A',
-    userRole,
+    effectiveRole,
     requiredRole,
     currentPath: location.pathname,
     timestamp: new Date().toISOString()
@@ -71,12 +71,12 @@ const SafeRouteWrapper: React.FC<SafeRouteWrapperProps> = ({
   // FASE 4: Verificación de roles (si se especificaron)
   if (requiredRole) {
     const hasRequiredRole = Array.isArray(requiredRole)
-      ? requiredRole.includes(userRole as UserRoleType)
-      : requiredRole === userRole;
+      ? requiredRole.includes(effectiveRole as UserRoleType)
+      : requiredRole === effectiveRole;
     
     console.debug('🛡️ [SafeRoute] Verificación de rol:', { 
       requiredRole, 
-      userRole, 
+      effectiveRole, 
       hasRequiredRole 
     });
     

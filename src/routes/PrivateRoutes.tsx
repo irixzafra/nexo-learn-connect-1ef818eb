@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/auth';
 import { useLocalization } from '@/hooks/useLocalization';
 
 interface ProtectedRouteProps {
@@ -10,7 +10,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
-  const { user, isLoading } = useAuth();
+  const { user, effectiveRole, isLoading } = useAuth();
   const { localizeUrl } = useLocalization();
 
   if (isLoading) {
@@ -21,7 +21,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
     return <Navigate to={localizeUrl('/auth/login')} replace />;
   }
 
-  if (requiredRole && !requiredRole.includes(user.role)) {
+  if (requiredRole && effectiveRole && !requiredRole.includes(effectiveRole)) {
     return <Navigate to={localizeUrl('/dashboard')} replace />;
   }
 

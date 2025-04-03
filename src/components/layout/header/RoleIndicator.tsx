@@ -1,41 +1,56 @@
 
 import React from 'react';
+import { useAuth } from '@/contexts/auth';
 import { Badge } from '@/components/ui/badge';
-import { UserRoleType } from '@/types/auth';
-import { getRoleBadgeColor, getRoleName } from '@/utils/roleUtils';
-import { Shield, BookOpen, GraduationCap, Terminal, Users, Lightbulb, Ghost } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export interface RoleIndicatorProps {
-  role: UserRoleType;
+interface RoleIndicatorProps {
+  className?: string;
 }
 
-export const RoleIndicator: React.FC<RoleIndicatorProps> = ({ role }) => {
-  const getRoleIcon = () => {
+const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className }) => {
+  const { userRole, effectiveRole, isViewingAsOtherRole } = useAuth();
+  
+  const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'admin':
-        return <Shield className="h-4 w-4 mr-2" />;
-      case 'instructor': 
-        return <BookOpen className="h-4 w-4 mr-2" />;
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      case 'instructor':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
       case 'student':
-        return <GraduationCap className="h-4 w-4 mr-2" />;
-      case 'sistemas':
-        return <Terminal className="h-4 w-4 mr-2" />;
-      case 'moderator':
-        return <Users className="h-4 w-4 mr-2" />;
-      case 'content_creator':
-        return <Lightbulb className="h-4 w-4 mr-2" />;
-      case 'anonimo':
-      case 'guest':
-        return <Ghost className="h-4 w-4 mr-2" />;
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
       default:
-        return <GraduationCap className="h-4 w-4 mr-2" />;
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
   };
   
+  const getRoleName = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return 'Administrador';
+      case 'instructor':
+        return 'Instructor';
+      case 'student':
+        return 'Estudiante';
+      default:
+        return role.charAt(0).toUpperCase() + role.slice(1);
+    }
+  };
+  
+  if (!effectiveRole) return null;
+  
   return (
-    <Badge variant="outline" className={`${getRoleBadgeColor(role)} transition-colors flex items-center`}>
-      {getRoleIcon()}
-      {getRoleName(role)}
-    </Badge>
+    <div className={cn("flex items-center space-x-2", className)}>
+      {isViewingAsOtherRole && (
+        <Badge variant="outline" className="font-normal">
+          Vista simulada
+        </Badge>
+      )}
+      <Badge className={cn("capitalize font-semibold", getRoleBadgeColor(effectiveRole))}>
+        {getRoleName(effectiveRole)}
+      </Badge>
+    </div>
   );
 };
+
+export default RoleIndicator;
