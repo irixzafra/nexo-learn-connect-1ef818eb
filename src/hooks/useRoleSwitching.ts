@@ -1,22 +1,10 @@
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { UserRoleType } from '@/types/auth';
-import { useLocalStorage } from './useLocalStorage';
 
 export const useRoleSwitching = () => {
-  const { userRole } = useAuth();
-  const [viewAsRole, setViewAsRole] = useLocalStorage<'current' | UserRoleType>('viewAsRole', 'current');
-  const [effectiveRole, setEffectiveRole] = useState<UserRoleType>(userRole as UserRoleType);
-  
-  useEffect(() => {
-    // Determinar el rol efectivo basado en viewAsRole
-    if (viewAsRole === 'current' || userRole !== 'admin') {
-      setEffectiveRole(userRole as UserRoleType);
-    } else {
-      setEffectiveRole(viewAsRole);
-    }
-  }, [viewAsRole, userRole]);
+  const { userRole, viewAsRole, setViewAsRole, effectiveRole } = useAuth();
   
   const handleRoleChange = (role: UserRoleType) => {
     if (userRole === 'admin') {

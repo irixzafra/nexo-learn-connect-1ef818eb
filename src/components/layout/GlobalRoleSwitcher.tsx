@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { UserRoleType } from '@/types/auth';
 import { RoleSwitcher } from '@/components/admin/RoleSwitcher';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { toast } from 'sonner';
 
 interface GlobalRoleSwitcherProps {
@@ -11,8 +10,7 @@ interface GlobalRoleSwitcherProps {
 }
 
 const GlobalRoleSwitcher: React.FC<GlobalRoleSwitcherProps> = ({ className }) => {
-  const { userRole } = useAuth();
-  const [viewAsRole, setViewAsRole] = useLocalStorage<'current' | UserRoleType>('viewAsRole', 'current');
+  const { userRole, viewAsRole, setViewAsRole } = useAuth();
   
   // Si no es admin, no mostrar el componente
   if (userRole !== 'admin') {

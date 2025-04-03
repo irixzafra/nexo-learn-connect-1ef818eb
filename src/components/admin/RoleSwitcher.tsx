@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { UserRoleType } from '@/types/auth';
 import { 
   DropdownMenu,
@@ -24,7 +24,7 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   onChange,
   currentViewRole
 }) => {
-  const { userRole } = useAuth();
+  const { userRole, setViewAsRole } = useAuth();
   
   // Solo los administradores pueden cambiar roles
   if (userRole !== 'admin') {
@@ -39,14 +39,16 @@ export const RoleSwitcher: React.FC<RoleSwitcherProps> = ({
   const effectiveRole = getEffectiveRole();
   
   const handleRoleChange = (role: UserRoleType | 'current') => {
+    if (role === 'current') {
+      setViewAsRole('current');
+      toast.success(`Volviendo a tu rol original: ${getRoleLabel(userRole as UserRoleType)}`);
+    } else {
+      setViewAsRole(role);
+      toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);
+    }
+    
     if (onChange) {
-      if (role === 'current') {
-        onChange(userRole as UserRoleType);
-        toast.success(`Volviendo a tu rol original: ${getRoleLabel(userRole as UserRoleType)}`);
-      } else {
-        onChange(role);
-        toast.success(`Cambiando vista a rol: ${getRoleLabel(role)}`);
-      }
+      onChange(role === 'current' ? userRole as UserRoleType : role);
     }
   };
 
