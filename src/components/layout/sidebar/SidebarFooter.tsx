@@ -40,6 +40,14 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
   ];
   const changeLanguage = (lang: string) => console.log('Change language to', lang);
 
+  console.log('>>> DEBUG SidebarFooter: About to render SidebarFooterSection with props:', { 
+    userRoleProp: userRole, 
+    isCollapsedProp: isCollapsed,
+    effectiveRoleProp: effectiveRole,
+    currentLanguageProp: currentLanguage,
+    languagesProp: languages
+  });
+
   return (
     <div className="border-t border-border p-3">
       <SidebarFooterSection
@@ -53,6 +61,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
         languages={languages}
         changeLanguage={changeLanguage}
       />
+      {console.log('>>> DEBUG SidebarFooter: Finished rendering SidebarFooterSection')}
     </div>
   );
 };
