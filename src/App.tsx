@@ -32,8 +32,8 @@ function AppRoutes() {
 
 function App() {
   return (
-    <FeaturesProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <FeaturesProvider>
         <ThemeProvider>
           <DesignSystemProvider>
             <TestDataProvider>
@@ -44,8 +44,8 @@ function App() {
             </TestDataProvider>
           </DesignSystemProvider>
         </ThemeProvider>
-      </AuthProvider>
-    </FeaturesProvider>
+      </FeaturesProvider>
+    </AuthProvider>
   );
 }
 
