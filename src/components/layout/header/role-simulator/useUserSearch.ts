@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { UserSearchResult } from './types';
+import { toast } from 'sonner';
 
 export const useUserSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,17 +19,25 @@ export const useUserSearch = () => {
     setIsSearching(true);
     
     try {
+      console.log('Searching for users with query:', query);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')
         .or(`full_name.ilike.%${query}%,email.ilike.%${query}%`)
         .limit(5);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error searching users:', error);
+        toast.error('Error al buscar usuarios');
+        throw error;
+      }
       
+      console.log('Search results:', data);
       setUserResults(data || []);
     } catch (error) {
       console.error('Error searching users:', error);
+      toast.error('Error al buscar usuarios');
     } finally {
       setIsSearching(false);
     }
