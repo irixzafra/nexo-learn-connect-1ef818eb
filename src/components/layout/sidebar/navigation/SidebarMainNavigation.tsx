@@ -25,7 +25,9 @@ import {
   PanelLeft,
   HelpCircle,
   Award,
-  Map
+  Map,
+  FolderOpen,
+  BookMarked
 } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
 import { NavItem, NavGroup, NavDivider } from '@/components/navigation';
@@ -121,6 +123,12 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
           isCollapsed={isCollapsed}
         />
         <NavItem
+          href="/app/learning-paths"
+          icon={Map}
+          title="Rutas de Aprendizaje"
+          isCollapsed={isCollapsed}
+        />
+        <NavItem
           href="/app/calendar"
           icon={Calendar}
           title="Calendario"
@@ -128,18 +136,10 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
         />
         <NavItem
           href="/app/resources"
-          icon={FileText}
+          icon={FolderOpen}
           title="Recursos"
           isCollapsed={isCollapsed}
         />
-        {/* Nueva ruta de aprendizaje */}
-        <NavItem
-          href="/app/learning-paths"
-          icon={Map}
-          title="Rutas de Aprendizaje"
-          isCollapsed={isCollapsed}
-        />
-        {/* Certificados */}
         <NavItem
           href="/app/certificates"
           icon={Award}
@@ -254,14 +254,12 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Revisión Elementos"
             isCollapsed={isCollapsed}
           />
-          {/* Nuevo ítem - Sistema de Diseño */}
           <NavItem
             href="/app/admin/design-system"
             icon={PanelLeft}
             title="Sistema de Diseño"
             isCollapsed={isCollapsed}
           />
-          {/* Nuevo ítem - Diagrama de Navegación */}
           <NavItem
             href="/app/admin/navigation-diagram"
             icon={FileText}
@@ -296,7 +294,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
       >
         <NavItem
           href="/app/docs"
-          icon={FileText}
+          icon={BookMarked}
           title="Documentación"
           isCollapsed={isCollapsed}
         />
@@ -306,7 +304,6 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
           title="Ayuda"
           isCollapsed={isCollapsed}
         />
-        {/* Nuevo ítem - Verificación de Certificados */}
         <NavItem
           href="/certificates/verification-portal"
           icon={Award}

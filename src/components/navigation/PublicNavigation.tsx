@@ -11,7 +11,8 @@ import {
   HelpCircle,
   LogIn,
   UserPlus,
-  Map
+  Map,
+  Sparkles
 } from 'lucide-react';
 
 interface PublicNavigationProps {
@@ -25,6 +26,7 @@ const PublicNavigation: React.FC<PublicNavigationProps> = ({ className }) => {
     { path: '/learning-paths', label: 'Rutas de Aprendizaje', icon: Map },
     { path: '/about-us', label: 'Sobre Nosotros', icon: Users },
     { path: '/certificates/verification-portal', label: 'Verificar Certificados', icon: Award },
+    { path: '/scholarships', label: 'Becas', icon: Sparkles },
     { path: '/help', label: 'Ayuda', icon: HelpCircle },
     { path: '/contact', label: 'Contacto', icon: FileText },
   ];

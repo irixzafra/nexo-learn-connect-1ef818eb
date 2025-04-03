@@ -44,6 +44,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({
                   <li><a href="/courses" className="hover:underline">Cursos</a></li>
                   <li><a href="/learning-paths" className="hover:underline">Rutas de Aprendizaje</a></li>
                   <li><a href="/certificates/verification-portal" className="hover:underline">Verificar Certificados</a></li>
+                  <li><a href="/scholarships" className="hover:underline">Becas</a></li>
                 </ul>
               </div>
               <div>
@@ -52,6 +53,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({
                   <li><a href="/terms" className="hover:underline">Términos de Uso</a></li>
                   <li><a href="/privacy" className="hover:underline">Política de Privacidad</a></li>
                   <li><a href="/cookies" className="hover:underline">Política de Cookies</a></li>
+                  <li><a href="/accessibility" className="hover:underline">Accesibilidad</a></li>
                 </ul>
               </div>
               <div>
