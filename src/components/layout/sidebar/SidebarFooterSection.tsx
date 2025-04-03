@@ -47,24 +47,46 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
     await logout();
   };
 
-  // Botón para activar el modo de simulación (SOLO PARA DEPURACIÓN)
+  // Role simulation button (for debugging only)
   const handleTestRoleSimulation = () => {
-    // Puedes ajustar esto según cómo hayas configurado setSimulatedRole
     if (window.confirm('¿Activar simulación de rol?')) {
-      // Buscar un rol diferente al actual para simular
       const availableRoles: UserRoleType[] = ['admin', 'instructor', 'student'];
       const differentRole = availableRoles.find(role => role !== userRole) || 'admin';
-      
-      // Esto debería estar disponible a través de AuthContext
-      // pero como es solo para pruebas, lo hacemos simple
       localStorage.setItem('viewAsRole', differentRole);
       window.location.reload();
     }
   };
 
+  // Role display/switch
+  const roleDisplay = (
+    <div className={cn(
+      "flex items-center gap-2 px-3 py-2 text-sm bg-muted/20 rounded-lg",
+      isCollapsed && "justify-center"
+    )}>
+      {!isCollapsed && (
+        <>
+          <span className="text-xs text-muted-foreground mr-1">Rol:</span>
+          <span className="font-medium text-foreground">{getRoleName(effectiveRole)}</span>
+        </>
+      )}
+      {isViewingAsOtherRole && !isCollapsed && (
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="ml-auto p-1 h-6 text-xs hover:bg-primary/10 hover:text-primary" 
+          onClick={resetToOriginalRole}
+        >
+          Resetear
+        </Button>
+      )}
+    </div>
+  );
+
   if (isCollapsed) {
     return (
-      <div className="mt-auto p-3 flex flex-col items-center space-y-3">
+      <div className="p-2 flex flex-col items-center space-y-3">
+        {roleDisplay}
+        
         <Button
           variant="ghost"
           size="icon"
@@ -79,7 +101,10 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
   }
 
   return (
-    <div className="mt-auto p-3 space-y-2">
+    <div className="p-3 space-y-2">
+      {/* Role Display */}
+      {roleDisplay}
+      
       {/* Language Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -107,16 +132,18 @@ const SidebarFooterSection: React.FC<SidebarFooterSectionProps> = ({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Botón para activar/probar el modo de simulación (solo para depuración) */}
-      <Button 
-        variant="ghost" 
-        onClick={handleTestRoleSimulation}
-        className="w-full text-xs justify-start py-2 px-3 rounded-lg hover:bg-yellow-500/10 hover:text-yellow-600 transition-colors"
-        title="Esto es solo para pruebas"
-      >
-        <ShieldAlert className="mr-2 h-4 w-4 text-yellow-500" />
-        Probar simulación rol
-      </Button>
+      {/* Debug buttons (development only) */}
+      {process.env.NODE_ENV === 'development' && (
+        <Button 
+          variant="ghost" 
+          onClick={handleTestRoleSimulation}
+          className="w-full text-xs justify-start py-2 px-3 rounded-lg hover:bg-yellow-500/10 hover:text-yellow-600 transition-colors"
+          title="Esto es solo para pruebas"
+        >
+          <ShieldAlert className="mr-2 h-4 w-4 text-yellow-500" />
+          Probar simulación rol
+        </Button>
+      )}
 
       {/* Logout Button */}
       <Button 

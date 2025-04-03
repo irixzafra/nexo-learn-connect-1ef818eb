@@ -1,268 +1,69 @@
 
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { 
-  Home, 
-  LayoutDashboard, 
-  BarChart, 
-  Activity, 
-  Clock, 
-  BookOpen, 
-  Compass, 
-  GraduationCap, 
-  Award, 
-  FileText,
-  Users,
-  Rss,
-  MessageSquare,
-  Bell,
-  Calendar,
-  Trophy,
-  ChevronDown,
-  ChevronRight
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import React from 'react';
+import { useAuth } from '@/contexts/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
+import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { useNotifications } from '@/hooks/useNotifications';
+import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
+import { getRoleName, getHomePath } from '@/utils/roleUtils';
+import SidebarMainNavigation from './navigation/SidebarMainNavigation';
+import SidebarFooterSection from './SidebarFooterSection';
 
 interface SidebarNavigationProps {
-  isCollapsed: boolean;
+  viewAsRole?: UserRoleType | null;
+  onRoleChange?: (role: UserRoleType) => void;
+  isCollapsed?: boolean;
 }
 
-interface NavItemProps {
-  to: string;
-  icon: React.ElementType;
-  label: string;
-  isCollapsed: boolean;
-  badge?: number;
-}
+const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
+  viewAsRole,
+  onRoleChange,
+  isCollapsed = false
+}) => {
+  const { userRole, effectiveRole, logout, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
+  const { unreadCount: notificationsCount } = useNotifications();
+  const messagesCount = 3; // Demo value - replace with actual unread message count
 
-interface NavGroupProps {
-  title: string;
-  icon: React.ElementType;
-  isCollapsed: boolean;
-  defaultOpen?: boolean;
-  children: React.ReactNode;
-}
+  const {
+    currentViewRole,
+    currentLanguage,
+    changeLanguage
+  } = useSidebarNavigation(toUserRoleType(userRole as string), viewAsRole, onRoleChange);
 
-const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, isCollapsed, badge }) => {
-  const content = (
-    <NavLink
-      to={to}
-      className={({ isActive }) => cn(
-        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-        isActive 
-          ? "bg-primary/10 text-primary" 
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-      )}
-    >
-      <Icon className="h-4 w-4" />
-      {!isCollapsed && (
-        <>
-          <span>{label}</span>
-          {badge && badge > 0 && (
-            <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-              {badge > 99 ? '99+' : badge}
-            </span>
-          )}
-        </>
-      )}
-    </NavLink>
-  );
-
-  if (isCollapsed) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {content}
-        </TooltipTrigger>
-        <TooltipContent side="right" className="flex items-center gap-2">
-          {label}
-          {badge && badge > 0 && (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-              {badge > 99 ? '99+' : badge}
-            </span>
-          )}
-        </TooltipContent>
-      </Tooltip>
-    );
-  }
-
-  return content;
-};
-
-const NavGroup: React.FC<NavGroupProps> = ({ title, icon: Icon, isCollapsed, defaultOpen = false, children }) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
-  if (isCollapsed) {
-    return <div className="mb-4 space-y-1">{children}</div>;
-  }
+  // Language options
+  const languages = [
+    { code: 'es', name: 'Español' },
+    { code: 'en', name: 'English' },
+    { code: 'pt', name: 'Português' }
+  ];
 
   return (
-    <div className="mb-4">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between rounded-md py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-      >
-        <div className="flex items-center gap-3">
-          <Icon className="h-4 w-4" />
-          <span>{title}</span>
-        </div>
-        {isOpen ? (
-          <ChevronDown className="h-4 w-4" />
-        ) : (
-          <ChevronRight className="h-4 w-4" />
-        )}
-      </button>
-      
-      <div
-        className={cn(
-          "mt-1 space-y-1 overflow-hidden transition-all",
-          isOpen ? "max-h-96" : "max-h-0"
-        )}
-      >
-        {children}
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-y-auto">
+        <SidebarMainNavigation
+          effectiveRole={toUserRoleType(effectiveRole as string)}
+          messagesCount={messagesCount}
+          notificationsCount={notificationsCount}
+          getHomePath={() => getHomePath(effectiveRole as UserRoleType)}
+          isCollapsed={isCollapsed}
+        />
       </div>
-    </div>
-  );
-};
-
-const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ isCollapsed }) => {
-  return (
-    <div className="space-y-2">
-      <NavItem 
-        to="/" 
-        icon={Home}
-        label="Inicio"
-        isCollapsed={isCollapsed}
-      />
       
-      <NavGroup 
-        title="Dashboard" 
-        icon={LayoutDashboard}
-        isCollapsed={isCollapsed}
-        defaultOpen={true}
-      >
-        <NavItem 
-          to="/app/dashboard" 
-          icon={LayoutDashboard}
-          label="Panel Principal"
+      <div className="mt-auto">
+        <SidebarFooterSection
+          userRole={toUserRoleType(userRole as string)}
+          effectiveRole={toUserRoleType(effectiveRole as string)}
           isCollapsed={isCollapsed}
+          currentViewRole={currentViewRole}
+          getRoleName={getRoleName}
+          currentLanguage={currentLanguage}
+          languages={languages}
+          changeLanguage={changeLanguage}
+          logout={logout}
+          isViewingAsOtherRole={isViewingAsOtherRole}
+          resetToOriginalRole={resetToOriginalRole}
         />
-        <NavItem 
-          to="/app/dashboard/stats" 
-          icon={BarChart}
-          label="Estadísticas"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/dashboard/activity" 
-          icon={Activity}
-          label="Actividad"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/dashboard/history" 
-          icon={Clock}
-          label="Historial"
-          isCollapsed={isCollapsed}
-        />
-      </NavGroup>
-      
-      <NavGroup 
-        title="Cursos" 
-        icon={BookOpen}
-        isCollapsed={isCollapsed}
-        defaultOpen={true}
-      >
-        <NavItem 
-          to="/courses" 
-          icon={Compass}
-          label="Oferta Académica"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/learning-paths" 
-          icon={GraduationCap}
-          label="Rutas de Aprendizaje"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/certificates" 
-          icon={Award}
-          label="Certificados"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/course-documents" 
-          icon={FileText}
-          label="Documentos"
-          isCollapsed={isCollapsed}
-        />
-      </NavGroup>
-      
-      <NavGroup 
-        title="Aprendizaje" 
-        icon={GraduationCap}
-        isCollapsed={isCollapsed}
-      >
-        <NavItem 
-          to="/app/dashboard" 
-          icon={GraduationCap}
-          label="Panel Principal"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/my-courses" 
-          icon={BookOpen}
-          label="Mis Cursos"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/learning-paths" 
-          icon={GraduationCap}
-          label="Rutas de Aprendizaje"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/achievements" 
-          icon={Trophy}
-          label="Logros y Certificados"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/calendar" 
-          icon={Calendar}
-          label="Calendario Académico"
-          isCollapsed={isCollapsed}
-        />
-      </NavGroup>
-      
-      <NavGroup 
-        title="Comunidad" 
-        icon={Users}
-        isCollapsed={isCollapsed}
-      >
-        <NavItem 
-          to="/app/community" 
-          icon={Rss}
-          label="Feed"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/messages" 
-          icon={MessageSquare}
-          label="Mensajes"
-          badge={3}
-          isCollapsed={isCollapsed}
-        />
-        <NavItem 
-          to="/app/notifications" 
-          icon={Bell}
-          label="Notificaciones"
-          badge={2}
-          isCollapsed={isCollapsed}
-        />
-      </NavGroup>
+      </div>
     </div>
   );
 };
