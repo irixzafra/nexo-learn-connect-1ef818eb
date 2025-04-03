@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,7 +29,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showProgress = f
     badge,
     discount_percentage,
     cover_image_url,
-    slug
   } = course;
 
   // Format price with Euro symbol and decimals
@@ -66,44 +64,37 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, showProgress = f
     }
   };
 
-  // Get URL for course detail page using slug or id
-  const getDetailUrl = () => {
-    return slug ? `/courses/${slug}` : `/courses/${id}`;
-  };
-
   return (
     <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-md">
-      <Link to={getDetailUrl()}>
-        <div className="relative h-48 overflow-hidden">
-          {badge && (
-            <div className="absolute top-2 left-0 z-10">
-              <Badge variant="secondary" className="bg-primary text-primary-foreground px-3 py-1 rounded-l-none">
-                {badge}
-              </Badge>
-            </div>
-          )}
-          
-          {discount_percentage && discount_percentage > 0 && (
-            <div className="absolute top-2 right-2 z-10">
-              <Badge variant="destructive" className="rounded-full px-2 py-0.5">
-                -{discount_percentage}%
-              </Badge>
-            </div>
-          )}
-          
-          <img
-            src={cover_image_url || '/placeholder-course.jpg'}
-            alt={title}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-          />
-        </div>
-      </Link>
+      <div className="relative h-48 overflow-hidden">
+        {badge && (
+          <div className="absolute top-2 left-0 z-10">
+            <Badge variant="secondary" className="bg-primary text-primary-foreground px-3 py-1 rounded-l-none">
+              {badge}
+            </Badge>
+          </div>
+        )}
+        
+        {discount_percentage && discount_percentage > 0 && (
+          <div className="absolute top-2 right-2 z-10">
+            <Badge variant="destructive" className="rounded-full px-2 py-0.5">
+              -{discount_percentage}%
+            </Badge>
+          </div>
+        )}
+        
+        <img
+          src={cover_image_url || '/placeholder-course.jpg'}
+          alt={title}
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+        />
+      </div>
       
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start gap-2">
-          <Link to={getDetailUrl()} className="text-lg font-semibold leading-snug hover:text-primary transition-colors line-clamp-2">
+          <div className="text-lg font-semibold leading-snug hover:text-primary transition-colors line-clamp-2">
             {title}
-          </Link>
+          </div>
           
           {rating && (
             <div className="flex items-center bg-amber-50 px-2 py-0.5 rounded-md">

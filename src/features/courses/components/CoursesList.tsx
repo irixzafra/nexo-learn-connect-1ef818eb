@@ -24,7 +24,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ courses, isLoading = f
       {courses.map((course) => (
         <Link 
           key={course.id} 
-          to={course.slug ? `/cursos/${course.slug}` : `/courses/${course.id}`}
+          to={`/app/course/${course.id}`}
           className="transition-all hover:scale-[1.01]"
         >
           <CourseCard course={course} />
