@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ui/mode-toggle';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { Menu, Bell, MessageSquare } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { UserMenu } from './header/UserMenu';
@@ -18,11 +18,11 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, userRole } = useAuth();
   const navigate = useNavigate();
   const { toggleSidebar, state } = useSidebar();
   const { localizeUrl, isMultiLanguageEnabled } = useLocalization();
-  const isAdmin = user?.email?.includes('admin'); // Simplified check for demo
+  const isAdmin = userRole === 'admin';
 
   const handleLogout = async () => {
     try {

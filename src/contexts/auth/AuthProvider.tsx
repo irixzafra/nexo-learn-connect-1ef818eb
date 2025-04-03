@@ -26,8 +26,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userRole, setUserRole] = useState<UserRoleType | null>(null);
+  const [simulatedRole, setSimulatedRoleState] = useState<UserRoleType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // Calculate effective role based on simulated role
+  const effectiveRole = simulatedRole || userRole;
+  const isViewingAsOtherRole = simulatedRole !== null && userRole !== simulatedRole;
+
+  // Function to set simulated role with localStorage persistence
+  const setSimulatedRole = (role: UserRoleType | null) => {
+    setSimulatedRoleState(role);
+    
+    if (role) {
+      localStorage.setItem('viewAsRole', role);
+      toast.success(`Vista cambiada a: ${role}`);
+    } else {
+      localStorage.setItem('viewAsRole', 'current');
+      toast.success(`Volviendo a tu rol original: ${userRole}`);
+    }
+  };
+
+  // Function to reset to original role
+  const resetToOriginalRole = () => {
+    setSimulatedRole(null);
+  };
 
   useEffect(() => {
     console.info('🔐 [Auth] Iniciando configuración del sistema de autenticación');
@@ -36,8 +59,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isLoading, 
       hasUser: !!user, 
       hasSession: !!session, 
-      userRole 
+      userRole,
+      simulatedRole 
     });
+    
+    // Initialize simulated role from localStorage if available
+    const storedRole = localStorage.getItem('viewAsRole');
+    if (storedRole && storedRole !== 'current') {
+      setSimulatedRoleState(storedRole as UserRoleType);
+    }
     
     // Primero: Configurar el listener de cambios de estado de autenticación
     console.info('🔐 [Auth] Configurando listener de cambios en el estado de autenticación');
@@ -54,6 +84,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(null);
           setProfile(null);
           setUserRole(null);
+          setSimulatedRoleState(null);
+          localStorage.removeItem('viewAsRole');
           return;
         }
         
@@ -276,11 +308,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     session,
     profile,
     userRole,
+    simulatedRole,
+    effectiveRole,
     isLoading,
     login,
     logout,
     isInitialized,
-    isAuthenticated
+    isAuthenticated,
+    setSimulatedRole,
+    isViewingAsOtherRole,
+    resetToOriginalRole
   };
 
   console.debug('🔐 [Auth] Estado actual del proveedor:', {
@@ -290,6 +327,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     userId: user?.id,
     sessionUserId: session?.user?.id,
     userRole,
+    simulatedRole,
+    effectiveRole,
+    isViewingAsOtherRole,
     hasProfile: !!profile,
     timestamp: new Date().toISOString()
   });
