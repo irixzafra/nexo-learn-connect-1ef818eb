@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import ComponentPreview from '@/components/admin/ComponentPreview';
+import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 
 type ComponentModule = {
   path: string;
@@ -469,7 +470,11 @@ const ComponentsTab: React.FC<ComponentsTabProps> = ({
                 isLoading={previewLoading}
                 error={previewError}
               >
-                <ErrorBoundary>
+                <ErrorBoundary 
+                  FallbackComponent={({ error, resetError }) => (
+                    <ErrorBoundaryFallback error={error} resetError={resetError} />
+                  )}
+                >
                   {previewContent}
                 </ErrorBoundary>
               </ComponentPreview>
@@ -499,4 +504,3 @@ const ComponentsLoadingState: React.FC = () => (
 );
 
 export default ComponentInventoryPage;
-

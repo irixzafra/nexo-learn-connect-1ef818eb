@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import ErrorBoundaryFallback from '@/components/ErrorBoundaryFallback';
 
 interface ComponentPreviewProps {
   componentPath: string;
@@ -64,7 +65,7 @@ const ComponentPreview: React.FC<ComponentPreviewProps> = ({
               </AlertDescription>
             </Alert>
           ) : (
-            <ErrorBoundary FallbackComponent={({ error }) => (
+            <ErrorBoundary FallbackComponent={({ error, resetError }) => (
               <Alert variant="destructive">
                 <AlertDescription>
                   <div className="font-medium">Error de renderizado:</div>
