@@ -75,4 +75,4 @@ Routes should be tested to ensure they:
 
 ## Navigation Structure
 
-See `MAPA_DE_RUTAS.md` for a visual representation of the application's navigation structure and route status.
+See `ESTRUCTURA_NAVEGACION.md` for a visual representation of the application's navigation structure and route status.
