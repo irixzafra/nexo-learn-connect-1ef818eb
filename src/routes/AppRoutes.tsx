@@ -13,6 +13,12 @@ import AppLayout from '@/layouts/AppLayout';
 // Import pages for student routes
 import StudentDashboard from '@/pages/student/Dashboard';
 import StudentMyCourses from '@/pages/student/MyCourses';
+import LessonView from '@/pages/student/LessonView';
+
+// Import course pages
+import CourseCatalog from '@/pages/courses/CourseCatalog';
+import CourseDetail from '@/pages/courses/CourseDetail';
+import CourseEnrollment from '@/pages/courses/CourseEnrollment';
 
 // Import pages for profile routes
 import ProfileDashboard from '@/pages/profile/ProfileDashboard';
@@ -91,11 +97,10 @@ const AppRoutes: React.FC = () => {
         <Route path="settings/roles" element={<RolesAndPermissions />} />
         
         {/* --- Rutas Course --- */}
-        <Route path="course" element={<PlaceholderPage title="Catálogo de Cursos" />} />
-        <Route path="course/:courseId" element={<PlaceholderPage title="Detalle de Curso" />} />
-        <Route path="course/:courseId/lesson/:lessonId" element={<PlaceholderPage title="Lección de Curso" />} />
-        <Route path="course/:courseId/modules" element={<PlaceholderPage title="Módulos del Curso" />} />
-        <Route path="course/:courseId/students" element={<PlaceholderPage title="Estudiantes del Curso" />} />
+        <Route path="course" element={<CourseCatalog />} />
+        <Route path="course/:courseId" element={<CourseDetail />} />
+        <Route path="course/:courseId/enroll" element={<CourseEnrollment />} />
+        <Route path="course/:courseId/lesson/:lessonId" element={<LessonView />} />
         
         {/* --- Rutas Admin (con wrapper individual) --- */}
         <Route path="admin" element={<SafeRouteWrapper requiredRole={['admin']}><AdminDashboard /></SafeRouteWrapper>} />
