@@ -61,7 +61,10 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
         languages={languages}
         changeLanguage={changeLanguage}
       />
-      {console.log('>>> DEBUG SidebarFooter: Finished rendering SidebarFooterSection')}
+      {/* Use a React fragment with an effect instead of inline console.log */}
+      {React.useEffect(() => {
+        console.log('>>> DEBUG SidebarFooter: Finished rendering SidebarFooterSection');
+      }, [])}
     </div>
   );
 };
