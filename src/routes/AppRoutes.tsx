@@ -36,6 +36,16 @@ import AIServicesPage from '@/pages/admin/ai/AIServicesPage';
 import TestDataManagement from '@/pages/admin/TestDataManagement';
 import AccessControl from '@/pages/admin/access/AccessControl';
 
+// Import settings pages
+import GeneralSettingsPage from '@/pages/settings/GeneralSettingsPage';
+import FeatureSettingsPage from '@/pages/settings/FeatureSettingsPage';
+import DesignSettingsPage from '@/pages/settings/DesignSettingsPage';
+import IntegrationsPage from '@/pages/admin/settings/integrations';
+import DataManagementPage from '@/pages/admin/settings/data';
+import PagesManagement from '@/pages/admin/settings/pages';
+import AnalyticsSettingsPage from '@/pages/admin/settings/analytics';
+import RolesAndPermissions from '@/pages/admin/settings/roles';
+
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
@@ -70,11 +80,14 @@ const AppRoutes: React.FC = () => {
         <Route path="profile/subscriptions" element={<ProfileSubscriptions />} />
         
         {/* --- Rutas Settings --- */}
-        <Route path="settings" element={<PlaceholderPage title="Configuración General" />} />
-        <Route path="settings/features" element={<PlaceholderPage title="Funcionalidades" />} />
-        <Route path="settings/account" element={<PlaceholderPage title="Cuenta" />} />
-        <Route path="settings/notifications" element={<PlaceholderPage title="Notificaciones" />} />
-        <Route path="settings/security" element={<PlaceholderPage title="Seguridad" />} />
+        <Route path="settings" element={<GeneralSettingsPage />} />
+        <Route path="settings/features" element={<FeatureSettingsPage />} />
+        <Route path="settings/design" element={<DesignSettingsPage />} />
+        <Route path="settings/integrations" element={<IntegrationsPage />} />
+        <Route path="settings/data" element={<DataManagementPage />} />
+        <Route path="settings/pages" element={<PagesManagement />} />
+        <Route path="settings/analytics" element={<AnalyticsSettingsPage />} />
+        <Route path="settings/roles" element={<RolesAndPermissions />} />
         
         {/* --- Rutas Course --- */}
         <Route path="course" element={<PlaceholderPage title="Catálogo de Cursos" />} />
