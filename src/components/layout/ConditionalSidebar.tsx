@@ -6,6 +6,7 @@ import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import SidebarMainNavigation from './sidebar/navigation/SidebarMainNavigation';
 import SidebarLogoSection from './sidebar/SidebarLogoSection';
 import SidebarFooterSection from './sidebar/SidebarFooterSection';
+import { useAuth } from '@/contexts/auth';
 
 interface ConditionalSidebarProps {
   userRole: UserRoleType;
@@ -41,6 +42,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   changeLanguage
 }) => {
   const { toggleSidebar } = useSidebar();
+  const { logout, resetToOriginalRole } = useAuth();
 
   return (
     <div className="h-full flex flex-col py-4 bg-background border-r border-border">
@@ -66,6 +68,8 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
         currentLanguage={currentLanguage}
         languages={languages}
         changeLanguage={changeLanguage}
+        logout={logout}
+        resetToOriginalRole={resetToOriginalRole}
       />
     </div>
   );
