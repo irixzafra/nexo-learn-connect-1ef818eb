@@ -53,7 +53,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
         userRole={userRole as UserRoleType}
         isCollapsed={isCollapsed}
         effectiveRole={effectiveRole as UserRoleType}
-        currentViewRole="current"
+        currentViewRole={null} // Changed from "current" to null
         handleRoleChange={() => {}}
         getRoleName={getRoleName}
         currentLanguage={currentLanguage}

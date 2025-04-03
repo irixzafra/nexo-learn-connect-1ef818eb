@@ -90,7 +90,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const storedData = localStorage.getItem('simulatedUserData');
       if (storedData) {
         const parsedData: SimulatedUserData = JSON.parse(storedData);
-        if (parsedData.role && parsedData.role !== 'current') {
+        if (parsedData.role) {
           setSimulatedRoleState(parsedData.role);
           setSimulatedUserId(parsedData.userId || null);
           setSimulatedUserName(parsedData.userName || null);
@@ -98,6 +98,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } else {
         // Legacy support for older format
         const storedRole = localStorage.getItem('viewAsRole');
+        // Fix: This is line causing TypeScript error - checking if a UserRoleType equals "current"
+        // Change this comparison to check if storedRole is not "current" and not null/undefined
         if (storedRole && storedRole !== 'current') {
           setSimulatedRoleState(storedRole as UserRoleType);
         }

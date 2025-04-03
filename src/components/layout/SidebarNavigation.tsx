@@ -8,7 +8,7 @@ import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSideb
 import ConditionalSidebar from './ConditionalSidebar';
 
 interface SidebarNavigationProps {
-  viewAsRole?: 'current' | UserRoleType;
+  viewAsRole?: UserRoleType | null;
   onRoleChange?: (role: UserRoleType) => void;
 }
 

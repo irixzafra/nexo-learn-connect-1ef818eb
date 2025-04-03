@@ -13,7 +13,7 @@ interface ConditionalSidebarProps {
   messagesCount: number;
   notificationsCount: number;
   isCollapsed: boolean;
-  currentViewRole: 'current' | UserRoleType;
+  currentViewRole: UserRoleType | null; // Changed from 'current' | UserRoleType
   currentLanguage: string;
   languages: Array<{ code: string; name: string }>;
   handleRoleChange: (role: UserRoleType) => void;

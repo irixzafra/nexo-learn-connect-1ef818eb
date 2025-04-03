@@ -6,14 +6,14 @@ import { getRoleName, getHomePath } from '@/utils/roleUtils';
 
 export const useSidebarNavigation = (
   userRole: UserRoleType,
-  viewAsRole?: 'current' | UserRoleType,
+  viewAsRole?: UserRoleType | null,
   onRoleChange?: (role: UserRoleType) => void
 ) => {
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   
-  // Track "view as" role for admin role-switching
-  const [currentViewRole, setCurrentViewRole] = useState<'current' | UserRoleType>(viewAsRole || 'current');
+  // Track "view as" role for admin role-switching - using null instead of 'current'
+  const [currentViewRole, setCurrentViewRole] = useState<UserRoleType | null>(viewAsRole || null);
   
   // Track current language (could come from a context/cookie)
   const [currentLanguage, setCurrentLanguage] = useState('es');
@@ -26,7 +26,7 @@ export const useSidebarNavigation = (
   }, [viewAsRole]);
   
   // Calculate effective role (actual or viewed-as)
-  const effectiveRole = currentViewRole === 'current' ? userRole : toUserRoleType(currentViewRole as string);
+  const effectiveRole = currentViewRole || userRole;
   
   // Toggle sidebar expanded/collapsed state
   const toggleSidebar = () => {

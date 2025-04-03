@@ -13,7 +13,7 @@ interface SidebarFooterSectionProps {
   userRole: UserRoleType;
   isCollapsed: boolean;
   effectiveRole: UserRoleType;
-  currentViewRole: 'current' | UserRoleType;
+  currentViewRole: UserRoleType | null; // Changed from 'current' | UserRoleType
   handleRoleChange: (role: UserRoleType) => void;
   getRoleName: (role: UserRoleType) => string;
   currentLanguage: string;
