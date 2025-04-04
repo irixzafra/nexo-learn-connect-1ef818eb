@@ -21,6 +21,11 @@ import { gamificationNavigation } from './gamificationNavigation';
  * @param role User role
  */
 export const filterMenuItemsByRole = (items: MenuItem[], role: UserRoleType): MenuItem[] => {
+  if (!Array.isArray(items)) {
+    console.warn('Expected items to be an array, got:', typeof items);
+    return [];
+  }
+  
   return items.filter(item => {
     // If no required role is specified, show the item to everyone
     if (!item.requiredRole) return true;
@@ -62,13 +67,13 @@ export const getHomePathByRole = (role: UserRoleType): string => {
  */
 export const getNavigationByRole = (role: UserRoleType): NavigationMenus => {
   return {
-    dashboard: filterMenuItemsByRole(dashboardNavigation.main || [], role),
-    main: filterMenuItemsByRole(mainNavigation.main || [], role),
+    dashboard: filterMenuItemsByRole(dashboardNavigation, role),
+    main: filterMenuItemsByRole(mainNavigation, role),
     admin: filterMenuItemsByRole(adminNavigation.main || [], role),
     instructor: filterMenuItemsByRole(instructorNavigation.main || [], role),
     student: filterMenuItemsByRole(studentNavigation.main || [], role),
-    learning: filterMenuItemsByRole(learningNavigation.main || [], role),
-    community: filterMenuItemsByRole(communityNavigation.main || [], role),
+    learning: filterMenuItemsByRole(learningNavigation, role),
+    community: filterMenuItemsByRole(communityNavigation, role),
     configuration: filterMenuItemsByRole(configurationNavigation.main || [], role)
   };
 };

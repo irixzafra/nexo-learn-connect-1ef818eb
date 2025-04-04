@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +12,6 @@ import appRoutes from '@/routes/app';
 import { adminNavigation } from '@/config/navigation/adminNavigation';
 import { settingsNavigation } from '@/config/navigation/settingsNavigation';
 
-// Helper to extract paths from route definitions
 const extractRoutes = (routes, parentPath = '') => {
   if (!routes) return [];
   
@@ -32,7 +30,6 @@ const extractRoutes = (routes, parentPath = '') => {
       });
     }
     
-    // If the route has children, recursively extract those routes too
     if (route.children) {
       const newParentPath = route.path ? 
         `${parentPath}/${route.path}`.replace(/\/+/g, '/') : 
@@ -48,7 +45,6 @@ const extractRoutes = (routes, parentPath = '') => {
   return extractedRoutes;
 };
 
-// Helper to group routes by section
 const groupRoutesBySection = (routes) => {
   const sections = {
     app: [],
@@ -86,7 +82,6 @@ const groupRoutesBySection = (routes) => {
   return sections;
 };
 
-// Route visualization component
 const RouteItem = ({ route, level = 0 }) => {
   const indentation = level * 16;
   
@@ -106,7 +101,6 @@ const RouteItem = ({ route, level = 0 }) => {
   );
 };
 
-// Menu item visualization
 const MenuItem = ({ item, level = 0 }) => {
   const indentation = level * 16;
   const Icon = item.icon || List;
@@ -145,7 +139,6 @@ const MenuItem = ({ item, level = 0 }) => {
   );
 };
 
-// Main component
 const NavigationDiagram: React.FC = () => {
   const [activeTab, setActiveTab] = useState('routes');
   const [routeGroups, setRouteGroups] = useState<Record<string, any>>({
@@ -159,7 +152,6 @@ const NavigationDiagram: React.FC = () => {
     other: []
   });
   
-  // Extract routes on component mount
   useEffect(() => {
     const extractedRoutes = extractRoutes(appRoutes);
     const grouped = groupRoutesBySection(extractedRoutes);
@@ -185,7 +177,6 @@ const NavigationDiagram: React.FC = () => {
         
         <TabsContent value="routes" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Admin Routes */}
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center">
@@ -211,7 +202,6 @@ const NavigationDiagram: React.FC = () => {
               </CardContent>
             </Card>
             
-            {/* Instructor Routes */}
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center">
@@ -237,7 +227,6 @@ const NavigationDiagram: React.FC = () => {
               </CardContent>
             </Card>
             
-            {/* Student Routes */}
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center">
@@ -263,7 +252,6 @@ const NavigationDiagram: React.FC = () => {
               </CardContent>
             </Card>
             
-            {/* Settings Routes */}
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center">
@@ -293,7 +281,6 @@ const NavigationDiagram: React.FC = () => {
         
         <TabsContent value="menus" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Admin Menu */}
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center">
@@ -306,14 +293,19 @@ const NavigationDiagram: React.FC = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="border rounded-md max-h-[400px] overflow-y-auto">
-                  {adminNavigation.main && adminNavigation.main.map((item, index) => (
-                    <MenuItem key={`admin-menu-${index}`} item={item} />
-                  ))}
+                  {adminNavigation.main && adminNavigation.main.length > 0 ? (
+                    adminNavigation.main.map((item, index) => (
+                      <MenuItem key={`admin-menu-${index}`} item={item} />
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No hay elementos de menú disponibles
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
             
-            {/* Settings Menu */}
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center">
@@ -326,14 +318,19 @@ const NavigationDiagram: React.FC = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="border rounded-md max-h-[400px] overflow-y-auto">
-                  {settingsNavigation.main && settingsNavigation.main.map((item, index) => (
-                    <MenuItem key={`settings-menu-${index}`} item={item} />
-                  ))}
+                  {settingsNavigation.main && settingsNavigation.main.length > 0 ? (
+                    settingsNavigation.main.map((item, index) => (
+                      <MenuItem key={`settings-menu-${index}`} item={item} />
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No hay elementos de menú disponibles
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
             
-            {/* Documentation Link */}
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center">
