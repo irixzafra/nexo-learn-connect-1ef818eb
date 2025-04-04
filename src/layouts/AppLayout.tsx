@@ -44,7 +44,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col w-full">
         <AuthenticatedHeader onToggleSidebar={toggleSidebar} />
         
         <div className="flex flex-1 overflow-hidden">

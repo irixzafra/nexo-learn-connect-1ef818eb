@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 import { UserRoleType } from '@/types/auth';
 import { useAuth } from '@/contexts/auth';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { getRoleName, getHomePath } from '@/utils/roleUtils';
 
 export function useSidebarNavigation(

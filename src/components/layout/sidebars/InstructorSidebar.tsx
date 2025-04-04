@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/auth';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { useNotifications } from '@/hooks/useNotifications';
 import ConditionalSidebar from '../ConditionalSidebar';
 import { useSidebarNavigation } from '../sidebar/hooks/useSidebarNavigation';

@@ -2,7 +2,7 @@
 import React from 'react';
 import { useAuth } from '@/contexts/auth';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
 import ConditionalSidebar from './ConditionalSidebar';
