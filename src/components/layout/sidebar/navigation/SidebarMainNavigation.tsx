@@ -1,43 +1,19 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavGroup from './SidebarNavGroup';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { useAuth } from '@/contexts/auth';
-import { MenuItem } from '@/types/navigation';
-import { LayoutDashboard, BookOpen, Users, Settings } from 'lucide-react';
-
-// Default navigation structure - will be replaced with actual data
-const defaultNavigation: Record<string, MenuItem[]> = {
-  dashboard: [
-    {
-      label: 'Panel Principal',
-      path: '/app/dashboard',
-      icon: LayoutDashboard,
-    }
-  ],
-  learning: [
-    {
-      label: 'Cursos',
-      path: '/app/courses',
-      icon: BookOpen,
-    }
-  ],
-  community: [
-    {
-      label: 'Comunidad',
-      path: '/app/community',
-      icon: Users,
-    }
-  ],
-  settings: [
-    {
-      label: 'Configuración',
-      path: '/app/settings',
-      icon: Settings,
-    }
-  ]
-};
+import { getNavigationByRole } from '@/config/navigation';
+import { 
+  Home,
+  LayoutDashboard, 
+  BookOpen, 
+  Users, 
+  Settings,
+  Bell,
+  MessageSquare 
+} from 'lucide-react';
 
 interface SidebarMainNavigationProps {
   isCollapsed?: boolean;
@@ -60,42 +36,79 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   // Track expanded sections
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     dashboard: true,
-    learning: true
+    learning: true,
+    community: true
   });
 
-  const toggleSection = (section: string) => {
-    setOpenSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
+  // Create a default navigation structure for rendering
+  const defaultNavigation = {
+    dashboard: [
+      {
+        label: 'Panel Principal',
+        path: '/app/dashboard',
+        icon: LayoutDashboard,
+      }
+    ],
+    learning: [
+      {
+        label: 'Cursos',
+        path: '/app/courses',
+        icon: BookOpen,
+      }
+    ],
+    community: [
+      {
+        label: 'Comunidad',
+        path: '/app/community',
+        icon: Users,
+      },
+      {
+        label: 'Mensajes',
+        path: '/app/messages',
+        icon: MessageSquare,
+        badge: messagesCount
+      },
+      {
+        label: 'Notificaciones',
+        path: '/app/notifications',
+        icon: Bell,
+        badge: notificationsCount
+      }
+    ],
+    settings: [
+      {
+        label: 'Configuración',
+        path: '/app/settings',
+        icon: Settings,
+      }
+    ]
   };
   
-  // Use default navigation for now - this would be replaced with role-based navigation
-  const navigation = defaultNavigation;
+  // Get role-based navigation if available, otherwise use default
+  const [navigation, setNavigation] = useState(defaultNavigation);
+  
+  useEffect(() => {
+    try {
+      // Try to get role-based navigation
+      const roleNavigation = getNavigationByRole(role);
+      if (roleNavigation && Object.keys(roleNavigation).length > 0) {
+        setNavigation(roleNavigation);
+      }
+    } catch (error) {
+      console.warn('Error loading role navigation:', error);
+      // Fallback to default navigation
+    }
+  }, [role]);
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1 py-2">
       {/* Render all navigation groups */}
       {Object.entries(navigation).map(([key, items]) => {
-        // Skip empty sections
         if (!items || items.length === 0) return null;
-        
-        // Skip sections that should be hidden for this role
-        const visibleItems = items.filter(item => {
-          if (!item.requiredRole) return true;
-          
-          if (Array.isArray(item.requiredRole)) {
-            return item.requiredRole.includes(role);
-          }
-          
-          return item.requiredRole === role;
-        });
-        
-        if (visibleItems.length === 0) return null;
         
         // Get section title from key
         const sectionTitle = key.charAt(0).toUpperCase() + key.slice(1);
-        const sectionIcon = items[0].icon;
+        const sectionIcon = items[0]?.icon ? items[0].icon : Home;
         
         return (
           <SidebarNavGroup
