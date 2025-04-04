@@ -22,7 +22,7 @@ export const useDynamicNavigation = (role: UserRoleType) => {
         const { data: navigationItems, error } = await supabase
           .from('navigation_items')
           .select('*')
-          .eq('role', role)
+          .contains('visible_to_roles', [role])
           .order('sort_order', { ascending: true });
         
         if (error) {

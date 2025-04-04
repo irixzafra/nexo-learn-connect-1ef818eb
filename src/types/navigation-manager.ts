@@ -12,7 +12,7 @@ export interface NavigationItemBase {
   path?: string; // Solo para items tipo "link"
   itemType: 'link' | 'group' | 'separator'; 
   parentId?: string | null; // null para items de primer nivel
-  requiredRoles?: UserRoleType[]; // Roles que pueden ver este elemento
+  visibleToRoles?: UserRoleType[]; // Roles que pueden ver este elemento
 }
 
 export interface NavigationItemWithChildren extends NavigationItemBase {

@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS public.navigation_items (
   path TEXT,
   item_type TEXT NOT NULL CHECK (item_type IN ('link', 'group', 'separator')),
   parent_id UUID REFERENCES public.navigation_items(id),
-  role TEXT NOT NULL,
-  required_roles TEXT[],
+  visible_to_roles TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
@@ -27,11 +26,10 @@ COMMENT ON COLUMN public.navigation_items.is_visible IS 'Indica si el elemento e
 COMMENT ON COLUMN public.navigation_items.path IS 'Ruta de navegación (solo para links)';
 COMMENT ON COLUMN public.navigation_items.item_type IS 'Tipo de elemento: link, grupo o separador';
 COMMENT ON COLUMN public.navigation_items.parent_id IS 'ID del elemento padre para elementos anidados';
-COMMENT ON COLUMN public.navigation_items.role IS 'Rol para el que aplica este elemento';
-COMMENT ON COLUMN public.navigation_items.required_roles IS 'Roles que pueden ver este elemento';
+COMMENT ON COLUMN public.navigation_items.visible_to_roles IS 'Roles que pueden ver este elemento';
 
 -- Añadir índices para mejorar rendimiento
-CREATE INDEX IF NOT EXISTS idx_navigation_items_role ON public.navigation_items(role);
+CREATE INDEX IF NOT EXISTS idx_navigation_items_visible_to_roles ON public.navigation_items USING gin(visible_to_roles);
 CREATE INDEX IF NOT EXISTS idx_navigation_items_parent_id ON public.navigation_items(parent_id);
 
 -- Trigger para actualizar timestamp
@@ -63,7 +61,11 @@ CREATE POLICY "Allow read for authenticated users"
   ON public.navigation_items
   FOR SELECT
   TO authenticated
-  USING (true);
+  USING (
+    auth.jwt() ->> 'role' = ANY (visible_to_roles) OR 
+    array_length(visible_to_roles, 1) IS NULL OR 
+    auth.jwt() ->> 'role' = 'admin'
+  );
 
 -- Tabla de historial de cambios (opcional para una fase posterior)
 CREATE TABLE IF NOT EXISTS public.navigation_history (

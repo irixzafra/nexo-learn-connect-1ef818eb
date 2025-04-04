@@ -35,7 +35,7 @@ const convertStaticNavigationToItems = (role: UserRoleType): NavigationItemWithC
         isVisible: true,
         itemType: 'link',
         parentId: groupId,
-        requiredRoles: Array.isArray(item.requiredRole) 
+        visibleToRoles: Array.isArray(item.requiredRole) 
           ? item.requiredRole 
           : item.requiredRole ? [item.requiredRole] : undefined
       });
@@ -54,8 +54,8 @@ export const fetchNavigationItems = async (role: UserRoleType): Promise<Navigati
     const { data: items, error } = await supabase
       .from('navigation_items')
       .select('*')
-      .eq('role', role)
-      .order('sortOrder', { ascending: true });
+      .eq('visible_to_roles', role)
+      .order('sort_order', { ascending: true });
     
     if (error) {
       console.error('Error fetching navigation items:', error);
@@ -74,18 +74,27 @@ export const fetchNavigationItems = async (role: UserRoleType): Promise<Navigati
     // Primera pasada: crear objetos y mapearlos por ID
     items.forEach(item => {
       itemMap[item.id] = {
-        ...item,
+        id: item.id,
+        label: item.label,
+        iconName: item.icon_name,
+        sortOrder: item.sort_order,
+        isActive: item.is_active,
+        isVisible: item.is_visible,
+        path: item.path,
+        itemType: item.item_type,
+        parentId: item.parent_id || null,
+        visibleToRoles: item.visible_to_roles,
         children: []
       };
     });
     
     // Segunda pasada: establecer relaciones jerárquicas
     items.forEach(item => {
-      if (item.parentId && itemMap[item.parentId]) {
-        if (!itemMap[item.parentId].children) {
-          itemMap[item.parentId].children = [];
+      if (item.parent_id && itemMap[item.parent_id]) {
+        if (!itemMap[item.parent_id].children) {
+          itemMap[item.parent_id].children = [];
         }
-        itemMap[item.parentId].children?.push(itemMap[item.id]);
+        itemMap[item.parent_id].children?.push(itemMap[item.id]);
       } else {
         rootItems.push(itemMap[item.id]);
       }
@@ -106,8 +115,16 @@ const flattenNavigationItems = (items: NavigationItemWithChildren[]): any[] => {
   const processItem = (item: NavigationItemWithChildren, parentId: string | null = null) => {
     const { children, ...itemWithoutChildren } = item;
     result.push({
-      ...itemWithoutChildren,
-      parentId
+      id: item.id,
+      label: item.label,
+      icon_name: item.iconName,
+      sort_order: item.sortOrder,
+      is_active: item.isActive,
+      is_visible: item.isVisible,
+      path: item.path,
+      item_type: item.itemType,
+      parent_id: parentId,
+      visible_to_roles: item.visibleToRoles || []
     });
     
     children?.forEach(child => processItem(child, item.id));
@@ -126,7 +143,7 @@ export const saveNavigationItems = async (role: UserRoleType, items: NavigationI
     const { error: deleteError } = await supabase
       .from('navigation_items')
       .delete()
-      .eq('role', role);
+      .contains('visible_to_roles', [role]);
     
     if (deleteError) {
       console.error('Error deleting navigation items:', deleteError);
@@ -136,7 +153,10 @@ export const saveNavigationItems = async (role: UserRoleType, items: NavigationI
     // Insertar los nuevos elementos
     const { error: insertError } = await supabase
       .from('navigation_items')
-      .insert(flatItems.map(item => ({ ...item, role })));
+      .insert(flatItems.map(item => ({ 
+        ...item, 
+        visible_to_roles: [...new Set([...item.visible_to_roles, role])]
+      })));
     
     if (insertError) {
       console.error('Error inserting navigation items:', insertError);
@@ -153,13 +173,73 @@ export const saveNavigationItems = async (role: UserRoleType, items: NavigationI
 // Función para sincronizar desde el código
 export const syncNavigationFromCode = async (role: UserRoleType): Promise<NavigationItemWithChildren[]> => {
   try {
-    // Convertir la navegación estática a formato dinámico
-    const items = convertStaticNavigationToItems(role);
+    // 1. Obtener elementos actuales de la BD
+    const { data: existingItems, error: fetchError } = await supabase
+      .from('navigation_items')
+      .select('*')
+      .contains('visible_to_roles', [role]);
+      
+    if (fetchError) throw fetchError;
     
-    // Guardar en la BD
-    await saveNavigationItems(role, items);
+    // 2. Convertir estructura estática a formato dinámico
+    const codeItems = convertStaticNavigationToItems(role);
     
-    return items;
+    // 3. Crear mapa de elementos existentes para fácil acceso
+    const existingItemsMap = new Map();
+    existingItems?.forEach(item => {
+      // Usar una clave compuesta para identificar elementos equivalentes
+      const key = `${item.label}-${item.path || ''}`;
+      existingItemsMap.set(key, item);
+    });
+    
+    // 4. Preparar elementos a insertar/actualizar
+    const itemsToUpsert = [];
+    
+    for (const item of flattenNavigationItems(codeItems)) {
+      // Generar clave compuesta para buscar equivalente
+      const key = `${item.label}-${item.path || ''}`;
+      const existingItem = existingItemsMap.get(key);
+      
+      if (existingItem) {
+        // El elemento ya existe - mantener configuración de visibilidad y orden
+        itemsToUpsert.push({
+          ...item,
+          id: existingItem.id,
+          is_visible: existingItem.is_visible,
+          sort_order: existingItem.sort_order,
+          // Asegurar que el rol actual está en visible_to_roles
+          visible_to_roles: [...new Set([...(existingItem.visible_to_roles || []), role])]
+        });
+        
+        // Marcar como procesado para identificar elementos a desactivar después
+        existingItemsMap.delete(key);
+      } else {
+        // Nuevo elemento - agregar con valores predeterminados
+        itemsToUpsert.push({
+          ...item,
+          visible_to_roles: [role]
+        });
+      }
+    }
+    
+    // 5. Marcar como inactivos elementos que ya no existen en el código
+    // (pero no eliminarlos para preservar relaciones y referencias)
+    for (const [_, item] of existingItemsMap.entries()) {
+      itemsToUpsert.push({
+        ...item,
+        is_active: false
+      });
+    }
+    
+    // 6. Guardar cambios en la BD
+    const { error: upsertError } = await supabase
+      .from('navigation_items')
+      .upsert(itemsToUpsert);
+      
+    if (upsertError) throw upsertError;
+    
+    // 7. Devolver la estructura actualizada
+    return fetchNavigationItems(role);
   } catch (error) {
     console.error('Error in syncNavigationFromCode:', error);
     throw error;
