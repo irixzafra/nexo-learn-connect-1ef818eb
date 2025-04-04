@@ -72,7 +72,7 @@ const Login: React.FC = () => {
     try {
       // Llamar a la función login del contexto de autenticación
       const result = await login(data.email, data.password, data.remember);
-      console.log("SimpleLogin: Resultado login:", result);
+      console.log("Login: Resultado login:", result);
       
       if (result.success) {
         toast.success('Inicio de sesión exitoso');
@@ -86,9 +86,10 @@ const Login: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Error de inicio de sesión:', err);
-      setAuthError('Verifica tus credenciales e intenta de nuevo');
+      const errorMessage = err.message || 'Error al iniciar sesión. Verifica tus credenciales e intenta de nuevo.';
+      setAuthError(errorMessage);
       toast.error('Error al iniciar sesión', {
-        description: err.message || 'Verifica tus credenciales e intenta de nuevo',
+        description: errorMessage,
       });
     } finally {
       // Garantizamos que isLoading local se desactiva SIEMPRE
@@ -135,6 +136,7 @@ const Login: React.FC = () => {
                           placeholder="usuario@ejemplo.com" 
                           autoComplete="email" 
                           className="pl-10 py-6 text-base"
+                          disabled={isLoading}
                         />
                       </FormControl>
                     </div>
@@ -158,6 +160,7 @@ const Login: React.FC = () => {
                           placeholder="••••••••" 
                           autoComplete="current-password" 
                           className="pl-10 py-6 text-base"
+                          disabled={isLoading}
                         />
                       </FormControl>
                     </div>
@@ -177,6 +180,7 @@ const Login: React.FC = () => {
                           checked={field.value}
                           onCheckedChange={field.onChange}
                           id="remember"
+                          disabled={isLoading}
                         />
                       </FormControl>
                       <label

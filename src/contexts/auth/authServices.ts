@@ -1,6 +1,6 @@
+
 import { supabase } from '@/lib/supabase';
 import { UserProfile, UserRoleType } from '@/types/auth';
-import { toast } from 'sonner';
 
 /**
  * Servicio para iniciar sesión
@@ -9,6 +9,14 @@ import { toast } from 'sonner';
 export const loginService = async (email: string, password: string, remember: boolean = false) => {
   try {
     console.log("authServices: Intentando iniciar sesión con email:", email, "y remember:", remember);
+    
+    // Validación básica
+    if (!email || !password) {
+      return { 
+        success: false, 
+        error: "El email y la contraseña son obligatorios" 
+      };
+    }
     
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -24,9 +32,20 @@ export const loginService = async (email: string, password: string, remember: bo
         userFriendlyError = "Credenciales inválidas. Verifica tu email y contraseña e intenta de nuevo.";
       } else if (error.message.includes("Email not confirmed")) {
         userFriendlyError = "Tu email no ha sido confirmado. Por favor revisa tu bandeja de entrada.";
+      } else if (error.message.includes("Too many requests")) {
+        userFriendlyError = "Demasiados intentos fallidos. Por favor intenta más tarde.";
+      } else if (error.message.includes("User not found")) {
+        userFriendlyError = "El usuario no existe. Por favor verifica tu email.";
       }
       
       return { success: false, error: userFriendlyError };
+    }
+    
+    if (!data.session || !data.user) {
+      return { 
+        success: false, 
+        error: "No se pudo iniciar sesión. Por favor intenta de nuevo." 
+      };
     }
     
     // If remember is true, set a longer session via updateSession

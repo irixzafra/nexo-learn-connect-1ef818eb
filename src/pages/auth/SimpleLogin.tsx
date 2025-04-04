@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 
 const SimpleLogin: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -27,6 +27,15 @@ const SimpleLogin: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("SimpleLogin: Intento de login con:", email);
+    
+    // Validación básica
+    if (!email || !password) {
+      setAuthError("El email y la contraseña son obligatorios");
+      toast.error("Error de login", {
+        description: "El email y la contraseña son obligatorios"
+      });
+      return;
+    }
     
     // Limpiar error previo
     setAuthError(null);
@@ -49,9 +58,10 @@ const SimpleLogin: React.FC = () => {
       }
     } catch (err: any) {
       console.error("SimpleLogin: Error en login:", err);
-      setAuthError(err.message || "Error desconocido");
+      const errorMessage = err.message || "Error desconocido";
+      setAuthError(errorMessage);
       toast.error("Error de login", {
-        description: err.message || "Error desconocido"
+        description: errorMessage
       });
     } finally {
       // Garantizamos que isLoading local se desactiva SIEMPRE
@@ -82,6 +92,9 @@ const SimpleLogin: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
+                placeholder="usuario@ejemplo.com"
+                className="w-full"
               />
             </div>
             
@@ -92,6 +105,9 @@ const SimpleLogin: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isLoading}
+                placeholder="••••••••"
+                className="w-full"
               />
             </div>
             
@@ -100,7 +116,14 @@ const SimpleLogin: React.FC = () => {
               className="w-full" 
               disabled={isLoading}
             >
-              {isLoading ? 'Iniciando sesión...' : 'Login'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Iniciando sesión...
+                </>
+              ) : (
+                'Login'
+              )}
             </Button>
             
             <div className="text-sm text-center text-gray-500 mt-4">
