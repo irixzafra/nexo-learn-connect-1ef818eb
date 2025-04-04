@@ -89,5 +89,5 @@ export * from './settingsNavigation';
 export * from './gamificationNavigation';
 
 // Export types properly with 'export type' syntax for isolatedModules
-export { MenuItem } from '@/types/navigation';
+export type { MenuItem } from '@/types/navigation';
 export type { NavigationMenus } from '@/types/navigation';
