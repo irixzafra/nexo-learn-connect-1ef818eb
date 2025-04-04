@@ -9,7 +9,7 @@ interface MenuItemProps {
   to: string;
   icon: LucideIcon;
   label: string;
-  badge?: number;
+  badge?: number; // Keep this as number type only
   isCollapsed?: boolean;
   isHighlighted?: boolean;
   disabled?: boolean;

@@ -11,7 +11,7 @@ import MenuItem from './common/MenuItem';
 interface ComunidadNavigationProps {
   isOpen: boolean;
   onToggle: () => void;
-  messagesCount?: number;
+  messagesCount?: number; // Ensure this is number type
 }
 
 const ComunidadNavigation: React.FC<ComunidadNavigationProps> = ({ 

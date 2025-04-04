@@ -7,7 +7,7 @@ export interface MenuItem {
   label: string;
   path?: string;
   url?: string;
-  badge?: number;
+  badge?: number; // Ensuring this is only number type
   requiredRole?: UserRoleType | UserRoleType[];
   isHighlighted?: boolean;
   disabled?: boolean;

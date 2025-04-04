@@ -8,11 +8,11 @@ export interface MenuItem extends Omit<BaseMenuItem, 'icon'> {
   icon: LucideIcon; // Keep this strictly as LucideIcon for config usage
   label: string;
   path: string;
-  requiredRole: UserRoleType | UserRoleType[];
+  requiredRole?: UserRoleType | UserRoleType[]; // Make this optional to match BaseMenuItem
   isHighlighted?: boolean;
   description?: string;
   disabled?: boolean;
-  badge?: string | number;
+  badge?: number; // Change to number to match BaseMenuItem
 }
 
 export type NavigationGroup = {
