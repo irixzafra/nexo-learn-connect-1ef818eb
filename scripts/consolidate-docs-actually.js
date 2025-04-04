@@ -2,289 +2,287 @@
 #!/usr/bin/env node
 
 /**
- * Script para consolidar toda la documentación Markdown del proyecto
- * desde 'docs/' y 'src/docs/' hacia 'docs_nexo/'
+ * Script para consolidar la documentación de Nexo Learning
+ * Este script reorganiza la estructura de documentación,
+ * elimina duplicados y crea una estructura limpia y minimalista
  */
 
 const fs = require('fs');
 const path = require('path');
 
 // Configuración de rutas
-const PROJECT_ROOT = path.resolve(__dirname, '..');
-const DOCS_DIR = path.join(PROJECT_ROOT, 'docs');
-const SRC_DOCS_DIR = path.join(PROJECT_ROOT, 'src', 'docs');
-const DOCS_NEXO_DIR = path.join(PROJECT_ROOT, 'docs_nexo');
+const PROJECT_ROOT = path.resolve('.');
+const DOCS_DIR = path.join(PROJECT_ROOT, 'docs_nexo');
+const LEGACY_DIR = path.join(DOCS_DIR, 'docs_legacy');
 
-// Registro de operaciones
-const movedFiles = [];
-const renamedFiles = [];
-const createdDirs = [];
+// Definir la nueva estructura de carpetas
+const NEW_STRUCTURE = {
+  core: ['architecture', 'tech-stack', 'design-system', 'data-model', 'security'],
+  guides: ['users', 'admin', 'developers'],
+  api: ['endpoints', 'schemas'],
+  features: ['courses', 'users', 'navigation', 'roadmap'],
+  templates: ['components', 'documentation']
+};
 
-// Crear la estructura de directorios necesaria
-function createDirectoryStructure() {
-  console.log('Creando estructura de directorios en docs_nexo/...');
+// Mapa de consolidación para determinar qué archivos fusionar
+const CONSOLIDATION_MAP = {
+  // Roadmap - consolidar archivos similares
+  'roadmap': ['roadmap.md', 'ROADMAP.md', 'docs_legacy/roadmap.md'],
   
-  const directories = [
-    DOCS_NEXO_DIR,
-    path.join(DOCS_NEXO_DIR, 'features'),
-    path.join(DOCS_NEXO_DIR, 'features', 'admin'),
-    path.join(DOCS_NEXO_DIR, 'features', 'authentication'),
-    path.join(DOCS_NEXO_DIR, 'features', 'community'),
-    path.join(DOCS_NEXO_DIR, 'features', 'courses'),
-    path.join(DOCS_NEXO_DIR, 'features', 'instructor'),
-    path.join(DOCS_NEXO_DIR, 'features', 'payments'),
-    path.join(DOCS_NEXO_DIR, 'features', 'profiles'),
-    path.join(DOCS_NEXO_DIR, 'guides')
+  // Navegación - consolidar documentos de estructura de navegación
+  'features/navigation': ['NAVIGATION_MASTER.md', 'docs_legacy/ESTRUCTURA_NAVEGACION.md', 'docs_legacy/docs/ESTRUCTURA_NAVEGACION.md', 'docs_legacy/routes.md'],
+  
+  // Seguridad - consolidar documentos relacionados
+  'core/security': ['docs_legacy/security/security_policy.md', 'docs_legacy/security/security_documentation.md'],
+  
+  // Stack tecnológico - consolidar documentos relacionados
+  'core/tech-stack': ['TECHNOLOGY_STACK.md', 'docs_legacy/docs/tech/stack/TECHNOLOGY_STACK.md'],
+  
+  // Diseño del sistema - consolidar documentos relacionados
+  'core/design-system': ['DESIGN_SYSTEM.md', 'docs_legacy/docs/modules/design-system/index.md', 'docs_legacy/docs/modules/design-system/typography.md', 'docs_legacy/docs/modules/design-system/spacing.md', 'docs_legacy/docs/modules/design-system/philosophy.md']
+};
+
+// Mensaje de inicio
+console.log('🚀 Iniciando consolidación de documentación...');
+
+// Crear nueva estructura de carpetas
+function createDirectoryStructure() {
+  console.log('\n📁 Creando estructura de carpetas...');
+  
+  // Asegurar que existe el directorio principal
+  if (!fs.existsSync(DOCS_DIR)) {
+    fs.mkdirSync(DOCS_DIR, { recursive: true });
+  }
+  
+  // Crear estructura de carpetas
+  Object.keys(NEW_STRUCTURE).forEach(mainDir => {
+    const mainPath = path.join(DOCS_DIR, mainDir);
+    
+    if (!fs.existsSync(mainPath)) {
+      fs.mkdirSync(mainPath, { recursive: true });
+      console.log(`  ✓ Creada carpeta: ${mainDir}`);
+    }
+    
+    NEW_STRUCTURE[mainDir].forEach(subDir => {
+      const subPath = path.join(mainPath, subDir);
+      if (!fs.existsSync(subPath)) {
+        fs.mkdirSync(subPath, { recursive: true });
+        console.log(`  ✓ Creada subcarpeta: ${mainDir}/${subDir}`);
+      }
+    });
+  });
+}
+
+// Mover y consolidad documentos
+function consolidateDocuments() {
+  console.log('\n📄 Consolidando documentos...');
+  
+  // Procesar el mapa de consolidación
+  Object.keys(CONSOLIDATION_MAP).forEach(targetPath => {
+    const sourceFiles = CONSOLIDATION_MAP[targetPath];
+    const fullTargetPath = path.join(DOCS_DIR, `${targetPath}.md`);
+    
+    console.log(`\n  📑 Consolidando documentos en: ${targetPath}.md`);
+    let consolidatedContent = `# ${path.basename(targetPath).toUpperCase()}\n\n`;
+    consolidatedContent += `_Este documento es el resultado de la consolidación de múltiples fuentes._\n\n`;
+    
+    // Asegurar que existe el directorio del archivo destino
+    const targetDir = path.dirname(fullTargetPath);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+    
+    // Leer y procesar cada archivo fuente
+    sourceFiles.forEach(sourceFile => {
+      const fullSourcePath = path.join(DOCS_DIR, sourceFile);
+      if (fs.existsSync(fullSourcePath)) {
+        console.log(`    ✓ Procesando: ${sourceFile}`);
+        const content = fs.readFileSync(fullSourcePath, 'utf8');
+        
+        // Extraer el contenido sin el título principal (si existe)
+        let cleanContent = content;
+        if (content.startsWith('# ')) {
+          cleanContent = content.split('\n').slice(1).join('\n').trim();
+        }
+        
+        consolidatedContent += `\n## Contenido de ${path.basename(sourceFile)}\n\n${cleanContent}\n\n`;
+      } else {
+        console.log(`    ⚠️ No encontrado: ${sourceFile}`);
+      }
+    });
+    
+    // Agregar pie de documento
+    const today = new Date().toISOString().split('T')[0];
+    consolidatedContent += `\n---\n\nÚltima actualización: ${today}\n`;
+    
+    // Escribir el archivo consolidado
+    fs.writeFileSync(fullTargetPath, consolidatedContent);
+    console.log(`  ✅ Documento consolidado creado: ${targetPath}.md`);
+  });
+}
+
+// Copiar archivos principales
+function copyMainDocuments() {
+  console.log('\n📋 Copiando documentos principales...');
+  
+  // Lista de archivos principales a copiar directamente
+  const mainDocs = [
+    { source: 'README.md', target: 'README.md' },
+    { source: 'ARCHITECTURE.md', target: 'core/architecture/overview.md' },
+    { source: 'DATA_MODEL.md', target: 'core/data-model/overview.md' },
+    { source: 'REQUIREMENTS.md', target: 'core/requirements.md' },
+    { source: 'CONTRIBUTING.md', target: 'guides/developers/contributing.md' },
+    { source: 'DEPLOYMENT.md', target: 'guides/developers/deployment.md' }
   ];
   
-  for (const dir of directories) {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-      createdDirs.push(dir);
-    }
-  }
-}
-
-// Determinar la ruta de destino para un archivo
-function determineDestinationPath(filePath) {
-  const relativePath = path.relative(PROJECT_ROOT, filePath);
-  let destinationPath;
-  
-  // Determinar si viene de docs/ o src/docs/
-  if (relativePath.startsWith('docs/')) {
-    // Para archivos en la raíz de docs/
-    if (relativePath.split('/').length === 2) {
-      // Ej: docs/ARCHITECTURE.md -> docs_nexo/01_ARCHITECTURE.md
-      const fileName = path.basename(relativePath);
-      destinationPath = path.join(DOCS_NEXO_DIR, `01_${fileName}`);
-    } 
-    // Para archivos en docs/guides/
-    else if (relativePath.startsWith('docs/guides/')) {
-      // Ej: docs/guides/development_workflow.md -> docs_nexo/guides/02_development_workflow.md
-      const guidePath = relativePath.replace('docs/guides/', '');
-      const fileName = path.basename(guidePath);
-      destinationPath = path.join(DOCS_NEXO_DIR, 'guides', `02_${fileName}`);
-    }
-    // Para archivos en docs/admin/
-    else if (relativePath.startsWith('docs/admin/')) {
-      // Ej: docs/admin/README.md -> docs_nexo/features/admin/README.md
-      const adminPath = relativePath.replace('docs/admin/', '');
-      destinationPath = path.join(DOCS_NEXO_DIR, 'features', 'admin', adminPath);
-    }
-    // Para otros subdirectorios en docs/
-    else {
-      // Mover manteniendo la estructura
-      const subPath = relativePath.replace('docs/', '');
-      destinationPath = path.join(DOCS_NEXO_DIR, subPath);
-    }
-  } 
-  // Para archivos en src/docs/
-  else if (relativePath.startsWith('src/docs/')) {
-    // Para archivos en la raíz de src/docs/
-    if (relativePath.split('/').length === 3) {
-      // Ej: src/docs/index.md -> docs_nexo/03_index.md
-      const fileName = path.basename(relativePath);
-      destinationPath = path.join(DOCS_NEXO_DIR, `03_${fileName}`);
-    }
-    // Para archivos en src/docs/features/
-    else if (relativePath.startsWith('src/docs/features/')) {
-      // Preservar la estructura dentro de features
-      const featuresPath = relativePath.replace('src/docs/features/', '');
-      destinationPath = path.join(DOCS_NEXO_DIR, 'features', featuresPath);
-    }
-    // Para archivos en src/docs/modules/
-    else if (relativePath.startsWith('src/docs/modules/')) {
-      // Mover a una carpeta específica dentro de features
-      const modulesPath = relativePath.replace('src/docs/modules/', '');
-      destinationPath = path.join(DOCS_NEXO_DIR, 'features', 'modules', modulesPath);
-    }
-    // Para otros subdirectorios en src/docs/
-    else {
-      // Mover manteniendo la estructura
-      const subPath = relativePath.replace('src/docs/', '');
-      destinationPath = path.join(DOCS_NEXO_DIR, subPath);
-    }
-  }
-  
-  return destinationPath;
-}
-
-// Procesar un archivo Markdown
-function processMarkdownFile(filePath) {
-  // Ignorar archivos que no son .md
-  if (!filePath.toLowerCase().endsWith('.md')) {
-    return;
-  }
-  
-  const destinationPath = determineDestinationPath(filePath);
-  
-  // Asegurar que exista el directorio de destino
-  const destDir = path.dirname(destinationPath);
-  if (!fs.existsSync(destDir)) {
-    fs.mkdirSync(destDir, { recursive: true });
-    createdDirs.push(destDir);
-  }
-  
-  // Verificar si el archivo de destino ya existe
-  if (fs.existsSync(destinationPath)) {
-    // Crear un nombre alternativo con sufijo para el archivo duplicado
-    const originalName = path.basename(filePath, '.md');
-    const extension = path.extname(filePath);
+  mainDocs.forEach(({ source, target }) => {
+    const sourcePath = path.join(DOCS_DIR, source);
+    const targetPath = path.join(DOCS_DIR, target);
     
-    // Determinar el sufijo apropiado (docs o srcdocs)
-    let sourceSuffix = '';
-    if (filePath.includes('src/docs/')) {
-      sourceSuffix = 'srcdocs';
+    // Asegurar que existe el directorio del archivo destino
+    const targetDir = path.dirname(targetPath);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+    
+    if (fs.existsSync(sourcePath)) {
+      // Copiar contenido
+      fs.copyFileSync(sourcePath, targetPath);
+      console.log(`  ✓ Copiado: ${source} → ${target}`);
     } else {
-      sourceSuffix = 'docs';
+      console.log(`  ⚠️ No encontrado: ${source}`);
     }
-    
-    const newName = `${originalName}_duplicate_from_${sourceSuffix}${extension}`;
-    const newDestination = path.join(destDir, newName);
-    
-    // Copiar el archivo con el nuevo nombre
-    fs.copyFileSync(filePath, newDestination);
-    renamedFiles.push({
-      original: filePath,
-      renamed: newDestination
-    });
-  } else {
-    // Copiar el archivo al destino normal
-    fs.copyFileSync(filePath, destinationPath);
-    movedFiles.push({
-      from: filePath,
-      to: destinationPath
-    });
-  }
-}
-
-// Procesar recursivamente una carpeta
-function processDirectory(dirPath) {
-  const items = fs.readdirSync(dirPath);
-  
-  for (const item of items) {
-    const itemPath = path.join(dirPath, item);
-    const stat = fs.statSync(itemPath);
-    
-    if (stat.isDirectory()) {
-      // Procesamos recursivamente los subdirectorios
-      processDirectory(itemPath);
-    } else {
-      // Procesamos los archivos individuales
-      processMarkdownFile(itemPath);
-    }
-  }
-}
-
-// Eliminar directorios recursivamente
-function removeDirectory(dirPath) {
-  if (fs.existsSync(dirPath)) {
-    fs.rmSync(dirPath, { recursive: true, force: true });
-    console.log(`Eliminado directorio: ${dirPath}`);
-    return true;
-  }
-  return false;
-}
-
-// Listar la estructura de archivos
-function listDirectoryStructure(dir, prefix = '') {
-  const items = fs.readdirSync(dir);
-  let output = '';
-  
-  items.sort((a, b) => {
-    // Primero directorios, luego archivos
-    const aIsDir = fs.statSync(path.join(dir, a)).isDirectory();
-    const bIsDir = fs.statSync(path.join(dir, b)).isDirectory();
-    
-    if (aIsDir && !bIsDir) return -1;
-    if (!aIsDir && bIsDir) return 1;
-    return a.localeCompare(b);
   });
+}
+
+// Copiar documentos de guías de usuario
+function copyGuideDocuments() {
+  console.log('\n📚 Procesando guías de usuario...');
   
-  items.forEach((item, index) => {
-    const isLast = index === items.length - 1;
-    const itemPath = path.join(dir, item);
-    const isDir = fs.statSync(itemPath).isDirectory();
+  // Copiar documentos de primeros pasos
+  const userGuides = [
+    { source: 'docs_legacy/guias/primeros-pasos.md', target: 'guides/users/getting-started.md' },
+    { source: 'docs_legacy/student-onboarding.md', target: 'guides/users/onboarding.md' }
+  ];
+  
+  userGuides.forEach(({ source, target }) => {
+    const sourcePath = path.join(DOCS_DIR, source);
+    const targetPath = path.join(DOCS_DIR, target);
     
-    // Caracteres para la representación en árbol
-    const connector = isLast ? '└── ' : '├── ';
-    const newPrefix = prefix + (isLast ? '    ' : '│   ');
+    // Asegurar que existe el directorio del archivo destino
+    const targetDir = path.dirname(targetPath);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
     
-    output += `${prefix}${connector}${item}\n`;
-    
-    if (isDir) {
-      output += listDirectoryStructure(itemPath, newPrefix);
+    if (fs.existsSync(sourcePath)) {
+      // Copiar contenido
+      fs.copyFileSync(sourcePath, targetPath);
+      console.log(`  ✓ Copiado: ${source} → ${target}`);
+    } else {
+      console.log(`  ⚠️ No encontrado: ${source}`);
     }
   });
   
-  return output;
+  // Crear índice de guías de usuario
+  const userGuidesIndex = `# Guías de Usuario
+
+Esta sección contiene guías paso a paso para usuarios del sistema Nexo Learning.
+
+## Contenido
+
+- [Primeros pasos](./getting-started.md) - Guía básica para nuevos usuarios
+- [Proceso de onboarding](./onboarding.md) - Proceso completo de incorporación de estudiantes
+
+## Recursos adicionales
+
+Para información más específica, consulte:
+- [Documentación de API](../../api/endpoints/overview.md)
+- [Características principales](../../features/courses/overview.md)
+
+---
+
+Última actualización: ${new Date().toISOString().split('T')[0]}
+`;
+
+  fs.writeFileSync(path.join(DOCS_DIR, 'guides/users/README.md'), userGuidesIndex);
+  console.log('  ✓ Creado índice de guías de usuario');
 }
 
-// Función principal
-function consolidateDocumentation() {
-  console.log('Iniciando consolidación de documentación...');
+// Limpiar archivos duplicados
+function cleanupDuplicates() {
+  console.log('\n🧹 Limpiando archivos duplicados...');
+
+  // No eliminar los archivos originales todavía, solo registrar
+  // Podemos implementar esta función cuando estemos seguros de que todo está consolidado
+  console.log('  ⚠️ Este paso se implementará después de verificar que todo funciona correctamente');
+}
+
+// Crear índice principal
+function createMainIndex() {
+  console.log('\n📑 Creando índice principal...');
   
-  // Paso 1: Crear estructura de directorios
+  const mainIndex = `# Nexo Learning - Documentación Oficial
+
+## Visión General
+
+Nexo Learning es una plataforma educativa SaaS modular diseñada para facilitar la creación, distribución y consumo de contenido educativo en línea.
+
+## Secciones Principales
+
+### Documentación Core
+- [Arquitectura](./core/architecture/overview.md)
+- [Stack Tecnológico](./core/tech-stack.md)
+- [Modelo de Datos](./core/data-model/overview.md)
+- [Sistema de Diseño](./core/design-system.md)
+- [Seguridad](./core/security.md)
+
+### Guías
+- [Guías para Usuarios](./guides/users/README.md)
+- [Guías para Administradores](./guides/admin/README.md)
+- [Guías para Desarrolladores](./guides/developers/contributing.md)
+
+### API y Referencias
+- [Documentación de API](./api/endpoints/overview.md)
+- [Esquemas de Datos](./api/schemas/README.md)
+
+### Características
+- [Sistema de Cursos](./features/courses/overview.md)
+- [Gestión de Usuarios](./features/users/overview.md)
+- [Sistema de Navegación](./features/navigation.md)
+- [Hoja de Ruta](./features/roadmap.md)
+
+## Herramientas de Documentación
+
+Esta documentación ha sido consolidada y simplificada para facilitar su mantenimiento y consulta.
+
+---
+
+Copyright © 2025 Nexo Learning. Todos los derechos reservados.
+`;
+
+  fs.writeFileSync(path.join(DOCS_DIR, 'README.md'), mainIndex);
+  console.log('  ✓ Creado índice principal');
+}
+
+// Ejecutar todas las funciones
+function run() {
   createDirectoryStructure();
+  consolidateDocuments();
+  copyMainDocuments();
+  copyGuideDocuments();
+  createMainIndex();
+  cleanupDuplicates();
   
-  // Paso 2: Procesar archivos de docs/ si existe
-  if (fs.existsSync(DOCS_DIR)) {
-    console.log('Procesando archivos en docs/...');
-    processDirectory(DOCS_DIR);
-  } else {
-    console.log('El directorio docs/ no existe, omitiendo...');
-  }
-  
-  // Paso 3: Procesar archivos de src/docs/ si existe
-  if (fs.existsSync(SRC_DOCS_DIR)) {
-    console.log('Procesando archivos en src/docs/...');
-    processDirectory(SRC_DOCS_DIR);
-  } else {
-    console.log('El directorio src/docs/ no existe, omitiendo...');
-  }
-  
-  // Paso 4: Eliminar directorios originales
-  let docsRemoved = removeDirectory(DOCS_DIR);
-  let srcDocsRemoved = removeDirectory(SRC_DOCS_DIR);
-  
-  // Paso 5: Generar informe
-  console.log('\n===== INFORME DE CONSOLIDACIÓN =====');
-  
-  console.log('\nDirectorios creados:');
-  createdDirs.forEach(dir => {
-    console.log(`- ${path.relative(PROJECT_ROOT, dir)}`);
-  });
-  
-  console.log('\nArchivos movidos:');
-  movedFiles.forEach(file => {
-    console.log(`- ${path.relative(PROJECT_ROOT, file.from)} -> ${path.relative(PROJECT_ROOT, file.to)}`);
-  });
-  
-  console.log('\nArchivos renombrados por duplicidad:');
-  if (renamedFiles.length === 0) {
-    console.log('- Ninguno');
-  } else {
-    renamedFiles.forEach(file => {
-      console.log(`- ${path.relative(PROJECT_ROOT, file.original)} -> ${path.relative(PROJECT_ROOT, file.renamed)}`);
-    });
-  }
-  
-  console.log('\nDirectorios eliminados:');
-  if (docsRemoved) console.log('- docs/');
-  if (srcDocsRemoved) console.log('- src/docs/');
-  if (!docsRemoved && !srcDocsRemoved) console.log('- Ninguno');
-  
-  console.log('\nEstructura final en docs_nexo/:');
-  console.log(listDirectoryStructure(DOCS_NEXO_DIR));
-  
-  console.log('\nOperación completada con éxito.');
-  console.log(`Archivos procesados: ${movedFiles.length + renamedFiles.length}`);
+  console.log('\n✅ Consolidación completada con éxito!');
+  console.log('\n⚠️ Importante: La carpeta docs_legacy no ha sido eliminada automáticamente.');
+  console.log('   Revise los documentos consolidados antes de eliminarla manualmente.');
 }
 
-// Ejecutar la función principal
+// Iniciar el proceso
 try {
-  consolidateDocumentation();
+  run();
 } catch (error) {
-  console.error('Error durante la consolidación:', error);
+  console.error('\n❌ Error en la consolidación:', error);
   process.exit(1);
 }
