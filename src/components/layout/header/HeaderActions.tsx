@@ -1,69 +1,64 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useAppNavigation } from '@/utils/routeUtils';
-import { 
-  User, 
-  Settings, 
-  HelpCircle,
-  Palette
-} from 'lucide-react';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useToast } from "@/components/ui/use-toast";
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import { Bell, Search } from 'lucide-react';
+import { UserMenu } from '@/components/layout/header/UserMenu';
+import { useAuth } from '@/contexts/auth';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const HeaderActions: React.FC = () => {
-  const { user, profile } = useAuth();
-  const { handleNavigate } = useAppNavigation();
-  const { toast } = useToast();
+export const HeaderActions = () => {
+  const { isAuthenticated, profile } = useAuth();
+  const navigate = useNavigate();
 
-  // Update the navigation links to include the new preferences page
-  const navLinks = [
-    { label: "Mi Perfil", href: "/profile", icon: <User className="h-4 w-4" /> },
-    { label: "Preferencias", href: "/preferences", icon: <Settings className="h-4 w-4" /> },
-    { label: "Ayuda", href: "/help", icon: <HelpCircle className="h-4 w-4" /> },
-  ];
+  if (!isAuthenticated) {
+    return (
+      <div className="flex items-center gap-2">
+        <Button variant="outline" onClick={() => navigate('/auth/login')}>Iniciar sesión</Button>
+        <Button onClick={() => navigate('/auth/register')}>Registrarse</Button>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex items-center space-x-4">
-      {/* Theme Toggle - Hacemos más visible el botón y le añadimos un tooltip más descriptivo */}
-      <div className="relative">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="flex items-center gap-2 bg-primary/5 border-primary/20"
-          onClick={handleNavigate("/app/settings")}
-        >
-          <Palette className="h-4 w-4 text-primary" />
-          <span className="hidden md:inline">Tema</span>
-        </Button>
-        <div className="absolute top-0 right-0 -mt-1 -mr-1">
-          <ThemeSwitcher />
-        </div>
+    <div className="flex items-center gap-4">
+      <div className="relative hidden md:flex items-center">
+        <Search className="absolute left-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="search"
+          placeholder="Buscar en la plataforma"
+          className="w-[200px] lg:w-[300px] pl-8 bg-background"
+        />
       </div>
 
-      {/* Navigation Links */}
-      {navLinks.map((link) => (
-        <Button
-          key={link.href}
-          variant="ghost"
-          size="sm"
-          onClick={handleNavigate(link.href)}
-        >
-          {link.icon}
-          <span className="hidden md:inline ml-2">{link.label}</span>
-        </Button>
-      ))}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button size="icon" variant="ghost" className="relative">
+            <Bell className="h-5 w-5" />
+            <Badge className="h-5 w-5 p-0 flex items-center justify-center absolute -top-1 -right-1">3</Badge>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>
+            Nueva lección disponible
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            Tu curso ha sido actualizado
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            Mensaje del instructor
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <UserMenu />
     </div>
   );
 };
-
-export default HeaderActions;

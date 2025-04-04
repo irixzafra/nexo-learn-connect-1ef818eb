@@ -1,7 +1,5 @@
 
-import { AuthProvider } from './AuthProvider';
-import { useAuth } from './useAuth';
-import type { AuthContextType } from './types';
-
-export { AuthProvider, useAuth };
-export type { AuthContextType };
+export { AuthContext } from './AuthContext';
+export { useAuth } from './useAuth';
+export { AuthProvider } from './AuthProvider';
+export type { AuthContextType } from './types';
