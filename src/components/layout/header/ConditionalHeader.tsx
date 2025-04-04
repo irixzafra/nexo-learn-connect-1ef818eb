@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useSidebar } from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { Button } from '@/components/ui/button';
 import { MenuIcon } from 'lucide-react';
 

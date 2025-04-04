@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { cn } from '@/lib/utils';
 import SidebarContent from './sidebar/SidebarContent';
 

@@ -26,7 +26,7 @@ type SidebarProviderState = {
   toggleSidebar: () => void
 }
 
-const SidebarContext = React.createContext<SidebarProviderState | null>(null)
+export const SidebarContext = React.createContext<SidebarProviderState | null>(null)
 
 export function SidebarProvider({
   children,

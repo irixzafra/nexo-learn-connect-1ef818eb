@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useAuth } from '@/contexts/auth';
 import { Menu, Bell, MessageSquare } from 'lucide-react';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { UserMenu } from './header/UserMenu';
 import Logo from '@/components/Logo';
 import { cn } from '@/lib/utils';
