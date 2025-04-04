@@ -122,7 +122,7 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
    - Panel Instructor (`/app/instructor/dashboard`)
    - Resumen de actividad reciente
    - Métricas de cursos
-   - Próximas clases
+   - Próximas sesiones
    - Notificaciones importantes
 
 2. **Gestión Académica**
@@ -130,9 +130,9 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
    - Crear Curso
    - Biblioteca de Contenido (Placeholder)
 
-3. **Estudiantes**
-   - Mis Estudiantes
-   - Progreso/Notas (Placeholder)
+3. **Participantes**
+   - Mis Participantes
+   - Progreso/Retroalimentación (Placeholder)
    - Comunicación (Placeholder)
 
 4. **Rendimiento**
@@ -144,9 +144,9 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
    - Configuración
 
 **Rutas principales**: `/app/instructor/*`  
-**Componentes clave**: `InstructorDashboard`, `CourseEditor`, `StudentManager`
+**Componentes clave**: `InstructorDashboard`, `CourseEditor`, `ParticipanteManager`
 
-### Sidebar - Rol Estudiante (Comunidad Primero)
+### Sidebar - Rol Participante (Comunidad Primero)
 
 1. **Dashboard**
    - Mi Panel (`/app/dashboard`)
@@ -170,7 +170,7 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
 4. **Mi Cuenta**
    - Mi Perfil
    - Progreso/Certificados (Placeholder)
-   - Facturación/Inscripciones (Placeholder)
+   - Facturación/Participaciones (Placeholder)
    - Configuración
 
 5. **Ayuda**
@@ -178,7 +178,7 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
    - Contactar Soporte (Placeholder)
 
 **Rutas principales**: `/app/*`  
-**Componentes clave**: `StudentDashboard`, `CoursePlayer`, `LearningPathViewer`
+**Componentes clave**: `ParticipanteDashboard`, `CoursePlayer`, `LearningPathViewer`
 
 ### Footer Sidebar (Autenticado)
 

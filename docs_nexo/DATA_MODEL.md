@@ -15,7 +15,7 @@ La base de datos de Nexo Learning está estructurada en PostgreSQL y organizada 
   - `email`: Correo electrónico
   - `role`: Rol principal del usuario
 
-  > **Nota sobre roles**: El campo `role` en `profiles` almacena el rol principal y activo del usuario (admin, instructor, student). Aunque un usuario puede tener múltiples roles asignados en `user_roles`, este campo indica el rol por defecto o el último activamente seleccionado. Las comprobaciones de permisos específicos deben consultar `user_roles` para una verificación más granular.
+  > **Nota sobre roles**: El campo `role` en `profiles` almacena el rol principal y activo del usuario (admin, instructor, participante). Aunque un usuario puede tener múltiples roles asignados en `user_roles`, este campo indica el rol por defecto o el último activamente seleccionado. Las comprobaciones de permisos específicos deben consultar `user_roles` para una verificación más granular.
 
 - **user_roles**: Asignación de roles a usuarios (relación muchos a muchos)
   - `id` (PK, UUID): ID único de asignación
@@ -24,7 +24,7 @@ La base de datos de Nexo Learning está estructurada en PostgreSQL y organizada 
 
 - **roles**: Definición de roles en el sistema
   - `id` (PK, UUID): ID único del rol
-  - `name`: Nombre del rol (admin, instructor, student, etc.)
+  - `name`: Nombre del rol (admin, instructor, participante, etc.)
   - `description`: Descripción del rol
 
 - **permissions**: Permisos individuales
@@ -71,11 +71,11 @@ La base de datos de Nexo Learning está estructurada en PostgreSQL y organizada 
   - `lesson_order`: Orden dentro del módulo
   - `is_previewable`: Si es visible sin estar inscrito
 
-- **enrollments**: Inscripciones de usuarios a cursos
-  - `id` (PK, UUID): ID único de inscripción
-  - `user_id` (FK → profiles.id): Usuario inscrito
+- **enrollments**: Participaciones de usuarios a cursos
+  - `id` (PK, UUID): ID único de participación
+  - `user_id` (FK → profiles.id): Usuario participante
   - `course_id` (FK → courses.id): Curso
-  - `enrolled_at`: Fecha de inscripción
+  - `enrolled_at`: Fecha de participación
 
 - **lesson_progress**: Progreso de usuarios en lecciones
   - `id` (PK, UUID): ID único del registro
@@ -88,8 +88,8 @@ La base de datos de Nexo Learning está estructurada en PostgreSQL y organizada 
 
 ### Sistema de Evaluación
 
-- **quizzes**: Cuestionarios/exámenes
-  - `id` (PK, UUID): ID único del cuestionario
+- **quizzes**: Valoraciones/retos
+  - `id` (PK, UUID): ID único de la valoración
   - `title`: Título del quiz
   - `description`: Descripción
   - `course_id` (FK → courses.id): Curso relacionado
@@ -97,9 +97,9 @@ La base de datos de Nexo Learning está estructurada en PostgreSQL y organizada 
   - `passing_score`: Puntaje para aprobar
   - `is_published`: Estado de publicación
 
-- **quiz_questions**: Preguntas de cuestionarios
+- **quiz_questions**: Preguntas de valoraciones
   - `id` (PK, UUID): ID único de la pregunta
-  - `quiz_id` (FK → quizzes.id): Cuestionario al que pertenece
+  - `quiz_id` (FK → quizzes.id): Valoración a la que pertenece
   - `question`: Texto de la pregunta
   - `question_type`: Tipo (multiple_choice, text, etc.)
   - `points`: Puntos asignados
@@ -111,10 +111,10 @@ La base de datos de Nexo Learning está estructurada en PostgreSQL y organizada 
   - `is_correct`: Si es la respuesta correcta
   - `option_order`: Orden de presentación
 
-- **quiz_attempts**: Intentos de usuarios en cuestionarios
+- **quiz_attempts**: Intentos de usuarios en valoraciones
   - `id` (PK, UUID): ID único del intento
   - `user_id` (FK → profiles.id): Usuario
-  - `quiz_id` (FK → quizzes.id): Cuestionario
+  - `quiz_id` (FK → quizzes.id): Valoración
   - `score`: Puntaje obtenido
   - `passed`: Si aprobó
   - `started_at`: Inicio del intento
@@ -202,7 +202,7 @@ profiles ---< user_roles >--- roles ---< role_permissions >--- permissions
 
 ## Tipos Enumerados Principales
 
-- **UserRoleType**: `admin`, `instructor`, `student`, `guest`, `anonimo`
+- **UserRoleType**: `admin`, `instructor`, `participante`, `guest`, `anonimo`
 - **CourseLevel**: `principiante`, `intermedio`, `avanzado`
 - **ContentType**: `text`, `video`, `quiz`, `assignment`
 - **CertificateStatus**: `issued`, `revoked`, `expired`
@@ -217,4 +217,4 @@ Las tablas principales implementan políticas RLS (Row Level Security) para prot
 - Instructores solo pueden modificar sus propios cursos
 - Administradores tienen acceso completo a toda la información
 - El contenido público de cursos es visible para todos
-- El contenido premium solo es visible para usuarios inscritos
+- El contenido premium solo es visible para usuarios participantes

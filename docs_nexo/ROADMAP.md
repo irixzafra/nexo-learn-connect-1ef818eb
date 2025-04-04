@@ -1,5 +1,5 @@
 
-# Roadmap Definitivo: Nexo Learning ERP/LMS/Comunidad Educativa
+# Roadmap Definitivo: Nexo Learning ERP/LMS/Comunidad de Creación e Impacto
 
 Este roadmap está estructurado en cinco fases principales, más una fase inicial de preparación (Fase 0). Cada una tiene objetivos claros, tareas específicas y un hito que marca su finalización. El enfoque es construir una plataforma modular, robusta y preparada para el crecimiento futuro, sin comprometer calidad ni innovación.
 
@@ -34,9 +34,9 @@ Este roadmap está estructurado en cinco fases principales, más una fase inicia
 **Objetivo:** Crear una experiencia de usuario unificada y lanzar el núcleo del sistema educativo.
 
 **Tareas Clave:**
-- 🔄 Estandarizar interfaces para todos los roles (admin, instructor, estudiante).
+- 🔄 Estandarizar interfaces para todos los roles (admin, instructor, participante).
 - 🕐 Desarrollar el catálogo de cursos con filtros y búsqueda avanzada.
-- 🕐 Implementar el visualizador de lecciones con seguimiento de progreso del estudiante.
+- 🕐 Implementar el visualizador de lecciones con seguimiento de progreso del participante.
 - 🕐 Configurar SEO básico para visibilidad en buscadores.
 - 🔄 Asegurar responsividad y accesibilidad (cumpliendo WCAG 2.1 AA).
 - 🕐 Introducir soporte multi-idioma básico (e.g., español e inglés).
@@ -44,7 +44,7 @@ Este roadmap está estructurado en cinco fases principales, más una fase inicia
 
 **Funcionalidad desde esta fase:**
 - Los usuarios pueden explorar y buscar cursos en un catálogo intuitivo.
-- Los estudiantes pueden ver lecciones y seguir su progreso.
+- Los participantes pueden ver lecciones y seguir su progreso.
 - La plataforma es accesible y usable en diferentes dispositivos e idiomas.
 
 **Hito:** Versión beta lista para pruebas con usuarios seleccionados.
@@ -58,7 +58,7 @@ Este roadmap está estructurado en cinco fases principales, más una fase inicia
 - 🔄 Implementar gestión de usuarios con permisos detallados.
 - 🕐 Integrar un sistema de pagos para compras y suscripciones (e.g., Stripe).
 - 🕐 Configurar planes de suscripción con facturación automática.
-- 🕐 Añadir analíticas básicas para administradores (e.g., progreso de estudiantes, uso del sistema).
+- 🕐 Añadir analíticas básicas para administradores (e.g., progreso de participantes, uso del sistema).
 - 🕐 Optimizar el backend para manejar mayor carga.
 - 🕐 Establecer auditoría y seguridad para transacciones.
 - 🔄 Implementar feature flags para activar/desactivar funcionalidades de manera controlada.
@@ -70,13 +70,13 @@ Este roadmap está estructurado en cinco fases principales, más una fase inicia
 
 **Hito:** Lanzamiento público inicial de la plataforma.
 
-## Fase 3: LMS Avanzado y Comunidad Educativa
+## Fase 3: LMS Avanzado y Comunidad de Creación e Impacto
 
 **Objetivo:** Enriquecer la experiencia educativa y fomentar la interacción social.
 
 **Tareas Clave:**
 - 🕐 Desarrollar un editor de contenido intuitivo para instructores.
-- 🕐 Añadir herramientas de evaluación (quizzes, exámenes) y certificados.
+- 🕐 Añadir herramientas de valoración (retos, validaciones) y certificados.
 - 🕐 Habilitar comentarios y discusiones en lecciones.
 - 🕐 Crear foros de comunidad (generales y por curso).
 - 🕐 Implementar mensajería directa y grupos de colaboración.
@@ -85,7 +85,7 @@ Este roadmap está estructurado en cinco fases principales, más una fase inicia
 
 **Funcionalidad desde esta fase:**
 - Los instructores pueden crear y gestionar contenido de manera eficiente.
-- Los estudiantes pueden interactuar, colaborar y recibir retroalimentación.
+- Los participantes pueden interactuar, colaborar y recibir retroalimentación.
 - La gamificación y las sugerencias de IA mejoran el engagement y la personalización.
 
 **Hito:** Plataforma con funcionalidades educativas y sociales avanzadas.
@@ -144,7 +144,7 @@ Para garantizar que Nexo Learning sea funcional desde las primeras fases, este r
 
 ## Conclusión
 
-Este Roadmap Definitivo asegura que Nexo Learning sea funcional y valioso desde las fases tempranas, mientras evoluciona hacia una plataforma ERP/LMS/Comunidad Educativa de clase mundial. Con cada etapa entregando funcionalidades clave y preparando el terreno para el futuro, este plan está diseñado para atraer usuarios, fomentar la adopción y liderar en innovación.
+Este Roadmap Definitivo asegura que Nexo Learning sea funcional y valioso desde las fases tempranas, mientras evoluciona hacia una plataforma de Creación e Impacto de clase mundial. Con cada etapa entregando funcionalidades clave y preparando el terreno para el futuro, este plan está diseñado para atraer usuarios, fomentar la adopción y liderar en innovación.
 
 **Última actualización:** Abril 2025
 

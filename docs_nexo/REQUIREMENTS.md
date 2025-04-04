@@ -5,7 +5,7 @@
 
 ### Objetivos Generales
 
-1. **Plataforma SAAS Educativa**
+1. **Plataforma de Creación e Impacto**
    - Sistema modular para creación y consumo de contenido educativo
    - Multiusuario con diferentes roles y permisos
    - Arquitectura escalable para crecimiento en usuarios y contenido
@@ -29,7 +29,7 @@ La implementación detallada por fases se encuentra en el documento `docs_nexo/R
 #### Sistema de Usuarios
 
 1. **Roles y Permisos**
-   - Implementación de roles principales: admin, instructor, student
+   - Implementación de roles principales: admin, instructor, participante
    - Sistema flexible para añadir roles adicionales
    - Permisos granulares para funcionalidades específicas
    - Capacidad para cambiar entre roles (para usuarios con múltiples roles)
@@ -44,7 +44,7 @@ La implementación detallada por fases se encuentra en el documento `docs_nexo/R
 
 1. **Estructura de Contenido**
    - Organización jerárquica: Cursos > Módulos > Lecciones
-   - Soporte para múltiples tipos de contenido: texto, video, cuestionarios, tareas
+   - Soporte para múltiples tipos de contenido: texto, video, valoraciones, tareas
    - Sistema de metadatos y categorización
    - Capacidad para contenido público y privado
 
@@ -57,7 +57,7 @@ La implementación detallada por fases se encuentra en el documento `docs_nexo/R
 3. **Creación de Contenido**
    - Editor WYSIWYG para instructores
    - Subida y gestión de recursos multimedia
-   - Herramientas para creación de cuestionarios y evaluaciones
+   - Herramientas para creación de valoraciones y evaluaciones
    - Sistemas de plantillas para facilitar la creación
 
 #### Comunidad y Engagement
