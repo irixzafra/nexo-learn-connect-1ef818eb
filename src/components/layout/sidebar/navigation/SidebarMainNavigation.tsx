@@ -10,10 +10,20 @@ import AdminNavigation from './AdminNavigation';
 import GamificationNavigation from './GamificationNavigation';
 
 interface SidebarMainNavigationProps {
-  isCollapsed: boolean;
+  isCollapsed?: boolean;
+  effectiveRole?: string;
+  messagesCount?: number;
+  notificationsCount?: number;
+  getHomePath?: () => string;
 }
 
-export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ isCollapsed }) => {
+export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ 
+  isCollapsed = false,
+  messagesCount = 0,
+  notificationsCount = 0,
+  effectiveRole,
+  getHomePath
+}) => {
   const [openSections, setOpenSections] = useState({
     dashboard: true,
     estudiante: true,
@@ -52,7 +62,7 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ is
       <ComunidadNavigation 
         isOpen={openSections.comunidad} 
         onToggle={() => toggleSection('comunidad')} 
-        messagesCount={3}
+        messagesCount={messagesCount}
       />
       
       <CalendarNavigation 
@@ -65,10 +75,12 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ is
         onToggle={() => toggleSection('gamification')} 
       />
       
-      <AdminNavigation 
-        isOpen={openSections.admin} 
-        onToggle={() => toggleSection('admin')} 
-      />
+      {(effectiveRole === 'admin' || effectiveRole === 'sistemas') && (
+        <AdminNavigation 
+          isOpen={openSections.admin} 
+          onToggle={() => toggleSection('admin')} 
+        />
+      )}
       
       <ConfiguracionNavigation 
         isOpen={openSections.configuracion} 
@@ -77,3 +89,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ is
     </div>
   );
 };
+
+// Add a default export pointing to the named export
+export default SidebarMainNavigation;

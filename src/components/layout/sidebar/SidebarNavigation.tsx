@@ -6,7 +6,7 @@ import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
 import { getRoleName, getHomePath } from '@/utils/roleUtils';
-import SidebarMainNavigation from './navigation/SidebarMainNavigation';
+import { SidebarMainNavigation } from './navigation/SidebarMainNavigation';
 import SidebarFooterSection from './SidebarFooterSection';
 
 interface SidebarNavigationProps {

@@ -2,7 +2,7 @@
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
-import SidebarMainNavigation from './sidebar/navigation/SidebarMainNavigation';
+import { SidebarMainNavigation } from './sidebar/navigation/SidebarMainNavigation';
 import SidebarLogoSection from './sidebar/SidebarLogoSection';
 import SidebarFooterSection from './sidebar/SidebarFooterSection';
 import { useAuth } from '@/contexts/auth';

@@ -4,7 +4,6 @@ import { Home } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
 import MenuItem from './common/MenuItem';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
-import { Badge } from '@/components/ui/badge';
 
 interface HomeNavigationProps {
   role: UserRoleType;
@@ -19,19 +18,6 @@ const HomeNavigation: React.FC<HomeNavigationProps> = ({
   homePath = '/',
   isCollapsed
 }) => {
-  const getNotificationBadge = () => {
-    if (notificationsCount === 0) return null;
-    
-    return (
-      <Badge 
-        variant="secondary" 
-        className="ml-2 px-1 min-w-[1.5rem] text-center"
-      >
-        {notificationsCount}
-      </Badge>
-    );
-  };
-
   return (
     <div className="mb-2">
       <MenuItem
@@ -39,7 +25,7 @@ const HomeNavigation: React.FC<HomeNavigationProps> = ({
         icon={Home}
         label="Inicio"
         isCollapsed={isCollapsed}
-        badge={getNotificationBadge()}
+        badge={notificationsCount > 0 ? notificationsCount : undefined}
       />
     </div>
   );
