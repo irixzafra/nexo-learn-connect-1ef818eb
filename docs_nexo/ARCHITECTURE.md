@@ -75,43 +75,7 @@ La aplicación está estructurada alrededor de dominios funcionales (features) e
 
 ## Sistema de Navegación y Rutas
 
-### Principios de Navegación
-
-1. **Organizados por Dominio/Flujo**: Navegación estructurada según contexto del usuario
-2. **Simplicidad**: Máximo 2 niveles de navegación para mantener usabilidad
-3. **Contextualidad**: Elementos específicos al rol y situación del usuario
-4. **Consistencia**: Patrones similares en toda la aplicación
-
-### Estructura de Navegación por Rol
-
-#### Admin (Organizado por Dominios Funcionales)
-- **Panel Principal**: Visión ejecutiva y KPIs
-- **Académico (LMS)**: Gestión de cursos, contenido y certificaciones
-- **Personas (CRM)**: Gestión de usuarios, roles y comunicaciones
-- **Finanzas**: Pagos, facturación y suscripciones
-- **Analíticas/Reportes**: Dashboards e informes personalizados
-- **Plataforma (Sistema)**: Configuración, diseño e integraciones
-- **Herramientas Técnicas**: Funcionalidades avanzadas para administradores técnicos
-
-#### Instructor (Organizado por Flujo de Trabajo)
-- **Panel Principal**: Vista general y actividad reciente
-- **Mis Cursos**: Creación y gestión de contenido educativo
-- **Mis Estudiantes**: Seguimiento y comunicación con estudiantes
-- **Analíticas**: Estadísticas de cursos y estudiantes
-- **Recursos**: Materiales y herramientas didácticas
-- **Perfil**: Información profesional y configuración
-
-#### Estudiante
-- **Dashboard**: Panel personalizado de aprendizaje
-- **Aprendizaje**: Cursos, rutas, calendario, recursos
-- **Comunidad**: Mensajes, foros, notificaciones
-- **Perfil**: Configuración personal y certificados
-
-#### Usuario no Autenticado
-- **Exploración**: Home, cursos, rutas de aprendizaje
-- **Información**: Sobre nosotros, ayuda, contacto
-- **Legal**: Términos, privacidad, cookies
-- **Autenticación**: Login, registro, recuperación
+Para información detallada sobre el sistema de navegación y estructura de rutas, consulte [Documentación de Navegación](./NAVIGATION.md).
 
 ## Flujo de Datos
 
