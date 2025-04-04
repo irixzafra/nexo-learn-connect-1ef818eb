@@ -44,44 +44,44 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
 
 La navegación de administración está organizada por dominios funcionales:
 
-1. **Panel Principal**
-   - Dashboard con KPIs clave
+1. **Dashboard**
+   - Visión General (`/app/admin/dashboard`)
+   - KPIs clave
    - Resumen de actividad reciente
    - Alertas y notificaciones importantes
 
-2. **Dominio Académico**
+2. **Académico (LMS)**
    - Gestión de cursos
-   - Gestión de categorías
-   - Rutas de aprendizaje
+   - Contenido Global
+   - Categorías
+   - Rutas de Aprendizaje
    - Certificados
+   - Analíticas Académicas
 
-3. **Dominio de Personas**
+3. **Gestión Central (ERP)**
    - Gestión de usuarios
    - Roles y permisos
-   - Instructores
-   - Estudiantes
+   - Analíticas de usuarios
+   - Comunicación
 
-4. **Dominio de Finanzas**
-   - Gestión de pagos
-   - Facturación
-   - Reportes financieros
-   - Configuración de precios
+4. **Finanzas**
+   - Transacciones
+   - Suscripciones
+   - Analíticas Financieras
+   - Configuración de pagos
 
-5. **Dominio de Analíticas**
-   - Dashboards
-   - Reportes personalizables
-   - Exportación de datos
-   - Métricas de rendimiento
+5. **Sistema (Plataforma)**
+   - Configuración General
+   - Diseño
+   - Páginas CMS
+   - Gestión de Features
+   - Integraciones
+   - Analíticas de Plataforma
+   - Salud/Logs
 
-6. **Dominio de Plataforma**
-   - Configuración global
-   - Personalización de diseño
-   - Páginas del sistema
-   - SEO
-
-7. **Herramientas Técnicas**
-   - Diagnóstico del sistema
-   - Logs y auditoría
+6. **Herramientas Dev (Opcional)**
+   - Diagrama de navegación
+   - Revisión de elementos
    - Herramientas de desarrollo
    - Configuraciones avanzadas
 
@@ -92,40 +92,29 @@ La navegación de administración está organizada por dominios funcionales:
 
 La navegación de instructores está organizada por flujo de trabajo natural:
 
-1. **Panel Principal**
+1. **Dashboard**
+   - Panel Instructor (`/app/instructor/dashboard`)
    - Resumen de actividad reciente
    - Métricas de cursos
    - Próximas clases
    - Notificaciones importantes
 
-2. **Mis Cursos**
-   - Creación y edición de cursos
-   - Materiales y recursos
-   - Organización de contenido
-   - Configuración de evaluaciones
+2. **Gestión Académica**
+   - Mis Cursos
+   - Crear Curso
+   - Biblioteca de Contenido
 
-3. **Mis Estudiantes**
-   - Lista de estudiantes
-   - Seguimiento de progreso
-   - Calificaciones
-   - Comunicaciones
+3. **Estudiantes**
+   - Mis Estudiantes
+   - Progreso/Notas
+   - Comunicación
 
-4. **Analíticas**
-   - Estadísticas de engagement
-   - Rendimiento por lección
-   - Métricas de finalización
-   - Retroalimentación
+4. **Rendimiento**
+   - Analíticas de Cursos
 
-5. **Recursos**
-   - Biblioteca de materiales
-   - Plantillas
-   - Herramientas didácticas
-   - Recursos compartidos
-
-6. **Perfil**
-   - Información personal
-   - Credenciales
-   - Especialidades
+5. **Cuenta**
+   - Mi Perfil
+   - Mi Facturación
    - Configuración
 
 **Rutas principales**: `/app/instructor/*`  
@@ -133,37 +122,36 @@ La navegación de instructores está organizada por flujo de trabajo natural:
 
 ### Estudiante
 
-La navegación de estudiantes está centrada en la experiencia de aprendizaje:
+La navegación de estudiantes está centrada en la comunidad y experiencia de aprendizaje:
 
-1. **Panel Principal**
-   - Cursos en progreso
+1. **Dashboard**
+   - Mi Panel (`/app/dashboard`)
+   - Resumen de actividad
    - Próximas entregas
    - Recomendaciones personalizadas
    - Notificaciones
 
-2. **Aprendizaje**
-   - Mis cursos
-   - Explorar catálogo
-   - Rutas de aprendizaje
-   - Certificados
+2. **Comunidad**
+   - Feed
+   - Leaderboard
+   - Mensajes
+   - Notificaciones
 
-3. **Comunidad**
-   - Foros
-   - Mensajería
-   - Grupos de estudio
-   - Eventos
+3. **Aprendizaje**
+   - Mis Cursos
+   - Explorar Cursos
+   - Rutas de Aprendizaje
+   - Calendario
 
-4. **Recursos**
-   - Biblioteca de materiales
-   - Herramientas
-   - Descargas
-   - Favoritos
-
-5. **Perfil y Configuración**
-   - Información personal
-   - Preferencias
-   - Suscripciones
+4. **Mi Cuenta**
+   - Mi Perfil
+   - Progreso/Certificados
+   - Facturación/Inscripciones
    - Configuración
+
+5. **Ayuda**
+   - Centro de Ayuda
+   - Contactar Soporte
 
 **Rutas principales**: `/app/*`  
 **Componentes clave**: `StudentDashboard`, `CoursePlayer`, `LearningPathViewer`
@@ -172,26 +160,20 @@ La navegación de estudiantes está centrada en la experiencia de aprendizaje:
 
 La navegación para usuarios no autenticados:
 
-1. **Página Principal**
-   - Presentación de la plataforma
-   - Testimonios
-   - Cursos destacados
-
-2. **Explorar**
-   - Catálogo de cursos
-   - Filtrado y búsqueda
-   - Previsualizaciones
-
-3. **Inscripción**
-   - Registro
-   - Iniciar sesión
-   - Planes y precios
-
-4. **Información**
-   - Acerca de nosotros
-   - Blog
-   - Contacto
+1. **Header**
+   - Cursos
+   - Rutas
+   - Sobre Nosotros
    - Ayuda
+   - Login/Registro
+   - Idioma
+   - Tema
+
+2. **Footer**
+   - Plataforma
+   - Legal
+   - Recursos
+   - Redes
 
 **Rutas principales**: `/` (raíz), `/landing`, `/auth/*`  
 **Componentes clave**: `LandingPage`, `Auth`, `PublicCourseView`
@@ -215,11 +197,11 @@ export const routeMap = {
   
   // Rutas de administración
   admin: '/app/admin',
-  adminUsers: '/app/admin/users',
+  adminDashboard: '/app/admin/dashboard',
   
   // Rutas de instructor
   instructor: '/app/instructor',
-  instructorCourses: '/app/instructor/courses',
+  instructorDashboard: '/app/instructor/dashboard',
 };
 ```
 
