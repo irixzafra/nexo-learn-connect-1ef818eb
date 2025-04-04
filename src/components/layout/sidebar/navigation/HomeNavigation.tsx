@@ -3,7 +3,6 @@ import React from 'react';
 import { Home } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
 import MenuItem from './common/MenuItem';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 
 interface HomeNavigationProps {
   role: UserRoleType;

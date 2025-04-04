@@ -1,17 +1,14 @@
 
 import React, { useState } from 'react';
-import DashboardNavigation from './DashboardNavigation';
-import EstudianteNavigation from './EstudianteNavigation';
-import CursosNavigation from './CursosNavigation';
-import ComunidadNavigation from './ComunidadNavigation';
-import CalendarNavigation from './CalendarNavigation';
-import ConfiguracionNavigation from './ConfiguracionNavigation';
-import AdminNavigation from './AdminNavigation';
-import GamificationNavigation from './GamificationNavigation';
+import { useAuth } from '@/contexts/auth';
+import { UserRoleType } from '@/types/auth';
+import { getNavigationByRole } from '@/config/navigation';
+import SidebarNavGroup from './SidebarNavGroup';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 
 interface SidebarMainNavigationProps {
   isCollapsed?: boolean;
-  effectiveRole?: string;
+  effectiveRole?: UserRoleType;
   messagesCount?: number;
   notificationsCount?: number;
   getHomePath?: () => string;
@@ -19,76 +16,70 @@ interface SidebarMainNavigationProps {
 
 export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ 
   isCollapsed = false,
+  effectiveRole = 'student',
   messagesCount = 0,
   notificationsCount = 0,
-  effectiveRole,
-  getHomePath
+  getHomePath = () => '/app/home'
 }) => {
-  const [openSections, setOpenSections] = useState({
+  const { state } = useSidebar();
+  const sidebarCollapsed = isCollapsed || state === "collapsed";
+  
+  // Track expanded sections
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     dashboard: true,
-    estudiante: true,
-    cursos: false,
-    comunidad: false,
-    calendar: false,
-    gamification: false,
-    admin: false,
-    configuracion: false,
+    learning: true
   });
 
-  const toggleSection = (section: keyof typeof openSections) => {
-    setOpenSections((prev) => ({
+  const toggleSection = (section: string) => {
+    setOpenSections(prev => ({
       ...prev,
-      [section]: !prev[section],
+      [section]: !prev[section]
     }));
   };
+  
+  // Get navigation items based on role
+  const roleNavigation = getNavigationByRole(effectiveRole);
 
   return (
     <div className="space-y-1">
-      <DashboardNavigation 
-        isOpen={openSections.dashboard} 
-        onToggle={() => toggleSection('dashboard')} 
-      />
-      
-      <EstudianteNavigation 
-        isOpen={openSections.estudiante} 
-        onToggle={() => toggleSection('estudiante')} 
-      />
-      
-      <CursosNavigation 
-        isOpen={openSections.cursos} 
-        onToggle={() => toggleSection('cursos')} 
-      />
-      
-      <ComunidadNavigation 
-        isOpen={openSections.comunidad} 
-        onToggle={() => toggleSection('comunidad')} 
-        messagesCount={messagesCount}
-      />
-      
-      <CalendarNavigation 
-        isOpen={openSections.calendar} 
-        onToggle={() => toggleSection('calendar')} 
-      />
-      
-      <GamificationNavigation 
-        isOpen={openSections.gamification} 
-        onToggle={() => toggleSection('gamification')} 
-      />
-      
-      {(effectiveRole === 'admin' || effectiveRole === 'sistemas') && (
-        <AdminNavigation 
-          isOpen={openSections.admin} 
-          onToggle={() => toggleSection('admin')} 
-        />
-      )}
-      
-      <ConfiguracionNavigation 
-        isOpen={openSections.configuracion} 
-        onToggle={() => toggleSection('configuracion')} 
-      />
+      {/* Render all navigation groups for the role */}
+      {Object.entries(roleNavigation).map(([key, items]) => {
+        // Skip empty sections
+        if (!items || items.length === 0) return null;
+        
+        // Skip sections that should be hidden for this role
+        const visibleItems = items.filter(item => {
+          if (!item.requiredRole) return true;
+          
+          if (Array.isArray(item.requiredRole)) {
+            return item.requiredRole.includes(effectiveRole);
+          }
+          
+          return item.requiredRole === effectiveRole;
+        });
+        
+        if (visibleItems.length === 0) return null;
+        
+        // Get the first item to determine section name (could be improved with proper section metadata)
+        const sectionTitle = key.charAt(0).toUpperCase() + key.slice(1);
+        const sectionIcon = items[0].icon;
+        
+        return (
+          <SidebarNavGroup
+            key={key}
+            title={sectionTitle}
+            icon={sectionIcon}
+            isCollapsed={sidebarCollapsed}
+            effectiveRole={effectiveRole}
+            items={items}
+            defaultOpen={openSections[key] || false}
+            id={key}
+          />
+        );
+      })}
     </div>
   );
 };
 
-// Add a default export pointing to the named export
+// Add default export to work with both named and default imports
 export default SidebarMainNavigation;

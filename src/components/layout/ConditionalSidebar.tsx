@@ -23,8 +23,8 @@ interface ConditionalSidebarProps {
 }
 
 /**
- * ConditionalSidebar determina qué navegación mostrar basado en la ruta actual.
- * Es un componente unificado que maneja tanto la navegación regular como la administrativa.
+ * ConditionalSidebar determina qué navegación mostrar basado en el rol efectivo del usuario.
+ * Es un componente unificado que maneja toda la navegación lateral.
  */
 const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   userRole,
@@ -47,12 +47,12 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       "h-full flex flex-col pb-2 bg-background border-r border-border/50 transition-all",
       isCollapsed ? "w-20" : "w-64"
     )}>
-      {/* Logo at the top with full title and subtitle */}
+      {/* Logo at the top */}
       <div className="p-3 border-b border-border/30 mb-1">
         <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
       </div>
 
-      {/* Navegación principal para todas las rutas */}
+      {/* Main navigation based on role */}
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent px-2">
         <SidebarMainNavigation 
           effectiveRole={effectiveRole}

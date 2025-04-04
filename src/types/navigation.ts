@@ -21,15 +21,17 @@ export interface MenuItem {
   disabled?: boolean;
   isHighlighted?: boolean;
   description?: string;
+  domain?: string; // For admin domain-based navigation
+  workflow?: string; // For instructor workflow-based navigation
 }
 
 export interface NavigationMenus {
+  dashboard: MenuItem[];
   main: MenuItem[];
   admin: MenuItem[];
-  explore: MenuItem[];
   instructor: MenuItem[];
-  academic: MenuItem[];
-  finance: MenuItem[];
-  settings: MenuItem[];
-  gamification: MenuItem[];
+  student: MenuItem[];
+  learning: MenuItem[];
+  community: MenuItem[];
+  configuration: MenuItem[];
 }
