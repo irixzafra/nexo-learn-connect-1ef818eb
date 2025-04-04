@@ -2,10 +2,7 @@
 #!/usr/bin/env node
 
 /**
- * Script para consolidar la documentación entre docs_nexo y docs
- * 
- * Este script mueve el contenido único de docs_nexo a docs y elimina docs_nexo
- * para tener una única fuente de verdad en la documentación.
+ * Script para consolidar y simplificar la documentación
  */
 
 const fs = require('fs');
@@ -15,6 +12,7 @@ const path = require('path');
 const PROJECT_ROOT = path.join(__dirname, '../..');
 const DOCS_NEXO_DIR = path.join(PROJECT_ROOT, 'docs_nexo');
 const DOCS_DIR = path.join(PROJECT_ROOT, 'docs');
+const TEMP_DIR = path.join(PROJECT_ROOT, 'docs_temp');
 
 // Función para asegurar que existe un directorio
 function ensureDirectoryExists(dir) {
@@ -24,98 +22,138 @@ function ensureDirectoryExists(dir) {
   }
 }
 
-// Función para copiar un archivo
-function copyFile(source, destination) {
-  ensureDirectoryExists(path.dirname(destination));
-  fs.copyFileSync(source, destination);
-  console.log(`✓ Copiado: ${path.relative(PROJECT_ROOT, source)} → ${path.relative(PROJECT_ROOT, destination)}`);
-}
-
-// Función para verificar si un archivo en docs_nexo ya existe en docs
-function fileExistsInDocs(sourceFile, relativePath) {
-  const destFile = path.join(DOCS_DIR, relativePath);
-  return fs.existsSync(destFile);
-}
-
-// Función para determinar qué archivo es más reciente
-function isMoreRecent(file1, file2) {
-  const stats1 = fs.statSync(file1);
-  const stats2 = fs.statSync(file2);
-  return stats1.mtime > stats2.mtime;
-}
-
-// Función para procesar un directorio y copiar archivos
-function processDirectory(sourceDir, targetDir, relativePath = '') {
-  // Asegurar que el directorio de destino existe
-  ensureDirectoryExists(targetDir);
+// Función para crear una estructura minimalista de documentación
+function createMinimalDocStructure() {
+  // Crear estructura básica
+  const mainDirs = [
+    DOCS_DIR,
+    path.join(DOCS_DIR, 'guias'),
+    path.join(DOCS_DIR, 'api'),
+    path.join(DOCS_DIR, 'admin')
+  ];
   
-  // Leer archivos y directorios
-  const items = fs.readdirSync(sourceDir);
+  // Asegurar que existan los directorios básicos
+  mainDirs.forEach(dir => ensureDirectoryExists(dir));
   
-  // Procesar cada elemento
-  for (const item of items) {
-    const sourcePath = path.join(sourceDir, item);
-    const relPath = path.join(relativePath, item);
-    const targetPath = path.join(targetDir, item);
-    
-    // Si es un directorio, procesarlo recursivamente
-    if (fs.statSync(sourcePath).isDirectory()) {
-      processDirectory(sourcePath, targetPath, relPath);
-      continue;
+  // Crear/Actualizar archivos esenciales
+  const indexContent = `# Documentación Nexo Learning
+
+## Secciones principales
+
+- [Guías de usuario](./guias/README.md)
+- [Documentación de API](./api/README.md)
+- [Documentación para administradores](./admin/README.md)
+
+## Acerca de esta documentación
+
+Esta documentación ha sido simplificada para facilitar su mantenimiento y consulta.
+
+---
+
+Última actualización: ${new Date().toISOString().split('T')[0]}
+`;
+
+  fs.writeFileSync(path.join(DOCS_DIR, 'README.md'), indexContent);
+  console.log(`✓ Creado archivo principal: README.md`);
+  
+  // Crear archivos README básicos para cada sección
+  const sections = [
+    { 
+      path: path.join(DOCS_DIR, 'guias', 'README.md'),
+      content: `# Guías de usuario\n\nEsta sección contiene guías paso a paso para usuarios del sistema.\n`
+    },
+    { 
+      path: path.join(DOCS_DIR, 'api', 'README.md'),
+      content: `# Documentación de API\n\nEsta sección contiene la documentación técnica de las APIs del sistema.\n`
+    },
+    { 
+      path: path.join(DOCS_DIR, 'admin', 'README.md'),
+      content: `# Documentación para administradores\n\nEsta sección contiene guías y referencias para administradores del sistema.\n`
     }
+  ];
+  
+  sections.forEach(section => {
+    fs.writeFileSync(section.path, section.content);
+    console.log(`✓ Creado archivo: ${path.relative(DOCS_DIR, section.path)}`);
+  });
+}
+
+// Función para eliminar documentos redundantes
+function removeRedundantDocs() {
+  // Lista de archivos y carpetas a limpiar (patrones)
+  const patternsToClean = [
+    /^0[0-9]_/,        // Archivos con prefijos numéricos
+    /\.MD$/,           // Archivos .MD en mayúsculas
+    /^ESTRUCTURA_/,    // Archivos antiguos de estructura
+    /\.(backup|bak|old)$/  // Archivos de respaldo
+  ];
+
+  function cleanDir(dir) {
+    if (!fs.existsSync(dir)) return;
     
-    // Si es un archivo, verificar si ya existe en docs
-    const exists = fileExistsInDocs(sourcePath, relPath);
+    const items = fs.readdirSync(dir);
     
-    if (!exists) {
-      // Si no existe, copiarlo
-      copyFile(sourcePath, targetPath);
-    } else {
-      // Si existe, comparar fechas y quedarse con el más reciente
-      const existingFile = path.join(DOCS_DIR, relPath);
-      if (isMoreRecent(sourcePath, existingFile)) {
-        console.log(`✓ Actualizando archivo más reciente: ${relPath}`);
-        copyFile(sourcePath, targetPath);
-      } else {
-        console.log(`ℹ️ Manteniendo archivo existente: ${relPath}`);
+    for (const item of items) {
+      const fullPath = path.join(dir, item);
+      
+      // Si es un directorio, procesar recursivamente
+      if (fs.statSync(fullPath).isDirectory()) {
+        cleanDir(fullPath);
+        continue;
+      }
+      
+      // Verificar si el archivo coincide con algún patrón para eliminar
+      const shouldRemove = patternsToClean.some(pattern => pattern.test(item));
+      
+      if (shouldRemove) {
+        fs.unlinkSync(fullPath);
+        console.log(`✓ Eliminado archivo redundante: ${path.relative(DOCS_DIR, fullPath)}`);
       }
     }
   }
+  
+  cleanDir(DOCS_DIR);
 }
 
-// Función principal
-function consolidateDocs() {
-  console.log('🔄 Iniciando consolidación de documentación...');
+// Función principal para consolidar y simplificar
+function simplifyDocs() {
+  console.log('🔄 Iniciando simplificación de documentación...');
   
-  // Verificar que existen ambos directorios
-  if (!fs.existsSync(DOCS_NEXO_DIR)) {
-    console.error('❌ El directorio docs_nexo no existe.');
-    process.exit(1);
-  }
+  // 1. Crear documentación minimalista
+  createMinimalDocStructure();
   
-  if (!fs.existsSync(DOCS_DIR)) {
-    console.error('❌ El directorio docs no existe.');
-    process.exit(1);
-  }
+  // 2. Eliminar documentos redundantes
+  removeRedundantDocs();
   
-  // Procesar documentación
-  processDirectory(DOCS_NEXO_DIR, DOCS_DIR);
-  
-  // Eliminar docs_nexo después de la consolidación
-  try {
+  // 3. Consolidar docs_nexo si existe
+  if (fs.existsSync(DOCS_NEXO_DIR)) {
+    console.log('🔄 Consolidando docs_nexo...');
+    
+    // Guardar archivos importantes de docs_nexo
+    const docsToKeep = [
+      { src: path.join(DOCS_NEXO_DIR, 'features/README.md'), dest: path.join(DOCS_DIR, 'guias', 'caracteristicas.md') },
+      { src: path.join(DOCS_NEXO_DIR, 'ARCHITECTURE.md'), dest: path.join(DOCS_DIR, 'api', 'arquitectura.md') }
+    ];
+    
+    docsToKeep.forEach(doc => {
+      if (fs.existsSync(doc.src)) {
+        ensureDirectoryExists(path.dirname(doc.dest));
+        fs.copyFileSync(doc.src, doc.dest);
+        console.log(`✓ Guardado documento importante: ${path.relative(PROJECT_ROOT, doc.dest)}`);
+      }
+    });
+    
+    // Eliminar docs_nexo
     fs.rmSync(DOCS_NEXO_DIR, { recursive: true, force: true });
     console.log(`✓ Eliminado directorio: docs_nexo`);
-  } catch (error) {
-    console.error(`❌ Error al eliminar docs_nexo: ${error.message}`);
   }
-  
-  console.log('✅ Consolidación completada. Toda la documentación se encuentra ahora en /docs');
-  console.log('ℹ️ Recuerde actualizar cualquier referencia a docs_nexo en su código.');
+
+  console.log('✅ Documentación simplificada correctamente.');
 }
 
 // Ejecutar si se llama directamente
 if (require.main === module) {
-  consolidateDocs();
+  simplifyDocs();
 }
 
-module.exports = { consolidateDocs };
+module.exports = { simplifyDocs };
