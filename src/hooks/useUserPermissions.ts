@@ -46,8 +46,9 @@ export function useUserPermissions() {
           
           data.forEach(item => {
             if (item.permissions) {
-              // Each item.permissions is actually a single Permission object, not an array
-              userPermissions.push(item.permissions as Permission);
+              // Each item.permissions is a single Permission object, not an array
+              const permission = item.permissions as unknown as Permission;
+              userPermissions.push(permission);
             }
           });
           
