@@ -106,8 +106,51 @@ Utilizamos un sistema de espaciado basado en múltiplos de 4px:
 | Ghost | Acciones contextuales en áreas densas | Sin borde, sin relleno |
 | Link | Navegación inline | Aspecto de enlace |
 | Destructive | Acciones destructivas | Color rojo |
+| Minimal | Acciones sutiles contextuales | Apenas visible en reposo, visible en hover |
 
 **Tamaños**: xs, sm, md (default), lg, xl
+
+**Estados**: default, hover, focus, active/pressed, disabled
+
+**Con Iconos**: Los botones pueden incluir íconos para mejorar la comprensión visual, con espaciado consistente entre icono y texto (0.5rem), alineación vertical centrada y tamaños proporcionales al botón.
+
+```tsx
+<Button>
+  <PlusIcon className="h-4 w-4 mr-2" />
+  Añadir nuevo
+</Button>
+```
+
+**Implementación Base**:
+
+```tsx
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
+        outline: "border border-input bg-background hover:bg-accent/10 hover:text-accent-foreground shadow-sm",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm",
+        ghost: "hover:bg-accent/10 hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+        minimal: "text-foreground hover:bg-secondary/50 hover:text-accent",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8 text-base",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+```
 
 ### Formularios
 
@@ -128,6 +171,46 @@ Utilizamos un sistema de espaciado basado en múltiplos de 4px:
 | Interactive | Elementos clicables | Hover state, cursor pointer |
 | Highlighted | Contenido destacado | Borde o fondo diferenciado |
 | Media | Contenido con imágenes | Soporte para ratio de aspecto |
+
+**Estructura de Componentes**:
+
+- **CardHeader**: Contiene título y descripción, con padding superior y laterales consistentes
+- **CardTitle**: Estilo tipográfico distintivo, mantiene jerarquía visual clara
+- **CardDescription**: Texto complementario con estilo secundario
+- **CardContent**: Área principal de contenido, sin padding superior cuando sigue a CardHeader
+- **CardFooter**: Área para acciones relacionadas, alineación flexible, separación visual del contenido
+
+**Implementación Base**:
+
+```tsx
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-lg bg-card text-card-foreground shadow-sm transition-all duration-300",
+      className
+    )}
+    {...props}
+  />
+))
+Card.displayName = "Card"
+```
+
+**Clases de Utilidad**:
+```css
+/* Tarjeta con estilo minimalista */
+.card-minimal {
+  @apply bg-card border-none shadow-sm dark:bg-secondary/30 transition-all duration-300 hover:shadow-md;
+}
+
+/* Tarjeta interactiva con indicador de hover */
+.card-interactive {
+  @apply bg-card border-none shadow-sm hover:shadow-md hover:border-l-4 hover:border-l-accent transition-all duration-300;
+}
+```
 
 ### Navegación
 
@@ -179,6 +262,69 @@ Utilizamos principalmente Lucide React para iconos, con las siguientes pautas:
 | Media | 250ms | ease-in-out | Expansión, colapso |
 | Lenta | 350ms | ease-in-out | Entradas, salidas |
 
+### Tipos de Animaciones
+
+**Transiciones de Estado**:
+```css
+.btn {
+  transition: background-color 200ms var(--ease-out),
+              transform 200ms var(--ease-out);
+}
+
+.btn:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+}
+```
+
+**Animaciones de Entrada/Salida**:
+```css
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 300ms var(--ease-out);
+}
+```
+
+**Funciones de Temporización (Easing)**:
+```css
+:root {
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in: cubic-bezier(1, 0, 0.8, 0.2);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+```
+
+**Utilidades en Tailwind**:
+```css
+@layer utilities {
+  .animate-fade-in {
+    @apply animate-[fade-in_0.3s_ease-out];
+  }
+  
+  .animate-scale-in {
+    @apply animate-[scale-in_0.2s_ease-out];
+  }
+  
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-md;
+  }
+}
+```
+
 ## Accesibilidad
 
 Nuestro sistema de diseño cumple con WCAG 2.1 nivel AA, asegurando:
@@ -189,12 +335,122 @@ Nuestro sistema de diseño cumple con WCAG 2.1 nivel AA, asegurando:
 - Estados de focus visibles y consistentes
 - Mensajes de error claros para formularios
 
+### Mensajes de Estado para Lectores de Pantalla
+
+**ARIA Live Regions**:
+```html
+<div aria-live="polite" aria-atomic="true">
+  Mensaje de estado actualizado
+</div>
+```
+
+**Roles y Estados**:
+```html
+<button aria-pressed="true">Toggle activo</button>
+<div role="alert">Error en el formulario</div>
+```
+
+## Sistema de Temas
+
+El sistema soporta varios modos de tema para adaptarse a preferencias del usuario:
+
+### Modos de Tema Disponibles
+
+- **Tema Claro (Light)**: Predeterminado, optimizado para uso diurno, mayor contraste
+- **Tema Oscuro (Dark)**: Para entornos con poca luz, contraste reducido, ahorra batería en OLED
+- **Preferencia del Sistema (System)**: Respeta la configuración del sistema operativo, transición automática día/noche
+
+### Implementación Técnica
+
+- **Variables CSS**: Definidas en el archivo `index.css` con variantes para cada tema
+- **Clases de Tema**: Aplicadas al elemento `html` (`.light`, `.dark`)
+- **Persistencia**: Preferencia guardada en `localStorage`
+- **Detección Automática**: Mediante `window.matchMedia('(prefers-color-scheme: dark)')`
+
+### Uso con Tailwind CSS
+
+```tsx
+<div className="bg-white dark:bg-slate-900 text-black dark:text-white">
+  Contenido adaptable
+</div>
+```
+
 ## Implementación Técnica
 
-- Los componentes base provienen principalmente de shadcn/ui
-- Utilizamos Tailwind CSS para implementar el sistema de diseño
+### Variables CSS Base
+
+El sistema de diseño se implementa principalmente a través de variables CSS personalizadas:
+
+```css
+:root {
+  --background: 0 0% 98%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 210 100% 50%;
+  --primary-foreground: 0 0% 98%;
+  /* ... otros colores ... */
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  /* ... otros colores en modo oscuro ... */
+}
+```
+
+### Uso con Tailwind
+
+El proyecto utiliza Tailwind CSS para implementar el sistema de diseño:
+
 - Los tokens de diseño se definen en el tema de Tailwind
-- Los componentes complejos se documentan con PropTypes/TypeScript
+- Utilizamos class-variance-authority para variantes de componentes
+- Componentes accesibles basados en Radix UI a través de shadcn/ui
+
+### Guías de Implementación
+
+1. **Utiliza las Variables CSS**: Todas las propiedades de color deben hacer referencia a variables:
+   ```css
+   color: hsl(var(--foreground));
+   background-color: hsl(var(--background));
+   ```
+
+2. **Evita Colores Codificados**: Nunca uses valores hexadecimales o RGB directamente:
+   ```css
+   /* ❌ Incorrecto */
+   color: #000000;
+   
+   /* ✅ Correcto */
+   color: hsl(var(--foreground));
+   ```
+
+3. **Soporte para Modo Oscuro**: Utiliza las variantes `dark:` de Tailwind:
+   ```html
+   <div className="bg-card text-card-foreground dark:bg-card-dark dark:text-card-foreground-dark">
+     Contenido
+   </div>
+   ```
+
+4. **Sistema de Espaciado**: Utiliza las clases de espaciado de Tailwind que siguen nuestro sistema:
+   ```html
+   <div className="space-y-4">
+     <div className="p-4">Componente con padding interno</div>
+     <div className="mt-6">Componente con margen superior</div>
+   </div>
+   ```
+
+5. **Extensión de Componentes**: Extiende los componentes base en lugar de crear nuevos:
+   ```tsx
+   import { Button } from '@/components/ui/button';
+   
+   const BigButton = ({ children, ...props }) => (
+     <Button className="py-6 text-lg" {...props}>
+       {children}
+     </Button>
+   );
+   ```
 
 ## Modo Oscuro
 
@@ -204,3 +460,8 @@ El sistema de diseño incluye soporte completo para modo oscuro con:
 - Transición suave entre modos
 - Respeto a las preferencias del sistema
 - Opción para fijar el modo independiente del sistema
+
+---
+
+*Para dudas o sugerencias sobre el sistema de diseño, contacte al equipo de UX/UI en `#design-system` en Slack.*
+
