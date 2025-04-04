@@ -1,6 +1,4 @@
 
-#!/usr/bin/env node
-
 /**
  * Script para ejecutar la normalización de documentación en GitHub.dev
  */
@@ -26,4 +24,3 @@ try {
   console.error('❌ Error al ejecutar el script:', error.message);
   process.exit(1);
 }
-

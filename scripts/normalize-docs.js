@@ -1,6 +1,4 @@
 
-#!/usr/bin/env node
-
 /**
  * Script para normalizar la documentación del proyecto
  * 
@@ -128,4 +126,3 @@ try {
   console.error('\n❌ Error durante la normalización:', error.message);
   process.exit(1);
 }
-
