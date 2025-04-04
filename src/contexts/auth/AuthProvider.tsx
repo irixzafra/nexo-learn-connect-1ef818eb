@@ -114,46 +114,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    let mounted = true;
+    let subscription: { unsubscribe: () => void } | null = null;
+    
     const initAuth = async () => {
-      setIsLoading(true);
-      
-      console.log("AuthProvider: Initializing auth...");
-      
-      // Set up subscription to auth state changes FIRST
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (event, newSession) => {
-          console.log('Auth state changed:', event, newSession?.user?.id);
-          setSession(newSession);
-          setUser(newSession?.user || null);
-          
-          if (newSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-            // Use setTimeout to avoid Supabase deadlocks
-            setTimeout(async () => {
-              try {
-                const profile = await fetchUserProfile(newSession.user.id);
-                if (profile) {
-                  setUserProfile(profile);
-                  
-                  const normalizedRole = profile.role ? String(profile.role).toLowerCase().trim() : 'student';
-                  console.log(`Setting userRole to: "${normalizedRole}" (original: "${profile.role}")`);
-                  setUserRole(toUserRoleType(normalizedRole));
-                }
-              } catch (err) {
-                console.error("Error fetching profile after auth state change:", err);
-              }
-            }, 0);
-          }
-          
-          if (event === 'SIGNED_OUT') {
-            setUserProfile(null);
-            setUserRole(null);
-            setSimulatedRoleState(null);
-            localStorage.removeItem('viewAsRole');
-          }
-        }
-      );
-      
       try {
+        console.log("AuthProvider: Initializing auth...");
+        
+        // Set up subscription to auth state changes FIRST
+        const { data } = supabase.auth.onAuthStateChange(
+          async (event, newSession) => {
+            console.log('Auth state changed:', event, newSession?.user?.id);
+            
+            if (!mounted) return;
+            
+            setSession(newSession);
+            setUser(newSession?.user || null);
+            
+            if (newSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+              // Use setTimeout to avoid Supabase deadlocks
+              setTimeout(async () => {
+                try {
+                  const profile = await fetchUserProfile(newSession.user.id);
+                  if (profile && mounted) {
+                    setUserProfile(profile);
+                    
+                    const normalizedRole = profile.role ? String(profile.role).toLowerCase().trim() : 'student';
+                    console.log(`Setting userRole to: "${normalizedRole}" (original: "${profile.role}")`);
+                    setUserRole(toUserRoleType(normalizedRole));
+                  }
+                } catch (err) {
+                  console.error("Error fetching profile after auth state change:", err);
+                }
+              }, 0);
+            }
+            
+            if (event === 'SIGNED_OUT' && mounted) {
+              setUserProfile(null);
+              setUserRole(null);
+              setSimulatedRoleState(null);
+              localStorage.removeItem('viewAsRole');
+            }
+          }
+        );
+        
+        subscription = data.subscription;
+        
         // THEN check for existing session
         console.log("AuthProvider: Checking for existing session...");
         const { data: { session: existingSession }, error } = await supabase.auth.getSession();
@@ -163,44 +169,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         
         console.log("AuthProvider: Existing session:", existingSession?.user?.id || "none");
-        setSession(existingSession);
-        setUser(existingSession?.user || null);
         
-        if (existingSession?.user) {
-          try {
-            const profile = await fetchUserProfile(existingSession.user.id);
-            if (profile) {
-              setUserProfile(profile);
-              setUserRole(toUserRoleType(profile.role));
+        if (mounted) {
+          setSession(existingSession);
+          setUser(existingSession?.user || null);
+          
+          if (existingSession?.user) {
+            try {
+              const profile = await fetchUserProfile(existingSession.user.id);
+              if (profile && mounted) {
+                setUserProfile(profile);
+                setUserRole(toUserRoleType(profile.role));
+              }
+            } catch (err) {
+              console.error("Error fetching profile during init:", err);
             }
-          } catch (err) {
-            console.error("Error fetching profile during init:", err);
           }
+        }
+        
+        if (mounted && user && user.email === 'admin@nexo.com') {
+          console.log('Found admin@nexo.com user, ensuring admin role');
+          await forceUpdateRole('admin@nexo.com', 'admin');
+        }
+        
+        const storedRole = getStoredSimulatedRole();
+        if (storedRole && mounted) {
+          setSimulatedRoleState(storedRole);
         }
       } catch (err) {
         console.error("Error in auth initialization:", err);
+      } finally {
+        // Aseguramos que isLoading se establezca en false al finalizar
+        if (mounted) {
+          setIsLoading(false);
+          setIsInitialized(true);
+        }
       }
-      
-      if (user && user.email === 'admin@nexo.com') {
-        console.log('Found admin@nexo.com user, ensuring admin role');
-        await forceUpdateRole('admin@nexo.com', 'admin');
-      }
-      
-      const storedRole = getStoredSimulatedRole();
-      if (storedRole) {
-        setSimulatedRoleState(storedRole);
-      }
-      
-      setIsLoading(false);
-      setIsInitialized(true);
-      
-      return () => {
-        // Cleanup on unmount
-        subscription.unsubscribe();
-      };
     };
     
     initAuth();
+    
+    // Cleanup on unmount
+    return () => {
+      mounted = false;
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, []);
 
   const value = {

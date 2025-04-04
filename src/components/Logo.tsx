@@ -7,16 +7,15 @@ interface LogoProps {
   size?: 'small' | 'medium' | 'large';
   variant?: 'light' | 'dark' | 'color';
   className?: string;
+  linkTo?: string;
 }
 
 const Logo: React.FC<LogoProps> = ({ 
   size = 'medium', 
   variant = 'color',
-  className
+  className,
+  linkTo = '/'
 }) => {
-  // Instead of using localizeUrl from useLocalization, we'll use direct paths
-  const homePath = '/';
-  
   const sizeClass = {
     small: 'h-6',
     medium: 'h-8',
@@ -29,13 +28,26 @@ const Logo: React.FC<LogoProps> = ({
     color: 'text-primary'
   }[variant];
 
+  const logoContent = (
+    <span className={`${sizeClass} font-heading`}>Nexo Learning</span>
+  );
+
+  // Renderiza el logo con o sin enlace según se necesite
+  if (linkTo) {
+    return (
+      <Link 
+        to={linkTo} 
+        className={cn(`flex items-center gap-2 font-bold ${textColor}`, className)}
+      >
+        {logoContent}
+      </Link>
+    );
+  }
+
   return (
-    <Link 
-      to={homePath} 
-      className={cn(`flex items-center gap-2 font-bold ${textColor}`, className)}
-    >
-      <span className={`${sizeClass} font-heading`}>Nexo Learning</span>
-    </Link>
+    <div className={cn(`flex items-center gap-2 font-bold ${textColor}`, className)}>
+      {logoContent}
+    </div>
   );
 };
 
