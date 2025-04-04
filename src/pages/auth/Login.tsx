@@ -49,6 +49,7 @@ const Login: React.FC = () => {
   });
   
   const onSubmit = async (data: LoginFormValues) => {
+    console.log('****** ONSUBMIT DISPARADO ******'); // <-- AÑADIR ESTO
     console.log("Intentando iniciar sesión con:", data);
     setIsLoading(true);
     
