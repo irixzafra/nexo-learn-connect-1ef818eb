@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,38 +15,38 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Primary: Reverted to original purple #8B5CF6 */
+    /* Primary: Original purple #8B5CF6 */
     --primary: 262 83% 66%;
     --primary-foreground: 0 0% 98%;
 
-    /* Secondary: #2E86C1 - Original blue */
+    /* Secondary: #E2E8F0 - Original value */
     --secondary: 220 13% 91%;
     --secondary-foreground: 240 5.9% 10%;
 
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    /* Accent/Warning: Original */
-    --accent: 240 4.8% 95.9%;
+    /* Accent: #F8FAFC - Original value */
+    --accent: 220 14% 98%;
     --accent-foreground: 240 5.9% 10%;
     
     /* Status colors */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     
-    /* Warning (original) */
+    /* Warning: #FBBF24 - Original value */
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 20%;
     
-    /* Success: #10B981 */
+    /* Success: #10B981 - Original value */
     --success: 158 64% 40%;
     --success-foreground: 0 0% 98%;
     
-    /* Error: #EF4444 (keeping as requested) */
+    /* Error: #EF4444 - Original value */
     --error: 0 84.2% 60.2%;
     --error-foreground: 0 0% 98%;
     
-    /* Info (original) */
+    /* Info: #3B82F6 - Original value */
     --info: 220 69% 56%;
     --info-foreground: 0 0% 98%;
 
@@ -80,7 +81,7 @@
     --primary: 262 83% 66%;
     --primary-foreground: 0 0% 98%;
 
-    /* Secondary: Original dark blue */
+    /* Secondary: Original dark value */
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
 
