@@ -2,6 +2,7 @@
 import { createContext } from 'react';
 import { AuthContextType } from './types';
 
+// Valores por defecto del contexto, representan el estado inicial
 export const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   isAuthenticated: false,

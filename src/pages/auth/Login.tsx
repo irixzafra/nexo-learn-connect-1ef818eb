@@ -5,10 +5,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { z } from 'zod';
-// Importación explícita desde la ruta correcta
 import { useAuth } from '@/contexts/auth/useAuth';
 import { Loader2, Mail, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
@@ -28,18 +27,25 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const Login: React.FC = () => {
   const { user, session, isLoading: authLoading, login } = useAuth();
   const navigate = useNavigate();
+  // Estado de carga local para este componente específico
   const [isLoading, setIsLoading] = useState(false);
   
-  console.log("Login component rendered, auth state:", { user, session, authLoading });
+  // Log para depuración
+  console.log("Login component rendered, auth state:", { 
+    user: user ? "exists" : "null", 
+    session: session ? "exists" : "null", 
+    authLoading 
+  });
   
+  // Redirigir si ya está autenticado
   useEffect(() => {
-    // If user is already logged in, redirect to dashboard
     if (user && session) {
       console.log("Usuario ya autenticado, redirigiendo a dashboard");
       navigate('/app/dashboard', { replace: true });
     }
   }, [user, session, navigate]);
   
+  // Configuración del formulario con react-hook-form
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -49,14 +55,15 @@ const Login: React.FC = () => {
     },
   });
   
+  // Manejador de envío del formulario
   const onSubmit = async (data: LoginFormValues) => {
-    console.log('****** ONSUBMIT DISPARADO ******'); // <-- Log de diagnóstico
-    console.log("Intentando iniciar sesión con:", data);
+    console.log('****** ONSUBMIT DISPARADO ******');
+    
+    // Activamos el estado de carga LOCAL para este componente
     setIsLoading(true);
     
     try {
-      // Añadimos más logs para diagnóstico
-      console.log("Antes de llamar a login(). Función login existe:", !!login);
+      // Llamar a la función login del contexto de autenticación
       const result = await login(data.email, data.password, data.remember);
       console.log("Resultado del login:", result);
       
@@ -69,25 +76,20 @@ const Login: React.FC = () => {
           description: result.error || 'Verifica tus credenciales e intenta de nuevo',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error de inicio de sesión:', error);
       toast.error('Error al iniciar sesión', {
-        description: 'Verifica tus credenciales e intenta de nuevo',
+        description: error.message || 'Verifica tus credenciales e intenta de nuevo',
       });
     } finally {
+      // Garantizamos que isLoading local se desactiva SIEMPRE
       setIsLoading(false);
     }
   };
   
-  // Verificamos explícitamente si el botón debería estar deshabilitado
-  const isDisabled = isLoading || authLoading;
-  console.log('****** Login.tsx: ESTADO DISABLED BOTON ******:', isDisabled, { localLoading: isLoading, contextLoading: authLoading });
-  
-  // Añadir un manejador de eventos de formulario directo para depuración
-  const handleFormSubmit = (e: React.FormEvent) => {
-    console.log("****** FORM SUBMIT EVENT FIRED ******");
-    // No prevenimos el comportamiento predeterminado para permitir que react-hook-form maneje el envío
-  };
+  // El botón se deshabilita cuando este componente está cargando
+  // No usamos authLoading para evitar interferencias
+  const isDisabled = isLoading;
   
   return (
     <AuthLayout>
@@ -100,7 +102,7 @@ const Login: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} onSubmitCapture={handleFormSubmit} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
                 name="email"
@@ -175,13 +177,11 @@ const Login: React.FC = () => {
                 </Link>
               </div>
               
-              {/* Añadimos un data-testid para facilitar pruebas */}
               <Button 
                 type="submit" 
                 className="w-full py-6 text-base" 
                 disabled={isDisabled}
                 data-testid="login-button"
-                onClick={() => console.log('****** Login.tsx: BOTON CLICADO (onClick directo) ******')}
               >
                 {isLoading ? (
                   <>

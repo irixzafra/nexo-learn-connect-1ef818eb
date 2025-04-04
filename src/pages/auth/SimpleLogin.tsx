@@ -24,6 +24,8 @@ const SimpleLogin: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("SimpleLogin: Intento de login con:", email);
+    
+    // Activamos el estado de carga LOCAL para este componente
     setIsLoading(true);
     
     try {
@@ -44,6 +46,7 @@ const SimpleLogin: React.FC = () => {
         description: err.message || "Error desconocido"
       });
     } finally {
+      // Garantizamos que isLoading local se desactiva SIEMPRE
       setIsLoading(false);
     }
   };
@@ -79,7 +82,7 @@ const SimpleLogin: React.FC = () => {
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={isLoading || auth.isLoading}
+              disabled={isLoading}
             >
               {isLoading ? 'Iniciando sesión...' : 'Login'}
             </Button>

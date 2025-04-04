@@ -1,9 +1,15 @@
+
 import { supabase } from '@/lib/supabase';
 import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
 
+/**
+ * Servicio para iniciar sesión
+ * Función pura que solo interactúa con Supabase y devuelve resultados/errores
+ */
 export const loginService = async (email: string, password: string, remember: boolean = false) => {
   try {
     console.log("authServices: Intentando iniciar sesión con email:", email, "y remember:", remember);
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -25,8 +31,9 @@ export const loginService = async (email: string, password: string, remember: bo
         });
         
         console.log("Extendiendo sesión para 'remember me'");
-      } catch (sessionError) {
+      } catch (sessionError: any) {
         console.error("Error al extender la sesión:", sessionError);
+        // No fallamos todo el login si falla la extensión de sesión
       }
     }
     
@@ -34,23 +41,32 @@ export const loginService = async (email: string, password: string, remember: bo
     return { success: true, data };
   } catch (error: any) {
     console.error("Error inesperado durante login:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message || "Error desconocido en el servicio de login" };
   }
 };
 
+/**
+ * Servicio para cerrar sesión
+ */
 export const logoutService = async () => {
   try {
     const { error } = await supabase.auth.signOut();
+    
     if (error) {
       console.error("Error al cerrar sesión:", error);
+      return { success: false, error: error.message };
     }
-    return { success: !error };
+    
+    return { success: true };
   } catch (error: any) {
     console.error("Error inesperado durante logout:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message || "Error desconocido en el servicio de logout" };
   }
 };
 
+/**
+ * Servicio para registro de usuarios
+ */
 export const signupService = async (email: string, password: string, userData?: Partial<UserProfile>) => {
   try {
     console.log("Intentando registrar con email:", email);
@@ -79,16 +95,20 @@ export const signupService = async (email: string, password: string, userData?: 
         
       if (profileError) {
         console.error('Error creating profile:', profileError);
+        // No fallamos todo el registro si falla la creación del perfil
       }
     }
     
-    return { success: true };
+    return { success: true, data };
   } catch (error: any) {
     console.error("Error inesperado durante registro:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message || "Error desconocido en el servicio de registro" };
   }
 };
 
+/**
+ * Servicio para actualizar el perfil del usuario
+ */
 export const updateProfileService = async (userId: string, profileData: Partial<UserProfile>) => {
   try {
     const { error } = await supabase
@@ -102,10 +122,13 @@ export const updateProfileService = async (userId: string, profileData: Partial<
     
     return { success: true };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return { success: false, error: error.message || "Error desconocido al actualizar perfil" };
   }
 };
 
+/**
+ * Servicio para actualizar contraseña
+ */
 export const updatePasswordService = async (password: string) => {
   try {
     const { error } = await supabase.auth.updateUser({
@@ -118,6 +141,48 @@ export const updatePasswordService = async (password: string) => {
     
     return { success: true };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return { success: false, error: error.message || "Error desconocido al actualizar contraseña" };
+  }
+};
+
+/**
+ * Servicio para obtener el perfil del usuario por ID
+ */
+export const fetchUserProfileService = async (userId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error("Error al obtener perfil de usuario:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (error: any) {
+    console.error("Error inesperado al obtener perfil:", error);
+    return { success: false, error: error.message || "Error desconocido al obtener perfil" };
+  }
+};
+
+/**
+ * Servicio para obtener la sesión actual
+ */
+export const getSessionService = async () => {
+  try {
+    const { data, error } = await supabase.auth.getSession();
+    
+    if (error) {
+      console.error("Error al obtener sesión:", error);
+      return { success: false, error: error.message };
+    }
+    
+    return { success: true, data: data.session };
+  } catch (error: any) {
+    console.error("Error inesperado al obtener sesión:", error);
+    return { success: false, error: error.message || "Error desconocido al obtener sesión" };
   }
 };
