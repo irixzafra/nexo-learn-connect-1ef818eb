@@ -9,7 +9,7 @@ import { mockSignInWithPassword, resetSupabaseMocks } from '@/testing-utils/supa
 // Mock para react-router-dom
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+  const actual = await vi.importActual('react-router-dom') as object;
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -119,7 +119,7 @@ describe('Login Component', () => {
     const submitButton = screen.getByRole('button', { name: /iniciar sesión/i });
     fireEvent.click(submitButton);
     
-    // Verificar que se llamó a navigate para redireccionar después del login exitoso
+    // Verificar que se llamó a login
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalled();
       // La redirección se maneja dentro del hook useLogin, no en el componente

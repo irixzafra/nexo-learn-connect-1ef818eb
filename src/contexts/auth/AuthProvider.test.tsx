@@ -15,7 +15,7 @@ import {
 vi.mock('react', async () => {
   const actual = await vi.importActual('react');
   return {
-    ...actual,
+    ...actual as object,
     useEffect: (callback: () => void) => callback(),
   };
 });
