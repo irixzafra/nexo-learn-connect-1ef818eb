@@ -3,7 +3,7 @@ import * as React from "react"
 import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { useSidebar } from "../use-sidebar"
+import { useSidebar } from "../sidebar-provider"
 import { motion, AnimatePresence } from 'framer-motion'
 
 export const SidebarTrigger = React.forwardRef<
