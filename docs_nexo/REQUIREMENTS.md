@@ -22,6 +22,8 @@
    - Diseño accesible que cumpla con estándares WCAG
    - Tiempos de carga optimizados (<3s para páginas principales)
 
+La implementación detallada por fases se encuentra en el documento `docs_nexo/ROADMAP.md`.
+
 ### Requisitos Funcionales Clave
 
 #### Sistema de Usuarios
@@ -156,26 +158,6 @@
    - Arquitectura que permita plugins/extensiones
    - API pública para integraciones de terceros (futuro)
    - Webhooks para eventos importantes
-
-## Requisitos de Implementación Iniciales
-
-Fase 1 (MVP):
-- Autenticación y gestión básica de usuarios
-- Catálogo de cursos con detalles
-- Visualización de lecciones (texto y video)
-- Panel admin básico
-
-Fase 2:
-- Sistema de pagos y compra de cursos
-- Seguimiento de progreso y certificados
-- Comentarios y foros básicos
-- Analíticas iniciales
-
-Fase 3:
-- Gamificación y características sociales
-- Herramientas avanzadas para instructores
-- Personalización de la plataforma
-- API pública y extensiones
 
 ## Restricciones
 
