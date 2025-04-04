@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -158,17 +159,18 @@ const NavigationDiagram: React.FC = () => {
     setRouteGroups(grouped);
   }, []);
   
-  const adminMenuItems = Array.isArray(adminNavigation) 
-    ? adminNavigation 
-    : (adminNavigation && typeof adminNavigation === 'object' && 'main' in adminNavigation 
-        ? adminNavigation.main 
-        : []);
+  // Fixed: Safely get menu items from the navigation objects
+  const getMenuItems = (navigation: any) => {
+    if (Array.isArray(navigation)) {
+      return navigation;
+    } else if (navigation && typeof navigation === 'object' && 'main' in navigation) {
+      return navigation.main || [];
+    }
+    return [];
+  };
   
-  const settingsMenuItems = Array.isArray(settingsNavigation) 
-    ? settingsNavigation 
-    : (settingsNavigation && typeof settingsNavigation === 'object' && 'main' in settingsNavigation 
-        ? settingsNavigation.main 
-        : []);
+  const adminMenuItems = getMenuItems(adminNavigation);
+  const settingsMenuItems = getMenuItems(settingsNavigation);
   
   return (
     <AdminPageLayout
