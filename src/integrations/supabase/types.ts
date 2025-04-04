@@ -2286,6 +2286,71 @@ export type Database = {
           },
         ]
       }
+      roadmap_phases: {
+        Row: {
+          created_at: string
+          functionality: string[]
+          id: number
+          milestone: string
+          objective: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          functionality?: string[]
+          id: number
+          milestone: string
+          objective: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          functionality?: string[]
+          id?: number
+          milestone?: string
+          objective?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      roadmap_tasks: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          phase: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id: string
+          phase: number
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          phase?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_tasks_phase_fkey"
+            columns: ["phase"]
+            isOneToOne: false
+            referencedRelation: "roadmap_phases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           created_at: string
