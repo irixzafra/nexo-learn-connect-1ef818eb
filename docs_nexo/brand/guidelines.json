@@ -1,0 +1,87 @@
+
+{
+  "brand": "NEXO",
+  "purpose": "Guía para generación automática de contenidos, gráficos y diseño en la app Nexo Learning",
+  "version": "1.0",
+  "date": "04-04-2025",
+
+  "colors": {
+    "description": "Paleta de colores basada en la personalidad creativa, audaz y cercana de NEXO. Usar en UI, gráficos y elementos interactivos.",
+    "palette": {
+      "primary": { "hex": "#FF5733", "rgb": [255, 87, 51], "usage": ["buttons", "CTAs", "emphasis"], "description": "Energía y acción" },
+      "secondary": { "hex": "#2E86C1", "rgb": [46, 134, 193], "usage": ["links", "secondary_backgrounds", "navigation"], "description": "Confianza y conexión" },
+      "accent": { "hex": "#F4D03F", "rgb": [244, 208, 63], "usage": ["alerts", "gamification", "highlights"], "description": "Inspiración y destaque" },
+      "neutral": { "hex": "#333333", "rgb": [51, 51, 51], "usage": ["text", "icons"], "description": "Legibilidad" },
+      "background": { "hex": "#FFFFFF", "rgb": [255, 255, 255], "usage": ["background", "base"], "description": "Claridad y contraste" }
+    },
+    "rules": {
+      "accessibility": "Cumple WCAG 2.1 AA para contraste",
+      "default_text_color": "neutral",
+      "default_background_color": "background",
+      "cta_color": "primary"
+    }
+  },
+
+  "voice_and_tone": {
+    "description": "Reglas para generar textos en la app que reflejen la personalidad de NEXO: facilitador, inspirador, audaz, cercano.",
+    "personality": {
+      "traits": ["close", "inspirational", "bold", "conversational"],
+      "rules": { "avoid_hierarchy": true, "avoid_formalism": true, "encourage_action": true, "use_short_sentences": true }
+    },
+    "attributes": [
+      { "name": "inspirational_accessible", "description": "Motiva sin ser inalcanzable", "examples": ["¡Tu primer paso ya cuenta! Crea.", "Tu talento empieza aquí."] },
+      { "name": "bold_provocative", "description": "Desafía el status quo", "examples": ["¿Y si cambias el juego hoy?", "Rompe las reglas. Lanza algo nuevo."] },
+      { "name": "close_conversational", "description": "Habla como compañero", "examples": ["Hey, ¿qué vas a crear hoy?", "Listo para conectar? Vamos."] }
+    ],
+    "applications": {
+      "welcome_screen": { "template": "{action1}. {action2}. {action3}. Esto es NEXO.", "examples": ["Crea. Conecta. Impacta. Esto es NEXO."] },
+      "notifications": { "template": "{exclamation}! {message}. {cta}.", "examples": ["¡Ups! Algo falló. Lo arreglamos ya."] },
+      "forums": { "template": "{prompt}? {cta}.", "examples": ["¿Qué opinas? Publícalo."] },
+      "support": { "template": "{positive_expression}! {message}.", "examples": ["¡Nos flipa ayudarte! ¿Qué necesitas?"] },
+      "certificates": { "template": "Tu {keyword} tiene sello NEXO.", "examples": ["Tu impacto tiene sello NEXO."] }
+    }
+  },
+
+  "style": {
+    "description": "Normas para formatear textos y gráficos generados.",
+    "capitalization": {
+      "brand_name": "NEXO",
+      "rules": { "brand_always_uppercase": true, "program_names": "capitalize_first_letter", "avoid_all_caps": true },
+      "examples": { "correct": "Bienvenido a NEXO.", "incorrect": "Bienvenido a nexo." }
+    },
+    "punctuation": {
+      "rules": { "end_with_period": true, "avoid_semicolon": true, "use_comma_for_rhythm": true, "exclamation_interrogation_max": 1 },
+      "examples": { "correct": "Crea. Conecta. Impacta.", "incorrect": "Crea; conecta; impacta." }
+    },
+    "emojis": {
+      "allowed_contexts": ["forums", "messaging"], "disallowed_contexts": ["support", "official_docs"], "position": "end_of_sentence",
+      "examples": { "correct": "¡Genial! 🚀", "incorrect": "¡Genial 🚀!" }
+    },
+    "format": {
+      "dates": { "default": "DD de MMMM de YYYY", "short": "DD/MM/YY", "examples": ["10 de marzo de 2025", "10/03/25"] },
+      "numbers": { "thousands_separator": ".", "decimal_separator": ",", "word_range": [1, 10], "examples": ["5.000 creadores", "99,9%"] },
+      "links": { "format": "CTA en {domain}", "domain": "nexo.com", "examples": ["Descubre más en nexo.com"] }
+    },
+    "naming": {
+      "preferred_terms": ["creación", "impacto", "experiencias", "talento", "comunidad"], "avoided_terms": ["cursos", "clases", "estudiantes"],
+      "examples": { "correct": "Explora experiencias en NEXO.", "incorrect": "Toma cursos en NEXO." }
+    },
+    "advertising_text": {
+      "rules": { "headline_length": "short", "cta_tense": ["present", "imperative"], "avoid_complex": true },
+      "examples": { "correct": "No esperes. Actúa.", "incorrect": "Si buscas aprender, inscríbete aquí." }
+    }
+  },
+
+  "implementation_instructions": {
+    "apply_to": ["ui_text", "notifications", "graphics", "content", "support_messages"],
+    "phases": {
+      "0": "Use in documentation and test data", "1": "Apply to UI/UX (welcome screens, catalog)", "2": "Apply to ERP (dashboard, payments)",
+      "3": "Apply to LMS/Community (forums, messaging)", "4": "Apply to advanced ERP (analytics, notifications)", "5": "Apply to innovation (AR/VR, marketplace)"
+    },
+    "generation_rules": {
+      "text": "Randomly select from examples or generate based on templates, respecting style rules.",
+      "graphics": "Use color palette and apply to buttons, backgrounds, and highlights.",
+      "validation": "Cross-check generated output against 'examples.correct' fields."
+    }
+  }
+}
