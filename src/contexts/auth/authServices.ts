@@ -18,6 +18,7 @@ export const loginService = async (email: string, password: string, remember: bo
       };
     }
     
+    // Login directo con Supabase
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -38,7 +39,10 @@ export const loginService = async (email: string, password: string, remember: bo
         userFriendlyError = "El usuario no existe. Por favor verifica tu email.";
       }
       
-      return { success: false, error: userFriendlyError };
+      return { 
+        success: false, 
+        error: userFriendlyError 
+      };
     }
     
     if (!data.session || !data.user) {
@@ -48,11 +52,9 @@ export const loginService = async (email: string, password: string, remember: bo
       };
     }
     
-    // If remember is true, set a longer session via updateSession
+    // Si remember está activado, establecemos una sesión más larga
     if (remember && data.session) {
       try {
-        // 30 days in seconds
-        const THIRTY_DAYS = 60 * 60 * 24 * 30;
         await supabase.auth.setSession({
           access_token: data.session.access_token,
           refresh_token: data.session.refresh_token,
@@ -66,12 +68,15 @@ export const loginService = async (email: string, password: string, remember: bo
     }
     
     console.log("Login exitoso:", data);
-    return { success: true, data };
+    return { 
+      success: true, 
+      data 
+    };
   } catch (error: any) {
     console.error("Error inesperado durante login:", error);
     return { 
       success: false, 
-      error: "Ha ocurrido un error al iniciar sesión. Por favor intenta de nuevo más tarde." 
+      error: error.message || "Ha ocurrido un error al iniciar sesión. Por favor intenta de nuevo más tarde." 
     };
   }
 };
