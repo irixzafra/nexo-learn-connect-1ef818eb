@@ -28,7 +28,7 @@ const NavGroup: React.FC<NavGroupProps> = ({
         {Icon && (
           <div className="flex items-center justify-center py-2">
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted/60 text-muted-foreground">
-              <Icon className="h-4 w-4" />
+              {React.createElement(Icon, { className: "h-4 w-4" })}
             </div>
           </div>
         )}
@@ -50,7 +50,7 @@ const NavGroup: React.FC<NavGroupProps> = ({
         aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-3">
-          {Icon && <Icon className="h-4.5 w-4.5" />}
+          {Icon && React.createElement(Icon, { className: "h-4.5 w-4.5" })}
           <span className="text-[14px] font-medium">{title}</span>
         </div>
         <ChevronDown

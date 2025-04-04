@@ -4,19 +4,19 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { LucideIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export interface NavItemProps {
-  icon?: React.ReactNode | LucideIcon;
+  icon?: LucideIcon;
   title: string;
   href: string;
   onClick?: () => void;
   className?: string;
   exact?: boolean;
-  badge?: React.ReactNode;
+  badge?: number;
   tooltip?: string;
   disabled?: boolean;
   isCollapsed?: boolean;
-  isHighlighted?: boolean;
 }
 
 const NavItem: React.FC<NavItemProps> = ({
@@ -29,8 +29,7 @@ const NavItem: React.FC<NavItemProps> = ({
   badge,
   tooltip,
   disabled = false,
-  isCollapsed = false,
-  isHighlighted = false
+  isCollapsed = false
 }) => {
   const location = useLocation();
   
@@ -46,7 +45,6 @@ const NavItem: React.FC<NavItemProps> = ({
       ? 'bg-primary/10 text-primary font-medium border-l-[3px] border-l-primary pl-[calc(0.75rem-3px)]' 
       : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground',
     disabled && 'opacity-50 pointer-events-none',
-    isHighlighted && 'ring-2 ring-primary/30 bg-primary/5',
     className
   );
   
@@ -58,11 +56,11 @@ const NavItem: React.FC<NavItemProps> = ({
       aria-disabled={disabled}
       aria-current={isActive ? 'page' : undefined}
     >
-      {Icon && (
-        <span className={cn("shrink-0", isActive ? "text-primary" : "text-muted-foreground")}>
-          {React.isValidElement(Icon) ? Icon : typeof Icon === 'function' ? React.createElement(Icon as LucideIcon, { size: 20 }) : Icon}
-        </span>
-      )}
+      {Icon && React.createElement(Icon, { 
+        className: cn("h-5 w-5 shrink-0", 
+          isActive ? "text-primary" : "text-muted-foreground")
+      })}
+      
       {(!isCollapsed || !Icon) && 
         <span className={cn("text-[14px] font-medium transition-colors", 
           isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")}
@@ -70,11 +68,11 @@ const NavItem: React.FC<NavItemProps> = ({
           {title}
         </span>
       }
-      {badge && <span className="ml-auto">{badge}</span>}
-      {disabled && !isCollapsed && (
-        <span className="ml-auto text-xs bg-muted/50 text-muted-foreground px-1.5 py-0.5 rounded">
-          Próximamente
-        </span>
+      
+      {badge !== undefined && badge > 0 && (
+        <Badge variant="outline" className="ml-auto px-1.5 min-w-5 text-center">
+          {badge > 99 ? '99+' : badge}
+        </Badge>
       )}
     </Link>
   );

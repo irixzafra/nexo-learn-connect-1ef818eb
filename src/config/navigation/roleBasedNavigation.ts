@@ -1,465 +1,391 @@
 
-import { UserRoleType } from '@/types/auth';
-import { MenuItem } from '@/types/navigation';
 import { 
   Home, 
-  LayoutDashboard, 
+  BookOpen, 
   Users, 
-  BookOpen,
-  Route,
-  Award,
-  CheckSquare,
+  BarChart3, 
+  Settings, 
+  Folder, 
+  BookText,
+  GraduationCap,
+  Building2,
   FileText,
-  MessageSquare,
-  Bell,
-  HelpCircle,
-  UserPlus,
-  Settings,
-  UserCog,
-  Lock,
   CreditCard,
-  Compass,
-  Calendar,
-  Database,
+  DollarSign,
   Palette,
-  Plug,
-  BarChart,
-  Shield,
-  Navigation,
-  ToggleLeft,
-  Video,
-  ClipboardList,
-  BarChart3,
-  Briefcase,
+  Layout,
+  Code,
+  Database,
+  Share2,
+  Terminal,
+  MessageCircle,
+  Award,
+  CalendarDays,
+  Star,
   User,
-  Trophy,
-  Map,
-  Flag,
-  Lightbulb,
-  DollarSign
-} from 'lucide-react';
+  FileCheck,
+  HelpCircle,
+  Contact,
+  PenTool
+} from "lucide-react";
 
-/**
- * Sistema de navegación unificado basado en NAVIGATION.md
- * Esta es la fuente única de verdad para la estructura de navegación.
- */
+import { UserRoleType } from "@/types/auth";
+import { NavigationMenus, MenuItem } from "@/types/navigation";
 
-// ADMINISTRACIÓN (Admin) - Organizada por dominios funcionales
-export const adminNavigation = {
-  // Dashboard principal admin
+// Navigation for Admin role
+export const adminNavigation: NavigationMenus = {
   dashboard: [
     {
-      icon: LayoutDashboard,
-      label: 'Dashboard Admin',
-      path: '/app/admin/dashboard',
-      requiredRole: ['admin', 'sistemas']
+      icon: Home,
+      label: "Dashboard",
+      path: "/app/admin/dashboard",
+      requiredRole: ["admin"]
     }
   ],
-  
-  // 1. Académico (LMS)
   academic: [
     {
       icon: BookOpen,
-      label: 'Gestión de cursos',
-      path: '/app/admin/courses',
-      requiredRole: ['admin', 'sistemas']
+      label: "Gestión de Cursos",
+      path: "/app/admin/courses",
+      requiredRole: ["admin"]
     },
     {
       icon: FileText,
-      label: 'Contenido Global',
-      path: '/app/admin/content',
-      requiredRole: ['admin', 'sistemas']
+      label: "Contenido Global",
+      path: "/app/admin/content",
+      requiredRole: ["admin"]
     },
     {
-      icon: Trophy,
-      label: 'Categorías',
-      path: '/app/admin/categories',
-      requiredRole: ['admin', 'sistemas']
+      icon: Folder,
+      label: "Categorías",
+      path: "/app/admin/categories",
+      requiredRole: ["admin"]
     },
     {
-      icon: Route,
-      label: 'Rutas de Aprendizaje',
-      path: '/app/admin/learning-paths',
-      requiredRole: ['admin', 'sistemas']
+      icon: FileText,
+      label: "Rutas de Aprendizaje",
+      path: "/app/admin/learning-paths",
+      requiredRole: ["admin"]
     },
     {
       icon: Award,
-      label: 'Certificados',
-      path: '/app/admin/certificates',
-      requiredRole: ['admin', 'sistemas']
+      label: "Certificados",
+      path: "/app/admin/certificates",
+      requiredRole: ["admin"]
     },
     {
-      icon: BarChart,
-      label: 'Analíticas Académicas',
-      path: '/app/admin/academic-analytics',
-      requiredRole: ['admin', 'sistemas']
+      icon: BarChart3,
+      label: "Analíticas Académicas",
+      path: "/app/admin/analytics/academic",
+      requiredRole: ["admin"]
     }
   ],
-  
-  // 2. Gestión Central (ERP)
   management: [
     {
       icon: Users,
-      label: 'Gestión de usuarios',
-      path: '/app/admin/users',
-      requiredRole: ['admin', 'sistemas']
-    },
-    {
-      icon: Shield,
-      label: 'Roles y permisos',
-      path: '/app/admin/roles',
-      requiredRole: ['admin', 'sistemas']
-    },
-    {
-      icon: BarChart,
-      label: 'Analíticas de usuarios',
-      path: '/app/admin/user-analytics',
-      requiredRole: ['admin', 'sistemas']
-    },
-    {
-      icon: MessageSquare,
-      label: 'Comunicación',
-      path: '/app/admin/communication',
-      requiredRole: ['admin', 'sistemas']
-    }
-  ],
-  
-  // 3. Finanzas
-  finances: [
-    {
-      icon: DollarSign,
-      label: 'Transacciones',
-      path: '/app/admin/transactions',
-      requiredRole: ['admin', 'sistemas']
-    },
-    {
-      icon: CreditCard,
-      label: 'Suscripciones',
-      path: '/app/admin/subscriptions',
-      requiredRole: ['admin', 'sistemas']
-    },
-    {
-      icon: BarChart,
-      label: 'Analíticas Financieras',
-      path: '/app/admin/financial-analytics',
-      requiredRole: ['admin', 'sistemas']
+      label: "Gestión de usuarios",
+      path: "/app/admin/users",
+      requiredRole: ["admin"]
     },
     {
       icon: Settings,
-      label: 'Configuración de pagos',
-      path: '/app/admin/payment-settings',
-      requiredRole: ['admin', 'sistemas']
+      label: "Roles y Permisos",
+      path: "/app/admin/roles",
+      requiredRole: ["admin"]
+    },
+    {
+      icon: BarChart3,
+      label: "Analíticas de Usuarios",
+      path: "/app/admin/analytics/users",
+      requiredRole: ["admin"]
+    },
+    {
+      icon: MessageCircle,
+      label: "Comunicación",
+      path: "/app/admin/communication",
+      requiredRole: ["admin"]
     }
   ],
-  
-  // 4. Sistema (Plataforma)
+  finance: [
+    {
+      icon: DollarSign,
+      label: "Transacciones",
+      path: "/app/admin/transactions",
+      requiredRole: ["admin"]
+    },
+    {
+      icon: CreditCard,
+      label: "Suscripciones",
+      path: "/app/admin/subscriptions",
+      requiredRole: ["admin"]
+    },
+    {
+      icon: BarChart3,
+      label: "Analíticas Financieras",
+      path: "/app/admin/analytics/finance",
+      requiredRole: ["admin"]
+    },
+    {
+      icon: Settings,
+      label: "Configuración de Pagos",
+      path: "/app/admin/payment-settings",
+      requiredRole: ["admin"]
+    }
+  ],
   system: [
     {
       icon: Settings,
-      label: 'Configuración General',
-      path: '/app/admin/settings',
-      requiredRole: ['admin', 'sistemas']
+      label: "Configuración General",
+      path: "/app/admin/settings",
+      requiredRole: ["admin"]
     },
     {
       icon: Palette,
-      label: 'Diseño',
-      path: '/app/admin/settings/design',
-      requiredRole: ['admin', 'sistemas']
+      label: "Diseño",
+      path: "/app/admin/design",
+      requiredRole: ["admin"]
     },
     {
-      icon: FileText,
-      label: 'Páginas CMS',
-      path: '/app/admin/system-pages',
-      requiredRole: ['admin', 'sistemas']
+      icon: Layout,
+      label: "Páginas CMS",
+      path: "/app/admin/pages",
+      requiredRole: ["admin"]
     },
     {
-      icon: Flag,
-      label: 'Gestión de Features',
-      path: '/app/admin/features',
-      requiredRole: ['admin', 'sistemas']
+      icon: Settings,
+      label: "Gestión de Features",
+      path: "/app/admin/features",
+      requiredRole: ["admin"]
     },
     {
-      icon: Plug,
-      label: 'Integraciones',
-      path: '/app/admin/settings/integrations',
-      requiredRole: ['admin', 'sistemas']
+      icon: Share2,
+      label: "Integraciones",
+      path: "/app/admin/integrations",
+      requiredRole: ["admin"]
     },
     {
-      icon: BarChart,
-      label: 'Analíticas de Plataforma',
-      path: '/app/admin/platform-analytics',
-      requiredRole: ['admin', 'sistemas']
-    },
-    {
-      icon: Database,
-      label: 'Salud/Logs',
-      path: '/app/admin/health',
-      requiredRole: ['admin', 'sistemas']
+      icon: BarChart3,
+      label: "Analíticas de Plataforma",
+      path: "/app/admin/analytics/platform",
+      requiredRole: ["admin"]
     }
   ],
-  
-  // 5. Herramientas Dev (Opcional)
   devTools: [
     {
-      icon: Navigation,
-      label: 'Diagrama de navegación',
-      path: '/app/admin/navigation-diagram',
-      requiredRole: ['admin', 'sistemas']
+      icon: Database,
+      label: "Test Data Generator",
+      path: "/app/admin/test-data",
+      requiredRole: ["admin"]
     },
     {
-      icon: Palette,
-      label: 'Revisión de elementos',
-      path: '/app/admin/design-system',
-      requiredRole: ['admin', 'sistemas']
-    },
-    {
-      icon: Map,
-      label: 'Roadmap',
-      path: '/app/admin/roadmap',
-      requiredRole: ['admin'],
-      isHighlighted: true
+      icon: Code,
+      label: "Herramientas de desarrollo",
+      path: "/app/admin/dev-tools",
+      requiredRole: ["admin"]
     }
   ]
 };
 
-// INSTRUCTOR - Organizada por flujo de trabajo natural
-export const instructorNavigation = {
-  // Dashboard principal instructor
+// Navigation for Instructor role
+export const instructorNavigation: NavigationMenus = {
   dashboard: [
     {
-      icon: LayoutDashboard,
-      label: 'Dashboard Instructor',
-      path: '/app/instructor/dashboard',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      icon: Home,
+      label: "Dashboard",
+      path: "/app/instructor/dashboard",
+      requiredRole: ["instructor"]
     }
   ],
-  
-  // 1. Gestión Académica
   academicManagement: [
     {
       icon: BookOpen,
-      label: 'Mis Cursos',
-      path: '/app/instructor/courses',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      label: "Mis Cursos",
+      path: "/app/instructor/courses",
+      requiredRole: ["instructor"]
     },
     {
-      icon: FileText,
-      label: 'Crear Curso',
-      path: '/app/instructor/courses/create',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      icon: PenTool,
+      label: "Crear Curso",
+      path: "/app/instructor/courses/create",
+      requiredRole: ["instructor"]
     },
     {
-      icon: Video,
-      label: 'Biblioteca de Contenido',
-      path: '/app/instructor/content',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      icon: Folder,
+      label: "Biblioteca de Contenido",
+      path: "/app/instructor/content",
+      requiredRole: ["instructor"]
     }
   ],
-  
-  // 2. Estudiantes
   students: [
     {
       icon: Users,
-      label: 'Mis Estudiantes',
-      path: '/app/instructor/students',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      label: "Mis Estudiantes",
+      path: "/app/instructor/students",
+      requiredRole: ["instructor"]
     },
     {
-      icon: ClipboardList,
-      label: 'Progreso/Notas',
-      path: '/app/instructor/grades',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      icon: FileCheck,
+      label: "Progreso/Notas",
+      path: "/app/instructor/progress",
+      requiredRole: ["instructor"]
     },
     {
-      icon: MessageSquare,
-      label: 'Comunicación',
-      path: '/app/instructor/messages',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      icon: MessageCircle,
+      label: "Comunicación",
+      path: "/app/instructor/messages",
+      requiredRole: ["instructor"]
     }
   ],
-  
-  // 3. Rendimiento
   performance: [
     {
       icon: BarChart3,
-      label: 'Analíticas de Cursos',
-      path: '/app/instructor/analytics',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      label: "Analíticas de Cursos",
+      path: "/app/instructor/analytics",
+      requiredRole: ["instructor"]
     }
   ],
-  
-  // 4. Cuenta
   account: [
     {
       icon: User,
-      label: 'Mi Perfil',
-      path: '/app/profile',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      label: "Mi Perfil",
+      path: "/app/instructor/profile",
+      requiredRole: ["instructor"]
     },
     {
       icon: CreditCard,
-      label: 'Mi Facturación',
-      path: '/app/instructor/billing',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      label: "Mi Facturación",
+      path: "/app/instructor/billing",
+      requiredRole: ["instructor"]
     },
     {
       icon: Settings,
-      label: 'Configuración',
-      path: '/app/preferences',
-      requiredRole: ['instructor', 'admin', 'sistemas']
+      label: "Configuración",
+      path: "/app/instructor/settings",
+      requiredRole: ["instructor"]
     }
   ]
 };
 
-// ESTUDIANTE - Centrada en la comunidad y experiencia de aprendizaje
-export const studentNavigation = {
-  // Dashboard principal estudiante
+// Navigation for Student role
+export const studentNavigation: NavigationMenus = {
   dashboard: [
     {
-      icon: LayoutDashboard,
-      label: 'Mi Panel',
-      path: '/app/dashboard',
-      requiredRole: ['student', 'admin', 'sistemas']
+      icon: Home,
+      label: "Mi Panel",
+      path: "/app/dashboard",
+      requiredRole: ["student"]
     }
   ],
-  
-  // 1. Comunidad
   community: [
     {
-      icon: Home,
-      label: 'Feed',
-      path: '/app/home',
-      requiredRole: ['student', 'admin', 'sistemas']
-    },
-    {
-      icon: Trophy,
-      label: 'Leaderboard',
-      path: '/app/leaderboard',
-      requiredRole: ['student', 'admin', 'sistemas']
-    },
-    {
-      icon: MessageSquare,
-      label: 'Mensajes',
-      path: '/app/messages',
-      requiredRole: ['student', 'admin', 'sistemas']
-    },
-    {
-      icon: Bell,
-      label: 'Notificaciones',
-      path: '/app/notifications',
-      requiredRole: ['student', 'admin', 'sistemas']
-    }
-  ],
-  
-  // 2. Aprendizaje
-  learning: [
-    {
-      icon: BookOpen,
-      label: 'Mis Cursos',
-      path: '/app/my-courses',
-      requiredRole: ['student', 'admin', 'sistemas'],
-      isHighlighted: true
-    },
-    {
-      icon: Compass,
-      label: 'Explorar Cursos',
-      path: '/app/explore-courses',
-      requiredRole: ['student', 'admin', 'sistemas']
-    },
-    {
-      icon: Route,
-      label: 'Rutas de Aprendizaje',
-      path: '/app/learning-paths',
-      requiredRole: ['student', 'admin', 'sistemas']
-    },
-    {
-      icon: Calendar,
-      label: 'Calendario',
-      path: '/app/calendar',
-      requiredRole: ['student', 'admin', 'sistemas']
-    }
-  ],
-  
-  // 3. Mi Cuenta
-  myAccount: [
-    {
-      icon: User,
-      label: 'Mi Perfil',
-      path: '/app/profile',
-      requiredRole: ['student', 'admin', 'sistemas']
+      icon: MessageCircle,
+      label: "Feed",
+      path: "/app/community/feed",
+      requiredRole: ["student"]
     },
     {
       icon: Award,
-      label: 'Progreso/Certificados',
-      path: '/app/certificates',
-      requiredRole: ['student', 'admin', 'sistemas']
+      label: "Leaderboard",
+      path: "/app/community/leaderboard",
+      requiredRole: ["student"]
+    },
+    {
+      icon: MessageCircle,
+      label: "Mensajes",
+      path: "/app/messages",
+      requiredRole: ["student"]
+    }
+  ],
+  learning: [
+    {
+      icon: BookText,
+      label: "Mis Cursos",
+      path: "/app/my-courses",
+      requiredRole: ["student"]
+    },
+    {
+      icon: BookOpen,
+      label: "Explorar Cursos",
+      path: "/app/explore",
+      requiredRole: ["student"]
+    },
+    {
+      icon: FileText,
+      label: "Rutas de Aprendizaje",
+      path: "/app/learning-paths",
+      requiredRole: ["student"]
+    },
+    {
+      icon: CalendarDays,
+      label: "Calendario",
+      path: "/app/calendar",
+      requiredRole: ["student"]
+    }
+  ],
+  myAccount: [
+    {
+      icon: User,
+      label: "Mi Perfil",
+      path: "/app/profile",
+      requiredRole: ["student"]
+    },
+    {
+      icon: Award,
+      label: "Progreso/Certificados",
+      path: "/app/progress",
+      requiredRole: ["student"]
     },
     {
       icon: CreditCard,
-      label: 'Facturación/Inscripciones',
-      path: '/app/payments',
-      requiredRole: ['student', 'admin', 'sistemas']
+      label: "Facturación/Inscripciones",
+      path: "/app/billing",
+      requiredRole: ["student"]
     },
     {
       icon: Settings,
-      label: 'Configuración',
-      path: '/app/preferences',
-      requiredRole: ['student', 'admin', 'sistemas']
+      label: "Configuración",
+      path: "/app/settings",
+      requiredRole: ["student"]
     }
   ],
-  
-  // 4. Ayuda
   help: [
     {
       icon: HelpCircle,
-      label: 'Centro de Ayuda',
-      path: '/app/help',
-      requiredRole: ['student', 'admin', 'sistemas']
+      label: "Centro de Ayuda",
+      path: "/app/help",
+      requiredRole: ["student"]
     },
     {
-      icon: MessageSquare,
-      label: 'Contactar Soporte',
-      path: '/app/support',
-      requiredRole: ['student', 'admin', 'sistemas']
+      icon: Contact,
+      label: "Contactar Soporte",
+      path: "/app/support",
+      requiredRole: ["student"]
     }
   ]
 };
 
-/**
- * Obtiene la navegación completa para un rol específico
- * @param role - Rol de usuario
- */
-export const getNavigationByRole = (role: UserRoleType): Record<string, MenuItem[]> => {
+// Function to get navigation items based on role
+export const getNavigationByRole = (role: UserRoleType | string): NavigationMenus => {
   switch (role) {
-    case 'admin':
+    case "admin":
       return adminNavigation;
-    case 'instructor':
+    case "instructor":
       return instructorNavigation;
-    case 'student':
+    case "student":
     default:
       return studentNavigation;
   }
 };
 
-/**
- * Obtiene la ruta de inicio para un rol específico
- * @param role - Rol de usuario
- */
-export const getHomePathByRole = (role: UserRoleType): string => {
+// Function to get home path based on role
+export const getHomePathByRole = (role: UserRoleType | string): string => {
   switch (role) {
-    case 'admin':
-      return '/app/admin/dashboard';
-    case 'instructor':
-      return '/app/instructor/dashboard';
+    case "admin":
+      return "/app/admin/dashboard";
+    case "instructor":
+      return "/app/instructor/dashboard";
+    case "student":
     default:
-      return '/app/dashboard';
+      return "/app/dashboard";
   }
-};
-
-export default {
-  adminNavigation,
-  instructorNavigation,
-  studentNavigation,
-  getNavigationByRole,
-  getHomePathByRole
 };

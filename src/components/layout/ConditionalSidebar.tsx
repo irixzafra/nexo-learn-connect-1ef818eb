@@ -56,6 +56,8 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
         <SidebarMainNavigation 
           effectiveRole={effectiveRole}
+          messagesCount={messagesCount}
+          notificationsCount={notificationsCount}
           isCollapsed={isCollapsed}
         />
       </div>

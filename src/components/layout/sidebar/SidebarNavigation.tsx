@@ -5,24 +5,30 @@ import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
+import ConditionalSidebar from '../ConditionalSidebar';
 import { getRoleName, getHomePath } from '@/utils/roleUtils';
-import { SidebarMainNavigation } from './navigation/SidebarMainNavigation';
-import SidebarFooterSection from './SidebarFooterSection';
 
 interface SidebarNavigationProps {
   viewAsRole?: UserRoleType | null;
   onRoleChange?: (role: UserRoleType) => void;
-  isCollapsed?: boolean;
 }
 
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
   viewAsRole,
-  onRoleChange,
-  isCollapsed = false
+  onRoleChange 
 }) => {
-  const { userRole, effectiveRole, logout, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
+  const { userRole, effectiveRole } = useAuth();
+  const { state } = useSidebar();
   const { unreadCount: notificationsCount } = useNotifications();
-  const messagesCount = 3; // Demo value - replace with actual unread message count
+  const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
+  
+  // Log initial props and context values for debugging
+  console.log('>>> DEBUG SidebarNavigation INIT with:', {
+    userRoleFromContext: userRole,
+    effectiveRoleFromContext: effectiveRole,
+    viewAsRoleProp: viewAsRole,
+    sidebarState: state
+  });
 
   const {
     currentViewRole,
@@ -38,36 +44,19 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   ];
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Espacio superior sin logo */}
-      <div className="h-12 border-b border-border/30"></div>
-      
-      <div className="flex-1 overflow-y-auto">
-        <SidebarMainNavigation
-          effectiveRole={toUserRoleType(effectiveRole as string)}
-          messagesCount={messagesCount}
-          notificationsCount={notificationsCount}
-          getHomePath={() => getHomePath(effectiveRole as UserRoleType)}
-          isCollapsed={isCollapsed}
-        />
-      </div>
-      
-      <div className="mt-auto">
-        <SidebarFooterSection
-          userRole={toUserRoleType(userRole as string)}
-          effectiveRole={toUserRoleType(effectiveRole as string)}
-          isCollapsed={isCollapsed}
-          currentViewRole={currentViewRole}
-          getRoleName={getRoleName}
-          currentLanguage={currentLanguage}
-          languages={languages}
-          changeLanguage={changeLanguage}
-          logout={logout}
-          isViewingAsOtherRole={isViewingAsOtherRole}
-          resetToOriginalRole={resetToOriginalRole}
-        />
-      </div>
-    </div>
+    <ConditionalSidebar
+      userRole={toUserRoleType(userRole as string)}
+      effectiveRole={toUserRoleType(effectiveRole as string)}
+      messagesCount={messagesCount}
+      notificationsCount={notificationsCount}
+      isCollapsed={state === "collapsed"}
+      currentViewRole={currentViewRole}
+      currentLanguage={currentLanguage}
+      languages={languages}
+      getRoleName={getRoleName}
+      getHomePath={getHomePath}
+      changeLanguage={changeLanguage}
+    />
   );
 };
 
