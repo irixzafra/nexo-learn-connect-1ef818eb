@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { Settings, Globe, LogOut, RefreshCw, ChevronDown } from 'lucide-react';
@@ -24,6 +23,7 @@ interface SidebarFooterProps {
   isViewingAsOtherRole: boolean;
   resetToOriginalRole: () => void;
   getRoleName: (role: UserRoleType) => string;
+  forceAdminRole?: () => Promise<void>;
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
@@ -37,7 +37,8 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
   logout,
   isViewingAsOtherRole,
   resetToOriginalRole,
-  getRoleName
+  getRoleName,
+  forceAdminRole
 }) => {
   // Only show role switcher if original user role is admin
   const showRoleSwitcher = userRole === 'admin';
