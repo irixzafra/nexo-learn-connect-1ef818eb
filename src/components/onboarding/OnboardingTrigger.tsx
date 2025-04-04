@@ -1,27 +1,28 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Button, ButtonProps } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-react';
 
-export interface OnboardingTriggerProps {
+interface OnboardingTriggerProps {
   onActivate: () => void;
+  variant?: ButtonProps['variant'];
+  size?: ButtonProps['size'];
 }
 
-/**
- * Componente que muestra un botón para activar el proceso de onboarding
- */
-export const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({
-  onActivate
+const OnboardingTrigger: React.FC<OnboardingTriggerProps> = ({ 
+  onActivate, 
+  variant = 'outline', 
+  size = 'default' 
 }) => {
   return (
     <Button 
-      variant="outline" 
-      size="sm"
-      className="gap-1.5 text-muted-foreground hover:text-foreground"
-      onClick={onActivate}
+      onClick={onActivate} 
+      variant={variant}
+      size={size}
+      className="flex items-center gap-1"
     >
       <HelpCircle className="h-4 w-4" />
-      <span className="hidden md:inline">Ayuda</span>
+      Tour de bienvenida
     </Button>
   );
 };

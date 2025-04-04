@@ -1,42 +1,50 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ReactNode } from 'react';
 
-interface StatProps {
+interface StatAction {
+  label: string;
+  onClick: () => void;
+}
+
+interface StatItem {
   label: string;
   value: string;
-  icon?: React.ReactNode;
-  change?: { value: number; positive: boolean };
-  color?: string;
+  icon: ReactNode;
+  action?: StatAction;
 }
 
 interface StatsSectionProps {
-  stats: StatProps[];
+  stats: StatItem[];
 }
 
 export const StatsSection: React.FC<StatsSectionProps> = ({ stats }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat, index) => (
-        <Card key={index} className="overflow-hidden">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                <h4 className="text-2xl font-bold mt-1">{stat.value}</h4>
-                {stat.change && (
-                  <p className={`text-xs mt-1 ${stat.change.positive ? "text-green-500" : "text-red-500"}`}>
-                    {stat.change.positive ? "+" : "-"}{stat.change.value}%
-                  </p>
-                )}
-              </div>
-              {stat.icon && (
-                <div className={`p-3 rounded-full bg-${stat.color ? stat.color : "primary"}/10`}>
-                  {stat.icon}
-                </div>
-              )}
+        <Card key={index} className="p-4">
+          <div className="flex justify-between items-start">
+            <div className="w-10 h-10 flex items-center justify-center bg-primary/10 text-primary rounded-lg">
+              {stat.icon}
             </div>
-          </CardContent>
+            <div className="text-right">
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="text-xs text-muted-foreground">{stat.label}</div>
+            </div>
+          </div>
+          {stat.action && (
+            <div className="mt-3 text-right">
+              <Button 
+                variant="link" 
+                className="h-auto p-0 text-xs" 
+                onClick={stat.action.onClick}
+              >
+                {stat.action.label}
+              </Button>
+            </div>
+          )}
         </Card>
       ))}
     </div>
