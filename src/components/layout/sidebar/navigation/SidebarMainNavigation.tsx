@@ -24,7 +24,8 @@ import {
   BarChart,
   Briefcase,
   FileCode,
-  HelpCircle
+  HelpCircle,
+  Compass
 } from 'lucide-react';
 
 interface SidebarMainNavigationProps {
@@ -54,7 +55,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Dashboard"
             icon={Activity}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={true}
             id="admin-dashboard"
             items={[
@@ -70,7 +70,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Académico (LMS)"
             icon={GraduationCap}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="admin-academic"
             items={[
@@ -88,7 +87,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Gestión Central (ERP)"
             icon={Briefcase}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="admin-management"
             items={[
@@ -104,7 +102,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Finanzas"
             icon={Landmark}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="admin-finance"
             items={[
@@ -120,7 +117,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Sistema (Plataforma)"
             icon={Settings}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="admin-system"
             items={[
@@ -139,7 +135,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Herramientas Dev"
             icon={FileCode}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="admin-dev"
             items={[
@@ -160,7 +155,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Dashboard"
             icon={Activity}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={true}
             id="instructor-dashboard"
             items={[
@@ -177,7 +171,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Gestión Académica"
             icon={BookOpen}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="instructor-academic"
             items={[
@@ -192,7 +185,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Participantes"
             icon={Users}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="instructor-participants"
             items={[
@@ -207,7 +199,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Rendimiento"
             icon={LineChart}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="instructor-performance"
             items={[
@@ -220,7 +211,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Cuenta"
             icon={UserSquare}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="instructor-account"
             items={[
@@ -240,7 +230,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Dashboard"
             icon={Activity}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={true}
             id="student-dashboard"
             items={[
@@ -257,7 +246,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Comunidad"
             icon={Users}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="student-community"
             items={[
@@ -273,12 +261,11 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Aprendizaje"
             icon={BookOpen}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="student-learning"
             items={[
               { label: 'Mis Cursos', path: '/app/my-courses', icon: BookOpen, isHighlighted: true },
-              { label: 'Explorar Cursos', path: '/app/courses', icon: GraduationCap },
+              { label: 'Explorar Cursos', path: '/app/courses', icon: Compass },
               { label: 'Rutas de Aprendizaje', path: '/app/learning-paths', icon: LineChart, disabled: true },
               { label: 'Calendario', path: '/app/calendar', icon: Calendar, disabled: true }
             ]}
@@ -289,7 +276,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Mi Cuenta"
             icon={UserSquare}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="student-account"
             items={[
@@ -305,7 +291,6 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             title="Ayuda"
             icon={HelpCircle}
             isCollapsed={isCollapsed}
-            effectiveRole={effectiveRole}
             defaultOpen={false}
             id="student-help"
             items={[

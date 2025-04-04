@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { UserRoleType } from '@/types/auth';
 import SidebarNavItem from './SidebarNavItem';
 
 interface SidebarNavGroupProps {
@@ -18,7 +17,6 @@ interface SidebarNavGroupProps {
   }>;
   isCollapsed?: boolean;
   defaultOpen?: boolean;
-  effectiveRole?: UserRoleType;
   id?: string;
 }
 
@@ -28,7 +26,6 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
   items,
   isCollapsed = false,
   defaultOpen = false,
-  effectiveRole = 'student',
   id = 'group'
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
