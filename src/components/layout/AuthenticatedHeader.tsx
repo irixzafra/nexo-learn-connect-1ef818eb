@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { UserMenu } from '@/components/layout/header/UserMenu';
 import { Button } from '@/components/ui/button';
-import { Menu, Bell, MessageSquare } from 'lucide-react';
+import { Menu, Bell, MessageSquare, Palette } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/lib/utils';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
@@ -48,8 +48,18 @@ const AuthenticatedHeader: React.FC<AuthenticatedHeaderProps> = ({
           {/* Database Connection Indicator */}
           <DatabaseConnectionIndicator />
           
-          {/* Theme Switcher */}
-          <ThemeSwitcher />
+          {/* Theme Switcher - Ahora más prominente con texto y animación */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center gap-2 bg-primary/5 border-primary/20 hover:bg-primary/10 transition-colors px-3 py-2 rounded-md text-sm"
+          >
+            <Palette className="h-4 w-4 text-primary" />
+            <span className="hidden md:inline">Tema</span>
+            <div className="relative">
+              <ThemeSwitcher showTooltip={true} />
+            </div>
+          </Button>
           
           {/* Notification & Messages buttons */}
           <Button 

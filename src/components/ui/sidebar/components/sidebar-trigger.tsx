@@ -53,10 +53,11 @@ export const SidebarTrigger = React.forwardRef<
     <Button
       ref={ref}
       data-sidebar="trigger"
-      variant="ghost"
+      variant="outline"
       size="icon"
       className={cn(
-        "h-10 w-10 rounded-full bg-background hover:bg-muted/40 text-foreground transition-all duration-300 fixed left-5 bottom-6 shadow-md hover:shadow-lg border border-border/30 z-50",
+        "h-10 w-10 rounded-md bg-primary/5 text-foreground hover:bg-primary/10 transition-all duration-300 border-primary/20",
+        "fixed md:absolute left-3 md:left-4 top-4 z-50 shadow-md",
         className
       )}
       onClick={handleToggleClick}
@@ -78,17 +79,17 @@ export const SidebarTrigger = React.forwardRef<
           </motion.div>
         ) : isCollapsed ? (
           <motion.div
-            key="logo-icon"
+            key="menu-icon"
             initial={{ opacity: 0, rotate: 180, scale: 0.5 }}
             animate={{ opacity: 1, rotate: 0, scale: 1 }}
             exit={{ opacity: 0, rotate: -180, scale: 0.5 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <ChevronRight className="h-5 w-5" aria-hidden="true" />
+            <Menu className="h-5 w-5" aria-hidden="true" />
           </motion.div>
         ) : (
           <motion.div
-            key="menu-icon"
+            key="chevron-left"
             initial={{ opacity: 0, rotate: -180, scale: 0.5 }}
             animate={{ opacity: 1, rotate: 0, scale: 1 }}
             exit={{ opacity: 0, rotate: 180, scale: 0.5 }}

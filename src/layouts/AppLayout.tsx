@@ -1,27 +1,19 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Toaster } from 'sonner';
 import { Outlet } from 'react-router-dom';
 import AuthenticatedHeader from '@/components/layout/AuthenticatedHeader';
 import { useAuth } from '@/contexts/auth';
-import { Loader } from 'lucide-react';
+import { Loader, ChevronRight } from 'lucide-react';
 import AdminSidebar from '@/components/layout/sidebars/AdminSidebar';
 import InstructorSidebar from '@/components/layout/sidebars/InstructorSidebar';
 import StudentSidebar from '@/components/layout/sidebars/StudentSidebar';
 import SafeRouteWrapper from '@/components/SafeRouteWrapper';
 import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
-interface AppLayoutProps {
-  children?: React.ReactNode;
-}
-
-const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+const AppLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const { isLoading, effectiveRole } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(prev => !prev);
-  };
 
   if (isLoading) {
     return (
@@ -45,20 +37,21 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <SidebarProvider defaultState="expanded" persist={true}>
       <div className="flex min-h-screen flex-col w-full">
-        <AuthenticatedHeader onToggleSidebar={toggleSidebar} />
+        <AuthenticatedHeader />
         
-        <div className="flex flex-1 overflow-hidden">
-          <div className={`w-64 border-r bg-gray-50 dark:bg-gray-900 transition-all duration-300 ${
-            isSidebarOpen ? 'block' : 'hidden md:block'
-          }`}>
-            {renderSidebar()}
-          </div>
+        <div className="flex flex-1 overflow-hidden relative">
+          {renderSidebar()}
+          
+          {/* Nuevo botón de sidebar: más visible y posicionado correctamente */}
+          <SidebarTrigger />
+          
           <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6">
             <SafeRouteWrapper>
               {children || <Outlet />}
             </SafeRouteWrapper>
           </main>
         </div>
+        
         <Toaster position="top-right" />
       </div>
     </SidebarProvider>
