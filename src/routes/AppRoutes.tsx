@@ -8,7 +8,6 @@ import NotFound from '@/pages/NotFound';
 import LandingPage from '@/pages/LandingPage';
 import Login from '@/pages/auth/Login'; 
 import PublicLayout from '@/layouts/PublicLayout';
-import AuthLayout from '@/layouts/AuthLayout';
 import AppLayout from '@/layouts/AppLayout';
 
 import StudentDashboard from '@/pages/student/Dashboard';
@@ -40,7 +39,6 @@ import TestDataManagement from '@/pages/admin/TestDataManagement';
 import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminDashboard from '@/pages/admin/Dashboard';
 import PagesManagement from '@/pages/admin/settings/pages';
-import OrphanReviewPage from '@/pages/admin/OrphanReviewPage';
 import NavigationDiagram from '@/pages/admin/NavigationDiagram';
 import AnalyticsOverview from '@/pages/admin/analytics/index';
 import ReviewElementsPage from '@/pages/admin/ReviewElementsPage';
@@ -68,11 +66,6 @@ const AppRoutes = () => {
       <Route 
         path="/" 
         element={<PublicLayout><LandingPage /></PublicLayout>} 
-      />
-
-      <Route 
-        path="/auth/login" 
-        element={<AuthLayout><Login /></AuthLayout>} 
       />
       
       <Route 
@@ -147,10 +140,8 @@ const AppRoutes = () => {
         <Route path="admin/test-data" element={<SafeRouteWrapper requiredRole={['admin']}><TestDataManagement /></SafeRouteWrapper>} />
         <Route path="admin/access-control" element={<SafeRouteWrapper requiredRole={['admin']}><AccessControl /></SafeRouteWrapper>} />
         <Route path="admin/system-pages" element={<SafeRouteWrapper requiredRole={['admin']}><PagesManagement /></SafeRouteWrapper>} />
-        <Route path="admin/orphan-review" element={<SafeRouteWrapper requiredRole={['admin']}><OrphanReviewPage /></SafeRouteWrapper>} />
-        <Route path="admin/design-system" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Design System" /></SafeRouteWrapper>} />
-        
         <Route path="admin/review-elements" element={<SafeRouteWrapper requiredRole={['admin']}><ReviewElementsPage /></SafeRouteWrapper>} />
+        <Route path="admin/design-system" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Design System" /></SafeRouteWrapper>} />
         
         <Route path="instructor" element={<SafeRouteWrapper requiredRole={['instructor', 'admin']}><InstructorDashboard /></SafeRouteWrapper>} />
         <Route path="instructor/dashboard" element={<SafeRouteWrapper requiredRole={['instructor', 'admin']}><InstructorDashboard /></SafeRouteWrapper>} />
