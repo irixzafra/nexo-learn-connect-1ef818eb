@@ -11,14 +11,10 @@ import {
   Bell,
   MessageSquare,
   FileCode,
-  GraduationCap,
-  Calendar,
-  Video,
-  FileCheck,
-  BarChart2,
   Compass,
   User,
   Award,
+  Calendar,
   MessageCircle,
   CreditCard,
   Palette,
@@ -26,7 +22,8 @@ import {
   Database,
   PanelLeft,
   Activity,
-  Sparkles
+  Sparkles,
+  GraduationCap
 } from "lucide-react";
 
 import { UserRoleType } from "@/types/auth";
@@ -37,22 +34,50 @@ export const adminNavigation: NavigationMenus = {
   dashboard: [
     {
       icon: LayoutDashboard,
-      label: "Panel de Control",
+      label: "Visión General",
       path: "/app/admin/dashboard",
       requiredRole: ["admin"]
+    },
+    {
+      icon: Activity,
+      label: "KPIs clave",
+      path: "/app/admin/kpis",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: Bell,
+      label: "Resumen de actividad reciente",
+      path: "/app/admin/recent-activity",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: Bell,
+      label: "Alertas y notificaciones importantes",
+      path: "/app/admin/alerts",
+      requiredRole: ["admin"],
+      disabled: true
     }
   ],
-  academic: [
+  académico: [
     {
       icon: BookOpen,
-      label: "Gestión de Cursos",
+      label: "Gestión de cursos",
       path: "/app/admin/courses",
       requiredRole: ["admin"]
     },
     {
       icon: FileText,
       label: "Contenido Global",
-      path: "/app/admin/content",
+      path: "/app/admin/content-global",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: FileText,
+      label: "Categorías",
+      path: "/app/admin/categories",
       requiredRole: ["admin"],
       disabled: true
     },
@@ -71,30 +96,30 @@ export const adminNavigation: NavigationMenus = {
       disabled: true
     },
     {
-      icon: BarChart2,
+      icon: Activity,
       label: "Analíticas Académicas",
       path: "/app/admin/academic-analytics",
       requiredRole: ["admin"],
       disabled: true
     }
   ],
-  management: [
+  "gestión central": [
     {
       icon: Users,
-      label: "Gestión de Usuarios",
+      label: "Gestión de usuarios",
       path: "/app/admin/users",
       requiredRole: ["admin"]
     },
     {
       icon: Shield,
-      label: "Roles y Permisos",
+      label: "Roles y permisos",
       path: "/app/admin/roles",
       requiredRole: ["admin"]
     },
     {
       icon: Activity,
-      label: "Analíticas de Usuarios",
-      path: "/app/admin/user-analytics",
+      label: "Analíticas de usuarios",
+      path: "/app/admin/users-analytics",
       requiredRole: ["admin"],
       disabled: true
     },
@@ -106,7 +131,7 @@ export const adminNavigation: NavigationMenus = {
       disabled: true
     }
   ],
-  finances: [
+  finanzas: [
     {
       icon: CreditCard,
       label: "Transacciones",
@@ -115,14 +140,14 @@ export const adminNavigation: NavigationMenus = {
       disabled: true
     },
     {
-      icon: Activity,
+      icon: CreditCard,
       label: "Suscripciones",
       path: "/app/admin/subscriptions",
       requiredRole: ["admin"],
       disabled: true
     },
     {
-      icon: BarChart2,
+      icon: Activity,
       label: "Analíticas Financieras",
       path: "/app/admin/financial-analytics",
       requiredRole: ["admin"],
@@ -130,13 +155,13 @@ export const adminNavigation: NavigationMenus = {
     },
     {
       icon: Settings,
-      label: "Configuración de Pagos",
+      label: "Configuración de pagos",
       path: "/app/admin/payment-settings",
       requiredRole: ["admin"],
       disabled: true
     }
   ],
-  system: [
+  sistema: [
     {
       icon: Settings,
       label: "Configuración General",
@@ -170,7 +195,7 @@ export const adminNavigation: NavigationMenus = {
       disabled: true
     },
     {
-      icon: BarChart2,
+      icon: Activity,
       label: "Analíticas de Plataforma",
       path: "/app/admin/platform-analytics",
       requiredRole: ["admin"],
@@ -184,29 +209,29 @@ export const adminNavigation: NavigationMenus = {
       disabled: true
     }
   ],
-  development: [
+  "herramientas dev": [
     {
       icon: PanelLeft,
-      label: "Diagrama de Navegación",
+      label: "Diagrama de navegación",
       path: "/app/admin/navigation-diagram",
       requiredRole: ["admin"]
     },
     {
       icon: FileText,
-      label: "Revisión de Elementos",
+      label: "Revisión de elementos",
       path: "/app/admin/review-elements",
       requiredRole: ["admin"],
       disabled: true
     },
     {
       icon: FileCode,
-      label: "Herramientas de Desarrollo",
+      label: "Herramientas de desarrollo",
       path: "/app/admin/development",
       requiredRole: ["admin"]
     },
     {
       icon: Settings,
-      label: "Configuraciones Avanzadas",
+      label: "Configuraciones avanzadas",
       path: "/app/admin/advanced-settings",
       requiredRole: ["admin"],
       disabled: true
@@ -222,9 +247,37 @@ export const instructorNavigation: NavigationMenus = {
       label: "Panel Instructor",
       path: "/app/instructor/dashboard",
       requiredRole: ["instructor"]
+    },
+    {
+      icon: Activity,
+      label: "Resumen de actividad reciente",
+      path: "/app/instructor/recent-activity",
+      requiredRole: ["instructor"],
+      disabled: true
+    },
+    {
+      icon: Activity,
+      label: "Métricas de cursos",
+      path: "/app/instructor/course-metrics",
+      requiredRole: ["instructor"],
+      disabled: true
+    },
+    {
+      icon: Calendar,
+      label: "Próximas sesiones",
+      path: "/app/instructor/upcoming-sessions",
+      requiredRole: ["instructor"],
+      disabled: true
+    },
+    {
+      icon: Bell,
+      label: "Notificaciones importantes",
+      path: "/app/instructor/notifications",
+      requiredRole: ["instructor"],
+      disabled: true
     }
   ],
-  academic: [
+  "gestión académica": [
     {
       icon: BookOpen,
       label: "Mis Cursos",
@@ -232,7 +285,7 @@ export const instructorNavigation: NavigationMenus = {
       requiredRole: ["instructor"]
     },
     {
-      icon: Video,
+      icon: FileText,
       label: "Crear Curso",
       path: "/app/instructor/courses/create",
       requiredRole: ["instructor"]
@@ -245,17 +298,17 @@ export const instructorNavigation: NavigationMenus = {
       disabled: true
     }
   ],
-  students: [
+  participantes: [
     {
       icon: Users,
-      label: "Mis Estudiantes",
-      path: "/app/instructor/students",
+      label: "Mis Participantes",
+      path: "/app/instructor/participants",
       requiredRole: ["instructor"]
     },
     {
-      icon: FileCheck,
-      label: "Progreso/Notas",
-      path: "/app/instructor/student-progress",
+      icon: FileText,
+      label: "Progreso/Retroalimentación",
+      path: "/app/instructor/feedback",
       requiredRole: ["instructor"],
       disabled: true
     },
@@ -267,15 +320,16 @@ export const instructorNavigation: NavigationMenus = {
       disabled: true
     }
   ],
-  performance: [
+  rendimiento: [
     {
-      icon: BarChart2,
+      icon: Activity,
       label: "Analíticas de Cursos",
       path: "/app/instructor/analytics",
-      requiredRole: ["instructor"]
+      requiredRole: ["instructor"],
+      disabled: true
     }
   ],
-  account: [
+  cuenta: [
     {
       icon: User,
       label: "Mi Perfil",
@@ -306,37 +360,67 @@ export const studentNavigation: NavigationMenus = {
       label: "Mi Panel",
       path: "/app/dashboard",
       requiredRole: ["student"]
-    }
-  ],
-  community: [
-    {
-      icon: MessageCircle,
-      label: "Feed",
-      path: "/app/community/feed",
-      requiredRole: ["student"]
     },
     {
-      icon: Users,
-      label: "Comunidad",
-      path: "/app/community",
-      requiredRole: ["student"]
-    },
-    {
-      icon: MessageSquare,
-      label: "Mensajes",
-      path: "/app/messages",
+      icon: Activity,
+      label: "Resumen de actividad",
+      path: "/app/activity-summary",
       requiredRole: ["student"],
-      badge: 3
+      disabled: true
+    },
+    {
+      icon: Calendar,
+      label: "Próximas entregas",
+      path: "/app/upcoming-deadlines",
+      requiredRole: ["student"],
+      disabled: true
+    },
+    {
+      icon: Compass,
+      label: "Recomendaciones personalizadas",
+      path: "/app/recommendations",
+      requiredRole: ["student"],
+      disabled: true
     },
     {
       icon: Bell,
       label: "Notificaciones",
       path: "/app/notifications",
       requiredRole: ["student"],
-      badge: 2
+      disabled: true
     }
   ],
-  learning: [
+  comunidad: [
+    {
+      icon: MessageCircle,
+      label: "Feed",
+      path: "/app/community/feed",
+      requiredRole: ["student"],
+      disabled: true
+    },
+    {
+      icon: Award,
+      label: "Leaderboard",
+      path: "/app/community/leaderboard",
+      requiredRole: ["student"],
+      disabled: true
+    },
+    {
+      icon: MessageSquare,
+      label: "Mensajes",
+      path: "/app/messages",
+      requiredRole: ["student"],
+      disabled: true
+    },
+    {
+      icon: Bell,
+      label: "Notificaciones",
+      path: "/app/notifications",
+      requiredRole: ["student"],
+      disabled: true
+    }
+  ],
+  aprendizaje: [
     {
       icon: BookOpen,
       label: "Mis Cursos",
@@ -351,19 +435,21 @@ export const studentNavigation: NavigationMenus = {
       requiredRole: ["student"]
     },
     {
-      icon: FileText,
+      icon: GraduationCap,
       label: "Rutas de Aprendizaje",
       path: "/app/learning-paths",
-      requiredRole: ["student"]
+      requiredRole: ["student"],
+      disabled: true
     },
     {
       icon: Calendar,
       label: "Calendario",
       path: "/app/calendar",
-      requiredRole: ["student"]
+      requiredRole: ["student"],
+      disabled: true
     }
   ],
-  account: [
+  "mi cuenta": [
     {
       icon: User,
       label: "Mi Perfil",
@@ -372,9 +458,17 @@ export const studentNavigation: NavigationMenus = {
     },
     {
       icon: Award,
-      label: "Certificados",
+      label: "Progreso/Certificados",
       path: "/app/certificates",
-      requiredRole: ["student"]
+      requiredRole: ["student"],
+      disabled: true
+    },
+    {
+      icon: CreditCard,
+      label: "Facturación/Participaciones",
+      path: "/app/billing",
+      requiredRole: ["student"],
+      disabled: true
     },
     {
       icon: Settings,
@@ -383,12 +477,20 @@ export const studentNavigation: NavigationMenus = {
       requiredRole: ["student"]
     }
   ],
-  help: [
+  ayuda: [
     {
       icon: HelpCircle,
-      label: "Ayuda",
-      path: "/app/help",
-      requiredRole: ["student"]
+      label: "Centro de Ayuda",
+      path: "/app/help-center",
+      requiredRole: ["student"],
+      disabled: true
+    },
+    {
+      icon: MessageSquare,
+      label: "Contactar Soporte",
+      path: "/app/contact-support",
+      requiredRole: ["student"],
+      disabled: true
     }
   ]
 };
