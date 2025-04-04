@@ -4,6 +4,7 @@ import { render, RenderOptions } from '@testing-library/react';
 import { AuthContext } from '@/contexts/auth/AuthContext';
 import { UserRoleType } from '@/types/auth';
 import { BrowserRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 
 // Tipo para los valores del contexto de autenticación
 interface AuthContextValue {
@@ -13,6 +14,7 @@ interface AuthContextValue {
   user?: any;
   session?: any;
   userProfile?: any;
+  profile?: any; // Adding profile explicitly to match AuthContextType
   userRole?: UserRoleType | null;
   simulatedRole?: UserRoleType | null;
   effectiveRole?: UserRoleType;
@@ -35,6 +37,7 @@ const defaultAuthContext: AuthContextValue = {
   user: null,
   session: null,
   userProfile: null,
+  profile: null, // Added profile property
   userRole: null,
   simulatedRole: null,
   effectiveRole: 'student',
