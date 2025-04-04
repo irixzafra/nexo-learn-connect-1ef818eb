@@ -1,10 +1,31 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavGroup from './SidebarNavGroup';
-import { getNavigationByRole } from '@/config/navigation';
-import { NavigationMenus } from '@/types/navigation';
-import { Home } from 'lucide-react';
+import { 
+  Activity, 
+  Users, 
+  BookOpen, 
+  Bot, 
+  FileText, 
+  Settings, 
+  Home, 
+  GraduationCap, 
+  LineChart, 
+  MessageSquare, 
+  Landmark,
+  UserSquare,
+  Award,
+  LayoutGrid,
+  Calendar,
+  Send,
+  Bell,
+  Heart,
+  BarChart,
+  Briefcase,
+  FileCode,
+  HelpCircle
+} from 'lucide-react';
 
 interface SidebarMainNavigationProps {
   isCollapsed?: boolean;
@@ -19,72 +40,281 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   messagesCount = 0,
   notificationsCount = 0
 }) => {
-  // State to store the navigation structure
-  const [navigation, setNavigation] = useState<NavigationMenus>({});
   
-  // Update badge counts in navigation items
-  const applyDynamicBadges = (navItems: NavigationMenus): NavigationMenus => {
-    const updatedNavigation = {...navItems};
-    
-    // Find and update message notifications if they exist
-    Object.keys(updatedNavigation).forEach(key => {
-      const items = updatedNavigation[key];
-      if (items) {
-        updatedNavigation[key] = items.map(item => {
-          if (item.label === 'Mensajes' || item.label === 'Messages') {
-            return {...item, badge: messagesCount};
-          }
-          if (item.label === 'Notificaciones' || item.label === 'Notifications') {
-            return {...item, badge: notificationsCount};
-          }
-          return item;
-        });
-      }
-    });
-    
-    return updatedNavigation;
-  };
+  // Log for debugging purposes
+  console.log('SidebarMainNavigation rendering with role:', effectiveRole);
   
-  // Load navigation based on current role
-  useEffect(() => {
-    try {
-      const roleNavigation = getNavigationByRole(effectiveRole);
-      if (roleNavigation) {
-        const navWithBadges = applyDynamicBadges(roleNavigation);
-        setNavigation(navWithBadges);
-      }
-    } catch (error) {
-      console.error('Error loading navigation for role:', effectiveRole, error);
-      // Set an empty navigation in case of error
-      setNavigation({});
-    }
-  }, [effectiveRole, messagesCount, notificationsCount]);
-
   return (
     <div className="space-y-1 py-2">
-      {/* Render all navigation groups */}
-      {Object.entries(navigation).map(([key, items]) => {
-        if (!items || items.length === 0) return null;
-        
-        // Get section title from key with proper capitalization
-        const sectionTitle = key.charAt(0).toUpperCase() + key.slice(1);
-        
-        // Use the first item's icon as the section icon, or a default
-        const sectionIcon = items[0]?.icon ? items[0].icon : Home;
-        
-        return (
+      {/* Admin Role Navigation */}
+      {effectiveRole === 'admin' && (
+        <>
+          {/* Dashboard Group */}
           <SidebarNavGroup
-            key={key}
-            title={sectionTitle}
-            icon={sectionIcon}
+            title="Dashboard"
+            icon={Activity}
             isCollapsed={isCollapsed}
             effectiveRole={effectiveRole}
-            items={items}
             defaultOpen={true}
-            id={key}
+            id="admin-dashboard"
+            items={[
+              { label: 'Visión General', path: '/app/admin/dashboard', icon: Home },
+              { label: 'KPIs clave', path: '/app/admin/dashboard/kpis', icon: BarChart, disabled: true },
+              { label: 'Resumen de actividad', path: '/app/admin/dashboard/activity', icon: LineChart, disabled: true },
+              { label: 'Alertas', path: '/app/admin/dashboard/alerts', icon: Bell, disabled: true }
+            ]}
           />
-        );
-      })}
+
+          {/* Academic (LMS) Group */}
+          <SidebarNavGroup
+            title="Académico (LMS)"
+            icon={GraduationCap}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="admin-academic"
+            items={[
+              { label: 'Gestión de cursos', path: '/app/admin/courses', icon: BookOpen },
+              { label: 'Contenido Global', path: '/app/admin/content', icon: FileText, disabled: true },
+              { label: 'Categorías', path: '/app/admin/categories', icon: LayoutGrid, disabled: true },
+              { label: 'Rutas de Aprendizaje', path: '/app/admin/learning-paths', icon: LineChart, disabled: true },
+              { label: 'Certificados', path: '/app/admin/certificates', icon: Award, disabled: true },
+              { label: 'Analíticas Académicas', path: '/app/admin/analytics/academic', icon: LineChart, disabled: true }
+            ]}
+          />
+
+          {/* Management (ERP) Group */}
+          <SidebarNavGroup
+            title="Gestión Central (ERP)"
+            icon={Briefcase}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="admin-management"
+            items={[
+              { label: 'Gestión de usuarios', path: '/app/admin/users', icon: Users },
+              { label: 'Roles y permisos', path: '/app/admin/roles', icon: UserSquare, disabled: true },
+              { label: 'Analíticas de usuarios', path: '/app/admin/analytics/users', icon: LineChart, disabled: true },
+              { label: 'Comunicación', path: '/app/admin/communication', icon: MessageSquare, disabled: true }
+            ]}
+          />
+
+          {/* Finance Group */}
+          <SidebarNavGroup
+            title="Finanzas"
+            icon={Landmark}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="admin-finance"
+            items={[
+              { label: 'Transacciones', path: '/app/admin/finance/transactions', icon: Landmark, disabled: true },
+              { label: 'Suscripciones', path: '/app/admin/finance/subscriptions', icon: Calendar, disabled: true },
+              { label: 'Analíticas Financieras', path: '/app/admin/analytics/finance', icon: LineChart, disabled: true },
+              { label: 'Configuración de pagos', path: '/app/admin/finance/settings', icon: Settings, disabled: true }
+            ]}
+          />
+
+          {/* System Group */}
+          <SidebarNavGroup
+            title="Sistema (Plataforma)"
+            icon={Settings}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="admin-system"
+            items={[
+              { label: 'Configuración General', path: '/app/admin/settings', icon: Settings },
+              { label: 'Diseño', path: '/app/admin/design', icon: LayoutGrid, disabled: true },
+              { label: 'Páginas CMS', path: '/app/admin/system-pages', icon: FileText },
+              { label: 'Gestión de Features', path: '/app/admin/features', icon: LayoutGrid },
+              { label: 'Integraciones', path: '/app/admin/integrations', icon: FileCode, disabled: true },
+              { label: 'Analíticas de Plataforma', path: '/app/admin/analytics/platform', icon: LineChart, disabled: true },
+              { label: 'Salud/Logs', path: '/app/admin/system/health', icon: Activity, disabled: true }
+            ]}
+          />
+
+          {/* Dev Tools Group */}
+          <SidebarNavGroup
+            title="Herramientas Dev"
+            icon={FileCode}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="admin-dev"
+            items={[
+              { label: 'Diagrama de navegación', path: '/app/admin/dev/navigation', icon: LayoutGrid },
+              { label: 'Revisión de elementos', path: '/app/admin/dev/components', icon: LayoutGrid, disabled: true },
+              { label: 'Herramientas de desarrollo', path: '/app/admin/dev/tools', icon: FileCode, disabled: true },
+              { label: 'Configuraciones avanzadas', path: '/app/admin/dev/settings', icon: Settings, disabled: true }
+            ]}
+          />
+        </>
+      )}
+
+      {/* Instructor Role Navigation */}
+      {effectiveRole === 'instructor' && (
+        <>
+          {/* Dashboard Group */}
+          <SidebarNavGroup
+            title="Dashboard"
+            icon={Activity}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={true}
+            id="instructor-dashboard"
+            items={[
+              { label: 'Panel Instructor', path: '/app/instructor/dashboard', icon: Home },
+              { label: 'Resumen de actividad', path: '/app/instructor/dashboard/activity', icon: Activity, disabled: true },
+              { label: 'Métricas de cursos', path: '/app/instructor/dashboard/metrics', icon: LineChart, disabled: true },
+              { label: 'Próximas sesiones', path: '/app/instructor/dashboard/upcoming', icon: Calendar, disabled: true },
+              { label: 'Notificaciones', path: '/app/instructor/dashboard/notifications', icon: Bell, disabled: true }
+            ]}
+          />
+
+          {/* Academic Management */}
+          <SidebarNavGroup
+            title="Gestión Académica"
+            icon={BookOpen}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="instructor-academic"
+            items={[
+              { label: 'Mis Cursos', path: '/app/instructor/courses', icon: BookOpen },
+              { label: 'Crear Curso', path: '/app/instructor/courses/create', icon: FileText },
+              { label: 'Biblioteca de Contenido', path: '/app/instructor/content', icon: FileText, disabled: true }
+            ]}
+          />
+
+          {/* Participants */}
+          <SidebarNavGroup
+            title="Participantes"
+            icon={Users}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="instructor-participants"
+            items={[
+              { label: 'Mis Participantes', path: '/app/instructor/students', icon: Users },
+              { label: 'Progreso/Retroalimentación', path: '/app/instructor/students/progress', icon: LineChart, disabled: true },
+              { label: 'Comunicación', path: '/app/instructor/communication', icon: MessageSquare, disabled: true }
+            ]}
+          />
+
+          {/* Performance */}
+          <SidebarNavGroup
+            title="Rendimiento"
+            icon={LineChart}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="instructor-performance"
+            items={[
+              { label: 'Analíticas de Cursos', path: '/app/instructor/analytics', icon: LineChart, disabled: true }
+            ]}
+          />
+
+          {/* Account */}
+          <SidebarNavGroup
+            title="Cuenta"
+            icon={UserSquare}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="instructor-account"
+            items={[
+              { label: 'Mi Perfil', path: '/app/profile', icon: UserSquare },
+              { label: 'Mi Facturación', path: '/app/instructor/billing', icon: Landmark, disabled: true },
+              { label: 'Configuración', path: '/app/settings', icon: Settings }
+            ]}
+          />
+        </>
+      )}
+
+      {/* Student Role Navigation */}
+      {(effectiveRole === 'student' || (effectiveRole !== 'admin' && effectiveRole !== 'instructor')) && (
+        <>
+          {/* Dashboard Group */}
+          <SidebarNavGroup
+            title="Dashboard"
+            icon={Activity}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={true}
+            id="student-dashboard"
+            items={[
+              { label: 'Mi Panel', path: '/app/dashboard', icon: Home },
+              { label: 'Resumen de actividad', path: '/app/dashboard/activity', icon: Activity, disabled: true },
+              { label: 'Próximas entregas', path: '/app/dashboard/upcoming', icon: Calendar, disabled: true },
+              { label: 'Recomendaciones', path: '/app/dashboard/recommendations', icon: Heart, disabled: true },
+              { label: 'Notificaciones', path: '/app/notifications', icon: Bell, badge: notificationsCount }
+            ]}
+          />
+
+          {/* Community Group */}
+          <SidebarNavGroup
+            title="Comunidad"
+            icon={Users}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="student-community"
+            items={[
+              { label: 'Feed', path: '/app/community', icon: Users, disabled: true },
+              { label: 'Leaderboard', path: '/app/community/leaderboard', icon: Award, disabled: true },
+              { label: 'Mensajes', path: '/app/messages', icon: MessageSquare, badge: messagesCount },
+              { label: 'Notificaciones', path: '/app/notifications', icon: Bell, badge: notificationsCount }
+            ]}
+          />
+
+          {/* Learning Group */}
+          <SidebarNavGroup
+            title="Aprendizaje"
+            icon={BookOpen}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="student-learning"
+            items={[
+              { label: 'Mis Cursos', path: '/app/my-courses', icon: BookOpen, isHighlighted: true },
+              { label: 'Explorar Cursos', path: '/app/courses', icon: GraduationCap },
+              { label: 'Rutas de Aprendizaje', path: '/app/learning-paths', icon: LineChart, disabled: true },
+              { label: 'Calendario', path: '/app/calendar', icon: Calendar, disabled: true }
+            ]}
+          />
+
+          {/* Account Group */}
+          <SidebarNavGroup
+            title="Mi Cuenta"
+            icon={UserSquare}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="student-account"
+            items={[
+              { label: 'Mi Perfil', path: '/app/profile', icon: UserSquare },
+              { label: 'Progreso/Certificados', path: '/app/profile/certificates', icon: Award, disabled: true },
+              { label: 'Facturación/Participaciones', path: '/app/profile/billing', icon: Landmark, disabled: true },
+              { label: 'Configuración', path: '/app/settings', icon: Settings }
+            ]}
+          />
+
+          {/* Help Group */}
+          <SidebarNavGroup
+            title="Ayuda"
+            icon={HelpCircle}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
+            defaultOpen={false}
+            id="student-help"
+            items={[
+              { label: 'Centro de Ayuda', path: '/app/help', icon: HelpCircle, disabled: true },
+              { label: 'Contactar Soporte', path: '/app/support', icon: Send, disabled: true }
+            ]}
+          />
+        </>
+      )}
     </div>
   );
 };

@@ -3,14 +3,19 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { UserRoleType } from '@/types/auth';
-import { MenuItem } from '@/types/navigation';
 import SidebarNavItem from './SidebarNavItem';
-import { filterMenuItemsByRole } from '@/config/navigation';
 
 interface SidebarNavGroupProps {
   title: string;
   icon: LucideIcon;
-  items: MenuItem[];
+  items: Array<{
+    label: string;
+    path: string;
+    icon?: LucideIcon;
+    badge?: number;
+    disabled?: boolean;
+    isHighlighted?: boolean;
+  }>;
   isCollapsed?: boolean;
   defaultOpen?: boolean;
   effectiveRole?: UserRoleType;
@@ -28,11 +33,8 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   
-  // Filter items based on role requirements
-  const filteredItems = filterMenuItemsByRole(items, effectiveRole);
-  
-  // If no items remain after filtering, don't render the group
-  if (filteredItems.length === 0) {
+  // If no items, don't render the group
+  if (items.length === 0) {
     return null;
   }
 
@@ -46,10 +48,10 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
           </div>
         </div>
         <div className="space-y-1 pt-1">
-          {filteredItems.map((item) => (
+          {items.map((item) => (
             <SidebarNavItem
               key={item.label}
-              href={item.path || item.url || '#'}
+              href={item.path}
               icon={item.icon}
               label={item.label}
               badge={item.badge}
@@ -92,10 +94,10 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
           id={`nav-group-${id}`}
           className="mt-1 space-y-1 px-2 py-1"
         >
-          {filteredItems.map((item) => (
+          {items.map((item) => (
             <SidebarNavItem
               key={item.label}
-              href={item.path || item.url || '#'}
+              href={item.path}
               icon={item.icon}
               label={item.label}
               badge={item.badge}

@@ -42,6 +42,8 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   const { toggleSidebar } = useSidebar();
   const { logout, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
 
+  console.log('ConditionalSidebar with effectiveRole:', effectiveRole);
+
   return (
     <div className={cn(
       "h-full flex flex-col pb-2 bg-background border-r border-border/50 transition-all",
