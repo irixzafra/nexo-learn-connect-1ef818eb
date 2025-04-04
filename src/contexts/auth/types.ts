@@ -14,7 +14,7 @@ export interface AuthContextType {
   simulatedRole: UserRoleType | null;
   effectiveRole: UserRoleType | null;
   isViewingAsOtherRole: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; data?: any }>;
   logout: () => Promise<void>;
   signup: (email: string, password: string, userData?: Partial<UserProfile>) => Promise<{ success: boolean; error?: string }>;
   updateProfile: (data: Partial<UserProfile>) => Promise<{ success: boolean; error?: string }>;

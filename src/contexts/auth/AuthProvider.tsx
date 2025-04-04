@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { UserRoleType, UserProfile, toUserRoleType } from '@/types/auth';
 import { supabase } from '@/lib/supabase';
@@ -27,12 +26,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userRole, setUserRole] = useState<UserRoleType | null>(null);
   const [simulatedRole, setSimulatedRoleState] = useState<UserRoleType | null>(null);
 
-  // Calculate derived values
   const effectiveRole = simulatedRole || userRole;
   const isViewingAsOtherRole = simulatedRole !== null;
   const isAuthenticated = !!session && !!user;
 
-  // Debug the state on each render
   console.log('>>> DEBUG AuthProvider RENDER:', {
     userRole,
     simulatedRole,
@@ -44,25 +41,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     userProfileRole: userProfile?.role,
   });
 
-  // Implementation of setSimulatedRole
   const setSimulatedRole = (role: UserRoleType | null) => {
-    const currentRole = userRole; // Capture real role before changing
+    const currentRole = userRole;
     setSimulatedRoleState(role);
     saveSimulatedRole(role, currentRole);
   };
 
-  // Implementation of resetToOriginalRole
   const resetToOriginalRole = () => {
     setSimulatedRole(null);
   };
 
-  // Force update a user's role by email
   const forceUpdateRole = async (email: string, roleToSet: UserRoleType) => {
     try {
-      // First attempt to update the user by email
       const result = await forceUpdateUserRole(email, roleToSet);
       
-      // If this is the current user, update the local state
       if (result.success && user && email === user.email) {
         setUserRole(roleToSet);
         setUserProfile(prev => prev ? { ...prev, role: roleToSet } : null);
@@ -75,13 +67,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Authentication functions
   const login = async (email: string, password: string) => {
-    return loginService(email, password);
+    console.log("AuthProvider: login called with", email);
+    try {
+      const result = await loginService(email, password);
+      console.log("AuthProvider: login result", result);
+      return result;
+    } catch (error: any) {
+      console.error("AuthProvider: login error", error);
+      return { success: false, error: error.message || "Error desconocido" };
+    }
   };
 
   const logout = async () => {
-    // Clear simulated role before signing out
     setSimulatedRoleState(null);
     localStorage.removeItem('viewAsRole');
     await logoutService();
@@ -97,10 +95,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const result = await updateProfileService(user.id, profileData);
     
     if (result.success) {
-      // Update local state
       setUserProfile(prev => prev ? { ...prev, ...profileData } : null);
       
-      // Update role if it's changed
       if (profileData.role) {
         setUserRole(toUserRoleType(profileData.role));
       }
@@ -113,26 +109,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return updatePasswordService(password);
   };
 
-  // Initialize auth state
   useEffect(() => {
     const initAuth = async () => {
       setIsLoading(true);
       
-      // First set up the auth state listener
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         (event, newSession) => {
           console.log('Auth state changed:', event, newSession?.user?.id);
           setSession(newSession);
           setUser(newSession?.user || null);
           
-          // When user signs in, fetch their profile
           if (newSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
             setTimeout(() => {
               fetchUserProfile(newSession.user.id).then(profile => {
                 if (profile) {
                   setUserProfile(profile);
                   
-                  // Ensure role is properly formatted (all lowercase)
                   const normalizedRole = profile.role ? String(profile.role).toLowerCase().trim() : 'student';
                   console.log(`Setting userRole to: "${normalizedRole}" (original: "${profile.role}")`);
                   setUserRole(toUserRoleType(normalizedRole));
@@ -141,7 +133,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }, 0);
           }
           
-          // When user signs out, clear profile and role
           if (event === 'SIGNED_OUT') {
             setUserProfile(null);
             setUserRole(null);
@@ -151,12 +142,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       );
       
-      // Then check for existing session
       const { data: { session: existingSession } } = await supabase.auth.getSession();
       setSession(existingSession);
       setUser(existingSession?.user || null);
       
-      // If there's a user, fetch their profile
       if (existingSession?.user) {
         const profile = await fetchUserProfile(existingSession.user.id);
         if (profile) {
@@ -165,13 +154,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
       
-      // Special case: If the user is admin@nexo.com, ensure they have admin role
       if (existingSession?.user && existingSession.user.email === 'admin@nexo.com') {
         console.log('Found admin@nexo.com user, ensuring admin role');
         await forceUpdateRole('admin@nexo.com', 'admin');
       }
       
-      // Initialize simulated role from localStorage
       const storedRole = getStoredSimulatedRole();
       if (storedRole) {
         setSimulatedRoleState(storedRole);
@@ -180,7 +167,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoading(false);
       setIsInitialized(true);
       
-      // Cleanup subscription on unmount
       return () => {
         subscription.unsubscribe();
       };
@@ -196,7 +182,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     session,
     userProfile,
-    profile: userProfile, // Add alias for backward compatibility
+    profile: userProfile,
     userRole,
     simulatedRole,
     effectiveRole,

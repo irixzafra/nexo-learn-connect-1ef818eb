@@ -43,10 +43,10 @@ const Login: React.FC = () => {
   });
   
   const onSubmit = async (data: LoginFormValues) => {
+    console.log("Intentando iniciar sesión con:", data);
     setIsLoading(true);
+    
     try {
-      console.log("Intentando iniciar sesión con:", data.email);
-      
       const result = await login(data.email, data.password);
       console.log("Resultado del login:", result);
       
