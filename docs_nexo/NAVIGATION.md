@@ -40,9 +40,37 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
 
 ## Estructura de Navegación por Rol
 
-### Administración (Admin)
+### Navegación Pública (Invitado)
 
-La navegación de administración está organizada por dominios funcionales:
+**Header:**
+- Logo
+- Explorar Cursos
+- Rutas Aprendizaje
+- Sobre Nosotros
+- Ayuda
+- Iniciar Sesión
+- Registrarse
+- Selector Idioma
+
+**Footer:**
+- Secciones Plataforma
+- Legal
+- Recursos
+- Redes Sociales
+- Copyright
+
+### Navegación Autenticada (General)
+
+**Header:**
+- Logo
+- Buscador (Futuro)
+- Notificaciones (Placeholder)
+- Mensajes (Placeholder)
+- UserMenu (Perfil, Config, Ayuda, Logout)
+- Idioma
+- Tema
+
+### Sidebar - Rol Admin (por Dominios)
 
 1. **Dashboard**
    - Visión General (`/app/admin/dashboard`)
@@ -52,45 +80,43 @@ La navegación de administración está organizada por dominios funcionales:
 
 2. **Académico (LMS)**
    - Gestión de cursos
-   - Contenido Global
-   - Categorías
-   - Rutas de Aprendizaje
-   - Certificados
+   - Contenido Global (Placeholder)
+   - Categorías (Placeholder)
+   - Rutas de Aprendizaje (Placeholder)
+   - Certificados (Placeholder)
    - Analíticas Académicas
 
 3. **Gestión Central (ERP)**
    - Gestión de usuarios
    - Roles y permisos
    - Analíticas de usuarios
-   - Comunicación
+   - Comunicación (Placeholder)
 
 4. **Finanzas**
-   - Transacciones
-   - Suscripciones
+   - Transacciones (Placeholder)
+   - Suscripciones (Placeholder)
    - Analíticas Financieras
-   - Configuración de pagos
+   - Configuración de pagos (Placeholder)
 
 5. **Sistema (Plataforma)**
-   - Configuración General
-   - Diseño
-   - Páginas CMS
+   - Configuración General (Ruta Unificada)
+   - Diseño (Placeholder)
+   - Páginas CMS (Ruta Unificada)
    - Gestión de Features
-   - Integraciones
-   - Analíticas de Plataforma
-   - Salud/Logs
+   - Integraciones (Placeholder)
+   - Analíticas de Plataforma (Placeholder)
+   - Salud/Logs (Placeholder)
 
 6. **Herramientas Dev (Opcional)**
    - Diagrama de navegación
-   - Revisión de elementos
+   - Revisión de elementos (Placeholder)
    - Herramientas de desarrollo
    - Configuraciones avanzadas
 
 **Rutas principales**: `/app/admin/*`  
 **Componentes clave**: `AdminDashboard`, `DomainNavigation`, `EntityManagers`
 
-### Instructor
-
-La navegación de instructores está organizada por flujo de trabajo natural:
+### Sidebar - Rol Instructor (por Workflow)
 
 1. **Dashboard**
    - Panel Instructor (`/app/instructor/dashboard`)
@@ -102,27 +128,25 @@ La navegación de instructores está organizada por flujo de trabajo natural:
 2. **Gestión Académica**
    - Mis Cursos
    - Crear Curso
-   - Biblioteca de Contenido
+   - Biblioteca de Contenido (Placeholder)
 
 3. **Estudiantes**
    - Mis Estudiantes
-   - Progreso/Notas
-   - Comunicación
+   - Progreso/Notas (Placeholder)
+   - Comunicación (Placeholder)
 
 4. **Rendimiento**
-   - Analíticas de Cursos
+   - Analíticas de Cursos (Placeholder)
 
 5. **Cuenta**
    - Mi Perfil
-   - Mi Facturación
+   - Mi Facturación (Placeholder)
    - Configuración
 
 **Rutas principales**: `/app/instructor/*`  
 **Componentes clave**: `InstructorDashboard`, `CourseEditor`, `StudentManager`
 
-### Estudiante
-
-La navegación de estudiantes está centrada en la comunidad y experiencia de aprendizaje:
+### Sidebar - Rol Estudiante (Comunidad Primero)
 
 1. **Dashboard**
    - Mi Panel (`/app/dashboard`)
@@ -132,51 +156,36 @@ La navegación de estudiantes está centrada en la comunidad y experiencia de ap
    - Notificaciones
 
 2. **Comunidad**
-   - Feed
-   - Leaderboard
-   - Mensajes
-   - Notificaciones
+   - Feed (Placeholder)
+   - Leaderboard (Placeholder)
+   - Mensajes (Placeholder)
+   - Notificaciones (Placeholder)
 
 3. **Aprendizaje**
    - Mis Cursos
    - Explorar Cursos
-   - Rutas de Aprendizaje
-   - Calendario
+   - Rutas de Aprendizaje (Placeholder)
+   - Calendario (Placeholder)
 
 4. **Mi Cuenta**
    - Mi Perfil
-   - Progreso/Certificados
-   - Facturación/Inscripciones
+   - Progreso/Certificados (Placeholder)
+   - Facturación/Inscripciones (Placeholder)
    - Configuración
 
 5. **Ayuda**
-   - Centro de Ayuda
-   - Contactar Soporte
+   - Centro de Ayuda (Placeholder)
+   - Contactar Soporte (Placeholder)
 
 **Rutas principales**: `/app/*`  
 **Componentes clave**: `StudentDashboard`, `CoursePlayer`, `LearningPathViewer`
 
-### Usuario Invitado (Guest)
+### Footer Sidebar (Autenticado)
 
-La navegación para usuarios no autenticados:
-
-1. **Header**
-   - Cursos
-   - Rutas
-   - Sobre Nosotros
-   - Ayuda
-   - Login/Registro
-   - Idioma
-   - Tema
-
-2. **Footer**
-   - Plataforma
-   - Legal
-   - Recursos
-   - Redes
-
-**Rutas principales**: `/` (raíz), `/landing`, `/auth/*`  
-**Componentes clave**: `LandingPage`, `Auth`, `PublicCourseView`
+- Selector de Idioma
+- Selector de Tema
+- Botón de Cierre de Sesión (Logout)
+- RoleSwitcher (solo visible para Administradores)
 
 ## Gestión Técnica de Rutas
 
