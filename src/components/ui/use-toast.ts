@@ -1,4 +1,8 @@
 
-import { useToast, toast } from "@/hooks/use-toast";
+// Re-export from an existing toast library like sonner
+import { toast } from 'sonner';
 
-export { useToast, toast };
+export { toast };
+export const useToast = () => {
+  return { toast };
+};
