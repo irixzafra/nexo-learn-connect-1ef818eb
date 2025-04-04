@@ -1,750 +1,396 @@
 
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import AdminPageLayout from '@/layouts/AdminPageLayout';
+import React, { useState } from 'react';
 import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
+  Tabs, TabsContent, TabsList, TabsTrigger 
+} from '@/components/ui/tabs';
 import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle, 
-  CardFooter 
-} from "@/components/ui/card";
-import { 
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Badge } from '@/components/ui/badge';
+  Card, CardContent, CardDescription, CardHeader, CardTitle 
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from '@/components/ui/separator';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { 
-  Home, 
-  Search, 
-  Grid, 
-  List, 
-  Palette, 
-  Code, 
-  Layers, 
-  Component, 
-  Puzzle, 
-  ChevronRight,
-  BookOpen,
-  Type,
-  Maximize,
-  Box,
-  LayoutGrid,
-  Shapes,
-  Info
+  Palette, Grid, Type, Square, Ruler, Component, Code, TextCursor
 } from 'lucide-react';
+import { toast } from 'sonner';
+import ColorPalette from '@/features/design-system/components/ColorPalette';
+import '@/styles/design-system.css';
 
-import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
-import { routeMap } from '@/utils/routeUtils';
-import ComponentsGrid from '@/features/design-system/components/ComponentsGrid';
-import ComponentsList from '@/features/design-system/components/ComponentsList';
-import { getComponentsData } from '@/features/design-system/data/componentsData';
+// Define color palettes
+const primaryColors = [
+  { name: 'primary', color: 'bg-primary', value: 'hsl(var(--primary))', description: 'Color principal del sistema' },
+  { name: 'primary-foreground', color: 'bg-primary-foreground text-primary', value: 'hsl(var(--primary-foreground))', description: 'Texto sobre fondo primary' },
+  { name: 'secondary', color: 'bg-secondary', value: 'hsl(var(--secondary))', description: 'Color secundario del sistema' },
+  { name: 'secondary-foreground', color: 'bg-secondary-foreground', value: 'hsl(var(--secondary-foreground))', description: 'Texto sobre fondo secondary' },
+  { name: 'accent', color: 'bg-accent', value: 'hsl(var(--accent))', description: 'Color de acento para elementos' },
+  { name: 'accent-foreground', color: 'bg-accent-foreground', value: 'hsl(var(--accent-foreground))', description: 'Texto sobre fondo accent' },
+];
 
-// Component types
-export type DesignComponent = {
-  id?: string;
-  name: string;
-  category: string;
-  status: 'stable' | 'beta' | 'experimental' | 'deprecated';
-  path?: string;
-  description: string;
-  usage?: string;
-};
+const neutralColors = [
+  { name: 'background', color: 'bg-background', value: 'hsl(var(--background))', description: 'Fondo general' },
+  { name: 'foreground', color: 'bg-foreground', value: 'hsl(var(--foreground))', description: 'Texto principal' },
+  { name: 'card', color: 'bg-card', value: 'hsl(var(--card))', description: 'Fondo de tarjetas' },
+  { name: 'card-foreground', color: 'bg-card-foreground', value: 'hsl(var(--card-foreground))', description: 'Texto en tarjetas' },
+  { name: 'muted', color: 'bg-muted', value: 'hsl(var(--muted))', description: 'Áreas secundarias' },
+  { name: 'muted-foreground', color: 'bg-muted-foreground', value: 'hsl(var(--muted-foreground))', description: 'Texto secundario' },
+];
+
+const borderColors = [
+  { name: 'border', color: 'bg-border', value: 'hsl(var(--border))', description: 'Bordes de elementos' },
+  { name: 'input', color: 'bg-input', value: 'hsl(var(--input))', description: 'Fondo de inputs' },
+  { name: 'ring', color: 'bg-ring', value: 'hsl(var(--ring))', description: 'Anillo de foco' },
+];
+
+const feedbackColors = [
+  { name: 'destructive', color: 'bg-destructive', value: 'hsl(var(--destructive))', description: 'Errores y alertas' },
+  { name: 'destructive-foreground', color: 'bg-destructive-foreground', value: 'hsl(var(--destructive-foreground))', description: 'Texto sobre errores' },
+  { name: 'success', color: 'bg-success', value: 'hsl(var(--success))', description: 'Confirmaciones' },
+  { name: 'success-foreground', color: 'bg-success-foreground', value: 'hsl(var(--success-foreground))', description: 'Texto sobre confirmaciones' },
+  { name: 'warning', color: 'bg-warning', value: 'hsl(var(--warning))', description: 'Advertencias' },
+  { name: 'warning-foreground', color: 'bg-warning-foreground', value: 'hsl(var(--warning-foreground))', description: 'Texto sobre advertencias' },
+  { name: 'info', color: 'bg-info', value: 'hsl(var(--info))', description: 'Información' },
+  { name: 'info-foreground', color: 'bg-info-foreground', value: 'hsl(var(--info-foreground))', description: 'Texto sobre información' },
+];
+
+// Font size samples for typography section
+const fontSizes = [
+  { name: 'text-xs', class: 'text-xs', size: '0.75rem' },
+  { name: 'text-sm', class: 'text-sm', size: '0.875rem' },
+  { name: 'text-base', class: 'text-base', size: '1rem' },
+  { name: 'text-lg', class: 'text-lg', size: '1.125rem' },
+  { name: 'text-xl', class: 'text-xl', size: '1.25rem' },
+  { name: 'text-2xl', class: 'text-2xl', size: '1.5rem' },
+  { name: 'text-3xl', class: 'text-3xl', size: '1.875rem' },
+  { name: 'text-4xl', class: 'text-4xl', size: '2.25rem' },
+  { name: 'text-5xl', class: 'text-5xl', size: '3rem' },
+];
+
+// Spacing samples
+const spacingSizes = [
+  { name: 'space-1', value: '0.25rem', class: 'w-1 h-1' },
+  { name: 'space-2', value: '0.5rem', class: 'w-2 h-2' },
+  { name: 'space-3', value: '0.75rem', class: 'w-3 h-3' },
+  { name: 'space-4', value: '1rem', class: 'w-4 h-4' },
+  { name: 'space-5', value: '1.25rem', class: 'w-5 h-5' },
+  { name: 'space-6', value: '1.5rem', class: 'w-6 h-6' },
+  { name: 'space-8', value: '2rem', class: 'w-8 h-8' },
+  { name: 'space-10', value: '2.5rem', class: 'w-10 h-10' },
+  { name: 'space-12', value: '3rem', class: 'w-12 h-12' },
+  { name: 'space-16', value: '4rem', class: 'w-16 h-16' },
+];
 
 const DesignSystemPage: React.FC = () => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('components');
-  const [components, setComponents] = useState<DesignComponent[]>([]);
+  const [currentTab, setCurrentTab] = useState("colors");
 
-  useEffect(() => {
-    // Load components data
-    const componentsData = getComponentsData();
-    setComponents(componentsData);
-  }, []);
-
-  // Get unique categories for filtering
-  const categories = Array.from(new Set(components.map(comp => comp.category)));
-  
-  // Get unique statuses for filtering
-  const statuses = Array.from(new Set(components.map(comp => comp.status)));
-
-  const handleCopyCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    toast({
-      title: "Copiado al portapapeles",
-      description: "El código ha sido copiado correctamente.",
-    });
+  const handleCopyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${text} copiado al portapapeles`);
   };
 
-  const handleCategoryChange = (value: string) => {
-    setCategoryFilter(value || null);
-  };
-
-  const handleStatusChange = (value: string) => {
-    setStatusFilter(value || null);
-  };
-
-  const renderColorsSection = () => (
-    <div className="space-y-8">
-      <div>
-        <h3 className="text-xl font-semibold mb-4">Colores Primarios</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[
-            { name: 'Primary', color: 'bg-primary', text: 'text-primary-foreground', value: 'hsl(var(--primary))' },
-            { name: 'Secondary', color: 'bg-secondary', text: 'text-secondary-foreground', value: 'hsl(var(--secondary))' },
-            { name: 'Accent', color: 'bg-accent', text: 'text-accent-foreground', value: 'hsl(var(--accent))' },
-            { name: 'Destructive', color: 'bg-destructive', text: 'text-destructive-foreground', value: 'hsl(var(--destructive))' },
-          ].map((item) => (
-            <div key={item.name} className="space-y-1.5">
-              <div 
-                className={`${item.color} ${item.text} h-20 rounded-md flex items-center justify-center relative group cursor-pointer`}
-                onClick={() => handleCopyCode(item.value)}
-              >
-                <span className="font-medium">{item.name}</span>
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-md transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <span className="text-xs font-mono bg-black/70 text-white px-2 py-1 rounded">
-                    {item.value}
-                  </span>
-                </div>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">{item.name}</span>
-                <span className="font-mono">{item.value}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+  return (
+    <div className="container mx-auto px-4 py-10">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-4">Sistema de Diseño</h1>
+        <p className="text-lg text-muted-foreground">
+          Este sistema de diseño documenta los componentes UI, colores, tipografía y patrones utilizados en la aplicación.
+        </p>
       </div>
 
-      <div>
-        <h3 className="text-xl font-semibold mb-4">Escala de Grises</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[
-            { name: 'Background', color: 'bg-background', text: 'text-foreground', value: 'hsl(var(--background))' },
-            { name: 'Foreground', color: 'bg-foreground', text: 'text-background', value: 'hsl(var(--foreground))' },
-            { name: 'Card', color: 'bg-card', text: 'text-card-foreground', value: 'hsl(var(--card))' },
-            { name: 'Muted', color: 'bg-muted', text: 'text-muted-foreground', value: 'hsl(var(--muted))' },
-            { name: 'Border', color: 'bg-border', text: 'text-foreground', value: 'hsl(var(--border))' },
-            { name: 'Input', color: 'bg-input', text: 'text-foreground', value: 'hsl(var(--input))' },
-            { name: 'Popover', color: 'bg-popover', text: 'text-popover-foreground', value: 'hsl(var(--popover))' },
-            { name: 'Ring', color: 'bg-ring/30', text: 'text-foreground', value: 'hsl(var(--ring))' },
-          ].map((item) => (
-            <div key={item.name} className="space-y-1.5">
-              <div 
-                className={`${item.color} ${item.text} h-16 rounded-md flex items-center justify-center relative group cursor-pointer`}
-                onClick={() => handleCopyCode(item.value)}
-              >
-                <span className="font-medium">{item.name}</span>
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-md transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <span className="text-xs font-mono bg-black/70 text-white px-2 py-1 rounded">
-                    {item.value}
-                  </span>
-                </div>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">{item.name}</span>
-                <span className="font-mono">{item.value}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+      <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-8">
+        <TabsList className="w-full justify-start border-b pb-px mb-4 rounded-none bg-transparent overflow-x-auto flex">
+          <TabsTrigger value="colors" className="flex items-center gap-2 data-[state=active]:bg-background">
+            <Palette className="h-4 w-4" />
+            <span>Colores</span>
+          </TabsTrigger>
+          <TabsTrigger value="typography" className="flex items-center gap-2 data-[state=active]:bg-background">
+            <TextCursor className="h-4 w-4" />
+            <span>Tipografía</span>
+          </TabsTrigger>
+          <TabsTrigger value="spacing" className="flex items-center gap-2 data-[state=active]:bg-background">
+            <Ruler className="h-4 w-4" />
+            <span>Espaciado</span>
+          </TabsTrigger>
+          <TabsTrigger value="components" className="flex items-center gap-2 data-[state=active]:bg-background">
+            <Component className="h-4 w-4" />
+            <span>Componentes</span>
+          </TabsTrigger>
+          <TabsTrigger value="patterns" className="flex items-center gap-2 data-[state=active]:bg-background">
+            <Grid className="h-4 w-4" />
+            <span>Patrones</span>
+          </TabsTrigger>
+        </TabsList>
 
-  const renderTypographySection = () => (
-    <div className="space-y-8">
-      <div>
-        <h3 className="text-xl font-semibold mb-4">Escala de Tipografía</h3>
-        <Card>
-          <CardContent className="p-6 space-y-8">
-            {[
-              { name: 'h1', element: 'h1', className: 'text-4xl font-bold', sample: 'Título Principal (h1)', description: 'Encabezados principales de páginas' },
-              { name: 'h2', element: 'h2', className: 'text-3xl font-bold', sample: 'Título de Sección (h2)', description: 'Encabezados de secciones importantes' },
-              { name: 'h3', element: 'h3', className: 'text-2xl font-bold', sample: 'Subtítulo (h3)', description: 'Encabezados de subsecciones' },
-              { name: 'h4', element: 'h4', className: 'text-xl font-semibold', sample: 'Título Menor (h4)', description: 'Títulos de componentes o grupos' },
-              { name: 'p', element: 'p', className: 'text-base', sample: 'Texto de Párrafo (p) - El contenido principal del sitio utiliza este tamaño para mantener la legibilidad óptima en bloques de texto grandes.', description: 'Texto principal de contenido' },
-              { name: 'small', element: 'p', className: 'text-sm', sample: 'Texto Pequeño - Utilizado para información secundaria o metadatos.', description: 'Información secundaria, etiquetas' },
-              { name: 'xsmall', element: 'p', className: 'text-xs', sample: 'Texto Muy Pequeño - Para notas al pie, descargos de responsabilidad y textos legales.', description: 'Notas al pie, texto legal' }
-            ].map((item) => (
-              <div key={item.name} className="pb-4 border-b last:border-b-0">
-                <div className="mb-2">
-                  <Badge variant="outline" className="font-mono">{item.name}</Badge>
-                  <span className="ml-2 text-muted-foreground text-sm">{item.description}</span>
-                </div>
-                <div className={cn(item.className)}>{item.sample}</div>
-                <div className="mt-2 bg-muted/30 rounded-md p-3">
-                  <code className="text-sm">{`<${item.element} className="${item.className}">${item.sample}</${item.element}>`}</code>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      <div>
-        <h3 className="text-xl font-semibold mb-4">Pesos de Fuente</h3>
-        <Card>
-          <CardContent className="p-6 space-y-6">
-            {[
-              { name: 'font-normal', weight: '400', sample: 'Texto con peso Normal (400)' },
-              { name: 'font-medium', weight: '500', sample: 'Texto con peso Medium (500)' },
-              { name: 'font-semibold', weight: '600', sample: 'Texto con peso Semibold (600)' },
-              { name: 'font-bold', weight: '700', sample: 'Texto con peso Bold (700)' }
-            ].map((item) => (
-              <div key={item.name} className="flex flex-col md:flex-row md:items-center gap-4 pb-4 border-b last:border-b-0">
-                <div className="md:w-1/4">
-                  <Badge variant="outline" className="font-mono">{item.name}</Badge>
-                  <div className="text-sm text-muted-foreground mt-1">weight: {item.weight}</div>
-                </div>
-                <div className={`text-xl ${item.name} md:w-3/4`}>{item.sample}</div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-
-  const renderSpacingSection = () => {
-    const spacingSizes = [
-      { name: '1', value: '0.25rem (4px)', description: 'Espaciado mínimo' },
-      { name: '2', value: '0.5rem (8px)', description: 'Espaciado entre elementos relacionados' },
-      { name: '3', value: '0.75rem (12px)', description: 'Espaciado pequeño' },
-      { name: '4', value: '1rem (16px)', description: 'Espaciado estándar' },
-      { name: '5', value: '1.25rem (20px)', description: 'Espaciado medio-pequeño' },
-      { name: '6', value: '1.5rem (24px)', description: 'Espaciado medio' },
-      { name: '8', value: '2rem (32px)', description: 'Espaciado grande' },
-      { name: '10', value: '2.5rem (40px)', description: 'Espaciado muy grande' },
-      { name: '12', value: '3rem (48px)', description: 'Espaciado entre secciones' },
-      { name: '16', value: '4rem (64px)', description: 'Espaciado extra grande' }
-    ];
-
-    return (
-      <div className="space-y-8">
-        <div>
-          <h3 className="text-xl font-semibold mb-4">Sistema de Espaciado</h3>
-          <p className="text-muted-foreground mb-6">
-            Nuestro sistema de espaciado utiliza una escala de incrementos consistentes basada en múltiplos de 4px. 
-            Esto proporciona una jerarquía visual clara y coherente en toda la interfaz.
-          </p>
-          
-          <div className="bg-card rounded-lg border overflow-hidden">
-            <div className="grid grid-cols-[1fr_2fr_1fr] text-sm font-medium bg-muted/50 p-3">
-              <div>Clase</div>
-              <div>Ejemplo</div>
-              <div>Valor / Uso</div>
-            </div>
-            <Separator />
+        {/* Colores */}
+        <TabsContent value="colors" className="space-y-8">
+          <div className="space-y-8">
+            <ColorPalette 
+              colors={primaryColors} 
+              title="Colores Primarios" 
+              description="Colores principales que definen la identidad visual" 
+            />
             
-            {spacingSizes.map((size, index) => (
-              <React.Fragment key={size.name}>
-                <div className="grid grid-cols-[1fr_2fr_1fr] p-3 items-center">
-                  <div className="font-mono text-sm">
-                    p-{size.name} / m-{size.name}<br />
-                    gap-{size.name} / space-{size.name}
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <div className={`bg-primary/20 border-2 border-primary/40 rounded flex items-center justify-center p-${size.name}`}>
-                      <div className="bg-primary text-primary-foreground px-2 py-1 rounded text-xs">
-                        p-{size.name}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-sm">
-                    <div className="font-medium">{size.value}</div>
-                    <div className="text-muted-foreground text-xs">{size.description}</div>
-                  </div>
-                </div>
-                {index < spacingSizes.length - 1 && <Separator />}
-              </React.Fragment>
-            ))}
+            <ColorPalette 
+              colors={neutralColors} 
+              title="Colores Neutros" 
+              description="Colores de fondo y texto para la interfaz" 
+            />
+            
+            <ColorPalette 
+              colors={borderColors} 
+              title="Bordes e Inputs" 
+              description="Colores para bordes, inputs y elementos interactivos" 
+            />
+            
+            <ColorPalette 
+              colors={feedbackColors} 
+              title="Colores de Feedback" 
+              description="Colores para mensajes de éxito, error, advertencia e información" 
+            />
           </div>
-        </div>
-      </div>
-    );
-  };
+        </TabsContent>
 
-  const renderPatternsSection = () => (
-    <div className="space-y-8">
-      <div>
-        <h3 className="text-xl font-semibold mb-4">Patrones de Diseño</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[
-            {
-              title: "Card con Acción",
-              description: "Tarjeta con contenido y acción principal",
-              code: `<Card>
-  <CardHeader>
-    <CardTitle>Título de la tarjeta</CardTitle>
-    <CardDescription>Descripción breve del contenido</CardDescription>
-  </CardHeader>
-  <CardContent>
-    <p>Contenido principal de la tarjeta...</p>
-  </CardContent>
-  <CardFooter>
-    <Button>Acción Principal</Button>
-  </CardFooter>
-</Card>`,
-              component: (
-                <Card className="w-full">
-                  <CardHeader>
-                    <CardTitle>Título de la tarjeta</CardTitle>
-                    <CardDescription>Descripción breve del contenido</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p>Contenido principal de la tarjeta...</p>
-                  </CardContent>
-                  <CardFooter>
-                    <Button>Acción Principal</Button>
-                  </CardFooter>
-                </Card>
-              )
-            },
-            {
-              title: "Form Field",
-              description: "Campo de formulario con etiqueta y mensaje de error",
-              code: `<div className="space-y-2">
-  <label className="text-sm font-medium" htmlFor="name">
-    Nombre completo
-  </label>
-  <Input id="name" placeholder="Introduce tu nombre" />
-  <p className="text-sm text-muted-foreground">
-    Introduce tu nombre completo
-  </p>
-</div>`,
-              component: (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="name">
-                    Nombre completo
-                  </label>
-                  <Input id="name" placeholder="Introduce tu nombre" />
-                  <p className="text-sm text-muted-foreground">
-                    Introduce tu nombre completo
-                  </p>
-                </div>
-              )
-            },
-            {
-              title: "Data List",
-              description: "Lista de datos con acciones por elemento",
-              code: `<div className="rounded-md border">
-  {items.map((item) => (
-    <div key={item.id} className="flex items-center justify-between p-4 border-b last:border-0">
-      <div>
-        <div className="font-medium">{item.title}</div>
-        <div className="text-sm text-muted-foreground">{item.description}</div>
-      </div>
-      <Button variant="ghost" size="sm">Action</Button>
-    </div>
-  ))}
-</div>`,
-              component: (
-                <div className="rounded-md border">
-                  {[
-                    { id: 1, title: "Elemento 1", description: "Descripción del elemento 1" },
-                    { id: 2, title: "Elemento 2", description: "Descripción del elemento 2" },
-                    { id: 3, title: "Elemento 3", description: "Descripción del elemento 3" }
-                  ].map((item) => (
-                    <div key={item.id} className="flex items-center justify-between p-4 border-b last:border-0">
-                      <div>
-                        <div className="font-medium">{item.title}</div>
-                        <div className="text-sm text-muted-foreground">{item.description}</div>
+        {/* Tipografía */}
+        <TabsContent value="typography" className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Tipografía</CardTitle>
+              <CardDescription>
+                Estilos tipográficos utilizados en la aplicación
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold">Tamaños de Fuente</h3>
+                <div className="space-y-4">
+                  {fontSizes.map((font) => (
+                    <div 
+                      key={font.name} 
+                      className="flex items-center justify-between py-2 border-b border-border"
+                      onClick={() => handleCopyToClipboard(font.class)}
+                    >
+                      <div className="flex-1">
+                        <p className={`${font.class} font-medium`}>
+                          El zorro marrón rápido salta sobre el perro perezoso
+                        </p>
                       </div>
-                      <Button variant="ghost" size="sm">Action</Button>
+                      <div className="flex items-center gap-4">
+                        <Badge variant="outline">{font.size}</Badge>
+                        <code className="px-2 py-1 rounded bg-muted text-sm">{font.class}</code>
+                      </div>
                     </div>
                   ))}
                 </div>
-              )
-            },
-            {
-              title: "Page Header",
-              description: "Encabezado de página con título, descripción y acciones",
-              code: `<div className="flex items-center justify-between pb-4 mb-4 border-b">
-  <div>
-    <h1 className="text-2xl font-bold tracking-tight">Título de Página</h1>
-    <p className="text-muted-foreground">Descripción de la página o sección</p>
-  </div>
-  <div className="flex gap-2">
-    <Button variant="outline">Acción Secundaria</Button>
-    <Button>Acción Principal</Button>
-  </div>
-</div>`,
-              component: (
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b w-full">
-                  <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Título de Página</h1>
-                    <p className="text-muted-foreground">Descripción de la página o sección</p>
-                  </div>
-                  <div className="flex gap-2 mt-4 sm:mt-0">
-                    <Button variant="outline">Acción Secundaria</Button>
-                    <Button>Acción Principal</Button>
-                  </div>
-                </div>
-              )
-            }
-          ].map((pattern) => (
-            <Card key={pattern.title} className="overflow-hidden">
-              <CardHeader>
-                <CardTitle>{pattern.title}</CardTitle>
-                <CardDescription>{pattern.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="border-y bg-muted/40 p-6">
-                {pattern.component}
-              </CardContent>
-              <CardFooter className="p-0">
-                <div className="w-full relative font-mono text-sm overflow-x-auto bg-muted/70 p-4">
-                  <pre className="text-xs">{pattern.code}</pre>
-                  <Button 
-                    size="sm" 
-                    variant="ghost" 
-                    className="absolute top-2 right-2 h-8 w-8 p-0"
-                    onClick={() => handleCopyCode(pattern.code)}
-                  >
-                    <Code className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+              </div>
 
-  const renderPrinciplesSection = () => (
-    <div className="space-y-8">
-      <div>
-        <h3 className="text-xl font-semibold mb-4">Principios de Diseño</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            {
-              title: "Simplicidad",
-              icon: <Layers className="h-6 w-6 text-primary" />,
-              description: "Interfaces claras y directas que no sobrecargan al usuario con complejidad innecesaria."
-            },
-            {
-              title: "Consistencia",
-              icon: <Shapes className="h-6 w-6 text-primary" />,
-              description: "Patrones repetibles que crean familiaridad y reducen la curva de aprendizaje."
-            },
-            {
-              title: "Adaptabilidad",
-              icon: <Maximize className="h-6 w-6 text-primary" />,
-              description: "Componentes flexibles que funcionan en diversos contextos y dispositivos."
-            },
-            {
-              title: "Claridad",
-              icon: <Type className="h-6 w-6 text-primary" />,
-              description: "Comunicación clara con tipografía legible y jerarquía visual bien definida."
-            },
-            {
-              title: "Accesibilidad",
-              icon: <Info className="h-6 w-6 text-primary" />,
-              description: "Diseño inclusivo que funciona para todos los usuarios, independientemente de sus capacidades."
-            },
-            {
-              title: "Propósito",
-              icon: <Box className="h-6 w-6 text-primary" />,
-              description: "Cada elemento tiene una razón para existir y cumple una función específica."
-            }
-          ].map((principle) => (
-            <Card key={principle.title} className="overflow-hidden">
-              <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                {principle.icon}
-                <CardTitle>{principle.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">{principle.description}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-xl font-semibold mb-4">Documentación Completa</h3>
-        <Card>
-          <CardContent className="p-6">
-            <p className="mb-4">Para una documentación completa del sistema de diseño, consulta los siguientes recursos:</p>
-            <ul className="space-y-2">
-              <li className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-primary" />
-                <Link to="/docs/design-system" className="text-primary hover:underline">
-                  Guía Completa del Sistema de Diseño
-                </Link>
-              </li>
-              <li className="flex items-center gap-2">
-                <Component className="h-4 w-4 text-primary" />
-                <Link to="/docs/components" className="text-primary hover:underline">
-                  Biblioteca de Componentes
-                </Link>
-              </li>
-              <li className="flex items-center gap-2">
-                <LayoutGrid className="h-4 w-4 text-primary" />
-                <Link to="/docs/templates" className="text-primary hover:underline">
-                  Plantillas y Layouts
-                </Link>
-              </li>
-              <li className="flex items-center gap-2">
-                <Code className="h-4 w-4 text-primary" />
-                <Link to="/docs/development" className="text-primary hover:underline">
-                  Guía de Desarrollo
-                </Link>
-              </li>
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-
-  return (
-    <AdminPageLayout 
-      title="Sistema de Diseño" 
-      subtitle="Guía completa de componentes, estilos y patrones de la plataforma"
-    >
-      {/* Breadcrumb navigation */}
-      <Breadcrumb className="mb-4">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href={routeMap.home}>
-              <Home className="h-4 w-4 mr-1" />
-              Inicio
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator>
-            <ChevronRight className="h-4 w-4" />
-          </BreadcrumbSeparator>
-          <BreadcrumbItem>
-            <BreadcrumbLink href={routeMap.admin}>
-              Administración
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator>
-            <ChevronRight className="h-4 w-4" />
-          </BreadcrumbSeparator>
-          <BreadcrumbItem>
-            <BreadcrumbLink href={routeMap.adminDesignSystem} aria-current="page">
-              Sistema de Diseño
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
-      <div className="flex flex-col gap-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Sistema de Diseño</h1>
-          <p className="text-muted-foreground mt-2">
-            Guía completa de componentes, estilos y patrones visuales utilizados en la plataforma.
-          </p>
-        </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="components">
-              <Component className="h-4 w-4 mr-2" />
-              Componentes
-            </TabsTrigger>
-            <TabsTrigger value="colors">
-              <Palette className="h-4 w-4 mr-2" />
-              Colores
-            </TabsTrigger>
-            <TabsTrigger value="typography">
-              <Type className="h-4 w-4 mr-2" />
-              Tipografía
-            </TabsTrigger>
-            <TabsTrigger value="spacing">
-              <Maximize className="h-4 w-4 mr-2" />
-              Espaciado
-            </TabsTrigger>
-            <TabsTrigger value="patterns">
-              <Puzzle className="h-4 w-4 mr-2" />
-              Patrones
-            </TabsTrigger>
-            <TabsTrigger value="principles">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Principios
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="components" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Biblioteca de Componentes</CardTitle>
-                <CardDescription>
-                  Explora los componentes reutilizables disponibles en el sistema de diseño.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
-                  <div className="relative w-full md:w-1/2">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      placeholder="Buscar componentes..." 
-                      className="pl-9"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                  
-                  <div className="flex gap-3 flex-wrap">
-                    <Select value={categoryFilter || ''} onValueChange={handleCategoryChange}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Todas las categorías" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">Todas las categorías</SelectItem>
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category}>{category}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    
-                    <Select value={statusFilter || ''} onValueChange={handleStatusChange}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Todos los estados" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">Todos los estados</SelectItem>
-                        {statuses.map((status) => (
-                          <SelectItem key={status} value={status}>{status}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    
-                    <div className="flex border rounded">
-                      <Button 
-                        variant={viewMode === 'grid' ? 'secondary' : 'ghost'} 
-                        size="sm"
-                        onClick={() => setViewMode('grid')}
-                      >
-                        <Grid className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant={viewMode === 'list' ? 'secondary' : 'ghost'} 
-                        size="sm"
-                        onClick={() => setViewMode('list')}
-                      >
-                        <List className="h-4 w-4" />
-                      </Button>
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold">Pesos de Fuente</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {['font-light', 'font-normal', 'font-medium', 'font-semibold', 'font-bold'].map((weight) => (
+                    <div 
+                      key={weight} 
+                      className="flex items-center justify-between p-3 border rounded hover:bg-accent/10"
+                      onClick={() => handleCopyToClipboard(weight)}
+                    >
+                      <p className={`text-lg ${weight}`}>
+                        {weight.replace('font-', '')}
+                      </p>
+                      <code className="px-2 py-1 rounded bg-muted text-sm">{weight}</code>
                     </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Espaciado */}
+        <TabsContent value="spacing" className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Espaciado</CardTitle>
+              <CardDescription>
+                Sistema de espaciado utilizado en la aplicación
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold">Espacios</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {spacingSizes.map((space) => (
+                    <div 
+                      key={space.name} 
+                      className="flex items-center gap-3 p-3 border rounded hover:bg-accent/10"
+                      onClick={() => handleCopyToClipboard(space.class)}
+                    >
+                      <div className={`${space.class} bg-primary rounded-sm`}></div>
+                      <div className="flex-1">
+                        <p className="font-medium">{space.name}</p>
+                        <p className="text-sm text-muted-foreground">{space.value}</p>
+                      </div>
+                      <code className="px-2 py-1 rounded bg-muted text-xs">{space.class}</code>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Componentes */}
+        <TabsContent value="components" className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Componentes UI</CardTitle>
+              <CardDescription>
+                Componentes de interfaz de usuario reutilizables
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Botones</h3>
+                <div className="flex flex-wrap gap-4">
+                  <Button>Default</Button>
+                  <Button variant="secondary">Secondary</Button>
+                  <Button variant="destructive">Destructive</Button>
+                  <Button variant="outline">Outline</Button>
+                  <Button variant="ghost">Ghost</Button>
+                  <Button variant="link">Link</Button>
+                </div>
+                <div className="flex flex-wrap gap-4 mt-4">
+                  <Button size="lg">Large</Button>
+                  <Button>Default</Button>
+                  <Button size="sm">Small</Button>
+                  <Button size="icon"><Code className="h-4 w-4" /></Button>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Badges</h3>
+                <div className="flex flex-wrap gap-4">
+                  <Badge>Default</Badge>
+                  <Badge variant="secondary">Secondary</Badge>
+                  <Badge variant="destructive">Destructive</Badge>
+                  <Badge variant="outline">Outline</Badge>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Inputs</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="default-input">Input</Label>
+                    <Input id="default-input" placeholder="Escribe aquí..." />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="disabled-input">Input Deshabilitado</Label>
+                    <Input id="disabled-input" placeholder="No disponible" disabled />
                   </div>
                 </div>
+              </div>
 
-                {viewMode === 'grid' ? (
-                  <ComponentsGrid 
-                    searchTerm={searchTerm} 
-                    categoryFilter={categoryFilter} 
-                  />
-                ) : (
-                  <ComponentsList 
-                    searchTerm={searchTerm} 
-                    categoryFilter={categoryFilter} 
-                  />
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Switches</h3>
+                <div className="flex flex-col space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="switch-example">Activo/Inactivo</Label>
+                    <Switch id="switch-example" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="switch-disabled">Deshabilitado</Label>
+                    <Switch id="switch-disabled" disabled />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          <TabsContent value="colors" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Paleta de Colores</CardTitle>
-                <CardDescription>
-                  Sistema de colores de la plataforma para mantener una apariencia consistente.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {renderColorsSection()}
-              </CardContent>
-            </Card>
-          </TabsContent>
+        {/* Patrones */}
+        <TabsContent value="patterns" className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Patrones de Diseño</CardTitle>
+              <CardDescription>
+                Patrones comunes utilizados a lo largo de la aplicación
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Cards</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Card Title</CardTitle>
+                      <CardDescription>
+                        Esta es una tarjeta básica con encabezado
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p>Este es el contenido principal de la tarjeta.</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Card con Acciones</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="mb-4">Tarjeta con acciones al final.</p>
+                      <div className="flex justify-end gap-2">
+                        <Button variant="outline" size="sm">Cancelar</Button>
+                        <Button size="sm">Guardar</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle>Card Compacta</CardTitle>
+                      <CardDescription>
+                        Versión reducida de tarjeta
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p>Contenido con espaciado reducido.</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
 
-          <TabsContent value="typography" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Sistema Tipográfico</CardTitle>
-                <CardDescription>
-                  Jerarquía tipográfica y estilos de texto para uso consistente.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {renderTypographySection()}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="spacing" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Sistema de Espaciado</CardTitle>
-                <CardDescription>
-                  Escala de espaciado para mantener consistencia en márgenes y rellenos.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {renderSpacingSection()}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="patterns" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Patrones de Diseño</CardTitle>
-                <CardDescription>
-                  Soluciones reutilizables para problemas comunes de diseño e interfaces.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {renderPatternsSection()}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="principles" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Principios de Diseño</CardTitle>
-                <CardDescription>
-                  Fundamentos y filosofía que guían todas las decisiones de diseño.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {renderPrinciplesSection()}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </AdminPageLayout>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Form Patterns</h3>
+                <div className="grid grid-cols-1 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Formulario Básico</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <form className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name">Nombre</Label>
+                          <Input id="name" placeholder="Tu nombre" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email">Email</Label>
+                          <Input id="email" type="email" placeholder="tu@email.com" />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="marketing">Recibir marketing</Label>
+                          <Switch id="marketing" />
+                        </div>
+                        <Button className="w-full">Enviar</Button>
+                      </form>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 

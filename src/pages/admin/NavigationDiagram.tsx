@@ -1,148 +1,360 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import AdminPageLayout from '@/layouts/AdminPageLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Home, ChevronRight, PanelLeft } from 'lucide-react';
+  Routes, Route, List, LayoutDashboard, Cog, Users, BookOpen, FileText 
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { routeMap } from '@/utils/routeUtils';
+import appRoutes from '@/routes/app';
+import { adminNavigation } from '@/config/navigation/adminNavigation';
+import { settingsNavigation } from '@/config/navigation/settingsNavigation';
 
-const NavigationDiagram: React.FC = () => {
+// Helper to extract paths from route definitions
+const extractRoutes = (routes, parentPath = '') => {
+  if (!routes) return [];
+  
+  let extractedRoutes = [];
+  
+  routes.forEach(route => {
+    if (route.path) {
+      const fullPath = parentPath ? 
+        `${parentPath}/${route.path}`.replace(/\/+/g, '/') : 
+        route.path;
+      
+      extractedRoutes.push({
+        path: fullPath,
+        element: route.element ? true : false,
+        index: route.index || false,
+      });
+    }
+    
+    // If the route has children, recursively extract those routes too
+    if (route.children) {
+      const newParentPath = route.path ? 
+        `${parentPath}/${route.path}`.replace(/\/+/g, '/') : 
+        parentPath;
+      
+      extractedRoutes = [
+        ...extractedRoutes,
+        ...extractRoutes(route.children, newParentPath)
+      ];
+    }
+  });
+  
+  return extractedRoutes;
+};
+
+// Helper to group routes by section
+const groupRoutesBySection = (routes) => {
+  const sections = {
+    app: [],
+    admin: [],
+    auth: [],
+    instructor: [],
+    student: [],
+    profile: [],
+    settings: [],
+    other: [],
+  };
+  
+  routes.forEach(route => {
+    const path = route.path;
+    
+    if (path.includes('/app/admin')) {
+      sections.admin.push(route);
+    } else if (path.includes('/app/instructor')) {
+      sections.instructor.push(route);
+    } else if (path.includes('/app/student')) {
+      sections.student.push(route);
+    } else if (path.includes('/app/profile')) {
+      sections.profile.push(route);
+    } else if (path.includes('/app/settings')) {
+      sections.settings.push(route);
+    } else if (path.includes('/auth') || path.includes('login') || path.includes('register')) {
+      sections.auth.push(route);
+    } else if (path.startsWith('/app')) {
+      sections.app.push(route);
+    } else {
+      sections.other.push(route);
+    }
+  });
+  
+  return sections;
+};
+
+// Route visualization component
+const RouteItem = ({ route, level = 0 }) => {
+  const indentation = level * 16;
+  
   return (
-    <div className="container py-8 max-w-7xl mx-auto">
-      {/* Breadcrumb navigation */}
-      <Breadcrumb className="mb-4">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href={routeMap.home}>
-              <Home className="h-4 w-4 mr-1" />
-              Inicio
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator>
-            <ChevronRight className="h-4 w-4" />
-          </BreadcrumbSeparator>
-          <BreadcrumbItem>
-            <BreadcrumbLink href={routeMap.admin}>
-              Administración
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator>
-            <ChevronRight className="h-4 w-4" />
-          </BreadcrumbSeparator>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/app/admin/navigation-diagram" aria-current="page">
-              Diagrama de Navegación
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
-      <div className="flex flex-col gap-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Diagrama de Navegación</h1>
-          <p className="text-muted-foreground mt-2">
-            Visualización completa de la estructura de navegación del sistema.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-muted/30 border rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-4">Recursos de Navegación</h2>
-            <div className="space-y-3">
-              <div>
-                <h3 className="font-medium">Documentos de Navegación</h3>
-                <ul className="ml-6 list-disc mt-2 space-y-1">
-                  <li>
-                    <Link to="/docs/MAPA_DE_RUTAS.md" className="text-blue-600 hover:underline">
-                      Mapa de Rutas
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/docs/ESTRUCTURA_NAVEGACION.md" className="text-blue-600 hover:underline">
-                      Estructura de Navegación
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/docs/estructura-navegacion.md" className="text-blue-600 hover:underline">
-                      Guía de Navegación Detallada
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/docs/routes.md" className="text-blue-600 hover:underline">
-                      Documentación de Rutas
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              
-              <div>
-                <h3 className="font-medium">Herramientas</h3>
-                <ul className="ml-6 list-disc mt-2 space-y-1">
-                  <li>
-                    <Link to="/app/admin/route-validator" className="text-blue-600 hover:underline">
-                      Validador de Rutas
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to={routeMap.adminDesignSystem} className="text-blue-600 hover:underline">
-                      Sistema de Diseño
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-muted/30 border rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-4">Accesos Rápidos</h2>
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" asChild>
-                <Link to="/app/admin/design-system">
-                  <PanelLeft className="mr-2 h-4 w-4" />
-                  Sistema de Diseño
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/app/admin/route-validator">
-                  <PanelLeft className="mr-2 h-4 w-4" />
-                  Validador de Rutas
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/app/admin/navigation-diagram">
-                  <PanelLeft className="mr-2 h-4 w-4" />
-                  Diagrama de Navegación
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/app/admin/pages">
-                  <PanelLeft className="mr-2 h-4 w-4" />
-                  Gestión de Páginas
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className="border rounded-lg p-6 bg-card">
-          <h2 className="text-xl font-semibold mb-4">Mapa Visual de Navegación</h2>
-          <div className="p-4 border bg-muted/20 rounded-md text-center h-[400px] flex items-center justify-center">
-            <div>
-              <p className="text-muted-foreground mb-4">
-                El diagrama interactivo de navegación se cargará aquí.
-              </p>
-              <Button>Cargar Diagrama</Button>
-            </div>
-          </div>
-        </div>
+    <div 
+      className="py-2 px-3 border-b border-border last:border-0 hover:bg-accent/5"
+      style={{ paddingLeft: `${indentation + 12}px` }}
+    >
+      <div className="flex items-center gap-2">
+        <Routes className="h-4 w-4 text-muted-foreground" />
+        <span className="font-mono text-sm">{route.path}</span>
+        {route.index && (
+          <Badge variant="outline" className="text-xs">index</Badge>
+        )}
       </div>
     </div>
+  );
+};
+
+// Menu item visualization
+const MenuItem = ({ item, level = 0 }) => {
+  const indentation = level * 16;
+  const Icon = item.icon || List;
+  
+  return (
+    <div>
+      <div 
+        className="py-2 px-3 border-b border-border hover:bg-accent/5"
+        style={{ paddingLeft: `${indentation + 12}px` }}
+      >
+        <div className="flex items-center gap-2">
+          <Icon className="h-4 w-4 text-muted-foreground" />
+          <span>{item.label}</span>
+          {item.requiredRole && (
+            <Badge variant="outline" className="text-xs">
+              {Array.isArray(item.requiredRole) 
+                ? item.requiredRole.join(', ') 
+                : item.requiredRole}
+            </Badge>
+          )}
+        </div>
+      </div>
+      
+      {item.submenu && (
+        <div>
+          {item.submenu.map((subItem, index) => (
+            <MenuItem 
+              key={`${subItem.label}-${index}`} 
+              item={subItem} 
+              level={level + 1} 
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Main component
+const NavigationDiagram: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('routes');
+  const [routeGroups, setRouteGroups] = useState({});
+  
+  // Extract routes on component mount
+  useEffect(() => {
+    const extractedRoutes = extractRoutes(appRoutes);
+    const grouped = groupRoutesBySection(extractedRoutes);
+    setRouteGroups(grouped);
+  }, []);
+  
+  return (
+    <AdminPageLayout
+      title="Diagrama de Navegación"
+      subtitle="Visualiza la estructura de rutas y navegación de la aplicación"
+    >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="routes" className="flex items-center gap-2">
+            <Routes className="h-4 w-4" />
+            <span>Rutas</span>
+          </TabsTrigger>
+          <TabsTrigger value="menus" className="flex items-center gap-2">
+            <List className="h-4 w-4" />
+            <span>Menús</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="routes" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Admin Routes */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center">
+                  <LayoutDashboard className="mr-2 h-5 w-5 text-primary" />
+                  <CardTitle>Rutas de Administrador</CardTitle>
+                </div>
+                <CardDescription>
+                  Rutas disponibles en el área de administración
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="border rounded-md max-h-[400px] overflow-y-auto">
+                  {routeGroups.admin && routeGroups.admin.length > 0 ? (
+                    routeGroups.admin.map((route, index) => (
+                      <RouteItem key={`admin-${index}`} route={route} />
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No hay rutas disponibles
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Instructor Routes */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center">
+                  <BookOpen className="mr-2 h-5 w-5 text-primary" />
+                  <CardTitle>Rutas de Instructor</CardTitle>
+                </div>
+                <CardDescription>
+                  Rutas disponibles para los instructores
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="border rounded-md max-h-[400px] overflow-y-auto">
+                  {routeGroups.instructor && routeGroups.instructor.length > 0 ? (
+                    routeGroups.instructor.map((route, index) => (
+                      <RouteItem key={`instructor-${index}`} route={route} />
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No hay rutas disponibles
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Student Routes */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center">
+                  <Users className="mr-2 h-5 w-5 text-primary" />
+                  <CardTitle>Rutas de Estudiante</CardTitle>
+                </div>
+                <CardDescription>
+                  Rutas disponibles para los estudiantes
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="border rounded-md max-h-[400px] overflow-y-auto">
+                  {routeGroups.student && routeGroups.student.length > 0 ? (
+                    routeGroups.student.map((route, index) => (
+                      <RouteItem key={`student-${index}`} route={route} />
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No hay rutas disponibles
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Settings Routes */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center">
+                  <Cog className="mr-2 h-5 w-5 text-primary" />
+                  <CardTitle>Rutas de Configuración</CardTitle>
+                </div>
+                <CardDescription>
+                  Rutas relacionadas con la configuración del sistema
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="border rounded-md max-h-[400px] overflow-y-auto">
+                  {routeGroups.settings && routeGroups.settings.length > 0 ? (
+                    routeGroups.settings.map((route, index) => (
+                      <RouteItem key={`settings-${index}`} route={route} />
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No hay rutas disponibles
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="menus" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Admin Menu */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center">
+                  <LayoutDashboard className="mr-2 h-5 w-5 text-primary" />
+                  <CardTitle>Menú de Administración</CardTitle>
+                </div>
+                <CardDescription>
+                  Estructura del menú de administración
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="border rounded-md max-h-[400px] overflow-y-auto">
+                  {adminNavigation.map((item, index) => (
+                    <MenuItem key={`admin-menu-${index}`} item={item} />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Settings Menu */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center">
+                  <Cog className="mr-2 h-5 w-5 text-primary" />
+                  <CardTitle>Menú de Configuración</CardTitle>
+                </div>
+                <CardDescription>
+                  Estructura del menú de configuración
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="border rounded-md max-h-[400px] overflow-y-auto">
+                  {settingsNavigation.map((item, index) => (
+                    <MenuItem key={`settings-menu-${index}`} item={item} />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Documentation Link */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center">
+                  <FileText className="mr-2 h-5 w-5 text-primary" />
+                  <CardTitle>Documentación de Rutas</CardTitle>
+                </div>
+                <CardDescription>
+                  Enlaces a la documentación de rutas y navegación
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col gap-3">
+                  <p className="text-sm text-muted-foreground">
+                    Para más información sobre la estructura de rutas y navegación, consulta la documentación completa.
+                  </p>
+                  
+                  <div>
+                    <Button variant="outline" size="sm" asChild>
+                      <a href="/docs" target="_blank" rel="noopener noreferrer">
+                        Ver Documentación
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </AdminPageLayout>
   );
 };
 
