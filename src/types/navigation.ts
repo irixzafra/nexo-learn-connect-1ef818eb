@@ -11,6 +11,7 @@ export interface MenuItem {
   path?: string;
   onClick?: () => void;
   items?: MenuItem[];
+  submenu?: MenuItem[];
   badge?: string | number;
   roles?: string[];
   requiredRole?: UserRoleType | UserRoleType[];

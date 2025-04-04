@@ -11,9 +11,10 @@ export interface DesignComponent {
   category: string;
   preview?: React.ReactNode;
   code?: string;
-  status?: 'stable' | 'beta' | 'experimental';
+  status?: 'stable' | 'beta' | 'experimental' | 'deprecated';
   variants?: string[];
   usage?: string;
+  path?: string;
   props?: Record<string, {
     type: string;
     description: string;
