@@ -2,18 +2,18 @@
 import { UserRoleType } from '@/types/auth';
 import { 
   MenuItem, 
-  mainNavigation,
+  NavigationMenus,
   adminNavigation,
   exploreNavigation,
   instructorNavigation,
   academicNavigation,
   financeNavigation,
   settingsNavigation,
+  mainNavigation,
   filterMenuItemsByRole,
   getHomePathByRole,
   getNavigationByRole
 } from './navigation';
-import { NavigationMenus } from '@/types/navigation';
 
 // Re-export everything for backward compatibility
 export {

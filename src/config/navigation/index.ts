@@ -8,6 +8,12 @@ import { studentNavigation } from './studentNavigation';
 import { learningNavigation } from './learningNavigation';
 import { communityNavigation } from './communityNavigation';
 import { configurationNavigation } from './configurationNavigation';
+import { mainNavigation } from './mainNavigation';
+import { exploreNavigation } from './exploreNavigation';
+import { academicNavigation } from './academicNavigation';
+import { financeNavigation } from './financeNavigation';
+import { settingsNavigation } from './settingsNavigation';
+import { gamificationNavigation } from './gamificationNavigation';
 
 /**
  * Filter menu items based on user role
@@ -57,7 +63,7 @@ export const getHomePathByRole = (role: UserRoleType): string => {
 export const getNavigationByRole = (role: UserRoleType): NavigationMenus => {
   return {
     dashboard: filterMenuItemsByRole(dashboardNavigation, role),
-    main: [], // Deprecated, kept for backward compatibility
+    main: filterMenuItemsByRole(mainNavigation, role),
     admin: filterMenuItemsByRole(adminNavigation, role),
     instructor: filterMenuItemsByRole(instructorNavigation, role),
     student: filterMenuItemsByRole(studentNavigation, role),
@@ -67,6 +73,7 @@ export const getNavigationByRole = (role: UserRoleType): NavigationMenus => {
   };
 };
 
+// Export all navigation configurations
 export * from './dashboardNavigation';
 export * from './adminNavigation';
 export * from './instructorNavigation';
@@ -74,3 +81,10 @@ export * from './studentNavigation';
 export * from './learningNavigation';
 export * from './communityNavigation';
 export * from './configurationNavigation';
+export * from './mainNavigation';
+export * from './exploreNavigation';
+export * from './academicNavigation';
+export * from './financeNavigation';
+export * from './settingsNavigation';
+export * from './gamificationNavigation';
+export { MenuItem } from '@/types/navigation';
