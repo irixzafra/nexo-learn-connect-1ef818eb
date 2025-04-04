@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { z } from 'zod';
-import { useAuth } from '@/contexts/auth';
+// Importación explícita desde la ruta correcta
+import { useAuth } from '@/contexts/auth/useAuth';
 import { Loader2, Mail, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
 import AuthLayout from '@/layouts/AuthLayout';
@@ -49,11 +50,13 @@ const Login: React.FC = () => {
   });
   
   const onSubmit = async (data: LoginFormValues) => {
-    console.log('****** ONSUBMIT DISPARADO ******'); // <-- AÑADIDO log de diagnóstico
+    console.log('****** ONSUBMIT DISPARADO ******'); // <-- Log de diagnóstico
     console.log("Intentando iniciar sesión con:", data);
     setIsLoading(true);
     
     try {
+      // Añadimos más logs para diagnóstico
+      console.log("Antes de llamar a login(). Función login existe:", !!login);
       const result = await login(data.email, data.password, data.remember);
       console.log("Resultado del login:", result);
       
@@ -76,8 +79,15 @@ const Login: React.FC = () => {
     }
   };
   
+  // Verificamos explícitamente si el botón debería estar deshabilitado
   const isDisabled = isLoading || authLoading;
   console.log('****** Login.tsx: ESTADO DISABLED BOTON ******:', isDisabled, { localLoading: isLoading, contextLoading: authLoading });
+  
+  // Añadir un manejador de eventos de formulario directo para depuración
+  const handleFormSubmit = (e: React.FormEvent) => {
+    console.log("****** FORM SUBMIT EVENT FIRED ******");
+    // No prevenimos el comportamiento predeterminado para permitir que react-hook-form maneje el envío
+  };
   
   return (
     <AuthLayout>
@@ -90,7 +100,7 @@ const Login: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} onSubmitCapture={handleFormSubmit} className="space-y-4">
               <FormField
                 control={form.control}
                 name="email"
@@ -165,11 +175,13 @@ const Login: React.FC = () => {
                 </Link>
               </div>
               
+              {/* Añadimos un data-testid para facilitar pruebas */}
               <Button 
                 type="submit" 
                 className="w-full py-6 text-base" 
                 disabled={isDisabled}
-                onClick={() => console.log('****** Login.tsx: BOTON CLICADO (onClick directo) ******')} // <-- AÑADIDO manejador onClick directo
+                data-testid="login-button"
+                onClick={() => console.log('****** Login.tsx: BOTON CLICADO (onClick directo) ******')}
               >
                 {isLoading ? (
                   <>
