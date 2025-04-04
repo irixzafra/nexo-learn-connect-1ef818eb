@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { AuthContextType } from '@/contexts/auth/types';
 
-// Tipo para los valores del contexto de autenticación que respeta AuthContextType
+// Default auth context that fully implements AuthContextType
 const defaultAuthContext: AuthContextType = {
   isLoading: false,
   isAuthenticated: false,
@@ -30,7 +30,7 @@ const defaultAuthContext: AuthContextType = {
   resetToOriginalRole: vi.fn()
 };
 
-// Componente wrapper que proporciona el contexto de autenticación y BrowserRouter
+// Wrapper component that provides auth context and router
 interface AllProvidersProps {
   children: React.ReactNode;
   authValue?: Partial<AuthContextType>;
@@ -49,7 +49,7 @@ export const AllProviders = ({
   );
 };
 
-// Función de renderizado con el wrapper
+// Render function with the wrapper
 export const renderWithAuth = (
   ui: ReactElement,
   authValue: Partial<AuthContextType> = {},

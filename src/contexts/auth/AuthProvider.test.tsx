@@ -11,11 +11,11 @@ import {
   resetSupabaseMocks 
 } from '@/testing-utils/supabase-mocks';
 
-// Mock para el hook useEffect
+// Mock for the useEffect hook
 vi.mock('react', async () => {
   const actual = await vi.importActual('react');
   return {
-    ...actual as object,
+    ...(actual as object),
     useEffect: (callback: () => void) => callback(),
   };
 });
@@ -23,20 +23,20 @@ vi.mock('react', async () => {
 describe('AuthProvider', () => {
   let mockUnsubscribe: ReturnType<typeof vi.fn>;
 
-  // Configuración antes de cada prueba
+  // Setup before each test
   beforeEach(() => {
     mockUnsubscribe = vi.fn();
     mockAuthStateChange.mockReturnValue({ 
       data: { subscription: { unsubscribe: mockUnsubscribe } } 
     });
 
-    // Mockear getSession para que devuelva una sesión inicialmente
+    // Mock getSession to initially return no session
     mockGetSession.mockResolvedValue({ 
       data: { session: null }
     });
   });
 
-  // Limpieza después de cada prueba
+  // Cleanup after each test
   afterEach(() => {
     resetSupabaseMocks();
     vi.clearAllMocks();
@@ -49,10 +49,10 @@ describe('AuthProvider', () => {
       </AuthProvider>
     );
 
-    // Verificar que se muestra el hijo (indicando que el AuthProvider se renderizó)
+    // Verify child is rendered (indicating that AuthProvider rendered)
     expect(screen.getByTestId('child')).toBeInTheDocument();
     
-    // Verificar que se llamó a los métodos de autenticación durante la inicialización
+    // Verify auth methods were called during initialization
     expect(mockAuthStateChange).toHaveBeenCalled();
     expect(mockGetSession).toHaveBeenCalled();
   });

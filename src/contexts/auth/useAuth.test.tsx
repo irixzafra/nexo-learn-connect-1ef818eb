@@ -3,6 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { useAuth } from './useAuth';
 import { AllProviders } from '@/testing-utils/auth-test-utils';
 import { describe, it, expect } from 'vitest';
+import { User } from '@supabase/supabase-js';
 
 describe('useAuth hook', () => {
   it('should return isAuthenticated=false when no session exists', () => {
@@ -24,8 +25,24 @@ describe('useAuth hook', () => {
   });
 
   it('should return isAuthenticated=true when session exists', () => {
-    const mockUser = { id: 'user-123', email: 'test@example.com' };
-    const mockSession = { access_token: 'token-123' };
+    // Create a more complete mock that satisfies the User type
+    const mockUser = { 
+      id: 'user-123', 
+      email: 'test@example.com',
+      app_metadata: {},
+      user_metadata: {},
+      aud: 'authenticated',
+      created_at: new Date().toISOString()
+    } as User;
+    
+    const mockSession = { 
+      access_token: 'token-123',
+      refresh_token: 'refresh-123',
+      expires_in: 3600,
+      expires_at: 3600,
+      token_type: 'bearer',
+      user: mockUser
+    };
 
     const { result } = renderHook(() => useAuth(), {
       wrapper: ({ children }) => (

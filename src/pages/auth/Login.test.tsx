@@ -6,7 +6,7 @@ import Login from './Login';
 import { renderWithAuth } from '@/testing-utils/auth-test-utils';
 import { mockSignInWithPassword, resetSupabaseMocks } from '@/testing-utils/supabase-mocks';
 
-// Mock para react-router-dom
+// Mock for react-router-dom
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom') as object;
@@ -16,7 +16,7 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// Mock para sonner (toast)
+// Mock for sonner (toast)
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
@@ -26,7 +26,7 @@ vi.mock('sonner', () => ({
 
 describe('Login Component', () => {
   beforeEach(() => {
-    // Reiniciar todos los mocks antes de cada prueba
+    // Reset all mocks before each test
     vi.clearAllMocks();
     resetSupabaseMocks();
   });
@@ -38,7 +38,7 @@ describe('Login Component', () => {
   it('should render login form correctly', () => {
     renderWithAuth(<Login />);
     
-    // Verificar que se renderizan los elementos principales
+    // Verify main elements are rendered
     expect(screen.getByRole('heading', { name: /iniciar sesión/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/correo electrónico/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/contraseña/i)).toBeInTheDocument();
