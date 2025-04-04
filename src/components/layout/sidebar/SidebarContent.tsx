@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import SidebarNavigation from './SidebarNavigation';
 import { LogoContainer } from '@/components/navigation';
-import { cn } from '@/lib/utils'; // Added the missing import for cn utility
+import { cn } from '@/lib/utils'; 
 
 const SidebarContent: React.FC = () => {
   const { state } = useSidebar();

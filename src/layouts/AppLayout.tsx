@@ -9,6 +9,7 @@ import AdminSidebar from '@/components/layout/sidebars/AdminSidebar';
 import InstructorSidebar from '@/components/layout/sidebars/InstructorSidebar';
 import StudentSidebar from '@/components/layout/sidebars/StudentSidebar';
 import SafeRouteWrapper from '@/components/SafeRouteWrapper';
+import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -42,23 +43,25 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <AuthenticatedHeader onToggleSidebar={toggleSidebar} />
-      
-      <div className="flex flex-1 overflow-hidden">
-        <div className={`w-64 border-r bg-gray-50 dark:bg-gray-900 transition-all duration-300 ${
-          isSidebarOpen ? 'block' : 'hidden md:block'
-        }`}>
-          {renderSidebar()}
+    <SidebarProvider>
+      <div className="flex min-h-screen flex-col">
+        <AuthenticatedHeader onToggleSidebar={toggleSidebar} />
+        
+        <div className="flex flex-1 overflow-hidden">
+          <div className={`w-64 border-r bg-gray-50 dark:bg-gray-900 transition-all duration-300 ${
+            isSidebarOpen ? 'block' : 'hidden md:block'
+          }`}>
+            {renderSidebar()}
+          </div>
+          <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6">
+            <SafeRouteWrapper>
+              {children || <Outlet />}
+            </SafeRouteWrapper>
+          </main>
         </div>
-        <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6">
-          <SafeRouteWrapper>
-            {children || <Outlet />}
-          </SafeRouteWrapper>
-        </main>
+        <Toaster position="top-right" />
       </div>
-      <Toaster position="top-right" />
-    </div>
+    </SidebarProvider>
   );
 };
 

@@ -1,31 +1,12 @@
+// This file is now deprecated. We are using the shadcn SidebarProvider instead.
+// Keeping this file temporarily for backward compatibility until all imports are updated.
 
-import React, { createContext, useContext, useState } from 'react';
-
-type SidebarContextType = {
-  isOpen: boolean;
-  toggleSidebar: () => void;
-};
-
-const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
+import React from 'react';
+import { SidebarProvider as ShadcnSidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
 
 export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(true);
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
-  return (
-    <SidebarContext.Provider value={{ isOpen, toggleSidebar }}>
-      {children}
-    </SidebarContext.Provider>
-  );
+  return <ShadcnSidebarProvider>{children}</ShadcnSidebarProvider>;
 };
 
-export const useSidebar = () => {
-  const context = useContext(SidebarContext);
-  if (context === undefined) {
-    throw new Error('useSidebar must be used within a SidebarProvider');
-  }
-  return context;
-};
+// Re-export the hooks from the proper location
+export { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
