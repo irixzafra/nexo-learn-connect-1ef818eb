@@ -1,15 +1,16 @@
 
-import React from 'react';
-import { ChevronDown } from 'lucide-react';
+import React, { ReactNode } from 'react';
+import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { LucideIcon } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 
 interface SidebarGroupProps {
   label: string;
   icon: LucideIcon;
   isExpanded: boolean;
   onToggle: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export const SidebarGroup: React.FC<SidebarGroupProps> = ({
@@ -17,34 +18,37 @@ export const SidebarGroup: React.FC<SidebarGroupProps> = ({
   icon: Icon,
   isExpanded,
   onToggle,
-  children,
+  children
 }) => {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
   return (
-    <div className="mb-3">
+    <div className="mb-2">
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between py-2.5 px-3 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg transition-colors hover:bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-1"
-        aria-expanded={isExpanded}
+        className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted/50"
       >
-        <div className="flex items-center gap-3">
-          <Icon className="h-4.5 w-4.5" />
-          <span className="text-[14px] font-medium">{label}</span>
+        <div className="flex items-center gap-2">
+          <Icon className="h-4 w-4" />
+          {!isCollapsed && <span>{label}</span>}
         </div>
-        <ChevronDown
-          className={cn(
-            "h-4 w-4 transition-transform duration-200",
-            isExpanded ? "rotate-180 transform" : ""
-          )}
-        />
-      </button>
-      <div
-        className={cn(
-          "overflow-hidden transition-all duration-200 ease-in-out pl-3",
-          isExpanded ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
+        {!isCollapsed && (
+          <div>
+            {isExpanded ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )}
+          </div>
         )}
-      >
+      </button>
+      
+      <div className={cn("mt-1", isExpanded ? "block" : "hidden")}>
         {children}
       </div>
     </div>
   );
 };
+
+export default SidebarGroup;

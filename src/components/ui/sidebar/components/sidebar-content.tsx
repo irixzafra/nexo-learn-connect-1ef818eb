@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 export const SidebarContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div">
->(({ className, ...props }, ref) => {
+>(({ className, children, ...props }, ref) => {
   return (
     <div
       ref={ref}
@@ -15,7 +15,9 @@ export const SidebarContent = React.forwardRef<
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </div>
   )
 })
 SidebarContent.displayName = "SidebarContent"
