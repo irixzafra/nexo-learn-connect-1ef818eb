@@ -41,9 +41,15 @@ export function useUserPermissions() {
         
         // Extract permissions from the nested structure and ensure proper typing
         if (data) {
-          const userPermissions = data
-            .map(item => item.permissions as Permission)
-            .filter(Boolean); // Filter out any null or undefined values
+          // The issue is here - we need to correctly extract and type the permissions array
+          const userPermissions: Permission[] = [];
+          
+          data.forEach(item => {
+            if (item.permissions) {
+              // Each item.permissions is actually a single Permission object, not an array
+              userPermissions.push(item.permissions as Permission);
+            }
+          });
           
           setPermissions(userPermissions);
         } else {
