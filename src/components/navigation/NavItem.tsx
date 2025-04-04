@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { LucideIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { isRouteActive } from '@/utils/routeUtils';
 
 export interface NavItemProps {
   icon?: LucideIcon;
@@ -34,9 +35,18 @@ const NavItem: React.FC<NavItemProps> = ({
   const location = useLocation();
   
   // Determine if the current route matches this nav item
-  const isActive = exact 
-    ? location.pathname === href 
-    : location.pathname.startsWith(href);
+  const isActive = isRouteActive(location.pathname, href, exact);
+  
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+    
+    if (onClick) {
+      onClick();
+    }
+  };
   
   const linkClassNames = cn(
     'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-all duration-200',
@@ -52,7 +62,7 @@ const NavItem: React.FC<NavItemProps> = ({
     <Link 
       to={disabled ? '#' : href}
       className={linkClassNames}
-      onClick={disabled ? undefined : onClick}
+      onClick={handleClick}
       aria-disabled={disabled}
       aria-current={isActive ? 'page' : undefined}
     >

@@ -3,12 +3,23 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAppNavigation } from '@/hooks/useAppNavigation';
 
 interface ExploreCoursesCardProps {
   onClick?: () => void;
 }
 
 const ExploreCoursesCard: React.FC<ExploreCoursesCardProps> = ({ onClick }) => {
+  const { navigateTo } = useAppNavigation();
+  
+  const handleExploreClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      navigateTo('/app/courses');
+    }
+  };
+  
   return (
     <Card className="h-full">
       <CardHeader>
@@ -29,7 +40,7 @@ const ExploreCoursesCard: React.FC<ExploreCoursesCardProps> = ({ onClick }) => {
         </div>
       </CardContent>
       <CardFooter>
-        <Button onClick={onClick} className="w-full">
+        <Button onClick={handleExploreClick} className="w-full">
           Ir al catálogo
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>

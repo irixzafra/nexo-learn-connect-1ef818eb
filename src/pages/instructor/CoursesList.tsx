@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { PageHeader } from '@/components/ui/page-header';
 import { useInstructorCoursesManagement } from '@/features/instructor/hooks/useInstructorCoursesManagement';
 import { InstructorCoursesHeader } from '@/features/instructor/components/courses/InstructorCoursesHeader';
 import { InstructorCoursesFilters } from '@/features/instructor/components/courses/InstructorCoursesFilters';
@@ -9,9 +8,12 @@ import { InstructorCoursesGrid } from '@/features/instructor/components/courses/
 import { InstructorCoursesEmptyState } from '@/features/instructor/components/courses/InstructorCoursesEmptyState';
 import { InstructorCoursesLoading } from '@/features/instructor/components/courses/InstructorCoursesLoading';
 import { DeleteCourseDialog } from '@/features/instructor/components/courses/DeleteCourseDialog';
+import PageHeader from '@/components/layout/PageHeader';
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 const CoursesList: React.FC = () => {
   const { user } = useAuth();
+  const { startOnboarding } = useOnboarding();
   
   const {
     searchTerm,
@@ -33,6 +35,16 @@ const CoursesList: React.FC = () => {
   
   return (
     <div className="container mx-auto p-6">
+      <PageHeader 
+        title="Mis Cursos" 
+        description="Gestiona y edita tus cursos como instructor"
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/app/instructor/dashboard' },
+          { label: 'Mis Cursos' }
+        ]}
+        showOnboarding={true}
+      />
+      
       <InstructorCoursesHeader onCreateCourse={createNewCourse} />
       
       <InstructorCoursesFilters

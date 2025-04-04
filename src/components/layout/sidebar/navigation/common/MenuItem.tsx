@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 interface MenuItemProps {
   to: string;
@@ -13,6 +14,7 @@ interface MenuItemProps {
   isCollapsed?: boolean;
   isHighlighted?: boolean;
   disabled?: boolean;
+  onClick?: () => void;
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({
@@ -22,8 +24,24 @@ const MenuItem: React.FC<MenuItemProps> = ({
   badge,
   isCollapsed = false,
   isHighlighted = false,
-  disabled = false
+  disabled = false,
+  onClick
 }) => {
+  const navigate = useNavigate();
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled) {
+      e.preventDefault();
+      toast.info(`La funcionalidad "${label}" estará disponible próximamente`);
+      return;
+    }
+
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <NavLink
       to={disabled ? '#' : to}
@@ -34,12 +52,10 @@ const MenuItem: React.FC<MenuItemProps> = ({
             ? "bg-primary text-primary-foreground"
             : "hover:bg-muted/50",
           isHighlighted && "ring-2 ring-primary/30",
-          disabled && "opacity-60 pointer-events-none"
+          disabled && "opacity-60 cursor-not-allowed"
         )
       }
-      onClick={(e) => {
-        if (disabled) e.preventDefault();
-      }}
+      onClick={handleClick}
     >
       {Icon && (
         <Icon className="h-4 w-4" />
