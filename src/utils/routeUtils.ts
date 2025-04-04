@@ -1,4 +1,3 @@
-
 /**
  * Verifica si una ruta está activa basada en la ruta actual y la ruta de destino
  * 
@@ -56,6 +55,7 @@ export const routeMap = {
   adminSystemPages: '/app/admin/system-pages',
   adminDesignSystem: '/app/admin/design-system',
   adminDesignSystemButton: '/app/admin/design-system/components/button',
+  adminReviewElements: '/app/admin/review-elements',
   
   // Rutas de instructor
   profesor: '/app/profesor',
