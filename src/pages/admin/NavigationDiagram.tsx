@@ -4,7 +4,7 @@ import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Routes, Route, List, LayoutDashboard, Cog, Users, BookOpen, FileText 
+  Route, List, LayoutDashboard, Cog, Users, BookOpen, FileText 
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
@@ -96,7 +96,7 @@ const RouteItem = ({ route, level = 0 }) => {
       style={{ paddingLeft: `${indentation + 12}px` }}
     >
       <div className="flex items-center gap-2">
-        <Routes className="h-4 w-4 text-muted-foreground" />
+        <Route className="h-4 w-4 text-muted-foreground" />
         <span className="font-mono text-sm">{route.path}</span>
         {route.index && (
           <Badge variant="outline" className="text-xs">index</Badge>
@@ -148,7 +148,16 @@ const MenuItem = ({ item, level = 0 }) => {
 // Main component
 const NavigationDiagram: React.FC = () => {
   const [activeTab, setActiveTab] = useState('routes');
-  const [routeGroups, setRouteGroups] = useState({});
+  const [routeGroups, setRouteGroups] = useState<Record<string, any>>({
+    admin: [],
+    instructor: [],
+    student: [],
+    settings: [],
+    app: [],
+    auth: [],
+    profile: [],
+    other: []
+  });
   
   // Extract routes on component mount
   useEffect(() => {
@@ -165,7 +174,7 @@ const NavigationDiagram: React.FC = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList>
           <TabsTrigger value="routes" className="flex items-center gap-2">
-            <Routes className="h-4 w-4" />
+            <Route className="h-4 w-4" />
             <span>Rutas</span>
           </TabsTrigger>
           <TabsTrigger value="menus" className="flex items-center gap-2">
