@@ -10,13 +10,11 @@
 
 ### Enrutamiento y Navegación
 - **React Router**: v6 - Navegación y gestión de rutas
-- **@tanstack/react-location**: Para gestión avanzada de rutas
 - **History API**: Para manipulación programática del historial
 
 ### Estado y Gestión de Datos
 - **React Context API**: Estado global de aplicación
 - **React Query**: v5 - Fetching, caching y sincronización de estado servidor
-- **Zustand/Jotai**: Estado global ligero (usado en módulos específicos)
 
 ### Interfaz de Usuario
 - **Tailwind CSS**: Framework de utilidades CSS
@@ -63,7 +61,6 @@
 
 ### E2E
 - **Playwright**: Testing end-to-end automatizado
-- **Cypress**: Testing de integración (en consideración)
 
 ## DevOps
 
@@ -78,7 +75,6 @@
 
 ### Monitoreo y Analíticas
 - **Sentry**: Monitoreo de errores en producción
-- **LogRocket**: Reproducción de sesiones de usuario (en consideración)
 - **Supabase Analytics**: Análisis de uso de la plataforma
 
 ## Herramientas de Desarrollo

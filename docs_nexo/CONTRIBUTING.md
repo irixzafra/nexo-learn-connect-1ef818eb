@@ -127,19 +127,6 @@ Ejemplo:
 feat(courses): add filter functionality to course list
 ```
 
-### Convención de Commits
-Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-feat: añadir nueva funcionalidad
-fix: corregir bug específico
-docs: actualizar documentación
-style: cambios de formato (no funcionales)
-refactor: reorganizar código sin cambiar comportamiento
-test: añadir o corregir pruebas
-chore: tareas de mantenimiento
-```
-
 ### Pull Requests
 
 1. Asegúrate de que tu código pasa todas las pruebas: `pnpm test`
