@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { Settings, Globe, LogOut, RefreshCw, ChevronDown } from 'lucide-react';
@@ -40,8 +41,6 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
   getRoleName,
   forceAdminRole
 }) => {
-  // Only show role switcher if original user role is admin
-  const showRoleSwitcher = userRole === 'admin';
   
   // Render the collapsed version
   if (isCollapsed) {
@@ -86,50 +85,15 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
           </Button>
         )}
 
-        {/* Role switcher (admin only) */}
-        {showRoleSwitcher && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-full hover:bg-muted/40"
-                disabled={isViewingAsOtherRole}
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-popover border border-border/50">
-              <DropdownMenuItem 
-                className="flex items-center py-1.5 cursor-pointer"
-                onClick={() => {/* Navigate to settings */}}
-              >
-                <Settings className="mr-2 h-4 w-4" /> 
-                <span>Configuración</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className="text-destructive flex items-center py-1.5 cursor-pointer hover:text-destructive"
-                onClick={logout}
-              >
-                <LogOut className="mr-2 h-4 w-4" /> 
-                <span>Cerrar sesión</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-        
         {/* Logout */}
-        {!showRoleSwitcher && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={logout}
-            className="h-9 w-9 rounded-full hover:bg-muted/40 text-destructive hover:text-destructive"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
-        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={logout}
+          className="h-9 w-9 rounded-full hover:bg-muted/40 text-destructive hover:text-destructive"
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
       </div>
     );
   }
@@ -179,62 +143,6 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
           <RefreshCw className="mr-2 h-4 w-4" />
           <span>Volver a rol original</span>
         </Button>
-      )}
-
-      {/* Role switcher (admin only) */}
-      {showRoleSwitcher && !isViewingAsOtherRole && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost" 
-              className="w-full justify-between pl-3 pr-2 py-2 text-muted-foreground hover:text-foreground h-auto font-medium"
-            >
-              <div className="flex items-center">
-                <span className="h-2 w-2 rounded-full bg-primary mr-2"></span>
-                <span>Ver como: {getRoleName(effectiveRole)}</span>
-              </div>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-popover border border-border/50">
-            <DropdownMenuItem 
-              className={cn(
-                "cursor-pointer flex items-center gap-2 py-1.5",
-                effectiveRole === 'admin' && "bg-muted font-medium"
-              )}
-            >
-              <span className={cn(
-                "h-2 w-2 rounded-full",
-                effectiveRole === 'admin' ? "bg-primary" : "bg-muted-foreground"
-              )}></span>
-              Administrador
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className={cn(
-                "cursor-pointer flex items-center gap-2 py-1.5",
-                effectiveRole === 'instructor' && "bg-muted font-medium"
-              )}
-            >
-              <span className={cn(
-                "h-2 w-2 rounded-full",
-                effectiveRole === 'instructor' ? "bg-primary" : "bg-muted-foreground"
-              )}></span>
-              Instructor
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className={cn(
-                "cursor-pointer flex items-center gap-2 py-1.5",
-                effectiveRole === 'student' && "bg-muted font-medium"
-              )}
-            >
-              <span className={cn(
-                "h-2 w-2 rounded-full",
-                effectiveRole === 'student' ? "bg-primary" : "bg-muted-foreground"
-              )}></span>
-              Estudiante
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       )}
 
       {/* Logout button */}

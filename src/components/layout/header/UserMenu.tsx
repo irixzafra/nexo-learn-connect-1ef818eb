@@ -14,7 +14,6 @@ import { User, LogOut, Settings, Sliders } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth';
 import { toast } from 'sonner';
-import RoleIndicator from './RoleIndicator';
 
 export const UserMenu: React.FC = () => {
   const { user, profile, logout } = useAuth();
@@ -40,9 +39,6 @@ export const UserMenu: React.FC = () => {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Role Indicator/Toggler Badge */}
-      <RoleIndicator asToggler={true} />
-      
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
