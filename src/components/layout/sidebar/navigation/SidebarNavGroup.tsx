@@ -4,11 +4,12 @@ import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { UserRoleType } from '@/types/auth';
 import { MenuItem } from '@/types/navigation';
-import NavItem from '@/components/navigation/NavItem';
+import SidebarNavItem from './SidebarNavItem';
+import { filterMenuItemsByRole } from '@/config/navigation';
 
 interface SidebarNavGroupProps {
   title: string;
-  icon?: LucideIcon;
+  icon: LucideIcon;
   items: MenuItem[];
   isCollapsed?: boolean;
   defaultOpen?: boolean;
@@ -28,66 +29,78 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
   const [isOpen, setIsOpen] = useState(defaultOpen);
   
   // Filter items based on role requirements
-  const filteredItems = items.filter(item => {
-    if (!item.requiredRole) return true;
-    
-    if (Array.isArray(item.requiredRole)) {
-      return item.requiredRole.includes(effectiveRole);
-    }
-    
-    return item.requiredRole === effectiveRole;
-  });
+  const filteredItems = filterMenuItemsByRole(items, effectiveRole);
   
   // If no items remain after filtering, don't render the group
   if (filteredItems.length === 0) {
     return null;
   }
 
+  // For collapsed sidebar, simplify and just show icons
+  if (isCollapsed) {
+    return (
+      <div className="mb-2 px-2">
+        <div className="flex items-center justify-center py-1">
+          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-sidebar-accent/30 text-sidebar-accent-foreground">
+            {<Icon className="h-4 w-4" />}
+          </div>
+        </div>
+        <div className="space-y-1 pt-1">
+          {filteredItems.map((item) => (
+            <SidebarNavItem
+              key={item.label}
+              href={item.path || item.url || '#'}
+              icon={item.icon}
+              label={item.label}
+              badge={item.badge}
+              isCollapsed={true}
+              disabled={item.disabled}
+              isHighlighted={item.isHighlighted}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Expanded sidebar with grouped items
   return (
-    <div className="mb-2">
-      {/* Group Header */}
+    <div className="mb-3">
       <div 
         className={cn(
-          "flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer hover:bg-muted/50 transition-colors",
-          isOpen && "font-medium"
+          "flex items-center justify-between rounded-md px-3 py-1.5 text-sm transition-colors",
+          isOpen ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground",
+          "cursor-pointer hover:bg-muted/50"
         )}
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-controls={`nav-group-${id}`}
       >
-        {Icon && <Icon className="h-5 w-5 text-muted-foreground" />}
-        
-        {!isCollapsed && (
-          <>
-            <span className="flex-1 text-sm">{title}</span>
-            {isOpen ? 
-              <ChevronDown className="h-4 w-4 text-muted-foreground" /> : 
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            }
-          </>
+        <div className="flex items-center gap-2">
+          {<Icon className="h-4 w-4" />}
+          <span className="text-sm font-medium">{title}</span>
+        </div>
+        {isOpen ? (
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        ) : (
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
         )}
       </div>
       
-      {/* Group Items */}
-      {(isOpen || isCollapsed) && (
+      {isOpen && (
         <div 
           id={`nav-group-${id}`}
-          className={cn(
-            "mt-1 space-y-1 pl-3",
-            isCollapsed ? "border-l-0" : "border-l border-border/50 ml-4"
-          )}
+          className="mt-1 space-y-1 px-2 py-1"
         >
-          {filteredItems.map((item, index) => (
-            <NavItem
-              key={`${item.label}-${index}`}
+          {filteredItems.map((item) => (
+            <SidebarNavItem
+              key={item.label}
               href={item.path || item.url || '#'}
               icon={item.icon}
-              title={item.label}
+              label={item.label}
               badge={item.badge}
               disabled={item.disabled}
-              isCollapsed={isCollapsed}
-              tooltip={isCollapsed ? item.label : undefined}
-              exact={false}
+              isHighlighted={item.isHighlighted}
             />
           ))}
         </div>

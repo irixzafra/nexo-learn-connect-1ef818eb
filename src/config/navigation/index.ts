@@ -5,13 +5,9 @@ import {
   adminNavigation, 
   instructorNavigation, 
   studentNavigation, 
-  getNavigationByRole as getRoleBasedNavigation,
-  getHomePathByRole as getHomePathByRoleType
+  getNavigationByRole,
+  getHomePathByRole
 } from './roleBasedNavigation';
-
-// Re-exportar navegación basada en roles
-export const getNavigationByRole = getRoleBasedNavigation;
-export const getHomePathByRole = getHomePathByRoleType;
 
 /**
  * Filter menu items based on user role
@@ -38,28 +34,14 @@ export const filterMenuItemsByRole = (items: MenuItem[], role: UserRoleType): Me
   });
 };
 
-// Legacy exports for backward compatibility - estas serán reemplazadas gradualmente
-export * from './dashboardNavigation';
-export * from './mainNavigation';
-export * from './learningNavigation';
-export * from './communityNavigation';
-export * from './configurationNavigation';
-export * from './exploreNavigation';
-export * from './academicNavigation';
-export * from './financeNavigation';
-export * from './settingsNavigation';
-export * from './gamificationNavigation';
-export * from './adminNavigation';
-export * from './instructorNavigation';
-export * from './studentNavigation';
-
-// Export types properly with 'export type' syntax for isolatedModules
-export type { MenuItem } from '@/types/navigation';
-export type { NavigationMenus } from '@/types/navigation';
-
-// Exportar la nueva navegación basada en roles
-export { 
-  adminNavigation, 
-  instructorNavigation, 
-  studentNavigation 
+// Export everything for usage
+export {
+  adminNavigation,
+  instructorNavigation,
+  studentNavigation,
+  getNavigationByRole,
+  getHomePathByRole
 };
+
+// Export types
+export type { MenuItem, NavigationMenus };

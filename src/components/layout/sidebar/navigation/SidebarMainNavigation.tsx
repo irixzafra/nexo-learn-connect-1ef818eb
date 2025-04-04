@@ -1,20 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavGroup from './SidebarNavGroup';
-import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
-import { useAuth } from '@/contexts/auth';
 import { getNavigationByRole } from '@/config/navigation';
 import { NavigationMenus } from '@/types/navigation';
-import { 
-  Home,
-  LayoutDashboard, 
-  BookOpen, 
-  Users, 
-  Settings,
-  Bell,
-  MessageSquare 
-} from 'lucide-react';
+import { Home } from 'lucide-react';
 
 interface SidebarMainNavigationProps {
   isCollapsed?: boolean;
@@ -25,81 +15,50 @@ interface SidebarMainNavigationProps {
 
 export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ 
   isCollapsed = false,
-  effectiveRole,
+  effectiveRole = 'student',
   messagesCount = 0,
   notificationsCount = 0
 }) => {
-  const { state } = useSidebar();
-  const { userRole } = useAuth();
-  const sidebarCollapsed = isCollapsed || state === "collapsed";
-  const role = effectiveRole || userRole as UserRoleType || 'student';
+  // State to store the navigation structure
+  const [navigation, setNavigation] = useState<NavigationMenus>({});
   
-  // Track expanded sections
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    dashboard: true,
-    learning: true,
-    community: true
-  });
-
-  // Create a default navigation structure for rendering
-  const defaultNavigation: NavigationMenus = {
-    dashboard: [
-      {
-        label: 'Panel Principal',
-        path: '/app/dashboard',
-        icon: LayoutDashboard,
+  // Update badge counts in navigation items
+  const applyDynamicBadges = (navItems: NavigationMenus): NavigationMenus => {
+    const updatedNavigation = {...navItems};
+    
+    // Find and update message notifications if they exist
+    Object.keys(updatedNavigation).forEach(key => {
+      const items = updatedNavigation[key];
+      if (items) {
+        updatedNavigation[key] = items.map(item => {
+          if (item.label === 'Mensajes' || item.label === 'Messages') {
+            return {...item, badge: messagesCount};
+          }
+          if (item.label === 'Notificaciones' || item.label === 'Notifications') {
+            return {...item, badge: notificationsCount};
+          }
+          return item;
+        });
       }
-    ],
-    learning: [
-      {
-        label: 'Cursos',
-        path: '/app/courses',
-        icon: BookOpen,
-      }
-    ],
-    community: [
-      {
-        label: 'Comunidad',
-        path: '/app/community',
-        icon: Users,
-      },
-      {
-        label: 'Mensajes',
-        path: '/app/messages',
-        icon: MessageSquare,
-        badge: messagesCount
-      },
-      {
-        label: 'Notificaciones',
-        path: '/app/notifications',
-        icon: Bell,
-        badge: notificationsCount
-      }
-    ],
-    settings: [
-      {
-        label: 'Configuración',
-        path: '/app/settings',
-        icon: Settings,
-      }
-    ]
+    });
+    
+    return updatedNavigation;
   };
   
-  // Get role-based navigation if available, otherwise use default
-  const [navigation, setNavigation] = useState<NavigationMenus>(defaultNavigation);
-  
+  // Load navigation based on current role
   useEffect(() => {
     try {
-      // Try to get role-based navigation
-      const roleNavigation = getNavigationByRole(role);
-      if (roleNavigation && Object.keys(roleNavigation).length > 0) {
-        setNavigation(roleNavigation);
+      const roleNavigation = getNavigationByRole(effectiveRole);
+      if (roleNavigation) {
+        const navWithBadges = applyDynamicBadges(roleNavigation);
+        setNavigation(navWithBadges);
       }
     } catch (error) {
-      console.warn('Error loading role navigation:', error);
-      // Fallback to default navigation
+      console.error('Error loading navigation for role:', effectiveRole, error);
+      // Set an empty navigation in case of error
+      setNavigation({});
     }
-  }, [role]);
+  }, [effectiveRole, messagesCount, notificationsCount]);
 
   return (
     <div className="space-y-1 py-2">
@@ -107,8 +66,10 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
       {Object.entries(navigation).map(([key, items]) => {
         if (!items || items.length === 0) return null;
         
-        // Get section title from key
+        // Get section title from key with proper capitalization
         const sectionTitle = key.charAt(0).toUpperCase() + key.slice(1);
+        
+        // Use the first item's icon as the section icon, or a default
         const sectionIcon = items[0]?.icon ? items[0].icon : Home;
         
         return (
@@ -116,10 +77,10 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             key={key}
             title={sectionTitle}
             icon={sectionIcon}
-            isCollapsed={sidebarCollapsed}
-            effectiveRole={role}
+            isCollapsed={isCollapsed}
+            effectiveRole={effectiveRole}
             items={items}
-            defaultOpen={openSections[key] || false}
+            defaultOpen={true}
             id={key}
           />
         );
