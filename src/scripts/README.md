@@ -13,6 +13,11 @@ Consolida y simplifica la documentación del proyecto:
 node src/scripts/consolidate-docs.js
 ```
 
+Este script:
+1. Crea una estructura minimalista de documentación
+2. Mueve documentación obsoleta a `docs/legacy`
+3. Migra contenido de `docs_nexo` (si existe)
+
 ### Hacer Scripts Ejecutables
 
 En sistemas Unix/Linux/Mac:
