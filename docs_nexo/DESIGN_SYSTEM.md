@@ -36,9 +36,9 @@ Utilizamos una combinación de fuentes sans-serif para máxima legibilidad:
 
 | Nombre | Hex | Uso |
 |--------|-----|-----|
-| Primary | `#8B5CF6` | Acciones principales, elementos destacados |
-| Secondary | `#F97316` | Acciones secundarias, acentos |
-| Tertiary | `#0EA5E9` | Elementos terciarios, enlaces |
+| Primary | `#FF5733` | Acciones principales, elementos destacados, energía y acción |
+| Secondary | `#2E86C1` | Acciones secundarias, enlaces, confianza y conexión |
+| Accent | `#F4D03F` | Alertas, gamificación, elementos destacados, inspiración |
 
 ### Neutrales
 
@@ -47,7 +47,7 @@ Utilizamos una combinación de fuentes sans-serif para máxima legibilidad:
 | Background | `#FFFFFF` (light) / `#1A1F2C` (dark) | Fondo de página |
 | Surface | `#F6F6F7` (light) / `#252B3B` (dark) | Fondos de tarjetas, modales |
 | Border | `#E5E7EB` (light) / `#2D3748` (dark) | Bordes y separadores |
-| Foreground | `#1A1F2C` (light) / `#F8FAFC` (dark) | Texto principal |
+| Foreground | `#333333` (light) / `#F8FAFC` (dark) | Texto principal |
 | Muted | `#6B7280` (light) / `#9CA3AF` (dark) | Texto secundario |
 
 ### Estado
@@ -55,9 +55,9 @@ Utilizamos una combinación de fuentes sans-serif para máxima legibilidad:
 | Nombre | Hex | Uso |
 |--------|-----|-----|
 | Success | `#10B981` | Confirmaciones, completado |
-| Warning | `#FBBF24` | Advertencias, precaución |
+| Warning | `#F4D03F` | Advertencias, precaución |
 | Error | `#EF4444` | Errores, alertas |
-| Info | `#3B82F6` | Información, noticias |
+| Info | `#2E86C1` | Información, noticias |
 
 ## Espaciado
 
@@ -389,7 +389,7 @@ El sistema de diseño se implementa principalmente a través de variables CSS pe
   --card-foreground: 240 10% 3.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 240 10% 3.9%;
-  --primary: 210 100% 50%;
+  --primary: 9 89% 60%;
   --primary-foreground: 0 0% 98%;
   /* ... otros colores ... */
 }
