@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -159,9 +158,17 @@ const NavigationDiagram: React.FC = () => {
     setRouteGroups(grouped);
   }, []);
   
-  // Ensure we have arrays to work with
-  const adminMenuItems = Array.isArray(adminNavigation.main) ? adminNavigation.main : [];
-  const settingsMenuItems = Array.isArray(settingsNavigation.main) ? settingsNavigation.main : [];
+  const adminMenuItems = Array.isArray(adminNavigation) 
+    ? adminNavigation 
+    : (adminNavigation && typeof adminNavigation === 'object' && 'main' in adminNavigation 
+        ? adminNavigation.main 
+        : []);
+  
+  const settingsMenuItems = Array.isArray(settingsNavigation) 
+    ? settingsNavigation 
+    : (settingsNavigation && typeof settingsNavigation === 'object' && 'main' in settingsNavigation 
+        ? settingsNavigation.main 
+        : []);
   
   return (
     <AdminPageLayout
