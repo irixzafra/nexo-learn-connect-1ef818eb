@@ -7,7 +7,7 @@ import { UserRoleType } from '@/types/auth';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, ChevronRight, ChevronDown } from 'lucide-react';
-import * as Icons from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface NavigationItemNodeProps {
@@ -45,7 +45,7 @@ export const NavigationItemNode: React.FC<NavigationItemNodeProps> = ({
 
   // Renderizar el icono dinámicamente basado en el nombre
   const IconComponent = item.iconName 
-    ? (Icons as Record<string, React.ElementType>)[item.iconName] 
+    ? (LucideIcons as any)[item.iconName] 
     : null;
 
   const handleToggle = () => {

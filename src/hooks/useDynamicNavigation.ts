@@ -1,60 +1,51 @@
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserRoleType } from '@/types/auth';
 import { NavigationMenus } from '@/types/navigation';
-import { fetchNavigationItems } from '@/services/navigationService';
+import { supabase } from '@/integrations/supabase/client';
 import { getNavigationByRole } from '@/config/navigation/roleBasedNavigation';
 
+/**
+ * Hook para obtener la navegación dinámica basada en el rol del usuario
+ */
 export const useDynamicNavigation = (role: UserRoleType) => {
   const [navigationMenus, setNavigationMenus] = useState<NavigationMenus>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const loadDynamicNavigation = async () => {
-      setIsLoading(true);
+    const fetchNavigation = async () => {
       try {
-        // Intentar cargar navegación dinámica
-        const dynamicItems = await fetchNavigationItems(role);
+        setIsLoading(true);
         
-        if (dynamicItems && dynamicItems.length > 0) {
-          // Convertir los items dinámicos al formato NavigationMenus
-          const menus: NavigationMenus = {};
-          
-          dynamicItems.forEach(group => {
-            if (group.isVisible && group.isActive) {
-              const groupItems = group.children
-                ?.filter(item => item.isVisible && item.isActive)
-                .map(item => {
-                  // Obtener el nombre del icono dinámicamente
-                  const IconComponent = item.iconName 
-                    ? require('lucide-react')[item.iconName]
-                    : undefined;
-                  
-                  return {
-                    icon: IconComponent,
-                    label: item.label,
-                    path: item.path,
-                    requiredRole: item.requiredRoles,
-                    disabled: !item.isActive,
-                    isHighlighted: false
-                  };
-                }) || [];
-              
-              if (groupItems.length > 0) {
-                menus[group.label.toLowerCase()] = groupItems;
-              }
-            }
-          });
-          
-          setNavigationMenus(menus);
-        } else {
-          // Fallback a navegación estática
-          const staticNavigation = getNavigationByRole(role);
-          setNavigationMenus(staticNavigation);
+        // Intentar cargar la navegación desde la BD primero
+        const { data: navigationItems, error } = await supabase
+          .from('navigation_items')
+          .select('*')
+          .eq('role', role)
+          .order('sort_order', { ascending: true });
+        
+        if (error) {
+          console.error("Error al cargar navegación dinámica:", error);
+          throw error;
         }
-      } catch (error) {
-        console.error('Error loading dynamic navigation:', error);
-        // Fallback a navegación estática
+        
+        // Si hay datos en la BD, procesarlos
+        if (navigationItems && navigationItems.length > 0) {
+          // Aquí procesaríamos los elementos de la BD para convertirlos en NavigationMenus
+          // Por ahora, como fallback, usamos la navegación estática si no hay implementación
+          console.log("Datos de navegación cargados de Supabase:", navigationItems);
+        }
+        
+        // Como fallback o si no hay datos en la BD, usar navegación estática
+        const staticNavigation = getNavigationByRole(role);
+        setNavigationMenus(staticNavigation);
+        
+      } catch (err) {
+        console.error("Error en useDynamicNavigation:", err);
+        setError(err as Error);
+        
+        // Fallback a navegación estática en caso de error
         const staticNavigation = getNavigationByRole(role);
         setNavigationMenus(staticNavigation);
       } finally {
@@ -62,8 +53,12 @@ export const useDynamicNavigation = (role: UserRoleType) => {
       }
     };
     
-    loadDynamicNavigation();
+    fetchNavigation();
   }, [role]);
   
-  return { navigationMenus, isLoading };
+  return {
+    navigationMenus,
+    isLoading,
+    error
+  };
 };
