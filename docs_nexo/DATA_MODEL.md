@@ -15,6 +15,8 @@ La base de datos de Nexo Learning está estructurada en PostgreSQL y organizada 
   - `email`: Correo electrónico
   - `role`: Rol principal del usuario
 
+  > **Nota sobre roles**: El campo `role` en `profiles` almacena el rol principal y activo del usuario (admin, instructor, student). Aunque un usuario puede tener múltiples roles asignados en `user_roles`, este campo indica el rol por defecto o el último activamente seleccionado. Las comprobaciones de permisos específicos deben consultar `user_roles` para una verificación más granular.
+
 - **user_roles**: Asignación de roles a usuarios (relación muchos a muchos)
   - `id` (PK, UUID): ID único de asignación
   - `user_id` (FK → profiles.id): Usuario
@@ -200,7 +202,7 @@ profiles ---< user_roles >--- roles ---< role_permissions >--- permissions
 
 ## Tipos Enumerados Principales
 
-- **UserRoleType**: `admin`, `instructor`, `student`, `moderator`, `guest`
+- **UserRoleType**: `admin`, `instructor`, `student`, `guest`, `anonimo`
 - **CourseLevel**: `principiante`, `intermedio`, `avanzado`
 - **ContentType**: `text`, `video`, `quiz`, `assignment`
 - **CertificateStatus**: `issued`, `revoked`, `expired`
