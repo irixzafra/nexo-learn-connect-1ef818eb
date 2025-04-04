@@ -15,29 +15,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
-// Export a mock version for development without Supabase
-export const mockSignIn = async (email: string, password: string) => {
-  console.log('Mock sign in:', email, password);
-  
-  // Create a mock user 
-  const mockUser = {
-    id: '1',
-    email,
-    user_metadata: {
-      name: email.split('@')[0]
-    }
-  };
-  
-  // Store in localStorage to mimic persistence
-  localStorage.setItem('supabase.auth.token', JSON.stringify({
-    user: mockUser,
-    access_token: 'mock-token',
-    refresh_token: 'mock-refresh-token'
-  }));
-  
-  return { data: { user: mockUser }, error: null };
-};
-
 // Helper to check database connection
 export const checkDatabaseConnection = async () => {
   try {

@@ -45,7 +45,6 @@ const SimpleLogin: React.FC = () => {
     
     try {
       // Llamar a la función login del contexto de autenticación
-      // Reemplazamos el llamado para que use correctamente la función login
       const result = await auth.login(email, password, false);
       console.log("SimpleLogin: Resultado login:", result);
       
