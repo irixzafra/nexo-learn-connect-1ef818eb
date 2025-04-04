@@ -1,90 +1,88 @@
 
-import { MenuItem } from '@/types/navigation';
+import { NavigationMenus } from '@/types/navigation';
 import { 
-  Settings, 
+  LayoutDashboard, 
   Users, 
-  LayoutGrid, 
-  FileText, 
-  Flag, 
-  Database, 
-  Palette,
-  DollarSign,
-  FlaskConical,
-  Map
+  BookOpen,
+  Settings,
+  Shield,
+  School,
+  FileText,
+  HelpCircle,
+  Bell,
+  MessageSquare,
+  FileCode
 } from 'lucide-react';
 
-export const adminNavigation: Record<string, MenuItem[]> = {
-  main: [
+// Admin navigation organized by domains
+export const adminNavigation: NavigationMenus = {
+  dashboard: [
     {
-      label: 'Dashboard',
-      icon: LayoutGrid,
-      path: '/app/admin/dashboard',
-      requiredRole: 'admin'
-    },
+      label: 'Panel de Control',
+      path: '/admin/dashboard',
+      icon: LayoutDashboard,
+    }
+  ],
+  users: [
     {
       label: 'Usuarios',
+      path: '/admin/users',
       icon: Users,
-      path: '/app/admin/users',
-      requiredRole: 'admin'
     },
+    {
+      label: 'Roles y Permisos',
+      path: '/admin/roles',
+      icon: Shield,
+    }
+  ],
+  education: [
     {
       label: 'Cursos',
-      icon: FileText,
-      path: '/app/admin/courses',
-      requiredRole: 'admin'
+      path: '/admin/courses',
+      icon: BookOpen,
     },
     {
-      label: 'Roadmap',
-      icon: Map,
-      path: '/app/admin/roadmap',
-      requiredRole: 'admin',
-      isHighlighted: true,
-      description: 'Gestión del roadmap del proyecto',
-    },
-    {
-      label: 'Características',
-      icon: Flag,
-      path: '/app/admin/features',
-      requiredRole: 'admin'
-    },
-    {
-      label: 'Finanzas',
-      icon: DollarSign,
-      path: '/app/admin/finances',
-      requiredRole: 'admin'
-    },
+      label: 'Instructores',
+      path: '/admin/instructors',
+      icon: School,
+    }
+  ],
+  content: [
     {
       label: 'Páginas',
+      path: '/admin/pages',
       icon: FileText,
-      path: '/app/admin/pages',
-      requiredRole: 'admin'
     },
     {
-      label: 'Sistema de diseño',
-      icon: Palette,
-      path: '/app/admin/design-system',
-      requiredRole: 'admin',
-      description: 'Explorar componentes del sistema de diseño'
+      label: 'Desarrollo',
+      path: '/admin/development',
+      icon: FileCode,
+    }
+  ],
+  communications: [
+    {
+      label: 'Notificaciones',
+      path: '/admin/notifications',
+      icon: Bell,
+      badge: 3
     },
     {
-      label: 'Ajustes',
-      icon: Settings,
-      path: '/app/admin/settings',
-      requiredRole: 'admin'
-    },
-    {
-      label: 'Datos de prueba',
-      icon: FlaskConical,
-      path: '/app/admin/test-data',
-      requiredRole: 'admin'
-    },
+      label: 'Mensajes',
+      path: '/admin/messages',
+      icon: MessageSquare,
+      badge: 5
+    }
+  ],
+  system: [
     {
       label: 'Configuración',
-      icon: Database,
-      path: '/app/admin/system-settings',
-      requiredRole: 'admin'
+      path: '/admin/settings',
+      icon: Settings,
+    },
+    {
+      label: 'Soporte',
+      path: '/admin/support',
+      icon: HelpCircle,
     }
   ]
 };
-
-export default adminNavigation;

@@ -41,7 +41,9 @@ const MenuItem: React.FC<MenuItemProps> = ({
         if (disabled) e.preventDefault();
       }}
     >
-      <Icon className="h-4 w-4" />
+      {Icon && (
+        <Icon className="h-4 w-4" />
+      )}
       {!isCollapsed && (
         <>
           <span className="flex-1">{label}</span>

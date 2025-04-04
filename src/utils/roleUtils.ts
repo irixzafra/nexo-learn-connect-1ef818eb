@@ -2,11 +2,9 @@
 import { UserRoleType } from '@/types/auth';
 
 /**
- * Get the display name for a user role
- * @param role The user role
- * @returns Readable name of the role in Spanish
+ * Get a human-readable name for a user role
  */
-export function getRoleName(role: UserRoleType): string {
+export const getRoleName = (role: UserRoleType): string => {
   switch (role) {
     case 'admin':
       return 'Administrador';
@@ -14,42 +12,44 @@ export function getRoleName(role: UserRoleType): string {
       return 'Instructor';
     case 'student':
       return 'Estudiante';
-    case 'sistemas':
-      return 'Sistemas';
-    case 'moderator':
-      return 'Moderador';
-    case 'content_creator':
-      return 'Creador de Contenido';
-    case 'beta_tester':
-      return 'Beta Tester';
-    case 'guest':
-      return 'Invitado';
-    case 'anonimo':
-      return 'Anónimo';
     default:
       return 'Usuario';
   }
-}
+};
 
 /**
- * Get the home path for a specific user role
- * @param role The user role
- * @returns The home path for the role
+ * Get the home path for a specific role
  */
-export function getHomePath(role: UserRoleType): string {
+export const getHomePath = (role: UserRoleType): string => {
   switch (role) {
     case 'admin':
-      return '/app/admin/dashboard';
+      return '/admin/dashboard';
     case 'instructor':
-      return '/app/instructor/dashboard';
-    case 'sistemas':
-      return '/app/admin/system';
-    case 'moderator':
-      return '/app/moderation/dashboard';
-    case 'content_creator':
-      return '/app/content/dashboard';
+      return '/instructor/dashboard';
     case 'student':
+      return '/dashboard';
     default:
-      return '/app/dashboard';
+      return '/dashboard';
   }
-}
+};
+
+/**
+ * Check if a user has permission for an action
+ */
+export const hasPermission = (
+  userRole: UserRoleType | null, 
+  requiredRole: UserRoleType | UserRoleType[]
+): boolean => {
+  if (!userRole) return false;
+  
+  // Admin can do everything
+  if (userRole === 'admin') return true;
+  
+  // Check against an array of roles
+  if (Array.isArray(requiredRole)) {
+    return requiredRole.includes(userRole);
+  }
+  
+  // Check against a single role
+  return userRole === requiredRole;
+};

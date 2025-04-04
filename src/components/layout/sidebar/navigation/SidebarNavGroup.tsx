@@ -9,7 +9,7 @@ import { UserRoleType } from '@/types/auth';
 interface SidebarNavGroupProps {
   title: string;
   items: MenuItem[];
-  icon?: React.ElementType | LucideIcon;
+  icon?: LucideIcon;
   isCollapsed?: boolean;
   effectiveRole: UserRoleType;
   defaultOpen?: boolean;
@@ -59,9 +59,9 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
           <SidebarNavItem
             key={item.path || item.url || item.label}
             href={item.path || item.url || '#'}
-            icon={item.icon as React.ElementType}
+            icon={item.icon}
             label={item.label}
-            badge={typeof item.badge === 'number' ? item.badge : undefined}
+            badge={item.badge}
             isCollapsed={isCollapsed}
             disabled={item.disabled}
             isHighlighted={item.isHighlighted}
@@ -77,9 +77,9 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
       <React.Fragment key={item.path || item.url || item.label}>
         <SidebarNavItem
           href={item.path || item.url || '#'}
-          icon={item.icon as React.ElementType}
+          icon={item.icon}
           label={item.label}
-          badge={typeof item.badge === 'number' ? item.badge : undefined}
+          badge={item.badge}
           isCollapsed={isCollapsed}
           disabled={item.disabled}
           isHighlighted={item.isHighlighted}

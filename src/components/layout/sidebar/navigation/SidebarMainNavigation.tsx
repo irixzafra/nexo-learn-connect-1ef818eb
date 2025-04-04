@@ -1,12 +1,43 @@
 
 import React, { useState } from 'react';
 import { UserRoleType } from '@/types/auth';
-import { getNavigationByRole } from '@/config/navigation';
-import { MenuItem } from '@/types/navigation';
+import SidebarNavGroup from './SidebarNavGroup';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
-import NavGroup from '@/components/navigation/NavGroup';
-import NavItem from '@/components/navigation/NavItem';
-import NavDivider from '@/components/navigation/NavDivider';
+import { useAuth } from '@/contexts/auth';
+import { MenuItem } from '@/types/navigation';
+import { LayoutDashboard, BookOpen, Users, Settings } from 'lucide-react';
+
+// Default navigation structure - will be replaced with actual data
+const defaultNavigation: Record<string, MenuItem[]> = {
+  dashboard: [
+    {
+      label: 'Panel Principal',
+      path: '/app/dashboard',
+      icon: LayoutDashboard,
+    }
+  ],
+  learning: [
+    {
+      label: 'Cursos',
+      path: '/app/courses',
+      icon: BookOpen,
+    }
+  ],
+  community: [
+    {
+      label: 'Comunidad',
+      path: '/app/community',
+      icon: Users,
+    }
+  ],
+  settings: [
+    {
+      label: 'Configuración',
+      path: '/app/settings',
+      icon: Settings,
+    }
+  ]
+};
 
 interface SidebarMainNavigationProps {
   isCollapsed?: boolean;
@@ -17,100 +48,66 @@ interface SidebarMainNavigationProps {
 
 export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ 
   isCollapsed = false,
-  effectiveRole = 'student',
+  effectiveRole,
   messagesCount = 0,
   notificationsCount = 0
 }) => {
   const { state } = useSidebar();
+  const { userRole } = useAuth();
   const sidebarCollapsed = isCollapsed || state === "collapsed";
+  const role = effectiveRole || userRole as UserRoleType || 'student';
   
-  // Estado para controlar qué secciones están expandidas (por defecto, dashboard y primera sección)
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() => {
-    // Determinar qué secciones expandir por defecto según el rol
-    const initialExpanded: Record<string, boolean> = { dashboard: true };
-    
-    // Para cada rol, expandir una sección adicional específica
-    if (effectiveRole === 'admin') initialExpanded.academic = true;
-    if (effectiveRole === 'instructor') initialExpanded.academicManagement = true;
-    if (effectiveRole === 'student') initialExpanded.community = true;
-    
-    return initialExpanded;
+  // Track expanded sections
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    dashboard: true,
+    learning: true
   });
-  
-  // Toggle para expandir/contraer una sección
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => ({
+
+  const toggleSection = (section: string) => {
+    setOpenSections(prev => ({
       ...prev,
-      [sectionId]: !prev[sectionId]
+      [section]: !prev[section]
     }));
   };
   
-  // Obtener la navegación específica para el rol actual
-  const roleNavigation = getNavigationByRole(effectiveRole);
-  
-  // Si no hay navegación para este rol, no renderizar nada
-  if (!roleNavigation) return null;
-
-  // Enriquecer elementos con notificaciones y mensajes cuando sea necesario
-  const enrichItems = (items: MenuItem[]): MenuItem[] => {
-    return items.map(item => {
-      let enrichedItem = {...item};
-      
-      // Add badges for specific paths
-      if (item.path === '/app/messages' || item.path === '/app/instructor/messages') {
-        enrichedItem.badge = messagesCount;
-      } else if (item.path === '/app/notifications') {
-        enrichedItem.badge = notificationsCount;
-      }
-      
-      return enrichedItem;
-    });
-  };
+  // Use default navigation for now - this would be replaced with role-based navigation
+  const navigation = defaultNavigation;
 
   return (
-    <div className="space-y-2 px-2">
-      {/* Renderizar todas las secciones de navegación para el rol */}
-      {Object.entries(roleNavigation).map(([sectionId, items], index) => {
-        // Si no hay elementos en esta sección o está vacía, no renderizar
+    <div className="space-y-1">
+      {/* Render all navigation groups */}
+      {Object.entries(navigation).map(([key, items]) => {
+        // Skip empty sections
         if (!items || items.length === 0) return null;
         
-        // Si no es dashboard y es la primera sección después de dashboard, añadir un separador
-        const needsDivider = sectionId !== 'dashboard' && index === 1;
+        // Skip sections that should be hidden for this role
+        const visibleItems = items.filter(item => {
+          if (!item.requiredRole) return true;
+          
+          if (Array.isArray(item.requiredRole)) {
+            return item.requiredRole.includes(role);
+          }
+          
+          return item.requiredRole === role;
+        });
         
-        // Título de la sección (convertir camelCase a Title Case)
-        const sectionTitle = sectionId
-          .replace(/([A-Z])/g, ' $1')
-          .replace(/^./, str => str.toUpperCase());
+        if (visibleItems.length === 0) return null;
         
-        // Obtener el primer icono de la sección para usarlo como icono de grupo
-        const sectionIcon = items.length > 0 && items[0].icon;
-        
-        const enrichedItems = enrichItems(items);
+        // Get section title from key
+        const sectionTitle = key.charAt(0).toUpperCase() + key.slice(1);
+        const sectionIcon = items[0].icon;
         
         return (
-          <React.Fragment key={sectionId}>
-            {needsDivider && <NavDivider />}
-            
-            <NavGroup
-              title={sectionTitle}
-              icon={sectionIcon}
-              defaultExpanded={expandedSections[sectionId]}
-              isCollapsed={sidebarCollapsed}
-            >
-              {enrichedItems.map(item => (
-                <NavItem 
-                  key={item.path || item.label}
-                  href={item.path || '#'} 
-                  title={item.label}
-                  icon={item.icon}
-                  badge={item.badge}
-                  isCollapsed={sidebarCollapsed}
-                  disabled={item.disabled}
-                  tooltip={item.label}
-                />
-              ))}
-            </NavGroup>
-          </React.Fragment>
+          <SidebarNavGroup
+            key={key}
+            title={sectionTitle}
+            icon={sectionIcon}
+            isCollapsed={sidebarCollapsed}
+            effectiveRole={role}
+            items={items}
+            defaultOpen={openSections[key] || false}
+            id={key}
+          />
         );
       })}
     </div>

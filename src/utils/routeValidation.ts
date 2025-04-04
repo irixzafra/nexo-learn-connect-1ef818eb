@@ -1,209 +1,110 @@
-
-// Importing the routeMap from routeUtils for consistent route validation
-import { routeMap } from './routeUtils';
 import { MenuItem } from '@/types/navigation';
 
-/**
- * Types of issues that can be found in routes
- */
-export enum RouteIssueType {
-  BROKEN_LINK = 'BROKEN_LINK',
-  DUPLICATE_ROUTE = 'DUPLICATE_ROUTE',
-  MISSING_ROLE_CHECK = 'MISSING_ROLE_CHECK',
-  DEPRECATED_ROUTE = 'DEPRECATED_ROUTE',
-  INCONSISTENT_NAMING = 'INCONSISTENT_NAMING'
-}
+// This is a simple implementation - replace with your actual routes
+const appRoutes: string[] = [
+  '/',
+  '/dashboard',
+  '/courses',
+  '/profile',
+  '/settings',
+  '/auth/login',
+  '/auth/register',
+  '/auth/forgot-password'
+];
 
-/**
- * Represents an issue found during route validation
- */
-export interface RouteIssue {
-  path: string;
-  type: RouteIssueType;
-  severity: 'error' | 'warning' | 'info';
-  message: string;
-  title?: string;
-  description?: string;
-  suggestion?: string;
-  recommendation?: string;
-  location?: string;
-}
-
-/**
- * Result of route validation
- */
-export interface ValidationResult {
-  valid: boolean;
-  issues: RouteIssue[];
-  stats: {
-    total: number;
-    errors: number;
-    warnings: number;
-    info: number;
-  };
-}
-
-/**
- * Checks if a path is valid in our application
- * @param path The path to check
- * @returns boolean indicating if the path is valid
- */
+// Validate if a path exists in the application
 export const isValidPath = (path: string): boolean => {
-  if (!path) return false;
+  // Strip leading and trailing slashes for consistency
+  const normalizedPath = path.replace(/^\/+|\/+$/g, '');
   
-  // Remove leading slash for comparison
-  const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
-  
-  // Check if it's a dynamic path with parameters
-  const hasDynamicSegment = normalizedPath.includes(':') || normalizedPath.includes('*');
-  
-  // If it's a dynamic path, we need to check if it matches any pattern
-  if (hasDynamicSegment) {
-    // This would require more complex pattern matching
-    // For now, we'll assume it's valid and let the router handle it
+  // Direct match in appRoutes
+  if (appRoutes.some(route => {
+    const normalizedRoute = route.replace(/^\/+|\/+$/g, '');
+    return normalizedPath === normalizedRoute;
+  })) {
     return true;
   }
   
-  // Check against our route map (converted to array of paths)
-  const allRoutes = Object.values(routeMap)
-    .map(route => typeof route === 'function' ? null : route)
-    .filter(Boolean) as string[];
+  // Check if it's a dynamic route with parameters
+  // For example: /courses/:id should match /courses/123
+  const potentialDynamicRoutes = appRoutes.filter(route => route.includes(':'));
   
-  // Check if the path exists in our route map
-  return allRoutes.some(route => {
-    const routeNormalized = route.startsWith('/') ? route.substring(1) : route;
-    return routeNormalized === normalizedPath;
-  });
+  for (const dynamicRoute of potentialDynamicRoutes) {
+    const routeParts = dynamicRoute.split('/').filter(Boolean);
+    const pathParts = normalizedPath.split('/').filter(Boolean);
+    
+    if (routeParts.length !== pathParts.length) continue;
+    
+    let isMatch = true;
+    for (let i = 0; i < routeParts.length; i++) {
+      // If this part is a parameter (starts with :), it matches anything
+      if (routeParts[i].startsWith(':')) continue;
+      
+      // Otherwise, the parts must match exactly
+      if (routeParts[i] !== pathParts[i]) {
+        isMatch = false;
+        break;
+      }
+    }
+    
+    if (isMatch) return true;
+  }
+  
+  return false;
 };
 
-/**
- * Normalizes a path by ensuring it has a leading slash
- * @param path The path to normalize
- * @returns The normalized path
- */
-export const normalizePath = (path: string): string => {
-  if (!path) return '/';
-  return path.startsWith('/') ? path : `/${path}`;
-};
-
-/**
- * Extracts routes from navigation items
- * @param items Navigation items to extract routes from
- * @returns Array of routes
- */
-export const extractRoutesFromNavigationItems = (items: MenuItem[]): string[] => {
-  const routes: string[] = [];
+// Flatten menu items to a simple array of paths
+export const extractPathsFromMenuItems = (menuItems: MenuItem[]): string[] => {
+  const paths: string[] = [];
   
-  // Recursive function to extract routes from items and their children
-  const extract = (items: MenuItem[]) => {
+  const extractPaths = (items: MenuItem[]) => {
     items.forEach(item => {
       if (item.path) {
-        routes.push(item.path);
-      } else if (item.url) {
-        // External URLs are valid by default
-        if (!item.url.startsWith('http')) {
-          routes.push(item.url);
-        }
+        paths.push(item.path);
       }
       
-      // Process child items if they exist
-      if (item.items && item.items.length > 0) {
-        extract(item.items);
+      if (item.submenu && item.submenu.length > 0) {
+        extractPaths(item.submenu);
       }
     });
   };
   
-  extract(items);
-  return routes;
+  extractPaths(menuItems);
+  return paths;
 };
 
-/**
- * Validates an array of routes
- * @param routes Routes to validate
- * @returns Validation result
- */
-export const validateRoutes = (routes: string[]): ValidationResult => {
-  const issues: RouteIssue[] = [];
-  const visitedRoutes = new Set<string>();
+// Check if a route map exists
+export const routeExists = (path: string, routeMap: Record<string, string>): boolean => {
+  return Object.values(routeMap).includes(path);
+};
+
+// Validate a route against menu items
+export const validateRoute = (route: string, menuItems: MenuItem[]): boolean => {
+  // Extract all paths from menu items
+  const validPaths = extractPathsFromMenuItems(menuItems);
   
-  // Check each route
-  routes.forEach(route => {
-    // Check for duplicates
-    if (visitedRoutes.has(route)) {
-      issues.push({
-        path: route,
-        type: RouteIssueType.DUPLICATE_ROUTE,
-        severity: 'warning',
-        message: `Route "${route}" is defined multiple times`,
-        suggestion: 'Consider consolidating duplicate routes or using a more specific path'
-      });
-    }
-    visitedRoutes.add(route);
-    
-    // Skip external URLs
-    if (route.startsWith('http')) {
-      return;
-    }
-    
-    // Check if the route is valid
-    if (!isValidPath(route)) {
-      issues.push({
-        path: route,
-        type: RouteIssueType.BROKEN_LINK,
-        severity: 'error',
-        message: `Route "${route}" does not exist in the application`,
-        suggestion: 'Verify the route path or add the missing route to the application'
-      });
-    }
-    
-    // Check for role-protected routes without role check
-    if (route.includes('/admin') && !route.includes(':role')) {
-      issues.push({
-        path: route,
-        type: RouteIssueType.MISSING_ROLE_CHECK,
-        severity: 'warning',
-        message: `Admin route "${route}" might not have proper role verification`,
-        suggestion: 'Ensure this route is properly protected by role-based access control'
-      });
-    }
-    
-    // Check for deprecated routes
-    if (route.includes('/old') || route.includes('/legacy')) {
-      issues.push({
-        path: route,
-        type: RouteIssueType.DEPRECATED_ROUTE,
-        severity: 'info',
-        message: `Route "${route}" appears to be a deprecated path`,
-        suggestion: 'Consider updating to the newer route pattern or removing if unused'
-      });
-    }
-  });
+  // Check if the route exists in valid paths
+  return validPaths.includes(route);
+};
+
+// Get a display name for a route
+export const getRouteDisplayName = (route: string, menuItems: MenuItem[]): string | null => {
+  let displayName: string | null = null;
   
-  // Count issues by severity
-  const errorCount = issues.filter(issue => issue.severity === 'error').length;
-  const warningCount = issues.filter(issue => issue.severity === 'warning').length;
-  const infoCount = issues.filter(issue => issue.severity === 'info').length;
-  
-  return {
-    valid: errorCount === 0,
-    issues,
-    stats: {
-      total: issues.length,
-      errors: errorCount,
-      warnings: warningCount,
-      info: infoCount
+  const findDisplayName = (items: MenuItem[]) => {
+    for (const item of items) {
+      if (item.path === route) {
+        displayName = item.label;
+        return;
+      }
+      
+      if (item.submenu && item.submenu.length > 0) {
+        findDisplayName(item.submenu);
+        if (displayName) return;
+      }
     }
   };
-};
-
-/**
- * Validates a single route with its related routes
- * Simplified wrapper for validateRoutes focusing on a single path
- */
-export const validateRoute = (path: string, includeRelated: boolean = false): ValidationResult => {
-  const routesToValidate = includeRelated 
-    ? [path, `${path}/index`, `${path}/:id`, `${path}/new`, `${path}/edit`]
-    : [path];
-    
-  return validateRoutes(routesToValidate);
+  
+  findDisplayName(menuItems);
+  return displayName;
 };

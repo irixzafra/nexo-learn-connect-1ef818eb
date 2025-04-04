@@ -56,10 +56,10 @@ const NavItem: React.FC<NavItemProps> = ({
       aria-disabled={disabled}
       aria-current={isActive ? 'page' : undefined}
     >
-      {Icon && React.createElement(Icon, { 
-        className: cn("h-5 w-5 shrink-0", 
-          isActive ? "text-primary" : "text-muted-foreground")
-      })}
+      {Icon && (
+        <Icon className={cn("h-5 w-5 shrink-0", 
+          isActive ? "text-primary" : "text-muted-foreground")} />
+      )}
       
       {(!isCollapsed || !Icon) && 
         <span className={cn("text-[14px] font-medium transition-colors", 

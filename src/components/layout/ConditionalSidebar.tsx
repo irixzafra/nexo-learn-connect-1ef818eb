@@ -53,7 +53,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       </div>
 
       {/* Main navigation based on role */}
-      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent px-2">
         <SidebarMainNavigation 
           effectiveRole={effectiveRole}
           messagesCount={messagesCount}

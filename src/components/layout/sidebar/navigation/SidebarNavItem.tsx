@@ -12,7 +12,7 @@ import { LucideIcon } from 'lucide-react';
 
 interface SidebarNavItemProps {
   href: string;
-  icon: React.ElementType | LucideIcon;
+  icon?: LucideIcon;
   label: string;
   badge?: number;
   isCollapsed?: boolean;
@@ -47,7 +47,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
             }}
           >
             {Icon && <Icon className="h-5 w-5" />}
-            {badge && badge > 0 && (
+            {badge !== undefined && badge > 0 && (
               <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-primary text-[10px] font-medium text-primary-foreground flex items-center justify-center">
                 {badge > 99 ? '99+' : badge}
               </span>
@@ -77,10 +77,9 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
         if (disabled) e.preventDefault();
       }}
     >
-      {Icon && <Icon className={cn("h-5 w-5", ({ isActive }: {isActive: boolean}) => 
-        isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />}
+      {Icon && <Icon className="h-5 w-5" />}
       <span className="font-medium">{label}</span>
-      {badge && badge > 0 && (
+      {badge !== undefined && badge > 0 && (
         <Badge variant="outline" className="ml-auto px-1.5 min-w-5 text-center">
           {badge > 99 ? '99+' : badge}
         </Badge>
