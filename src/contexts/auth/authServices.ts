@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
 
@@ -8,16 +7,27 @@ export const loginService = async (email: string, password: string, remember: bo
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
-      options: {
-        // Si remember es true, establecer el tiempo de expiración a 30 días
-        // Si es false, usar el valor por defecto (1 hora)
-        expiresIn: remember ? 60 * 60 * 24 * 30 : undefined
-      }
     });
     
     if (error) {
       console.error("Error de autenticación:", error.message);
       return { success: false, error: error.message };
+    }
+    
+    // If remember is true, set a longer session via updateSession
+    if (remember && data.session) {
+      try {
+        // 30 days in seconds
+        const THIRTY_DAYS = 60 * 60 * 24 * 30;
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+        
+        console.log("Extendiendo sesión para 'remember me'");
+      } catch (sessionError) {
+        console.error("Error al extender la sesión:", sessionError);
+      }
     }
     
     console.log("Login exitoso:", data);
