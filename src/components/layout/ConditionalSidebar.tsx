@@ -7,6 +7,7 @@ import SidebarLogoSection from './sidebar/SidebarLogoSection';
 import SidebarFooterSection from './sidebar/SidebarFooterSection';
 import { useAuth } from '@/contexts/auth';
 import { cn } from '@/lib/utils';
+import { useDynamicNavigation } from '@/hooks/useDynamicNavigation';
 
 interface ConditionalSidebarProps {
   userRole: UserRoleType;
@@ -41,6 +42,9 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
 }) => {
   const { toggleSidebar } = useSidebar();
   const { logout, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
+  
+  // Usar el hook de navegación dinámica
+  const { navigationMenus } = useDynamicNavigation(effectiveRole);
 
   console.log('ConditionalSidebar with effectiveRole:', effectiveRole);
 
@@ -61,6 +65,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
           messagesCount={messagesCount}
           notificationsCount={notificationsCount}
           isCollapsed={isCollapsed}
+          navigationMenus={navigationMenus} // Pasar la navegación dinámica
         />
       </div>
       

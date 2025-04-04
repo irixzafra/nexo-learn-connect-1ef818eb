@@ -1,15 +1,14 @@
-
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavGroup from './SidebarNavGroup';
 import { 
   Activity, 
+  Home,
   Users, 
   BookOpen, 
   Bot, 
   FileText, 
   Settings, 
-  Home, 
   GraduationCap, 
   LineChart, 
   MessageSquare, 
@@ -31,23 +30,52 @@ import {
   Layers,
   Globe
 } from 'lucide-react';
+import { NavigationMenus } from '@/types/navigation';
 
 interface SidebarMainNavigationProps {
   isCollapsed?: boolean;
   effectiveRole?: UserRoleType;
   messagesCount?: number;
   notificationsCount?: number;
+  navigationMenus?: NavigationMenus;
 }
 
 export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ 
   isCollapsed = false,
   effectiveRole = 'student',
   messagesCount = 0,
-  notificationsCount = 0
+  notificationsCount = 0,
+  navigationMenus = {}
 }) => {
   
-  // Log for debugging purposes
   console.log('SidebarMainNavigation rendering with role:', effectiveRole);
+  
+  if (navigationMenus && Object.keys(navigationMenus).length > 0) {
+    return (
+      <div className="space-y-1 py-2">
+        {Object.entries(navigationMenus).map(([groupName, items], index) => (
+          <SidebarNavGroup
+            key={`${effectiveRole}-${groupName}`}
+            title={groupName}
+            icon={items[0]?.icon || Activity}
+            isCollapsed={isCollapsed}
+            defaultOpen={index === 0}
+            id={`${effectiveRole}-${groupName}`}
+            items={items.map(item => ({
+              label: item.label,
+              path: item.path || '#',
+              icon: item.icon,
+              badge: groupName.toLowerCase() === 'mensajes' ? messagesCount : 
+                     groupName.toLowerCase() === 'notificaciones' ? notificationsCount : 
+                     undefined,
+              disabled: item.disabled,
+              isHighlighted: item.isHighlighted
+            }))}
+          />
+        ))}
+      </div>
+    );
+  }
   
   return (
     <div className="space-y-1 py-2">
