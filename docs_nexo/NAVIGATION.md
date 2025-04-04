@@ -1,4 +1,5 @@
 
+
 # Navegación del Sistema Nexo Learning
 
 Este documento sirve como la fuente única de verdad (SSOT) para la estructura de navegación de Nexo Learning. Define los principios, componentes y organización de la navegación para todos los roles de usuario.
@@ -256,3 +257,4 @@ La implementación del sistema de navegación se encuentra en constante evoluci�
 *Este documento representa la fuente única de verdad sobre la navegación del sistema. Cualquier cambio en la estructura de navegación debe reflejarse aquí primero.*
 
 *Última actualización: Abril 2025*
+

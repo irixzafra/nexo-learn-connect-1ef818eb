@@ -1,4 +1,5 @@
 
+
 # Requisitos del Proyecto Nexo Learning
 
 ## Requisitos de Negocio
@@ -165,3 +166,4 @@ La implementación detallada por fases se encuentra en el documento `docs_nexo/R
 - Cumplimiento GDPR/CCPA para datos de usuarios
 - Compatibilidad con navegadores modernos (últimas 2 versiones)
 - Tiempo al mercado prioritario sobre características no esenciales
+

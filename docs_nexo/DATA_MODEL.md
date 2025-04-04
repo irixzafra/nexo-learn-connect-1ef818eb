@@ -1,4 +1,5 @@
 
+
 # Modelo de Datos de Nexo Learning
 
 ## Visión General del Esquema
@@ -218,3 +219,4 @@ Las tablas principales implementan políticas RLS (Row Level Security) para prot
 - Administradores tienen acceso completo a toda la información
 - El contenido público de cursos es visible para todos
 - El contenido premium solo es visible para usuarios participantes
+

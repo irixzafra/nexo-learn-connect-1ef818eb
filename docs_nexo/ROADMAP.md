@@ -1,4 +1,5 @@
 
+
 # Roadmap Definitivo: Nexo Learning ERP/LMS/Comunidad de Creación e Impacto
 
 Este roadmap está estructurado en cinco fases principales, más una fase inicial de preparación (Fase 0). Cada una tiene objetivos claros, tareas específicas y un hito que marca su finalización. El enfoque es construir una plataforma modular, robusta y preparada para el crecimiento futuro, sin comprometer calidad ni innovación.
@@ -155,3 +156,4 @@ Este Roadmap Definitivo asegura que Nexo Learning sea funcional y valioso desde 
 - Fase 3: 🕐 Pendiente (5% completado)
 - Fase 4: 🕐 Pendiente (0% completado)
 - Fase 5: 🕐 Pendiente (0% completado)
+
