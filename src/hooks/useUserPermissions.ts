@@ -12,14 +12,14 @@ interface Permission {
 }
 
 export function useUserPermissions() {
-  const { userRole, userId } = useAuth();
+  const { userRole, user } = useAuth();
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   // Fetch user permissions when component mounts
   useEffect(() => {
     const fetchPermissions = async () => {
-      if (!userId) return;
+      if (!user?.id) return;
       
       setIsLoading(true);
       
@@ -39,9 +39,16 @@ export function useUserPermissions() {
         
         if (error) throw error;
         
-        // Extract permissions from the nested structure
-        const userPermissions = data?.map(item => item.permissions) || [];
-        setPermissions(userPermissions);
+        // Extract permissions from the nested structure and ensure proper typing
+        if (data) {
+          const userPermissions = data
+            .map(item => item.permissions as Permission)
+            .filter(Boolean); // Filter out any null or undefined values
+          
+          setPermissions(userPermissions);
+        } else {
+          setPermissions([]);
+        }
       } catch (error) {
         console.error('Error fetching permissions:', error);
         setPermissions([]);
@@ -51,7 +58,7 @@ export function useUserPermissions() {
     };
     
     fetchPermissions();
-  }, [userId, userRole]);
+  }, [user?.id, userRole]);
   
   // Check if user has a specific permission
   const hasPermission = (permissionCode: string): boolean => {

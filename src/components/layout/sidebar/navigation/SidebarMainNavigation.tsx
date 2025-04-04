@@ -5,6 +5,7 @@ import SidebarNavGroup from './SidebarNavGroup';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { useAuth } from '@/contexts/auth';
 import { getNavigationByRole } from '@/config/navigation';
+import { NavigationMenus } from '@/types/navigation';
 import { 
   Home,
   LayoutDashboard, 
@@ -41,7 +42,7 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   });
 
   // Create a default navigation structure for rendering
-  const defaultNavigation = {
+  const defaultNavigation: NavigationMenus = {
     dashboard: [
       {
         label: 'Panel Principal',
@@ -85,7 +86,7 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   };
   
   // Get role-based navigation if available, otherwise use default
-  const [navigation, setNavigation] = useState(defaultNavigation);
+  const [navigation, setNavigation] = useState<NavigationMenus>(defaultNavigation);
   
   useEffect(() => {
     try {
