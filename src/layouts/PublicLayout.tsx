@@ -2,6 +2,7 @@
 import React from 'react';
 import PublicNavigation from '@/components/navigation/PublicNavigation';
 import PublicFooter from '@/components/layout/PublicFooter';
+import { routeMap } from '@/utils/routeUtils';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -33,35 +34,35 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({
               <div>
                 <h3 className="font-medium text-base mb-2">Acerca de</h3>
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li><a href="/about-us" className="hover:underline">Nuestra Misión</a></li>
-                  <li><a href="/about-us" className="hover:underline">Equipo</a></li>
-                  <li><a href="/contact" className="hover:underline">Contacto</a></li>
+                  <li><a href={routeMap.aboutUs} className="hover:underline">Nuestra Misión</a></li>
+                  <li><a href={routeMap.aboutUs} className="hover:underline">Equipo</a></li>
+                  <li><a href={routeMap.contact} className="hover:underline">Contacto</a></li>
                 </ul>
               </div>
               <div>
                 <h3 className="font-medium text-base mb-2">Aprendizaje</h3>
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li><a href="/courses" className="hover:underline">Cursos</a></li>
-                  <li><a href="/learning-paths" className="hover:underline">Rutas de Aprendizaje</a></li>
-                  <li><a href="/certificates/verification-portal" className="hover:underline">Verificar Certificados</a></li>
-                  <li><a href="/scholarships" className="hover:underline">Becas</a></li>
+                  <li><a href={routeMap.courses} className="hover:underline">Cursos</a></li>
+                  <li><a href={routeMap.learningPaths} className="hover:underline">Rutas de Aprendizaje</a></li>
+                  <li><a href={routeMap.certificateVerificationPortal} className="hover:underline">Verificar Certificados</a></li>
+                  <li><a href={routeMap.scholarships} className="hover:underline">Becas</a></li>
                 </ul>
               </div>
               <div>
                 <h3 className="font-medium text-base mb-2">Legal</h3>
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li><a href="/terms" className="hover:underline">Términos de Uso</a></li>
-                  <li><a href="/privacy" className="hover:underline">Política de Privacidad</a></li>
-                  <li><a href="/cookies" className="hover:underline">Política de Cookies</a></li>
-                  <li><a href="/accessibility" className="hover:underline">Accesibilidad</a></li>
+                  <li><a href={routeMap.terms} className="hover:underline">Términos de Uso</a></li>
+                  <li><a href={routeMap.privacy} className="hover:underline">Política de Privacidad</a></li>
+                  <li><a href={routeMap.cookies} className="hover:underline">Política de Cookies</a></li>
+                  <li><a href={routeMap.accessibility} className="hover:underline">Accesibilidad</a></li>
                 </ul>
               </div>
               <div>
                 <h3 className="font-medium text-base mb-2">Ayuda</h3>
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li><a href="/help" className="hover:underline">Centro de Ayuda</a></li>
-                  <li><a href="/scholarships" className="hover:underline">Becas</a></li>
-                  <li><a href="/accessibility" className="hover:underline">Accesibilidad</a></li>
+                  <li><a href={routeMap.help} className="hover:underline">Centro de Ayuda</a></li>
+                  <li><a href={routeMap.scholarships} className="hover:underline">Becas</a></li>
+                  <li><a href={routeMap.accessibility} className="hover:underline">Accesibilidad</a></li>
                 </ul>
               </div>
             </div>

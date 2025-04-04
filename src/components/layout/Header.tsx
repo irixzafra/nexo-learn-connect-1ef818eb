@@ -11,6 +11,7 @@ import Logo from '@/components/Logo';
 import { cn } from '@/lib/utils';
 import { useLocalization } from '@/hooks/useLocalization';
 import LanguageSelector from '@/components/LanguageSelector';
+import { routeMap } from '@/utils/routeUtils';
 
 interface HeaderProps {
   showAuthButtons?: boolean;
@@ -25,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate(localizeUrl('/auth/login'));
+      navigate(localizeUrl(routeMap.login));
     } catch (error) {
       console.error('Error during logout:', error);
     }
@@ -49,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
               <span className="sr-only">Menú lateral</span>
             </Button>
           )}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to={routeMap.home} className="flex items-center space-x-2">
             <Logo className="h-7 w-7" />
             <span className="hidden font-bold text-lg sm:inline-block">
               Nexo Educativo
@@ -90,14 +91,14 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                onClick={() => navigate(localizeUrl('/auth/login'))}
+                onClick={() => navigate(localizeUrl(routeMap.login))}
                 className="rounded-full hover:bg-muted/40 transition-colors"
               >
                 Iniciar Sesión
               </Button>
               <Button 
                 size="sm" 
-                onClick={() => navigate(localizeUrl('/auth/register'))}
+                onClick={() => navigate(localizeUrl(routeMap.register))}
                 className="rounded-full transition-transform hover:scale-105 active:scale-95"
               >
                 Registrarse

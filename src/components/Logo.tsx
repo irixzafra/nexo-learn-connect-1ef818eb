@@ -7,7 +7,7 @@ interface LogoProps {
   size?: 'small' | 'medium' | 'large';
   variant?: 'light' | 'dark' | 'color';
   className?: string;
-  linkTo?: string;
+  linkTo?: string | null;
 }
 
 const Logo: React.FC<LogoProps> = ({ 

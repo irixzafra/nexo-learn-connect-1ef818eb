@@ -14,6 +14,8 @@ import {
   Map,
   Sparkles
 } from 'lucide-react';
+import { routeMap } from '@/utils/routeUtils';
+import SafeLink from '@/components/SafeLink';
 
 interface PublicNavigationProps {
   className?: string;
@@ -21,35 +23,35 @@ interface PublicNavigationProps {
 
 const PublicNavigation: React.FC<PublicNavigationProps> = ({ className }) => {
   const navItems = [
-    { path: '/', label: 'Inicio', icon: Home },
-    { path: '/courses', label: 'Cursos', icon: BookOpen },
-    { path: '/learning-paths', label: 'Rutas de Aprendizaje', icon: Map },
-    { path: '/about-us', label: 'Sobre Nosotros', icon: Users },
-    { path: '/certificates/verification-portal', label: 'Verificar Certificados', icon: Award },
-    { path: '/scholarships', label: 'Becas', icon: Sparkles },
-    { path: '/help', label: 'Ayuda', icon: HelpCircle },
-    { path: '/contact', label: 'Contacto', icon: FileText },
+    { path: routeMap.home, label: 'Inicio', icon: Home },
+    { path: routeMap.courses, label: 'Cursos', icon: BookOpen },
+    { path: routeMap.learningPaths, label: 'Rutas de Aprendizaje', icon: Map },
+    { path: routeMap.aboutUs, label: 'Sobre Nosotros', icon: Users },
+    { path: routeMap.certificateVerificationPortal, label: 'Verificar Certificados', icon: Award },
+    { path: routeMap.scholarships, label: 'Becas', icon: Sparkles },
+    { path: routeMap.help, label: 'Ayuda', icon: HelpCircle },
+    { path: routeMap.contact, label: 'Contacto', icon: FileText },
   ];
 
   const authItems = [
-    { path: '/auth/login', label: 'Iniciar Sesión', icon: LogIn, variant: 'outline' as const },
-    { path: '/auth/register', label: 'Registrarse', icon: UserPlus, variant: 'default' as const }
+    { path: routeMap.login, label: 'Iniciar Sesión', icon: LogIn, variant: 'outline' as const },
+    { path: routeMap.register, label: 'Registrarse', icon: UserPlus, variant: 'default' as const }
   ];
 
   return (
     <nav className={`flex items-center justify-between w-full px-4 py-2 ${className}`}>
       <div className="flex items-center space-x-1">
-        <Link to="/" className="mr-4 flex items-center">
+        <Link to={routeMap.home} className="mr-4 flex items-center">
           <span className="font-bold text-xl">Nexo Learning</span>
         </Link>
         
         <div className="hidden md:flex space-x-1">
           {navItems.map((item) => (
             <Button key={item.path} variant="ghost" asChild size="sm">
-              <Link to={item.path} className="flex items-center gap-1">
+              <SafeLink to={item.path} className="flex items-center gap-1">
                 <item.icon className="h-4 w-4" />
                 <span>{item.label}</span>
-              </Link>
+              </SafeLink>
             </Button>
           ))}
         </div>
@@ -58,10 +60,10 @@ const PublicNavigation: React.FC<PublicNavigationProps> = ({ className }) => {
       <div className="flex items-center space-x-2">
         {authItems.map((item) => (
           <Button key={item.path} variant={item.variant} asChild size="sm">
-            <Link to={item.path} className="flex items-center gap-1">
+            <SafeLink to={item.path} className="flex items-center gap-1">
               <item.icon className="h-4 w-4" />
               <span>{item.label}</span>
-            </Link>
+            </SafeLink>
           </Button>
         ))}
       </div>

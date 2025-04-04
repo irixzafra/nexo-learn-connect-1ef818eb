@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { routeMap } from '@/utils/routeUtils';
 
 const SiteFooter: React.FC = () => {
   return (
@@ -10,10 +11,10 @@ const SiteFooter: React.FC = () => {
           &copy; {new Date().getFullYear()} Academia LMS. Todos los derechos reservados.
         </p>
         <nav className="flex items-center gap-4">
-          <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground">
+          <Link to={routeMap.terms} className="text-sm text-muted-foreground hover:text-foreground">
             Términos
           </Link>
-          <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
+          <Link to={routeMap.privacy} className="text-sm text-muted-foreground hover:text-foreground">
             Privacidad
           </Link>
         </nav>
