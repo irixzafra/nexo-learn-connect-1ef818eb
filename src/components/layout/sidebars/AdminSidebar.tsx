@@ -5,8 +5,9 @@ import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { useNotifications } from '@/hooks/useNotifications';
 import ConditionalSidebar from '../ConditionalSidebar';
 import { useSidebarNavigation } from '../sidebar/hooks/useSidebarNavigation';
-import { getRoleName, getHomePath } from '@/utils/roleUtils';
+import { getRoleName } from '@/utils/roleUtils';
 import { toUserRoleType } from '@/types/auth';
+import { getHomePathByRole } from '@/config/navigation/roleBasedNavigation';
 
 const AdminSidebar: React.FC = () => {
   const { userRole, effectiveRole } = useAuth();
@@ -38,7 +39,7 @@ const AdminSidebar: React.FC = () => {
       currentLanguage={currentLanguage}
       languages={languages}
       getRoleName={getRoleName}
-      getHomePath={getHomePath}
+      getHomePath={getHomePathByRole}
       changeLanguage={changeLanguage}
     />
   );

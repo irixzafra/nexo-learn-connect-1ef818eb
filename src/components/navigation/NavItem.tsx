@@ -16,6 +16,7 @@ export interface NavItemProps {
   tooltip?: string;
   disabled?: boolean;
   isCollapsed?: boolean;
+  isHighlighted?: boolean;
 }
 
 const NavItem: React.FC<NavItemProps> = ({
@@ -28,7 +29,8 @@ const NavItem: React.FC<NavItemProps> = ({
   badge,
   tooltip,
   disabled = false,
-  isCollapsed = false
+  isCollapsed = false,
+  isHighlighted = false
 }) => {
   const location = useLocation();
   
@@ -44,6 +46,7 @@ const NavItem: React.FC<NavItemProps> = ({
       ? 'bg-primary/10 text-primary font-medium border-l-[3px] border-l-primary pl-[calc(0.75rem-3px)]' 
       : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground',
     disabled && 'opacity-50 pointer-events-none',
+    isHighlighted && 'ring-2 ring-primary/30 bg-primary/5',
     className
   );
   
@@ -68,6 +71,11 @@ const NavItem: React.FC<NavItemProps> = ({
         </span>
       }
       {badge && <span className="ml-auto">{badge}</span>}
+      {disabled && !isCollapsed && (
+        <span className="ml-auto text-xs bg-muted/50 text-muted-foreground px-1.5 py-0.5 rounded">
+          Próximamente
+        </span>
+      )}
     </Link>
   );
   

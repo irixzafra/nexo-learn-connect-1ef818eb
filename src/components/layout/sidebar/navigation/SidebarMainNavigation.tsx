@@ -1,85 +1,112 @@
 
 import React, { useState } from 'react';
-import { useAuth } from '@/contexts/auth';
 import { UserRoleType } from '@/types/auth';
-import { getNavigationByRole } from '@/config/navigation';
-import SidebarNavGroup from './SidebarNavGroup';
+import { getNavigationByRole } from '@/config/navigation/roleBasedNavigation';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
+import NavGroup from '@/components/navigation/NavGroup';
+import NavItem from '@/components/navigation/NavItem';
+import NavDivider from '@/components/navigation/NavDivider';
+import { LucideIcon } from 'lucide-react';
 
 interface SidebarMainNavigationProps {
   isCollapsed?: boolean;
   effectiveRole?: UserRoleType;
   messagesCount?: number;
   notificationsCount?: number;
-  getHomePath?: () => string;
 }
 
 export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ 
   isCollapsed = false,
   effectiveRole = 'student',
-  messagesCount = 0,
-  notificationsCount = 0,
-  getHomePath = () => '/app/home'
 }) => {
   const { state } = useSidebar();
   const sidebarCollapsed = isCollapsed || state === "collapsed";
   
-  // Track expanded sections
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    dashboard: true,
-    learning: true
+  // Estado para controlar qué secciones están expandidas (por defecto, dashboard y primera sección)
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() => {
+    // Determinar qué secciones expandir por defecto según el rol
+    const initialExpanded: Record<string, boolean> = { dashboard: true };
+    
+    // Para cada rol, expandir una sección adicional específica
+    if (effectiveRole === 'admin') initialExpanded.academic = true;
+    if (effectiveRole === 'instructor') initialExpanded.academicManagement = true;
+    if (effectiveRole === 'student') initialExpanded.community = true;
+    
+    return initialExpanded;
   });
-
-  const toggleSection = (section: string) => {
-    setOpenSections(prev => ({
+  
+  // Toggle para expandir/contraer una sección
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections(prev => ({
       ...prev,
-      [section]: !prev[section]
+      [sectionId]: !prev[sectionId]
     }));
   };
   
-  // Get navigation items based on role
+  // Obtener la navegación específica para el rol actual
   const roleNavigation = getNavigationByRole(effectiveRole);
+  
+  // Si no hay navegación para este rol, no renderizar nada
+  if (!roleNavigation) return null;
+
+  // Función helper para renderizar un elemento de navegación
+  const renderNavItem = (item: {
+    icon?: LucideIcon;
+    label: string;
+    path?: string;
+    badge?: number;
+    isHighlighted?: boolean;
+    disabled?: boolean;
+  }) => {
+    return (
+      <NavItem 
+        key={item.path || item.label}
+        href={item.path || '#'} 
+        title={item.label}
+        icon={item.icon}
+        badge={item.badge}
+        isCollapsed={sidebarCollapsed}
+        disabled={item.disabled}
+        tooltip={item.label}
+      />
+    );
+  };
 
   return (
-    <div className="space-y-1">
-      {/* Render all navigation groups for the role */}
-      {Object.entries(roleNavigation).map(([key, items]) => {
-        // Skip empty sections
+    <div className="space-y-2 px-2">
+      {/* Renderizar todas las secciones de navegación para el rol */}
+      {Object.entries(roleNavigation).map(([sectionId, items], index) => {
+        // Si no hay elementos en esta sección o está vacía, no renderizar
         if (!items || items.length === 0) return null;
         
-        // Skip sections that should be hidden for this role
-        const visibleItems = items.filter(item => {
-          if (!item.requiredRole) return true;
-          
-          if (Array.isArray(item.requiredRole)) {
-            return item.requiredRole.includes(effectiveRole);
-          }
-          
-          return item.requiredRole === effectiveRole;
-        });
+        // Si no es dashboard y es la primera sección después de dashboard, añadir un separador
+        const needsDivider = sectionId !== 'dashboard' && index === 1;
         
-        if (visibleItems.length === 0) return null;
+        // Título de la sección (convertir camelCase a Title Case)
+        const sectionTitle = sectionId
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/^./, str => str.toUpperCase());
         
-        // Get the first item to determine section name (could be improved with proper section metadata)
-        const sectionTitle = key.charAt(0).toUpperCase() + key.slice(1);
-        const sectionIcon = items[0].icon;
+        // Obtener el primer icono de la sección para usarlo como icono de grupo
+        const sectionIcon = items.length > 0 ? items[0].icon : undefined;
         
         return (
-          <SidebarNavGroup
-            key={key}
-            title={sectionTitle}
-            icon={sectionIcon}
-            isCollapsed={sidebarCollapsed}
-            effectiveRole={effectiveRole}
-            items={items}
-            defaultOpen={openSections[key] || false}
-            id={key}
-          />
+          <React.Fragment key={sectionId}>
+            {needsDivider && <NavDivider />}
+            
+            <NavGroup
+              title={sectionTitle}
+              icon={sectionIcon}
+              defaultExpanded={expandedSections[sectionId]}
+              isCollapsed={sidebarCollapsed}
+            >
+              {items.map(item => renderNavItem(item))}
+            </NavGroup>
+          </React.Fragment>
         );
       })}
     </div>
   );
 };
 
-// Add default export to work with both named and default imports
 export default SidebarMainNavigation;

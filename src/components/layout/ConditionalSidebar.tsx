@@ -47,18 +47,15 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       "h-full flex flex-col pb-2 bg-background border-r border-border/50 transition-all",
       isCollapsed ? "w-20" : "w-64"
     )}>
-      {/* Espacio superior sin logo, solo el botón de toggle cuando es necesario */}
+      {/* Espacio superior con logo y botón de toggle */}
       <div className="p-3 border-b border-border/30 mb-1">
         <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
       </div>
 
       {/* Main navigation based on role */}
-      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent px-2">
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
         <SidebarMainNavigation 
           effectiveRole={effectiveRole}
-          messagesCount={messagesCount}
-          notificationsCount={notificationsCount}
-          getHomePath={() => getHomePath(effectiveRole)}
           isCollapsed={isCollapsed}
         />
       </div>
