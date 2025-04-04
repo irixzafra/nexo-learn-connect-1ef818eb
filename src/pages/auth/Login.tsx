@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,9 +24,9 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const Login: React.FC = () => {
   const { user, session, isLoading: authLoading, login } = useAuth();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
-  React.useEffect(() => {
+  useEffect(() => {
     // If user is already logged in, redirect to dashboard
     if (user && session) {
       console.log("Usuario ya autenticado, redirigiendo a dashboard");
@@ -47,35 +47,22 @@ const Login: React.FC = () => {
     try {
       console.log("Intentando iniciar sesión con:", data.email);
       
-      // Primero intentamos con la autenticación real
-      await login(data.email, data.password);
+      const result = await login(data.email, data.password);
+      console.log("Resultado del login:", result);
       
-      // Si llegamos hasta aquí, el inicio de sesión fue exitoso
-      toast.success('Inicio de sesión exitoso');
-      
-      // Redirigimos al dashboard inmediatamente después del login exitoso
-      navigate('/app/dashboard', { replace: true });
-      
+      if (result.success) {
+        toast.success('Inicio de sesión exitoso');
+        navigate('/app/dashboard', { replace: true });
+      } else {
+        toast.error('Error al iniciar sesión', {
+          description: result.error || 'Verifica tus credenciales e intenta de nuevo',
+        });
+      }
     } catch (error) {
       console.error('Error de inicio de sesión:', error);
-      
-      // Si falla la autenticación real, mostramos el error
       toast.error('Error al iniciar sesión', {
         description: 'Verifica tus credenciales e intenta de nuevo',
       });
-      
-      // Como estamos en desarrollo, podemos intentar con un mock
-      try {
-        const { mockSignIn } = await import('@/lib/supabase');
-        const result = await mockSignIn(data.email, data.password);
-        
-        if (!result.error) {
-          toast.success('Inicio de sesión simulado exitoso (modo desarrollo)');
-          navigate('/app/dashboard', { replace: true });
-        }
-      } catch (mockError) {
-        console.log('No se pudo usar autenticación simulada');
-      }
     } finally {
       setIsLoading(false);
     }

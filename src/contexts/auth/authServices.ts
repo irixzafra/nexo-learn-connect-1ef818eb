@@ -4,33 +4,48 @@ import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
 
 export const loginService = async (email: string, password: string) => {
   try {
+    console.log("Intentando iniciar sesión con email:", email);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     
     if (error) {
+      console.error("Error de autenticación:", error.message);
       return { success: false, error: error.message };
     }
     
+    console.log("Login exitoso:", data);
     return { success: true, data };
   } catch (error: any) {
+    console.error("Error inesperado durante login:", error);
     return { success: false, error: error.message };
   }
 };
 
 export const logoutService = async () => {
-  await supabase.auth.signOut();
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+    return { success: !error };
+  } catch (error: any) {
+    console.error("Error inesperado durante logout:", error);
+    return { success: false, error: error.message };
+  }
 };
 
 export const signupService = async (email: string, password: string, userData?: Partial<UserProfile>) => {
   try {
+    console.log("Intentando registrar con email:", email);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
     
     if (error) {
+      console.error("Error de registro:", error.message);
       return { success: false, error: error.message };
     }
     
@@ -54,6 +69,7 @@ export const signupService = async (email: string, password: string, userData?: 
     
     return { success: true };
   } catch (error: any) {
+    console.error("Error inesperado durante registro:", error);
     return { success: false, error: error.message };
   }
 };
