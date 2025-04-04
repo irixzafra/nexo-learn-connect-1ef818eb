@@ -10,7 +10,6 @@ import {
 import UserRolesTable from '@/components/admin/roles/UserRolesTable';
 import RoleManagementSearch from '@/components/admin/roles/RoleManagementSearch';
 import { useRoleManagement } from '@/hooks/useRoleManagement';
-import AdminNavigation from '@/components/admin/AdminNavigation';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -28,7 +27,7 @@ const RoleManagement: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <AdminNavigation />
+      {/* AdminNavigation was removed as it's no longer needed */}
       
       <div className="flex items-center justify-between mb-6">
         <div>
