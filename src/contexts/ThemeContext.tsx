@@ -5,9 +5,10 @@ import { useThemeManager, ThemeMode } from '@/hooks/useThemeManager';
 interface ThemeContextType {
   theme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
-  resolvedTheme: 'light' | 'dark' | 'futuristic';
+  resolvedTheme: 'light' | 'dark' | 'futuristic' | 'nexo';
   isDark: boolean;
   isFuturistic: boolean;
+  isNexo: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Sun, Moon, Monitor, SquareCode } from 'lucide-react';
+import { Sun, Moon, Monitor, SquareCode, Palette } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { 
@@ -24,7 +24,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
   variant = 'ghost',
   size = 'icon'
 }) => {
-  const { theme, setTheme, isDark, isFuturistic } = useTheme();
+  const { theme, setTheme, isDark, isFuturistic, isNexo } = useTheme();
 
   // Obtener el icono correspondiente al tema actual
   const ThemeIcon = () => {
@@ -45,6 +45,16 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
         transition={{ duration: 0.5 }}
       >
         <SquareCode className="h-[1.2rem] w-[1.2rem]" />
+      </motion.div>
+    );
+    
+    if (isNexo) return (
+      <motion.div
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Palette className="h-[1.2rem] w-[1.2rem]" />
       </motion.div>
     );
     
@@ -69,12 +79,13 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
     );
   };
 
-  const handleThemeChange = (newTheme: 'light' | 'dark' | 'futuristic' | 'system') => {
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'futuristic' | 'system' | 'nexo') => {
     setTheme(newTheme);
     toast.success(`Tema ${
       newTheme === 'light' ? 'Claro' : 
       newTheme === 'dark' ? 'Oscuro' : 
       newTheme === 'futuristic' ? 'Gris Futurista' :
+      newTheme === 'nexo' ? 'Nexo' :
       'Sistema'
     } aplicado`, {
       position: 'top-center',
@@ -106,6 +117,10 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
         <DropdownMenuItem onClick={() => handleThemeChange('futuristic')} className="flex items-center gap-2 cursor-pointer hover:bg-primary/10">
           <SquareCode className="h-4 w-4" />
           <span>Gris Futurista</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleThemeChange('nexo')} className="flex items-center gap-2 cursor-pointer hover:bg-primary/10">
+          <Palette className="h-4 w-4" />
+          <span>Nexo</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleThemeChange('system')} className="flex items-center gap-2 cursor-pointer hover:bg-primary/10">
           <Monitor className="h-4 w-4" />

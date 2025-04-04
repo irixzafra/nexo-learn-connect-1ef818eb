@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Moon, Sun, SquareCode, Monitor } from 'lucide-react';
+import { Moon, Sun, SquareCode, Monitor, Palette } from 'lucide-react';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -21,6 +21,8 @@ export const ThemeSelector: React.FC = () => {
         return <Moon className="h-[1.2rem] w-[1.2rem]" />;
       case 'futuristic':
         return <SquareCode className="h-[1.2rem] w-[1.2rem]" />;
+      case 'nexo':
+        return <Palette className="h-[1.2rem] w-[1.2rem]" />;
       case 'system':
         return <Monitor className="h-[1.2rem] w-[1.2rem]" />;
       default:
@@ -28,12 +30,13 @@ export const ThemeSelector: React.FC = () => {
     }
   };
 
-  const handleThemeChange = (newTheme: 'light' | 'dark' | 'futuristic' | 'system') => {
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'futuristic' | 'system' | 'nexo') => {
     setTheme(newTheme);
     toast.success(`Tema ${
       newTheme === 'light' ? 'Claro' : 
       newTheme === 'dark' ? 'Oscuro' : 
       newTheme === 'futuristic' ? 'Gris Futurista' :
+      newTheme === 'nexo' ? 'Nexo' :
       'Sistema'
     } aplicado`);
   };
@@ -58,6 +61,10 @@ export const ThemeSelector: React.FC = () => {
         <DropdownMenuItem onClick={() => handleThemeChange('futuristic')} className="flex items-center gap-2">
           <SquareCode className="h-4 w-4" />
           <span>Gris Futurista</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleThemeChange('nexo')} className="flex items-center gap-2">
+          <Palette className="h-4 w-4" />
+          <span>Nexo</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleThemeChange('system')} className="flex items-center gap-2">
           <Monitor className="h-4 w-4" />

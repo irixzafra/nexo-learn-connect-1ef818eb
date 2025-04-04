@@ -1,14 +1,15 @@
 
 import { useEffect, useState } from 'react';
 
-export type ThemeMode = 'light' | 'dark' | 'system' | 'futuristic';
+export type ThemeMode = 'light' | 'dark' | 'system' | 'futuristic' | 'nexo';
 
 interface ThemeManagerReturn {
   theme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
-  resolvedTheme: 'light' | 'dark' | 'futuristic';
+  resolvedTheme: 'light' | 'dark' | 'futuristic' | 'nexo';
   isDark: boolean;
   isFuturistic: boolean;
+  isNexo: boolean;
 }
 
 export function useThemeManager(): ThemeManagerReturn {
@@ -20,9 +21,13 @@ export function useThemeManager(): ThemeManagerReturn {
     return 'system';
   });
 
-  const resolveTheme = (): 'light' | 'dark' | 'futuristic' => {
+  const resolveTheme = (): 'light' | 'dark' | 'futuristic' | 'nexo' => {
     if (theme === 'futuristic') {
       return 'futuristic';
+    }
+
+    if (theme === 'nexo') {
+      return 'nexo';
     }
     
     if (theme === 'system') {
@@ -36,6 +41,7 @@ export function useThemeManager(): ThemeManagerReturn {
   const resolvedTheme = resolveTheme();
   const isDark = resolvedTheme === 'dark';
   const isFuturistic = resolvedTheme === 'futuristic';
+  const isNexo = resolvedTheme === 'nexo';
 
   const setTheme = (newTheme: ThemeMode) => {
     setThemeState(newTheme);
@@ -46,11 +52,16 @@ export function useThemeManager(): ThemeManagerReturn {
     const root = window.document.documentElement;
     
     // Remover todas las clases de tema
-    root.classList.remove('light', 'dark', 'futuristic');
+    root.classList.remove('light', 'dark', 'futuristic', 'nexo');
     
     // Añadir la clase correspondiente al tema resuelto
     root.classList.add(resolvedTheme);
-  }, [resolvedTheme]);
+
+    // Add dark class separately if system prefers dark and theme is system
+    if (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      root.classList.add('dark');
+    }
+  }, [resolvedTheme, theme]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -58,7 +69,7 @@ export function useThemeManager(): ThemeManagerReturn {
     const handleChange = () => {
       if (theme === 'system') {
         const root = window.document.documentElement;
-        root.classList.remove('light', 'dark', 'futuristic');
+        root.classList.remove('light', 'dark');
         root.classList.add(mediaQuery.matches ? 'dark' : 'light');
       }
     };
@@ -72,6 +83,7 @@ export function useThemeManager(): ThemeManagerReturn {
     setTheme,
     resolvedTheme,
     isDark,
-    isFuturistic
+    isFuturistic,
+    isNexo
   };
 }

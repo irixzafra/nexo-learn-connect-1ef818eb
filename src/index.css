@@ -1,11 +1,133 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Base colors from brand guidelines */
+    /* Base colors from original palette */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    /* Primary: Reverted to original purple #8B5CF6 */
+    --primary: 262 83% 66%;
+    --primary-foreground: 0 0% 98%;
+
+    /* Secondary: #2E86C1 - Original blue */
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    /* Accent/Warning: Original */
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    
+    /* Status colors */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Warning (original) */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 20%;
+    
+    /* Success: #10B981 */
+    --success: 158 64% 40%;
+    --success-foreground: 0 0% 98%;
+    
+    /* Error: #EF4444 (keeping as requested) */
+    --error: 0 84.2% 60.2%;
+    --error-foreground: 0 0% 98%;
+    
+    /* Info (original) */
+    --info: 220 69% 56%;
+    --info-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 262 83% 66%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 20%;
+    --sidebar-primary: 262 83% 66%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 262 83% 66%;
+  }
+
+  .dark {
+    /* Dark mode colors based on original theme */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary: Original dark purple */
+    --primary: 262 83% 66%;
+    --primary-foreground: 0 0% 98%;
+
+    /* Secondary: Original dark blue */
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    /* Accent: Original dark accent */
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    
+    /* Status colors for dark mode */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Warning dark (original) */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+    
+    /* Success dark: derived from Success */
+    --success: 158 64% 30%;
+    --success-foreground: 0 0% 98%;
+    
+    /* Error dark: derived from Error */
+    --error: 0 62.8% 30.6%;
+    --error-foreground: 0 0% 98%;
+    
+    /* Info dark (original) */
+    --info: 220 69% 46%;
+    --info-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 262 83% 66%;
+    
+    --sidebar-background: 240 10% 3.9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 262 83% 66%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 262 83% 66%;
+  }
+
+  /* NEXO THEME - Light Mode */
+  .nexo {
+    /* Base colors from brand guidelines.json */
     --background: 0 0% 100%;
     --foreground: 0 0% 20%;
 
@@ -28,7 +150,7 @@
 
     /* Accent/Warning: #F4D03F - Inspiración y destaque */
     --accent: 48 89% 60%;
-    --accent-foreground: 0 0% 98%;
+    --accent-foreground: 0 0% 20%;
     
     /* Status colors */
     --destructive: 0 84.2% 60.2%;
@@ -66,7 +188,8 @@
     --sidebar-ring: 9 89% 60%;
   }
 
-  .dark {
+  /* NEXO THEME - Dark Mode */
+  .dark.nexo {
     /* Dark mode colors based on approved proposal */
     --background: 222 22% 14%;
     --foreground: 210 40% 98%;

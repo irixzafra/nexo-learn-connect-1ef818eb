@@ -36,9 +36,9 @@ Utilizamos una combinación de fuentes sans-serif para máxima legibilidad:
 
 | Nombre | Hex | Uso |
 |--------|-----|-----|
-| Primary | `#FF5733` | Acciones principales, elementos destacados, energía y acción |
-| Secondary | `#2E86C1` | Acciones secundarias, enlaces, confianza y conexión |
-| Accent | `#F4D03F` | Alertas, gamificación, elementos destacados, inspiración |
+| Primary | `#8B5CF6` | Acciones principales, elementos destacados |
+| Secondary | `#E2E8F0` | Acciones secundarias, enlaces |
+| Accent | `#F8FAFC` | Alertas, elementos destacados |
 
 ### Neutrales
 
@@ -55,9 +55,9 @@ Utilizamos una combinación de fuentes sans-serif para máxima legibilidad:
 | Nombre | Hex | Uso |
 |--------|-----|-----|
 | Success | `#10B981` | Confirmaciones, completado |
-| Warning | `#F4D03F` | Advertencias, precaución |
+| Warning | `#FBBF24` | Advertencias, precaución |
 | Error | `#EF4444` | Errores, alertas |
-| Info | `#2E86C1` | Información, noticias |
+| Info | `#3B82F6` | Información, noticias |
 
 ## Espaciado
 
@@ -358,12 +358,14 @@ El sistema soporta varios modos de tema para adaptarse a preferencias del usuari
 
 - **Tema Claro (Light)**: Predeterminado, optimizado para uso diurno, mayor contraste
 - **Tema Oscuro (Dark)**: Para entornos con poca luz, contraste reducido, ahorra batería en OLED
+- **Tema Futurista (Futuristic)**: Estilo minimalista con tonos grises
+- **Tema Nexo (Nexo)**: Basado en los colores oficiales de marca definidos en `guidelines.json`
 - **Preferencia del Sistema (System)**: Respeta la configuración del sistema operativo, transición automática día/noche
 
 ### Implementación Técnica
 
 - **Variables CSS**: Definidas en el archivo `index.css` con variantes para cada tema
-- **Clases de Tema**: Aplicadas al elemento `html` (`.light`, `.dark`)
+- **Clases de Tema**: Aplicadas al elemento `html` (`.light`, `.dark`, `.futuristic`, `.nexo`)
 - **Persistencia**: Preferencia guardada en `localStorage`
 - **Detección Automática**: Mediante `window.matchMedia('(prefers-color-scheme: dark)')`
 
@@ -389,7 +391,7 @@ El sistema de diseño se implementa principalmente a través de variables CSS pe
   --card-foreground: 240 10% 3.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 240 10% 3.9%;
-  --primary: 9 89% 60%;
+  --primary: 262 83% 66%;
   --primary-foreground: 0 0% 98%;
   /* ... otros colores ... */
 }
@@ -398,6 +400,14 @@ El sistema de diseño se implementa principalmente a través de variables CSS pe
   --background: 240 10% 3.9%;
   --foreground: 0 0% 98%;
   /* ... otros colores en modo oscuro ... */
+}
+
+.nexo {
+  /* Variables para el tema Nexo (basado en guidelines.json) */
+}
+
+.dark.nexo {
+  /* Variables para el tema Nexo en modo oscuro */
 }
 ```
 
@@ -464,4 +474,3 @@ El sistema de diseño incluye soporte completo para modo oscuro con:
 ---
 
 *Para dudas o sugerencias sobre el sistema de diseño, contacte al equipo de UX/UI en `#design-system` en Slack.*
-
