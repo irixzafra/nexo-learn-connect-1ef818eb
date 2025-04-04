@@ -2,12 +2,17 @@
 import { supabase } from '@/lib/supabase';
 import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
 
-export const loginService = async (email: string, password: string) => {
+export const loginService = async (email: string, password: string, remember: boolean = false) => {
   try {
-    console.log("authServices: Intentando iniciar sesión con email:", email);
+    console.log("authServices: Intentando iniciar sesión con email:", email, "y remember:", remember);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
+      options: {
+        // Si remember es true, establecer el tiempo de expiración a 30 días
+        // Si es false, usar el valor por defecto (1 hora)
+        expiresIn: remember ? 60 * 60 * 24 * 30 : undefined
+      }
     });
     
     if (error) {

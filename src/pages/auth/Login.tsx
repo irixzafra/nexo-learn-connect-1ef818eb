@@ -13,11 +13,13 @@ import { Loader2, Mail, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
 import AuthLayout from '@/layouts/AuthLayout';
 import { Toaster } from '@/components/ui/sonner';
+import { Checkbox } from '@/components/ui/checkbox';
 
 // Esquema de validación
 const loginSchema = z.object({
   email: z.string().email('Introduce un email válido'),
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  remember: z.boolean().optional().default(false)
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -42,6 +44,7 @@ const Login: React.FC = () => {
     defaultValues: {
       email: '',
       password: '',
+      remember: false
     },
   });
   
@@ -50,7 +53,7 @@ const Login: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const result = await login(data.email, data.password);
+      const result = await login(data.email, data.password, data.remember);
       console.log("Resultado del login:", result);
       
       if (result.success) {
@@ -131,14 +134,28 @@ const Login: React.FC = () => {
               />
               
               <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-2">
-                  <input 
-                    type="checkbox" 
-                    id="remember" 
-                    className="rounded border-gray-300 text-primary" 
-                  />
-                  <label htmlFor="remember" className="text-sm text-gray-600">Recordarme</label>
-                </div>
+                <FormField
+                  control={form.control}
+                  name="remember"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Checkbox 
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          id="remember"
+                        />
+                      </FormControl>
+                      <label
+                        htmlFor="remember"
+                        className="text-sm text-gray-600 cursor-pointer"
+                      >
+                        Recordarme
+                      </label>
+                    </FormItem>
+                  )}
+                />
+                
                 <Link to="/auth/forgot-password" className="text-sm text-primary hover:underline">
                   ¿Olvidaste tu contraseña?
                 </Link>

@@ -68,11 +68,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (email: string, password: string) => {
-    console.log("AuthProvider: login called with", email);
+  const login = async (email: string, password: string, remember: boolean = false) => {
+    console.log("AuthProvider: login called with", email, "and remember:", remember);
     setIsLoading(true);
     try {
-      const result = await loginService(email, password);
+      const result = await loginService(email, password, remember);
       console.log("AuthProvider: login result", result);
       setIsLoading(false);
       return result;
