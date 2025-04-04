@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
-import { Settings, Globe, LogOut, RefreshCw, ChevronDown } from 'lucide-react';
+import { Settings, Globe, LogOut, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
@@ -83,18 +83,6 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-        
-        {/* Return to original role if viewing as another role */}
-        {isViewingAsOtherRole && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={resetToOriginalRole}
-            className="h-9 w-9 rounded-full hover:bg-muted/40"
-          >
-            <RefreshCw className="h-4 w-4 text-yellow-500" />
-          </Button>
-        )}
 
         {/* Logout */}
         <Button
@@ -150,18 +138,6 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {/* Return to original role if viewing as another role */}
-      {isViewingAsOtherRole && (
-        <Button
-          variant="outline"
-          className="w-full justify-start text-yellow-500 border-yellow-500/30"
-          onClick={resetToOriginalRole}
-        >
-          <RefreshCw className="mr-2 h-4 w-4" />
-          <span>Volver a rol original</span>
-        </Button>
-      )}
 
       {/* Logout button */}
       <Button
