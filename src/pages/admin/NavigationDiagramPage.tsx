@@ -1,7 +1,7 @@
 
 import React from 'react';
 import AdminLayout from '@/layouts/AdminLayout';
-import PageHeader from '@/components/ui/page-header';
+import { PageHeader } from '@/components/ui/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,7 +14,6 @@ const NavigationDiagramPage: React.FC = () => {
         <PageHeader
           title="Diagrama de Navegación"
           description="Visualización gráfica de la estructura de navegación del sistema"
-          backButton={true}
         />
         
         <div className="mt-6">

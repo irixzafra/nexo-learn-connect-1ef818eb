@@ -1,8 +1,9 @@
 
 import React from 'react';
-import DefaultLayout from '@/layouts/DefaultLayout';
-import UnderConstructionPage from '@/components/shared/UnderConstructionPage';
 import { useParams, useLocation } from 'react-router-dom';
+import UnderConstructionPage from '@/components/shared/UnderConstructionPage';
+import AdminLayout from '@/layouts/AdminLayout';
+import AppLayout from '@/layouts/AppLayout';
 
 const ComingSoonPage: React.FC = () => {
   const { pathname } = useLocation();
@@ -39,17 +40,25 @@ const ComingSoonPage: React.FC = () => {
       return '/app/dashboard';
     }
   };
+
+  // Determinar qué layout usar basado en la ruta
+  const isAdminRoute = pathname.includes('/app/admin');
   
-  return (
-    <DefaultLayout>
-      <div className="container mx-auto py-8">
-        <UnderConstructionPage 
-          title={getTitle()}
-          backPath={getBackPath()}
-        />
-      </div>
-    </DefaultLayout>
+  const content = (
+    <div className="container mx-auto py-8">
+      <UnderConstructionPage 
+        title={getTitle()}
+        backPath={getBackPath()}
+      />
+    </div>
   );
+
+  // Usar el layout correspondiente según la ruta
+  if (isAdminRoute) {
+    return <AdminLayout>{content}</AdminLayout>;
+  }
+  
+  return <AppLayout>{content}</AppLayout>;
 };
 
 export default ComingSoonPage;

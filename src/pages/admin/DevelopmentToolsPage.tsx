@@ -1,7 +1,7 @@
 
 import React from 'react';
 import AdminLayout from '@/layouts/AdminLayout';
-import PageHeader from '@/components/ui/page-header';
+import { PageHeader } from '@/components/ui/page-header';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Code, Puzzle, Database, RefreshCw, FileCode, Package } from 'lucide-react';
@@ -13,7 +13,6 @@ const DevelopmentToolsPage: React.FC = () => {
         <PageHeader
           title="Herramientas de Desarrollo"
           description="Conjunto de herramientas para los desarrolladores del sistema"
-          backButton={true}
         />
         
         <div className="mt-6">

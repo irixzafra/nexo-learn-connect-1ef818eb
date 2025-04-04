@@ -1,7 +1,7 @@
 
 import React from 'react';
 import AdminLayout from '@/layouts/AdminLayout';
-import PageHeader from '@/components/ui/page-header';
+import { PageHeader } from '@/components/ui/page-header';
 import OrphanPagesReview from '@/components/admin/OrphanPagesReview';
 
 const OrphanReviewPage: React.FC = () => {
@@ -11,7 +11,6 @@ const OrphanReviewPage: React.FC = () => {
         <PageHeader
           title="Revisión de Páginas Huérfanas"
           description="Análisis de páginas sin enlaces entrantes"
-          backButton={true}
         />
         <div className="mt-6">
           <OrphanPagesReview />
