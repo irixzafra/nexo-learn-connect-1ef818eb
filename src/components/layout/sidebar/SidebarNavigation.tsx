@@ -39,6 +39,9 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
   return (
     <div className="flex flex-col h-full">
+      {/* Espacio superior sin logo */}
+      <div className="h-12 border-b border-border/30"></div>
+      
       <div className="flex-1 overflow-y-auto">
         <SidebarMainNavigation
           effectiveRole={toUserRoleType(effectiveRole as string)}

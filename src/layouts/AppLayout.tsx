@@ -4,7 +4,7 @@ import { Toaster } from 'sonner';
 import { Outlet } from 'react-router-dom';
 import AuthenticatedHeader from '@/components/layout/AuthenticatedHeader';
 import { useAuth } from '@/contexts/auth';
-import { Loader, ChevronRight } from 'lucide-react';
+import { Loader } from 'lucide-react';
 import AdminSidebar from '@/components/layout/sidebars/AdminSidebar';
 import InstructorSidebar from '@/components/layout/sidebars/InstructorSidebar';
 import StudentSidebar from '@/components/layout/sidebars/StudentSidebar';
@@ -42,8 +42,8 @@ const AppLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
         <div className="flex flex-1 overflow-hidden relative">
           {renderSidebar()}
           
-          {/* Nuevo botón de sidebar: más visible y posicionado correctamente */}
-          <SidebarTrigger />
+          {/* Botón de sidebar: ahora mejor posicionado y sin solapamiento */}
+          <SidebarTrigger className="left-5 md:left-6 z-50" />
           
           <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6">
             <SafeRouteWrapper>

@@ -17,7 +17,7 @@ const Sidebar: React.FC = () => {
         "focus-within:outline-none focus-within:ring-0"
       )}
     >
-      <div className="flex h-full flex-col">
+      <div className="flex h-full flex-col pt-12"> {/* Añadimos padding-top para evitar solapamiento con el botón */}
         <SidebarContent />
       </div>
     </aside>

@@ -47,7 +47,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       "h-full flex flex-col pb-2 bg-background border-r border-border/50 transition-all",
       isCollapsed ? "w-20" : "w-64"
     )}>
-      {/* Logo at the top */}
+      {/* Espacio superior sin logo, solo el botón de toggle cuando es necesario */}
       <div className="p-3 border-b border-border/30 mb-1">
         <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
       </div>

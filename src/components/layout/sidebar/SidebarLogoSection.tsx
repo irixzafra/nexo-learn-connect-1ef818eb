@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 import { ChevronLeft } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface SidebarLogoSectionProps {
   isCollapsed: boolean;
@@ -14,26 +13,7 @@ const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({
   toggleSidebar
 }) => {
   return (
-    <div className="flex items-center justify-between">
-      <Link 
-        to="/app" 
-        className={cn(
-          "flex items-center transition-all hover:opacity-90 gap-3",
-          isCollapsed && "mx-auto"
-        )}
-      >
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/90 text-primary-foreground shadow-sm">
-          <span className="text-sm font-bold">N</span>
-        </div>
-        
-        {!isCollapsed && (
-          <div className="flex flex-col">
-            <div className="font-medium text-base leading-tight">Nexo Learning</div>
-            <span className="text-[11px] text-muted-foreground">ecosistema educativo</span>
-          </div>
-        )}
-      </Link>
-      
+    <div className="flex items-center justify-end p-2">
       {!isCollapsed && (
         <button
           onClick={toggleSidebar}
