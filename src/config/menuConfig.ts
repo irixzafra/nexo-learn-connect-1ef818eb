@@ -4,12 +4,8 @@ import {
   MenuItem, 
   NavigationMenus,
   adminNavigation,
-  exploreNavigation,
   instructorNavigation,
-  academicNavigation,
-  financeNavigation,
-  settingsNavigation,
-  mainNavigation,
+  studentNavigation,
   filterMenuItemsByRole,
   getHomePathByRole,
   getNavigationByRole
@@ -17,13 +13,9 @@ import {
 
 // Re-export everything for backward compatibility
 export {
-  mainNavigation,
   adminNavigation,
-  exploreNavigation,
   instructorNavigation,
-  academicNavigation,
-  financeNavigation,
-  settingsNavigation,
+  studentNavigation,
   filterMenuItemsByRole,
   getHomePathByRole,
   getNavigationByRole
