@@ -306,7 +306,7 @@ const NavigationDiagram: React.FC = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="border rounded-md max-h-[400px] overflow-y-auto">
-                  {adminNavigation.map((item, index) => (
+                  {adminNavigation.main && adminNavigation.main.map((item, index) => (
                     <MenuItem key={`admin-menu-${index}`} item={item} />
                   ))}
                 </div>
@@ -326,7 +326,7 @@ const NavigationDiagram: React.FC = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="border rounded-md max-h-[400px] overflow-y-auto">
-                  {settingsNavigation.map((item, index) => (
+                  {settingsNavigation.main && settingsNavigation.main.map((item, index) => (
                     <MenuItem key={`settings-menu-${index}`} item={item} />
                   ))}
                 </div>
