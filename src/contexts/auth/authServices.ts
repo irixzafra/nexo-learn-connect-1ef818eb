@@ -1,6 +1,6 @@
-
 import { supabase } from '@/lib/supabase';
-import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
+import { UserProfile, UserRoleType } from '@/types/auth';
+import { toast } from 'sonner';
 
 /**
  * Servicio para iniciar sesión
@@ -17,7 +17,16 @@ export const loginService = async (email: string, password: string, remember: bo
     
     if (error) {
       console.error("Error de autenticación:", error.message);
-      return { success: false, error: error.message };
+      
+      // Transformar errores comunes de Supabase a mensajes más amigables
+      let userFriendlyError = error.message;
+      if (error.message.includes("Invalid login credentials")) {
+        userFriendlyError = "Credenciales inválidas. Verifica tu email y contraseña e intenta de nuevo.";
+      } else if (error.message.includes("Email not confirmed")) {
+        userFriendlyError = "Tu email no ha sido confirmado. Por favor revisa tu bandeja de entrada.";
+      }
+      
+      return { success: false, error: userFriendlyError };
     }
     
     // If remember is true, set a longer session via updateSession
@@ -41,7 +50,10 @@ export const loginService = async (email: string, password: string, remember: bo
     return { success: true, data };
   } catch (error: any) {
     console.error("Error inesperado durante login:", error);
-    return { success: false, error: error.message || "Error desconocido en el servicio de login" };
+    return { 
+      success: false, 
+      error: "Ha ocurrido un error al iniciar sesión. Por favor intenta de nuevo más tarde." 
+    };
   }
 };
 

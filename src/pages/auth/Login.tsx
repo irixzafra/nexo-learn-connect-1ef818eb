@@ -14,6 +14,8 @@ import { toast } from 'sonner';
 import AuthLayout from '@/layouts/AuthLayout';
 import { Toaster } from '@/components/ui/sonner';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 // Esquema de validación
 const loginSchema = z.object({
@@ -29,6 +31,8 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   // Estado de carga local para este componente específico
   const [isLoading, setIsLoading] = useState(false);
+  // Estado para error de autenticación
+  const [authError, setAuthError] = useState<string | null>(null);
   
   // Log para depuración
   console.log("Login component rendered, auth state:", { 
@@ -59,27 +63,32 @@ const Login: React.FC = () => {
   const onSubmit = async (data: LoginFormValues) => {
     console.log('****** ONSUBMIT DISPARADO ******');
     
+    // Limpiar cualquier error previo
+    setAuthError(null);
+    
     // Activamos el estado de carga LOCAL para este componente
     setIsLoading(true);
     
     try {
       // Llamar a la función login del contexto de autenticación
       const result = await login(data.email, data.password, data.remember);
-      console.log("Resultado del login:", result);
+      console.log("SimpleLogin: Resultado login:", result);
       
       if (result.success) {
         toast.success('Inicio de sesión exitoso');
         navigate('/app/dashboard', { replace: true });
       } else {
         console.error("Error en login:", result.error);
+        setAuthError(result.error || 'Verifica tus credenciales e intenta de nuevo');
         toast.error('Error al iniciar sesión', {
           description: result.error || 'Verifica tus credenciales e intenta de nuevo',
         });
       }
-    } catch (error: any) {
-      console.error('Error de inicio de sesión:', error);
+    } catch (err: any) {
+      console.error('Error de inicio de sesión:', err);
+      setAuthError('Verifica tus credenciales e intenta de nuevo');
       toast.error('Error al iniciar sesión', {
-        description: error.message || 'Verifica tus credenciales e intenta de nuevo',
+        description: err.message || 'Verifica tus credenciales e intenta de nuevo',
       });
     } finally {
       // Garantizamos que isLoading local se desactiva SIEMPRE
@@ -101,6 +110,14 @@ const Login: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {authError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error al iniciar sesión</AlertTitle>
+              <AlertDescription>{authError}</AlertDescription>
+            </Alert>
+          )}
+          
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField

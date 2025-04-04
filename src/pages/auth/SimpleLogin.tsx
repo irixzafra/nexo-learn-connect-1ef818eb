@@ -6,11 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 const SimpleLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const navigate = useNavigate();
   
   // Importamos directamente de useAuth
@@ -25,6 +28,9 @@ const SimpleLogin: React.FC = () => {
     e.preventDefault();
     console.log("SimpleLogin: Intento de login con:", email);
     
+    // Limpiar error previo
+    setAuthError(null);
+    
     // Activamos el estado de carga LOCAL para este componente
     setIsLoading(true);
     
@@ -36,12 +42,14 @@ const SimpleLogin: React.FC = () => {
         toast.success("Login exitoso!");
         navigate('/app/dashboard');
       } else {
+        setAuthError(result.error || "Credenciales inválidas");
         toast.error("Error de login", {
           description: result.error || "Credenciales inválidas"
         });
       }
     } catch (err: any) {
       console.error("SimpleLogin: Error en login:", err);
+      setAuthError(err.message || "Error desconocido");
       toast.error("Error de login", {
         description: err.message || "Error desconocido"
       });
@@ -58,6 +66,14 @@ const SimpleLogin: React.FC = () => {
           <CardTitle>Login Simplificado</CardTitle>
         </CardHeader>
         <CardContent>
+          {authError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error al iniciar sesión</AlertTitle>
+              <AlertDescription>{authError}</AlertDescription>
+            </Alert>
+          )}
+          
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Email</label>
