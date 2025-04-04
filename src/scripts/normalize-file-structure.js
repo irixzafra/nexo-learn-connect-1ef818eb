@@ -1,4 +1,3 @@
-
 #!/usr/bin/env node
 
 /**
@@ -15,7 +14,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // Configuración
-const PROJECT_ROOT = path.join(__dirname, '..');
+const PROJECT_ROOT = path.join(__dirname, '../..');
 const DOCS_DIR = path.join(PROJECT_ROOT, 'docs');
 
 // Función para normalizar nombres de archivos (convertir a minúsculas)
@@ -204,7 +203,7 @@ function main() {
     case 'normalize':
       console.log('Normalizando nombres de archivos...');
       // TODO: Implementar recorrido recursivo
-      normalizeFileName(path.join(DOCS_DIR, 'admin/ADMINISTRACION.md'));
+      normalizeFileName(path.join(DOCS_DIR, 'admin/administracion.md'));
       break;
       
     case 'duplicates':
@@ -221,7 +220,7 @@ function main() {
       
     case 'all':
       console.log('Ejecutando todas las correcciones...');
-      normalizeFileName(path.join(DOCS_DIR, 'admin/ADMINISTRACION.md'));
+      normalizeFileName(path.join(DOCS_DIR, 'admin/administracion.md'));
       const removed = removeDuplicates(PROJECT_ROOT);
       const fixed = fixDocumentationNaming(DOCS_DIR);
       console.log(`Resumen: ${removed} duplicados eliminados, ${fixed} problemas de nomenclatura corregidos.`);
