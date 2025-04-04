@@ -49,7 +49,7 @@ const Login: React.FC = () => {
   });
   
   const onSubmit = async (data: LoginFormValues) => {
-    console.log('****** ONSUBMIT DISPARADO ******'); // <-- AÑADIR ESTO
+    console.log('****** ONSUBMIT DISPARADO ******'); // <-- AÑADIDO log de diagnóstico
     console.log("Intentando iniciar sesión con:", data);
     setIsLoading(true);
     
@@ -75,6 +75,9 @@ const Login: React.FC = () => {
       setIsLoading(false);
     }
   };
+  
+  const isDisabled = isLoading || authLoading;
+  console.log('****** Login.tsx: ESTADO DISABLED BOTON ******:', isDisabled, { localLoading: isLoading, contextLoading: authLoading });
   
   return (
     <AuthLayout>
@@ -165,7 +168,8 @@ const Login: React.FC = () => {
               <Button 
                 type="submit" 
                 className="w-full py-6 text-base" 
-                disabled={isLoading || authLoading}
+                disabled={isDisabled}
+                onClick={() => console.log('****** Login.tsx: BOTON CLICADO (onClick directo) ******')} // <-- AÑADIDO manejador onClick directo
               >
                 {isLoading ? (
                   <>

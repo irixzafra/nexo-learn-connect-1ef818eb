@@ -199,6 +199,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (err) {
         console.error("Error in auth initialization:", err);
       } finally {
+        console.log('****** AuthProvider: FINALLY block alcanzado ******'); // Añadido log de diagnóstico
         // Aseguramos que isLoading se establezca en false al finalizar
         if (mounted) {
           setIsLoading(false);
