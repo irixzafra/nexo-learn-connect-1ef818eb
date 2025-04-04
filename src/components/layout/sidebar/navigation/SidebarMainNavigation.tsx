@@ -25,7 +25,11 @@ import {
   Briefcase,
   FileCode,
   HelpCircle,
-  Compass
+  Compass,
+  Navigation,
+  CheckSquare,
+  Layers,
+  Globe
 } from 'lucide-react';
 
 interface SidebarMainNavigationProps {
@@ -138,9 +142,10 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             defaultOpen={false}
             id="admin-dev"
             items={[
-              { label: 'Diagrama de navegación', path: '/app/admin/dev/navigation', icon: LayoutGrid },
-              { label: 'Revisión de elementos', path: '/app/admin/dev/components', icon: LayoutGrid, disabled: true },
-              { label: 'Herramientas de desarrollo', path: '/app/admin/dev/tools', icon: FileCode, disabled: true },
+              { label: 'Diagrama de navegación', path: '/app/admin/navigation-diagram', icon: Navigation },
+              { label: 'Revisión de elementos', path: '/app/admin/review-elements', icon: CheckSquare },
+              { label: 'Revisión de huérfanos', path: '/app/admin/orphan-review', icon: Layers },
+              { label: 'Herramientas de desarrollo', path: '/app/admin/development', icon: FileCode },
               { label: 'Configuraciones avanzadas', path: '/app/admin/dev/settings', icon: Settings, disabled: true }
             ]}
           />
@@ -206,6 +211,21 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             ]}
           />
 
+          {/* Extras Group */}
+          <SidebarNavGroup
+            title="Extras"
+            icon={Globe}
+            isCollapsed={isCollapsed}
+            defaultOpen={false}
+            id="instructor-extras"
+            items={[
+              { label: 'Comunidad', path: '/app/community', icon: Users },
+              { label: 'Calendario', path: '/app/calendar', icon: Calendar },
+              { label: 'Mensajes', path: '/app/messages', icon: MessageSquare, badge: messagesCount },
+              { label: 'Certificados', path: '/app/certificates', icon: Award }
+            ]}
+          />
+
           {/* Account */}
           <SidebarNavGroup
             title="Cuenta"
@@ -216,6 +236,7 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             items={[
               { label: 'Mi Perfil', path: '/app/profile', icon: UserSquare },
               { label: 'Mi Facturación', path: '/app/instructor/billing', icon: Landmark, disabled: true },
+              { label: 'Centro de Ayuda', path: '/app/help', icon: HelpCircle },
               { label: 'Configuración', path: '/app/settings', icon: Settings }
             ]}
           />
@@ -249,7 +270,7 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             defaultOpen={false}
             id="student-community"
             items={[
-              { label: 'Feed', path: '/app/community', icon: Users, disabled: true },
+              { label: 'Feed', path: '/app/community', icon: Users },
               { label: 'Leaderboard', path: '/app/community/leaderboard', icon: Award, disabled: true },
               { label: 'Mensajes', path: '/app/messages', icon: MessageSquare, badge: messagesCount },
               { label: 'Notificaciones', path: '/app/notifications', icon: Bell, badge: notificationsCount }
@@ -266,8 +287,8 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             items={[
               { label: 'Mis Cursos', path: '/app/my-courses', icon: BookOpen, isHighlighted: true },
               { label: 'Explorar Cursos', path: '/app/courses', icon: Compass },
-              { label: 'Rutas de Aprendizaje', path: '/app/learning-paths', icon: LineChart, disabled: true },
-              { label: 'Calendario', path: '/app/calendar', icon: Calendar, disabled: true }
+              { label: 'Rutas de Aprendizaje', path: '/app/learning-paths', icon: LineChart },
+              { label: 'Calendario', path: '/app/calendar', icon: Calendar }
             ]}
           />
 
@@ -280,7 +301,7 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             id="student-account"
             items={[
               { label: 'Mi Perfil', path: '/app/profile', icon: UserSquare },
-              { label: 'Progreso/Certificados', path: '/app/profile/certificates', icon: Award, disabled: true },
+              { label: 'Certificados', path: '/app/certificates', icon: Award },
               { label: 'Facturación/Participaciones', path: '/app/profile/billing', icon: Landmark, disabled: true },
               { label: 'Configuración', path: '/app/settings', icon: Settings }
             ]}
@@ -294,7 +315,7 @@ export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
             defaultOpen={false}
             id="student-help"
             items={[
-              { label: 'Centro de Ayuda', path: '/app/help', icon: HelpCircle, disabled: true },
+              { label: 'Centro de Ayuda', path: '/app/help', icon: HelpCircle },
               { label: 'Contactar Soporte', path: '/app/support', icon: Send, disabled: true }
             ]}
           />

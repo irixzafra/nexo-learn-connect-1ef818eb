@@ -1,83 +1,85 @@
 
 import React from 'react';
-import AdminPageLayout from '@/layouts/AdminPageLayout';
+import AdminLayout from '@/layouts/AdminLayout';
+import PageHeader from '@/components/ui/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Award, Download, Share2, AlertTriangle } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Info } from 'lucide-react';
 
 const NavigationDiagramPage: React.FC = () => {
   return (
-    <AdminPageLayout
-      title="Diagrama de Navegación"
-      subtitle="Visualiza y analiza la estructura de navegación de la plataforma"
-    >
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-primary" />
-            Diagrama de Navegación
-          </CardTitle>
-          <CardDescription>
-            Visualización gráfica de la estructura de navegación de la plataforma
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center p-10 border border-dashed rounded-md">
-            <AlertTriangle className="h-16 w-16 text-amber-500 mb-4 opacity-40" />
-            <h3 className="text-lg font-medium mb-2">Módulo en Desarrollo</h3>
-            <p className="text-muted-foreground text-center max-w-md mb-4">
-              El diagrama de navegación está actualmente en desarrollo. Esta funcionalidad
-              permitirá visualizar gráficamente la estructura completa de navegación de la plataforma.
-            </p>
-            <Badge variant="outline" className="mb-6 bg-blue-100 text-blue-800 border-blue-200">
-              Disponible próximamente
-            </Badge>
-            <div className="flex gap-2">
-              <Button variant="outline" disabled className="flex items-center gap-2">
-                <Download className="h-4 w-4" />
-                Exportar Diagrama
-              </Button>
-              <Button variant="outline" disabled className="flex items-center gap-2">
-                <Share2 className="h-4 w-4" />
-                Compartir Diagrama
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Características Planificadas</CardTitle>
-          <CardDescription>Futuras funcionalidades del diagrama de navegación</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2">
-            <li className="flex items-center">
-              <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-              <span>Visualización interactiva de la estructura de navegación</span>
-            </li>
-            <li className="flex items-center">
-              <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-              <span>Detección de rutas huérfanas y problemas de navegación</span>
-            </li>
-            <li className="flex items-center">
-              <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-              <span>Análisis de flujos de navegación de usuarios</span>
-            </li>
-            <li className="flex items-center">
-              <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-              <span>Exportación del diagrama en múltiples formatos</span>
-            </li>
-            <li className="flex items-center">
-              <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-              <span>Editor visual para modificar la estructura de navegación</span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
-    </AdminPageLayout>
+    <AdminLayout>
+      <div className="container mx-auto py-4">
+        <PageHeader
+          title="Diagrama de Navegación"
+          description="Visualización gráfica de la estructura de navegación del sistema"
+          backButton={true}
+        />
+        
+        <div className="mt-6">
+          <Alert className="mb-6">
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              Esta página muestra la estructura de navegación del sistema, incluyendo menús, enlaces y rutas.
+            </AlertDescription>
+          </Alert>
+          
+          <Tabs defaultValue="flow">
+            <TabsList>
+              <TabsTrigger value="flow">Diagrama de flujo</TabsTrigger>
+              <TabsTrigger value="menu">Estructura de menús</TabsTrigger>
+              <TabsTrigger value="routes">Mapa de rutas</TabsTrigger>
+            </TabsList>
+            <TabsContent value="flow" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Diagrama de flujo de navegación</CardTitle>
+                  <CardDescription>
+                    Visualización del flujo de navegación entre las principales páginas del sistema
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-10 bg-muted/20 rounded-lg border border-dashed flex items-center justify-center min-h-[400px]">
+                    <p className="text-muted-foreground">El diagrama de flujo se visualizará aquí</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="menu" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Estructura de menús</CardTitle>
+                  <CardDescription>
+                    Organización jerárquica de los menús de navegación por rol
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-10 bg-muted/20 rounded-lg border border-dashed flex items-center justify-center min-h-[400px]">
+                    <p className="text-muted-foreground">La estructura de menús se visualizará aquí</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="routes" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Mapa de rutas</CardTitle>
+                  <CardDescription>
+                    Listado de todas las rutas definidas en el sistema
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-10 bg-muted/20 rounded-lg border border-dashed flex items-center justify-center min-h-[400px]">
+                    <p className="text-muted-foreground">El mapa de rutas se visualizará aquí</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    </AdminLayout>
   );
 };
 

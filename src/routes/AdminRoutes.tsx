@@ -1,37 +1,38 @@
 
-import React from 'react';
-import { Route } from 'react-router-dom';
-import AdminDashboard from '@/pages/admin/AdminDashboard';
-import AdminCourses from '@/pages/admin/AdminCourses';
-import UserManagement from '@/pages/admin/UserManagement';
-import DesignSystem from '@/pages/admin/design/DesignSystem';
-import PageManagement from '@/pages/admin/pages/PageManagement';
-import CreatePage from '@/pages/admin/pages/CreatePage';
-import EditPage from '@/pages/admin/pages/EditPage';
-import Features from '@/pages/admin/Features';
-import Settings from '@/pages/admin/Settings';
-import SystemSettings from '@/pages/admin/SystemSettings';
-import TestDataManagement from '@/pages/admin/TestDataManagement';
-import AdminFinances from '@/pages/admin/finances/AdminFinances';
-import RoadmapManagerPage from '@/pages/admin/RoadmapManagerPage';
+import React, { lazy } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Suspense } from 'react';
+import LoadingScreen from '@/components/LoadingScreen';
 
-const AdminRoutes: React.FC = () => {
+// Lazy loaded pages
+const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
+const UsersPage = lazy(() => import('@/pages/admin/UsersPage'));
+const CoursesPage = lazy(() => import('@/pages/admin/CoursesPage'));
+const SystemPagesPage = lazy(() => import('@/pages/admin/SystemPagesPage'));
+const DesignSystemPage = lazy(() => import('@/pages/admin/DesignSystemPage'));
+const OrphanReviewPage = lazy(() => import('@/pages/admin/OrphanReviewPage'));
+const NavigationDiagramPage = lazy(() => import('@/pages/admin/NavigationDiagramPage'));
+const DevelopmentToolsPage = lazy(() => import('@/pages/admin/DevelopmentToolsPage'));
+const ComingSoonPage = lazy(() => import('@/pages/common/ComingSoonPage'));
+
+// Routes that are part of the admin module
+const AdminRoutes = () => {
   return (
-    <>
-      <Route path="dashboard" element={<AdminDashboard />} />
-      <Route path="courses/*" element={<AdminCourses />} />
-      <Route path="users/*" element={<UserManagement />} />
-      <Route path="design-system/*" element={<DesignSystem />} />
-      <Route path="pages" element={<PageManagement />} />
-      <Route path="pages/create" element={<CreatePage />} />
-      <Route path="pages/edit/:id" element={<EditPage />} />
-      <Route path="features" element={<Features />} />
-      <Route path="settings" element={<Settings />} />
-      <Route path="system-settings" element={<SystemSettings />} />
-      <Route path="test-data" element={<TestDataManagement />} />
-      <Route path="finances/*" element={<AdminFinances />} />
-      <Route path="roadmap" element={<RoadmapManagerPage />} />
-    </>
+    <Suspense fallback={<LoadingScreen />}>
+      <Routes>
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="courses" element={<CoursesPage />} />
+        <Route path="system-pages" element={<SystemPagesPage />} />
+        <Route path="design-system" element={<DesignSystemPage />} />
+        <Route path="navigation-diagram" element={<NavigationDiagramPage />} />
+        <Route path="orphan-review" element={<OrphanReviewPage />} />
+        <Route path="development" element={<DevelopmentToolsPage />} />
+        <Route path="features" element={<ComingSoonPage />} />
+        <Route path="review-elements" element={<ComingSoonPage />} />
+        <Route path="*" element={<Navigate to="/app/admin/dashboard" replace />} />
+      </Routes>
+    </Suspense>
   );
 };
 

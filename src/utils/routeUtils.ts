@@ -56,12 +56,22 @@ export const routeMap = {
   adminSystemPages: '/app/admin/system-pages',
   adminDesignSystem: '/app/admin/design-system',
   adminDesignSystemButton: '/app/admin/design-system/components/button',
+  adminNavigationDiagram: '/app/admin/navigation-diagram',
+  adminReviewElements: '/app/admin/review-elements',
+  adminOrphanReview: '/app/admin/orphan-review',
+  adminDevelopment: '/app/admin/development',
+  adminFeatures: '/app/admin/features',
   
   // Rutas de instructor
   profesor: '/app/profesor',
   profesorDashboard: '/app/profesor/dashboard',
   profesorCourses: '/app/profesor/courses',
   profesorStudents: '/app/profesor/students',
+  instructor: '/app/instructor',
+  instructorDashboard: '/app/instructor/dashboard',
+  instructorCourses: '/app/instructor/courses',
+  instructorCreateCourse: '/app/instructor/courses/create',
+  instructorStudents: '/app/instructor/students',
   
   // Rutas de perfil y configuración
   profile: '/app/profile',
@@ -70,6 +80,7 @@ export const routeMap = {
   // Rutas de cursos
   courseDetail: (id: string) => `/app/course/${id}`,
   courseLesson: (courseId: string, lessonId: string) => `/app/course/${courseId}/lesson/${lessonId}`,
+  exploreCourses: '/app/courses',
   
   // Rutas de certificados
   certificates: '/app/certificates',
@@ -79,15 +90,19 @@ export const routeMap = {
   // Rutas de perfil
   profileSettings: '/app/profile/settings',
   profileAchievements: '/app/profile/achievements',
+  profileBilling: '/app/profile/billing',
   
-  // Otras rutas
-  help: '/help',
-  learningPaths: '/app/learning-paths',
-  achievements: '/app/achievements',
-  calendar: '/app/calendar',
+  // Rutas de comunidad
   community: '/app/community',
   messages: '/app/messages',
-  notifications: '/app/notifications'
+  notifications: '/app/notifications',
+  
+  // Otras rutas
+  help: '/app/help',
+  support: '/app/support',
+  learningPaths: '/app/learning-paths',
+  achievements: '/app/achievements',
+  calendar: '/app/calendar'
 };
 
 /**
