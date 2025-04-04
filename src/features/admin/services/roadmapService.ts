@@ -1,5 +1,6 @@
 
 import { toast } from 'sonner';
+import { supabase } from '@/lib/supabase';
 
 // Tipos para el roadmap
 export type TaskStatus = 'completed' | 'in-progress' | 'pending' | 'review';
@@ -119,9 +120,44 @@ Este Roadmap Definitivo asegura que Nexo Learning sea funcional y valioso desde 
 // Función para obtener los datos actuales del roadmap
 export const fetchRoadmapData = async (): Promise<RoadmapPhase[]> => {
   try {
-    // En un caso real, esto haría una llamada a la API
-    // Por ahora usamos datos de prueba
-    return Promise.resolve([
+    // Intentamos obtener datos de la base de datos
+    const { data: roadmapPhases, error } = await supabase
+      .from('roadmap_phases')
+      .select('*')
+      .order('id');
+
+    if (error) {
+      console.error('Error fetching from Supabase:', error);
+      throw error;
+    }
+    
+    if (roadmapPhases && roadmapPhases.length > 0) {
+      // Si hay datos en la base de datos, conseguimos las tareas para cada fase
+      const phases: RoadmapPhase[] = [];
+      
+      for (const phase of roadmapPhases) {
+        const { data: tasks, error: tasksError } = await supabase
+          .from('roadmap_tasks')
+          .select('*')
+          .eq('phase', phase.id)
+          .order('id');
+          
+        if (tasksError) {
+          console.error(`Error fetching tasks for phase ${phase.id}:`, tasksError);
+          continue;
+        }
+        
+        phases.push({
+          ...phase,
+          tasks: tasks || []
+        });
+      }
+      
+      return phases;
+    }
+    
+    // Si no hay datos en la base de datos, usamos datos de prueba
+    return [
       {
         id: 0,
         title: "Auditoría y Estabilización Base",
@@ -142,8 +178,27 @@ export const fetchRoadmapData = async (): Promise<RoadmapPhase[]> => {
         ],
         milestone: "Sistema básico funcional y listo para pruebas internas."
       },
-      // Puedes añadir el resto de fases aquí...
-    ]);
+      {
+        id: 1,
+        title: "Consolidación UI/UX y Núcleo del LMS",
+        objective: "Crear una experiencia de usuario unificada y lanzar el núcleo del sistema educativo.",
+        tasks: [
+          { id: "task-1-1", description: "Estandarizar interfaces para todos los roles (admin, instructor, estudiante).", status: "in-progress", phase: 1 },
+          { id: "task-1-2", description: "Desarrollar el catálogo de cursos con filtros y búsqueda avanzada.", status: "pending", phase: 1 },
+          { id: "task-1-3", description: "Implementar el visualizador de lecciones con seguimiento de progreso del estudiante.", status: "pending", phase: 1 },
+          { id: "task-1-4", description: "Configurar SEO básico para visibilidad en buscadores.", status: "pending", phase: 1 },
+          { id: "task-1-5", description: "Asegurar responsividad y accesibilidad (cumpliendo WCAG 2.1 AA).", status: "in-progress", phase: 1 },
+          { id: "task-1-6", description: "Introducir soporte multi-idioma básico (e.g., español e inglés).", status: "pending", phase: 1 },
+          { id: "task-1-7", description: "Garantizar una navegación intuitiva y consistente en toda la plataforma.", status: "in-progress", phase: 1 }
+        ],
+        functionality: [
+          "Los usuarios pueden explorar y buscar cursos en un catálogo intuitivo.",
+          "Los estudiantes pueden ver lecciones y seguir su progreso.",
+          "La plataforma es accesible y usable en diferentes dispositivos e idiomas."
+        ],
+        milestone: "Versión beta lista para pruebas con usuarios seleccionados."
+      }
+    ];
   } catch (error) {
     console.error('Error fetching roadmap data:', error);
     toast.error('No se pudieron cargar los datos del roadmap');
@@ -157,10 +212,35 @@ export const updateRoadmapTask = async (
   newStatus: TaskStatus
 ): Promise<boolean> => {
   try {
-    // En un caso real, esto haría una llamada a la API
-    // Por ahora simulamos un éxito
-    console.log(`Updating task ${taskId} to status ${newStatus}`);
-    return Promise.resolve(true);
+    // Check if we're using database or mock data
+    const { data, error: checkError } = await supabase
+      .from('roadmap_tasks')
+      .select('id')
+      .eq('id', taskId)
+      .limit(1);
+      
+    if (checkError) {
+      console.error('Error checking for task:', checkError);
+      throw checkError;
+    }
+    
+    // If the task exists in database, update it
+    if (data && data.length > 0) {
+      const { error } = await supabase
+        .from('roadmap_tasks')
+        .update({ status: newStatus })
+        .eq('id', taskId);
+        
+      if (error) {
+        console.error('Error updating task in Supabase:', error);
+        throw error;
+      }
+      
+      return true;
+    }
+    
+    // If not using database yet, just return success (mock update)
+    return true;
   } catch (error) {
     console.error('Error updating roadmap task:', error);
     toast.error('No se pudo actualizar la tarea del roadmap');

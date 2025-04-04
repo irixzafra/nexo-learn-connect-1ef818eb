@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import AdminPageLayout from '@/layouts/AdminPageLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -158,6 +159,10 @@ const NavigationDiagram: React.FC = () => {
     setRouteGroups(grouped);
   }, []);
   
+  // Ensure we have arrays to work with
+  const adminMenuItems = Array.isArray(adminNavigation.main) ? adminNavigation.main : [];
+  const settingsMenuItems = Array.isArray(settingsNavigation.main) ? settingsNavigation.main : [];
+  
   return (
     <AdminPageLayout
       title="Diagrama de Navegación"
@@ -293,8 +298,8 @@ const NavigationDiagram: React.FC = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="border rounded-md max-h-[400px] overflow-y-auto">
-                  {adminNavigation.main && adminNavigation.main.length > 0 ? (
-                    adminNavigation.main.map((item, index) => (
+                  {adminMenuItems && adminMenuItems.length > 0 ? (
+                    adminMenuItems.map((item, index) => (
                       <MenuItem key={`admin-menu-${index}`} item={item} />
                     ))
                   ) : (
@@ -318,8 +323,8 @@ const NavigationDiagram: React.FC = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="border rounded-md max-h-[400px] overflow-y-auto">
-                  {settingsNavigation.main && settingsNavigation.main.length > 0 ? (
-                    settingsNavigation.main.map((item, index) => (
+                  {settingsMenuItems && settingsMenuItems.length > 0 ? (
+                    settingsMenuItems.map((item, index) => (
                       <MenuItem key={`settings-menu-${index}`} item={item} />
                     ))
                   ) : (

@@ -69,12 +69,12 @@ export const getNavigationByRole = (role: UserRoleType): NavigationMenus => {
   return {
     dashboard: filterMenuItemsByRole(dashboardNavigation, role),
     main: filterMenuItemsByRole(mainNavigation, role),
-    admin: filterMenuItemsByRole(adminNavigation.main || [], role),
-    instructor: filterMenuItemsByRole(instructorNavigation.main || [], role),
-    student: filterMenuItemsByRole(studentNavigation.main || [], role),
+    admin: filterMenuItemsByRole(Array.isArray(adminNavigation) ? adminNavigation : (adminNavigation.main || []), role),
+    instructor: filterMenuItemsByRole(Array.isArray(instructorNavigation) ? instructorNavigation : (instructorNavigation.main || []), role),
+    student: filterMenuItemsByRole(Array.isArray(studentNavigation) ? studentNavigation : (studentNavigation.main || []), role),
     learning: filterMenuItemsByRole(learningNavigation, role),
     community: filterMenuItemsByRole(communityNavigation, role),
-    configuration: filterMenuItemsByRole(configurationNavigation.main || [], role)
+    configuration: filterMenuItemsByRole(Array.isArray(configurationNavigation) ? configurationNavigation : (configurationNavigation.main || []), role)
   };
 };
 
