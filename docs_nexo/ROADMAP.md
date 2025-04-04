@@ -1,169 +1,143 @@
 
-# Hoja de Ruta de Nexo Learning
+# Roadmap Definitivo: Nexo Learning ERP/LMS/Comunidad Educativa
 
-## Visión General
+Este roadmap está estructurado en cinco fases principales, más una fase inicial de preparación (Fase 0). Cada una tiene objetivos claros, tareas específicas y un hito que marca su finalización. El enfoque es construir una plataforma modular, robusta y preparada para el crecimiento futuro, sin comprometer calidad ni innovación.
 
-Este documento detalla la hoja de ruta del desarrollo de Nexo Learning, organizando las funcionalidades en épicas, historias de usuario y tareas específicas. El estado de cada ítem se actualiza regularmente para reflejar el progreso del proyecto.
+## Fase 0: Auditoría y Estabilización Base
 
-## Estados
+**Objetivo:** Establecer una base técnica sólida y confiable para el desarrollo.
 
-- 🔄 **En Progreso**: Actualmente en desarrollo
-- ✅ **Validado CTO**: Completado y validado por el CTO
-- 🟢 **Validado Usuario**: Completado y validado por usuarios/stakeholders
-- ⏱️ **Pendiente**: En espera de ser iniciado
-- 🔒 **Bloqueado**: Bloqueado por dependencias
+**Tareas Clave:**
+- Reorganizar la estructura del código para facilitar la modularidad (e.g., /src/features/).
+- Configurar la infraestructura backend (autenticación, políticas de seguridad, base de datos).
+- Definir y documentar el modelo de datos completo.
+- Auditar y eliminar código o rutas obsoletas.
+- Implementar pruebas unitarias iniciales con alta cobertura.
+- Documentar la arquitectura base del sistema.
+- Preparar datos de prueba para demostraciones internas.
 
-## Prioridades
+**Funcionalidad desde esta fase:**
+- El equipo de desarrollo cuenta con una base de código limpia y organizada.
+- La autenticación básica permite pruebas internas seguras.
+- Los datos de prueba facilitan la validación de funcionalidades futuras.
 
-- 🔴 **Alta**: Crítico para la funcionalidad principal
-- 🟠 **Media**: Importante pero no crítico
-- 🟡 **Baja**: Mejora deseable
+**Hito:** Sistema básico funcional y listo para pruebas internas.
 
-## Estado Actual del Proyecto
+## Fase 1: Consolidación UI/UX y Núcleo del LMS
 
-La plataforma ha completado recientemente una importante refactorización estructural, con mejoras en la organización del código y la estructura de navegación. Actualmente se están conectando las diferentes secciones y asegurando la consistencia del sistema.
+**Objetivo:** Crear una experiencia de usuario unificada y lanzar el núcleo del sistema educativo.
 
----
+**Tareas Clave:**
+- Estandarizar interfaces para todos los roles (admin, instructor, estudiante).
+- Desarrollar el catálogo de cursos con filtros y búsqueda avanzada.
+- Implementar el visualizador de lecciones con seguimiento de progreso del estudiante.
+- Configurar SEO básico para visibilidad en buscadores.
+- Asegurar responsividad y accesibilidad (cumpliendo WCAG 2.1 AA).
+- Introducir soporte multi-idioma básico (e.g., español e inglés).
+- Garantizar una navegación intuitiva y consistente en toda la plataforma.
 
-## Épicas y Tareas
+**Funcionalidad desde esta fase:**
+- Los usuarios pueden explorar y buscar cursos en un catálogo intuitivo.
+- Los estudiantes pueden ver lecciones y seguir su progreso.
+- La plataforma es accesible y usable en diferentes dispositivos e idiomas.
 
-### 1. 🏗️ Arquitectura y Base del Proyecto
+**Hito:** Versión beta lista para pruebas con usuarios seleccionados.
 
-#### Refactorización Estructural
-- ✅ **Validado CTO** 🔴 Reorganizar estructura de carpetas basada en características
-- ✅ **Validado CTO** 🔴 Implementar sistema de layouts anidados
-- ✅ **Validado CTO** 🔴 Crear sistema de navegación adaptativa por roles
-- ✅ **Validado CTO** 🔴 Definir sistema de tipos global
+## Fase 2: ERP Básico y Monetización
 
-#### Integración Supabase
-- ✅ **Validado CTO** 🔴 Configurar cliente Supabase
-- ✅ **Validado CTO** 🔴 Implementar sistema de autenticación
-- ✅ **Validado CTO** 🔴 Crear políticas RLS básicas
-- 🔄 **En Progreso** 🔴 Completar esquema de base de datos
+**Objetivo:** Habilitar la gestión administrativa y establecer el modelo de negocio.
 
-#### Sistema UI Base
-- ✅ **Validado CTO** 🔴 Integrar shadcn/ui components
-- ✅ **Validado CTO** 🔴 Configurar temas (claro/oscuro)
-- ✅ **Validado CTO** 🔴 Implementar componentes reutilizables principales
+**Tareas Clave:**
+- Crear un panel de administración con métricas clave (e.g., usuarios activos, ingresos).
+- Implementar gestión de usuarios con permisos detallados.
+- Integrar un sistema de pagos para compras y suscripciones (e.g., Stripe).
+- Configurar planes de suscripción con facturación automática.
+- Añadir analíticas básicas para administradores (e.g., progreso de estudiantes, uso del sistema).
+- Optimizar el backend para manejar mayor carga.
+- Establecer auditoría y seguridad para transacciones.
+- Implementar feature flags para activar/desactivar funcionalidades de manera controlada.
 
-### 2. 📚 Sistema de Cursos
+**Funcionalidad desde esta fase:**
+- Los administradores pueden gestionar usuarios y ver métricas clave.
+- Los usuarios pueden registrarse, pagar y acceder a contenido premium.
+- La plataforma soporta transacciones seguras y escalables.
 
-#### Catálogo de Cursos
-- ✅ **Validado CTO** 🔴 Implementar listado de cursos
-- ✅ **Validado CTO** 🔴 Crear página de detalle de curso
-- 🔄 **En Progreso** 🔴 Desarrollar filtros y búsqueda
-- ⏱️ **Pendiente** 🟠 Implementar sistema de categorías
+**Hito:** Lanzamiento público inicial de la plataforma.
 
-#### Gestión de Contenido
-- ✅ **Validado CTO** 🔴 Crear estructura de módulos y lecciones
-- ✅ **Validado CTO** 🔴 Implementar visualizador de lecciones
-- 🔄 **En Progreso** 🟠 Desarrollar editor de contenido para instructores
-- ⏱️ **Pendiente** 🟠 Implementar sistema de multimedia (videos, archivos)
+## Fase 3: LMS Avanzado y Comunidad Educativa
 
-#### Aprendizaje y Progreso
-- ✅ **Validado CTO** 🔴 Implementar sistema de inscripción
-- 🔄 **En Progreso** 🔴 Desarrollar seguimiento de progreso
-- ⏱️ **Pendiente** 🟠 Crear sistema de marcadores y notas
-- ⏱️ **Pendiente** 🟡 Implementar recordatorios de estudio
+**Objetivo:** Enriquecer la experiencia educativa y fomentar la interacción social.
 
-### 3. 👥 Gestión de Usuarios
+**Tareas Clave:**
+- Desarrollar un editor de contenido intuitivo para instructores.
+- Añadir herramientas de evaluación (quizzes, exámenes) y certificados.
+- Habilitar comentarios y discusiones en lecciones.
+- Crear foros de comunidad (generales y por curso).
+- Implementar mensajería directa y grupos de colaboración.
+- Integrar IA básica para sugerencias de contenido.
+- Introducir gamificación inicial (e.g., puntos, insignias).
 
-#### Sistema de Roles
-- ✅ **Validado CTO** 🔴 Implementar roles básicos (admin, instructor, estudiante)
-- ✅ **Validado CTO** 🔴 Crear sistema de cambio de rol
-- 🔄 **En Progreso** 🟠 Desarrollar asignación de permisos granulares
-- ⏱️ **Pendiente** 🟡 Implementar roles personalizados
+**Funcionalidad desde esta fase:**
+- Los instructores pueden crear y gestionar contenido de manera eficiente.
+- Los estudiantes pueden interactuar, colaborar y recibir retroalimentación.
+- La gamificación y las sugerencias de IA mejoran el engagement y la personalización.
 
-#### Perfiles de Usuario
-- ✅ **Validado CTO** 🔴 Crear páginas de perfil
-- 🔄 **En Progreso** 🟠 Implementar edición de perfil
-- ⏱️ **Pendiente** 🟡 Desarrollar badges y logros
-- ⏱️ **Pendiente** 🟡 Crear portfolios de proyectos
+**Hito:** Plataforma con funcionalidades educativas y sociales avanzadas.
 
-#### Administración de Usuarios
-- ✅ **Validado CTO** 🔴 Desarrollar listado de usuarios
-- 🔄 **En Progreso** 🟠 Implementar gestión de usuarios
-- ⏱️ **Pendiente** 🟠 Crear sistema de notas administrativas
-- ⏱️ **Pendiente** 🟡 Implementar sistema de reportes/flags
+## Fase 4: ERP Avanzado y Escalabilidad
 
-### 4. 🏢 Panel de Administración
+**Objetivo:** Fortalecer el ERP y preparar la plataforma para alta demanda y personalización.
 
-#### Dashboard Admin
-- ✅ **Validado CTO** 🔴 Crear estructura base del panel
-- ✅ **Validado CTO** 🔴 Implementar navegación administrativa
-- 🔄 **En Progreso** 🟠 Desarrollar widgets de resumen
-- ⏱️ **Pendiente** 🟡 Crear sistema de alertas y notificaciones
+**Tareas Clave:**
+- Implementar configuraciones globales y toggles de funcionalidades.
+- Desarrollar analíticas avanzadas con reportes personalizables.
+- Configurar notificaciones en la app y por email.
+- Optimizar la arquitectura para escalabilidad (e.g., caché, carga diferida).
+- Ampliar soporte multi-idioma a más regiones y contenidos dinámicos.
+- Crear una API pública documentada para integraciones externas.
+- Habilitar soporte multi-organización (e.g., personalización para empresas).
 
-#### Configuración del Sistema
-- 🔄 **En Progreso** 🟠 Implementar ajustes globales
-- ⏱️ **Pendiente** 🟠 Desarrollar gestión de características
-- ⏱️ **Pendiente** 🟡 Crear editor de correos/plantillas
-- ⏱️ **Pendiente** 🟡 Implementar copias de seguridad
+**Funcionalidad desde esta fase:**
+- Los administradores pueden personalizar y monitorizar la plataforma en detalle.
+- La plataforma soporta grandes volúmenes de usuarios y contenido en múltiples idiomas.
+- Las empresas pueden personalizar la plataforma para sus necesidades específicas.
 
-#### Analíticas
-- ⏱️ **Pendiente** 🟠 Desarrollar dashboard de analíticas
-- ⏱️ **Pendiente** 🟠 Implementar reportes de uso
-- ⏱️ **Pendiente** 🟡 Crear sistema de exportación de datos
-- ⏱️ **Pendiente** 🟡 Desarrollar predicciones y tendencias
+**Hito:** Sistema robusto, escalable y listo para grandes volúmenes de usuarios.
 
-### 5. 💬 Sistema de Comunidad
+## Fase 5: Innovación y Liderazgo Mundial
 
-#### Comentarios y Foros
-- 🔄 **En Progreso** 🟠 Implementar comentarios en lecciones
-- ⏱️ **Pendiente** 🟠 Desarrollar foros por curso
-- ⏱️ **Pendiente** 🟡 Crear foros generales
-- ⏱️ **Pendiente** 🟡 Implementar sistema de moderación
+**Objetivo:** Posicionar Nexo Learning como líder global con tecnología de punta.
 
-#### Mensajería
-- ⏱️ **Pendiente** 🟠 Desarrollar mensajería directa
-- ⏱️ **Pendiente** 🟠 Crear chats grupales
-- ⏱️ **Pendiente** 🟡 Implementar notificaciones en tiempo real
-- ⏱️ **Pendiente** 🟡 Desarrollar mensajes enriquecidos
+**Tareas Clave:**
+- Integrar IA avanzada (e.g., chatbots educativos, recomendaciones personalizadas).
+- Ampliar la gamificación (e.g., tablas de clasificación, desafíos grupales).
+- Desarrollar un marketplace para cursos y recursos educativos.
+- Añadir integraciones con sistemas externos (e.g., webhooks, software HR).
+- Optimizar SEO avanzado para máxima visibilidad.
+- Implementar aprendizaje adaptativo basado en análisis de datos e IA.
+- Crear un portal corporativo para gestión de equipos y reportes de cumplimiento.
+- Implementar soporte para realidad aumentada/virtual (AR/VR) para experiencias inmersivas, como laboratorios virtuales y simulaciones interactivas.
+- Integrar blockchain para emitir certificaciones verificables y seguras, con portal público de validación.
 
-#### Social
-- ⏱️ **Pendiente** 🟡 Implementar perfiles públicos
-- ⏱️ **Pendiente** 🟡 Crear sistema de seguimiento
-- ⏱️ **Pendiente** 🟡 Desarrollar feed de actividad
-- ⏱️ **Pendiente** 🟡 Implementar grupos de interés
+**Funcionalidad desde esta fase:**
+- Los usuarios disfrutan de experiencias educativas inmersivas y personalizadas.
+- Las certificaciones son seguras y verificables globalmente.
+- La plataforma lidera en innovación, atrayendo a usuarios y organizaciones de todo el mundo.
 
-### 6. 💰 Sistema de Pagos
+**Hito:** Plataforma de clase mundial, líder en educación y tecnología.
 
-#### Procesamiento de Pagos
-- ⏱️ **Pendiente** 🔴 Integrar Stripe
-- ⏱️ **Pendiente** 🔴 Implementar checkout seguro
-- ⏱️ **Pendiente** 🟠 Desarrollar gestión de métodos de pago
-- ⏱️ **Pendiente** 🟠 Crear sistema de facturación
+## Principios Estratégicos para Funcionalidad Temprana
 
-#### Suscripciones
-- ⏱️ **Pendiente** 🟠 Implementar planes de suscripción
-- ⏱️ **Pendiente** 🟠 Desarrollar renovaciones automáticas
-- ⏱️ **Pendiente** 🟡 Crear gestión de cancelaciones/reembolsos
-- ⏱️ **Pendiente** 🟡 Implementar cupones y descuentos
+Para garantizar que Nexo Learning sea funcional desde las primeras fases, este roadmap se basa en los siguientes principios:
 
-#### Monetización para Instructores
-- ⏱️ **Pendiente** 🟠 Desarrollar sistema de revenue share
-- ⏱️ **Pendiente** 🟠 Crear dashboard financiero para instructores
-- ⏱️ **Pendiente** 🟡 Implementar pagos a instructores
-- ⏱️ **Pendiente** 🟡 Desarrollar analíticas de ventas
+- **Valor Incremental:** Cada fase entrega funcionalidades que los usuarios pueden utilizar de inmediato (e.g., explorar cursos en Fase 1, pagar en Fase 2).
+- **Modularidad:** Las nuevas características se construyen sobre una base estable, permitiendo lanzamientos parciales sin comprometer la experiencia.
+- **Feedback Continuo:** Las pruebas con usuarios desde la Fase 1 permiten ajustes basados en retroalimentación real.
+- **Escalabilidad Progresiva:** La optimización del backend y la escalabilidad se abordan desde la Fase 2, preparando la plataforma para el crecimiento.
+- **Innovación Gradual:** Tecnologías avanzadas como AR/VR y blockchain se integran en la Fase 5, una vez que la plataforma es estable y escalable.
 
-## Próximas Tareas Prioritarias
+## Conclusión
 
-1. 🔴 **Completar Seed Data**: Configurar datos iniciales para demostración
-2. 🔴 **Finalizar Conexiones**: Conectar componentes y páginas restantes
-3. 🔴 **Mejorar Sistema de Roles**: Completar intercambiador de roles
-4. 🔴 **Optimizar Queries**: Revisar y mejorar consultas a Supabase
-5. 🟠 **Auditoría de Componentes**: Identificar y eliminar componentes huérfanos
-6. 🟠 **Documentación**: Completar documentación técnica y de usuario
+Este Roadmap Definitivo asegura que Nexo Learning sea funcional y valioso desde las fases tempranas, mientras evoluciona hacia una plataforma ERP/LMS/Comunidad Educativa de clase mundial. Con cada etapa entregando funcionalidades clave y preparando el terreno para el futuro, este plan está diseñado para atraer usuarios, fomentar la adopción y liderar en innovación.
 
-## Hitos (Milestones)
-
-| Hito | Descripción | Fecha Objetivo | Estado |
-|------|-------------|----------------|--------|
-| MVP Interno | Versión mínima funcional para testing interno | Q2 2024 | 🔄 En Progreso |
-| Beta Privada | Versión para testers seleccionados | Q3 2024 | ⏱️ Pendiente |
-| Lanzamiento | Primera versión pública | Q4 2024 | ⏱️ Pendiente |
-| Expansión | Implementación de features avanzadas | Q1 2025 | ⏱️ Pendiente |
-
----
-
-**Última actualización**: Junio 2024
+**Última actualización:** Abril 2025
