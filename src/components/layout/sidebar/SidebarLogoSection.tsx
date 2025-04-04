@@ -1,54 +1,47 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
-import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { ChevronLeft } from 'lucide-react';
 
 interface SidebarLogoSectionProps {
-  isCollapsed?: boolean;
-  toggleSidebar?: () => void;
+  isCollapsed: boolean;
+  toggleSidebar: () => void;
 }
 
 const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({ 
-  isCollapsed: propIsCollapsed,
-  toggleSidebar: propToggleSidebar
+  isCollapsed,
+  toggleSidebar
 }) => {
-  const { state, toggleSidebar: contextToggleSidebar } = useSidebar();
-  
-  // Use props if provided, otherwise use context values
-  const isCollapsed = propIsCollapsed !== undefined ? propIsCollapsed : state === "collapsed";
-  const handleToggle = propToggleSidebar || contextToggleSidebar;
-
   return (
-    <div className={cn(
-      "flex items-center justify-between py-4",
-      isCollapsed ? "px-3" : "px-4"
-    )}>
-      <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
+    <div className="flex items-center justify-between">
+      <Link 
+        to="/app" 
+        className={cn(
+          "flex items-center transition-all hover:opacity-90 gap-3",
+          isCollapsed && "mx-auto"
+        )}
+      >
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/90 text-primary-foreground shadow-sm">
-          <span className="text-base font-bold">N</span>
+          <span className="text-sm font-bold">N</span>
         </div>
         
         {!isCollapsed && (
           <div className="flex flex-col">
-            <span className="font-bold leading-tight text-foreground">Nexo</span>
-            <span className="text-[11px] text-muted-foreground">ecosistema creativo</span>
+            <div className="font-medium text-base leading-tight">Nexo Learning</div>
+            <span className="text-[11px] text-muted-foreground">ecosistema educativo</span>
           </div>
         )}
       </Link>
       
       {!isCollapsed && (
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={handleToggle}
-          className="text-muted-foreground hover:text-foreground hover:bg-muted/60 rounded-full h-8 w-8"
-          aria-label="Colapsar sidebar"
+        <button
+          onClick={toggleSidebar}
+          className="rounded-full p-1.5 hover:bg-muted/50 text-muted-foreground transition-colors"
+          aria-label="Colapsar menú lateral"
         >
           <ChevronLeft className="h-4 w-4" />
-        </Button>
+        </button>
       )}
     </div>
   );

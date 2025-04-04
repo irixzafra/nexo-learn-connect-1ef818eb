@@ -42,20 +42,15 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   const { toggleSidebar } = useSidebar();
   const { logout, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
 
-  console.log('>>> DEBUG ConditionalSidebar:', {
-    userRoleProp: userRole,
-    effectiveRoleProp: effectiveRole,
-    isCollapsed,
-    currentViewRole
-  });
-
   return (
     <div className={cn(
-      "h-full flex flex-col pb-2 bg-background border-r border-border/70 transition-all",
+      "h-full flex flex-col pb-2 bg-background border-r border-border/50 transition-all",
       isCollapsed ? "w-20" : "w-64"
     )}>
       {/* Logo at the top with full title and subtitle */}
-      <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
+      <div className="p-3 border-b border-border/30 mb-1">
+        <SidebarLogoSection isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
+      </div>
 
       {/* Navegación principal para todas las rutas */}
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent px-2">
@@ -64,11 +59,12 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
           messagesCount={messagesCount}
           notificationsCount={notificationsCount}
           getHomePath={() => getHomePath(effectiveRole)}
+          isCollapsed={isCollapsed}
         />
       </div>
       
       {/* Footer Section with Role Switcher and Language Selector */}
-      <div className="mt-auto border-t border-border/50">
+      <div className="mt-auto border-t border-border/40 pt-2 px-2">
         <SidebarFooterSection 
           userRole={userRole}
           effectiveRole={effectiveRole}

@@ -1,77 +1,72 @@
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
-export interface NavGroupProps {
+interface NavGroupProps {
   title: string;
   icon?: LucideIcon;
-  children: React.ReactNode;
   defaultExpanded?: boolean;
   isCollapsed?: boolean;
-  className?: string;
+  children: React.ReactNode;
 }
 
 const NavGroup: React.FC<NavGroupProps> = ({
   title,
   icon: Icon,
-  children,
-  defaultExpanded = true,
+  defaultExpanded = false,
   isCollapsed = false,
-  className
+  children,
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-
-  const toggleExpanded = () => {
-    setIsExpanded(prev => !prev);
-  };
-
+  
+  // If collapsed sidebar, we render children without expandable container
   if (isCollapsed) {
     return (
-      <div className={cn("mb-2 px-1", className)}>
+      <div className="my-2">
         {Icon && (
-          <div className="flex items-center justify-center py-2 text-muted-foreground">
-            <Icon className="h-5 w-5" />
+          <div className="flex items-center justify-center py-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted/60 text-muted-foreground">
+              <Icon className="h-4 w-4" />
+            </div>
           </div>
         )}
-        <div className="space-y-1 mt-1">
-          {children}
-        </div>
+        {children}
       </div>
     );
   }
-
+  
   return (
-    <div className={cn("mb-4", className)}>
+    <div className="mb-3">
       <button
-        onClick={toggleExpanded}
+        onClick={() => setIsExpanded(!isExpanded)}
         className={cn(
-          "flex items-center justify-between w-full px-3 py-2 text-sm font-medium rounded-md",
-          "text-muted-foreground hover:text-foreground transition-colors",
-          "hover:bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary/30"
+          "flex w-full items-center justify-between py-2 px-3 text-sm font-medium rounded-md",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-1",
+          "transition-colors hover:bg-muted/30",
+          isExpanded ? "text-foreground" : "text-muted-foreground hover:text-foreground"
         )}
         aria-expanded={isExpanded}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {Icon && <Icon className="h-4.5 w-4.5" />}
-          <span className="text-sm font-medium">{title}</span>
+          <span className="text-[14px] font-medium">{title}</span>
         </div>
-        {isExpanded ? (
-          <ChevronDown className="h-4 w-4 transition-transform" />
-        ) : (
-          <ChevronRight className="h-4 w-4 transition-transform" />
-        )}
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 text-muted-foreground transition-transform duration-200",
+            isExpanded ? "rotate-180 transform" : ""
+          )}
+        />
       </button>
       <div
         className={cn(
-          "overflow-hidden transition-all duration-200 ease-in-out pl-2",
+          "pl-3 overflow-hidden transition-all duration-200 ease-in-out",
           isExpanded ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
         )}
       >
-        <div className="space-y-1 py-1">
-          {children}
-        </div>
+        {children}
       </div>
     </div>
   );

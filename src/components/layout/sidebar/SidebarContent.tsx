@@ -10,10 +10,13 @@ const SidebarContent: React.FC = () => {
 
   return (
     <div className="flex h-full flex-col">
-      <LogoContainer 
-        title="Nexo Learning" 
-        subtitle="ecosistema educativo" 
-      />
+      <div className="p-3 border-b border-border/30 mb-1">
+        <LogoContainer 
+          title="Nexo Learning" 
+          subtitle="ecosistema educativo"
+          className={cn("transition-all duration-300", isCollapsed ? "justify-center" : "")}
+        />
+      </div>
       
       <div className="flex-1 overflow-y-auto py-2 px-3 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
         <SidebarNavigation isCollapsed={isCollapsed} />

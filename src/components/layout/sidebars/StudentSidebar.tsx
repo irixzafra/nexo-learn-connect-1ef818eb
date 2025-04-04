@@ -1,38 +1,46 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { LayoutDashboard, BookOpen, Search, UserCircle } from 'lucide-react';
+import { useAuth } from '@/contexts/auth';
+import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import { useNotifications } from '@/hooks/useNotifications';
+import ConditionalSidebar from '../ConditionalSidebar';
+import { useSidebarNavigation } from '../sidebar/hooks/useSidebarNavigation';
+import { getRoleName, getHomePath } from '@/utils/roleUtils';
+import { toUserRoleType } from '@/types/auth';
 
 const StudentSidebar: React.FC = () => {
-  const navItems = [
-    { path: '/app/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-    { path: '/app/my-courses', label: 'Mis Cursos', icon: <BookOpen size={18} /> },
-    { path: '/courses', label: 'Explorar Cursos', icon: <Search size={18} /> },
-    { path: '/app/profile', label: 'Perfil', icon: <UserCircle size={18} /> },
-  ];
+  const { userRole, effectiveRole } = useAuth();
+  const { unreadCount: notificationsCount } = useNotifications();
+  const messagesCount = 3; // Demo value
+  const { state } = useSidebar();
+  
+  const {
+    currentViewRole,
+    currentLanguage,
+    changeLanguage
+  } = useSidebarNavigation(toUserRoleType(userRole as string));
 
+  // Language options
+  const languages = [
+    { code: 'es', name: 'Español' },
+    { code: 'en', name: 'English' },
+    { code: 'pt', name: 'Português' }
+  ];
+  
   return (
-    <nav className="p-4">
-      <h3 className="font-medium mb-4 text-lg">Panel de Estudiante</h3>
-      <ul className="space-y-2">
-        {navItems.map((item) => (
-          <li key={item.path}>
-            <NavLink
-              to={item.path}
-              className={({ isActive }) => 
-                `block ${isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`
-              }
-            >
-              <Button variant="ghost" className="w-full justify-start gap-2 px-2">
-                {item.icon}
-                <span>{item.label}</span>
-              </Button>
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <ConditionalSidebar 
+      userRole={toUserRoleType(userRole as string)}
+      effectiveRole={toUserRoleType(effectiveRole as string)}
+      messagesCount={messagesCount}
+      notificationsCount={notificationsCount}
+      isCollapsed={state === "collapsed"}
+      currentViewRole={currentViewRole}
+      currentLanguage={currentLanguage}
+      languages={languages}
+      getRoleName={getRoleName}
+      getHomePath={getHomePath}
+      changeLanguage={changeLanguage}
+    />
   );
 };
 

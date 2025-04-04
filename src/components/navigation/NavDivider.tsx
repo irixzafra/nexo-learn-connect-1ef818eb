@@ -2,25 +2,29 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface NavDividerProps {
+interface NavDividerProps {
   className?: string;
   label?: string;
 }
 
-const NavDivider: React.FC<NavDividerProps> = ({ className, label }) => {
-  return (
-    <div className={cn("my-2 relative", className)}>
-      <div className="absolute inset-0 flex items-center">
-        <span className="w-full border-t border-border/50" />
+const NavDivider: React.FC<NavDividerProps> = ({ 
+  className, 
+  label 
+}) => {
+  if (label) {
+    return (
+      <div className={cn("flex items-center py-3", className)}>
+        <div className="h-px flex-1 bg-border/60"></div>
+        <span className="px-3 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+          {label}
+        </span>
+        <div className="h-px flex-1 bg-border/60"></div>
       </div>
-      {label && (
-        <div className="relative flex justify-center">
-          <span className="bg-background px-2 text-xs text-muted-foreground">
-            {label}
-          </span>
-        </div>
-      )}
-    </div>
+    );
+  }
+  
+  return (
+    <div className={cn("my-2 h-px w-full bg-border/40", className)} />
   );
 };
 

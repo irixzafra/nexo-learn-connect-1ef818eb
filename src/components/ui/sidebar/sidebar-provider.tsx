@@ -1,67 +1,115 @@
 
 import * as React from "react"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import {
-  SidebarContext,
-  SidebarContextType,
-  SidebarState,
-  SIDEBAR_COOKIE_NAME,
-  SIDEBAR_COOKIE_MAX_AGE,
-  SIDEBAR_WIDTH,
-  SIDEBAR_WIDTH_COLLAPSED,
-  SIDEBAR_WIDTH_ICON,
-  SIDEBAR_KEYBOARD_SHORTCUT
-} from "./sidebar-context"
+import { SIDEBAR_WIDTH, SIDEBAR_WIDTH_MOBILE, SIDEBAR_WIDTH_ICON } from "./sidebar-context"
 
-interface SidebarProviderProps {
-  children: React.ReactNode
+type SidebarState = "expanded" | "collapsed" | "resizing"
+
+type SidebarProviderProps = {
+  /**
+   * The default state of the sidebar. Used for initial render and SSR.
+   * @default expanded
+   */
   defaultState?: SidebarState
-  defaultHideNav?: boolean
-  enableKeyboardShortcut?: boolean
-  disableCollapseButton?: boolean
+  /**
+   * Whether to persist the sidebar state in localStorage.
+   * @default true
+   */
+  persist?: boolean
 }
+
+type SidebarProviderState = {
+  state: SidebarState
+  setState: React.Dispatch<React.SetStateAction<SidebarState>>
+  isMobile: boolean
+  openMobile: boolean
+  setOpenMobile: React.Dispatch<React.SetStateAction<boolean>>
+  toggleSidebar: () => void
+}
+
+const SidebarContext = React.createContext<SidebarProviderState | null>(null)
 
 export function SidebarProvider({
   children,
   defaultState = "expanded",
-  enableKeyboardShortcut = true,
-}: SidebarProviderProps) {
-  const isMobile = useMediaQuery("(max-width: 768px)")
-  const [state, setState] = React.useState<SidebarState>(defaultState)
+  persist = true,
+}: React.PropsWithChildren<SidebarProviderProps>) {
+  const [state, setState] = React.useState<SidebarState>(() => {
+    if (!persist) return defaultState
+    try {
+      const savedState = localStorage.getItem("sidebar-state")
+      return savedState === "collapsed" ? "collapsed" : "expanded"
+    } catch (e) {
+      return defaultState
+    }
+  })
+  const [isMobile, setIsMobile] = React.useState(false)
   const [openMobile, setOpenMobile] = React.useState(false)
 
+  React.useEffect(() => {
+    if (persist) {
+      try {
+        localStorage.setItem("sidebar-state", state)
+      } catch (e) {
+        console.warn("Failed to save sidebar state to localStorage:", e)
+      }
+    }
+  }, [state, persist])
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const isMobileView = window.innerWidth < 768
+      setIsMobile(isMobileView)
+      if (!isMobileView && openMobile) setOpenMobile(false)
+    }
+
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [openMobile])
+
   const toggleSidebar = React.useCallback(() => {
-    setState((prev) => (prev === "expanded" ? "collapsed" : "expanded"))
+    setState((prev) => (prev === "collapsed" ? "expanded" : "collapsed"))
   }, [])
 
-  // Set CSS variables for the sidebar width
+  // Handle ESC key to close mobile sidebar
   React.useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--sidebar-width",
-      state === "expanded" ? SIDEBAR_WIDTH : SIDEBAR_WIDTH_COLLAPSED
-    )
-    document.documentElement.style.setProperty(
-      "--sidebar-width-collapsed",
-      SIDEBAR_WIDTH_COLLAPSED
-    )
-    document.documentElement.style.setProperty(
-      "--sidebar-width-icon",
-      SIDEBAR_WIDTH_ICON
-    )
-  }, [state])
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && openMobile) {
+        setOpenMobile(false)
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [openMobile])
 
   return (
     <SidebarContext.Provider
       value={{
         state,
         setState,
-        toggleSidebar,
+        isMobile,
         openMobile,
         setOpenMobile,
-        isMobile,
+        toggleSidebar,
       }}
     >
+      <style>
+        {`:root {
+          --sidebar-width: ${SIDEBAR_WIDTH}px;
+          --sidebar-width-mobile: ${SIDEBAR_WIDTH_MOBILE}px;
+          --sidebar-width-icon: ${SIDEBAR_WIDTH_ICON}px;
+        }`}
+      </style>
       {children}
     </SidebarContext.Provider>
   )
+}
+
+export function useSidebar(): SidebarProviderState {
+  const context = React.useContext(SidebarContext)
+  if (!context) {
+    throw new Error("useSidebar must be used within a SidebarProvider")
+  }
+  return context
 }

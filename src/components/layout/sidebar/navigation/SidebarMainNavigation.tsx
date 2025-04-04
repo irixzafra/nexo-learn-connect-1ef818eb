@@ -68,7 +68,7 @@ const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({
   };
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1 py-2">
       {/* Home link - always visible */}
       <NavItem 
         href={getHomePath()}
