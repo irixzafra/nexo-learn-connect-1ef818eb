@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import SafeRouteWrapper from '@/components/SafeRouteWrapper';
@@ -42,6 +43,7 @@ import PagesManagement from '@/pages/admin/settings/pages';
 import OrphanReviewPage from '@/pages/admin/OrphanReviewPage';
 import NavigationDiagram from '@/pages/admin/NavigationDiagram';
 import AnalyticsOverview from '@/pages/admin/analytics/index';
+import ReviewElementsPage from '@/pages/admin/ReviewElementsPage';
 
 import InstructorDashboard from '@/pages/instructor/Dashboard';
 import InstructorCoursesList from '@/pages/instructor/CoursesList';
