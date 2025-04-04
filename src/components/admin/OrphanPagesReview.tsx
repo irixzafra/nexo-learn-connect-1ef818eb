@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Link, useNavigate } from 'react-router-dom';
 import { ExternalLink, AlertTriangle, CheckCircle, PlusCircle, RefreshCw, Layers } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { getSitePages } from '@/services/pagesService';
+import { getPages } from '@/services/pagesService';
 import { getNavigationComponents } from '@/features/admin/services/componentsService';
 
 interface OrphanPage {
@@ -34,7 +34,7 @@ const OrphanPagesReview: React.FC = () => {
         setIsLoading(true);
         
         // Get all pages from the site
-        const sitePages = await getSitePages();
+        const sitePages = await getPages();
         
         // Get navigation components to check which pages are linked
         const navComponents = await getNavigationComponents();
