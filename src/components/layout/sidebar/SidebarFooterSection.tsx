@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import RoleIndicator from '@/components/layout/header/RoleIndicator';
+import { useAuth } from '@/contexts/auth';
 
 interface SidebarFooterProps {
   userRole: UserRoleType;
@@ -41,11 +43,20 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
   getRoleName,
   forceAdminRole
 }) => {
+  // Get the real user role from auth context to determine if we should show the RoleIndicator
+  const { userRole: actualUserRole } = useAuth();
   
   // Render the collapsed version
   if (isCollapsed) {
     return (
       <div className="flex flex-col items-center gap-2 py-2">
+        {/* RoleIndicator/Switcher visible only for real admin users */}
+        {actualUserRole === 'admin' && (
+          <div className="pb-2 border-b border-border w-full flex justify-center mb-2">
+            <RoleIndicator />
+          </div>
+        )}
+      
         {/* Language selector */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -101,6 +112,13 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
   // Render the expanded version
   return (
     <div className="space-y-2 px-2 py-2">
+      {/* RoleIndicator/Switcher visible only for real admin users */}
+      {actualUserRole === 'admin' && (
+        <div className="px-1 pb-2 border-b border-border mb-2">
+          <RoleIndicator />
+        </div>
+      )}
+
       {/* Language switcher */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
