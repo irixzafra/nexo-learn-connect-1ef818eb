@@ -4,7 +4,7 @@ import { UserProfile, UserRoleType, toUserRoleType } from '@/types/auth';
 
 export const loginService = async (email: string, password: string) => {
   try {
-    console.log("Intentando iniciar sesión con email:", email);
+    console.log("authServices: Intentando iniciar sesión con email:", email);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,

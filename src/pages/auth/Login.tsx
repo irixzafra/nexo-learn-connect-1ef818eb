@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/auth';
 import { Loader2, Mail, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
 import AuthLayout from '@/layouts/AuthLayout';
+import { Toaster } from '@/components/ui/sonner';
 
 // Esquema de validación
 const loginSchema = z.object({
@@ -25,6 +26,8 @@ const Login: React.FC = () => {
   const { user, session, isLoading: authLoading, login } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  
+  console.log("Login component rendered, auth state:", { user, session, authLoading });
   
   useEffect(() => {
     // If user is already logged in, redirect to dashboard
@@ -54,6 +57,7 @@ const Login: React.FC = () => {
         toast.success('Inicio de sesión exitoso');
         navigate('/app/dashboard', { replace: true });
       } else {
+        console.error("Error en login:", result.error);
         toast.error('Error al iniciar sesión', {
           description: result.error || 'Verifica tus credenciales e intenta de nuevo',
         });
@@ -167,6 +171,7 @@ const Login: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+      <Toaster />
     </AuthLayout>
   );
 };

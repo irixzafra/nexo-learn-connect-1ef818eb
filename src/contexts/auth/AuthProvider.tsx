@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { UserRoleType, UserProfile, toUserRoleType } from '@/types/auth';
 import { supabase } from '@/lib/supabase';
@@ -69,12 +70,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     console.log("AuthProvider: login called with", email);
+    setIsLoading(true);
     try {
       const result = await loginService(email, password);
       console.log("AuthProvider: login result", result);
+      setIsLoading(false);
       return result;
     } catch (error: any) {
       console.error("AuthProvider: login error", error);
+      setIsLoading(false);
       return { success: false, error: error.message || "Error desconocido" };
     }
   };
@@ -113,15 +117,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const initAuth = async () => {
       setIsLoading(true);
       
+      console.log("AuthProvider: Initializing auth...");
+      
+      // Set up subscription to auth state changes FIRST
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (event, newSession) => {
+        async (event, newSession) => {
           console.log('Auth state changed:', event, newSession?.user?.id);
           setSession(newSession);
           setUser(newSession?.user || null);
           
           if (newSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-            setTimeout(() => {
-              fetchUserProfile(newSession.user.id).then(profile => {
+            // Use setTimeout to avoid Supabase deadlocks
+            setTimeout(async () => {
+              try {
+                const profile = await fetchUserProfile(newSession.user.id);
                 if (profile) {
                   setUserProfile(profile);
                   
@@ -129,7 +138,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                   console.log(`Setting userRole to: "${normalizedRole}" (original: "${profile.role}")`);
                   setUserRole(toUserRoleType(normalizedRole));
                 }
-              });
+              } catch (err) {
+                console.error("Error fetching profile after auth state change:", err);
+              }
             }, 0);
           }
           
@@ -142,19 +153,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       );
       
-      const { data: { session: existingSession } } = await supabase.auth.getSession();
-      setSession(existingSession);
-      setUser(existingSession?.user || null);
-      
-      if (existingSession?.user) {
-        const profile = await fetchUserProfile(existingSession.user.id);
-        if (profile) {
-          setUserProfile(profile);
-          setUserRole(toUserRoleType(profile.role));
+      try {
+        // THEN check for existing session
+        console.log("AuthProvider: Checking for existing session...");
+        const { data: { session: existingSession }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("Error getting session:", error);
         }
+        
+        console.log("AuthProvider: Existing session:", existingSession?.user?.id || "none");
+        setSession(existingSession);
+        setUser(existingSession?.user || null);
+        
+        if (existingSession?.user) {
+          try {
+            const profile = await fetchUserProfile(existingSession.user.id);
+            if (profile) {
+              setUserProfile(profile);
+              setUserRole(toUserRoleType(profile.role));
+            }
+          } catch (err) {
+            console.error("Error fetching profile during init:", err);
+          }
+        }
+      } catch (err) {
+        console.error("Error in auth initialization:", err);
       }
       
-      if (existingSession?.user && existingSession.user.email === 'admin@nexo.com') {
+      if (user && user.email === 'admin@nexo.com') {
         console.log('Found admin@nexo.com user, ensuring admin role');
         await forceUpdateRole('admin@nexo.com', 'admin');
       }
@@ -168,6 +195,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsInitialized(true);
       
       return () => {
+        // Cleanup on unmount
         subscription.unsubscribe();
       };
     };
