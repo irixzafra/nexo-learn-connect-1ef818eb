@@ -1,3 +1,4 @@
+
 import { 
   LayoutDashboard, 
   Users, 
@@ -219,7 +220,8 @@ export const adminNavigation: NavigationMenus = {
       icon: FileText,
       label: "Revisión de elementos",
       path: "/app/admin/review-elements",
-      requiredRole: ["admin"]
+      requiredRole: ["admin"],
+      disabled: true
     },
     {
       icon: FileCode,

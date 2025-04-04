@@ -1,6 +1,7 @@
 
 import React, { ReactNode } from 'react';
 import { Toaster } from 'sonner';
+import AdminNavigation from '../components/admin/AdminNavigation';
 
 interface AdminLayoutProps {
   children?: ReactNode;
@@ -12,7 +13,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       <aside className="hidden md:block md:w-64 border-r bg-card">
         <div className="p-5 flex-col h-full overflow-y-auto">
           <div className="font-bold text-lg mb-5">Academia LMS</div>
-          {/* Navigation now handled by the sidebar component system */}
+          <AdminNavigation />
         </div>
       </aside>
       

@@ -1,5 +1,5 @@
 
-// Este archivo redirige al contexto principal de autenticación
+// This file redirects to the main auth context
 import { useAuth } from '@/contexts/auth';
 
 export { useAuth };

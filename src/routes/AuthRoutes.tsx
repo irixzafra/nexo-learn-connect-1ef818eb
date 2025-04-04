@@ -2,7 +2,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Login from '@/pages/auth/Login';
-import SimpleLogin from '@/pages/auth/SimpleLogin'; // Añadimos la nueva página
 import Register from '@/pages/auth/Register';
 import ForgotPassword from '@/pages/auth/ForgotPassword';
 import ResetPassword from '@/pages/auth/ResetPassword';
@@ -13,7 +12,6 @@ const AuthRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="login" element={<Login />} />
-      <Route path="simple-login" element={<SimpleLogin />} /> {/* Ruta para la página simplificada */}
       <Route path="register" element={<Register />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
       <Route path="reset-password" element={<ResetPassword />} />

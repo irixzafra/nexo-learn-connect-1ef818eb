@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { routeMap } from '@/utils/routeUtils';
 
 const Footer: React.FC = () => {
   return (
@@ -11,13 +10,13 @@ const Footer: React.FC = () => {
           &copy; {new Date().getFullYear()} Nexo Educativo. Todos los derechos reservados.
         </p>
         <div className="flex items-center gap-4">
-          <Link to={routeMap.terms} className="text-sm text-muted-foreground hover:text-foreground">
+          <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground">
             Términos
           </Link>
-          <Link to={routeMap.privacy} className="text-sm text-muted-foreground hover:text-foreground">
+          <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
             Privacidad
           </Link>
-          <Link to={routeMap.accessibility} className="text-sm text-muted-foreground hover:text-foreground">
+          <Link to="/accessibility" className="text-sm text-muted-foreground hover:text-foreground">
             Accesibilidad
           </Link>
         </div>

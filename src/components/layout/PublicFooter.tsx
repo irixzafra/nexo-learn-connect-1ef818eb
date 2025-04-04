@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { routeMap } from '@/utils/routeUtils';
 
 const PublicFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -19,16 +18,16 @@ const PublicFooter: React.FC = () => {
           <div>
             <h3 className="font-semibold text-lg mb-4">Enlaces</h3>
             <ul className="space-y-2">
-              <li><Link to={routeMap.courses} className="text-muted-foreground hover:text-primary">Cursos</Link></li>
-              <li><Link to={routeMap.aboutUs} className="text-muted-foreground hover:text-primary">Sobre Nosotros</Link></li>
-              <li><Link to={routeMap.login} className="text-muted-foreground hover:text-primary">Iniciar Sesión</Link></li>
+              <li><Link to="/courses" className="text-muted-foreground hover:text-primary">Cursos</Link></li>
+              <li><Link to="/about-us" className="text-muted-foreground hover:text-primary">Sobre Nosotros</Link></li>
+              <li><Link to="/auth/login" className="text-muted-foreground hover:text-primary">Iniciar Sesión</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-semibold text-lg mb-4">Legal</h3>
             <ul className="space-y-2">
-              <li><Link to={routeMap.terms} className="text-muted-foreground hover:text-primary">Términos de Servicio</Link></li>
-              <li><Link to={routeMap.privacy} className="text-muted-foreground hover:text-primary">Política de Privacidad</Link></li>
+              <li><Link to="/terms" className="text-muted-foreground hover:text-primary">Términos de Servicio</Link></li>
+              <li><Link to="/privacy" className="text-muted-foreground hover:text-primary">Política de Privacidad</Link></li>
             </ul>
           </div>
         </div>

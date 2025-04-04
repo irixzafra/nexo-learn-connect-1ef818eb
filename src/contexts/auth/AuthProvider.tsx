@@ -4,11 +4,11 @@ import { UserRoleType, UserProfile, toUserRoleType } from '@/types/auth';
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
 import { AuthContext } from './AuthContext';
-import { fetchUserProfileService, getSessionService } from './authServices';
 import { 
+  fetchUserProfile, 
+  forceUpdateUserRole, 
   saveSimulatedRole,
-  getStoredSimulatedRole,
-  forceUpdateUserRole
+  getStoredSimulatedRole
 } from './authHelpers';
 import {
   loginService,
@@ -19,48 +19,50 @@ import {
 } from './authServices';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Estados principales de autenticación
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  
-  // Estados de perfil y rol
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userRole, setUserRole] = useState<UserRoleType | null>(null);
   const [simulatedRole, setSimulatedRoleState] = useState<UserRoleType | null>(null);
 
-  // Estados derivados
+  // Calculate derived values
   const effectiveRole = simulatedRole || userRole;
   const isViewingAsOtherRole = simulatedRole !== null;
   const isAuthenticated = !!session && !!user;
 
+  // Debug the state on each render
   console.log('>>> DEBUG AuthProvider RENDER:', {
     userRole,
     simulatedRole,
     effectiveRole,
     isViewingAsOtherRole,
     isAuthenticated,
-    isLoading
+    userRoleType: typeof userRole,
+    userRoleExactValue: JSON.stringify(userRole),
+    userProfileRole: userProfile?.role,
   });
 
-  // Manejador para actualizar el rol simulado
+  // Implementation of setSimulatedRole
   const setSimulatedRole = (role: UserRoleType | null) => {
-    const currentRole = userRole;
+    const currentRole = userRole; // Capture real role before changing
     setSimulatedRoleState(role);
     saveSimulatedRole(role, currentRole);
   };
 
+  // Implementation of resetToOriginalRole
   const resetToOriginalRole = () => {
     setSimulatedRole(null);
   };
 
-  // Actualizar forzadamente el rol de un usuario (admin)
+  // Force update a user's role by email
   const forceUpdateRole = async (email: string, roleToSet: UserRoleType) => {
     try {
+      // First attempt to update the user by email
       const result = await forceUpdateUserRole(email, roleToSet);
       
-      // Si se actualizó con éxito y es el usuario actual, actualizamos el estado local
+      // If this is the current user, update the local state
       if (result.success && user && email === user.email) {
         setUserRole(roleToSet);
         setUserProfile(prev => prev ? { ...prev, role: roleToSet } : null);
@@ -73,202 +75,128 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Función de login
-  const login = async (email: string, password: string, remember: boolean = false) => {
-    console.log("AuthProvider: login called with", email, "and remember:", remember);
-    setIsLoading(true);
-    
-    try {
-      const result = await loginService(email, password, remember);
-      console.log("AuthProvider: login result", result);
-      return result;
-    } catch (error: any) {
-      console.error("AuthProvider: login error", error);
-      return { success: false, error: error.message || "Error desconocido" };
-    } finally {
-      setIsLoading(false);
-    }
+  // Authentication functions
+  const login = async (email: string, password: string) => {
+    return loginService(email, password);
   };
 
-  // Función de logout
   const logout = async () => {
-    setIsLoading(true);
-    
-    try {
-      setSimulatedRoleState(null);
-      localStorage.removeItem('viewAsRole');
-      await logoutService();
-    } finally {
-      setIsLoading(false);
-    }
+    // Clear simulated role before signing out
+    setSimulatedRoleState(null);
+    localStorage.removeItem('viewAsRole');
+    await logoutService();
   };
 
-  // Función de registro
   const signup = async (email: string, password: string, userData?: Partial<UserProfile>) => {
-    setIsLoading(true);
-    
-    try {
-      const result = await signupService(email, password, userData);
-      return result;
-    } catch (error: any) {
-      return { success: false, error: error.message || "Error desconocido" };
-    } finally {
-      setIsLoading(false);
-    }
+    return signupService(email, password, userData);
   };
 
-  // Función de actualización de perfil
   const updateProfile = async (profileData: Partial<UserProfile>) => {
     if (!user) return { success: false, error: 'No user logged in' };
     
-    setIsLoading(true);
+    const result = await updateProfileService(user.id, profileData);
     
-    try {
-      const result = await updateProfileService(user.id, profileData);
+    if (result.success) {
+      // Update local state
+      setUserProfile(prev => prev ? { ...prev, ...profileData } : null);
       
-      if (result.success) {
-        setUserProfile(prev => prev ? { ...prev, ...profileData } : null);
-        
-        if (profileData.role) {
-          setUserRole(toUserRoleType(profileData.role));
-        }
+      // Update role if it's changed
+      if (profileData.role) {
+        setUserRole(toUserRoleType(profileData.role));
       }
-      
-      return result;
-    } finally {
-      setIsLoading(false);
     }
+    
+    return result;
   };
 
-  // Función de actualización de contraseña
   const updatePassword = async (password: string) => {
-    setIsLoading(true);
-    
-    try {
-      return await updatePasswordService(password);
-    } finally {
-      setIsLoading(false);
-    }
+    return updatePasswordService(password);
   };
 
-  // Inicialización del proveedor de autenticación
+  // Initialize auth state
   useEffect(() => {
-    let mounted = true;
-    let subscription: { unsubscribe: () => void } | null = null;
-    
     const initAuth = async () => {
-      try {
-        console.log("AuthProvider: Inicializando auth...");
-        setIsLoading(true);
-        
-        // PRIMERO: Configurar la suscripción a cambios de estado de autenticación
-        const { data } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      setIsLoading(true);
+      
+      // First set up the auth state listener
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        (event, newSession) => {
           console.log('Auth state changed:', event, newSession?.user?.id);
-          
-          if (!mounted) return;
-          
           setSession(newSession);
           setUser(newSession?.user || null);
           
-          // Si hay una sesión nueva, obtenemos el perfil del usuario
-          if (newSession?.user) {
-            // Usamos setTimeout para evitar deadlocks en Supabase
-            setTimeout(async () => {
-              try {
-                const { success, data: profile } = await fetchUserProfileService(newSession.user.id);
-                
-                if (success && profile && mounted) {
+          // When user signs in, fetch their profile
+          if (newSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+            setTimeout(() => {
+              fetchUserProfile(newSession.user.id).then(profile => {
+                if (profile) {
                   setUserProfile(profile);
-                  setUserRole(toUserRoleType(profile.role));
+                  
+                  // Ensure role is properly formatted (all lowercase)
+                  const normalizedRole = profile.role ? String(profile.role).toLowerCase().trim() : 'student';
+                  console.log(`Setting userRole to: "${normalizedRole}" (original: "${profile.role}")`);
+                  setUserRole(toUserRoleType(normalizedRole));
                 }
-              } catch (err) {
-                console.error("Error fetching profile after auth state change:", err);
-              }
+              });
             }, 0);
-          } else if (event === 'SIGNED_OUT' && mounted) {
-            // Limpiamos los estados cuando el usuario cierra sesión
+          }
+          
+          // When user signs out, clear profile and role
+          if (event === 'SIGNED_OUT') {
             setUserProfile(null);
             setUserRole(null);
             setSimulatedRoleState(null);
             localStorage.removeItem('viewAsRole');
           }
-        });
-        
-        subscription = data.subscription;
-        
-        // DESPUÉS: Verificamos si existe una sesión
-        const { success, data: existingSession, error } = await getSessionService();
-        
-        if (error) {
-          console.error("Error getting session:", error);
         }
-        
-        console.log("AuthProvider: Existing session:", existingSession?.user?.id || "none");
-        
-        if (mounted) {
-          setSession(existingSession || null);
-          setUser(existingSession?.user || null);
-          
-          // Si hay un usuario en la sesión, obtenemos su perfil
-          if (existingSession?.user) {
-            try {
-              const { success, data: profile } = await fetchUserProfileService(existingSession.user.id);
-              
-              if (success && profile && mounted) {
-                setUserProfile(profile);
-                setUserRole(toUserRoleType(profile.role));
-              }
-            } catch (err) {
-              console.error("Error fetching profile during init:", err);
-            }
-          }
-        }
-        
-        // Verificar si hay un rol simulado guardado
-        if (mounted) {
-          const storedRole = getStoredSimulatedRole();
-          if (storedRole) {
-            setSimulatedRoleState(storedRole);
-          }
-        }
-        
-        // Aseguramos que admin@nexo.com siempre tenga rol admin (para desarrollo)
-        if (mounted && user && user.email === 'admin@nexo.com') {
-          console.log('Found admin@nexo.com user, ensuring admin role');
-          await forceUpdateRole('admin@nexo.com', 'admin');
-        }
-      } catch (err) {
-        console.error("Error in auth initialization:", err);
-      } finally {
-        // Garantizamos que isLoading se establezca en false al finalizar
-        if (mounted) {
-          setIsLoading(false);
-          setIsInitialized(true);
-          console.log('AuthProvider initialization complete, isLoading set to false');
+      );
+      
+      // Then check for existing session
+      const { data: { session: existingSession } } = await supabase.auth.getSession();
+      setSession(existingSession);
+      setUser(existingSession?.user || null);
+      
+      // If there's a user, fetch their profile
+      if (existingSession?.user) {
+        const profile = await fetchUserProfile(existingSession.user.id);
+        if (profile) {
+          setUserProfile(profile);
+          setUserRole(toUserRoleType(profile.role));
         }
       }
+      
+      // Special case: If the user is admin@nexo.com, ensure they have admin role
+      if (existingSession?.user && existingSession.user.email === 'admin@nexo.com') {
+        console.log('Found admin@nexo.com user, ensuring admin role');
+        await forceUpdateRole('admin@nexo.com', 'admin');
+      }
+      
+      // Initialize simulated role from localStorage
+      const storedRole = getStoredSimulatedRole();
+      if (storedRole) {
+        setSimulatedRoleState(storedRole);
+      }
+      
+      setIsLoading(false);
+      setIsInitialized(true);
+      
+      // Cleanup subscription on unmount
+      return () => {
+        subscription.unsubscribe();
+      };
     };
     
     initAuth();
-    
-    // Limpieza al desmontar
-    return () => {
-      mounted = false;
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    };
   }, []);
 
-  // Objetos de contexto que se proporcionarán
-  const contextValue = {
+  const value = {
     isLoading,
     isAuthenticated,
     isInitialized,
     user,
     session,
     userProfile,
-    profile: userProfile, // Alias para mantener compatibilidad
+    profile: userProfile, // Add alias for backward compatibility
     userRole,
     simulatedRole,
     effectiveRole,
@@ -283,7 +211,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     resetToOriginalRole
   };
 
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;

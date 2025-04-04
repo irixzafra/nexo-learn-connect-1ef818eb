@@ -1,18 +1,13 @@
 
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import AppProviders from './providers/AppProviders';
 import AppRoutes from './routes/AppRoutes';
-import { Toaster } from 'sonner';
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-        <Toaster position="top-right" richColors />
-      </AuthProvider>
-    </BrowserRouter>
+    <AppProviders>
+      <AppRoutes />
+    </AppProviders>
   );
 };
 

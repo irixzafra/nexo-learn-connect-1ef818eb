@@ -1,6 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,18 +7,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Loader2, Mail, LockKeyhole, User } from 'lucide-react';
-import { useAuth } from '@/contexts/auth';
-import AuthLayout from '@/layouts/AuthLayout';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { Loader2, Mail, LockKeyhole, User } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 // Esquema de validación
 const registerSchema = z.object({
-  fullName: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
+  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   email: z.string().email('Introduce un email válido'),
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
-  confirmPassword: z.string().min(6, 'La confirmación de contraseña debe tener al menos 6 caracteres'),
-}).refine(data => data.password === data.confirmPassword, {
+  confirmPassword: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+}).refine((data) => data.password === data.confirmPassword, {
   message: "Las contraseñas no coinciden",
   path: ["confirmPassword"],
 });
@@ -27,52 +27,53 @@ const registerSchema = z.object({
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const Register: React.FC = () => {
-  const { user, session, isLoading: authLoading, signup } = useAuth();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const { user, session } = useAuth();
+  const [isLoading, setIsLoading] = React.useState(false);
   
-  useEffect(() => {
+  React.useEffect(() => {
     // If user is already logged in, redirect to dashboard
     if (user && session) {
-      navigate('/app/dashboard', { replace: true });
+      navigate('/dashboard');
     }
   }, [user, session, navigate]);
   
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      fullName: '',
+      name: '',
       email: '',
       password: '',
       confirmPassword: '',
     },
   });
   
-  const onSubmit = async (formData: RegisterFormValues) => {
+  const onSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
     try {
-      // Extract data for registration
-      const { fullName, email, password } = formData;
-      
-      // Call signup method from AuthContext
-      const result = await signup(email, password, {
-        full_name: fullName,
+      const { data: signUpData, error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            full_name: data.name,
+          },
+        },
       });
       
-      if (result.success) {
-        toast.success('Registro exitoso', {
-          description: 'Tu cuenta ha sido creada correctamente. Ya puedes iniciar sesión.',
-        });
-        navigate('/auth/login');
-      } else {
-        toast.error('Error al registrarse', {
-          description: result.error || 'Por favor intenta nuevamente.',
-        });
+      if (error) {
+        throw error;
       }
+      
+      toast.success('Registro exitoso', {
+        description: 'Ya puedes iniciar sesión con tus credenciales',
+      });
+      
+      navigate('/auth/login');
     } catch (error: any) {
-      console.error('Error durante el registro:', error);
+      console.error('Error de registro:', error);
       toast.error('Error al registrarse', {
-        description: error.message || 'Por favor intenta nuevamente.',
+        description: error.message || 'Verifica tus datos e intenta de nuevo',
       });
     } finally {
       setIsLoading(false);
@@ -80,12 +81,12 @@ const Register: React.FC = () => {
   };
   
   return (
-    <AuthLayout>
+    <div className="container mx-auto px-4 py-12 flex justify-center">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Crear una cuenta</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Crear Cuenta</CardTitle>
           <CardDescription className="text-center">
-            Introduce tus datos para registrarte en la plataforma
+            Introduce tus datos para registrarte
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -93,10 +94,10 @@ const Register: React.FC = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="fullName"
+                name="name"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-base">Nombre completo</FormLabel>
+                    <FormLabel className="text-base">Nombre Completo</FormLabel>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                       <FormControl>
@@ -125,6 +126,7 @@ const Register: React.FC = () => {
                           {...field} 
                           type="email" 
                           placeholder="usuario@ejemplo.com" 
+                          autoComplete="email" 
                           className="pl-10 py-6 text-base"
                         />
                       </FormControl>
@@ -147,6 +149,7 @@ const Register: React.FC = () => {
                           {...field} 
                           type="password" 
                           placeholder="••••••••" 
+                          autoComplete="new-password" 
                           className="pl-10 py-6 text-base"
                         />
                       </FormControl>
@@ -169,6 +172,7 @@ const Register: React.FC = () => {
                           {...field} 
                           type="password" 
                           placeholder="••••••••" 
+                          autoComplete="new-password" 
                           className="pl-10 py-6 text-base"
                         />
                       </FormControl>
@@ -181,12 +185,12 @@ const Register: React.FC = () => {
               <Button 
                 type="submit" 
                 className="w-full py-6 text-base" 
-                disabled={isLoading || authLoading}
+                disabled={isLoading}
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Registrando...
+                    Registrándose...
                   </>
                 ) : (
                   'Registrarse'
@@ -199,13 +203,13 @@ const Register: React.FC = () => {
             <p className="text-sm text-muted-foreground">
               ¿Ya tienes una cuenta?{' '}
               <Link to="/auth/login" className="text-primary hover:underline">
-                Iniciar sesión
+                Iniciar Sesión
               </Link>
             </p>
           </div>
         </CardContent>
       </Card>
-    </AuthLayout>
+    </div>
   );
 };
 

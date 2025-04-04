@@ -3,9 +3,6 @@ import { supabase } from '@/lib/supabase';
 import { UserProfile, UserRoleType } from '@/types/auth';
 import { toast } from 'sonner';
 
-/**
- * Obtiene el perfil del usuario desde Supabase
- */
 export const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
   try {
     console.log('Fetching user profile for:', userId);
@@ -31,10 +28,6 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
   }
 };
 
-/**
- * Actualiza forzadamente el rol de un usuario
- * Usado principalmente por administradores
- */
 export const forceUpdateUserRole = async (email: string, roleToSet: UserRoleType): Promise<{ success: boolean; error?: any }> => {
   try {
     console.log(`Attempting to force update role for ${email} to ${roleToSet}`);
@@ -77,9 +70,6 @@ export const forceUpdateUserRole = async (email: string, roleToSet: UserRoleType
   }
 };
 
-/**
- * Guarda el rol simulado en localStorage y muestra una notificación
- */
 export const saveSimulatedRole = (role: UserRoleType | null, currentRole: UserRoleType | null) => {
   if (role) {
     localStorage.setItem('viewAsRole', role);
@@ -92,9 +82,6 @@ export const saveSimulatedRole = (role: UserRoleType | null, currentRole: UserRo
   }
 };
 
-/**
- * Obtiene el rol simulado guardado en localStorage
- */
 export const getStoredSimulatedRole = (): UserRoleType | null => {
   try {
     const storedRole = localStorage.getItem('viewAsRole');

@@ -6,7 +6,6 @@ import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, MapPin, Phone, A
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
-import { routeMap } from '@/utils/routeUtils';
 
 const LandingFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -60,7 +59,7 @@ const LandingFooter: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           {/* Logo y descripción */}
           <motion.div className="space-y-5" variants={itemVariants}>
-            <Link to={routeMap.home} className="flex items-center mb-4 group transition-transform duration-300 hover:scale-105">
+            <Link to="/" className="flex items-center mb-4 group transition-transform duration-300 hover:scale-105">
               <NexoLogo className="h-10 w-auto" subtitle="ecosistema creativo" />
             </Link>
             <p className="text-muted-foreground text-base">
@@ -79,11 +78,11 @@ const LandingFooter: React.FC = () => {
           <motion.div variants={itemVariants}>
             <h3 className="font-semibold mb-5 text-lg tracking-wide">Enlaces rápidos</h3>
             <ul className="space-y-3">
-              <FooterLink href={routeMap.courses} text="Cursos" />
-              <FooterLink href={routeMap.community} text="Comunidad" />
-              <FooterLink href={routeMap.aboutUs} text="Nosotros" />
-              <FooterLink href={routeMap.scholarships} text="Becas y Ayudas" />
-              <FooterLink href={routeMap.contact} text="Contacto" />
+              <FooterLink href="/courses" text="Cursos" />
+              <FooterLink href="/community" text="Comunidad" />
+              <FooterLink href="/about-us" text="Nosotros" />
+              <FooterLink href="/scholarships" text="Becas y Ayudas" />
+              <FooterLink href="/contact" text="Contacto" />
             </ul>
           </motion.div>
 
@@ -91,10 +90,10 @@ const LandingFooter: React.FC = () => {
           <motion.div variants={itemVariants}>
             <h3 className="font-semibold mb-5 text-lg tracking-wide">Legal</h3>
             <ul className="space-y-3">
-              <FooterLink href={routeMap.terms} text="Términos y Condiciones" />
-              <FooterLink href={routeMap.privacy} text="Política de Privacidad" />
-              <FooterLink href={routeMap.cookies} text="Política de Cookies" />
-              <FooterLink href={routeMap.accessibility} text="Accesibilidad" />
+              <FooterLink href="/terms" text="Términos y Condiciones" />
+              <FooterLink href="/privacy" text="Política de Privacidad" />
+              <FooterLink href="/cookies" text="Política de Cookies" />
+              <FooterLink href="/accessibility" text="Accesibilidad" />
             </ul>
           </motion.div>
 
@@ -129,7 +128,7 @@ const LandingFooter: React.FC = () => {
                   asChild
                   className="mt-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all duration-300 hover:shadow-md"
                 >
-                  <Link to={routeMap.contact}>Contactar ahora</Link>
+                  <Link to="/contact">Contactar ahora</Link>
                 </Button>
               </motion.div>
             </div>
@@ -173,13 +172,13 @@ const LandingFooter: React.FC = () => {
               © {currentYear} Nexo Ecosistema Creativo. Todos los derechos reservados.
             </p>
             <div className="flex flex-wrap justify-center gap-5">
-              <Link to={routeMap.terms} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Términos
               </Link>
-              <Link to={routeMap.privacy} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Privacidad
               </Link>
-              <Link to={routeMap.cookies} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link to="/cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Cookies
               </Link>
             </div>

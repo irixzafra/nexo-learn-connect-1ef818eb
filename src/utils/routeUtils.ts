@@ -39,16 +39,6 @@ export const routeMap = {
   contact: '/contact',
   aboutUs: '/about-us',
   courses: '/courses',
-  cookies: '/cookies',
-  accessibility: '/accessibility',
-  
-  // Nueva ruta para comunidad
-  community: '/community',
-  
-  // Rutas de verificación de certificados y becas
-  certificateVerificationPortal: '/certificates/verification-portal',
-  scholarships: '/scholarships',
-  help: '/help',
   
   // Rutas de aplicación autenticada
   app: '/app',
@@ -66,7 +56,6 @@ export const routeMap = {
   adminSystemPages: '/app/admin/system-pages',
   adminDesignSystem: '/app/admin/design-system',
   adminDesignSystemButton: '/app/admin/design-system/components/button',
-  adminReviewElements: '/app/admin/review-elements',
   
   // Rutas de instructor
   profesor: '/app/profesor',
@@ -85,15 +74,18 @@ export const routeMap = {
   // Rutas de certificados
   certificates: '/app/certificates',
   certificateDetail: (id: string) => `/app/certificate/${id}`,
+  certificateVerificationPortal: '/app/certificates/verify',
   
   // Rutas de perfil
   profileSettings: '/app/profile/settings',
   profileAchievements: '/app/profile/achievements',
   
   // Otras rutas
-  learningPaths: '/learning-paths',
+  help: '/help',
+  learningPaths: '/app/learning-paths',
   achievements: '/app/achievements',
   calendar: '/app/calendar',
+  community: '/app/community',
   messages: '/app/messages',
   notifications: '/app/notifications'
 };
