@@ -19,7 +19,14 @@ import {
   Compass,
   User,
   Award,
-  MessageCircle
+  MessageCircle,
+  CreditCard,
+  Palette,
+  Plug,
+  Database,
+  PanelLeft,
+  Activity,
+  Sparkles
 } from "lucide-react";
 
 import { UserRoleType } from "@/types/auth";
@@ -35,10 +42,46 @@ export const adminNavigation: NavigationMenus = {
       requiredRole: ["admin"]
     }
   ],
-  users: [
+  academic: [
+    {
+      icon: BookOpen,
+      label: "Gestión de Cursos",
+      path: "/app/admin/courses",
+      requiredRole: ["admin"]
+    },
+    {
+      icon: FileText,
+      label: "Contenido Global",
+      path: "/app/admin/content",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: GraduationCap,
+      label: "Rutas de Aprendizaje",
+      path: "/app/admin/learning-paths",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: Award,
+      label: "Certificados",
+      path: "/app/admin/certificates",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: BarChart2,
+      label: "Analíticas Académicas",
+      path: "/app/admin/academic-analytics",
+      requiredRole: ["admin"],
+      disabled: true
+    }
+  ],
+  management: [
     {
       icon: Users,
-      label: "Usuarios",
+      label: "Gestión de Usuarios",
       path: "/app/admin/users",
       requiredRole: ["admin"]
     },
@@ -47,64 +90,126 @@ export const adminNavigation: NavigationMenus = {
       label: "Roles y Permisos",
       path: "/app/admin/roles",
       requiredRole: ["admin"]
-    }
-  ],
-  education: [
-    {
-      icon: BookOpen,
-      label: "Cursos",
-      path: "/app/admin/courses",
-      requiredRole: ["admin"]
     },
     {
-      icon: School,
-      label: "Instructores",
-      path: "/app/admin/instructors",
-      requiredRole: ["admin"]
-    }
-  ],
-  content: [
-    {
-      icon: FileText,
-      label: "Páginas",
-      path: "/app/admin/pages",
-      requiredRole: ["admin"]
-    },
-    {
-      icon: FileCode,
-      label: "Desarrollo",
-      path: "/app/admin/development",
-      requiredRole: ["admin"]
-    }
-  ],
-  communications: [
-    {
-      icon: Bell,
-      label: "Notificaciones",
-      path: "/app/admin/notifications",
+      icon: Activity,
+      label: "Analíticas de Usuarios",
+      path: "/app/admin/user-analytics",
       requiredRole: ["admin"],
-      badge: 3
+      disabled: true
     },
     {
       icon: MessageSquare,
-      label: "Mensajes",
-      path: "/app/admin/messages",
+      label: "Comunicación",
+      path: "/app/admin/communication",
       requiredRole: ["admin"],
-      badge: 5
+      disabled: true
+    }
+  ],
+  finances: [
+    {
+      icon: CreditCard,
+      label: "Transacciones",
+      path: "/app/admin/transactions",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: Activity,
+      label: "Suscripciones",
+      path: "/app/admin/subscriptions",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: BarChart2,
+      label: "Analíticas Financieras",
+      path: "/app/admin/financial-analytics",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: Settings,
+      label: "Configuración de Pagos",
+      path: "/app/admin/payment-settings",
+      requiredRole: ["admin"],
+      disabled: true
     }
   ],
   system: [
     {
       icon: Settings,
-      label: "Configuración",
+      label: "Configuración General",
       path: "/app/admin/settings",
       requiredRole: ["admin"]
     },
     {
-      icon: HelpCircle,
-      label: "Soporte",
-      path: "/app/admin/support",
+      icon: Palette,
+      label: "Diseño",
+      path: "/app/admin/design",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: FileText,
+      label: "Páginas CMS",
+      path: "/app/admin/pages",
       requiredRole: ["admin"]
+    },
+    {
+      icon: Sparkles,
+      label: "Gestión de Features",
+      path: "/app/admin/features",
+      requiredRole: ["admin"]
+    },
+    {
+      icon: Plug,
+      label: "Integraciones",
+      path: "/app/admin/integrations",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: BarChart2,
+      label: "Analíticas de Plataforma",
+      path: "/app/admin/platform-analytics",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: Database,
+      label: "Salud/Logs",
+      path: "/app/admin/system-health",
+      requiredRole: ["admin"],
+      disabled: true
+    }
+  ],
+  development: [
+    {
+      icon: PanelLeft,
+      label: "Diagrama de Navegación",
+      path: "/app/admin/navigation-diagram",
+      requiredRole: ["admin"]
+    },
+    {
+      icon: FileText,
+      label: "Revisión de Elementos",
+      path: "/app/admin/review-elements",
+      requiredRole: ["admin"],
+      disabled: true
+    },
+    {
+      icon: FileCode,
+      label: "Herramientas de Desarrollo",
+      path: "/app/admin/development",
+      requiredRole: ["admin"]
+    },
+    {
+      icon: Settings,
+      label: "Configuraciones Avanzadas",
+      path: "/app/admin/advanced-settings",
+      requiredRole: ["admin"],
+      disabled: true
     }
   ]
 };
@@ -114,12 +219,12 @@ export const instructorNavigation: NavigationMenus = {
   dashboard: [
     {
       icon: LayoutDashboard,
-      label: "Panel del Instructor",
+      label: "Panel Instructor",
       path: "/app/instructor/dashboard",
       requiredRole: ["instructor"]
     }
   ],
-  courses: [
+  academic: [
     {
       icon: BookOpen,
       label: "Mis Cursos",
@@ -128,65 +233,66 @@ export const instructorNavigation: NavigationMenus = {
     },
     {
       icon: Video,
-      label: "Crear Contenido",
-      path: "/app/instructor/content/create",
+      label: "Crear Curso",
+      path: "/app/instructor/courses/create",
       requiredRole: ["instructor"]
     },
     {
-      icon: FileCheck,
-      label: "Evaluaciones",
-      path: "/app/instructor/assessments",
-      requiredRole: ["instructor"]
-    }
-  ],
-  schedule: [
-    {
-      icon: Calendar,
-      label: "Calendario",
-      path: "/app/instructor/calendar",
-      requiredRole: ["instructor"]
+      icon: FileText,
+      label: "Biblioteca de Contenido",
+      path: "/app/instructor/content-library",
+      requiredRole: ["instructor"],
+      disabled: true
     }
   ],
   students: [
     {
       icon: Users,
-      label: "Estudiantes",
+      label: "Mis Estudiantes",
       path: "/app/instructor/students",
       requiredRole: ["instructor"]
     },
     {
-      icon: MessageSquare,
-      label: "Mensajes",
-      path: "/app/instructor/messages",
+      icon: FileCheck,
+      label: "Progreso/Notas",
+      path: "/app/instructor/student-progress",
       requiredRole: ["instructor"],
-      badge: 3
+      disabled: true
+    },
+    {
+      icon: MessageSquare,
+      label: "Comunicación",
+      path: "/app/instructor/communication",
+      requiredRole: ["instructor"],
+      disabled: true
     }
   ],
-  analytics: [
+  performance: [
     {
       icon: BarChart2,
-      label: "Estadísticas",
+      label: "Analíticas de Cursos",
       path: "/app/instructor/analytics",
+      requiredRole: ["instructor"]
+    }
+  ],
+  account: [
+    {
+      icon: User,
+      label: "Mi Perfil",
+      path: "/app/profile",
       requiredRole: ["instructor"]
     },
     {
-      icon: FileText,
-      label: "Informes",
-      path: "/app/instructor/reports",
-      requiredRole: ["instructor"]
-    }
-  ],
-  settings: [
+      icon: CreditCard,
+      label: "Mi Facturación",
+      path: "/app/instructor/billing",
+      requiredRole: ["instructor"],
+      disabled: true
+    },
     {
       icon: Settings,
       label: "Configuración",
       path: "/app/instructor/settings",
-      requiredRole: ["instructor"]
-    },
-    {
-      icon: HelpCircle,
-      label: "Ayuda",
-      path: "/app/instructor/help",
       requiredRole: ["instructor"]
     }
   ]
