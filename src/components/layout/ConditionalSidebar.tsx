@@ -65,7 +65,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
           messagesCount={messagesCount}
           notificationsCount={notificationsCount}
           isCollapsed={isCollapsed}
-          navigationMenus={navigationMenus} // Pasar la navegación dinámica
+          navigationMenus={navigationMenus}
         />
       </div>
       
