@@ -4,7 +4,6 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
 import { InlineEditorProvider } from '@/contexts/InlineEditorContext';
-import InlineEditControls from '@/components/admin/InlineEditControls';
 import { useAuth } from '@/contexts/auth';
 import Header from '@/components/layout/Header';
 
@@ -28,8 +27,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               {children || <Outlet />}
             </main>
           </div>
-          
-          {isAdmin && <InlineEditControls />}
         </div>
       </SidebarProvider>
     </InlineEditorProvider>

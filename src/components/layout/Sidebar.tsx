@@ -11,8 +11,8 @@ const Sidebar: React.FC = () => {
 
   return (
     <>
-      {/* Sidebar toggle button - visible on all screens */}
-      <SidebarTrigger className="fixed left-3 top-4 z-50" />
+      {/* Sidebar trigger button - more visible position */}
+      <SidebarTrigger className="fixed left-3 top-3 z-50" />
       
       {/* Actual sidebar */}
       <aside 

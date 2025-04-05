@@ -1,6 +1,6 @@
 
 import * as React from "react"
-import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react"
+import { Menu, X, ChevronLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useSidebar } from "../sidebar-provider"
@@ -31,7 +31,7 @@ export const SidebarTrigger = React.forwardRef<
       variant="outline"
       size="icon"
       className={cn(
-        "h-10 w-10 rounded-md bg-primary/5 text-foreground hover:bg-primary/10 transition-all duration-300 border-primary/20",
+        "h-10 w-10 rounded-md bg-primary/10 text-foreground hover:bg-primary/20 transition-all duration-300 border-primary/20",
         "z-50 shadow-md",
         className
       )}
