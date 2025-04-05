@@ -59,23 +59,20 @@ export function constructColumns<TData>(
   
   // Add actions column if needed
   if (onEdit || onDelete || renderCustomActions) {
-    const actionsColumn = createActionsColumn<TData>({
-      id: 'actions',
-      cell: ({ row }) => {
-        const item = row.original;
-        const itemId = (item as any).id;
-        
-        // Return the necessary data for rendering actions
-        return { 
-          item, 
-          itemId, 
-          hasEdit: !!onEdit, 
-          hasDelete: !!onDelete, 
-          onEdit: onEdit ? () => onEdit(item) : undefined,
-          onDelete: onDelete ? () => onDelete(itemId) : undefined,
-          renderCustomActions
-        } as unknown as React.ReactNode; // Cast to ReactNode to satisfy TypeScript
-      }
+    const actionsColumn = createActionsColumn<TData>(({ row }) => {
+      const item = row.original;
+      const itemId = (item as any).id;
+      
+      // Return the necessary data for rendering actions
+      return { 
+        item, 
+        itemId, 
+        hasEdit: !!onEdit, 
+        hasDelete: !!onDelete, 
+        onEdit: onEdit ? () => onEdit(item) : undefined,
+        onDelete: onDelete ? () => onDelete(itemId) : undefined,
+        renderCustomActions
+      } as unknown as React.ReactNode; // Cast to ReactNode to satisfy TypeScript
     });
     
     tableColumns.push(actionsColumn);
