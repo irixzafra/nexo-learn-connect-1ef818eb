@@ -1,78 +1,109 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { UserRoleType } from '@/types/auth';
 import { NavigationItemWithChildren } from '@/types/navigation-manager';
-import { useAuth } from '@/contexts/auth';
+import { getNavigationByRole } from '@/config/navigation/roleBasedNavigation';
 import { 
-  fetchNavigationItems,
-  saveNavigationItems,
-  syncNavigationFromCode
+  fetchNavigationItems, 
+  saveNavigationItems, 
+  syncNavigationFromCode 
 } from '@/services/navigationService';
+import { useToast } from '@/components/ui/use-toast';
 
-export const useNavigationItems = () => {
+export const useNavigationItems = (role: UserRoleType) => {
   const [items, setItems] = useState<NavigationItemWithChildren[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const { effectiveRole } = useAuth();
+  const [originalItems, setOriginalItems] = useState<NavigationItemWithChildren[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const { toast } = useToast();
   
-  const loadItems = async () => {
+  const hasUnsavedChanges = JSON.stringify(items) !== JSON.stringify(originalItems);
+
+  // Cargar elementos de navegación para el rol seleccionado
+  const loadNavigationItems = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
-    
     try {
-      const navigationItems = await fetchNavigationItems();
-      setItems(navigationItems);
-    } catch (err) {
-      console.error('Error loading navigation items:', err);
-      setError(err instanceof Error ? err : new Error('Failed to load navigation items'));
+      const loadedItems = await fetchNavigationItems(role);
+      setItems(loadedItems);
+      setOriginalItems(JSON.parse(JSON.stringify(loadedItems))); // Deep clone
+    } catch (error) {
+      console.error(`Error cargando navegación para ${role}:`, error);
+      toast({
+        title: "Error al cargar navegación",
+        description: `No se pudo cargar la configuración de navegación para el rol ${role}.`,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
-  };
-  
-  const updateItems = async (newItems: NavigationItemWithChildren[]) => {
-    setIsLoading(true);
-    setError(null);
-    
+  }, [role, toast]);
+
+  // Actualizar visibilidad de un elemento
+  const updateItemVisibility = useCallback((itemId: string, isVisible: boolean) => {
+    setItems(prevItems => {
+      const updateItemInTree = (items: NavigationItemWithChildren[]): NavigationItemWithChildren[] => {
+        return items.map(item => {
+          if (item.id === itemId) {
+            return { ...item, isVisible };
+          }
+          if (item.children && item.children.length > 0) {
+            return {
+              ...item,
+              children: updateItemInTree(item.children)
+            };
+          }
+          return item;
+        });
+      };
+      
+      return updateItemInTree(prevItems);
+    });
+  }, []);
+
+  // Reordenar elementos
+  const reorderItem = useCallback((newItems: NavigationItemWithChildren[]) => {
+    setItems(newItems);
+  }, []);
+
+  // Guardar cambios
+  const saveNavigationChanges = useCallback(async () => {
     try {
-      await saveNavigationItems(newItems);
-      setItems(newItems);
-    } catch (err) {
-      console.error('Error updating navigation items:', err);
-      setError(err instanceof Error ? err : new Error('Failed to update navigation items'));
-    } finally {
-      setIsLoading(false);
+      await saveNavigationItems(role, items);
+      setOriginalItems(JSON.parse(JSON.stringify(items))); // Deep clone
+      return true;
+    } catch (error) {
+      console.error('Error al guardar cambios:', error);
+      throw error;
     }
-  };
-  
-  const syncItems = async () => {
-    setIsLoading(true);
-    setError(null);
-    
+  }, [role, items]);
+
+  // Sincronizar con el código
+  const syncNavigationWithCode = useCallback(async () => {
     try {
-      await syncNavigationFromCode();
-      // Reload items after sync
-      await loadItems();
-    } catch (err) {
-      console.error('Error syncing navigation:', err);
-      setError(err instanceof Error ? err : new Error('Failed to sync navigation from code'));
-    } finally {
-      setIsLoading(false);
+      const updatedItems = await syncNavigationFromCode(role);
+      setItems(updatedItems);
+      setOriginalItems(JSON.parse(JSON.stringify(updatedItems)));
+      return true;
+    } catch (error) {
+      console.error('Error al sincronizar con el código:', error);
+      throw error;
     }
-  };
-  
-  // Load items on component mount and when effectiveRole changes
+  }, [role]);
+
+  // Cargar elementos iniciales
   useEffect(() => {
-    loadItems();
-  }, [effectiveRole]);
-  
+    loadNavigationItems();
+  }, [loadNavigationItems]);
+
   return {
     items,
     isLoading,
-    error,
-    loadItems,
-    updateItems,
-    syncItems
+    updateItemVisibility,
+    reorderItem,
+    saveNavigationChanges,
+    syncNavigationWithCode,
+    selectedItem,
+    setSelectedItem,
+    hasUnsavedChanges
   };
 };
-
-export default useNavigationItems;

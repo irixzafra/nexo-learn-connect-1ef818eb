@@ -1,13 +1,13 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { SidebarMainNavigation } from './sidebar/navigation/SidebarMainNavigation';
 import SidebarLogoSection from './sidebar/SidebarLogoSection';
 import SidebarFooter from './sidebar/SidebarFooter';
+import { useAuth } from '@/contexts/auth';
 import { cn } from '@/lib/utils';
 import { useDynamicNavigation } from '@/hooks/useDynamicNavigation';
-import { NavigationItemWithChildren } from '@/types/navigation-manager';
 
 interface ConditionalSidebarProps {
   userRole: UserRoleType;
@@ -29,28 +29,10 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   messagesCount,
   notificationsCount,
 }) => {
-  // State for navigation items
-  const [navigationItems, setNavigationItems] = useState<NavigationItemWithChildren[]>([]);
-  const { getNavigationItemsByRole, isLoading } = useDynamicNavigation();
+  // Usar el hook de navegación dinámica
+  const { navigationMenus } = useDynamicNavigation(effectiveRole);
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-
-  // Fetch navigation items when effective role changes
-  useEffect(() => {
-    const fetchNavigation = async () => {
-      if (effectiveRole) {
-        try {
-          const items = await getNavigationItemsByRole(effectiveRole);
-          // Convert flat items to tree structure if needed
-          setNavigationItems(items as NavigationItemWithChildren[]);
-        } catch (error) {
-          console.error('Error fetching navigation:', error);
-        }
-      }
-    };
-
-    fetchNavigation();
-  }, [effectiveRole, getNavigationItemsByRole]);
 
   console.log('ConditionalSidebar with effectiveRole:', effectiveRole, 'isCollapsed:', isCollapsed);
 
@@ -70,7 +52,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
           effectiveRole={effectiveRole}
           messagesCount={messagesCount}
           notificationsCount={notificationsCount}
-          navigationMenus={navigationItems}
+          navigationMenus={navigationMenus}
         />
       </div>
       

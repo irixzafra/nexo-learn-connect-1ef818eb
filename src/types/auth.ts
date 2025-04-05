@@ -1,139 +1,147 @@
 
-// Define los tipos de roles de usuario
 export type UserRoleType = 
-  | 'admin'
-  | 'instructor'
-  | 'student'
-  | 'moderator'
-  | 'manager'
-  | 'anonymous'
-  | 'sistemas'
-  | 'content_creator'
-  | 'guest'
-  | 'beta_tester'
+  | 'admin' 
+  | 'instructor' 
+  | 'student' 
+  | 'support' 
+  | 'sistemas' 
+  | 'content_manager' 
+  | 'content_creator' 
+  | 'analytics' 
+  | 'finance' 
+  | 'moderator' 
+  | 'guest' 
+  | 'beta_tester' 
   | 'anonimo';
 
-// Para validar/convertir strings a UserRoleType
-export function toUserRoleType(role: string): UserRoleType {
-  const validRoles = [
-    'admin',
-    'instructor',
-    'student',
-    'moderator',
-    'manager',
-    'anonymous',
-    'sistemas',
-    'content_creator',
-    'guest',
-    'beta_tester',
-    'anonimo'
-  ];
-  
-  if (validRoles.includes(role)) {
-    return role as UserRoleType;
-  }
-  
-  // Valor predeterminado si no coincide
-  return 'anonymous';
-}
-
-// Export alias for backward compatibility
-export const asUserRoleType = toUserRoleType;
-
-// Interfaces para el sistema de autenticación
-export interface AuthUser {
+export interface User {
   id: string;
   email: string;
-  role: UserRoleType;
-  avatar?: string;
-  name?: string;
   firstName?: string;
   lastName?: string;
-  created_at?: string;
-  updated_at?: string;
-  displayName?: string;
-  emailVerified?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  user_metadata?: Record<string, any>; // Added for compatibility
-  full_name?: string; // Added for compatibility
+  avatar?: string;
+  role: UserRoleType;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface AuthSession {
-  access_token: string;
-  refresh_token?: string;
-  expires_at: number;
-  user: AuthUser;
+export interface UserSession {
+  token: string;
+  user: User;
 }
 
 export interface LoginCredentials {
   email: string;
   password: string;
+  remember?: boolean;
 }
 
-export interface RegisterData extends LoginCredentials {
-  name?: string;
-  firstName?: string;
-  lastName?: string;
+export interface RegisterData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
 }
 
-export interface AuthState {
-  user: AuthUser | null;
-  session: AuthSession | null;
+export interface AuthContextType {
+  user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   userRole: UserRoleType | null;
-  effectiveRole: UserRoleType | null;
+  effectiveRole: UserRoleType;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
+  logout: () => Promise<void>;
+  hasRole: (role: UserRoleType | UserRoleType[]) => boolean;
+  updateProfile: (data: Partial<User>) => Promise<void>;
 }
 
-// User Profile definition
+// Add user profile interface
 export interface UserProfile {
   id: string;
-  userId?: string;
-  email: string;
+  full_name?: string;
+  email?: string;
+  avatar_url?: string;
   role: UserRoleType;
-  avatar?: string;
-  firstName?: string;
-  lastName?: string;
-  displayName?: string;
-  bio?: string;
-  website?: string;
-  socialLinks?: Record<string, string>;
-  preferences?: UserPreferences;
   created_at?: string;
   updated_at?: string;
-  full_name?: string; // Added for compatibility
-  avatar_url?: string; // Added for compatibility
+  is_active?: boolean;
+  last_sign_in?: string;
+  bio?: string;
+  headline?: string;
+  location?: string;
+  website?: string;
+  phone?: string;
 }
 
-export interface UserPreferences {
-  theme?: 'light' | 'dark' | 'system';
-  notifications?: {
-    email?: boolean;
-    push?: boolean;
-    sms?: boolean;
-  };
-  language?: string;
-  timezone?: string;
-}
-
-// User Role Management
+// Add UserRole interface
 export interface UserRole {
   id: string;
-  name: UserRoleType;
-  displayName: string;
+  name: string;
   description?: string;
   permissions?: string[];
 }
 
-// Define base User type for Supabase/Auth integration
-export interface User {
-  id: string;
-  email: string;
-  role: UserRoleType;
-  displayName?: string;
-  emailVerified?: boolean;
-  createdAt: string;
-  updatedAt: string;
-  user_metadata?: Record<string, any>;
-}
+/**
+ * Utility function to safely convert any string to a valid UserRoleType
+ * Falls back to 'student' if an invalid role type is provided
+ */
+export const toUserRoleType = (role?: string | null): UserRoleType => {
+  if (!role) return 'student';
+  
+  const normalizedRole = String(role).toLowerCase().trim();
+  
+  // Check if the role is a valid UserRoleType
+  const validRoles: UserRoleType[] = [
+    'admin', 
+    'instructor', 
+    'student', 
+    'support', 
+    'sistemas', 
+    'content_manager', 
+    'content_creator', 
+    'analytics', 
+    'finance', 
+    'moderator', 
+    'guest', 
+    'beta_tester', 
+    'anonimo'
+  ];
+  
+  return validRoles.includes(normalizedRole as UserRoleType) 
+    ? (normalizedRole as UserRoleType) 
+    : 'student';
+};
+
+/**
+ * Alias for toUserRoleType for backward compatibility
+ */
+export const asUserRoleType = toUserRoleType;
+
+/**
+ * Checks if a role is a valid UserRoleType
+ */
+export const isValidRole = (role?: string | null): boolean => {
+  if (!role) return false;
+  
+  const normalizedRole = String(role).toLowerCase().trim();
+  
+  const validRoles: UserRoleType[] = [
+    'admin', 
+    'instructor', 
+    'student', 
+    'support', 
+    'sistemas', 
+    'content_manager', 
+    'content_creator', 
+    'analytics', 
+    'finance', 
+    'moderator', 
+    'guest', 
+    'beta_tester', 
+    'anonimo'
+  ];
+  
+  return validRoles.includes(normalizedRole as UserRoleType);
+};

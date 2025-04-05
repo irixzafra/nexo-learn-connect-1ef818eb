@@ -1,27 +1,6 @@
 
-import { useState, useEffect } from 'react';
-import { UserRoleType } from '@/types/auth';
-import { useDynamicNavigation } from './useDynamicNavigation';
+// This file redirects to the main sidebar navigation hook
+import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
 
-export const useSidebarNavigation = (
-  userRole: UserRoleType,
-  viewAsRole?: UserRoleType | null,
-  onRoleChange?: (role: UserRoleType) => void
-) => {
-  const { menuItems, currentViewRole, isUsingSimulatedRole } = useDynamicNavigation(
-    userRole,
-    viewAsRole
-  );
-  
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  
-  return {
-    menuItems,
-    currentViewRole,
-    isUsingSimulatedRole,
-    selectedItem,
-    setSelectedItem
-  };
-};
-
+export { useSidebarNavigation };
 export default useSidebarNavigation;

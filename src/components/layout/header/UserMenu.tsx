@@ -1,71 +1,98 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
+import { User, LogOut, Settings, Sliders } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { User, Settings, LogOut, HelpCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
-export const UserMenu = () => {
-  const { user, logout } = useAuth();
+export const UserMenu: React.FC = () => {
+  const { user, profile, logout } = useAuth();
+  const navigate = useNavigate();
 
-  const initials = user?.email 
-    ? user.email.substring(0, 2).toUpperCase() 
-    : 'U';
+  // Get user initials for avatar fallback
+  const getUserInitials = () => {
+    if (profile?.full_name) {
+      const nameParts = profile.full_name.split(' ');
+      if (nameParts.length >= 2) {
+        return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+      }
+      return profile.full_name.substring(0, 2).toUpperCase();
+    }
+    return user?.email?.substring(0, 2).toUpperCase() || 'UN';
+  };
 
   const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-    }
+    await logout();
+    toast.success("Sesión cerrada exitosamente");
+    navigate('/auth/login');
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.avatar || ''} alt="Usuario" />
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user?.email}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {user?.role || 'Usuario'}
-            </p>
+    <div className="flex items-center gap-2">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+            <Avatar className="h-8 w-8 border border-border">
+              <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "Usuario"} />
+              <AvatarFallback>{getUserInitials()}</AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <div className="flex items-center justify-start gap-2 p-2">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "Usuario"} />
+              <AvatarFallback>{getUserInitials()}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col space-y-0.5 leading-none">
+              {profile?.full_name && (
+                <p className="font-medium text-sm">{profile.full_name}</p>
+              )}
+              <p className="text-xs text-muted-foreground capitalize">
+                {profile?.role === 'admin' ? 'Administrador' : profile?.role === 'instructor' ? 'Instructor' : 'Estudiante'}
+              </p>
+            </div>
           </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <User className="mr-2 h-4 w-4" />
-          <span>Mi Perfil</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Ajustes</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <HelpCircle className="mr-2 h-4 w-4" />
-          <span>Ayuda</span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Cerrar Sesión</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link to="/profile" className="cursor-pointer flex w-full items-center">
+              <User className="mr-2 h-4 w-4" />
+              <span>Mi Perfil</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/preferences" className="cursor-pointer flex w-full items-center">
+              <Sliders className="mr-2 h-4 w-4" />
+              <span>Preferencias</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/settings" className="cursor-pointer flex w-full items-center">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Configuración</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem 
+            className="text-red-600 cursor-pointer"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Cerrar Sesión</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 };

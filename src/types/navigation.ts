@@ -1,21 +1,17 @@
 
-import { UserRoleType } from '@/types/auth';
 import { LucideIcon } from 'lucide-react';
+import { UserRoleType } from './auth';
 
-// Base navigation item
 export interface MenuItem {
-  id?: string;
-  path: string;
+  icon?: LucideIcon;
   label: string;
-  icon?: string | LucideIcon;
+  path?: string;
+  url?: string;
+  badge?: number; // Only number type for badge
   requiredRole?: UserRoleType | UserRoleType[];
-  badge?: number;
   isHighlighted?: boolean;
   disabled?: boolean;
-  submenu?: MenuItem[]; // Añadimos la propiedad submenu
+  submenu?: MenuItem[];
 }
 
-// Navigation with children
-export interface NavigationMenus {
-  [category: string]: MenuItem[];
-}
+export type NavigationMenus = Record<string, MenuItem[]>;

@@ -1,33 +1,37 @@
 
-import { MenuItem } from './navigation';
-import { UserRoleType } from './auth';
 import { LucideIcon } from 'lucide-react';
+import { UserRoleType } from './auth';
 
-export interface NavigationItemWithChildren {
+export interface NavigationItemBase {
   id: string;
   label: string;
-  path: string;
-  icon?: LucideIcon | string;
-  sortOrder?: number;
-  isActive?: boolean;
-  isVisible?: boolean;
-  itemType?: 'link' | 'section' | 'divider';
-  requiredRole?: UserRoleType | UserRoleType[];
-  badge?: number;
-  isHighlighted?: boolean;
-  disabled?: boolean;
+  iconName?: string; // Nombre del icono de Lucide
+  sortOrder: number;
+  isActive: boolean;
+  isVisible: boolean;
+  path?: string; // Solo para items tipo "link"
+  itemType: 'link' | 'group' | 'separator'; 
+  parentId?: string | null; // null para items de primer nivel
+  visibleToRoles?: UserRoleType[]; // Roles que pueden ver este elemento
+}
+
+export interface NavigationItemWithChildren extends NavigationItemBase {
   children?: NavigationItemWithChildren[];
 }
 
-export interface NavigationSection {
+export interface NavigationGrouping {
   id: string;
-  title: string;
+  name: string;
+  description?: string;
   items: NavigationItemWithChildren[];
-  isCollapsed?: boolean;
-  requiredRole?: UserRoleType | UserRoleType[];
 }
 
-export interface NavigationState {
-  items: NavigationItemWithChildren[];
-  sections: NavigationSection[];
+export interface RoleNavigation {
+  role: UserRoleType;
+  structure: NavigationGrouping[];
+}
+
+export interface NavigationUpdate {
+  itemId: string;
+  changes: Partial<NavigationItemBase>;
 }
