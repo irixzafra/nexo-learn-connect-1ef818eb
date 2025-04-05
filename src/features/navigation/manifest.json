@@ -1,0 +1,163 @@
+
+{
+  "domain": "navigation",
+  "version": "1.0.0",
+  "lastUpdated": "2025-04-05",
+  "description": "Sistema de navegación de Nexo Learning",
+  "maintainers": ["equipo_desarrollo"],
+  "references": {
+    "ssot": ["NAVIGATION.md", "DESIGN_SYSTEM.md"],
+    "components": ["sidebar", "header", "breadcrumbs", "footer"]
+  },
+  "components": [
+    {
+      "id": "sidebar",
+      "name": "Sidebar",
+      "description": "Barra lateral de navegación principal",
+      "mainComponent": "ConditionalSidebar.tsx",
+      "subComponents": ["SidebarNavGroup", "SidebarLogoSection", "SidebarFooter"],
+      "behaviors": {
+        "collapsible": true,
+        "responsive": true,
+        "roleConditional": true
+      },
+      "designRules": {
+        "maxNestedLevels": 2,
+        "badgeSupport": true,
+        "iconRequired": true
+      },
+      "docs": "navigation-sidebar.md",
+      "tests": "sidebar.test.tsx"
+    },
+    {
+      "id": "header",
+      "name": "Header",
+      "description": "Cabecera de la aplicación",
+      "mainComponent": "AppHeader.tsx",
+      "subComponents": ["HeaderActions", "UserMenu", "BreadcrumbTrail"],
+      "behaviors": {
+        "sticky": true,
+        "responsive": true,
+        "roleConditional": true
+      },
+      "designRules": {
+        "heightFixed": true,
+        "notificationSupport": true
+      },
+      "docs": "navigation-header.md",
+      "tests": "header.test.tsx"
+    },
+    {
+      "id": "sidebarNavGroup",
+      "name": "SidebarNavGroup",
+      "description": "Grupo de navegación en la barra lateral",
+      "mainComponent": "SidebarNavGroup.tsx",
+      "subComponents": ["MenuItem"],
+      "behaviors": {
+        "collapsible": true,
+        "roleFiltered": true,
+        "badgeDisplay": true
+      },
+      "designRules": {
+        "iconRequired": true,
+        "consistentPadding": true,
+        "activeItemHighlighting": true
+      },
+      "docs": "navigation-components.md",
+      "tests": "sidebarNavGroup.test.tsx"
+    },
+    {
+      "id": "menuItem",
+      "name": "MenuItem",
+      "description": "Elemento de navegación individual",
+      "mainComponent": "MenuItem.tsx",
+      "behaviors": {
+        "routerIntegrated": true,
+        "badgeSupport": true,
+        "disabledState": true
+      },
+      "designRules": {
+        "consistentHeight": true,
+        "iconOptional": false,
+        "hoverEffect": true
+      },
+      "docs": "navigation-components.md",
+      "tests": "menuItem.test.tsx"
+    },
+    {
+      "id": "sidebarFooter",
+      "name": "SidebarFooter",
+      "description": "Sección inferior de la barra lateral",
+      "mainComponent": "SidebarFooter.tsx",
+      "subComponents": ["SidebarFooterSection", "LanguageSelector"],
+      "behaviors": {
+        "roleDisplay": true,
+        "languageSwitch": true,
+        "themeToggle": true,
+        "logoutAction": true
+      },
+      "designRules": {
+        "stickyBottom": true,
+        "compactLayout": true
+      },
+      "docs": "navigation-components.md",
+      "tests": "sidebarFooter.test.tsx"
+    }
+  ],
+  "patterns": {
+    "activeNavItem": {
+      "description": "Estilo visual para elementos de navegación activos",
+      "cssClasses": ["bg-primary/10", "text-primary", "font-medium", "border-l-[3px]", "border-l-primary"]
+    },
+    "groupCollapsible": {
+      "description": "Comportamiento de grupos plegables/desplegables",
+      "implementationDetails": "useState con toggle y animación de rotación del icono ChevronRight"
+    },
+    "responsiveCollapse": {
+      "description": "Comportamiento de colapso responsivo de la barra lateral",
+      "implementationDetails": "useSidebar hook con estados 'expanded' y 'collapsed'"
+    }
+  },
+  "navigationGroups": [
+    {
+      "id": "dashboard",
+      "label": "Dashboard",
+      "roleAccess": ["admin", "instructor", "student"]
+    },
+    {
+      "id": "academico",
+      "label": "Académico (LMS)",
+      "roleAccess": ["admin", "instructor"]
+    },
+    {
+      "id": "gestion",
+      "label": "Gestión Central (ERP)",
+      "roleAccess": ["admin"]
+    },
+    {
+      "id": "finanzas",
+      "label": "Finanzas",
+      "roleAccess": ["admin"]
+    },
+    {
+      "id": "sistema",
+      "label": "Sistema (Plataforma)",
+      "roleAccess": ["admin"]
+    },
+    {
+      "id": "comunidad",
+      "label": "Comunidad",
+      "roleAccess": ["student", "instructor"]
+    },
+    {
+      "id": "aprendizaje",
+      "label": "Aprendizaje",
+      "roleAccess": ["student"]
+    },
+    {
+      "id": "cuenta",
+      "label": "Mi Cuenta",
+      "roleAccess": ["admin", "instructor", "student"]
+    }
+  ]
+}
