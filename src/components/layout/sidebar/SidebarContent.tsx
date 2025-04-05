@@ -1,38 +1,38 @@
 
 import React from 'react';
-import { useSidebar } from '@/components/ui/sidebar/sidebar-provider'; 
-import { SidebarMainNavigation } from './navigation/SidebarMainNavigation';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/contexts/auth';
-import { UserRoleType } from '@/types/auth';
+import { SidebarContent as ShadcnSidebarContent } from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
+import CursosNavigation from './navigation/CursosNavigation';
+import MisCursosNavigation from './navigation/MisCursosNavigation';
 
-interface SidebarContentProps {
-  userRole?: UserRoleType;
-}
-
-const SidebarContent: React.FC<SidebarContentProps> = ({ userRole }) => {
+const CustomSidebarContent: React.FC = () => {
   const { state } = useSidebar();
-  const isExpanded = state === "expanded";
-  const { userRole: contextUserRole } = useAuth();
-  
-  const effectiveRole = userRole || contextUserRole as UserRoleType;
+  const [openGroups, setOpenGroups] = React.useState({
+    cursos: true,
+    misCursos: true,
+  });
+
+  const toggleGroup = (group: keyof typeof openGroups) => {
+    setOpenGroups((prev) => ({
+      ...prev,
+      [group]: !prev[group],
+    }));
+  };
 
   return (
-    <div className={cn(
-      "flex flex-col h-full py-4 overflow-y-auto",
-      !isExpanded && "items-center" // Center items when collapsed
-    )}>
-      <div className="px-3 py-2">
-        {/* Logo or branding goes here */}
-      </div>
-      
-      <div className={cn("flex-1", isExpanded ? "px-3" : "px-1")}>
-        <SidebarMainNavigation 
-          effectiveRole={effectiveRole}
+    <ShadcnSidebarContent>
+      <div className="space-y-2">
+        <CursosNavigation
+          isOpen={openGroups.cursos}
+          onToggle={() => toggleGroup('cursos')}
+        />
+        <MisCursosNavigation
+          isOpen={openGroups.misCursos}
+          onToggle={() => toggleGroup('misCursos')}
         />
       </div>
-    </div>
+    </ShadcnSidebarContent>
   );
 };
 
-export default SidebarContent;
+export default CustomSidebarContent;
