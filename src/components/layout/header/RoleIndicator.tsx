@@ -9,7 +9,7 @@ interface RoleIndicatorProps {
 
 const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className, asToggler }) => {
   return (
-    <div className="relative group">
+    <div className="relative group cursor-pointer">
       <EnhancedRoleSimulator />
       <div className="absolute inset-0 bg-primary/5 rounded-full scale-110 opacity-0 group-hover:opacity-100 transition-opacity -z-10"></div>
     </div>

@@ -60,6 +60,7 @@ export const EnhancedRoleSimulator = () => {
   
   // Handle switching to a specific role
   const handleSwitchRole = (role: UserRoleType) => {
+    console.log('Switching to role:', role);
     setSimulatedRole(role);
     setOpen(false);
   };
@@ -67,7 +68,7 @@ export const EnhancedRoleSimulator = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div className="flex items-center">
+        <div className="flex items-center cursor-pointer">
           <RoleBadge 
             role={effectiveRole || ''} 
             isSimulated={isViewingAsOtherRole}
