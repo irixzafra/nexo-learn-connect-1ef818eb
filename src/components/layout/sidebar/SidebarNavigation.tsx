@@ -32,16 +32,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
   const {
     currentViewRole,
-    currentLanguage,
-    changeLanguage
   } = useSidebarNavigation(toUserRoleType(userRole as string), viewAsRole, onRoleChange);
-
-  // Language options
-  const languages = [
-    { code: 'es', name: 'Español' },
-    { code: 'en', name: 'English' },
-    { code: 'pt', name: 'Português' }
-  ];
 
   return (
     <ConditionalSidebar
@@ -51,11 +42,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       notificationsCount={notificationsCount}
       isCollapsed={state === "collapsed"}
       currentViewRole={currentViewRole}
-      currentLanguage={currentLanguage}
-      languages={languages}
       getRoleName={getRoleName}
       getHomePath={getHomePath}
-      changeLanguage={changeLanguage}
     />
   );
 };
