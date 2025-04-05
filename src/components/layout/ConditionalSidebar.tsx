@@ -4,7 +4,7 @@ import { UserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { SidebarMainNavigation } from './sidebar/navigation/SidebarMainNavigation';
 import SidebarLogoSection from './sidebar/SidebarLogoSection';
-import SidebarFooterSection from './sidebar/SidebarFooterSection';
+import SidebarFooter from './sidebar/SidebarFooter';
 import { useAuth } from '@/contexts/auth';
 import { cn } from '@/lib/utils';
 import { useDynamicNavigation } from '@/hooks/useDynamicNavigation';
@@ -33,15 +33,10 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   messagesCount,
   notificationsCount,
   isCollapsed,
-  currentViewRole,
-  currentLanguage,
-  languages,
   getRoleName,
   getHomePath,
-  changeLanguage
 }) => {
   const { toggleSidebar } = useSidebar();
-  const { logout, resetToOriginalRole, isViewingAsOtherRole } = useAuth();
   
   // Usar el hook de navegación dinámica
   const { navigationMenus } = useDynamicNavigation(effectiveRole);
@@ -70,18 +65,8 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       </div>
       
       {/* Footer Section with Role Switcher and Language Selector */}
-      <div className="mt-auto border-t border-border/40 pt-2 px-2">
-        <SidebarFooterSection 
-          userRole={userRole}
-          effectiveRole={effectiveRole}
-          isCollapsed={isCollapsed}
-          currentLanguage={currentLanguage}
-          languages={languages}
-          changeLanguage={changeLanguage}
-          logout={logout}
-          isViewingAsOtherRole={isViewingAsOtherRole}
-          resetToOriginalRole={resetToOriginalRole}
-        />
+      <div className="mt-auto">
+        <SidebarFooter isCollapsed={isCollapsed} />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
-import { Settings, Globe, LogOut, ChevronDown } from 'lucide-react';
+import { Settings, LogOut, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
@@ -11,8 +11,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import RoleIndicator from '@/components/layout/header/RoleIndicator';
-import EnhancedRoleSimulator from '@/components/layout/header/role-simulator/EnhancedRoleSimulator';
 
 interface SidebarFooterProps {
   userRole: UserRoleType;
@@ -30,66 +28,29 @@ interface SidebarFooterProps {
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
-  userRole,
-  effectiveRole,
   isCollapsed,
-  currentLanguage,
-  languages,
-  changeLanguage,
-  logout,
-  currentViewRole,
-  getRoleName,
-  isViewingAsOtherRole,
-  resetToOriginalRole,
-  forceAdminRole
+  logout
 }) => {
-  // Check if user is an administrator (has admin role)
-  const isAdmin = userRole === 'admin';
+  const handleLogout = () => {
+    if (logout) {
+      logout();
+    }
+  };
 
   return (
     <div className="space-y-2 p-2">
-      {/* Role Switcher - Only for admins */}
-      {isAdmin && (
-        <div className={cn(
-          "mb-2 pb-2 border-b border-border",
-          isCollapsed ? "px-2" : "px-4"
-        )}>
-          <EnhancedRoleSimulator />
-        </div>
-      )}
-
-      {/* Language Selector */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className={cn(
-              "w-full font-normal",
-              isCollapsed ? "justify-center px-2" : "justify-between pl-4 pr-2"
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <Globe className="h-4 w-4" />
-              {!isCollapsed && <span>{languages.find(l => l.code === currentLanguage)?.name}</span>}
-            </div>
-            {!isCollapsed && <ChevronDown className="h-4 w-4 opacity-50" />}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align={isCollapsed ? "center" : "start"} className="w-48">
-          {languages.map(lang => (
-            <DropdownMenuItem
-              key={lang.code}
-              onClick={() => changeLanguage(lang.code)}
-              className={cn(
-                "cursor-pointer",
-                lang.code === currentLanguage && "bg-muted font-medium"
-              )}
-            >
-              {lang.name}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {/* Settings Button */}
+      <Button
+        variant="ghost"
+        className={cn(
+          "w-full font-normal",
+          isCollapsed ? "justify-center px-2" : "justify-start pl-4"
+        )}
+        onClick={() => console.log('Settings clicked')}
+      >
+        <Settings className="h-4 w-4 mr-2" />
+        {!isCollapsed && <span>Configuración</span>}
+      </Button>
 
       {/* Logout Button */}
       <Button
@@ -98,7 +59,7 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
           "w-full font-normal",
           isCollapsed ? "justify-center px-2" : "justify-start pl-4"
         )}
-        onClick={logout}
+        onClick={handleLogout}
       >
         <LogOut className="h-4 w-4 mr-2" />
         {!isCollapsed && <span>Cerrar sesión</span>}
