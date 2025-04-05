@@ -8,7 +8,11 @@ import InlineEditControls from '@/components/admin/InlineEditControls';
 import { useAuth } from '@/contexts/auth';
 import Header from '@/components/layout/Header';
 
-const AppLayout: React.FC = () => {
+interface AppLayoutProps {
+  children?: React.ReactNode;
+}
+
+const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { userRole } = useAuth();
   const isAdmin = userRole === 'admin';
 
@@ -21,7 +25,7 @@ const AppLayout: React.FC = () => {
             <Sidebar />
             
             <main className="flex-1 overflow-auto bg-background">
-              <Outlet />
+              {children || <Outlet />}
             </main>
           </div>
           
