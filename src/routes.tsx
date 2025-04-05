@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
 import AdminRoutes from './routes/AdminRoutes';
 import SystemPagesPage from './pages/admin/SystemPagesPage';
+import ComingSoonPage from './pages/common/ComingSoonPage';
+import LearningPathsPage from './pages/student/LearningPathsPage';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -24,9 +26,16 @@ const AppRoutes: React.FC = () => {
           <Route path="profile" element={<div>ProfilePage</div>} />
           <Route path="settings" element={<div>SettingsPage</div>} />
           
+          {/* Updated routes with specific page components */}
+          <Route path="learning-paths" element={<LearningPathsPage />} />
+          <Route path="recommendations" element={<ComingSoonPage />} />
+          
           {/* Admin Routes */}
           <Route path="admin/*" element={<AdminRoutes />} />
         </Route>
+
+        {/* Catch direct /learning-paths URL without /app prefix */}
+        <Route path="/learning-paths" element={<AppLayout><LearningPathsPage /></AppLayout>} />
       </Routes>
     </Router>
   );
