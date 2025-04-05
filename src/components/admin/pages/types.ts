@@ -23,7 +23,7 @@ export interface PageData {
 }
 
 export interface PageBlock {
-  id?: string;
+  id: string; // Changed from optional to required to match the type in types/pages.ts
   type: string;
   content: string | Record<string, any>;
   order?: number;

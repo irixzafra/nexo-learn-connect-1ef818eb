@@ -14,9 +14,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { PageData } from './types';
+import { PageData, PageBlock as AdminPageBlock } from './types';
+import { PageBlock as GlobalPageBlock } from '@/types/pages';
 import { FileText, Eye, Save } from 'lucide-react';
-import DraggableBlocksContainer from '@/components/admin/DraggableBlocksContainer';
+import PagePreviewTab from './drawer-tabs/PagePreviewTab';
 
 interface PageEditorDrawerProps {
   page: PageData | null;
@@ -36,7 +37,17 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
 
   useEffect(() => {
     if (page) {
-      setEditedPage(page);
+      // Ensure all blocks have IDs
+      const processedPage = {
+        ...page,
+        content: page.content ? {
+          blocks: page.content.blocks.map(block => ({
+            ...block,
+            id: block.id || `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          }))
+        } : undefined
+      };
+      setEditedPage(processedPage);
     }
   }, [page]);
 
@@ -93,61 +104,6 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
     { value: 'account', label: 'Cuenta' },
     { value: 'marketing', label: 'Marketing' }
   ];
-
-  const renderBlockContent = (block: any) => {
-    if (!block) return null;
-
-    switch (block.type) {
-      case 'text':
-        return (
-          <div className="p-4 border rounded mb-2">
-            <div className="font-medium text-sm text-muted-foreground mb-1">{block.type}</div>
-            <p>{typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}</p>
-          </div>
-        );
-      case 'heading':
-        return (
-          <div className="p-4 border rounded mb-2">
-            <div className="font-medium text-sm text-muted-foreground mb-1">{block.type}</div>
-            <h3 className="text-xl font-semibold">{typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}</h3>
-          </div>
-        );
-      case 'hero':
-        return (
-          <div className="p-4 border rounded mb-2 bg-primary/10">
-            <div className="font-medium text-sm text-muted-foreground mb-1">{block.type}</div>
-            <h2 className="text-2xl font-bold text-center py-8">{typeof block.content === 'string' ? block.content : block.content.title || 'Hero Content'}</h2>
-            {block.content.subtitle && <p className="text-center">{block.content.subtitle}</p>}
-          </div>
-        );
-      case 'features':
-        return (
-          <div className="p-4 border rounded mb-2">
-            <div className="font-medium text-sm text-muted-foreground mb-1">{block.type}</div>
-            <h3 className="font-medium mb-2">{block.content.title || 'Features Section'}</h3>
-            <div className="grid grid-cols-3 gap-2">
-              {Array.isArray(block.content.items) ? block.content.items.map((item: any, i: number) => (
-                <div key={i} className="p-2 border rounded">
-                  <div className="text-sm font-medium">{item.title}</div>
-                  <div className="text-xs text-muted-foreground">{item.description}</div>
-                </div>
-              )) : (
-                <div className="text-sm text-muted-foreground">No items defined</div>
-              )}
-            </div>
-          </div>
-        );
-      default:
-        return (
-          <div className="p-4 border rounded mb-2">
-            <div className="font-medium text-sm text-muted-foreground mb-1">{block.type}</div>
-            <pre className="text-xs bg-muted p-2 rounded overflow-auto">
-              {JSON.stringify(block.content, null, 2)}
-            </pre>
-          </div>
-        );
-    }
-  };
 
   if (!editedPage) return null;
 
@@ -322,38 +278,7 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
           </TabsContent>
 
           <TabsContent value="content" className="space-y-4">
-            <div className="border rounded-lg p-4">
-              <h3 className="font-medium text-lg mb-3">Vista previa del contenido</h3>
-              
-              {editedPage.content?.blocks && editedPage.content.blocks.length > 0 ? (
-                <div className="bg-white p-6 rounded-md border shadow-sm min-h-[400px]">
-                  <h1 className="text-2xl font-bold mb-4">{editedPage.title}</h1>
-                  <DraggableBlocksContainer 
-                    blocks={editedPage.content.blocks} 
-                    onBlocksChange={(blocks) => {
-                      handleFieldChange('content', { blocks });
-                    }}
-                    renderBlockContent={renderBlockContent}
-                  />
-                </div>
-              ) : (
-                <div className="text-center p-8 bg-muted/20 rounded-md border border-dashed flex flex-col items-center justify-center min-h-[400px]">
-                  <FileText className="h-8 w-8 text-muted-foreground mb-2" />
-                  <h3 className="text-lg font-medium">No hay contenido</h3>
-                  <p className="text-muted-foreground mt-2 max-w-md">
-                    Esta página no tiene bloques de contenido definidos o utiliza un componente personalizado para su renderizado.
-                  </p>
-                </div>
-              )}
-
-              <div className="mt-6">
-                <iframe 
-                  src={`/pages/${editedPage.path}`}
-                  className="w-full border rounded h-[400px] mt-4"
-                  title={`Vista previa de ${editedPage.title}`}
-                />
-              </div>
-            </div>
+            <PagePreviewTab page={editedPage} />
           </TabsContent>
         </Tabs>
       </SheetContent>
