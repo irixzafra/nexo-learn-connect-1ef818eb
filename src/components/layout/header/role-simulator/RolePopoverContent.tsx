@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { UserRoleType } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { Search, X, RefreshCcw } from 'lucide-react';
 import { RoleBadge } from './RoleBadge';
 import { UserSearchResult } from './types';
@@ -112,13 +113,13 @@ export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
                   <div
                     key={user.id}
                     className="flex items-center justify-between p-2 hover:bg-muted rounded-md cursor-pointer"
-                    onClick={() => handleSwitchRole(user.role)}
+                    onClick={() => handleSwitchRole(toUserRoleType(user.role))}
                   >
                     <div>
                       <p className="font-medium">{user.full_name || 'Usuario sin nombre'}</p>
                       <p className="text-xs text-muted-foreground">{user.email}</p>
                     </div>
-                    <RoleBadge role={user.role} size="sm" />
+                    <RoleBadge role={toUserRoleType(user.role)} size="sm" />
                   </div>
                 ))}
               </div>
