@@ -7,12 +7,14 @@ interface SidebarLogoSectionProps {
   isCollapsed: boolean;
   icon?: LucideIcon;
   title?: string;
+  toggleSidebar?: () => void;  // Added this prop
 }
 
 const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({ 
   isCollapsed,
   icon: Icon,
-  title = "Nexo"
+  title = "Nexo",
+  toggleSidebar
 }) => {
   return (
     <div className="flex flex-col gap-2 px-2">

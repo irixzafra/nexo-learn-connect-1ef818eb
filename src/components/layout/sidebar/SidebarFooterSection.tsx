@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/auth';
+import { UserRoleType } from '@/types/auth';
 import { Settings, Globe, LogOut, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -15,13 +15,18 @@ import RoleIndicator from '@/components/layout/header/RoleIndicator';
 import EnhancedRoleSimulator from '@/components/layout/header/role-simulator/EnhancedRoleSimulator';
 
 interface SidebarFooterProps {
-  userRole: string;
-  effectiveRole: string;
+  userRole: UserRoleType;
+  effectiveRole: UserRoleType;
   isCollapsed: boolean;
   currentLanguage: string; 
   languages: Array<{ code: string; name: string }>;
   changeLanguage: (code: string) => void;
   logout: () => void;
+  currentViewRole?: UserRoleType | null;
+  getRoleName?: (role: UserRoleType) => string;
+  isViewingAsOtherRole?: boolean;
+  resetToOriginalRole?: () => void;
+  forceAdminRole?: () => Promise<void>;
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
@@ -32,8 +37,14 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
   languages,
   changeLanguage,
   logout,
+  currentViewRole,
+  getRoleName,
+  isViewingAsOtherRole,
+  resetToOriginalRole,
+  forceAdminRole
 }) => {
-  const { isAdmin } = useAuth();
+  // Check if user is an administrator (has admin role)
+  const isAdmin = userRole === 'admin';
 
   return (
     <div className="space-y-2 p-2">
