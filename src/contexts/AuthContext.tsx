@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserRoleType } from '@/types/auth';
+import { UserRoleType, AuthUser as User } from '@/types/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -14,6 +14,7 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>;
   setEffectiveRole: (role: UserRoleType | null) => void;
   profile: any; // For simplicity in this example
+  session: any; // Added to fix build errors
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextType>({
   resetPassword: async () => {},
   setEffectiveRole: () => {},
   profile: null,
+  session: null,
 });
 
 export const useAuth = () => useContext(AuthContext);

@@ -3,6 +3,7 @@
 import { NavigationItemWithChildren } from '@/types/navigation-manager';
 import { LucideIcon } from 'lucide-react';
 import { UserRoleType } from '@/types/auth';
+import { MenuItem } from '@/types/navigation';
 
 // Función para crear un elemento de navegación
 export const createNavigationItem = (
@@ -69,10 +70,37 @@ export const sortNavigationItems = (
   });
 };
 
+// Mock fetch navigation items
+export const fetchNavigationItems = async (): Promise<NavigationItemWithChildren[]> => {
+  // This would be a real API call in a production environment
+  return Promise.resolve([
+    createNavigationItem('dashboard', 'Dashboard', '/app/dashboard', 0),
+    createNavigationItem('courses', 'Courses', '/app/courses', 1),
+    createNavigationItem('profile', 'Profile', '/app/profile', 2),
+  ]);
+};
+
+// Mock save navigation items
+export const saveNavigationItems = async (items: NavigationItemWithChildren[]): Promise<boolean> => {
+  // This would be a real API call in a production environment
+  console.log('Saving navigation items:', items);
+  return Promise.resolve(true);
+};
+
+// Mock sync navigation from code
+export const syncNavigationFromCode = async (): Promise<boolean> => {
+  // This would be a real API call in a production environment
+  console.log('Syncing navigation from code');
+  return Promise.resolve(true);
+};
+
 // Export auxiliar functions
 export default {
   createNavigationItem,
   getIconComponent,
   filterNavigationByRole,
-  sortNavigationItems
+  sortNavigationItems,
+  fetchNavigationItems,
+  saveNavigationItems,
+  syncNavigationFromCode
 };

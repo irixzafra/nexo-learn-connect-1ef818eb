@@ -1,32 +1,27 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UserRoleType } from '@/types/auth';
-
-// Mock data for auth
-interface User {
-  id: string;
-  email: string;
-  role: UserRoleType;
-  avatar?: string;
-}
-
-interface Session {
-  access_token: string;
-  expires_at: number;
-  user: User;
-}
+import { UserRoleType, AuthUser, AuthSession, UserProfile } from '@/types/auth';
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  user: AuthUser | null;
+  session: AuthSession | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   isInitialized: boolean;
   userRole: UserRoleType | null;
   effectiveRole: UserRoleType | null;
+  userProfile: UserProfile | null;
+  profile: UserProfile | null;
+  simulatedRole: UserRoleType | null;
+  isViewingAsOtherRole: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   setEffectiveRole: (role: UserRoleType) => void;
+  forceUpdateRole: (email: string, roleToSet: UserRoleType) => Promise<{ success: boolean; error?: any }>;
+  setSimulatedRole: (role: UserRoleType | null) => void;
+  resetToOriginalRole: () => void;
+  signup: (email: string, password: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 // Crear el contexto
@@ -34,11 +29,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Provider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [session, setSession] = useState<AuthSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
   const [effectiveRole, setEffectiveRoleState] = useState<UserRoleType | null>(null);
+  const [simulatedRole, setSimulatedRoleState] = useState<UserRoleType | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
+  // Computed properties
+  const isViewingAsOtherRole = simulatedRole !== null;
 
   // Simulate initialization
   useEffect(() => {
@@ -54,6 +54,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(user);
           setSession(session);
           setEffectiveRoleState(user.role);
+
+          // Set user profile
+          setUserProfile({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            displayName: user.email.split('@')[0],
+            avatar: 'https://via.placeholder.com/150'
+          });
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
@@ -74,14 +83,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Mock user data
-      const mockUser: User = {
+      const mockUser: AuthUser = {
         id: '1',
         email,
-        role: 'student',
-        avatar: ''
+        role: email.includes('admin') ? 'admin' : 
+              email.includes('instructor') ? 'instructor' : 'student',
+        avatar: '',
+        displayName: email.split('@')[0]
       };
 
-      const mockSession: Session = {
+      const mockSession: AuthSession = {
         access_token: 'mock_token',
         expires_at: Date.now() + 3600 * 1000, // 1 hour
         user: mockUser
@@ -90,6 +101,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(mockUser);
       setSession(mockSession);
       setEffectiveRoleState(mockUser.role);
+      
+      // Set user profile
+      const mockProfile: UserProfile = {
+        id: mockUser.id,
+        email: mockUser.email,
+        role: mockUser.role,
+        displayName: mockUser.email.split('@')[0],
+        avatar: 'https://via.placeholder.com/150'
+      };
+      setUserProfile(mockProfile);
       
       // Store in localStorage for persistence
       localStorage.setItem('user', JSON.stringify(mockUser));
@@ -113,6 +134,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setSession(null);
       setEffectiveRoleState(null);
+      setSimulatedRoleState(null);
+      setUserProfile(null);
       
       // Remove from localStorage
       localStorage.removeItem('user');
@@ -130,8 +153,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setEffectiveRoleState(role);
   };
 
+  // Set simulated role
+  const setSimulatedRole = (role: UserRoleType | null) => {
+    setSimulatedRoleState(role);
+  };
+
+  // Reset to original role
+  const resetToOriginalRole = () => {
+    setSimulatedRoleState(null);
+  };
+
+  // Force update role
+  const forceUpdateRole = async (email: string, roleToSet: UserRoleType) => {
+    try {
+      // In a real implementation, this would make an API call
+      console.log(`Forcing role update for ${email} to ${roleToSet}`);
+      
+      // If this is the current user, update locally
+      if (user && user.email === email) {
+        const updatedUser = { ...user, role: roleToSet };
+        setUser(updatedUser);
+        setEffectiveRoleState(roleToSet);
+        
+        if (userProfile) {
+          setUserProfile({ ...userProfile, role: roleToSet });
+        }
+        
+        // Update in localStorage
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+      
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error updating role:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  // Simulated signup
+  const signup = async (email: string, password: string) => {
+    // Implementation similar to login but would create a new account
+    await login(email, password); // For demo, just login
+  };
+
+  // Simulated password reset
+  const resetPassword = async (email: string) => {
+    // Mock implementation
+    console.log(`Password reset requested for ${email}`);
+  };
+
   // Context value
-  const value = {
+  const value: AuthContextType = {
     user,
     session,
     isAuthenticated: !!user,
@@ -139,9 +211,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isInitialized,
     userRole: user?.role || null,
     effectiveRole,
+    userProfile,
+    profile: userProfile, // Alias for backward compatibility
+    simulatedRole,
+    isViewingAsOtherRole,
     login,
     logout,
-    setEffectiveRole
+    setEffectiveRole,
+    forceUpdateRole,
+    setSimulatedRole,
+    resetToOriginalRole,
+    signup,
+    resetPassword
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

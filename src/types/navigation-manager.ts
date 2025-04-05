@@ -1,41 +1,33 @@
 
-import { UserRoleType } from '@/types/auth';
+import { MenuItem } from './navigation';
+import { UserRoleType } from './auth';
 import { LucideIcon } from 'lucide-react';
-import { IconName } from '@/types/icon-types';
 
-// Base navigation item interface
-export interface NavigationItemBase {
-  id?: string;
-  path: string;
+export interface NavigationItemWithChildren {
+  id: string;
   label: string;
-  icon?: IconName | LucideIcon | string;
+  path: string;
+  icon?: LucideIcon | string;
+  sortOrder?: number;
+  isActive?: boolean;
+  isVisible?: boolean;
+  itemType?: 'link' | 'section' | 'divider';
   requiredRole?: UserRoleType | UserRoleType[];
   badge?: number;
   isHighlighted?: boolean;
   disabled?: boolean;
-  isVisible?: boolean;
-  isActive?: boolean;
-  sort?: number;
-  parent_id?: string | null;
-}
-
-// Navigation item with children support
-export interface NavigationItemWithChildren extends NavigationItemBase {
   children?: NavigationItemWithChildren[];
-  iconName?: string;
-  sortOrder?: number;
-  itemType?: string;
-  parentId?: string | null;
-  visibleToRoles?: UserRoleType[];
 }
 
-// Navigation update type
-export interface NavigationUpdate {
-  type: 'reorder' | 'toggle-visibility' | 'add' | 'remove' | 'edit';
-  payload: any;
+export interface NavigationSection {
+  id: string;
+  title: string;
+  items: NavigationItemWithChildren[];
+  isCollapsed?: boolean;
+  requiredRole?: UserRoleType | UserRoleType[];
 }
 
-// Navigation menus organized by categories
-export interface NavigationMenus {
-  [category: string]: NavigationItemWithChildren[];
+export interface NavigationState {
+  items: NavigationItemWithChildren[];
+  sections: NavigationSection[];
 }
