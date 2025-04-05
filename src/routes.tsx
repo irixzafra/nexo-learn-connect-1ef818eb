@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
 import NavigationManagerPage from './pages/admin/NavigationManagerPage';
 
-// Importar la nueva página de gestión de navegación
 const AppRoutes: React.FC = () => {
   return (
     <Router>
@@ -37,6 +36,7 @@ const AppRoutes: React.FC = () => {
           <Route path="features" element={<div>Features</div>} />
           <Route path="orphan-review" element={<div>OrphanReviewPage</div>} />
           <Route path="navigation-manager" element={<NavigationManagerPage />} />
+          <Route path="navigation-diagram" element={<div>NavigationDiagramPage</div>} />
         </Route>
         
         {/* Accessibility Route (Example) */}
