@@ -20,15 +20,17 @@ export const SidebarMainMenuItem: React.FC<SidebarMainMenuItemProps> = ({
   const isCollapsed = state === "collapsed";
 
   // Dynamically get the icon component from Lucide
-  let IconComponent = CircleDashed;
-  
-  if (item.icon && typeof item.icon === 'string') {
-    const iconName = item.icon as string;
-    const LucideIcon = LucideIcons[iconName as keyof typeof LucideIcons];
-    if (LucideIcon) {
-      IconComponent = LucideIcon;
+  const IconComponent = React.useMemo(() => {
+    if (!item.icon) return CircleDashed;
+    
+    if (typeof item.icon === 'string') {
+      const iconName = item.icon as string;
+      // @ts-ignore - we know this is a valid Lucide icon
+      return LucideIcons[iconName] || CircleDashed;
     }
-  }
+    
+    return CircleDashed;
+  }, [item.icon]);
 
   return (
     <NavLink

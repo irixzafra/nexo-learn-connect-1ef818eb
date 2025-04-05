@@ -1,17 +1,20 @@
 
 import React from 'react';
-import EnhancedRoleSimulator from './role-simulator/EnhancedRoleSimulator';
+import { useAuth } from '@/contexts/auth';
+import { UserRoleDisplay } from '@/features/users/UserRoleType';
 
 interface RoleIndicatorProps {
   className?: string;
-  asToggler?: boolean;
 }
 
-const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className, asToggler }) => {
+const RoleIndicator: React.FC<RoleIndicatorProps> = ({ className }) => {
+  const { userRole } = useAuth();
+
+  if (!userRole) return null;
+
   return (
-    <div className="relative group cursor-pointer">
-      <EnhancedRoleSimulator />
-      <div className="absolute inset-0 bg-primary/5 rounded-full scale-110 opacity-0 group-hover:opacity-100 transition-opacity -z-10"></div>
+    <div className={className}>
+      <UserRoleDisplay role={userRole as any} size="sm" />
     </div>
   );
 };

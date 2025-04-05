@@ -1,14 +1,29 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider'; 
 import { SidebarMainNavigation } from './navigation/SidebarMainNavigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/auth';
+import { useNotifications } from '@/hooks/useNotifications';
+import { NavigationItemWithChildren } from '@/types/navigation-manager';
+import { useDynamicNavigation } from '@/hooks/useDynamicNavigation';
 
 const SidebarContent: React.FC = () => {
   const { state } = useSidebar();
   const isExpanded = state === "expanded";
   const { userRole } = useAuth();
+  const { unreadCount: notificationsCount } = useNotifications();
+  const messagesCount = 3; // Valor de demostración
+  const [navigationItems, setNavigationItems] = useState<NavigationItemWithChildren[]>([]);
+  const { getNavigationItemsByRole } = useDynamicNavigation();
+  
+  useEffect(() => {
+    if (userRole) {
+      getNavigationItemsByRole(userRole)
+        .then(items => setNavigationItems(items))
+        .catch(err => console.error('Error loading navigation:', err));
+    }
+  }, [userRole, getNavigationItemsByRole]);
 
   return (
     <div className={cn(
@@ -21,7 +36,10 @@ const SidebarContent: React.FC = () => {
       
       <div className={cn("flex-1", isExpanded ? "px-3" : "px-1")}>
         <SidebarMainNavigation 
-          effectiveRole={userRole as any}
+          effectiveRole={userRole || 'anonymous'}
+          messagesCount={messagesCount}
+          notificationsCount={notificationsCount}
+          navigationMenus={navigationItems}
         />
       </div>
       

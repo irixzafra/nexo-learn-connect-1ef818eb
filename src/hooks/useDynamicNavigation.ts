@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import { UserRoleType } from '@/types/auth';
 import { NavigationItemWithChildren } from '@/types/navigation-manager';
 
-// Mock data - this would typically come from an API
+// Mock data - esto normalmente vendría de una API
 const navigationByRole: Record<UserRoleType, NavigationItemWithChildren[]> = {
   admin: [
     { label: 'Dashboard', path: '/admin/dashboard', icon: 'LayoutDashboard' },
@@ -35,6 +35,27 @@ const navigationByRole: Record<UserRoleType, NavigationItemWithChildren[]> = {
     { label: 'Register', path: '/auth/register', icon: 'UserPlus' },
     { label: 'Explore', path: '/explore', icon: 'Compass' },
   ],
+  // Agregando los roles faltantes
+  sistemas: [
+    { label: 'Dashboard', path: '/sistemas/dashboard', icon: 'Terminal' },
+    { label: 'Configuración', path: '/sistemas/config', icon: 'Settings' },
+  ],
+  content_creator: [
+    { label: 'Dashboard', path: '/content/dashboard', icon: 'PenTool' },
+    { label: 'Mis Contenidos', path: '/content/my-content', icon: 'FileText' },
+  ],
+  guest: [
+    { label: 'Explorar', path: '/explore', icon: 'Compass' },
+    { label: 'Iniciar Sesión', path: '/auth/login', icon: 'LogIn' },
+  ],
+  beta_tester: [
+    { label: 'Dashboard', path: '/beta/dashboard', icon: 'LayoutDashboard' },
+    { label: 'Reportar Bug', path: '/beta/report-bug', icon: 'Bug' },
+  ],
+  anonimo: [
+    { label: 'Explorar', path: '/explorar', icon: 'Compass' },
+    { label: 'Iniciar Sesión', path: '/auth/login', icon: 'LogIn' },
+  ],
 };
 
 export const useDynamicNavigation = () => {
@@ -46,10 +67,10 @@ export const useDynamicNavigation = () => {
     setError(null);
     
     try {
-      // Simulate API call
+      // Simular llamada a API
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Return navigation for the specified role, or empty array if not found
+      // Devolver navegación para el rol especificado, o array vacío si no se encuentra
       return navigationByRole[role] || [];
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to fetch navigation items');

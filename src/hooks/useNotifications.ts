@@ -1,61 +1,98 @@
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState, useCallback, useEffect } from 'react';
 
-export const useNotifications = () => {
-  const { user } = useAuth();
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  isRead: boolean;
+  createdAt: Date;
+}
+
+export function useNotifications() {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // This is a mock implementation. In a real app, you would fetch notifications from an API
-    if (user) {
-      // Simulate loading
-      setIsLoading(true);
+  // Función para cargar notificaciones (simulada)
+  const fetchNotifications = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      // Simulamos una llamada a la API con un retraso
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Mock data - replace with actual API call in production
-      setTimeout(() => {
-        const mockNotifications = [
-          { id: 1, read: false, message: 'Nueva calificación en tu curso', timestamp: new Date() },
-          { id: 2, read: false, message: 'Comentario nuevo en tu publicación', timestamp: new Date() },
-          { id: 3, read: true, message: 'Curso completado', timestamp: new Date() }
-        ];
-        
-        setNotifications(mockNotifications);
-        setUnreadCount(mockNotifications.filter(n => !n.read).length);
-        setIsLoading(false);
-      }, 500);
+      // Datos simulados de notificaciones
+      const mockNotifications: Notification[] = [
+        {
+          id: '1',
+          title: 'Nuevo mensaje',
+          message: 'Has recibido un nuevo mensaje',
+          isRead: false,
+          createdAt: new Date()
+        },
+        {
+          id: '2',
+          title: 'Recordatorio de curso',
+          message: 'Tu curso comienza en 1 hora',
+          isRead: false,
+          createdAt: new Date(Date.now() - 3600000)
+        },
+        {
+          id: '3',
+          title: 'Actualización de sistema',
+          message: 'El sistema se ha actualizado correctamente',
+          isRead: true,
+          createdAt: new Date(Date.now() - 86400000)
+        }
+      ];
+      
+      setNotifications(mockNotifications);
+      setUnreadCount(mockNotifications.filter(n => !n.isRead).length);
+    } catch (error) {
+      console.error('Error al cargar notificaciones:', error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [user]);
+  }, []);
 
-  const markAsRead = (notificationId: number) => {
-    setNotifications(prevNotifications => 
-      prevNotifications.map(notification => 
+  // Cargar notificaciones al montar el componente
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
+
+  // Marcar una notificación como leída
+  const markAsRead = useCallback((notificationId: string) => {
+    setNotifications(prev => 
+      prev.map(notification => 
         notification.id === notificationId 
-          ? { ...notification, read: true } 
+          ? { ...notification, isRead: true } 
           : notification
       )
     );
     
-    // Update unread count
+    // Actualizar contador de no leídos
     setUnreadCount(prev => Math.max(0, prev - 1));
-  };
+  }, []);
 
-  const markAllAsRead = () => {
-    setNotifications(prevNotifications => 
-      prevNotifications.map(notification => ({ ...notification, read: true }))
+  // Marcar todas las notificaciones como leídas
+  const markAllAsRead = useCallback(() => {
+    setNotifications(prev => 
+      prev.map(notification => ({ ...notification, isRead: true }))
     );
-    
-    // Reset unread count
     setUnreadCount(0);
-  };
+  }, []);
+
+  // Refrescar notificaciones
+  const refreshNotifications = useCallback(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
 
   return {
     notifications,
     unreadCount,
     isLoading,
     markAsRead,
-    markAllAsRead
+    markAllAsRead,
+    refreshNotifications
   };
-};
+}
