@@ -50,9 +50,9 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
         return 'default';
       case 'instructor':
         return 'secondary';
-      case 'sistemas':
+      case 'moderator':
         return 'destructive';
-      case 'anonimo':
+      case 'guest':
         return 'outline';
       case 'student':
         return 'outline';
@@ -67,9 +67,9 @@ const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
         return <Shield className="h-4 w-4" />;
       case 'instructor':
         return <UserCog className="h-4 w-4" />;
-      case 'sistemas':
+      case 'moderator':
         return <Terminal className="h-4 w-4" />;
-      case 'anonimo':
+      case 'guest':
         return <Ghost className="h-4 w-4" />;
       case 'student':
         return <User className="h-4 w-4" />;

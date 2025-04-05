@@ -46,7 +46,7 @@ export const fetchNavigationItems = async (
           isActive: !item.disabled,
           sortOrder: itemIndex,
           parentId: groupId,
-          visibleToRoles: item.requiredRole ? item.requiredRole : [role]
+          visibleToRoles: Array.isArray(item.requiredRole) ? item.requiredRole : item.requiredRole ? [item.requiredRole] : [role]
         };
         
         groupItem.children?.push(childItem);

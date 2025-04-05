@@ -16,25 +16,25 @@ export const configurationNavigation: MenuItem[] = [
     icon: Settings,
     label: 'Preferencias',
     path: '/app/preferences',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
     icon: UserCog,
     label: 'Cuenta',
     path: '/app/account',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
     icon: Bell,
     label: 'Notificaciones',
     path: '/app/notification-settings',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
     icon: Lock,
     label: 'Privacidad',
     path: '/app/privacy',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
     icon: CreditCard,

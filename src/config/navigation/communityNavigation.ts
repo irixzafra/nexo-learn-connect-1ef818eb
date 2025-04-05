@@ -22,13 +22,13 @@ export const communityNavigation: MenuItem[] = [
     icon: Bell,
     label: 'Notificaciones',
     path: '/app/notifications',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
     icon: Users,
     label: 'Comunidad',
     path: '/app/community',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
     icon: UserPlus,
@@ -40,6 +40,6 @@ export const communityNavigation: MenuItem[] = [
     icon: HelpCircle,
     label: 'Ayuda',
     path: '/app/support',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator', 'guest']
   }
 ];

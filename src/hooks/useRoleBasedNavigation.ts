@@ -24,17 +24,8 @@ export const useRoleBasedNavigation = () => {
         case 'instructor': 
           setHomePath('/instructor/dashboard');
           break;
-        case 'sistemas':
-          setHomePath('/admin/dashboard');
-          break;
         case 'moderator':
           setHomePath('/moderation/dashboard');
-          break;
-        case 'content_creator':
-          setHomePath('/content/dashboard');
-          break;
-        case 'beta_tester':
-          setHomePath('/beta/dashboard');
           break;
         default:
           setHomePath('/student/dashboard'); // Default for student role

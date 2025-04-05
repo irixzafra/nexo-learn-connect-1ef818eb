@@ -10,12 +10,12 @@ export const dashboardNavigation: MenuItem[] = [
     icon: LayoutDashboard,
     label: 'Dashboard',
     path: '/app/dashboard',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
     icon: Home,
     label: 'Inicio',
     path: '/app/home',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator', 'guest']
   }
 ];

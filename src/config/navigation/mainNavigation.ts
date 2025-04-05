@@ -22,26 +22,26 @@ export const mainNavigation: MenuItem[] = [
     icon: Home,
     label: 'Dashboard',
     path: '/app/home',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator', 'guest']
   },
   {
     icon: User,
     label: 'Mi Perfil',
     path: '/app/profile',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
     icon: BookOpen,
     label: 'Mis Cursos',
     path: '/app/my-courses',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester'],
+    requiredRole: ['student', 'instructor', 'admin', 'moderator'],
     isHighlighted: true
   },
   {
     icon: Award,
     label: 'Certificados',
     path: '/app/certificates',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas']
+    requiredRole: ['student', 'instructor', 'admin']
   },
   {
     icon: Lightbulb,
@@ -65,12 +65,12 @@ export const mainNavigation: MenuItem[] = [
     icon: Settings,
     label: 'Preferencias',
     path: '/app/preferences',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator']
   },
   {
     icon: BarChart,
     label: 'Analíticas',
     path: '/app/analytics/personal',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas']
+    requiredRole: ['student', 'instructor', 'admin']
   }
 ];

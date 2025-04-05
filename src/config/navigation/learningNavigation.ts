@@ -15,14 +15,14 @@ export const learningNavigation: MenuItem[] = [
     icon: BookOpen,
     label: 'Mis Cursos',
     path: '/app/my-courses',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'beta_tester'],
+    requiredRole: ['student', 'instructor', 'admin', 'moderator'],
     isHighlighted: true
   },
   {
     icon: Route,
     label: 'Rutas de aprendizaje',
     path: '/app/learning-paths',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas']
+    requiredRole: ['student', 'instructor', 'admin']
   },
   {
     icon: CheckSquare,

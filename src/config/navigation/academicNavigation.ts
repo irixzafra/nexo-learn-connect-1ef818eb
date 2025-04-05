@@ -18,42 +18,42 @@ export const academicNavigation: MenuItem[] = [
     icon: Users,
     label: 'Estudiantes',
     path: '/app/admin/students',
-    requiredRole: ['admin', 'sistemas']
+    requiredRole: ['admin']
   },
   {
     icon: GraduationCap,
     label: 'Profesores',
     path: '/app/admin/instructors',
-    requiredRole: ['admin', 'sistemas']
+    requiredRole: ['admin']
   },
   {
     icon: BookOpen,
     label: 'Cursos',
     path: '/app/admin/courses',
-    requiredRole: ['admin', 'sistemas', 'instructor']
+    requiredRole: ['admin', 'instructor']
   },
   {
     icon: Tag,
     label: 'Categorías',
     path: '/app/admin/categories',
-    requiredRole: ['admin', 'sistemas', 'content_creator']
+    requiredRole: ['admin']
   },
   {
     icon: Award,
     label: 'Certificados',
     path: '/app/admin/certificates',
-    requiredRole: ['admin', 'sistemas']
+    requiredRole: ['admin']
   },
   {
     icon: Route,
     label: 'Rutas de aprendizaje',
     path: '/app/admin/learning-paths',
-    requiredRole: ['admin', 'sistemas', 'content_creator']
+    requiredRole: ['admin']
   },
   {
     icon: Activity,
     label: 'Actividad de Alumnos',
     path: '/app/admin/student-activity',
-    requiredRole: ['admin', 'sistemas']
+    requiredRole: ['admin']
   }
 ];

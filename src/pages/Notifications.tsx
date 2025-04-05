@@ -36,15 +36,15 @@ const Notifications: React.FC = () => {
 
   const filteredNotifications = notifications.filter(notification => {
     const typeMatch = filter === 'all' || notification.type === filter;
-    const readMatch = !showUnreadOnly || !notification.is_read;
+    const readMatch = !showUnreadOnly || !notification.isRead;
     return typeMatch && readMatch;
   });
 
   const handleNotificationClick = (notification: Notification) => {
     markAsRead(notification.id);
     
-    if (notification.action_url) {
-      navigate(notification.action_url);
+    if (notification.actionUrl) {
+      navigate(notification.actionUrl);
     }
   };
 
@@ -142,11 +142,11 @@ const Notifications: React.FC = () => {
                 >
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h3 className={`text-base ${!notification.is_read ? 'font-medium' : ''}`}>
+                      <h3 className={`text-base ${!notification.isRead ? 'font-medium' : ''}`}>
                         {notification.title}
                       </h3>
                       <span className="text-xs text-muted-foreground">
-                        {format(new Date(notification.created_at), 'PPP, HH:mm', { locale: es })}
+                        {format(new Date(notification.createdAt), 'PPP, HH:mm', { locale: es })}
                       </span>
                     </div>
                     {notification.content && (
@@ -154,7 +154,7 @@ const Notifications: React.FC = () => {
                         {notification.content}
                       </p>
                     )}
-                    {!notification.is_read && (
+                    {!notification.isRead && (
                       <div className="mt-2">
                         <span className="inline-flex items-center px-2 py-1 text-xs rounded-full bg-primary/10 text-primary">
                           No leído

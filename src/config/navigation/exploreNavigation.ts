@@ -16,7 +16,7 @@ export const exploreNavigation: MenuItem[] = [
     icon: Compass,
     label: 'Explorar',
     path: '/courses',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas', 'moderator', 'content_creator', 'guest', 'beta_tester']
+    requiredRole: ['student', 'instructor', 'admin', 'moderator', 'guest']
   },
   {
     icon: Briefcase,
@@ -28,7 +28,7 @@ export const exploreNavigation: MenuItem[] = [
     icon: Route,
     label: 'Rutas de aprendizaje',
     path: '/app/learning-paths',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas']
+    requiredRole: ['student', 'instructor', 'admin']
   },
   {
     icon: Briefcase,
@@ -40,13 +40,13 @@ export const exploreNavigation: MenuItem[] = [
     icon: Trophy,
     label: 'Leader Board',
     path: '/app/leaderboard',
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas']
+    requiredRole: ['student', 'instructor', 'admin']
   },
   {
     icon: Users,
     label: 'Grupos',
     path: '/app/groups',
     disabled: true,
-    requiredRole: ['student', 'instructor', 'admin', 'sistemas']
+    requiredRole: ['student', 'instructor', 'admin']
   }
 ];
