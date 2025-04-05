@@ -16,7 +16,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         {children || <Outlet />}
       </main>
       
-      <Toaster position="top-right" />
+      <Toaster 
+        position="top-right" 
+        richColors
+        closeButton
+      />
     </div>
   );
 };

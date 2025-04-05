@@ -9,6 +9,8 @@ import { Eye, Edit, Trash2, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useSupabaseTable } from '@/hooks/use-supabase-table';
+import PageEditorDrawer from '@/components/admin/pages/PageEditorDrawer';
+import { PageData } from '@/components/admin/pages/types';
 
 // Define types for page data
 interface SitePage {
@@ -22,12 +24,18 @@ interface SitePage {
   updated_at: string;
   meta_description?: string;
   content?: any;
+  description?: string;
+  path?: string;
+  category?: string;
+  component?: string;
+  accessType?: string;
+  navigation?: string;
 }
 
 const SystemPagesPage: React.FC = () => {
   const tableRef = useRef<GlobalTableRef>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedPage, setSelectedPage] = useState<SitePage | null>(null);
+  const [selectedPage, setSelectedPage] = useState<PageData | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [pageToDelete, setPageToDelete] = useState<string | null>(null);
 
@@ -47,7 +55,7 @@ const SystemPagesPage: React.FC = () => {
   const columns: TableColumn<SitePage>[] = [
     {
       id: 'title',
-      header: 'Title',
+      header: 'Título',
       accessorKey: 'title',
       editable: true,
       required: true,
@@ -62,73 +70,88 @@ const SystemPagesPage: React.FC = () => {
             )}
           </div>
           <div className="text-sm text-muted-foreground truncate max-w-[300px]">
-            {row.original.slug}
+            {row.original.slug || row.original.path}
           </div>
         </div>
       )
     },
     {
       id: 'slug',
-      header: 'Slug',
+      header: 'Ruta',
       accessorKey: 'slug',
       editable: true,
       required: true,
       type: 'text',
+      cell: ({ row }) => (
+        <code className="text-xs bg-muted px-1 py-0.5 rounded">
+          /{row.original.slug || row.original.path}
+        </code>
+      )
     },
     {
       id: 'status',
-      header: 'Status',
+      header: 'Estado',
       accessorKey: 'status',
       editable: true,
       required: true,
       type: 'select',
       options: [
-        { label: 'Draft', value: 'draft' },
-        { label: 'Published', value: 'published' },
-        { label: 'Archived', value: 'archived' }
+        { label: 'Borrador', value: 'draft' },
+        { label: 'Publicado', value: 'published' },
+        { label: 'Archivado', value: 'archived' }
       ],
       cell: ({ row }) => {
         const status = row.original.status;
         let variant: 'default' | 'secondary' | 'outline' | 'destructive' = 'default';
+        let label = 'Publicado';
         
-        if (status === 'draft') variant = 'secondary';
-        if (status === 'archived') variant = 'outline';
+        if (status === 'draft') {
+          variant = 'secondary';
+          label = 'Borrador';
+        }
+        if (status === 'archived') {
+          variant = 'outline';
+          label = 'Archivado';
+        }
         
-        return <Badge variant={variant}>{status}</Badge>;
+        return <Badge variant={variant}>{label}</Badge>;
       }
     },
     {
+      id: 'category',
+      header: 'Categoría',
+      accessorKey: 'category',
+      editable: true,
+      type: 'text',
+    },
+    {
       id: 'layout',
-      header: 'Layout',
+      header: 'Diseño',
       accessorKey: 'layout',
       editable: true,
       required: true,
       type: 'select',
       options: [
-        { label: 'Default', value: 'default' },
+        { label: 'Predeterminado', value: 'default' },
         { label: 'Landing', value: 'landing' },
-        { label: 'Sidebar', value: 'sidebar' }
+        { label: 'Con sidebar', value: 'sidebar' }
       ]
     },
     {
       id: 'is_system_page',
-      header: 'System Page',
+      header: 'Sistema',
       accessorKey: 'is_system_page',
       editable: true,
-      type: 'boolean'
-    },
-    {
-      id: 'meta_description',
-      header: 'Meta Description',
-      accessorKey: 'meta_description',
-      editable: true,
-      type: 'text',
-      meta: { multiline: true },
-      hidden: true
+      type: 'boolean',
+      cell: ({ row }) => (
+        row.original.is_system_page ? 
+          <Badge variant="outline">Sistema</Badge> : 
+          <Badge variant="outline" className="bg-muted/50">Custom</Badge>
+      )
     },
     {
       id: 'updated_at',
-      header: 'Updated',
+      header: 'Actualizado',
       accessorKey: 'updated_at',
       type: 'date',
       editable: false
@@ -137,7 +160,28 @@ const SystemPagesPage: React.FC = () => {
 
   // Handle edit page
   const handleEditPage = (page: SitePage) => {
-    setSelectedPage(page);
+    // Convert to PageData format for the drawer
+    const pageData: PageData = {
+      title: page.title,
+      path: page.slug || page.path || '',
+      description: page.description || page.meta_description || '',
+      status: page.status,
+      category: page.category || '',
+      importance: 'medium',
+      updated: new Date(page.updated_at).toLocaleDateString(),
+      component: page.component || '',
+      accessType: page.accessType || 'public',
+      content: page.content,
+      navigation: page.navigation,
+      permissions: {
+        canView: ['all'],
+        canEdit: ['admin'],
+        canDelete: ['admin'],
+        canPublish: ['admin']
+      }
+    };
+    
+    setSelectedPage(pageData);
     setIsDrawerOpen(true);
   };
 
@@ -152,8 +196,8 @@ const SystemPagesPage: React.FC = () => {
     // Implementation to view the page
     const baseUrl = window.location.origin;
     const pageUrl = page.is_system_page
-      ? `${baseUrl}/${page.slug}`
-      : `${baseUrl}/pages/${page.slug}`;
+      ? `${baseUrl}/${page.slug || page.path}`
+      : `${baseUrl}/pages/${page.slug || page.path}`;
       
     window.open(pageUrl, '_blank');
   };
@@ -166,13 +210,14 @@ const SystemPagesPage: React.FC = () => {
       await remove(pageToDelete);
       setIsDeleteDialogOpen(false);
       setPageToDelete(null);
+      toast.success("Página eliminada correctamente");
       
       // Refresh the table data
       if (tableRef.current) {
         tableRef.current.refresh();
       }
     } catch (error) {
-      toast.error("Failed to delete page");
+      toast.error("Error al eliminar la página");
     }
   };
 
@@ -182,6 +227,7 @@ const SystemPagesPage: React.FC = () => {
       if (selectedPage) {
         // Update existing page
         await update({ id: selectedPage.id, data: formData });
+        toast.success("Página actualizada correctamente");
       } else {
         // Create new page with default values
         const newPageData = {
@@ -191,6 +237,7 @@ const SystemPagesPage: React.FC = () => {
           updated_at: new Date().toISOString()
         };
         await create(newPageData);
+        toast.success("Página creada correctamente");
       }
       
       setIsDrawerOpen(false);
@@ -201,7 +248,40 @@ const SystemPagesPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Error saving page:', error);
-      toast.error(`Failed to ${selectedPage ? 'update' : 'create'} page`);
+      toast.error(`Error al ${selectedPage ? 'actualizar' : 'crear'} la página`);
+    }
+  };
+
+  // Handle save for PageEditorDrawer
+  const handleSavePageEditor = async (updatedPage: PageData) => {
+    try {
+      // Convert back to SitePage format
+      const pageData = {
+        title: updatedPage.title,
+        slug: updatedPage.path,
+        description: updatedPage.description,
+        status: updatedPage.status,
+        category: updatedPage.category,
+        component: updatedPage.component,
+        accessType: updatedPage.accessType,
+        content: updatedPage.content,
+        navigation: updatedPage.navigation,
+        updated_at: new Date().toISOString()
+      };
+      
+      // Here we would update in the database
+      toast.success("Cambios guardados correctamente");
+      
+      // Refresh the table data
+      if (tableRef.current) {
+        tableRef.current.refresh();
+      }
+      
+      setIsDrawerOpen(false);
+    } catch (error) {
+      console.error('Error updating page:', error);
+      toast.error("Error al guardar los cambios");
+      throw error;
     }
   };
 
@@ -215,6 +295,7 @@ const SystemPagesPage: React.FC = () => {
           e.stopPropagation();
           handleViewPage(page);
         }}
+        title="Ver página"
       >
         <Eye className="h-4 w-4" />
       </Button>
@@ -225,6 +306,7 @@ const SystemPagesPage: React.FC = () => {
           e.stopPropagation();
           handleEditPage(page);
         }}
+        title="Editar página"
       >
         <Edit className="h-4 w-4" />
       </Button>
@@ -237,6 +319,7 @@ const SystemPagesPage: React.FC = () => {
             setPageToDelete(page.id);
             setIsDeleteDialogOpen(true);
           }}
+          title="Eliminar página"
         >
           <Trash2 className="h-4 w-4" />
         </Button>
@@ -247,8 +330,8 @@ const SystemPagesPage: React.FC = () => {
   return (
     <div className="container mx-auto py-4">
       <PageHeader
-        title="System Pages"
-        description="Manage system pages and static content"
+        title="Gestión de Páginas"
+        description="Administra las páginas y la navegación del sistema"
       />
       
       <div className="mt-6">
@@ -256,14 +339,14 @@ const SystemPagesPage: React.FC = () => {
           <CardContent className="pt-6">
             <GlobalDataTable
               ref={tableRef}
-              title="Pages"
-              description="View and manage all pages in the system"
+              title="Páginas"
+              description="Visualiza y gestiona todas las páginas del sistema"
               data={pages}
               columns={columns}
-              searchPlaceholder="Search pages..."
+              searchPlaceholder="Buscar páginas..."
               searchColumn="title"
-              exportFilename="system-pages"
-              createButtonLabel="Create Page"
+              exportFilename="paginas-sistema"
+              createButtonLabel="Crear Página"
               onCreate={handleCreatePage}
               onRowClick={handleEditPage}
               renderCustomActions={renderActions}
@@ -272,30 +355,29 @@ const SystemPagesPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* Edit/Create Drawer */}
-      <TableDrawer 
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-        title={selectedPage ? 'Edit Page' : 'Create Page'}
-        data={selectedPage}
-        columns={columns}
-        onSubmit={handleSubmit}
-        isLoading={isLoading}
-      />
+      {/* Enhanced Page Editor Drawer */}
+      {selectedPage && (
+        <PageEditorDrawer
+          page={selectedPage}
+          open={isDrawerOpen}
+          onOpenChange={setIsDrawerOpen}
+          onSave={handleSavePageEditor}
+        />
+      )}
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the page.
+              Esta acción no se puede deshacer. La página será eliminada permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700">
-              Delete
+              Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

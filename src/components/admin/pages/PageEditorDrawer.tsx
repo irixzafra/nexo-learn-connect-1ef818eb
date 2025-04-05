@@ -1,96 +1,307 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 import { PageData } from './types';
+import { FileText, Eye, Save } from 'lucide-react';
 
 interface PageEditorDrawerProps {
   page: PageData;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSave?: (updatedPage: PageData) => Promise<void>;
 }
 
 const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
   page,
   open,
-  onOpenChange
+  onOpenChange,
+  onSave
 }) => {
+  const [editedPage, setEditedPage] = useState<PageData>(page);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (page) {
+      setEditedPage(page);
+    }
+  }, [page]);
+
+  const handleFieldChange = (field: keyof PageData, value: any) => {
+    setEditedPage(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSave = async () => {
+    if (!onSave) return;
+    
+    try {
+      setSaving(true);
+      await onSave(editedPage);
+      toast.success('Página actualizada correctamente');
+    } catch (error) {
+      console.error('Error saving page:', error);
+      toast.error('Error al guardar los cambios');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const navigationMenus = [
+    { value: 'main', label: 'Menú Principal' },
+    { value: 'student', label: 'Navegación de Estudiante' },
+    { value: 'instructor', label: 'Navegación de Instructor' },
+    { value: 'admin', label: 'Navegación de Administrador' },
+    { value: 'footer', label: 'Pie de Página' }
+  ];
+  
+  const accessTypes = [
+    { value: 'public', label: 'Público' },
+    { value: 'authenticated', label: 'Autenticado' },
+    { value: 'admin', label: 'Administrador' },
+    { value: 'student', label: 'Estudiante' },
+    { value: 'instructor', label: 'Instructor' }
+  ];
+
+  const statuses = [
+    { value: 'draft', label: 'Borrador' },
+    { value: 'published', label: 'Publicado' },
+    { value: 'archived', label: 'Archivado' }
+  ];
+  
+  const categories = [
+    { value: 'general', label: 'General' },
+    { value: 'learning', label: 'Aprendizaje' },
+    { value: 'community', label: 'Comunidad' },
+    { value: 'admin', label: 'Administración' },
+    { value: 'account', label: 'Cuenta' },
+    { value: 'marketing', label: 'Marketing' }
+  ];
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="sm:max-w-[600px] overflow-y-auto">
+      <SheetContent className="w-[70vw] max-w-[1000px] overflow-y-auto sm:max-w-none">
         <SheetHeader className="mb-6">
-          <SheetTitle>Editar página: {page.title}</SheetTitle>
+          <SheetTitle className="text-2xl flex items-center gap-2">
+            <FileText className="h-6 w-6" />
+            Editar página: {editedPage.title}
+          </SheetTitle>
         </SheetHeader>
 
         <Tabs defaultValue="general">
-          <TabsList className="grid grid-cols-3 mb-4">
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="content">Contenido</TabsTrigger>
-            <TabsTrigger value="settings">Configuración</TabsTrigger>
+          <TabsList className="grid grid-cols-2 mb-6">
+            <TabsTrigger value="general" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span>General</span>
+            </TabsTrigger>
+            <TabsTrigger value="content" className="flex items-center gap-2">
+              <Eye className="h-4 w-4" />
+              <span>Contenido</span>
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="general" className="space-y-4">
-            <div className="space-y-2">
-              <div className="font-medium">Título</div>
-              <div>{page.title}</div>
+          <TabsContent value="general" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <Label htmlFor="title">Título</Label>
+                <Input
+                  id="title"
+                  value={editedPage.title || ''}
+                  onChange={(e) => handleFieldChange('title', e.target.value)}
+                  placeholder="Título de la página"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label htmlFor="path">Ruta (slug)</Label>
+                <Input
+                  id="path"
+                  value={editedPage.path || ''}
+                  onChange={(e) => handleFieldChange('path', e.target.value)}
+                  placeholder="/ruta-de-pagina"
+                />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="font-medium">Ruta</div>
-              <div className="bg-muted p-2 rounded">{page.path}</div>
+            <div className="space-y-3">
+              <Label htmlFor="description">Descripción</Label>
+              <Textarea
+                id="description"
+                value={editedPage.description || ''}
+                onChange={(e) => handleFieldChange('description', e.target.value)}
+                placeholder="Descripción de la página"
+                rows={3}
+              />
             </div>
 
-            <div className="space-y-2">
-              <div className="font-medium">Descripción</div>
-              <div>{page.description}</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <Label htmlFor="category">Categoría</Label>
+                <Select 
+                  value={editedPage.category} 
+                  onValueChange={(value) => handleFieldChange('category', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar categoría" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-3">
+                <Label htmlFor="status">Estado de publicación</Label>
+                <Select 
+                  value={editedPage.status} 
+                  onValueChange={(value) => handleFieldChange('status', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar estado" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statuses.map((status) => (
+                      <SelectItem key={status.value} value={status.value}>
+                        {status.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <Label htmlFor="navigation">Navegación</Label>
+                <Select 
+                  value={editedPage.navigation || "main"}
+                  onValueChange={(value) => handleFieldChange('navigation', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar menú" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {navigationMenus.map((menu) => (
+                      <SelectItem key={menu.value} value={menu.value}>
+                        {menu.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-3">
+                <Label htmlFor="accessType">Tipo de acceso</Label>
+                <Select 
+                  value={editedPage.accessType || "public"} 
+                  onValueChange={(value) => handleFieldChange('accessType', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar tipo de acceso" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accessTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="component">Componente</Label>
+              <Input
+                id="component"
+                value={editedPage.component || ''}
+                onChange={(e) => handleFieldChange('component', e.target.value)}
+                placeholder="Nombre del componente React"
+                className="font-mono text-sm"
+              />
+              <p className="text-sm text-muted-foreground">
+                Nombre del componente React que se utilizará para renderizar esta página
+              </p>
+            </div>
+            
+            <div className="flex justify-end gap-3 mt-6 pt-6 border-t">
+              <Button 
+                variant="outline" 
+                onClick={() => onOpenChange(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleSave}
+                disabled={saving}
+                className="gap-2"
+              >
+                <Save className="h-4 w-4" />
+                Guardar cambios
+              </Button>
             </div>
           </TabsContent>
 
           <TabsContent value="content" className="space-y-4">
-            {page.content?.blocks ? (
-              <div className="space-y-4">
-                {page.content.blocks.map((block, index) => (
-                  <div key={index} className="border p-3 rounded">
-                    <div className="font-medium mb-1">Bloque de tipo: {block.type}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {typeof block.content === 'string' 
-                        ? block.content 
-                        : JSON.stringify(block.content)}
+            <div className="border rounded-lg p-4">
+              <h3 className="font-medium text-lg mb-3">Vista previa del contenido</h3>
+              
+              {editedPage.content?.blocks && editedPage.content.blocks.length > 0 ? (
+                <div className="bg-white p-6 rounded-md border shadow-sm min-h-[400px]">
+                  <h1 className="text-2xl font-bold mb-4">{editedPage.title}</h1>
+                  {editedPage.content.blocks.map((block, index) => (
+                    <div key={index} className="mb-4">
+                      {block.type === 'text' && (
+                        <div className="prose">
+                          {typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}
+                        </div>
+                      )}
+                      {block.type === 'heading' && (
+                        <h2 className="text-xl font-semibold mb-2">
+                          {typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}
+                        </h2>
+                      )}
+                      {block.type !== 'text' && block.type !== 'heading' && (
+                        <div className="p-3 bg-gray-100 rounded border border-dashed">
+                          <p className="text-sm font-medium">{block.type}</p>
+                          <pre className="text-xs overflow-auto mt-1">
+                            {JSON.stringify(block.content, null, 2)}
+                          </pre>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center p-4 text-muted-foreground">
-                Esta página no tiene bloques de contenido.
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="settings" className="space-y-4">
-            <div className="space-y-2">
-              <div className="font-medium">Estado</div>
-              <div className="capitalize">{page.status}</div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="font-medium">Categoría</div>
-              <div>{page.category || "Sin categoría"}</div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="font-medium">Tipo de acceso</div>
-              <div className="capitalize">{page.accessType || "Público"}</div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center p-8 bg-muted/20 rounded-md border border-dashed flex flex-col items-center justify-center min-h-[400px]">
+                  <FileText className="h-8 w-8 text-muted-foreground mb-2" />
+                  <h3 className="text-lg font-medium">No hay contenido</h3>
+                  <p className="text-muted-foreground mt-2 max-w-md">
+                    Esta página no tiene bloques de contenido definidos o utiliza un componente personalizado para su renderizado.
+                  </p>
+                </div>
+              )}
             </div>
           </TabsContent>
         </Tabs>
-
-        <div className="mt-6 flex justify-end">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cerrar
-          </Button>
-        </div>
       </SheetContent>
     </Sheet>
   );

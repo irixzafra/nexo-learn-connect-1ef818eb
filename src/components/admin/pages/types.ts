@@ -1,5 +1,6 @@
 
 export interface PageData {
+  id?: string;
   title: string;
   path: string;
   description: string;
@@ -8,20 +9,10 @@ export interface PageData {
   importance?: 'high' | 'medium' | 'low';
   updated?: string;
   component?: string;
-  accessType?: 'public' | 'authenticated' | 'admin';
+  accessType?: 'public' | 'authenticated' | 'admin' | 'student' | 'instructor';
+  navigation?: string;
   content?: {
-    blocks: {
-      id: string;
-      type: string;
-      content: string | Record<string, any>;
-      order?: number;
-      tags?: string[];
-      width?: string;
-      height?: string;
-      layout?: 'column' | 'row' | 'grid-2' | 'grid-3' | 'grid-4';
-      isContainer?: boolean;
-      childBlocks?: Array<any>;
-    }[];
+    blocks: PageBlock[];
   };
   permissions?: {
     canView: string[];
@@ -29,4 +20,11 @@ export interface PageData {
     canDelete: string[];
     canPublish: string[];
   };
+}
+
+export interface PageBlock {
+  id?: string;
+  type: string;
+  content: string | Record<string, any>;
+  order?: number;
 }
