@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from '@/components/ui/drawer';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { TableColumn } from './types';
 import { 
@@ -58,7 +58,7 @@ export function TableDrawer<TData extends Record<string, any>>({
       // Set the appropriate schema based on the column type
       switch (col.type) {
         case 'text':
-          fieldSchema = col.required ? z.string().min(1, { message: "This field is required" }) : z.string().optional();
+          fieldSchema = col.required ? z.string().min(1, { message: "Este campo es requerido" }) : z.string().optional();
           break;
         case 'number':
           fieldSchema = col.required ? z.number() : z.number().optional();
@@ -107,11 +107,11 @@ export function TableDrawer<TData extends Record<string, any>>({
   const handleSubmit = async (values: any) => {
     try {
       await onSubmit(values);
-      toast.success(`${data ? 'Updated' : 'Created'} successfully`);
+      toast.success(`${data ? 'Actualizado' : 'Creado'} correctamente`);
       onClose();
     } catch (error) {
-      console.error('Error submitting form:', error);
-      toast.error(`Failed to ${data ? 'update' : 'create'}`);
+      console.error('Error en el formulario:', error);
+      toast.error(`Error al ${data ? 'actualizar' : 'crear'}`);
     }
   };
   
@@ -146,10 +146,19 @@ export function TableDrawer<TData extends Record<string, any>>({
     switch (column.type) {
       case 'boolean':
         return (
-          <Checkbox 
-            checked={field.value} 
-            onCheckedChange={field.onChange} 
-          />
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              checked={field.value} 
+              onCheckedChange={field.onChange} 
+              id={column.id}
+            />
+            <label 
+              htmlFor={column.id}
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Activar
+            </label>
+          </div>
         );
       
       case 'text':
@@ -169,8 +178,8 @@ export function TableDrawer<TData extends Record<string, any>>({
           <Input 
             {...field} 
             type="number" 
-            value={field.value || ''} 
-            onChange={(e) => field.onChange(e.target.valueAsNumber || null)} 
+            value={field.value ?? ''} 
+            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)} 
           />
         );
       
@@ -179,7 +188,7 @@ export function TableDrawer<TData extends Record<string, any>>({
           <Input 
             {...field} 
             type="datetime-local" 
-            value={field.value || ''} 
+            value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''} 
           />
         );
       
@@ -189,8 +198,8 @@ export function TableDrawer<TData extends Record<string, any>>({
             value={String(field.value || '')} 
             onValueChange={field.onChange}
           >
-            <SelectTrigger>
-              <SelectValue placeholder="Select..." />
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccionar..." />
             </SelectTrigger>
             <SelectContent>
               {column.options?.map((option) => (
@@ -208,32 +217,41 @@ export function TableDrawer<TData extends Record<string, any>>({
   };
   
   return (
-    <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent className="max-h-[90vh] sm:max-w-[600px] md:max-w-[800px]">
-        <DrawerHeader>
-          <DrawerTitle>{title}</DrawerTitle>
-        </DrawerHeader>
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent side="right" className="w-[70%] sm:max-w-[70%] overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>{title}</SheetTitle>
+        </SheetHeader>
         
-        <div className="px-4 py-2 overflow-y-auto">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {columns.map(renderFormField)}
-              </div>
-              
-              <DrawerFooter className="pt-2 border-t flex justify-between">
-                <Button variant="outline" onClick={onClose} type="button">
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {data ? 'Save changes' : 'Create'}
-                </Button>
-              </DrawerFooter>
-            </form>
-          </Form>
+        <div className="mt-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-60">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="ml-2">Cargando...</span>
+            </div>
+          ) : (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {columns.map(renderFormField)}
+                </div>
+                
+                <SheetFooter className="pt-6">
+                  <div className="flex justify-between w-full gap-2">
+                    <Button variant="outline" onClick={onClose} type="button">
+                      Cancelar
+                    </Button>
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {data ? 'Guardar cambios' : 'Crear'}
+                    </Button>
+                  </div>
+                </SheetFooter>
+              </form>
+            </Form>
+          )}
         </div>
-      </DrawerContent>
-    </Drawer>
+      </SheetContent>
+    </Sheet>
   );
 }

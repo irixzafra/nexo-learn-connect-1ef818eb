@@ -172,7 +172,7 @@ const RoleManagement: React.FC = () => {
       </div>
 
       <Card>
-        <GlobalDataTable<Role>
+        <GlobalDataTable
           tablePath="roles"
           columns={columns}
           title="Roles"
