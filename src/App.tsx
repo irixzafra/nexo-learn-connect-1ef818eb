@@ -1,14 +1,18 @@
 
 import React from 'react';
-import AppProviders from './providers/AppProviders';
-import AppRoutes from './routes/AppRoutes';
+import './App.css';
+import { ThemeProvider } from './components/ThemeProvider';
+import AppRoutes from './routes';
+import { AuthProvider } from './contexts/auth';
 
-const App: React.FC = () => {
+function App() {
   return (
-    <AppProviders>
-      <AppRoutes />
-    </AppProviders>
+    <ThemeProvider defaultTheme="light" storageKey="nexo-ui-theme">
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </ThemeProvider>
   );
-};
+}
 
 export default App;

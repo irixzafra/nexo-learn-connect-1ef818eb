@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
@@ -6,16 +5,18 @@ import AdminRoutes from './routes/AdminRoutes';
 import SystemPagesPage from './pages/admin/SystemPagesPage';
 import ComingSoonPage from './pages/common/ComingSoonPage';
 import LearningPathsPage from './pages/student/LearningPathsPage';
+import AuthRoutes from './routes/AuthRoutes';
+import AuthLayout from './layouts/AuthLayout';
 
 const AppRoutes: React.FC = () => {
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
-        <Route path="/auth/login" element={<div>LoginPage</div>} />
-        <Route path="/auth/register" element={<div>RegisterPage</div>} />
-        <Route path="/auth/forgot-password" element={<div>ForgotPasswordPage</div>} />
-        <Route path="/auth/reset-password" element={<div>ResetPasswordPage</div>} />
+        {/* Auth Routes - Updated to use the AuthRoutes component */}
+        <Route path="/auth/*" element={<AuthLayout><AuthRoutes /></AuthLayout>} />
+        
+        {/* Public Routes - Keep for backward compatibility */}
+        <Route path="/login" element={<AuthLayout><AuthRoutes /></AuthLayout>} />
 
         {/* App Routes (Authenticated) */}
         <Route path="/app" element={<AppLayout />}>
@@ -36,6 +37,9 @@ const AppRoutes: React.FC = () => {
 
         {/* Catch direct /learning-paths URL without /app prefix */}
         <Route path="/learning-paths" element={<AppLayout><LearningPathsPage /></AppLayout>} />
+
+        {/* Redirect root to auth/login */}
+        <Route path="/" element={<AuthLayout><AuthRoutes /></AuthLayout>} />
       </Routes>
     </Router>
   );

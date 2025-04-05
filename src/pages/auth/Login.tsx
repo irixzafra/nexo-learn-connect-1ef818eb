@@ -11,7 +11,6 @@ import { z } from 'zod';
 import { useAuth } from '@/contexts/auth';
 import { Loader2, Mail, LockKeyhole } from 'lucide-react';
 import { toast } from 'sonner';
-import AuthLayout from '@/layouts/AuthLayout';
 
 // Esquema de validación
 const loginSchema = z.object({
@@ -82,105 +81,103 @@ const Login: React.FC = () => {
   };
   
   return (
-    <AuthLayout>
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Iniciar Sesión</CardTitle>
-          <CardDescription className="text-center">
-            Introduce tus credenciales para acceder a tu cuenta
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-base">Correo Electrónico</FormLabel>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                      <FormControl>
-                        <Input 
-                          {...field} 
-                          type="email" 
-                          placeholder="usuario@ejemplo.com" 
-                          autoComplete="email" 
-                          className="pl-10 py-6 text-base"
-                        />
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-base">Contraseña</FormLabel>
-                    <div className="relative">
-                      <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                      <FormControl>
-                        <Input 
-                          {...field} 
-                          type="password" 
-                          placeholder="••••••••" 
-                          autoComplete="current-password" 
-                          className="pl-10 py-6 text-base"
-                        />
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-2">
-                  <input 
-                    type="checkbox" 
-                    id="remember" 
-                    className="rounded border-gray-300 text-primary" 
-                  />
-                  <label htmlFor="remember" className="text-sm text-gray-600">Recordarme</label>
-                </div>
-                <Link to="/auth/forgot-password" className="text-sm text-primary hover:underline">
-                  ¿Olvidaste tu contraseña?
-                </Link>
+    <Card className="w-full max-w-md">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl font-bold text-center">Iniciar Sesión</CardTitle>
+        <CardDescription className="text-center">
+          Introduce tus credenciales para acceder a tu cuenta
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel className="text-base">Correo Electrónico</FormLabel>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        type="email" 
+                        placeholder="usuario@ejemplo.com" 
+                        autoComplete="email" 
+                        className="pl-10 py-6 text-base"
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel className="text-base">Contraseña</FormLabel>
+                  <div className="relative">
+                    <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        type="password" 
+                        placeholder="••••••••" 
+                        autoComplete="current-password" 
+                        className="pl-10 py-6 text-base"
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  id="remember" 
+                  className="rounded border-gray-300 text-primary" 
+                />
+                <label htmlFor="remember" className="text-sm text-gray-600">Recordarme</label>
               </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full py-6 text-base" 
-                disabled={isLoading || authLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Iniciando sesión...
-                  </>
-                ) : (
-                  'Iniciar Sesión'
-                )}
-              </Button>
-            </form>
-          </Form>
-          
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              ¿No tienes una cuenta?{' '}
-              <Link to="/auth/register" className="text-primary hover:underline">
-                Regístrate
+              <Link to="/auth/forgot-password" className="text-sm text-primary hover:underline">
+                ¿Olvidaste tu contraseña?
               </Link>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </AuthLayout>
+            </div>
+            
+            <Button 
+              type="submit" 
+              className="w-full py-6 text-base" 
+              disabled={isLoading || authLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Iniciando sesión...
+                </>
+              ) : (
+                'Iniciar Sesión'
+              )}
+            </Button>
+          </form>
+        </Form>
+        
+        <div className="mt-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            ¿No tienes una cuenta?{' '}
+            <Link to="/auth/register" className="text-primary hover:underline">
+              Regístrate
+            </Link>
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
