@@ -54,9 +54,12 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 <span className="sr-only">Cambiar idioma</span>
               </Button>
             ) : (
-              <Button variant="outline" size="sm" className="gap-2">
-                {getLanguageFlag(currentLanguage)}
-                <span>{languages.find(l => l.code === currentLanguage)?.name || 'Language'}</span>
+              <Button variant="outline" size="sm" className="gap-2 w-full justify-between">
+                <span className="flex items-center gap-2">
+                  {getLanguageFlag(currentLanguage)}
+                  <span>{languages.find(l => l.code === currentLanguage)?.name || 'Idioma'}</span>
+                </span>
+                <Globe className="h-3.5 w-3.5 opacity-70" />
               </Button>
             )}
           </DropdownMenuTrigger>

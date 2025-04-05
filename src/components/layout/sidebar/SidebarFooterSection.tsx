@@ -1,16 +1,12 @@
 
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
-import { Settings, LogOut, ChevronDown } from 'lucide-react';
+import { Settings, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+import EnhancedRoleSimulator from '@/components/layout/header/role-simulator/EnhancedRoleSimulator';
+import { LanguageSelector } from '@/components/shared/LanguageSelector';
+import { SupportedLanguage } from '@/contexts/LanguageContext';
 
 interface SidebarFooterProps {
   userRole: UserRoleType;
@@ -20,16 +16,21 @@ interface SidebarFooterProps {
   languages: Array<{ code: string; name: string }>;
   changeLanguage: (code: string) => void;
   logout: () => void;
-  currentViewRole?: UserRoleType | null;
-  getRoleName?: (role: UserRoleType) => string;
   isViewingAsOtherRole?: boolean;
   resetToOriginalRole?: () => void;
   forceAdminRole?: () => Promise<void>;
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
+  userRole,
+  effectiveRole,
   isCollapsed,
-  logout
+  currentLanguage,
+  languages,
+  changeLanguage,
+  logout,
+  isViewingAsOtherRole,
+  resetToOriginalRole
 }) => {
   const handleLogout = () => {
     if (logout) {
@@ -39,6 +40,23 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
 
   return (
     <div className="space-y-2 p-2">
+      {/* Role Switcher - Only for admins */}
+      {userRole === 'admin' && (
+        <div className={`mb-2 pb-2 border-b border-border ${isCollapsed ? 'px-2' : 'px-4'}`}>
+          <EnhancedRoleSimulator compact={isCollapsed} />
+        </div>
+      )}
+
+      {/* Language Selector */}
+      <div className={`mb-3 ${isCollapsed ? 'flex justify-center' : 'px-2'}`}>
+        <LanguageSelector 
+          currentLanguage={currentLanguage as SupportedLanguage}
+          languages={languages}
+          onChange={changeLanguage}
+          variant={isCollapsed ? 'minimal' : 'full'}
+        />
+      </div>
+
       {/* Settings Button */}
       <Button
         variant="ghost"

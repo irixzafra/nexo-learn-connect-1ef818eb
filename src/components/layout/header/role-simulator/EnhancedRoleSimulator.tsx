@@ -83,7 +83,7 @@ const EnhancedRoleSimulator: React.FC<EnhancedRoleSimulatorProps> = ({
 
   return (
     <div className={cn("flex flex-col w-full", className)}>
-      {isViewingAsOtherRole && (
+      {isViewingAsOtherRole && !compact && (
         <div className="text-xs text-muted-foreground mb-1 text-center">
           Vista como:
         </div>
@@ -101,9 +101,11 @@ const EnhancedRoleSimulator: React.FC<EnhancedRoleSimulatorProps> = ({
           >
             <div className="flex items-center gap-1.5 truncate">
               {getRoleIcon(effectiveRole as UserRoleType)}
-              <span className="truncate">
-                {getRoleName(effectiveRole as UserRoleType)}
-              </span>
+              {!compact && (
+                <span className="truncate">
+                  {getRoleName(effectiveRole as UserRoleType)}
+                </span>
+              )}
             </div>
             <ChevronDown className="h-4 w-4 opacity-50" />
           </Button>
