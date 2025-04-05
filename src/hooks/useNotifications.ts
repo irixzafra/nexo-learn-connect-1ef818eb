@@ -1,187 +1,118 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/auth';
 import { Notification } from '@/types/notifications';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-export const useNotifications = () => {
+export function useNotifications() {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const userId = user?.id;
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  // Fetch notifications
-  const {
-    data: notifications = [],
-    isLoading,
-    isError,
-    refetch
-  } = useQuery({
-    queryKey: ['notifications', userId],
-    queryFn: async () => {
-      if (!userId) return [];
-      
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(30);
-      
-      if (error) {
-        console.error('Error fetching notifications:', error);
-        return [];
-      }
-      
-      return data as Notification[];
-    },
-    enabled: !!userId,
-  });
-
-  // Subscribe to real-time notifications
+  // Fetch notifications when the user changes
   useEffect(() => {
-    if (!userId) return;
+    if (user) {
+      fetchNotifications();
+    } else {
+      setNotifications([]);
+      setUnreadCount(0);
+    }
+  }, [user]);
 
-    // Listen for new notifications
-    const channel = supabase
-      .channel('db-notifications')
-      .on(
-        'postgres_changes',
+  // Function to fetch notifications from the server
+  const fetchNotifications = async () => {
+    if (!user) return;
+    
+    setIsLoading(true);
+    try {
+      // This is a placeholder. In a real application, you'd fetch notifications from your API
+      // For demo purposes, we'll just set some sample data
+      const sampleNotifications: Notification[] = [
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`,
+          id: '1',
+          user_id: user.id,
+          type: 'message',
+          title: 'New message from instructor',
+          content: 'You have a new message regarding your course',
+          is_read: false,
+          created_at: new Date().toISOString(),
         },
-        (payload) => {
-          // Update the cache with the new notification
-          const newNotification = payload.new as Notification;
-          
-          queryClient.setQueryData(
-            ['notifications', userId],
-            (old: Notification[] | undefined) => {
-              const currentNotifications = old || [];
-              // Add the new notification at the beginning of the array
-              return [newNotification, ...currentNotifications];
-            }
-          );
-          
-          // Show a toast notification
-          toast(newNotification.title, {
-            description: newNotification.content,
-            action: {
-              label: 'Ver',
-              onClick: () => {
-                if (newNotification.action_url) {
-                  window.location.href = newNotification.action_url;
-                }
-              },
-            },
-          });
-        }
-      )
-      .subscribe();
+        {
+          id: '2',
+          user_id: user.id,
+          type: 'course_completed',
+          title: 'Course completed',
+          content: 'Congratulations on completing the course!',
+          is_read: true,
+          created_at: new Date(Date.now() - 86400000).toISOString(),
+        },
+        {
+          id: '3',
+          user_id: user.id,
+          type: 'announcement',
+          title: 'New platform feature',
+          content: 'We have added new features to the platform!',
+          is_read: false,
+          created_at: new Date(Date.now() - 172800000).toISOString(),
+        },
+      ];
 
-    // Cleanup subscription
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [userId, queryClient]);
+      setNotifications(sampleNotifications);
+      setUnreadCount(sampleNotifications.filter(n => !n.is_read).length);
+    } catch (err) {
+      console.error('Error fetching notifications:', err);
+      setError(err instanceof Error ? err : new Error('Failed to fetch notifications'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Mark a notification as read
-  const markAsReadMutation = useMutation({
-    mutationFn: async (notificationId: string) => {
-      if (!userId) return;
-      
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', notificationId)
-        .eq('user_id', userId);
-      
-      if (error) {
-        console.error('Error marking notification as read:', error);
-        throw error;
-      }
-    },
-    onSuccess: (_, notificationId) => {
-      // Update the cache
-      queryClient.setQueryData(
-        ['notifications', userId],
-        (old: Notification[] | undefined) => {
-          if (!old) return [];
-          
-          return old.map((notification) => {
-            if (notification.id === notificationId) {
-              return { ...notification, is_read: true };
-            }
-            return notification;
-          });
-        }
-      );
-    },
-  });
-
-  // Mark all notifications as read
-  const markAllAsReadMutation = useMutation({
-    mutationFn: async () => {
-      if (!userId) return;
-      
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', userId)
-        .eq('is_read', false);
-      
-      if (error) {
-        console.error('Error marking all notifications as read:', error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      // Update the cache
-      queryClient.setQueryData(
-        ['notifications', userId],
-        (old: Notification[] | undefined) => {
-          if (!old) return [];
-          
-          return old.map((notification) => ({
-            ...notification,
-            is_read: true,
-          }));
-        }
+  const markAsRead = async (notificationId: string) => {
+    if (!user) return;
+    
+    try {
+      // In a real application, you'd update the notification in your API
+      setNotifications(prev => 
+        prev.map(n => 
+          n.id === notificationId ? { ...n, is_read: true } : n
+        )
       );
       
-      toast.success('Todas las notificaciones marcadas como leídas');
-    },
-  });
-
-  // Mark a notification as read
-  const markAsRead = useCallback((notificationId: string) => {
-    markAsReadMutation.mutate(notificationId);
-  }, [markAsReadMutation]);
+      // Update unread count
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error('Error marking notification as read:', err);
+    }
+  };
 
   // Mark all notifications as read
-  const markAllAsRead = useCallback(() => {
-    markAllAsReadMutation.mutate();
-  }, [markAllAsReadMutation]);
-
-  // Refresh notifications
-  const refreshNotifications = useCallback(() => {
-    refetch();
-  }, [refetch]);
-
-  // Calculate unread count
-  const unreadCount = notifications.filter(n => !n.is_read).length;
+  const markAllAsRead = async () => {
+    if (!user) return;
+    
+    try {
+      // In a real application, you'd update the notifications in your API
+      setNotifications(prev => 
+        prev.map(n => ({ ...n, is_read: true }))
+      );
+      
+      // Update unread count
+      setUnreadCount(0);
+    } catch (err) {
+      console.error('Error marking all notifications as read:', err);
+    }
+  };
 
   return {
     notifications,
     unreadCount,
     isLoading,
-    isError,
+    error,
     markAsRead,
     markAllAsRead,
-    refreshNotifications,
+    refresh: fetchNotifications
   };
-};
+}
+
+export default useNotifications;

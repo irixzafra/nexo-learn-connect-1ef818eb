@@ -1,109 +1,109 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { UserRoleType } from '@/types/auth';
 import { NavigationItemWithChildren } from '@/types/navigation-manager';
-import { getNavigationByRole } from '@/config/navigation/roleBasedNavigation';
-import { 
-  fetchNavigationItems, 
-  saveNavigationItems, 
-  syncNavigationFromCode 
-} from '@/services/navigationService';
-import { useToast } from '@/components/ui/use-toast';
+import { fetchNavigationItems, saveNavigationItems, syncNavigationFromCode } from '@/services/navigationService';
 
 export const useNavigationItems = (role: UserRoleType) => {
   const [items, setItems] = useState<NavigationItemWithChildren[]>([]);
   const [originalItems, setOriginalItems] = useState<NavigationItemWithChildren[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const { toast } = useToast();
-  
-  const hasUnsavedChanges = JSON.stringify(items) !== JSON.stringify(originalItems);
 
-  // Cargar elementos de navegación para el rol seleccionado
-  const loadNavigationItems = useCallback(async () => {
+  // Load items when role changes
+  useEffect(() => {
+    loadItems();
+  }, [role]);
+
+  // Function to load navigation items
+  const loadItems = async () => {
     setIsLoading(true);
     try {
       const loadedItems = await fetchNavigationItems(role);
       setItems(loadedItems);
       setOriginalItems(JSON.parse(JSON.stringify(loadedItems))); // Deep clone
-    } catch (error) {
-      console.error(`Error cargando navegación para ${role}:`, error);
-      toast({
-        title: "Error al cargar navegación",
-        description: `No se pudo cargar la configuración de navegación para el rol ${role}.`,
-        variant: "destructive",
-      });
+      setHasUnsavedChanges(false);
+    } catch (err) {
+      console.error('Error loading navigation items:', err);
+      setError(err instanceof Error ? err : new Error('Failed to load navigation items'));
     } finally {
       setIsLoading(false);
     }
-  }, [role, toast]);
+  };
 
-  // Actualizar visibilidad de un elemento
-  const updateItemVisibility = useCallback((itemId: string, isVisible: boolean) => {
-    setItems(prevItems => {
-      const updateItemInTree = (items: NavigationItemWithChildren[]): NavigationItemWithChildren[] => {
-        return items.map(item => {
-          if (item.id === itemId) {
-            return { ...item, isVisible };
-          }
-          if (item.children && item.children.length > 0) {
-            return {
-              ...item,
-              children: updateItemInTree(item.children)
-            };
-          }
-          return item;
-        });
-      };
-      
-      return updateItemInTree(prevItems);
-    });
-  }, []);
+  // Function to update an item's visibility
+  const updateItemVisibility = (itemId: string, isVisible: boolean) => {
+    const updateVisibility = (items: NavigationItemWithChildren[]): NavigationItemWithChildren[] => {
+      return items.map(item => {
+        if (item.id === itemId) {
+          return { ...item, isVisible };
+        }
+        if (item.children && item.children.length > 0) {
+          return { ...item, children: updateVisibility(item.children) };
+        }
+        return item;
+      });
+    };
 
-  // Reordenar elementos
-  const reorderItem = useCallback((newItems: NavigationItemWithChildren[]) => {
-    setItems(newItems);
-  }, []);
+    const updatedItems = updateVisibility(items);
+    setItems(updatedItems);
+    setHasUnsavedChanges(true);
+  };
 
-  // Guardar cambios
-  const saveNavigationChanges = useCallback(async () => {
+  // Function to reorder items
+  const reorderItem = (newOrder: NavigationItemWithChildren[]) => {
+    setItems(newOrder);
+    setHasUnsavedChanges(true);
+  };
+
+  // Function to save navigation changes
+  const saveNavigationChanges = async () => {
+    setIsLoading(true);
     try {
       await saveNavigationItems(role, items);
       setOriginalItems(JSON.parse(JSON.stringify(items))); // Deep clone
-      return true;
-    } catch (error) {
-      console.error('Error al guardar cambios:', error);
-      throw error;
+      setHasUnsavedChanges(false);
+    } catch (err) {
+      console.error('Error saving navigation changes:', err);
+      setError(err instanceof Error ? err : new Error('Failed to save navigation changes'));
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
-  }, [role, items]);
+  };
 
-  // Sincronizar con el código
-  const syncNavigationWithCode = useCallback(async () => {
+  // Function to sync navigation with code
+  const syncNavigationWithCode = async () => {
+    setIsLoading(true);
     try {
-      const updatedItems = await syncNavigationFromCode(role);
-      setItems(updatedItems);
-      setOriginalItems(JSON.parse(JSON.stringify(updatedItems)));
-      return true;
-    } catch (error) {
-      console.error('Error al sincronizar con el código:', error);
-      throw error;
+      const syncedItems = await syncNavigationFromCode(role);
+      setItems(syncedItems);
+      setOriginalItems(JSON.parse(JSON.stringify(syncedItems))); // Deep clone
+      setHasUnsavedChanges(false);
+    } catch (err) {
+      console.error('Error syncing navigation with code:', err);
+      setError(err instanceof Error ? err : new Error('Failed to sync navigation with code'));
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
-  }, [role]);
-
-  // Cargar elementos iniciales
-  useEffect(() => {
-    loadNavigationItems();
-  }, [loadNavigationItems]);
+  };
 
   return {
     items,
     isLoading,
+    error,
+    loadItems,
     updateItemVisibility,
     reorderItem,
     saveNavigationChanges,
     syncNavigationWithCode,
+    hasUnsavedChanges,
     selectedItem,
-    setSelectedItem,
-    hasUnsavedChanges
+    setSelectedItem
   };
 };
+
+export default useNavigationItems;

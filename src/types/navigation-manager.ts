@@ -35,3 +35,8 @@ export interface NavigationUpdate {
   itemId: string;
   changes: Partial<NavigationItemBase>;
 }
+
+export interface NavigationState {
+  items: NavigationItemWithChildren[];
+  selectedItem: string | null;
+}
