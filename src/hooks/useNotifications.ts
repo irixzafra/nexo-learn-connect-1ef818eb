@@ -1,65 +1,67 @@
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/auth';
-import { Notification } from '@/types/notifications';
+
+export interface Notification {
+  id: string;
+  title: string;
+  content?: string;
+  type: 'info' | 'success' | 'warning' | 'error' | 'system';
+  isRead: boolean;
+  createdAt: Date;
+  actionUrl?: string;
+}
 
 export function useNotifications() {
-  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Fetch notifications when the user changes
   useEffect(() => {
-    if (user) {
-      fetchNotifications();
-    } else {
-      setNotifications([]);
-      setUnreadCount(0);
-    }
-  }, [user]);
+    fetchNotifications();
+  }, []);
 
-  // Function to fetch notifications from the server
+  useEffect(() => {
+    // Update unread count when notifications change
+    const count = notifications.filter(notification => !notification.isRead).length;
+    setUnreadCount(count);
+  }, [notifications]);
+
   const fetchNotifications = async () => {
-    if (!user) return;
-    
-    setIsLoading(true);
     try {
-      // This is a placeholder. In a real application, you'd fetch notifications from your API
-      // For demo purposes, we'll just set some sample data
-      const sampleNotifications: Notification[] = [
+      setIsLoading(true);
+      // In a real app, this would fetch from an API
+      // For now, we'll use mock data
+      const mockNotifications: Notification[] = [
         {
           id: '1',
-          user_id: user.id,
-          type: 'message',
-          title: 'New message from instructor',
-          content: 'You have a new message regarding your course',
-          is_read: false,
-          created_at: new Date().toISOString(),
+          title: 'Welcome to the platform',
+          content: 'Thank you for joining! Let us know if you need help.',
+          type: 'info',
+          isRead: false,
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
         },
         {
           id: '2',
-          user_id: user.id,
-          type: 'course_completed',
-          title: 'Course completed',
-          content: 'Congratulations on completing the course!',
-          is_read: true,
-          created_at: new Date(Date.now() - 86400000).toISOString(),
+          title: 'New course available',
+          content: 'Check out our latest course on React development!',
+          type: 'success',
+          isRead: true,
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 24 hours ago
+          actionUrl: '/courses/react-development',
         },
         {
           id: '3',
-          user_id: user.id,
-          type: 'announcement',
-          title: 'New platform feature',
-          content: 'We have added new features to the platform!',
-          is_read: false,
-          created_at: new Date(Date.now() - 172800000).toISOString(),
+          title: 'System maintenance',
+          content: 'The system will be under maintenance on Sunday from 2-4 AM.',
+          type: 'warning',
+          isRead: false,
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 12), // 12 hours ago
         },
       ];
 
-      setNotifications(sampleNotifications);
-      setUnreadCount(sampleNotifications.filter(n => !n.is_read).length);
+      setNotifications(mockNotifications);
+      setError(null);
     } catch (err) {
       console.error('Error fetching notifications:', err);
       setError(err instanceof Error ? err : new Error('Failed to fetch notifications'));
@@ -68,40 +70,36 @@ export function useNotifications() {
     }
   };
 
-  // Mark a notification as read
   const markAsRead = async (notificationId: string) => {
-    if (!user) return;
-    
     try {
-      // In a real application, you'd update the notification in your API
+      // In a real app, this would call an API
       setNotifications(prev => 
-        prev.map(n => 
-          n.id === notificationId ? { ...n, is_read: true } : n
+        prev.map(notif => 
+          notif.id === notificationId 
+            ? { ...notif, isRead: true } 
+            : notif
         )
       );
-      
-      // Update unread count
-      setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (err) {
       console.error('Error marking notification as read:', err);
+      throw err;
     }
   };
 
-  // Mark all notifications as read
   const markAllAsRead = async () => {
-    if (!user) return;
-    
     try {
-      // In a real application, you'd update the notifications in your API
+      // In a real app, this would call an API
       setNotifications(prev => 
-        prev.map(n => ({ ...n, is_read: true }))
+        prev.map(notif => ({ ...notif, isRead: true }))
       );
-      
-      // Update unread count
-      setUnreadCount(0);
     } catch (err) {
       console.error('Error marking all notifications as read:', err);
+      throw err;
     }
+  };
+
+  const refresh = async () => {
+    return fetchNotifications();
   };
 
   return {
@@ -111,8 +109,6 @@ export function useNotifications() {
     error,
     markAsRead,
     markAllAsRead,
-    refresh: fetchNotifications
+    refresh
   };
 }
-
-export default useNotifications;

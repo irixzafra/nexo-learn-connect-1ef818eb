@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
-import { UserRoleType, toUserRoleType } from '@/types/auth';
+import { useState, useEffect, useCallback } from 'react';
+import { UserRoleType } from '@/types/auth';
 import { NavigationItemWithChildren } from '@/types/navigation-manager';
 import { getNavigationByRole } from '@/config/navigation';
+import { useAuth } from '@/contexts/auth';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
+import { fetchNavigationItems } from '@/services/navigationService';
 
 export function useSidebarNavigation(
   userRole: UserRoleType,
@@ -16,6 +19,9 @@ export function useSidebarNavigation(
   const [isUsingSimulatedRole, setIsUsingSimulatedRole] = useState<boolean>(
     Boolean(viewAsRole && viewAsRole !== userRole)
   );
+  const { state } = useSidebar();
+  const { setSimulatedRole } = useAuth();
+  const isCollapsed = state === "collapsed";
 
   useEffect(() => {
     if (viewAsRole && viewAsRole !== currentViewRole) {
@@ -26,10 +32,32 @@ export function useSidebarNavigation(
 
   // Load navigation items for the current role
   useEffect(() => {
-    // Get navigation from config
-    const navigationItems = getNavigationByRole(currentViewRole);
-    setMenuItems(navigationItems as NavigationItemWithChildren[]);
+    const loadItems = async () => {
+      try {
+        // Get navigation from API or config
+        const navigationItems = await fetchNavigationItems(currentViewRole);
+        setMenuItems(navigationItems);
+      } catch (error) {
+        console.error('Error loading navigation items:', error);
+        // Fallback to static configuration
+        const fallbackItems = await fetchNavigationItems(currentViewRole);
+        setMenuItems(fallbackItems);
+      }
+    };
+    
+    loadItems();
   }, [currentViewRole]);
+
+  const handleRoleChange = useCallback((role: UserRoleType) => {
+    console.log('>>> DEBUG useSidebarNavigation: handleRoleChange called with:', role);
+    setCurrentViewRole(role);
+    setSimulatedRole(role);
+    
+    // Call the onRoleChange callback if provided
+    if (onRoleChange) {
+      onRoleChange(role);
+    }
+  }, [onRoleChange, setSimulatedRole]);
 
   // Function to get navigation items by role
   const getNavigationItemsByRole = (role?: UserRoleType) => {
@@ -41,9 +69,9 @@ export function useSidebarNavigation(
     menuItems,
     currentRole: userRole,
     currentViewRole,
+    isCollapsed,
     isUsingSimulatedRole,
-    getNavigationItemsByRole
+    getNavigationItemsByRole,
+    handleRoleChange
   };
 }
-
-export default useSidebarNavigation;

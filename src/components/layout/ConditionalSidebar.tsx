@@ -33,7 +33,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   return (
     <>
       <div className="flex-1 overflow-y-auto">
-        <SidebarContent effectiveRole={effectiveRole} />
+        <SidebarContent userRole={effectiveRole} />
       </div>
       
       <SidebarFooter />
