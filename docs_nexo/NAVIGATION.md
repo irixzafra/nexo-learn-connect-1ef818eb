@@ -45,7 +45,7 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
 
 **Header:**
 - Logo
-- Explorar Cursos
+- Cursos
 - Rutas Aprendizaje
 - Sobre Nosotros
 - Ayuda
