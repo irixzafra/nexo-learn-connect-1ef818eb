@@ -2,44 +2,46 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { EditModeProvider } from '@/contexts/EditModeContext';
-import { AuthProvider } from '@/contexts/auth';
-import { Toaster } from '@/components/ui/sonner';
-import { TestDataProvider } from '@/contexts/test-data';
-import { OnboardingProvider } from '@/contexts/OnboardingContext';
-import { KeyboardShortcuts } from '@/components/accessibility/KeyboardShortcuts';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FeaturesProvider } from '@/contexts/features/FeaturesContext';
-import { LanguageProvider } from '@/contexts/LanguageContext';
+import { Toaster } from '@/components/ui/toaster';
 import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { AuthProvider } from '@/contexts/auth';
+import { LanguageProvider } from '@/contexts/LanguageContext';
+import { FeaturesProvider } from '@/contexts/features/FeaturesContext';
+import { EditModeProvider } from '@/contexts/EditModeContext';
+import { OnboardingProvider } from '@/contexts/OnboardingContext';
+import { TestDataProvider } from '@/contexts/test-data/TestDataProvider';
 
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: 1,
+      staleTime: 60 * 1000, // 1 minute
+      refetchOnWindowFocus: false,
     },
   },
 });
 
-const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface AppProvidersProps {
+  children: React.ReactNode;
+}
+
+const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <HelmetProvider>
           <ThemeProvider>
-            <TooltipProvider delayDuration={300}>
+            <TooltipProvider>
               <AuthProvider>
                 <FeaturesProvider>
                   <LanguageProvider>
                     <EditModeProvider>
                       <TestDataProvider>
                         <OnboardingProvider>
-                          <KeyboardShortcuts />
                           {children}
-                          <Toaster position="top-right" />
+                          <Toaster />
                         </OnboardingProvider>
                       </TestDataProvider>
                     </EditModeProvider>
