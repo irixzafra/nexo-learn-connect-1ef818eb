@@ -2,7 +2,7 @@
 /**
  * Tipos de roles de usuario en el sistema
  */
-export type UserRoleType = 'admin' | 'instructor' | 'student' | 'moderator' | 'manager' | 'anonymous';
+export type UserRoleType = 'admin' | 'instructor' | 'student' | 'moderator' | 'manager' | 'anonymous' | 'sistemas' | 'content_creator' | 'guest' | 'beta_tester' | 'anonimo';
 
 /**
  * Convertir cadena a tipo de rol de usuario
@@ -25,9 +25,26 @@ export const toUserRoleType = (role?: string): UserRoleType => {
       return 'moderator';
     case 'manager':
       return 'manager';
+    case 'sistemas':
+      return 'sistemas';
+    case 'content_creator':
+      return 'content_creator';
+    case 'guest':
+      return 'guest';
+    case 'beta_tester':
+      return 'beta_tester';
+    case 'anonimo':
+      return 'anonimo';
     default:
       return 'anonymous';
   }
+};
+
+/**
+ * Function to convert strings to UserRoleType
+ */
+export const asUserRoleType = (role: string): UserRoleType => {
+  return toUserRoleType(role);
 };
 
 /**
@@ -44,6 +61,11 @@ export interface User {
   emailVerified: boolean;
   createdAt: string;
   updatedAt: string;
+  user_metadata?: {
+    full_name?: string;
+    avatar_url?: string;
+    [key: string]: any;
+  };
 }
 
 /**
@@ -66,6 +88,22 @@ export interface UserProfile {
     emailNotifications?: boolean;
     pushNotifications?: boolean;
   };
+  id?: string;
+  role?: UserRoleType;
+  full_name?: string;
+  email?: string;
+  avatar_url?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
+ * User role interface
+ */
+export interface UserRole {
+  id: string;
+  name: string;
+  description?: string;
 }
 
 /**

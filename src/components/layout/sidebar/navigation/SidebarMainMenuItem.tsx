@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { NavigationItemWithChildren } from '@/types/navigation-manager';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import * as LucideIcons from 'lucide-react';
+import { CircleDashed } from 'lucide-react';
 
 interface SidebarMainMenuItemProps {
   item: NavigationItemWithChildren;
@@ -19,9 +20,15 @@ export const SidebarMainMenuItem: React.FC<SidebarMainMenuItemProps> = ({
   const isCollapsed = state === "collapsed";
 
   // Dynamically get the icon component from Lucide
-  const IconComponent = item.icon && typeof item.icon === 'string' 
-    ? LucideIcons[item.icon as keyof typeof LucideIcons] 
-    : LucideIcons.CircleDashed;
+  let IconComponent = CircleDashed;
+  
+  if (item.icon && typeof item.icon === 'string') {
+    const iconName = item.icon as string;
+    const LucideIcon = LucideIcons[iconName as keyof typeof LucideIcons];
+    if (LucideIcon) {
+      IconComponent = LucideIcon;
+    }
+  }
 
   return (
     <NavLink
@@ -36,7 +43,7 @@ export const SidebarMainMenuItem: React.FC<SidebarMainMenuItemProps> = ({
       )}
       aria-disabled={item.disabled}
     >
-      {IconComponent && <IconComponent className="h-5 w-5" />}
+      <IconComponent className="h-5 w-5" />
       
       {!isCollapsed && (
         <>
