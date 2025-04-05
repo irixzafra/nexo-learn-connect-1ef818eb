@@ -1,20 +1,14 @@
 
 import React from 'react';
 import './App.css';
-import { ThemeProvider } from './contexts/ThemeContext';
 import AppRoutes from './routes';
-import { AuthProvider } from './contexts/auth';
-import { TooltipProvider } from './components/ui/tooltip';
+import AppProviders from './providers/AppProviders';
 
 function App() {
   return (
-    <ThemeProvider>
-      <TooltipProvider delayDuration={300}>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </TooltipProvider>
-    </ThemeProvider>
+    <AppProviders>
+      <AppRoutes />
+    </AppProviders>
   );
 }
 
