@@ -7,13 +7,19 @@ export type PageLayout =
   | "sidebar" 
   | "marketing" 
   | "documentation" 
-  | "course";
+  | "course"
+  | "column"
+  | "row"
+  | "grid-2"
+  | "grid-3"
+  | "grid-4";
 
 // Define possible page status values
 export type PageStatus = 
   | "draft" 
   | "published" 
-  | "archived";
+  | "archived"
+  | "scheduled";
 
 // Define page access types
 export type PageAccessType = 
@@ -65,6 +71,7 @@ export interface PageContent {
 
 // Add other relevant types that were referenced in imports
 export interface PageData {
+  id?: string;
   title: string;
   path: string;
   description: string;
@@ -77,6 +84,7 @@ export interface PageData {
   content?: {
     blocks: PageBlock[];
   };
+  navigation?: string | string[];
   permissions?: {
     canView: string[];
     canEdit: string[];

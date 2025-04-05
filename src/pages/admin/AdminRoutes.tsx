@@ -11,7 +11,6 @@ const UsersPage = lazy(() => import('@/pages/admin/UsersPage'));
 const CoursesPage = lazy(() => import('@/pages/admin/CoursesPage'));
 const SystemPagesPage = lazy(() => import('@/pages/admin/SystemPagesPage'));
 const DesignSystemPage = lazy(() => import('@/pages/admin/DesignSystemPage'));
-const OrphanReviewPage = lazy(() => import('@/pages/admin/OrphanReviewPage'));
 const NavigationDiagramPage = lazy(() => import('@/pages/admin/NavigationDiagramPage'));
 const NavigationManagerPage = lazy(() => import('@/pages/admin/NavigationManagerPage'));
 const DevelopmentToolsPage = lazy(() => import('@/pages/admin/DevelopmentToolsPage'));
@@ -39,7 +38,6 @@ const AdminRoutes = () => {
         <Route path="design-system" element={<DesignSystemPage />} />
         <Route path="navigation-diagram" element={<NavigationDiagramPage />} />
         <Route path="navigation-manager" element={<NavigationManagerPage />} />
-        <Route path="orphan-review" element={<OrphanReviewPage />} />
         <Route path="development" element={<DevelopmentToolsPage />} />
         <Route path="features" element={<FeaturesPage />} />
         <Route path="review-elements" element={<ReviewElementsPage />} />

@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import ProtectedRoute from "@/components/ProtectedRoute";
 import NotFound from "@/pages/NotFound";
 import AppLayout from "@/layouts/AppLayout";
 
@@ -9,8 +8,6 @@ import AppLayout from "@/layouts/AppLayout";
 import StudentDashboard from "@/pages/student/Dashboard";
 import StudentCourses from "@/pages/student/Courses";
 import Invoices from "@/pages/student/Invoices";
-import Calendar from "@/pages/placeholder/Calendar";
-import Messages from "@/pages/placeholder/Messages";
 import Settings from "@/pages/placeholder/Settings";
 import Preferences from "@/pages/user/Preferences";
 
@@ -35,16 +32,6 @@ const UserRoutes: React.FC = () => {
       <Route path="/invoices" element={
         <AppLayout>
           <Invoices />
-        </AppLayout>
-      } />
-      <Route path="/calendar" element={
-        <AppLayout>
-          <Calendar />
-        </AppLayout>
-      } />
-      <Route path="/messages" element={
-        <AppLayout>
-          <Messages />
         </AppLayout>
       } />
       <Route path="/settings" element={
