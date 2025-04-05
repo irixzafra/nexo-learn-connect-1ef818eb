@@ -37,6 +37,9 @@ export function toUserRoleType(role: string): UserRoleType {
   return 'anonymous';
 }
 
+// Export alias for backward compatibility
+export const asUserRoleType = toUserRoleType;
+
 // Interfaces para el sistema de autenticación
 export interface AuthUser {
   id: string;
@@ -52,6 +55,8 @@ export interface AuthUser {
   emailVerified?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  user_metadata?: Record<string, any>; // Added for compatibility
+  full_name?: string; // Added for compatibility
 }
 
 export interface AuthSession {
@@ -97,6 +102,8 @@ export interface UserProfile {
   preferences?: UserPreferences;
   created_at?: string;
   updated_at?: string;
+  full_name?: string; // Added for compatibility
+  avatar_url?: string; // Added for compatibility
 }
 
 export interface UserPreferences {
@@ -119,9 +126,6 @@ export interface UserRole {
   permissions?: string[];
 }
 
-// Alias for backward compatibility
-export const asUserRoleType = toUserRoleType;
-
 // Define base User type for Supabase/Auth integration
 export interface User {
   id: string;
@@ -131,4 +135,5 @@ export interface User {
   emailVerified?: boolean;
   createdAt: string;
   updatedAt: string;
+  user_metadata?: Record<string, any>;
 }

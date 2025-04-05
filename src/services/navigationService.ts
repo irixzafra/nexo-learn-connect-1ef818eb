@@ -70,7 +70,7 @@ export const sortNavigationItems = (
   });
 };
 
-// Mock fetch navigation items
+// Fetch navigation items
 export const fetchNavigationItems = async (): Promise<NavigationItemWithChildren[]> => {
   // This would be a real API call in a production environment
   return Promise.resolve([
@@ -80,14 +80,14 @@ export const fetchNavigationItems = async (): Promise<NavigationItemWithChildren
   ]);
 };
 
-// Mock save navigation items
+// Save navigation items
 export const saveNavigationItems = async (items: NavigationItemWithChildren[]): Promise<boolean> => {
   // This would be a real API call in a production environment
   console.log('Saving navigation items:', items);
   return Promise.resolve(true);
 };
 
-// Mock sync navigation from code
+// Sync navigation from code
 export const syncNavigationFromCode = async (): Promise<boolean> => {
   // This would be a real API call in a production environment
   console.log('Syncing navigation from code');
