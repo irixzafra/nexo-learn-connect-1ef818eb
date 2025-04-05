@@ -1,137 +1,107 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 import { LucideIcon } from 'lucide-react';
-import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
-
-interface MenuItem {
-  icon?: LucideIcon;
-  label: string;
-  path: string;
-  submenu?: MenuItem[];
-}
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { toast } from 'sonner';
 
 interface SidebarNavItemProps {
-  item?: MenuItem; // Make item optional
-  href?: string;   // Add alternative props for direct usage
+  label: string;
+  path: string;
   icon?: LucideIcon;
-  label?: string;
-  badge?: number | string;
-  isCollapsed?: boolean;
+  badge?: number;
   disabled?: boolean;
   isHighlighted?: boolean;
+  isCollapsed?: boolean;
 }
 
-const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ 
-  item, 
-  href, 
-  icon: IconProp, 
-  label: labelProp, 
-  badge, 
-  isCollapsed = false,
+const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
+  label,
+  path,
+  icon: Icon,
+  badge,
   disabled = false,
-  isHighlighted = false
+  isHighlighted = false,
+  isCollapsed = false
 }) => {
-  const { state } = useSidebar();
-  isCollapsed = isCollapsed || state === "collapsed";
-  
-  // Use either from item or direct props
-  const Icon = item?.icon || IconProp;
-  const label = item?.label || labelProp || '';
-  const path = item?.path || href || '#';
-  const submenu = item?.submenu;
+  const location = useLocation();
+  const isActive = location.pathname === path || location.pathname.startsWith(`${path}/`);
 
-  if (!Icon && !label) {
-    console.warn('SidebarNavItem: Missing both icon and label');
-    return null; // Don't render if no content
-  }
-
-  if (isCollapsed) {
-    if (submenu) {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="w-full p-2 hover:bg-accent rounded-md">
-              {Icon && <Icon className="h-4 w-4 mx-auto" />}
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="start" className="w-48">
-            <NavLink to={path} className="w-full">
-              <DropdownMenuItem>
-                {label}
-              </DropdownMenuItem>
-            </NavLink>
-            {submenu.map((subItem, idx) => (
-              <NavLink key={idx} to={subItem.path} className="w-full">
-                <DropdownMenuItem>
-                  {subItem.label}
-                </DropdownMenuItem>
-              </NavLink>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled) {
+      e.preventDefault();
+      toast.info("Esta funcionalidad estará disponible próximamente");
     }
+  };
 
+  const itemContent = (
+    <Link
+      to={disabled ? '#' : path}
+      onClick={handleClick}
+      className={cn(
+        "flex items-center justify-between group gap-2 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200",
+        isActive ? 
+          "bg-primary/10 text-primary border-l-[3px] border-l-primary pl-[calc(0.75rem-3px)]" : 
+          "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
+        isHighlighted && !isActive && "border-l-[3px] border-l-secondary pl-[calc(0.75rem-3px)]",
+        disabled && "opacity-60 cursor-not-allowed hover:bg-transparent",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+      )}
+      aria-current={isActive ? "page" : undefined}
+      aria-disabled={disabled}
+    >
+      <span className="flex items-center gap-3">
+        {Icon && (
+          <Icon 
+            className={cn(
+              "h-5 w-5 flex-shrink-0", 
+              isActive ? 
+                "text-primary" : 
+                "text-muted-foreground group-hover:text-foreground",
+              disabled && "text-muted-foreground/60"
+            )} 
+            aria-hidden="true" 
+          />
+        )}
+        {!isCollapsed && <span>{label}</span>}
+      </span>
+      
+      {!isCollapsed && badge && badge > 0 && (
+        <Badge variant="outline" className="ml-auto px-1.5 min-w-5 text-center">
+          {badge > 99 ? '99+' : badge}
+        </Badge>
+      )}
+      
+      {!isCollapsed && disabled && (
+        <span className="ml-auto text-xs bg-muted/30 text-muted-foreground px-1.5 py-0.5 rounded">
+          Próx.
+        </span>
+      )}
+    </Link>
+  );
+
+  // When the sidebar is collapsed, wrap the item in a tooltip
+  if (isCollapsed) {
     return (
-      <Tooltip delayDuration={0}>
+      <Tooltip>
         <TooltipTrigger asChild>
-          <NavLink
-            to={path}
-            className={({ isActive }) => cn(
-              "w-full p-2 hover:bg-accent rounded-md flex items-center justify-center",
-              isActive && "bg-accent",
-              disabled && "opacity-50 cursor-not-allowed"
-            )}
-            onClick={(e) => disabled && e.preventDefault()}
-          >
-            {Icon && <Icon className="h-4 w-4" />}
-            {!Icon && label && <span className="text-xs">{label.charAt(0)}</span>}
-            {badge && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
-            )}
-          </NavLink>
+          {itemContent}
         </TooltipTrigger>
         <TooltipContent side="right">
-          {label}
-          {badge && <span className="ml-1 text-xs">({badge})</span>}
+          <p>{label}</p>
+          {badge && badge > 0 && (
+            <Badge variant="outline" className="ml-1 px-1 min-w-4 text-center">
+              {badge > 99 ? '99+' : badge}
+            </Badge>
+          )}
         </TooltipContent>
       </Tooltip>
     );
   }
 
-  return (
-    <NavLink
-      to={path}
-      className={({ isActive }) => cn(
-        "w-full p-2 hover:bg-accent rounded-md flex items-center gap-2",
-        isActive && "bg-accent",
-        isHighlighted && "font-medium text-primary",
-        disabled && "opacity-50 cursor-not-allowed"
-      )}
-      onClick={(e) => disabled && e.preventDefault()}
-    >
-      {Icon && <Icon className="h-4 w-4" />}
-      <span className={cn(isHighlighted && "font-medium")}>{label}</span>
-      {badge && (
-        <span className="ml-auto bg-primary/10 text-primary text-xs px-1.5 py-0.5 rounded-md">
-          {badge}
-        </span>
-      )}
-    </NavLink>
-  );
+  return itemContent;
 };
 
 export default SidebarNavItem;

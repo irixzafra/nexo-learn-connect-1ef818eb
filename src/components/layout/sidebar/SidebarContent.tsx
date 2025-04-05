@@ -31,20 +31,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ userRole }) => {
           effectiveRole={effectiveRole}
         />
       </div>
-      
-      {effectiveRole && (
-        <div className={cn(
-          "px-3 pt-2 text-xs font-medium text-muted-foreground",
-          !isExpanded && "text-center w-full"
-        )}>
-          <div className={cn(
-            "px-2 py-1 text-center rounded-md border border-primary/20 bg-primary/5",
-            !isExpanded && "mx-auto w-16"
-          )}>
-            {isExpanded ? 'Rol: ' : ''}{effectiveRole.charAt(0).toUpperCase() + effectiveRole.slice(1)}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

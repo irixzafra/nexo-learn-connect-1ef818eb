@@ -1,18 +1,13 @@
 
 import React, { useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
-import { LucideIcon } from 'lucide-react';
-import {
-  SidebarMenu,
-} from '@/components/ui/sidebar';
-import { MenuItem } from '../MenuItems';
-import { useLocation } from 'react-router-dom';
+import SidebarNavItem from './SidebarNavItem';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
-interface MenuItem {
+interface NavItem {
   label: string;
-  path?: string;
+  path: string;
   icon?: LucideIcon;
   badge?: number;
   disabled?: boolean;
@@ -22,81 +17,94 @@ interface MenuItem {
 interface SidebarNavGroupProps {
   title: string;
   icon?: LucideIcon;
+  isCollapsed?: boolean;
   defaultOpen?: boolean;
   id: string;
-  items: MenuItem[];
-  isCollapsed?: boolean;
+  items: NavItem[];
 }
 
 const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
   title,
   icon: Icon,
+  isCollapsed = false,
   defaultOpen = false,
   id,
-  items,
-  isCollapsed = false
+  items
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const { state } = useSidebar();
-  const sidebarIsCollapsed = state === "collapsed";
-  const location = useLocation();
 
-  // Function to capitalize first letter of each word in the title
-  const capitalizeTitle = (text: string) => {
-    return text.split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
-  };
-
-  const capitalizedTitle = capitalizeTitle(title);
-
-  if (sidebarIsCollapsed) {
+  // When sidebar is collapsed, render a compact version
+  if (isCollapsed) {
     return (
-      <div className="px-1 py-1">
-        <div
-          className="flex h-9 items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-          title={capitalizedTitle}
-        >
-          {Icon && <Icon className="h-5 w-5" />}
+      <div className="py-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              className="w-full flex justify-center p-2"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {Icon && <Icon className="h-5 w-5 text-muted-foreground" />}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>{title}</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <div className="space-y-1 mt-1">
+          {items.map((item, index) => (
+            <SidebarNavItem
+              key={`${id}-item-${index}`}
+              label={item.label}
+              path={item.path}
+              icon={item.icon}
+              badge={item.badge}
+              disabled={item.disabled}
+              isHighlighted={item.isHighlighted}
+              isCollapsed={isCollapsed}
+            />
+          ))}
         </div>
       </div>
     );
   }
 
+  // Full expanded version
   return (
-    <div className="mb-2">
-      <button 
-        className="flex w-full items-center justify-between py-2 text-muted-foreground hover:text-foreground"
+    <div className="py-2">
+      <button
         onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm transition-all",
+          isOpen ? "text-foreground" : "text-muted-foreground",
+          "hover:bg-muted/50"
+        )}
+        aria-controls={id}
+        aria-expanded={isOpen}
       >
         <div className="flex items-center gap-3">
           {Icon && <Icon className="h-5 w-5" />}
-          <span className="text-sm font-medium">{capitalizedTitle}</span>
+          <span className="font-medium">{title}</span>
         </div>
-        <ChevronRight className={cn(
-          "h-4 w-4 transition-transform duration-200",
-          isOpen && "rotate-90 transform"
-        )} />
+        <ChevronRight
+          className={cn("h-4 w-4 transition-transform", isOpen && "rotate-90")}
+        />
       </button>
-      
+
       {isOpen && (
-        <div className="pl-10 pr-2">
-          {items.map((item, index) => {
-            // Check if the current route matches this item's path
-            const isActive = item.path ? location.pathname.startsWith(item.path) : false;
-            
-            return (
-              <MenuItem
-                key={`${id}-item-${index}`}
-                to={item.path || '#'}
-                icon={item.icon || (() => null)}
-                label={item.label}
-                badge={item.badge}
-                disabled={item.disabled}
-                isCollapsed={sidebarIsCollapsed}
-              />
-            );
-          })}
+        <div id={id} className="mt-1 space-y-1 px-2">
+          {items.map((item, index) => (
+            <SidebarNavItem
+              key={`${id}-item-${index}`}
+              label={item.label}
+              path={item.path}
+              icon={item.icon}
+              badge={item.badge}
+              disabled={item.disabled}
+              isHighlighted={item.isHighlighted}
+              isCollapsed={isCollapsed}
+            />
+          ))}
         </div>
       )}
     </div>

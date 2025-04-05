@@ -4,11 +4,13 @@ import { UserRoleType } from '@/types/auth';
 import { Settings, LogOut, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import EnhancedRoleSimulator from '@/components/layout/header/role-simulator/EnhancedRoleSimulator';
 import { LanguageSelector } from '@/components/shared/LanguageSelector';
 import { SupportedLanguage } from '@/contexts/LanguageContext';
-import RoleBadge from '@/components/layout/header/role-simulator/RoleBadge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+
+// Only for admin users when role simulation is needed
+import EnhancedRoleSimulator from '@/components/layout/header/role-simulator/EnhancedRoleSimulator';
+import RoleBadge from '@/components/layout/header/role-simulator/RoleBadge';
 
 interface SidebarFooterProps {
   userRole: UserRoleType | null;
@@ -42,36 +44,7 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
 
   return (
     <div className="p-2 flex flex-col gap-2">
-      {/* Role Indicator - Compact design */}
-      {userRole === 'admin' && (
-        <div className={cn("mb-1 w-full", isCollapsed ? "flex justify-center" : "")}>
-          {isCollapsed ? (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className={cn(
-                    "w-9 h-9 rounded-full p-0", 
-                    isViewingAsOtherRole && "ring-1 ring-primary"
-                  )}
-                  onClick={() => window.open('/app/admin/roles', '_self')}
-                >
-                  <RoleBadge role={effectiveRole as UserRoleType} showText={false} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Vista como: {effectiveRole}</p>
-                <p className="text-xs text-muted-foreground">Clic para cambiar rol</p>
-              </TooltipContent>
-            </Tooltip>
-          ) : (
-            <EnhancedRoleSimulator compact={isCollapsed} />
-          )}
-        </div>
-      )}
-
-      {/* Footer Controls */}
+      {/* Footer Controls as defined in NAVIGATION.md */}
       <div className={cn(
         "flex items-center gap-1", 
         isCollapsed ? "justify-center" : "justify-between w-full"
@@ -136,6 +109,13 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
           </Tooltip>
         </div>
       </div>
+
+      {/* Admin role simulator - only shown when user is admin */}
+      {userRole === 'admin' && (
+        <div className="text-xs text-center text-muted-foreground pt-1">
+          <EnhancedRoleSimulator compact={true} />
+        </div>
+      )}
     </div>
   );
 };
