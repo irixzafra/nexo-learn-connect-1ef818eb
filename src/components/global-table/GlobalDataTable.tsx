@@ -1,8 +1,8 @@
+
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { SortingState, ColumnFiltersState, VisibilityState } from '@tanstack/react-table';
 import { AdvancedDataTable } from '@/components/shared/AdvancedDataTable';
-import { createColumn } from '@/components/shared/DataTableUtils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/lib/supabase';

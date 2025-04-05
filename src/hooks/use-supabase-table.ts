@@ -56,7 +56,12 @@ export function useSupabaseTable<TData extends Record<string, any> = Record<stri
         
         if (queryError) throw queryError;
         
-        return transformer ? queryData.map(transformer) : queryData as TData[];
+        // Add type safety by first converting to unknown
+        if (transformer) {
+          return (queryData as unknown[]).map(item => transformer(item)) as TData[];
+        }
+        
+        return queryData as unknown as TData[];
       } catch (error) {
         console.error('Error fetching data:', error);
         if (onError) onError(error as Error);

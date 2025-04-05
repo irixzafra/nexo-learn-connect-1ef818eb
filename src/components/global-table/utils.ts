@@ -24,9 +24,13 @@ export function constructColumns<TData>(
       cell: ({ row }) => {
         const value = row.getValue(column.accessorKey || column.id);
         
-        // The actual cell rendering will be handled by the consuming component
-        // which will be a .tsx file, not here in the .ts file
-        return { value, type: column.type, options: column.options, cellInfo: row };
+        // Return a data object instead of JSX, the actual rendering will be done in the consuming component
+        return {
+          value,
+          type: column.type,
+          options: column.options,
+          cellInfo: row
+        };
       },
       enableSorting: column.enableSorting !== false,
       enableFiltering: column.enableFiltering,
@@ -36,21 +40,24 @@ export function constructColumns<TData>(
   
   // Add actions column if needed
   if (onEdit || onDelete || renderCustomActions) {
-    const actionsColumn = createActionsColumn<TData>(({ row }) => {
-      const item = row.original;
-      const itemId = (item as any).id;
-      
-      // Return the necessary data for rendering actions
-      // The actual JSX will be in the consuming component
-      return { 
-        item, 
-        itemId, 
-        hasEdit: !!onEdit, 
-        hasDelete: !!onDelete, 
-        onEdit: onEdit ? () => onEdit(item) : undefined,
-        onDelete: onDelete ? () => onDelete(itemId) : undefined,
-        renderCustomActions
-      };
+    const actionsColumn = createActionsColumn<TData>({
+      id: 'actions',
+      cell: ({ row }) => {
+        const item = row.original;
+        const itemId = (item as any).id;
+        
+        // Return the necessary data for rendering actions
+        // The actual JSX will be in the consuming component
+        return { 
+          item, 
+          itemId, 
+          hasEdit: !!onEdit, 
+          hasDelete: !!onDelete, 
+          onEdit: onEdit ? () => onEdit(item) : undefined,
+          onDelete: onDelete ? () => onDelete(itemId) : undefined,
+          renderCustomActions
+        };
+      }
     });
     
     tableColumns.push(actionsColumn);
