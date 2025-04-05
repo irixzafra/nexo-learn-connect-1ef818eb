@@ -3,9 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
 import AdminRoutes from './routes/AdminRoutes';
-import NavigationManagerPage from './pages/admin/NavigationManagerPage';
 import SystemPagesPage from './pages/admin/SystemPagesPage';
-import PagesManagement from './pages/admin/settings/pages';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -29,9 +27,6 @@ const AppRoutes: React.FC = () => {
           {/* Admin Routes */}
           <Route path="admin/*" element={<AdminRoutes />} />
         </Route>
-
-        {/* Accessibility Route (Example) */}
-        <Route path="/accessibility" element={<div>AccessibilityPage</div>} />
       </Routes>
     </Router>
   );

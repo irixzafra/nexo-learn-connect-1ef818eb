@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { AdvancedDataTable } from './AdvancedDataTable';
 import { Button } from '@/components/ui/button';
@@ -153,7 +153,7 @@ export function CrudTable<T extends Record<string, any>>({
     }
   ];
 
-  // Create a mock onSave function that returns a Promise to satisfy TypeScript
+  // Create a function that returns a Promise to satisfy TypeScript
   const handleDrawerSave = async (data: T): Promise<void> => {
     // This is just a placeholder - the actual save functionality
     // will be managed by the parent component through the form
