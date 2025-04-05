@@ -14,14 +14,14 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
 // Function to construct TanStack table columns from our custom column format
-export const constructColumns = <TData>(
+export function constructColumns<TData>(
   columns: TableColumn<TData>[],
   options: {
     onEdit?: (data: TData) => void;
     onDelete?: (id: string | number) => Promise<void>;
     renderCustomActions?: (data: TData) => React.ReactNode;
   } = {}
-): ColumnDef<TData, any>[] => {
+): ColumnDef<TData, any>[] {
   const { onEdit, onDelete, renderCustomActions } = options;
   
   // Create table columns from our column definitions
@@ -111,10 +111,10 @@ export const constructColumns = <TData>(
   }
   
   return tableColumns;
-};
+}
 
 // Function to generate a table schema from data
-export const generateSchemaFromData = (data: any[]): TableColumn[] => {
+export function generateSchemaFromData(data: any[]): TableColumn[] {
   if (!data || data.length === 0) return [];
   
   const sample = data[0];
@@ -134,10 +134,10 @@ export const generateSchemaFromData = (data: any[]): TableColumn[] => {
       type
     };
   });
-};
+}
 
 // Format data for display
-export const formatCellValue = (value: any, type?: string): string => {
+export function formatCellValue(value: any, type?: string): string {
   if (value === null || value === undefined) return '—';
   
   switch (type) {
@@ -150,9 +150,9 @@ export const formatCellValue = (value: any, type?: string): string => {
     default:
       return String(value);
   }
-};
+}
 
 // Helper to extract id from row data
-export const getRowId = (row: any): string | number => {
+export function getRowId(row: any): string | number {
   return row?.id || '';
-};
+}
