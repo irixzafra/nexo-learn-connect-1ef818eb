@@ -57,7 +57,7 @@ export const SidebarTrigger = React.forwardRef<
       size="icon"
       className={cn(
         "h-10 w-10 rounded-md bg-primary/5 text-foreground hover:bg-primary/10 transition-all duration-300 border-primary/20",
-        "fixed md:absolute left-3 md:left-4 top-4 z-50 shadow-md",
+        "z-50 shadow-md",
         className
       )}
       onClick={handleToggleClick}

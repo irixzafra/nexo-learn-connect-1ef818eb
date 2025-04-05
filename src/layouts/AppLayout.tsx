@@ -6,6 +6,7 @@ import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
 import { InlineEditorProvider } from '@/contexts/InlineEditorContext';
 import InlineEditControls from '@/components/admin/InlineEditControls';
 import { useAuth } from '@/contexts/auth';
+import Header from '@/components/layout/Header';
 
 const AppLayout: React.FC = () => {
   const { userRole } = useAuth();
@@ -14,12 +15,15 @@ const AppLayout: React.FC = () => {
   return (
     <InlineEditorProvider>
       <SidebarProvider>
-        <div className="flex h-screen">
-          <SidebarNavigation />
-          
-          <main className="flex-1 overflow-auto bg-background">
-            <Outlet />
-          </main>
+        <div className="flex h-screen flex-col">
+          <Header />
+          <div className="flex flex-1 overflow-hidden">
+            <SidebarNavigation />
+            
+            <main className="flex-1 overflow-auto bg-background">
+              <Outlet />
+            </main>
+          </div>
           
           {isAdmin && <InlineEditControls />}
         </div>

@@ -4,13 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useAuth } from '@/contexts/auth';
-import { Menu, Bell, MessageSquare } from 'lucide-react';
-import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
+import { Bell, MessageSquare } from 'lucide-react';
 import { UserMenu } from './header/UserMenu';
-import Logo from '@/components/Logo';
 import { cn } from '@/lib/utils';
 import { useLocalization } from '@/hooks/useLocalization';
 import LanguageSelector from '@/components/LanguageSelector';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 interface HeaderProps {
   showAuthButtons?: boolean;
@@ -19,7 +18,6 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
   const { user, logout, userRole } = useAuth();
   const navigate = useNavigate();
-  const { toggleSidebar, state } = useSidebar();
   const { localizeUrl, isMultiLanguageEnabled } = useLocalization();
   
   const handleLogout = async () => {
@@ -35,22 +33,10 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm shadow-sm">
       <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-3 md:gap-4">
-          {user && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleSidebar} 
-              className={cn(
-                "md:hidden rounded-full hover:bg-primary/10 transition-colors",
-                state === "expanded" ? "text-primary" : ""
-              )}
-            >
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Menú lateral</span>
-            </Button>
-          )}
           <Link to="/" className="flex items-center space-x-2">
-            <Logo className="h-7 w-7" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/90 text-primary-foreground shadow-sm">
+              <span className="text-sm font-bold">N</span>
+            </div>
             <span className="hidden font-bold text-lg sm:inline-block">
               Nexo Educativo
             </span>

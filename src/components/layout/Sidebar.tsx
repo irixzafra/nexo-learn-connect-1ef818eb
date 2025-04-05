@@ -3,24 +3,31 @@ import React from 'react';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { cn } from '@/lib/utils';
 import SidebarContent from './sidebar/SidebarContent';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const Sidebar: React.FC = () => {
   const { state } = useSidebar();
   const isExpanded = state === "expanded";
 
   return (
-    <aside 
-      className={cn(
-        "fixed inset-y-0 left-0 z-30 transform border-r border-border/70 transition-all duration-300 ease-in-out bg-background",
-        "md:static md:translate-x-0",
-        isExpanded ? 'translate-x-0 shadow-md w-64' : '-translate-x-full md:w-20 md:translate-x-0',
-        "focus-within:outline-none focus-within:ring-0"
-      )}
-    >
-      <div className="flex h-full flex-col pt-12"> {/* Añadimos padding-top para evitar solapamiento con el botón */}
-        <SidebarContent />
-      </div>
-    </aside>
+    <>
+      {/* Sidebar toggle button - visible on all screens */}
+      <SidebarTrigger className="fixed left-3 top-4 z-50" />
+      
+      {/* Actual sidebar */}
+      <aside 
+        className={cn(
+          "fixed inset-y-0 left-0 z-30 transform border-r border-border/70 transition-all duration-300 ease-in-out bg-background",
+          "md:static md:translate-x-0",
+          isExpanded ? 'translate-x-0 shadow-md w-64' : '-translate-x-full md:w-20 md:translate-x-0',
+          "focus-within:outline-none focus-within:ring-0"
+        )}
+      >
+        <div className="flex h-full flex-col pt-16"> {/* Increased padding-top to prevent overlap with toggle button */}
+          <SidebarContent />
+        </div>
+      </aside>
+    </>
   );
 };
 
