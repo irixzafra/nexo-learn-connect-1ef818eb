@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { SupportedLanguage } from '@/contexts/LanguageContext';
 
 interface LanguageSelectorProps {
-  currentLanguage: string;
+  currentLanguage: SupportedLanguage;
   languages: { code: string; name: string }[];
   onChange: (code: string) => void;
   variant?: 'icon' | 'full' | 'minimal';
@@ -36,6 +36,11 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       case 'de': return '🇩🇪';
       default: return '🌐';
     }
+  };
+
+  const handleLanguageChange = (langCode: string) => {
+    console.log('Changing language to:', langCode);
+    onChange(langCode);
   };
 
   return (
@@ -67,7 +72,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             {languages.map((lang) => (
               <DropdownMenuItem 
                 key={lang.code}
-                onClick={() => onChange(lang.code)}
+                onClick={() => handleLanguageChange(lang.code)}
                 className={`cursor-pointer flex items-center gap-2 ${
                   currentLanguage === lang.code ? 'bg-accent text-accent-foreground' : ''
                 }`}

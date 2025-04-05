@@ -16,9 +16,6 @@ interface ConditionalSidebarProps {
   notificationsCount: number;
   isCollapsed: boolean;
   currentViewRole: UserRoleType | null;
-  currentLanguage: string;
-  languages: Array<{ code: string; name: string }>;
-  changeLanguage: (code: string) => void;
   getRoleName: (role: UserRoleType) => string;
   getHomePath: (role: UserRoleType) => string;
 }
@@ -33,11 +30,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   messagesCount,
   notificationsCount,
   isCollapsed,
-  getRoleName,
-  getHomePath,
 }) => {
-  const { toggleSidebar } = useSidebar();
-  
   // Usar el hook de navegación dinámica
   const { navigationMenus } = useDynamicNavigation(effectiveRole);
 

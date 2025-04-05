@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { UserRoleType } from '@/types/auth';
 import { useAuth } from '@/contexts/auth';
 import SidebarFooterSection from './SidebarFooterSection';
-import { useLanguage, SupportedLanguage } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SidebarFooterProps {
   isCollapsed: boolean;
@@ -16,7 +15,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     logout, 
     isViewingAsOtherRole,
     resetToOriginalRole,
-    forceUpdateRole
+    setSimulatedRole
   } = useAuth();
 
   const { currentLanguage, changeLanguage } = useLanguage();
@@ -30,16 +29,16 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
 
   // Handler for forcing admin role
   const handleForceAdminRole = async () => {
-    if (forceUpdateRole) {
-      await forceUpdateRole('admin@nexo.com', 'admin');
+    if (setSimulatedRole) {
+      await setSimulatedRole('admin');
     }
   };
 
   return (
     <div className="border-t border-border p-3">
       <SidebarFooterSection
-        userRole={userRole as UserRoleType}
-        effectiveRole={effectiveRole as UserRoleType}
+        userRole={userRole}
+        effectiveRole={effectiveRole}
         isCollapsed={isCollapsed}
         currentLanguage={currentLanguage}
         languages={languages}

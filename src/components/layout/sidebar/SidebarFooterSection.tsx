@@ -9,8 +9,8 @@ import { LanguageSelector } from '@/components/shared/LanguageSelector';
 import { SupportedLanguage } from '@/contexts/LanguageContext';
 
 interface SidebarFooterProps {
-  userRole: UserRoleType;
-  effectiveRole: UserRoleType;
+  userRole: UserRoleType | null;
+  effectiveRole: UserRoleType | null;
   isCollapsed: boolean;
   currentLanguage: string; 
   languages: Array<{ code: string; name: string }>;
@@ -30,7 +30,8 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
   changeLanguage,
   logout,
   isViewingAsOtherRole,
-  resetToOriginalRole
+  resetToOriginalRole,
+  forceAdminRole
 }) => {
   const handleLogout = () => {
     if (logout) {
