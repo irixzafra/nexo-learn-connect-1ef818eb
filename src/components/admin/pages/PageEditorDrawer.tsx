@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -58,7 +57,7 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
       const processedPage = {
         ...page,
         content: page.content ? {
-          blocks: page.content.blocks.map(block => ({
+          blocks: (page.content.blocks || []).map(block => ({
             ...block,
             id: block.id || `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
           }))
@@ -68,16 +67,22 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
       };
       setEditedPage(processedPage);
       
-      // Set selected navigations based on page.navigation
+      // Initialize selectedNavigations correctly based on page.navigation
+      let initialNavigations: string[] = [];
       if (page.navigation) {
         if (typeof page.navigation === 'string') {
-          setSelectedNavigations(page.navigation !== 'none' ? [page.navigation] : []);
+          // If it's a string, convert to array unless it's 'none'
+          initialNavigations = page.navigation !== 'none' ? [page.navigation] : ['none'];
         } else if (Array.isArray(page.navigation)) {
-          setSelectedNavigations(page.navigation);
+          // If it's already an array, use it directly
+          initialNavigations = page.navigation.length > 0 ? page.navigation : ['none'];
         }
       } else {
-        setSelectedNavigations([]);
+        // Default to 'none' if no navigation is set
+        initialNavigations = ['none'];
       }
+      
+      setSelectedNavigations(initialNavigations);
     }
   }, [page]);
 
@@ -97,7 +102,9 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
       // Update the navigation field with the selected navigations
       const updatedPage = {
         ...editedPage,
-        navigation: selectedNavigations.length > 0 ? selectedNavigations : 'none'
+        navigation: selectedNavigations.length > 0 
+          ? (selectedNavigations.includes('none') ? 'none' : selectedNavigations) 
+          : 'none'
       };
       
       await onSave(updatedPage);
@@ -145,20 +152,23 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
   // Handle selection/deselection of navigation items
   const toggleNavigationItem = (value: string) => {
     setSelectedNavigations(current => {
+      // Ensure we have a valid array to work with
+      const currentArray = current || [];
+      
       // If selecting "none", clear all other selections
       if (value === 'none') {
         return ['none'];
       }
       
       // If current selection includes "none" and selecting something else, remove "none"
-      if (current.includes('none')) {
+      if (currentArray.includes('none')) {
         return [value];
       }
       
       // Toggle the selected value
-      const updatedSelections = current.includes(value)
-        ? current.filter(item => item !== value)
-        : [...current, value];
+      const updatedSelections = currentArray.includes(value)
+        ? currentArray.filter(item => item !== value)
+        : [...currentArray, value];
         
       return updatedSelections.length > 0 ? updatedSelections : ['none'];
     });
@@ -268,7 +278,10 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <Label htmlFor="navigation">Navegación</Label>
-                <Popover open={navigationPopoverOpen} onOpenChange={setNavigationPopoverOpen}>
+                <Popover 
+                  open={navigationPopoverOpen} 
+                  onOpenChange={setNavigationPopoverOpen}
+                >
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -288,25 +301,28 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
                     <Command>
                       <CommandInput placeholder="Buscar navegación..." />
                       <CommandEmpty>No se encontraron resultados.</CommandEmpty>
-                      <CommandGroup>
-                        {navigationMenus.map((item) => (
-                          <CommandItem
-                            key={item.value}
-                            value={item.value}
-                            onSelect={() => {
-                              toggleNavigationItem(item.value);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                safeSelectedNavigations.includes(item.value) ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            {item.label}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
+                      <CommandList>
+                        <CommandGroup>
+                          {navigationMenus.map((item) => (
+                            <CommandItem
+                              key={item.value}
+                              value={item.value}
+                              onSelect={() => {
+                                toggleNavigationItem(item.value);
+                                setNavigationPopoverOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  safeSelectedNavigations.includes(item.value) ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {item.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
                     </Command>
                   </PopoverContent>
                 </Popover>
@@ -394,4 +410,3 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
 };
 
 export default PageEditorDrawer;
-

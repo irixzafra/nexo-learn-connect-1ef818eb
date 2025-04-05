@@ -156,6 +156,14 @@ const SystemPagesPage: React.FC = () => {
   ];
 
   const handleEditPage = useCallback((page: SitePage) => {
+    // Normalize the navigation field
+    let navigationValue: string | string[] = page.navigation || 'none';
+    
+    // If navigation is a comma-separated string, convert to array
+    if (typeof navigationValue === 'string' && navigationValue !== 'none' && navigationValue.includes(',')) {
+      navigationValue = navigationValue.split(',').filter(Boolean);
+    }
+    
     const pageData: PageData = {
       id: page.id,
       title: page.title,
@@ -168,7 +176,7 @@ const SystemPagesPage: React.FC = () => {
       component: page.component || '',
       accessType: page.accessType || 'public',
       content: page.content,
-      navigation: page.navigation || 'none',
+      navigation: navigationValue,
       permissions: {
         canView: ['all'],
         canEdit: ['admin'],
@@ -189,7 +197,7 @@ const SystemPagesPage: React.FC = () => {
       status: 'draft',
       category: 'general',
       accessType: 'public',
-      navigation: 'none',
+      navigation: 'none', 
       content: {
         blocks: []
       }
@@ -254,6 +262,17 @@ const SystemPagesPage: React.FC = () => {
 
   const handleSavePageEditor = async (updatedPage: PageData) => {
     try {
+      // Normalize navigation value for database storage
+      let navigationValue: string;
+      
+      if (Array.isArray(updatedPage.navigation)) {
+        navigationValue = updatedPage.navigation.length > 0 
+          ? updatedPage.navigation.join(',') 
+          : 'none';
+      } else {
+        navigationValue = updatedPage.navigation || 'none';
+      }
+      
       const pageData: Partial<SitePage> = {
         title: updatedPage.title,
         slug: updatedPage.path,
@@ -263,10 +282,7 @@ const SystemPagesPage: React.FC = () => {
         component: updatedPage.component,
         accessType: updatedPage.accessType,
         content: updatedPage.content,
-        // Safely handle navigation field - convert array to string if needed
-        navigation: Array.isArray(updatedPage.navigation) 
-          ? updatedPage.navigation.join(',') 
-          : updatedPage.navigation,
+        navigation: navigationValue,
         updated_at: new Date().toISOString()
       };
       
