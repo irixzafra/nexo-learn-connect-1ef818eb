@@ -39,6 +39,10 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
     }
   };
 
+  console.log('SidebarFooterSection rendering with:', { 
+    userRole, effectiveRole, isCollapsed, currentLanguage, languages 
+  });
+
   return (
     <div className="space-y-2 p-2">
       {/* Role Switcher - Only for admins */}

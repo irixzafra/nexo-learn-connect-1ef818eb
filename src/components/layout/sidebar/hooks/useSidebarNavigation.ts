@@ -1,60 +1,35 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/auth';
+import { useState } from 'react';
 import { UserRoleType } from '@/types/auth';
-import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
-import { getHomePathByRole } from '@/config/navigation/roleBasedNavigation';
 
+export interface SidebarNavigationData {
+  currentViewRole: UserRoleType | null;
+  isCollapsed: boolean;
+}
+
+/**
+ * Hook para manejar la navegación del sidebar y valores relacionados
+ * 
+ * @param userRole Rol actual del usuario
+ * @param viewAsRole Rol como el que se está viendo (simulación)
+ * @param onRoleChange Callback opcional cuando cambia el rol de visualización
+ * @returns Objeto con los datos del estado de navegación
+ */
 export const useSidebarNavigation = (
   userRole: UserRoleType,
   viewAsRole?: UserRoleType | null,
   onRoleChange?: (role: UserRoleType) => void
-) => {
-  const navigate = useNavigate();
-  const { state, setState } = useSidebar();
-  const { userRole: currentRole } = useAuth();
-  
-  const [currentLanguage, setCurrentLanguage] = useState<string>('es');
-  const [currentViewRole, setCurrentViewRole] = useState<UserRoleType | null>(viewAsRole || null);
-  
-  const isCollapsed = state === "collapsed";
+): SidebarNavigationData => {
+  // Use viewAsRole if provided, otherwise use userRole
+  const [currentViewRole, setCurrentViewRole] = useState<UserRoleType | null>(
+    viewAsRole || null
+  );
 
-  const changeLanguage = useCallback((lang: string) => {
-    setCurrentLanguage(lang);
-    // Lógica para cambiar el idioma en la aplicación
-    console.log(`Cambiando idioma a: ${lang}`);
-  }, []);
-  
-  // Callback para cambiar el rol visualizado
-  const handleRoleChange = useCallback((role: UserRoleType) => {
-    setCurrentViewRole(role);
-    
-    // Notificar al componente padre si existe un handler
-    if (onRoleChange) {
-      onRoleChange(role);
-    }
-    
-    // Navegar a la página de inicio correspondiente al rol
-    const homePath = getHomePathByRole(role);
-    navigate(homePath);
-    
-  }, [navigate, onRoleChange]);
-
-  // Efecto para actualizar el rol actual cuando cambia externamente
-  useEffect(() => {
-    if (viewAsRole !== undefined && viewAsRole !== currentViewRole) {
-      setCurrentViewRole(viewAsRole);
-    }
-  }, [viewAsRole, currentViewRole]);
+  // Get isCollapsed from sidebar context if available or set default
+  const isCollapsed = false; // Fixed value for now
 
   return {
-    isCollapsed,
     currentViewRole,
-    currentLanguage,
-    changeLanguage,
-    handleRoleChange
+    isCollapsed,
   };
 };
-
-export default useSidebarNavigation;

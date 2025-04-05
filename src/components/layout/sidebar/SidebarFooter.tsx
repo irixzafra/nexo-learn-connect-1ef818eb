@@ -18,9 +18,10 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     setSimulatedRole
   } = useAuth();
 
-  const { currentLanguage, changeLanguage } = useLanguage();
+  // Get language context
+  const { currentLanguage, changeLanguage, supportedLanguages } = useLanguage();
 
-  // Language options
+  // Language options mapping
   const languages = [
     { code: 'es', name: 'Español' },
     { code: 'en', name: 'English' },
@@ -33,6 +34,8 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
       await setSimulatedRole('admin');
     }
   };
+
+  console.log('SidebarFooter rendering with:', { isCollapsed, userRole, currentLanguage });
 
   return (
     <div className="border-t border-border p-3">
