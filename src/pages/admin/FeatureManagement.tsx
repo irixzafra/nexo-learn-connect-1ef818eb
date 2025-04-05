@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AdminLayout from '@/layouts/AdminLayout';
 import { GlobalDataTable } from '@/components/global-table';
@@ -8,7 +7,6 @@ import { TableDrawer } from '@/components/global-table/TableDrawer';
 import { useToast } from '@/components/ui/use-toast';
 import { PageHeader } from '@/components/ui/page-header';
 import { 
-  Toggle, 
   ToggleLeft, 
   Settings, 
   Layers, 
@@ -31,7 +29,6 @@ interface Feature {
   updatedAt: string;
 }
 
-// Helper function to get icon by category
 const getCategoryIcon = (category: string) => {
   switch (category) {
     case 'platform': return <Settings className="h-4 w-4" />;
@@ -45,7 +42,6 @@ const getCategoryIcon = (category: string) => {
   }
 };
 
-// Helper function to get status badge
 const getStatusBadge = (status: string) => {
   switch (status) {
     case 'active':
@@ -67,7 +63,6 @@ const FeatureManagement: React.FC = () => {
   const [selectedFeature, setSelectedFeature] = useState<Feature | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Mock data for features (in a real app, this would come from your API/database)
   const [features] = useState<Feature[]>([
     {
       id: "feature-1",
@@ -221,7 +216,6 @@ const FeatureManagement: React.FC = () => {
     }
   ]);
 
-  // Define table columns
   const columns: TableColumn<Feature>[] = [
     {
       id: "name",
@@ -326,24 +320,19 @@ const FeatureManagement: React.FC = () => {
     },
   ];
 
-  // Handler for creating a new feature
   const handleCreate = () => {
     setSelectedFeature(null);
     setIsDrawerOpen(true);
   };
 
-  // Handler for editing an existing feature
   const handleEdit = (feature: Feature) => {
     setSelectedFeature(feature);
     setIsDrawerOpen(true);
   };
 
-  // Handler for toggling a feature's status
   const handleToggleStatus = async (id: string, currentStatus: string) => {
     setIsLoading(true);
     try {
-      // In a real app, this would call your API
-      // For now, let's simulate a status toggle
       const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
       
       toast({
@@ -363,19 +352,15 @@ const FeatureManagement: React.FC = () => {
     }
   };
 
-  // Handler for form submission (create/update)
   const handleSubmit = async (data: Feature) => {
     setIsLoading(true);
     try {
-      // In a real app, this would call your API
       if (selectedFeature) {
-        // Update existing feature
         toast({
           title: "Funcionalidad actualizada",
           description: "La funcionalidad ha sido actualizada correctamente",
         });
       } else {
-        // Create new feature
         toast({
           title: "Funcionalidad creada",
           description: "La funcionalidad ha sido creada correctamente",
