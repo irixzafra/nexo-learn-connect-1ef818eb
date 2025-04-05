@@ -1,130 +1,145 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useInlineEditor } from '@/contexts/InlineEditorContext';
 import { Button } from '@/components/ui/button';
-import { EditIcon, XIcon, EyeIcon, PlusIcon, Flag, Menu } from 'lucide-react';
-import InlineNavigationEditor from './navigation/InlineNavigationEditor';
-import InlineFeatureFlags from './features/InlineFeatureFlags';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { 
+  Navigation, 
+  Flag, 
+  Plus, 
+  Eye, 
+  X, 
+  PanelLeft,
+  Settings
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const InlineEditControls: React.FC = () => {
-  const { isEditModeEnabled, toggleEditMode } = useInlineEditor();
-
-  if (!isEditModeEnabled) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="fixed bottom-4 right-4 z-50 shadow-lg h-10 w-10 rounded-full"
-            onClick={toggleEditMode}
-          >
-            <EditIcon className="h-4 w-4" />
-            <span className="sr-only">Activar Modo Edición</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="left">
-          <p>Activar Modo Edición</p>
-        </TooltipContent>
-      </Tooltip>
-    );
-  }
+  const { 
+    isEditModeEnabled, 
+    toggleEditMode, 
+    editModeType, 
+    setEditModeType 
+  } = useInlineEditor();
+  
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <>
-      <InlineNavigationEditor />
-      <InlineFeatureFlags />
-      
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
-        <div className="flex gap-2 justify-end">
+    <div className="fixed z-50 bottom-8 right-6">
+      {isEditModeEnabled && (
+        <div className={cn(
+          "bg-primary/90 backdrop-blur-sm rounded-full p-1 mb-2 flex items-center gap-1 shadow-lg",
+          "transform transition-all duration-300",
+          isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
+        )}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shadow-lg h-10 w-10 rounded-full bg-background"
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="rounded-full bg-white/20 text-white hover:bg-white/40"
+                onClick={() => setEditModeType('navigation')}
               >
-                <Menu className="h-4 w-4" />
-                <span className="sr-only">Navegación</span>
+                <Navigation className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Editar Navegación</p>
+            <TooltipContent side="top">
+              <p>Editar navegación</p>
             </TooltipContent>
           </Tooltip>
-          
+
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shadow-lg h-10 w-10 rounded-full bg-background"
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="rounded-full bg-white/20 text-white hover:bg-white/40"
+                onClick={() => setEditModeType('features')}
               >
                 <Flag className="h-4 w-4" />
-                <span className="sr-only">Features</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Gestionar Features</p>
+            <TooltipContent side="top">
+              <p>Gestionar features</p>
             </TooltipContent>
           </Tooltip>
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shadow-lg h-10 w-10 rounded-full bg-background"
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="rounded-full bg-white/20 text-white hover:bg-white/40"
+                onClick={() => setEditModeType('page')}
               >
-                <PlusIcon className="h-4 w-4" />
-                <span className="sr-only">Nueva Página</span>
+                <Plus className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Nueva Página</p>
+            <TooltipContent side="top">
+              <p>Nueva página</p>
             </TooltipContent>
           </Tooltip>
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shadow-lg h-10 w-10 rounded-full bg-background"
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="rounded-full bg-white/20 text-white hover:bg-white/40"
+                onClick={() => setEditModeType('preview')}
               >
-                <EyeIcon className="h-4 w-4" />
-                <span className="sr-only">Vista Previa</span>
+                <Eye className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Vista Previa</p>
+            <TooltipContent side="top">
+              <p>Previsualizar</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="rounded-full bg-white/20 text-white hover:bg-white/40"
+                onClick={() => {
+                  toggleEditMode();
+                  setIsOpen(false);
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>Cerrar modo edición</p>
             </TooltipContent>
           </Tooltip>
         </div>
-        
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="destructive"
-              size="icon"
-              className="shadow-lg h-10 w-10 rounded-full ml-auto"
-              onClick={toggleEditMode}
-            >
-              <XIcon className="h-4 w-4" />
-              <span className="sr-only">Salir del Modo Edición</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="left">
-            <p>Salir del Modo Edición</p>
-          </TooltipContent>
-        </Tooltip>
-      </div>
-    </>
+      )}
+      
+      <Button 
+        size="icon" 
+        variant={isEditModeEnabled ? "default" : "outline"} 
+        className={cn(
+          "h-12 w-12 rounded-full shadow-lg",
+          isEditModeEnabled && "bg-primary text-primary-foreground"
+        )}
+        onClick={() => {
+          if (isEditModeEnabled) {
+            setIsOpen(!isOpen);
+          } else {
+            toggleEditMode();
+            setIsOpen(true);
+          }
+        }}
+      >
+        {isEditModeEnabled ? (
+          <PanelLeft className="h-5 w-5" />
+        ) : (
+          <Settings className="h-5 w-5" />
+        )}
+      </Button>
+    </div>
   );
 };
 

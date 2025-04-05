@@ -9,7 +9,6 @@ import { UserMenu } from './header/UserMenu';
 import { cn } from '@/lib/utils';
 import { useLocalization } from '@/hooks/useLocalization';
 import LanguageSelector from '@/components/LanguageSelector';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 
 interface HeaderProps {
   showAuthButtons?: boolean;
@@ -31,8 +30,8 @@ const Header: React.FC<HeaderProps> = ({ showAuthButtons = true }) => {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm shadow-sm">
-      <div className="container flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-3 md:gap-4">
+      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+        <div className="flex items-center gap-3 md:gap-4 ml-8 md:ml-0">
           <Link to="/" className="flex items-center space-x-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/90 text-primary-foreground shadow-sm">
               <span className="text-sm font-bold">N</span>

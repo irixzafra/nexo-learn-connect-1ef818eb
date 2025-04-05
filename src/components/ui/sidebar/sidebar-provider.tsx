@@ -15,6 +15,10 @@ type SidebarProviderProps = {
    * @default true
    */
   persist?: boolean
+  /**
+   * Children to render within the sidebar provider
+   */
+  children: React.ReactNode
 }
 
 type SidebarProviderState = {
@@ -32,7 +36,7 @@ export function SidebarProvider({
   children,
   defaultState = "expanded",
   persist = true,
-}: React.PropsWithChildren<SidebarProviderProps>) {
+}: SidebarProviderProps) {
   const [state, setState] = React.useState<SidebarState>(() => {
     if (!persist) return defaultState
     try {

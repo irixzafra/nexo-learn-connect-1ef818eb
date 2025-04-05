@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import SidebarNavigation from '@/components/layout/sidebar/SidebarNavigation';
+import Sidebar from '@/components/layout/Sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
 import { InlineEditorProvider } from '@/contexts/InlineEditorContext';
 import InlineEditControls from '@/components/admin/InlineEditControls';
@@ -18,7 +18,7 @@ const AppLayout: React.FC = () => {
         <div className="flex h-screen flex-col">
           <Header />
           <div className="flex flex-1 overflow-hidden">
-            <SidebarNavigation />
+            <Sidebar />
             
             <main className="flex-1 overflow-auto bg-background">
               <Outlet />

@@ -10,30 +10,9 @@ export const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, children, ...props }, ref) => {
-  const { toggleSidebar, state, openMobile, setOpenMobile } = useSidebar()
+  const { toggleSidebar, state } = useSidebar()
   const isCollapsed = state === "collapsed"
   
-  // Use a ref for mobile detection to avoid re-renders
-  const isMobileRef = React.useRef(false);
-  
-  // Set the isMobile value once on mount, or when window is resized
-  React.useEffect(() => {
-    const handleResize = () => {
-      isMobileRef.current = window.innerWidth < 768;
-    };
-    
-    // Initial call
-    handleResize();
-    
-    // Add event listener for resize
-    window.addEventListener('resize', handleResize);
-    
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
   const handleToggleClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -42,12 +21,8 @@ export const SidebarTrigger = React.forwardRef<
       onClick(e);
     }
 
-    if (isMobileRef.current) {
-      setOpenMobile(!openMobile);
-    } else {
-      toggleSidebar();
-    }
-  }, [openMobile, toggleSidebar, setOpenMobile, onClick]);
+    toggleSidebar();
+  }, [toggleSidebar, onClick]);
 
   return (
     <Button
@@ -67,17 +42,7 @@ export const SidebarTrigger = React.forwardRef<
       {...props}
     >
       <AnimatePresence mode="wait" initial={false}>
-        {openMobile ? (
-          <motion.div
-            key="close"
-            initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-            animate={{ opacity: 1, rotate: 0, scale: 1 }}
-            exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
-            <X className="h-5 w-5" aria-hidden="true" />
-          </motion.div>
-        ) : isCollapsed ? (
+        {isCollapsed ? (
           <motion.div
             key="menu-icon"
             initial={{ opacity: 0, rotate: 180, scale: 0.5 }}

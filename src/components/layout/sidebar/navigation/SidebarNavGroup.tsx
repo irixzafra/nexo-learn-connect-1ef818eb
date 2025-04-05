@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import SidebarNavItem from './SidebarNavItem';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface SidebarNavGroupProps {
   title: string;
@@ -35,39 +36,52 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
     return null;
   }
 
-  // For collapsed sidebar, simplify and just show icons
+  // For collapsed sidebar, show a more compact version
   if (isCollapsed) {
     return (
-      <div className="mb-2 px-2">
-        <div className="flex items-center justify-center py-1">
-          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-sidebar-accent/30 text-sidebar-accent-foreground">
-            {<Icon className="h-4 w-4" />}
+      <div className="mb-2 px-1">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div 
+              className="flex items-center justify-center py-2 cursor-pointer hover:bg-muted/30 rounded-md"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <div className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground">
+                <Icon className="h-5 w-5" />
+              </div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>{title}</p>
+          </TooltipContent>
+        </Tooltip>
+        
+        {isOpen && (
+          <div className="space-y-1 pt-1">
+            {items.map((item) => (
+              <SidebarNavItem
+                key={item.label}
+                href={item.path}
+                icon={item.icon}
+                label={item.label}
+                badge={item.badge}
+                isCollapsed={true}
+                disabled={item.disabled}
+                isHighlighted={item.isHighlighted}
+              />
+            ))}
           </div>
-        </div>
-        <div className="space-y-1 pt-1">
-          {items.map((item) => (
-            <SidebarNavItem
-              key={item.label}
-              href={item.path}
-              icon={item.icon}
-              label={item.label}
-              badge={item.badge}
-              isCollapsed={true}
-              disabled={item.disabled}
-              isHighlighted={item.isHighlighted}
-            />
-          ))}
-        </div>
+        )}
       </div>
     );
   }
 
   // Expanded sidebar with grouped items
   return (
-    <div className="mb-3">
+    <div className="mb-2">
       <div 
         className={cn(
-          "flex items-center justify-between rounded-md px-3 py-1.5 text-sm transition-colors",
+          "flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors",
           isOpen ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground",
           "cursor-pointer hover:bg-muted/50"
         )}
@@ -76,7 +90,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
         aria-controls={`nav-group-${id}`}
       >
         <div className="flex items-center gap-2">
-          {<Icon className="h-4 w-4" />}
+          <Icon className="h-5 w-5" />
           <span className="text-sm font-medium">{title}</span>
         </div>
         {isOpen ? (
