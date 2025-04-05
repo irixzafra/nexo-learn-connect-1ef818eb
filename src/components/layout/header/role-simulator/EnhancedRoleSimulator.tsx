@@ -24,6 +24,8 @@ const EnhancedRoleSimulator: React.FC<EnhancedRoleSimulatorProps> = ({
 }) => {
   const { userRole, effectiveRole, setSimulatedRole, isViewingAsOtherRole, resetToOriginalRole } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Use our updated hook with the correct return type
   const {
     searchTerm,
     setSearchTerm,

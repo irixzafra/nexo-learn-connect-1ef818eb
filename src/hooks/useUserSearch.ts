@@ -2,17 +2,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from "@/lib/supabase";
 import debounce from 'lodash.debounce';
-
-export interface UserProfile {
-  id: string;
-  full_name: string | null;
-  role: string;
-}
+import { UserSearchResult } from '@/components/layout/header/role-simulator/types';
 
 export function useUserSearch() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
+  const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
   const [noResults, setNoResults] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
 
@@ -32,14 +27,22 @@ export function useUserSearch() {
       // Buscar usuarios que coincidan con el término de búsqueda
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, full_name, role')
+        .select('id, full_name, role, email')
         .ilike('full_name', `%${term}%`)
         .limit(10);
       
       if (error) throw error;
       
-      setSearchResults(data || []);
-      setNoResults(data?.length === 0);
+      // Convert the data to match UserSearchResult type
+      const formattedResults: UserSearchResult[] = (data || []).map(profile => ({
+        id: profile.id,
+        full_name: profile.full_name,
+        email: profile.email,
+        role: profile.role
+      }));
+      
+      setSearchResults(formattedResults);
+      setNoResults(formattedResults.length === 0);
     } catch (error: any) {
       console.error('Error buscando usuarios:', error);
       setSearchError(`Error al buscar usuarios: ${error.message}`);

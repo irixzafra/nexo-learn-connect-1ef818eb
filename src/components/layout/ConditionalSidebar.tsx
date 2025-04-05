@@ -60,7 +60,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       </div>
       
       {/* Footer Section with Role Switcher and Language Selector */}
-      <SidebarFooter isCollapsed={isCollapsed} />
+      <SidebarFooter />
     </div>
   );
 };
