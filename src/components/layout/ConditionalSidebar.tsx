@@ -33,12 +33,14 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
 }) => {
   // Usar el hook de navegación dinámica
   const { navigationMenus } = useDynamicNavigation(effectiveRole);
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
 
-  console.log('ConditionalSidebar with effectiveRole:', effectiveRole);
+  console.log('ConditionalSidebar with effectiveRole:', effectiveRole, 'isCollapsed:', isCollapsed);
 
   return (
     <div className={cn(
-      "h-full flex flex-col pb-2 bg-background border-r border-border/50 transition-all",
+      "h-full flex flex-col pb-0 bg-background border-r border-border/50 transition-all",
       isCollapsed ? "w-20" : "w-64"
     )}>
       {/* Espacio superior con logo y botón de toggle */}
@@ -58,9 +60,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
       </div>
       
       {/* Footer Section with Role Switcher and Language Selector */}
-      <div className="mt-auto">
-        <SidebarFooter isCollapsed={isCollapsed} />
-      </div>
+      <SidebarFooter isCollapsed={isCollapsed} />
     </div>
   );
 };

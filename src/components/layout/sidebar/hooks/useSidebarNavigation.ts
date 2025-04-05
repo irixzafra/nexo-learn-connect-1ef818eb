@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { UserRoleType } from '@/types/auth';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 
 export interface SidebarNavigationData {
   currentViewRole: UserRoleType | null;
@@ -24,9 +25,10 @@ export const useSidebarNavigation = (
   const [currentViewRole, setCurrentViewRole] = useState<UserRoleType | null>(
     viewAsRole || null
   );
-
-  // Get isCollapsed from sidebar context if available or set default
-  const isCollapsed = false; // Fixed value for now
+  
+  // Get sidebar state
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   return {
     currentViewRole,

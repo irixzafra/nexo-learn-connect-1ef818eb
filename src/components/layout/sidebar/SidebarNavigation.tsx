@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/auth';
 import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { useNotifications } from '@/hooks/useNotifications';
-import { useSidebarNavigation } from '@/components/layout/sidebar/hooks/useSidebarNavigation';
+import { useSidebarNavigation } from '@/hooks/useSidebarNavigation';
 import ConditionalSidebar from '../ConditionalSidebar';
 import { getRoleName, getHomePath } from '@/utils/roleUtils';
 
@@ -32,6 +32,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
   const {
     currentViewRole,
+    isCollapsed
   } = useSidebarNavigation(toUserRoleType(userRole as string), viewAsRole, onRoleChange);
 
   return (

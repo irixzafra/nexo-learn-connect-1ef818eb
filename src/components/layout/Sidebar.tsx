@@ -3,6 +3,7 @@ import React from 'react';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { cn } from '@/lib/utils';
 import SidebarContent from './sidebar/SidebarContent';
+import SidebarNavigation from './sidebar/SidebarNavigation';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const Sidebar: React.FC = () => {
@@ -26,7 +27,7 @@ const Sidebar: React.FC = () => {
             <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
           </div>
           
-          <SidebarContent />
+          <SidebarNavigation />
         </div>
       </aside>
     </>

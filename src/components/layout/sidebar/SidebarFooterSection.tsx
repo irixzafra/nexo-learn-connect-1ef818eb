@@ -1,11 +1,10 @@
 
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
-import { Settings, LogOut } from 'lucide-react';
+import { Settings, LogOut, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import EnhancedRoleSimulator from '@/components/layout/header/role-simulator/EnhancedRoleSimulator';
-import { LanguageSelector } from '@/components/shared/LanguageSelector';
 import { SupportedLanguage } from '@/contexts/LanguageContext';
 
 interface SidebarFooterProps {
@@ -39,9 +38,55 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
     }
   };
 
+  const handleLanguageChange = (code: string) => {
+    console.log('Changing language to:', code);
+    changeLanguage(code);
+  };
+
   console.log('SidebarFooterSection rendering with:', { 
     userRole, effectiveRole, isCollapsed, currentLanguage, languages 
   });
+
+  // Function to render the language selector
+  const renderLanguageSelector = () => {
+    return (
+      <div className={`mb-3 flex ${isCollapsed ? 'justify-center' : ''}`}>
+        {isCollapsed ? (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="w-8 h-8" 
+            onClick={() => {
+              // Cycle through languages when in collapsed mode
+              const currentIndex = languages.findIndex(l => l.code === currentLanguage);
+              const nextIndex = (currentIndex + 1) % languages.length;
+              handleLanguageChange(languages[nextIndex].code);
+            }}
+          >
+            <Globe className="h-4 w-4" />
+            <span className="sr-only">Cambiar idioma</span>
+          </Button>
+        ) : (
+          <div className="flex flex-col w-full gap-1">
+            <p className="text-xs text-muted-foreground px-2">Idioma</p>
+            <div className="flex flex-wrap gap-1">
+              {languages.map((lang) => (
+                <Button
+                  key={lang.code}
+                  variant={currentLanguage === lang.code ? "secondary" : "ghost"}
+                  size="sm"
+                  className="px-2 py-1 h-8"
+                  onClick={() => handleLanguageChange(lang.code)}
+                >
+                  {lang.name}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-2 p-2">
@@ -53,14 +98,7 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
       )}
 
       {/* Language Selector */}
-      <div className={`mb-3 ${isCollapsed ? 'flex justify-center' : 'px-2'}`}>
-        <LanguageSelector 
-          currentLanguage={currentLanguage as SupportedLanguage}
-          languages={languages}
-          onChange={changeLanguage}
-          variant={isCollapsed ? 'minimal' : 'full'}
-        />
-      </div>
+      {renderLanguageSelector()}
 
       {/* Settings Button */}
       <Button
