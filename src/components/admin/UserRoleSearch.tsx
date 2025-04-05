@@ -25,7 +25,7 @@ interface UserRoleSearchProps {
 export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [users, setUsers] = useState<UserProfile[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = async () => {
@@ -52,7 +52,7 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: UserRoleType) => {
+  const handleRoleChange = async (userId: string, newRole: UserRoleType): Promise<void> => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -81,9 +81,9 @@ export const UserRoleSearch: React.FC<UserRoleSearchProps> = ({ onClose }) => {
     switch (role) {
       case 'admin': return "bg-yellow-100 text-yellow-800";
       case 'instructor': return "bg-blue-100 text-blue-800";
-      case 'sistemas': return "bg-purple-100 text-purple-800";
       case 'student': return "bg-green-100 text-green-800";
-      case 'anonimo': return "bg-gray-100 text-gray-800";
+      case 'moderator': return "bg-purple-100 text-purple-800";
+      case 'guest': return "bg-gray-100 text-gray-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };

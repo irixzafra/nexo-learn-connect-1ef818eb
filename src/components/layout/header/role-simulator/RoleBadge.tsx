@@ -55,12 +55,6 @@ const RoleBadge: React.FC<RoleBadgeProps> = ({
       text: 'text-gray-800 dark:text-gray-300',
       icon: Ghost,
       label: 'Invitado'
-    },
-    beta_tester: {
-      bg: 'bg-purple-100 dark:bg-purple-900/20',
-      text: 'text-purple-800 dark:text-purple-300',
-      icon: Ghost,
-      label: 'Beta Tester'
     }
   };
 

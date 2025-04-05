@@ -15,7 +15,7 @@ interface QuickRoleSelectorProps {
 export const QuickRoleSelector: React.FC<QuickRoleSelectorProps> = ({ 
   effectiveRole, 
   handleSwitchRole,
-  availableRoles = ['admin', 'instructor', 'student', 'moderator', 'beta_tester', 'guest'],
+  availableRoles = ['admin', 'instructor', 'student', 'moderator', 'guest'],
 }) => {
   return (
     <CommandGroup heading="Roles disponibles" className="pb-2">

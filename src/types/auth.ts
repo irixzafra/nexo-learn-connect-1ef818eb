@@ -1,7 +1,7 @@
 
 import { Session, User as SupabaseUser } from '@supabase/supabase-js';
 
-export type UserRoleType = 'admin' | 'instructor' | 'student' | 'moderator' | 'beta_tester' | 'guest';
+export type UserRoleType = 'admin' | 'instructor' | 'student' | 'moderator' | 'guest';
 
 export interface User extends SupabaseUser {
   role?: UserRoleType;
@@ -49,8 +49,6 @@ export function toUserRoleType(role: string | null): UserRoleType {
       return 'instructor';
     case 'moderator':
       return 'moderator';
-    case 'beta_tester':
-      return 'beta_tester';
     case 'guest':
       return 'guest';
     case 'student':

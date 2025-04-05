@@ -18,7 +18,7 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({
 }) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const isSistemas = userRole === 'sistemas';
+  const isAdmin = userRole === 'admin'; // Changed from sistemas to admin
 
   return (
     <div className="px-3 py-2">
@@ -76,7 +76,7 @@ const AdministracionNavigation: React.FC<AdministracionNavigationProps> = ({
             label="Revisar Componentes" 
             isCollapsed={isCollapsed}
           />
-          {isSistemas && (
+          {isAdmin && (
             <MenuItem
               to="/app/admin/route-validator"
               icon={FileText}
