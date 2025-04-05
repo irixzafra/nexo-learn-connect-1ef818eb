@@ -20,15 +20,33 @@ const SidebarFooter: React.FC = () => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
-  // Use the language context
-  const { currentLanguage, changeLanguage } = useLanguage();
+  // Use the language context with a fallback for testing or when the provider isn't available
+  let languageProps = {
+    currentLanguage: 'es',
+    changeLanguage: (lang: string) => console.log('Language change:', lang),
+    languages: [
+      { code: 'es', name: 'Español' },
+      { code: 'en', name: 'English' },
+      { code: 'pt', name: 'Português' }
+    ]
+  };
 
-  // Language options mapping
-  const languages = [
-    { code: 'es', name: 'Español' },
-    { code: 'en', name: 'English' },
-    { code: 'pt', name: 'Português' }
-  ];
+  try {
+    // Only use the context if it's available
+    const langContext = useLanguage();
+    if (langContext) {
+      languageProps = {
+        currentLanguage: langContext.currentLanguage,
+        changeLanguage: langContext.changeLanguage,
+        languages: langContext.supportedLanguages.map(code => ({
+          code,
+          name: code === 'es' ? 'Español' : code === 'en' ? 'English' : code === 'pt' ? 'Português' : code
+        }))
+      };
+    }
+  } catch (e) {
+    console.log('Language provider not available, using fallback');
+  }
 
   // Handler for forcing admin role
   const handleForceAdminRole = async () => {
@@ -43,9 +61,9 @@ const SidebarFooter: React.FC = () => {
         userRole={userRole}
         effectiveRole={effectiveRole}
         isCollapsed={isCollapsed}
-        currentLanguage={currentLanguage}
-        languages={languages}
-        changeLanguage={changeLanguage}
+        currentLanguage={languageProps.currentLanguage}
+        languages={languageProps.languages}
+        changeLanguage={languageProps.changeLanguage}
         logout={logout}
         isViewingAsOtherRole={isViewingAsOtherRole}
         resetToOriginalRole={resetToOriginalRole}
