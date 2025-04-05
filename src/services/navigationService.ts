@@ -54,7 +54,7 @@ export const fetchNavigationItems = async (role: UserRoleType): Promise<Navigati
     const { data: items, error } = await supabase
       .from('navigation_items')
       .select('*')
-      .eq('visible_to_roles', role)
+      .contains('visible_to_roles', [role])
       .order('sort_order', { ascending: true });
     
     if (error) {

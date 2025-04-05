@@ -36,10 +36,8 @@ const AppRoutes: React.FC = () => {
           <Route path="development" element={<div>AdminDevelopmentPage</div>} />
           <Route path="features" element={<div>Features</div>} />
           <Route path="orphan-review" element={<div>OrphanReviewPage</div>} />
+          <Route path="navigation-manager" element={<NavigationManagerPage />} />
         </Route>
-        
-        {/* Ruta para el gestor de navegación */}
-        <Route path="/app/admin/navigation-manager" element={<NavigationManagerPage />} />
         
         {/* Accessibility Route (Example) */}
         <Route path="/accessibility" element={<div>AccessibilityPage</div>} />
