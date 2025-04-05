@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavGroup from './SidebarNavGroup';
@@ -9,7 +8,6 @@ import {
   Home,
   Users, 
   BookOpen, 
-  Bot, 
   FileText, 
   Settings, 
   GraduationCap, 

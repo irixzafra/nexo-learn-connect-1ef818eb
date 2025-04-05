@@ -56,7 +56,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
         />
       </div>
       
-      {/* Footer Section - Solo un SidebarFooter */}
+      {/* Footer Section */}
       <SidebarFooter />
     </div>
   );

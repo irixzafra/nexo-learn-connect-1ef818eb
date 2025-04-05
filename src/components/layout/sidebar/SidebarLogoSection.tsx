@@ -13,7 +13,6 @@ interface SidebarLogoSectionProps {
 const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({ 
   isCollapsed = false,
   icon: Icon,
-  title = "Nexo",
   toggleSidebar
 }) => {
   return (
@@ -24,9 +23,6 @@ const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({
       )}>
         {Icon && (
           <Icon className="h-6 w-6" />
-        )}
-        {!isCollapsed && (
-          <span className="text-lg font-semibold">{title}</span>
         )}
       </div>
     </div>

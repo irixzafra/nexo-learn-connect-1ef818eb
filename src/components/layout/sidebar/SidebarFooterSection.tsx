@@ -41,7 +41,7 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
   };
 
   return (
-    <div className={cn("p-2 flex flex-col gap-1", isCollapsed ? "items-center" : "")}>
+    <div className="p-2 flex flex-col gap-2">
       {/* Role Indicator - Compact design */}
       {userRole === 'admin' && (
         <div className={cn("mb-1 w-full", isCollapsed ? "flex justify-center" : "")}>
@@ -71,17 +71,30 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
         </div>
       )}
 
-      <div className={cn("flex", isCollapsed ? "flex-col items-center" : "justify-between w-full")}>
+      {/* Footer Controls */}
+      <div className={cn(
+        "flex items-center gap-1", 
+        isCollapsed ? "justify-center" : "justify-between w-full"
+      )}>
         {/* Left side actions */}
-        <div className={cn("flex", isCollapsed ? "flex-col gap-1" : "gap-1")}>
-          {/* Language Selector - More compact */}
-          <LanguageSelector 
-            currentLanguage={currentLanguage as SupportedLanguage}
-            languages={languages}
-            onChange={changeLanguage}
-            variant={isCollapsed ? "minimal" : "icon"}
-            align="center"
-          />
+        <div className="flex items-center gap-1">
+          {/* Language Selector */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <LanguageSelector 
+                  currentLanguage={currentLanguage as SupportedLanguage}
+                  languages={languages}
+                  onChange={changeLanguage}
+                  variant={isCollapsed ? "minimal" : "icon"}
+                  align="center"
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side={isCollapsed ? "right" : "top"}>
+              <p>Cambiar idioma</p>
+            </TooltipContent>
+          </Tooltip>
         
           {/* Settings Button */}
           <Tooltip>

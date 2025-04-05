@@ -8,12 +8,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
-import { SupportedLanguage } from '@/contexts/LanguageContext';
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useLanguage, SupportedLanguage, LANGUAGE_NAMES } from '@/contexts/LanguageContext';
 
 interface LanguageSelectorProps {
   currentLanguage: SupportedLanguage;
-  languages: { code: string; name: string }[];
+  languages: Array<{ code: string; name: string }>;
   onChange: (code: string) => void;
   variant?: 'icon' | 'full' | 'minimal';
   align?: 'start' | 'center' | 'end';
@@ -38,66 +37,41 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     }
   };
 
-  const handleLanguageChange = (langCode: string) => {
-    console.log('LanguageSelector: Changing language to:', langCode);
-    onChange(langCode);
-  };
-
-  const trigger = (
-    <>
-      {variant === 'icon' && (
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-          <Globe className="h-4 w-4" />
-          <span className="sr-only">Cambiar idioma</span>
-        </Button>
-      )}
-      
-      {variant === 'minimal' && (
-        <Button variant="ghost" size="sm" className="h-9 w-9 rounded-full p-0">
-          <span className="text-base">{getLanguageFlag(currentLanguage)}</span>
-          <span className="sr-only">Cambiar idioma</span>
-        </Button>
-      )}
-      
-      {variant === 'full' && (
-        <Button variant="outline" size="sm" className="gap-2 w-full justify-between">
-          <span className="flex items-center gap-2">
-            {getLanguageFlag(currentLanguage)}
-            <span>{languages.find(l => l.code === currentLanguage)?.name || 'Idioma'}</span>
-          </span>
-          <Globe className="h-3.5 w-3.5 opacity-70" />
-        </Button>
-      )}
-    </>
-  );
-
   return (
-    <Tooltip>
-      <DropdownMenu>
-        <TooltipTrigger asChild>
-          <DropdownMenuTrigger asChild>
-            {trigger}
-          </DropdownMenuTrigger>
-        </TooltipTrigger>
-        <TooltipContent side="right">
-          <p>Cambiar idioma</p>
-        </TooltipContent>
-        <DropdownMenuContent align={align} className="w-40">
-          {languages.map((lang) => (
-            <DropdownMenuItem 
-              key={lang.code}
-              onClick={() => handleLanguageChange(lang.code)}
-              className={`cursor-pointer flex items-center gap-2 ${
-                currentLanguage === lang.code ? 'bg-accent text-accent-foreground' : ''
-              }`}
-            >
-              <span>{getLanguageFlag(lang.code)}</span>
-              <span>{lang.name}</span>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </Tooltip>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        {variant === 'icon' ? (
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+            <Globe className="h-4 w-4" />
+            <span className="sr-only">Cambiar idioma</span>
+          </Button>
+        ) : variant === 'minimal' ? (
+          <Button variant="ghost" size="sm" className="px-2 h-8">
+            {getLanguageFlag(currentLanguage)}
+            <span className="sr-only">Cambiar idioma</span>
+          </Button>
+        ) : (
+          <Button variant="outline" size="sm" className="gap-2">
+            {getLanguageFlag(currentLanguage)}
+            <span>{LANGUAGE_NAMES[currentLanguage]}</span>
+          </Button>
+        )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align={align} className="w-40">
+        {languages.map((lang) => (
+          <DropdownMenuItem 
+            key={lang.code}
+            onClick={() => onChange(lang.code)}
+            className={`cursor-pointer flex items-center gap-2 ${
+              currentLanguage === lang.code ? 'bg-accent text-accent-foreground' : ''
+            }`}
+          >
+            <span>{getLanguageFlag(lang.code)}</span>
+            <span>{lang.name}</span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

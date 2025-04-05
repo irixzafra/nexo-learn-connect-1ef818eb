@@ -1,15 +1,19 @@
-
 import React, { useState } from 'react';
-import { LucideIcon } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import SidebarNavItem from './SidebarNavItem';
-import { ChevronRight, ChevronDown } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { LucideIcon } from 'lucide-react';
+import {
+  SidebarMenu,
+  SidebarMenuTrigger,
+  SidebarMenuContent
+} from '@/components/ui/sidebar';
+import { MenuItem } from '../MenuItems';
+import { useLocation } from 'react-router-dom';
 
-interface NavItem {
+interface MenuItem {
   label: string;
-  path: string;
+  path?: string;
   icon?: LucideIcon;
   badge?: number;
   disabled?: boolean;
@@ -19,115 +23,83 @@ interface NavItem {
 interface SidebarNavGroupProps {
   title: string;
   icon?: LucideIcon;
-  isCollapsed?: boolean;
   defaultOpen?: boolean;
-  id?: string;
-  items: NavItem[];
+  id: string;
+  items: MenuItem[];
+  isCollapsed?: boolean;
 }
 
 const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
   title,
   icon: Icon,
-  isCollapsed = false,
   defaultOpen = false,
   id,
-  items
+  items,
+  isCollapsed = false
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const { state } = useSidebar();
-  isCollapsed = isCollapsed || state === "collapsed";
+  const sidebarIsCollapsed = state === "collapsed";
+  const location = useLocation();
 
-  // Handle toggle group
-  const toggleGroup = () => {
-    if (!isCollapsed) {
-      setIsOpen(!isOpen);
-    }
+  // Function to capitalize first letter of each word in the title
+  const capitalizeTitle = (text: string) => {
+    return text.split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   };
-  
-  if (isCollapsed) {
+
+  const capitalizedTitle = capitalizeTitle(title);
+
+  if (sidebarIsCollapsed) {
     return (
-      <div className="mb-2">
-        {/* Group Label */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="relative">
-              <div className="flex w-full items-center justify-center">
-                {Icon && (
-                  <button
-                    onClick={toggleGroup}
-                    className="w-full p-2 hover:bg-muted/70 rounded-md flex items-center justify-center"
-                    aria-label={title}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <p>{title}</p>
-          </TooltipContent>
-        </Tooltip>
-        
-        {/* Group Items */}
-        <div className="mt-1 space-y-1">
-          {items.map((item, index) => (
-            <SidebarNavItem 
-              key={index} 
-              href={item.path} 
-              icon={item.icon}
-              label={item.label}
-              badge={item.badge}
-              isCollapsed={true}
-              disabled={item.disabled}
-              isHighlighted={item.isHighlighted}
-            />
-          ))}
+      <div className="px-1 py-1">
+        <div
+          className="flex h-9 items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+          title={capitalizedTitle}
+        >
+          {Icon && <Icon className="h-5 w-5" />}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mb-2">
-      {/* Group Label */}
-      <button
-        onClick={toggleGroup}
-        className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted/50"
-        aria-expanded={isOpen}
-        aria-controls={id}
+    <SidebarMenu defaultOpen={defaultOpen} collapsible>
+      <SidebarMenuTrigger 
+        className="flex w-full items-center justify-between py-2 text-muted-foreground hover:text-foreground"
+        onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex items-center gap-2">
-          {Icon && <Icon className="h-4 w-4" />}
-          <span>{title}</span>
+        <div className="flex items-center gap-3">
+          {Icon && <Icon className="h-5 w-5" />}
+          <span className="text-sm font-medium">{capitalizedTitle}</span>
         </div>
-        <div>
-          {isOpen ? (
-            <ChevronDown className="h-4 w-4" />
-          ) : (
-            <ChevronRight className="h-4 w-4" />
-          )}
+        <ChevronRight className={cn(
+          "h-4 w-4 transition-transform duration-200",
+          isOpen && "rotate-90 transform"
+        )} />
+      </SidebarMenuTrigger>
+      <SidebarMenuContent>
+        <div className="pl-10 pr-2">
+          {items.map((item, index) => {
+            // Check if the current route matches this item's path
+            const isActive = item.path ? location.pathname.startsWith(item.path) : false;
+            
+            return (
+              <MenuItem
+                key={`${id}-item-${index}`}
+                to={item.path || '#'}
+                icon={item.icon || (() => null)}
+                label={item.label}
+                badge={item.badge}
+                disabled={item.disabled}
+                isCollapsed={sidebarIsCollapsed}
+              />
+            );
+          })}
         </div>
-      </button>
-      
-      {/* Group Items */}
-      <div 
-        className={cn("mt-1 space-y-1", isOpen ? "block" : "hidden")}
-        id={id}
-      >
-        {items.map((item, index) => (
-          <SidebarNavItem 
-            key={index} 
-            href={item.path} 
-            icon={item.icon}
-            label={item.label}
-            badge={item.badge}
-            disabled={item.disabled}
-            isHighlighted={item.isHighlighted}
-          />
-        ))}
-      </div>
-    </div>
+      </SidebarMenuContent>
+    </SidebarMenu>
   );
 };
 
