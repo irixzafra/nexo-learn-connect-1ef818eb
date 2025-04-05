@@ -1,24 +1,16 @@
 
 import React, { useState } from 'react';
-import { AdminDataTable } from '@/components/shared/AdminDataTable';
-import { createColumn, createActionsColumn } from "@/components/shared/DataTableUtils";
-import { ColumnDef } from "@tanstack/react-table";
+import { GlobalDataTable } from '@/components/global-table';
+import { TableColumn } from '@/components/global-table/types';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { 
   BookOpen, 
-  MoreHorizontal, 
   Users, 
-  ArrowUpRight, 
   Calendar, 
   Tag, 
-  Plus, 
-  FileEdit,
-  Trash,
-  Eye
+  Plus
 } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 // Definición de tipos para cursos
 interface Course {
@@ -106,50 +98,67 @@ const AllCoursesTab: React.FC = () => {
     }
   };
 
-  // Columnas para la tabla de cursos
-  const columns: ColumnDef<Course, any>[] = [
-    createColumn<Course>({
-      accessorKey: "title",
+  // Define las columnas para la tabla de cursos usando nuestro sistema GlobalDataTable
+  const columns: TableColumn<Course>[] = [
+    {
+      id: "title",
       header: "Título",
-      cell: ({ row }) => (
+      accessorKey: "title",
+      type: 'text',
+      cell: ({ getValue }) => (
         <div className="flex items-center gap-2">
           <BookOpen className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">{row.getValue("title")}</span>
+          <span className="font-medium">{getValue() as string}</span>
         </div>
       ),
-    }),
-    createColumn<Course>({
-      accessorKey: "instructor",
+    },
+    {
+      id: "instructor",
       header: "Instructor",
-    }),
-    createColumn<Course>({
-      accessorKey: "category",
+      accessorKey: "instructor",
+      type: 'text',
+    },
+    {
+      id: "category",
       header: "Categoría",
+      accessorKey: "category",
+      type: 'text',
       cell: ({ getValue }) => (
         <div className="flex items-center gap-2">
           <Tag className="h-4 w-4 text-muted-foreground" />
           <span>{getValue() as string}</span>
         </div>
       ),
-    }),
-    createColumn<Course>({
-      accessorKey: "status",
+    },
+    {
+      id: "status",
       header: "Estado",
+      accessorKey: "status",
+      type: 'select',
+      options: [
+        { label: 'Publicado', value: 'published' },
+        { label: 'Borrador', value: 'draft' },
+        { label: 'Archivado', value: 'archived' },
+      ],
       cell: ({ getValue }) => getStatusBadge(getValue() as string),
-    }),
-    createColumn<Course>({
-      accessorKey: "enrolledStudents",
+    },
+    {
+      id: "enrolledStudents",
       header: "Estudiantes",
+      accessorKey: "enrolledStudents",
+      type: 'number',
       cell: ({ getValue }) => (
         <div className="flex items-center gap-2">
           <Users className="h-4 w-4 text-muted-foreground" />
           <span>{getValue() as number}</span>
         </div>
       ),
-    }),
-    createColumn<Course>({
-      accessorKey: "updatedAt",
+    },
+    {
+      id: "updatedAt",
       header: "Actualizado",
+      accessorKey: "updatedAt",
+      type: 'date',
       cell: ({ getValue }) => {
         const date = getValue() as string;
         return (
@@ -159,46 +168,40 @@ const AllCoursesTab: React.FC = () => {
           </div>
         );
       },
-    }),
-    createActionsColumn<Course>(({ row }) => {
-      return (
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-            <Eye className="h-4 w-4 text-muted-foreground" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-            <FileEdit className="h-4 w-4 text-muted-foreground" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-            <Trash className="h-4 w-4 text-muted-foreground" />
-          </Button>
-        </div>
-      );
-    }),
+    }
   ];
 
+  const handleCreateCourse = () => {
+    console.log('Create course');
+  };
+
+  const handleEditCourse = (course: Course) => {
+    console.log('Edit course', course);
+  };
+
+  const handleDeleteCourse = async (id: string) => {
+    console.log('Delete course', id);
+    setCourses(prevCourses => prevCourses.filter(course => course.id !== id));
+    return Promise.resolve();
+  };
+
   return (
-    <AdminDataTable
+    <GlobalDataTable
       title="Cursos"
       description="Gestiona todos los cursos de la plataforma"
       columns={columns}
       data={courses}
       searchPlaceholder="Buscar curso..."
       searchColumn="title"
+      onCreate={handleCreateCourse}
+      onEdit={handleEditCourse}
+      onDelete={handleDeleteCourse}
       createButtonLabel="Crear Curso"
-      createButtonIcon={<Plus className="h-4 w-4 mr-2" />}
-      onCreateClick={() => {}}
       emptyState={
         <div className="text-center py-10">
           <BookOpen className="mx-auto h-10 w-10 text-muted-foreground mb-4" />
           <p className="text-muted-foreground">No se encontraron cursos</p>
         </div>
-      }
-      actionButtons={
-        <Button variant="outline" size="sm">
-          <Tag className="h-4 w-4 mr-2" />
-          Filtrar por categoría
-        </Button>
       }
     />
   );
