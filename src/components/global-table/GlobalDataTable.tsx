@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { SortingState, ColumnFiltersState, VisibilityState } from '@tanstack/react-table';
@@ -11,6 +10,7 @@ import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
 import { GlobalTableProps, GlobalTableRef, TableColumn } from './types';
 import { constructColumns } from './utils';
+import { renderCellContent, renderActions } from './renderers';
 
 const GlobalDataTable = forwardRef<GlobalTableRef, GlobalTableProps>((
   { 
@@ -44,15 +44,12 @@ const GlobalDataTable = forwardRef<GlobalTableRef, GlobalTableProps>((
   }, 
   ref
 ) => {
-  // State
   const [sorting, setSorting] = useState<SortingState>(defaultSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   
-  // Determine query keys
   const finalQueryKey = queryKey || (tablePath ? [tablePath] : ['table-data']);
   
-  // Data fetching function
   const fetchData = async () => {
     if (propData) return propData;
     if (queryFn) return queryFn();
@@ -72,7 +69,6 @@ const GlobalDataTable = forwardRef<GlobalTableRef, GlobalTableProps>((
     }
   };
   
-  // Use React Query for data fetching
   const {
     data: fetchedData = [],
     isLoading,
@@ -84,26 +80,21 @@ const GlobalDataTable = forwardRef<GlobalTableRef, GlobalTableProps>((
     enabled: autoFetch && !propData
   });
   
-  // Expose methods via ref
   useImperativeHandle(ref, () => ({
     refresh: () => refetch(),
     getData: () => tableData
   }));
   
-  // Determine the data to use
   const tableData = propData || fetchedData || [];
   
-  // Filter visible columns
   const visibleColumns = propColumns.filter(col => !hideColumns.includes(col.id));
   
-  // Convert our column format to TanStack table columns
   const tableColumns = constructColumns(visibleColumns, {
     onEdit,
     onDelete,
     renderCustomActions
   });
   
-  // Effects for setting initial column visibility
   useEffect(() => {
     const initialVisibility = propColumns.reduce<Record<string, boolean>>((acc, col) => {
       acc[col.id] = col.hidden !== true;
@@ -112,7 +103,6 @@ const GlobalDataTable = forwardRef<GlobalTableRef, GlobalTableProps>((
     setColumnVisibility(initialVisibility);
   }, [propColumns]);
   
-  // Render header with title and create button if provided
   const renderHeader = () => {
     if (!title && !createButtonLabel && !description) return null;
     
@@ -134,19 +124,44 @@ const GlobalDataTable = forwardRef<GlobalTableRef, GlobalTableProps>((
     );
   };
   
-  // Return empty state for error
   if (error) {
     toast.error("Error loading data", {
       description: "There was a problem fetching the data"
     });
   }
   
+  const enhancedColumns = tableColumns.map(column => {
+    if (column.id === 'actions') {
+      return {
+        ...column,
+        cell: (info) => {
+          const actionData = info.getValue();
+          if (typeof actionData === 'object' && actionData !== null) {
+            return renderActions(actionData);
+          }
+          return null;
+        }
+      };
+    } else {
+      return {
+        ...column,
+        cell: (info) => {
+          const data = info.getValue();
+          if (data && typeof data === 'object' && 'value' in data && 'type' in data) {
+            return renderCellContent(data.value, data.type, data.options);
+          }
+          return String(info.getValue() || '');
+        }
+      };
+    }
+  });
+  
   return (
     <div className="space-y-4">
       {renderHeader()}
       
       <AdvancedDataTable
-        columns={tableColumns}
+        columns={enhancedColumns}
         data={tableData}
         searchPlaceholder={searchPlaceholder || `Search ${title || tableName || ''}...`}
         searchColumn={searchColumn}
