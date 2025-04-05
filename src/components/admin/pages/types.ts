@@ -1,4 +1,5 @@
 
+
 export interface PageData {
   id?: string;
   title: string;
@@ -28,3 +29,4 @@ export interface PageBlock {
   content: string | Record<string, any>;
   order?: number;
 }
+

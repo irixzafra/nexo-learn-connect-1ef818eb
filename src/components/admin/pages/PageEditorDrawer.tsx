@@ -166,6 +166,9 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
 
   if (!editedPage) return null;
 
+  // Initialize safely for the Command component
+  const safeSelectedNavigations = selectedNavigations || [];
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-[70vw] max-w-[1000px] overflow-y-auto sm:max-w-none">
@@ -273,10 +276,10 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
                       aria-expanded={navigationPopoverOpen}
                       className="w-full justify-between"
                     >
-                      {selectedNavigations.length > 0
-                        ? selectedNavigations.includes('none')
+                      {safeSelectedNavigations.length > 0
+                        ? safeSelectedNavigations.includes('none')
                           ? 'No mostrar en navegación'
-                          : `${selectedNavigations.length} seleccionados`
+                          : `${safeSelectedNavigations.length} seleccionados`
                         : "Seleccionar navegación"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -297,7 +300,7 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
-                                selectedNavigations.includes(item.value) ? "opacity-100" : "opacity-0"
+                                safeSelectedNavigations.includes(item.value) ? "opacity-100" : "opacity-0"
                               )}
                             />
                             {item.label}
@@ -309,9 +312,9 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
                 </Popover>
                 
                 {/* Display selected items as badges */}
-                {selectedNavigations.length > 0 && !selectedNavigations.includes('none') && (
+                {safeSelectedNavigations.length > 0 && !safeSelectedNavigations.includes('none') && (
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedNavigations.map((nav) => {
+                    {safeSelectedNavigations.map((nav) => {
                       const navItem = navigationMenus.find(item => item.value === nav);
                       return navItem ? (
                         <Badge key={nav} variant="secondary" className="px-2 py-1">
@@ -391,3 +394,4 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
 };
 
 export default PageEditorDrawer;
+

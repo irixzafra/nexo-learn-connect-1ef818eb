@@ -263,7 +263,7 @@ const SystemPagesPage: React.FC = () => {
         component: updatedPage.component,
         accessType: updatedPage.accessType,
         content: updatedPage.content,
-        // Fix the type mismatch by converting array to string if needed
+        // Safely handle navigation field - convert array to string if needed
         navigation: Array.isArray(updatedPage.navigation) 
           ? updatedPage.navigation.join(',') 
           : updatedPage.navigation,

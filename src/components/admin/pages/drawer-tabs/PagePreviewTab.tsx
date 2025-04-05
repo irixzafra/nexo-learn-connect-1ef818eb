@@ -11,7 +11,7 @@ interface PagePreviewTabProps {
 
 const PagePreviewTab: React.FC<PagePreviewTabProps> = ({ page }) => {
   // Generate IDs for any blocks that don't have them to satisfy the type requirements
-  const ensureBlockIds = (blocks: AdminPageBlock[]): GlobalPageBlock[] => {
+  const ensureBlockIds = (blocks: AdminPageBlock[] = []): GlobalPageBlock[] => {
     return blocks.map(block => ({
       ...block,
       id: block.id || `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -74,14 +74,17 @@ const PagePreviewTab: React.FC<PagePreviewTabProps> = ({ page }) => {
     }
   };
 
+  // Safely access content blocks, providing fallbacks for undefined values
+  const pageBlocks = page.content?.blocks || [];
+
   return (
     <div className="p-4 border rounded-md min-h-[60vh]">
       <div className="flex flex-col space-y-6">
         <div className="bg-white p-6 rounded-md border shadow-sm min-h-[400px]">
           <h1 className="text-2xl font-bold mb-4">{page.title}</h1>
-          {page.content?.blocks && page.content.blocks.length > 0 ? (
+          {pageBlocks.length > 0 ? (
             <DraggableBlocksContainer 
-              blocks={ensureBlockIds(page.content.blocks)}
+              blocks={ensureBlockIds(pageBlocks)}
               onBlocksChange={() => {}} // Read-only in preview mode
               renderBlockContent={renderBlockContent}
             />
