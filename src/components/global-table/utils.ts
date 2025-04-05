@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
 // Function to construct TanStack table columns from our custom column format
-export const constructColumns = <TData,>(
+export const constructColumns = <TData>(
   columns: TableColumn<TData>[],
   options: {
     onEdit?: (data: TData) => void;
