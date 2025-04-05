@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import SafeRouteWrapper from '@/components/SafeRouteWrapper';
 
 // Layouts
 import PublicLayout from '@/layouts/PublicLayout';
@@ -11,7 +9,6 @@ import AppLayout from '@/layouts/AppLayout';
 // Pages
 import NotFound from '@/pages/NotFound';
 import LandingPage from '@/pages/LandingPage';
-import Login from '@/pages/auth/Login';
 
 // Domain-specific routes
 import UserRoutes from '@/routes/UserRoutes';
@@ -40,20 +37,10 @@ const AppRoutes = () => {
         {/* Index route redirects to student dashboard */}
         <Route index element={<Navigate to="/app/dashboard" replace />} />
         
-        {/* Student Routes */}
+        {/* Student Routes - Keep only functional routes */}
         <Route path="dashboard/*" element={<UserRoutes />} />
-        <Route path="my-courses/*" element={<UserRoutes />} />
         <Route path="profile/*" element={<UserRoutes />} />
-        <Route path="settings/*" element={<UserRoutes />} />
-        <Route path="learning-paths/*" element={<UserRoutes />} />
-        <Route path="certificates/*" element={<UserRoutes />} />
-        <Route path="achievements/*" element={<UserRoutes />} />
-        <Route path="calendar/*" element={<UserRoutes />} />
-        <Route path="help/*" element={<UserRoutes />} />
-        <Route path="messages/*" element={<UserRoutes />} />
-        <Route path="community/*" element={<UserRoutes />} />
-        <Route path="notifications/*" element={<UserRoutes />} />
-        <Route path="preferences/*" element={<UserRoutes />} />
+        <Route path="my-courses/*" element={<UserRoutes />} />
         
         {/* Course Routes */}
         <Route path="course/*" element={<CourseRoutes />} />

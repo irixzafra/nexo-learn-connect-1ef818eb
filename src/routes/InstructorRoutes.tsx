@@ -4,7 +4,6 @@ import { Routes, Route } from 'react-router-dom';
 import NotFound from "@/pages/NotFound";
 import AppLayout from "@/layouts/AppLayout";
 import SafeRouteWrapper from '@/components/SafeRouteWrapper';
-import PlaceholderPage from '@/components/PlaceholderPage';
 
 // Instructor pages
 import InstructorDashboard from '@/pages/instructor/Dashboard';
@@ -61,13 +60,6 @@ const InstructorRoutes: React.FC = () => {
           </SafeRouteWrapper>
         </AppLayout>
       } />
-      <Route path="/courses/:id/analytics" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['instructor', 'admin']}>
-            <PlaceholderPage title="Analíticas del Curso (Instructor)" />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
       <Route path="/courses/:id/editor" element={
         <AppLayout>
           <SafeRouteWrapper requiredRole={['instructor', 'admin']}>
@@ -86,29 +78,6 @@ const InstructorRoutes: React.FC = () => {
         <AppLayout>
           <SafeRouteWrapper requiredRole={['instructor', 'admin']}>
             <InstructorEditLesson />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      
-      {/* Additional instructor routes */}
-      <Route path="/assignments" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['instructor', 'admin']}>
-            <PlaceholderPage title="Notas y Tareas" subtitle="Sistema de gestión de tareas en desarrollo" />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/messages" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['instructor', 'admin']}>
-            <PlaceholderPage title="Mensajes de Instructor" subtitle="Sistema de mensajería en desarrollo" />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/analytics" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['instructor', 'admin']}>
-            <PlaceholderPage title="Analíticas de Instructor" subtitle="Dashboard de analíticas en desarrollo" />
           </SafeRouteWrapper>
         </AppLayout>
       } />
