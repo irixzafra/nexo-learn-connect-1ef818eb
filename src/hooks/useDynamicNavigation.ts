@@ -5,6 +5,7 @@ import { NavigationMenus } from '@/types/navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { getNavigationByRole } from '@/config/navigation/roleBasedNavigation';
 import { NavigationItemWithChildren } from '@/types/navigation-manager';
+import * as LucideIcons from 'lucide-react';
 
 /**
  * Hook para obtener la navegación dinámica basada en el rol del usuario
@@ -80,10 +81,15 @@ export const useDynamicNavigation = (role: UserRoleType) => {
               // Añadir hijos como elementos del grupo
               rootItem.children?.forEach(childItem => {
                 if (childItem.isVisible) {
+                  // Fixed: Handle icon properly
+                  const iconComponent = childItem.iconName && (LucideIcons as any)[childItem.iconName] 
+                    ? (LucideIcons as any)[childItem.iconName] 
+                    : undefined;
+                  
                   dynamicNavigation[groupName].push({
                     label: childItem.label,
                     path: childItem.path,
-                    icon: childItem.iconName ? { name: childItem.iconName } : undefined,
+                    icon: iconComponent,
                     disabled: !childItem.isActive,
                     requiredRole: childItem.visibleToRoles || [role]
                   });
