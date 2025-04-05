@@ -1,19 +1,12 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UserRoleType } from '@/types/auth';
-import { Search, X, RefreshCcw, UserCheck } from 'lucide-react';
+import { Search, X, RefreshCcw } from 'lucide-react';
 import { RoleBadge } from './RoleBadge';
-
-interface UserResult {
-  id: string;
-  full_name?: string;
-  email?: string;
-  role: UserRoleType;
-}
+import { UserSearchResult } from './types';
 
 interface RolePopoverContentProps {
   effectiveRole: UserRoleType | string;
@@ -21,7 +14,7 @@ interface RolePopoverContentProps {
   userRole: UserRoleType | string;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  userResults: UserResult[];
+  userResults: UserSearchResult[];
   isSearching: boolean;
   handleSwitchRole: (role: UserRoleType) => void;
   resetToOriginalRole: () => void;

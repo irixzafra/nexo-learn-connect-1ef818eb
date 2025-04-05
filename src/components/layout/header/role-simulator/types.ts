@@ -1,8 +1,9 @@
 
-// If this file doesn't exist, we'll create it
+import { UserRoleType } from '@/types/auth';
+
 export interface UserSearchResult {
   id: string;
   full_name: string | null;
   email: string | null;
-  role: string | null;
+  role: UserRoleType | string;
 }

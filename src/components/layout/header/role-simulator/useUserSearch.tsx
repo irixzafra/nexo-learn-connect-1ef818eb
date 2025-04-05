@@ -1,59 +1,86 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useDebounce } from '@/hooks/useDebounce';
-
-interface UserResult {
-  id: string;
-  full_name?: string;
-  email?: string;
-  role: string;
-}
+import { UserSearchResult } from './types';
+import { toast } from 'sonner';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 
 export const useUserSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
-  const [userResults, setUserResults] = useState<UserResult[]>([]);
+  const [userResults, setUserResults] = useState<UserSearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
-  useEffect(() => {
-    const searchUsers = async () => {
-      if (!debouncedSearchQuery || debouncedSearchQuery.length < 2) {
+  
+  // Search for users by name or email
+  const searchUsers = async (query: string) => {
+    if (!query.trim() || query.length < 2) {
+      setUserResults([]);
+      return;
+    }
+    
+    setIsSearching(true);
+    
+    try {
+      console.log('🔍 Iniciando búsqueda de usuarios con término:', query);
+      
+      // Llamada a la Edge Function para buscar usuarios
+      const { data, error } = await supabase.functions.invoke('search-users-simulation', {
+        body: { searchTerm: query }
+      });
+      
+      console.log('📊 Respuesta de la búsqueda de usuarios:', { data, error });
+      
+      if (error) {
+        console.error('❌ Error al invocar search-users-simulation:', error);
+        toast.error('Error al buscar usuarios');
         setUserResults([]);
         return;
       }
-
-      setIsSearching(true);
-
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('id, full_name, email, role')
-          .or(`full_name.ilike.%${debouncedSearchQuery}%,email.ilike.%${debouncedSearchQuery}%`)
-          .limit(10);
-
-        if (error) {
-          console.error('Error searching users:', error);
-          return;
-        }
-
-        setUserResults(data || []);
-      } catch (error) {
-        console.error('Exception in searchUsers:', error);
-      } finally {
-        setIsSearching(false);
+      
+      if (data?.data && Array.isArray(data.data)) {
+        // Mapear los resultados a formato compatible con UserSearchResult
+        // y asegurarnos de que el role sea un UserRoleType válido
+        const formattedResults: UserSearchResult[] = data.data.map((user: any) => ({
+          id: user.id,
+          full_name: user.fullName || 'Sin nombre',
+          email: user.email || 'No email',
+          role: toUserRoleType(user.role) // Convertir a UserRoleType válido
+        }));
+        
+        console.log('✅ Resultados de búsqueda formateados:', formattedResults);
+        setUserResults(formattedResults);
+      } else {
+        console.log('⚠️ No se encontraron resultados o formato de respuesta inesperado', data);
+        setUserResults([]);
       }
-    };
-
-    searchUsers();
-  }, [debouncedSearchQuery]);
+    } catch (error) {
+      console.error('🔴 Error completo en searchUsers:', error);
+      toast.error('Error al buscar usuarios');
+      setUserResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+  
+  // When search query changes, search for users
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchQuery && searchQuery.length >= 2) {
+        console.log('⏱️ Ejecutando búsqueda después de debounce:', searchQuery);
+        searchUsers(searchQuery);
+      } else {
+        setUserResults([]);
+      }
+    }, 300);
+    
+    return () => {
+      clearTimeout(timeoutId);
+    }
+  }, [searchQuery]);
 
   return {
     searchQuery,
     setSearchQuery,
     userResults,
-    isSearching,
+    isSearching
   };
 };
-
-export default useUserSearch;

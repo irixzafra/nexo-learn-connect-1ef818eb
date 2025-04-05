@@ -4,7 +4,7 @@ import { UserSearchResult } from './types';
 import { CommandSeparator, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Badge } from '@/components/ui/badge';
 import { getRoleIcon, getRoleName, getRoleBadgeColor } from './roleUtils';
-import { UserRoleType } from '@/types/auth';
+import { UserRoleType, toUserRoleType } from '@/types/auth';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
@@ -64,7 +64,7 @@ export const UserSearch: React.FC<UserSearchProps> = ({
                 console.log('🔄 Usuario seleccionado para simular rol:', user);
                 // Simulate this user's role
                 if (user.role) {
-                  handleSwitchRole(user.role as UserRoleType);
+                  handleSwitchRole(toUserRoleType(user.role));
                 }
               }}
               className="flex items-center gap-2 py-2"
@@ -83,10 +83,10 @@ export const UserSearch: React.FC<UserSearchProps> = ({
                   variant="outline" 
                   className={cn(
                     "ml-auto text-xs px-1.5 py-0.5", 
-                    getRoleBadgeColor(user.role).replace('bg-', 'border-')
+                    getRoleBadgeColor(user.role.toString()).replace('bg-', 'border-')
                   )}
                 >
-                  {getRoleName(user.role)}
+                  {getRoleName(user.role.toString())}
                 </Badge>
               )}
             </CommandItem>
