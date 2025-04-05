@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import SafeRouteWrapper from '@/components/SafeRouteWrapper';
@@ -35,7 +36,6 @@ import Settings from '@/pages/admin/Settings';
 import SystemSettings from '@/pages/admin/SystemSettings';
 import RoleManagement from '@/pages/admin/RoleManagement';
 import AdminCourses from '@/pages/admin/AdminCourses';
-import LinkDashboard from '@/pages/admin/LinkDashboard';
 import UserAnalytics from '@/pages/admin/UserAnalytics';
 import CourseAnalytics from '@/pages/admin/analytics/CourseAnalytics';
 import RevenueAnalytics from '@/pages/admin/analytics/RevenueAnalytics';
@@ -44,7 +44,6 @@ import TestDataManagement from '@/pages/admin/TestDataManagement';
 import AccessControl from '@/pages/admin/access/AccessControl';
 import AdminDashboard from '@/pages/admin/Dashboard';
 import PagesManagement from '@/pages/admin/settings/pages';
-import OrphanReviewPage from '@/pages/admin/OrphanReviewPage';
 import NavigationDiagram from '@/pages/admin/NavigationDiagram';
 import AnalyticsOverview from '@/pages/admin/analytics/index';
 
@@ -149,7 +148,7 @@ const AppRoutes = () => {
         <Route path="admin/settings" element={<SafeRouteWrapper requiredRole={['admin']}><Settings /></SafeRouteWrapper>} />
         <Route path="admin/system-settings" element={<SafeRouteWrapper requiredRole={['admin']}><SystemSettings /></SafeRouteWrapper>} />
         <Route path="admin/roles" element={<SafeRouteWrapper requiredRole={['admin']}><RoleManagement /></SafeRouteWrapper>} />
-        <Route path="admin/link-dashboard" element={<SafeRouteWrapper requiredRole={['admin']}><LinkDashboard /></SafeRouteWrapper>} />
+        {/* Removed LinkDashboard route */}
         
         {/* --- Rutas Admin Analytics --- */}
         <Route path="admin/analytics" element={<SafeRouteWrapper requiredRole={['admin']}><AnalyticsOverview /></SafeRouteWrapper>} />
@@ -165,7 +164,7 @@ const AppRoutes = () => {
         <Route path="admin/test-data" element={<SafeRouteWrapper requiredRole={['admin']}><TestDataManagement /></SafeRouteWrapper>} />
         <Route path="admin/access-control" element={<SafeRouteWrapper requiredRole={['admin']}><AccessControl /></SafeRouteWrapper>} />
         <Route path="admin/system-pages" element={<SafeRouteWrapper requiredRole={['admin']}><PagesManagement /></SafeRouteWrapper>} />
-        <Route path="admin/orphan-review" element={<SafeRouteWrapper requiredRole={['admin']}><OrphanReviewPage /></SafeRouteWrapper>} />
+        {/* Removed OrphanReviewPage route */}
         <Route path="admin/design-system" element={<SafeRouteWrapper requiredRole={['admin']}><PlaceholderPage title="Design System" /></SafeRouteWrapper>} />
         
         {/* --- Nueva ruta para revisión de elementos obsoletos --- */}
