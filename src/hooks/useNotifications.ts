@@ -1,13 +1,6 @@
 
 import { useState, useCallback, useEffect } from 'react';
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  isRead: boolean;
-  createdAt: Date;
-}
+import { Notification } from '@/types/notifications';
 
 export function useNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -25,29 +18,35 @@ export function useNotifications() {
       const mockNotifications: Notification[] = [
         {
           id: '1',
+          user_id: 'user1',
+          type: 'message',
           title: 'Nuevo mensaje',
-          message: 'Has recibido un nuevo mensaje',
-          isRead: false,
-          createdAt: new Date()
+          content: 'Has recibido un nuevo mensaje',
+          is_read: false,
+          created_at: new Date().toISOString(),
         },
         {
           id: '2',
+          user_id: 'user1',
+          type: 'course_completed',
           title: 'Recordatorio de curso',
-          message: 'Tu curso comienza en 1 hora',
-          isRead: false,
-          createdAt: new Date(Date.now() - 3600000)
+          content: 'Tu curso comienza en 1 hora',
+          is_read: false,
+          created_at: new Date(Date.now() - 3600000).toISOString(),
         },
         {
           id: '3',
+          user_id: 'user1',
+          type: 'announcement',
           title: 'Actualización de sistema',
-          message: 'El sistema se ha actualizado correctamente',
-          isRead: true,
-          createdAt: new Date(Date.now() - 86400000)
+          content: 'El sistema se ha actualizado correctamente',
+          is_read: true,
+          created_at: new Date(Date.now() - 86400000).toISOString(),
         }
       ];
       
       setNotifications(mockNotifications);
-      setUnreadCount(mockNotifications.filter(n => !n.isRead).length);
+      setUnreadCount(mockNotifications.filter(n => !n.is_read).length);
     } catch (error) {
       console.error('Error al cargar notificaciones:', error);
     } finally {
@@ -65,7 +64,7 @@ export function useNotifications() {
     setNotifications(prev => 
       prev.map(notification => 
         notification.id === notificationId 
-          ? { ...notification, isRead: true } 
+          ? { ...notification, is_read: true } 
           : notification
       )
     );
@@ -77,7 +76,7 @@ export function useNotifications() {
   // Marcar todas las notificaciones como leídas
   const markAllAsRead = useCallback(() => {
     setNotifications(prev => 
-      prev.map(notification => ({ ...notification, isRead: true }))
+      prev.map(notification => ({ ...notification, is_read: true }))
     );
     setUnreadCount(0);
   }, []);

@@ -12,6 +12,7 @@ export interface MenuItem {
   badge?: number;
   isHighlighted?: boolean;
   disabled?: boolean;
+  submenu?: MenuItem[]; // Añadimos la propiedad submenu
 }
 
 // Navigation with children

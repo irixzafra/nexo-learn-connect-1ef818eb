@@ -29,7 +29,7 @@ export const SidebarMainMenuItem: React.FC<SidebarMainMenuItemProps> = ({
       return LucideIcons[iconName] || CircleDashed;
     }
     
-    return CircleDashed;
+    return item.icon;
   }, [item.icon]);
 
   return (

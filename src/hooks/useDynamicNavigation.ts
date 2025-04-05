@@ -4,7 +4,7 @@ import { UserRoleType } from '@/types/auth';
 import { NavigationItemWithChildren } from '@/types/navigation-manager';
 
 // Mock data - esto normalmente vendría de una API
-const navigationByRole: Record<UserRoleType, NavigationItemWithChildren[]> = {
+const navigationByRole: Record<UserRoleType | string, NavigationItemWithChildren[]> = {
   admin: [
     { label: 'Dashboard', path: '/admin/dashboard', icon: 'LayoutDashboard' },
     { label: 'Users', path: '/admin/users', icon: 'Users' },
@@ -56,13 +56,18 @@ const navigationByRole: Record<UserRoleType, NavigationItemWithChildren[]> = {
     { label: 'Explorar', path: '/explorar', icon: 'Compass' },
     { label: 'Iniciar Sesión', path: '/auth/login', icon: 'LogIn' },
   ],
+  // Agregar un valor predeterminado para roles desconocidos
+  default: [
+    { label: 'Inicio', path: '/', icon: 'Home' },
+    { label: 'Explorar', path: '/explore', icon: 'Compass' },
+  ]
 };
 
 export const useDynamicNavigation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const getNavigationItemsByRole = useCallback(async (role: UserRoleType): Promise<NavigationItemWithChildren[]> => {
+  const getNavigationItemsByRole = useCallback(async (role: UserRoleType | string): Promise<NavigationItemWithChildren[]> => {
     setIsLoading(true);
     setError(null);
     
@@ -71,7 +76,7 @@ export const useDynamicNavigation = () => {
       await new Promise(resolve => setTimeout(resolve, 100));
       
       // Devolver navegación para el rol especificado, o array vacío si no se encuentra
-      return navigationByRole[role] || [];
+      return navigationByRole[role] || navigationByRole.default || [];
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to fetch navigation items');
       setError(error);
