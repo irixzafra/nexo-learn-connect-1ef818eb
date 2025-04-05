@@ -16,32 +16,47 @@ Este documento define la terminología clave utilizada en el desarrollo y la doc
     *   Componente UI persistente o semi-persistente que ayuda al usuario a orientarse y moverse entre las `Páginas` o secciones principales de la aplicación.
     *   *Ejemplos Específicos:*
         *   **`Header` (Cabecera):** Barra superior, generalmente con logo, acciones rápidas, menú de usuario.
-        *   **`Sidebar` (Barra Lateral):** Menú vertical (usualmente izquierdo) con la estructura de navegación jerárquica principal, a menudo específica por rol y colapsable.
+        *   **`Sidebar` (Barra Lateral):** El menú vertical (usualmente izquierdo) con la estructura de navegación jerárquica principal, a menudo específica por rol y colapsable. Típicamente se organiza en:
+            *   **`Grupo de Navegación (Sidebar)`:** Una sección dentro de la Sidebar, usualmente con un título y/o icono, que agrupa `Items de Navegación` relacionados. Puede ser colapsable. *(Ejemplo: El grupo "Gestión Académica")*.
+            *   **`Item de Navegación (Sidebar)`:** Un elemento individual dentro de un `Grupo de Navegación` o directamente en la Sidebar. Puede ser:
+                *   Un **`Enlace de Navegación`:** Un item que, al hacer clic, navega a una `Página` específica. *(Ejemplo: El enlace "Mis Cursos" dentro del grupo "Gestión Académica")*.
+                *   Un disparador de **`Submenú Desplegable (Sidebar):`** Un item que, al interactuar (clic/hover), muestra un menú secundario con más `Items de Navegación` relacionados. *(Ejemplo: Un item "Informes" que despliega "Informe Ventas", "Informe Usuarios")*.
+                *   Un disparador de **Acción:** Un item que ejecuta una acción directamente sin navegar (menos común en sidebars principales).
+                *   Un **`Separador de Navegación:`** Una línea visual para separar lógicamente `Grupos` o `Items`.
         *   **`Footer` (Pie de Página Global):** Barra inferior común a la mayoría de las páginas (si existe), con información legal, enlaces, etc.
         *   **`Sidebar Footer` (Pie de Sidebar):** Sección inferior *dentro* de la `Sidebar` con acciones como idioma, tema, logout, cambio de rol.
         *   **`Breadcrumbs` (Migas de Pan):** Indicador de ruta jerárquica de la página actual (ej. Inicio > Cursos > Mi Curso). *(Planeado/Futuro)*
 
 *   **`Elemento de Navegación Interna de Página`:**
-    *   **Propósito:** Componentes UI utilizados *dentro* de una `Página` para organizar su contenido o permitir la navegación entre sub-secciones de la misma página sin cambiar la URL principal drásticamente.
+    *   **Propósito:** Componentes UI utilizados *dentro* del área de contenido principal de una `Página` para organizar su contenido o permitir la navegación entre sub-secciones lógicas de esa misma página, usualmente sin cambiar el `Elemento de Navegación Global` activo (Header/Sidebar principal).
     *   **Ejemplos Específicos:**
         *   **`Tabs` (Pestañas):** Componente que muestra diferentes paneles de contenido dentro del mismo espacio de la página, permitiendo al usuario cambiar entre ellos haciendo clic en las cabeceras de las pestañas. (ej. Usado en `/app/admin/users` para cambiar entre "Lista de Usuarios" y "Gestión de Roles").
         *   **`Stepper` (Pasos):** Componente que guía al usuario a través de un proceso de varios pasos (ej. un wizard de configuración o un formulario multi-página), mostrando el progreso y permitiendo navegar entre pasos.
         *   **`Accordion` (Acordeón):** Componente que permite mostrar/ocultar secciones de contenido dentro de una página haciendo clic en sus cabeceras. Útil para FAQs o contenido extenso.
-        *   **`Menú Secundario / Submenú:`** Enlaces de navegación adicionales específicos de una sección o página, que pueden aparecer bajo el header o en una barra lateral secundaria dentro del área de contenido.
+        *   **`Menú Secundario / Submenú (Página):`** Enlaces de navegación específicos de una `Página` o sección compleja, presentados *dentro del área de contenido* (ej. una barra lateral secundaria específica para la configuración, o enlaces horizontales bajo el título de la página). **Distinto de un submenú desplegable dentro de la `Sidebar` principal.**
+
+*   **`Componente Emergente / Overlay`:**
+    *   **Propósito:** Componentes UI que aparecen temporalmente sobre la interfaz principal, usualmente anclados a un elemento disparador (trigger), para mostrar un menú de acciones, información adicional o un formulario corto, sin bloquear completamente la interacción con el resto de la página (a diferencia de un Dialog/Modal).
+    *   **Ejemplos Específicos:**
+        *   **`Popover`:** Un pequeño cuadro de contenido no modal que aparece junto a su elemento disparador. Útil para mostrar información extra o controles secundarios.
+        *   **`Dropdown Menu` (Menú Desplegable):** Una lista de opciones o acciones que aparece (generalmente hacia abajo) al hacer clic en un botón o icono. *(Ejemplo en Nexo: El `User Menu` en el `Header`, potencialmente el `Role Switcher`)*.
+        *   **`Tooltip` (Información Emergente):** Un pequeño texto descriptivo que aparece al pasar el cursor sobre un elemento.
+        *   **`Select / Combobox (con Opciones Emergentes)`:** Controles de formulario que muestran una lista de opciones seleccionables en un panel emergente.
+    *   **Distinción Clave:** Generalmente se cierran haciendo clic fuera de ellos y no suelen oscurecer el fondo como un `Dialog/Modal`.
 
 *   **`Widget Funcional` (o `Módulo de Página`):**
     *   Un bloque o componente **dentro de una `Página`** que encapsula una **funcionalidad específica y autocontenida**. Muestra información dinámica (a menudo conectada a datos) o permite interacciones concretas. Es una "mini-aplicación" dentro de la página.
-    *   *Ejemplos:* Widget de Estadísticas, Lista "Mis Cursos", Tabla de Usuarios con Filtros, Formulario de Edición de Perfil, Visor de Lecciones, Gráfico de Progreso.
+    *   *Ejemplos:* Widget de Estadísticas, Lista "Mis Cursos", Tabla de Usuarios con Filtros, Formulario de Edición de Perfil, Visor de Lecciones, Gráfico de Progreso, el `Role Switcher` (si es más complejo que un simple Dropdown).
 
 *   **`Componente UI Base` (o `Componente de Diseño`):**
-    *   Bloque de construcción fundamental y reutilizable de la interfaz, definido por el `DESIGN_SYSTEM.md` (basado en `shadcn/ui` y Tailwind). Se utilizan para construir `Páginas`, `Widgets Funcionales` y otros elementos. No suelen tener lógica de negocio compleja por sí mismos.
-    *   *Ejemplos:* `Button`, `Card`, `Input`, `Avatar`, `Table`, `Dialog`, `Tooltip`, `Badge`, `Switch`.
+    *   Bloque de construcción fundamental y reutilizable de la interfaz, definido por el `DESIGN_SYSTEM.md` (basado en `shadcn/ui` y Tailwind). Se utilizan para construir `Páginas`, `Widgets Funcionales`, `Componentes Emergentes`, etc. No suelen tener lógica de negocio compleja por sí mismos.
+    *   *Ejemplos:* `Button`, `Card`, `Input`, `Avatar`, `Table`, `Dialog`, `Modal`, `AlertDialog`, `Sheet` (Drawer/Panel Lateral), `Tooltip`, `Badge`, `Switch`, `Tabs`, `Accordion`, `Popover`, `DropdownMenu`.
 
 ## 2. Conceptos de Desarrollo y Arquitectura
 
 *   **`Funcionalidad Transversal`:**
     *   Una capacidad del sistema que no está limitada a una única `Página` o `Widget Funcional`, sino que afecta a múltiples partes de la aplicación.
-    *   *Ejemplos:* Autenticación y Autorización, Sistema Multi-idioma (i18n), Gestión de Temas (Claro/Oscuro), Notificaciones Toast, Sistema de Feature Flags, Role Switching (Admin).
+    *   *Ejemplos:* Autenticación y Autorización, Sistema Multi-idioma (i18n), Gestión de Temas (Claro/Oscuro), Notificaciones Toast, Sistema de Feature Flags, Role Switching (Admin - la lógica detrás, no solo el botón).
 
 *   **`SPA (Single Page Application)`:**
     *   Tipo de aplicación web donde la navegación entre `Páginas` ocurre principalmente en el navegador del cliente sin recargar la página HTML completa, ofreciendo una experiencia más fluida. (Nuestra arquitectura).
@@ -68,7 +83,7 @@ Este documento define la terminología clave utilizada en el desarrollo y la doc
     *   Librería que usamos en el frontend para gestionar la obtención, caché, sincronización y actualización de datos del servidor (Supabase). Simplifica el manejo del estado del servidor.
 
 *   **`Context API`:**
-    *   Mecanismo de React para compartir estado global (como información del usuario autenticado o el tema actual) entre componentes sin pasarlo manualmente a través de props.
+    *   Mecanismo de React para compartir estado global (como información del usuario autenticado o el tema actual) entre componentes sin pasarlo manually a través de props.
 
 *   **`Tailwind CSS`:**
     *   Framework CSS de "utilidades primero" que usamos para estilizar rápidamente la interfaz aplicando clases directamente en el HTML/JSX.
