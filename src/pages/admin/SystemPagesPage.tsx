@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback } from 'react';
 import { PageHeader } from '@/components/ui/page-header';
 import { toast } from 'sonner';
@@ -262,7 +263,10 @@ const SystemPagesPage: React.FC = () => {
         component: updatedPage.component,
         accessType: updatedPage.accessType,
         content: updatedPage.content,
-        navigation: updatedPage.navigation,
+        // Fix the type mismatch by converting array to string if needed
+        navigation: Array.isArray(updatedPage.navigation) 
+          ? updatedPage.navigation.join(',') 
+          : updatedPage.navigation,
         updated_at: new Date().toISOString()
       };
       
