@@ -1,9 +1,7 @@
 
 import React from 'react';
-import { LayoutDashboard, BarChart, Activity, Clock } from 'lucide-react';
-import { 
-  SidebarMenu
-} from '@/components/ui/sidebar';
+import { LayoutDashboard } from 'lucide-react';
+import { SidebarMenu } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import MenuItem from './common/MenuItem';
@@ -29,27 +27,6 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ isOpen, onTog
           to="/app/dashboard"
           icon={LayoutDashboard}
           label="Panel Principal"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/app/dashboard/stats"
-          icon={BarChart}
-          label="Estadísticas"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/app/dashboard/activity"
-          icon={Activity}
-          label="Actividad"
-          isCollapsed={isCollapsed}
-        />
-        
-        <MenuItem
-          to="/app/dashboard/history"
-          icon={Clock}
-          label="Historial"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>
