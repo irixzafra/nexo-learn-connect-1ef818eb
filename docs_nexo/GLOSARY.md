@@ -79,6 +79,13 @@ Este documento define la terminología clave utilizada en el desarrollo y la doc
 *   **`Edge Function`:**
     *   Funciones serverless (código backend) que se ejecutan en la red de Supabase, cerca del usuario, para lógica personalizada o tareas intensivas.
 
+*   **`Hook (React Hook)`:** *(NUEVA ENTRADA)*
+    *   **Propósito:** Funciones especiales en React (que empiezan con `use`) que permiten a los componentes funcionales "engancharse" a características de React (como el estado local con `useState`, o los efectos secundarios con `useEffect`) o a lógica de estado reutilizable y compleja.
+    *   **Tipos:**
+        *   **Hooks Nativos de React:** `useState`, `useEffect`, `useContext`, `useReducer`, `useCallback`, `useMemo`, `useRef`.
+        *   **Hooks de Librerías:** Funciones `use...` proporcionadas por librerías externas para facilitar tareas específicas (ej. `useQuery` de React Query para datos, `useForm` de React Hook Form para formularios).
+        *   **Hooks Personalizados (Custom Hooks):** Funciones `use...` que creamos nosotros mismos en el proyecto para encapsular y reutilizar lógica específica de nuestra aplicación (ej. `useDynamicNavigation`, `useAuth`). Se guardan típicamente en `src/hooks/`.
+
 *   **`React Query (TanStack Query)`:**
     *   Librería que usamos en el frontend para gestionar la obtención, caché, sincronización y actualización de datos del servidor (Supabase). Simplifica el manejo del estado del servidor.
 
