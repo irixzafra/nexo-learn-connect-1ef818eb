@@ -6,13 +6,13 @@ import { EditModeProvider } from '@/contexts/EditModeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
 import { TestDataProvider } from '@/contexts/test-data';
-import { ThemeProvider } from '@/contexts/ThemeContext';
 import { OnboardingProvider } from '@/contexts/OnboardingContext';
 import { KeyboardShortcuts } from '@/components/accessibility/KeyboardShortcuts';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { FeaturesProvider } from '@/contexts/features/FeaturesContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { HelmetProvider } from 'react-helmet-async';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 // Create a client
 const queryClient = new QueryClient({
