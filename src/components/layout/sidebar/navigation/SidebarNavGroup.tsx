@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -5,8 +6,6 @@ import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { LucideIcon } from 'lucide-react';
 import {
   SidebarMenu,
-  SidebarMenuTrigger,
-  SidebarMenuContent
 } from '@/components/ui/sidebar';
 import { MenuItem } from '../MenuItems';
 import { useLocation } from 'react-router-dom';
@@ -65,8 +64,8 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
   }
 
   return (
-    <SidebarMenu defaultOpen={defaultOpen} collapsible>
-      <SidebarMenuTrigger 
+    <div className="mb-2">
+      <button 
         className="flex w-full items-center justify-between py-2 text-muted-foreground hover:text-foreground"
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -78,8 +77,9 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
           "h-4 w-4 transition-transform duration-200",
           isOpen && "rotate-90 transform"
         )} />
-      </SidebarMenuTrigger>
-      <SidebarMenuContent>
+      </button>
+      
+      {isOpen && (
         <div className="pl-10 pr-2">
           {items.map((item, index) => {
             // Check if the current route matches this item's path
@@ -98,8 +98,8 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
             );
           })}
         </div>
-      </SidebarMenuContent>
-    </SidebarMenu>
+      )}
+    </div>
   );
 };
 
