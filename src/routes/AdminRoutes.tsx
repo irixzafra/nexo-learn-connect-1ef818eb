@@ -19,6 +19,7 @@ const FeaturesPage = lazy(() => import('@/pages/admin/settings/features'));
 const SystemSettings = lazy(() => import('@/pages/admin/SystemSettings'));
 const DeveloperSettingsPage = lazy(() => import('@/pages/admin/settings/developer'));
 const ComingSoonPage = lazy(() => import('@/pages/common/ComingSoonPage'));
+const PagesManagement = lazy(() => import('@/pages/admin/settings/pages'));
 
 // Routes that are part of the admin module
 const AdminRoutes = () => {
@@ -28,7 +29,9 @@ const AdminRoutes = () => {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="courses" element={<CoursesPage />} />
+        <Route path="pages" element={<SystemPagesPage />} />
         <Route path="system-pages" element={<SystemPagesPage />} />
+        <Route path="settings/pages" element={<PagesManagement />} />
         <Route path="design-system" element={<DesignSystemPage />} />
         <Route path="navigation-diagram" element={<NavigationDiagramPage />} />
         <Route path="navigation-manager" element={<NavigationManagerPage />} />

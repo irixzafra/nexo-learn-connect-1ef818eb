@@ -62,13 +62,19 @@ export const routeMap = {
   adminUsers: '/app/admin/users',
   adminCourses: '/app/admin/courses',
   adminSystemPages: '/app/admin/system-pages',
+  adminPages: '/app/admin/pages', // Alias para system-pages
+  adminSettingsPages: '/app/admin/settings/pages', // Ruta para gestión de páginas
   adminDesignSystem: '/app/admin/design-system',
   adminDesignSystemButton: '/app/admin/design-system/components/button',
   adminNavigationDiagram: '/app/admin/navigation-diagram',
+  adminNavigationManager: '/app/admin/navigation-manager', // Nueva ruta de gestión de navegación
   adminReviewElements: '/app/admin/review-elements',
   adminOrphanReview: '/app/admin/orphan-review',
   adminDevelopment: '/app/admin/development',
   adminFeatures: '/app/admin/features',
+  adminRoles: '/app/admin/roles',
+  adminInstructors: '/app/admin/instructors',
+  adminSettings: '/app/admin/settings',
   
   // Rutas de instructor
   profesor: '/app/profesor',

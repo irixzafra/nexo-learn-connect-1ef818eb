@@ -3,6 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
 import NavigationManagerPage from './pages/admin/NavigationManagerPage';
+import SystemPagesPage from './pages/admin/SystemPagesPage';
+import PagesManagement from './pages/admin/settings/pages';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -31,7 +33,9 @@ const AppRoutes: React.FC = () => {
           <Route path="users" element={<div>AdminUsersPage</div>} />
           <Route path="courses" element={<div>AdminCoursesPage</div>} />
           <Route path="instructors" element={<div>AdminInstructorsPage</div>} />
-          <Route path="pages" element={<div>AdminPagesPage</div>} />
+          <Route path="pages" element={<SystemPagesPage />} />
+          <Route path="system-pages" element={<SystemPagesPage />} />
+          <Route path="settings/pages" element={<PagesManagement />} />
           <Route path="development" element={<div>AdminDevelopmentPage</div>} />
           <Route path="features" element={<div>Features</div>} />
           <Route path="orphan-review" element={<div>OrphanReviewPage</div>} />
