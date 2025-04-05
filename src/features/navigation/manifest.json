@@ -6,25 +6,37 @@
   "description": "Sistema de navegación de Nexo Learning",
   "maintainers": ["equipo_desarrollo"],
   "references": {
-    "ssot": ["NAVIGATION.md", "DESIGN_SYSTEM.md"],
+    "ssot": ["NAVIGATION.md", "DESIGN_SYSTEM.md", "GLOSARY.md"],
     "components": ["sidebar", "header", "breadcrumbs", "footer"]
   },
   "components": [
     {
       "id": "sidebar",
       "name": "Sidebar",
-      "description": "Barra lateral de navegación principal",
+      "description": "Barra lateral de navegación principal que organiza los Grupos e Items de Navegación",
       "mainComponent": "ConditionalSidebar.tsx",
-      "subComponents": ["SidebarNavGroup", "SidebarLogoSection", "SidebarFooter"],
+      "type": "Elemento de Navegación Global",
+      "subComponents": [
+        "SidebarNavGroup", 
+        "SidebarLogoSection", 
+        "SidebarFooter",
+        "SidebarNavItem"
+      ],
       "behaviors": {
         "collapsible": true,
         "responsive": true,
-        "roleConditional": true
+        "roleConditional": true,
+        "maxLevels": 2
       },
       "designRules": {
         "maxNestedLevels": 2,
         "badgeSupport": true,
-        "iconRequired": true
+        "iconRequired": true,
+        "width": {
+          "expanded": "64px",
+          "collapsed": "256px",
+          "mobile": "100%"
+        }
       },
       "docs": "navigation-sidebar.md",
       "tests": "sidebar.test.tsx"
@@ -32,9 +44,15 @@
     {
       "id": "header",
       "name": "Header",
-      "description": "Cabecera de la aplicación",
+      "description": "Cabecera de la aplicación que contiene logo, acciones rápidas y navegación global",
       "mainComponent": "AppHeader.tsx",
-      "subComponents": ["HeaderActions", "UserMenu", "BreadcrumbTrail"],
+      "type": "Elemento de Navegación Global",
+      "subComponents": [
+        "HeaderActions", 
+        "UserMenu", 
+        "BreadcrumbTrail",
+        "RoleIndicator"
+      ],
       "behaviors": {
         "sticky": true,
         "responsive": true,
@@ -42,7 +60,8 @@
       },
       "designRules": {
         "heightFixed": true,
-        "notificationSupport": true
+        "notificationSupport": true,
+        "searchSupport": true
       },
       "docs": "navigation-header.md",
       "tests": "header.test.tsx"
@@ -50,58 +69,40 @@
     {
       "id": "sidebarNavGroup",
       "name": "SidebarNavGroup",
-      "description": "Grupo de navegación en la barra lateral",
+      "description": "Grupo colapsable de elementos de navegación dentro de la barra lateral",
       "mainComponent": "SidebarNavGroup.tsx",
-      "subComponents": ["MenuItem"],
+      "type": "Grupo de Navegación (Sidebar)",
+      "subComponents": ["SidebarNavItem"],
       "behaviors": {
         "collapsible": true,
-        "roleFiltered": true,
-        "badgeDisplay": true
+        "statePersistent": true,
+        "highlightActive": true
       },
       "designRules": {
         "iconRequired": true,
-        "consistentPadding": true,
-        "activeItemHighlighting": true
-      },
-      "docs": "navigation-components.md",
-      "tests": "sidebarNavGroup.test.tsx"
+        "indentation": "10px",
+        "animation": "rotate-90 transform"
+      }
     },
     {
-      "id": "menuItem",
-      "name": "MenuItem",
-      "description": "Elemento de navegación individual",
-      "mainComponent": "MenuItem.tsx",
+      "id": "breadcrumbs",
+      "name": "Breadcrumbs",
+      "description": "Indicador de ruta jerárquica de la página actual",
+      "mainComponent": "Breadcrumbs.tsx",
+      "type": "Elemento de Navegación Global",
       "behaviors": {
-        "routerIntegrated": true,
-        "badgeSupport": true,
-        "disabledState": true
+        "dynamic": true,
+        "responsive": true,
+        "truncate": true
       },
       "designRules": {
-        "consistentHeight": true,
-        "iconOptional": false,
-        "hoverEffect": true
+        "separator": "/",
+        "maxVisibleItems": {
+          "mobile": 2,
+          "desktop": 4
+        }
       },
-      "docs": "navigation-components.md",
-      "tests": "menuItem.test.tsx"
-    },
-    {
-      "id": "sidebarFooter",
-      "name": "SidebarFooter",
-      "description": "Sección inferior de la barra lateral",
-      "mainComponent": "SidebarFooter.tsx",
-      "subComponents": ["SidebarFooterSection", "LanguageSelector"],
-      "behaviors": {
-        "roleDisplay": true,
-        "languageSwitch": true,
-        "themeToggle": true,
-        "logoutAction": true
-      },
-      "designRules": {
-        "stickyBottom": true,
-        "compactLayout": true
-      },
-      "docs": "navigation-components.md",
-      "tests": "sidebarFooter.test.tsx"
+      "status": "planned"
     }
   ],
   "patterns": {
@@ -112,52 +113,46 @@
     "groupCollapsible": {
       "description": "Comportamiento de grupos plegables/desplegables",
       "implementationDetails": "useState con toggle y animación de rotación del icono ChevronRight"
-    },
-    "responsiveCollapse": {
-      "description": "Comportamiento de colapso responsivo de la barra lateral",
-      "implementationDetails": "useSidebar hook con estados 'expanded' y 'collapsed'"
     }
   },
   "navigationGroups": [
     {
       "id": "dashboard",
       "label": "Dashboard",
-      "roleAccess": ["admin", "instructor", "student"]
+      "roleAccess": ["admin", "instructor", "student"],
+      "icon": "LayoutDashboard"
     },
     {
-      "id": "academico",
-      "label": "Académico (LMS)",
-      "roleAccess": ["admin", "instructor"]
+      "id": "academics",
+      "label": "Académico",
+      "roleAccess": ["admin", "instructor"],
+      "icon": "BookOpen"
     },
     {
-      "id": "gestion",
-      "label": "Gestión Central (ERP)",
-      "roleAccess": ["admin"]
-    },
-    {
-      "id": "finanzas",
-      "label": "Finanzas",
-      "roleAccess": ["admin"]
-    },
-    {
-      "id": "sistema",
-      "label": "Sistema (Plataforma)",
-      "roleAccess": ["admin"]
-    },
-    {
-      "id": "comunidad",
+      "id": "community",
       "label": "Comunidad",
-      "roleAccess": ["student", "instructor"]
+      "roleAccess": ["admin", "student", "instructor"],
+      "icon": "Users"
     },
     {
-      "id": "aprendizaje",
-      "label": "Aprendizaje",
-      "roleAccess": ["student"]
-    },
-    {
-      "id": "cuenta",
+      "id": "account",
       "label": "Mi Cuenta",
-      "roleAccess": ["admin", "instructor", "student"]
+      "roleAccess": ["admin", "instructor", "student"],
+      "icon": "User"
     }
-  ]
+  ],
+  "elementTypes": {
+    "navigationGlobal": [
+      "Header", 
+      "Sidebar", 
+      "Footer", 
+      "Breadcrumbs"
+    ],
+    "navigationInternal": [
+      "Tabs", 
+      "Stepper", 
+      "Accordion", 
+      "MenuSecundario"
+    ]
+  }
 }

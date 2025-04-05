@@ -15,15 +15,8 @@ const SidebarContextWrapper = ({ children }: { children: React.ReactNode }) => (
 const mockLocation = { pathname: '/app/dashboard' };
 const mockSidebar = { state: 'expanded' };
 
-// Antes de montar los componentes, mockear los hooks
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => mockLocation,
-}));
-
-jest.mock('@/components/ui/sidebar/sidebar-provider', () => ({
-  useSidebar: () => ({ state: mockSidebar.state }),
-}));
+// En Storybook no necesitamos jest.mock, podemos simular el comportamiento 
+// directamente en el componente wrapper o usando el decorador
 
 const meta: Meta<typeof SidebarNavGroup> = {
   title: "Components/Layout/SidebarNavGroup",
