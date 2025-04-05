@@ -1,6 +1,5 @@
 
 import React from 'react';
-import AdminLayout from '@/layouts/AdminLayout';
 import { NavigationManager } from '@/components/admin/navigation/NavigationManager';
 import { PageHeader } from '@/components/ui/page-header';
 

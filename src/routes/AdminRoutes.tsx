@@ -14,6 +14,7 @@ const OrphanReviewPage = lazy(() => import('@/pages/admin/OrphanReviewPage'));
 const NavigationDiagramPage = lazy(() => import('@/pages/admin/NavigationDiagramPage'));
 const NavigationManagerPage = lazy(() => import('@/pages/admin/NavigationManagerPage'));
 const DevelopmentToolsPage = lazy(() => import('@/pages/admin/DevelopmentToolsPage'));
+const ReviewElementsPage = lazy(() => import('@/pages/admin/ReviewElementsPage'));
 const ComingSoonPage = lazy(() => import('@/pages/common/ComingSoonPage'));
 
 // Routes that are part of the admin module
@@ -31,7 +32,7 @@ const AdminRoutes = () => {
         <Route path="orphan-review" element={<OrphanReviewPage />} />
         <Route path="development" element={<DevelopmentToolsPage />} />
         <Route path="features" element={<ComingSoonPage />} />
-        <Route path="review-elements" element={<ComingSoonPage />} />
+        <Route path="review-elements" element={<ReviewElementsPage />} />
         <Route path="*" element={<Navigate to="/app/admin/dashboard" replace />} />
       </Routes>
     </Suspense>
