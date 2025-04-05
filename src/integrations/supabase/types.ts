@@ -1685,6 +1685,59 @@ export type Database = {
         }
         Relationships: []
       }
+      navigation_items: {
+        Row: {
+          created_at: string | null
+          icon_name: string | null
+          id: string
+          is_active: boolean
+          is_visible: boolean
+          item_type: string
+          label: string
+          parent_id: string | null
+          path: string | null
+          sort_order: number
+          updated_at: string | null
+          visible_to_roles: string[]
+        }
+        Insert: {
+          created_at?: string | null
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean
+          is_visible?: boolean
+          item_type: string
+          label: string
+          parent_id?: string | null
+          path?: string | null
+          sort_order?: number
+          updated_at?: string | null
+          visible_to_roles?: string[]
+        }
+        Update: {
+          created_at?: string | null
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean
+          is_visible?: boolean
+          item_type?: string
+          label?: string
+          parent_id?: string | null
+          path?: string | null
+          sort_order?: number
+          updated_at?: string | null
+          visible_to_roles?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "navigation_items_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "navigation_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           action_url: string | null
