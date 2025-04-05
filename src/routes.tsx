@@ -1,52 +1,46 @@
 
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
 import AdminRoutes from './routes/AdminRoutes';
 import ModeratorRoutes from './routes/ModeratorRoutes';
-import SystemPagesPage from './pages/admin/SystemPagesPage';
-import ComingSoonPage from './pages/common/ComingSoonPage';
 import LearningPathsPage from './pages/student/LearningPathsPage';
 import AuthRoutes from './routes/AuthRoutes';
 import AuthLayout from './layouts/AuthLayout';
+import CourseRoutes from './routes/CourseRoutes';
 
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Auth Routes - Updated to use the AuthRoutes component */}
+      {/* Auth Routes */}
       <Route path="/auth/*" element={<AuthLayout><AuthRoutes /></AuthLayout>} />
       
-      {/* Public Routes - Keep for backward compatibility */}
-      <Route path="/login" element={<AuthLayout><AuthRoutes /></AuthLayout>} />
-
       {/* App Routes (Authenticated) */}
       <Route path="/app" element={<AppLayout />}>
-        <Route index element={<div>DashboardPage</div>} />
+        <Route index element={<Navigate to="/app/dashboard" replace />} />
         <Route path="dashboard" element={<div>DashboardPage</div>} />
-        <Route path="courses" element={<div>CoursesPage</div>} />
-        <Route path="my-courses" element={<div>MyCoursesPage</div>} />
+        <Route path="courses/*" element={<CourseRoutes />} />
         <Route path="profile" element={<div>ProfilePage</div>} />
-        <Route path="settings" element={<div>SettingsPage</div>} />
-        
-        {/* Updated routes with specific page components */}
         <Route path="learning-paths" element={<LearningPathsPage />} />
-        <Route path="recommendations" element={<ComingSoonPage />} />
         
         {/* Admin Routes */}
         <Route path="admin/*" element={<AdminRoutes />} />
         
-        {/* Moderator Routes - Added */}
+        {/* Moderator Routes */}
         <Route path="moderator/*" element={<ModeratorRoutes />} />
       </Route>
 
       {/* Direct content-review route */}
       <Route path="/content-review" element={<AppLayout><ModeratorRoutes /></AppLayout>} />
 
-      {/* Catch direct /learning-paths URL without /app prefix */}
-      <Route path="/learning-paths" element={<AppLayout><LearningPathsPage /></AppLayout>} />
+      {/* Public course routes */}
+      <Route path="/courses/*" element={<CourseRoutes />} />
 
       {/* Redirect root to auth/login */}
-      <Route path="/" element={<AuthLayout><AuthRoutes /></AuthLayout>} />
+      <Route path="/" element={<Navigate to="/auth/login" replace />} />
+      
+      {/* Catch-all route */}
+      <Route path="*" element={<Navigate to="/auth/login" replace />} />
     </Routes>
   );
 };

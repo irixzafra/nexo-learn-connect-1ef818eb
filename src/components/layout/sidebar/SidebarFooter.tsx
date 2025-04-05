@@ -32,7 +32,6 @@ const SidebarFooter: React.FC = () => {
   };
 
   try {
-    // Only use the context if it's available
     const langContext = useLanguage();
     if (langContext) {
       languageProps = {
