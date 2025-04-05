@@ -11,9 +11,6 @@ const Sidebar: React.FC = () => {
 
   return (
     <>
-      {/* Sidebar trigger button - more visible position */}
-      <SidebarTrigger className="fixed left-3 top-3 z-50" />
-      
       {/* Actual sidebar */}
       <aside 
         className={cn(
@@ -23,7 +20,12 @@ const Sidebar: React.FC = () => {
           "focus-within:outline-none focus-within:ring-0"
         )}
       >
-        <div className="flex h-full flex-col pt-16"> {/* Increased padding-top to prevent overlap with toggle button */}
+        <div className="flex h-full flex-col">
+          {/* Sidebar trigger positioned after logo */}
+          <div className="flex items-center justify-end p-4 border-b border-border/60">
+            <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
+          </div>
+          
           <SidebarContent />
         </div>
       </aside>

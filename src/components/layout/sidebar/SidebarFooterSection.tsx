@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { UserRoleType } from '@/types/auth';
+import { useAuth } from '@/contexts/auth';
 import { Settings, Globe, LogOut, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -12,124 +12,65 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import RoleIndicator from '@/components/layout/header/RoleIndicator';
-import { useAuth } from '@/contexts/auth';
+import EnhancedRoleSimulator from '@/components/layout/header/role-simulator/EnhancedRoleSimulator';
 
 interface SidebarFooterProps {
-  userRole: UserRoleType;
-  effectiveRole: UserRoleType;
+  userRole: string;
+  effectiveRole: string;
   isCollapsed: boolean;
-  currentViewRole: UserRoleType | null;
   currentLanguage: string; 
   languages: Array<{ code: string; name: string }>;
   changeLanguage: (code: string) => void;
   logout: () => void;
-  isViewingAsOtherRole: boolean;
-  resetToOriginalRole: () => void;
-  getRoleName: (role: UserRoleType) => string;
-  forceAdminRole?: () => Promise<void>;
 }
 
 const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
   userRole,
   effectiveRole,
   isCollapsed,
-  currentViewRole,
   currentLanguage,
   languages,
   changeLanguage,
   logout,
-  isViewingAsOtherRole,
-  resetToOriginalRole,
-  getRoleName,
-  forceAdminRole
 }) => {
-  // Get the real user role from auth context to determine if we should show the RoleIndicator
-  const { userRole: actualUserRole } = useAuth();
-  
-  // Render the collapsed version
-  if (isCollapsed) {
-    return (
-      <div className="flex flex-col items-center gap-2 py-2">
-        {/* RoleIndicator/Switcher visible only for real admin users */}
-        {actualUserRole === 'admin' && (
-          <div className="pb-2 border-b border-border w-full flex justify-center mb-2">
-            <RoleIndicator />
-          </div>
-        )}
-      
-        {/* Language selector */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost"
-              size="icon" 
-              className="h-9 w-9 rounded-full hover:bg-muted/40"
-            >
-              <Globe className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 bg-popover border border-border/50">
-            {languages.map(lang => (
-              <DropdownMenuItem
-                key={lang.code}
-                onClick={() => changeLanguage(lang.code)}
-                className={cn(
-                  "cursor-pointer flex items-center py-1.5",
-                  lang.code === currentLanguage && "bg-muted font-medium"
-                )}
-              >
-                {lang.name}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+  const { isAdmin } = useAuth();
 
-        {/* Logout */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={logout}
-          className="h-9 w-9 rounded-full hover:bg-muted/40 text-destructive hover:text-destructive"
-        >
-          <LogOut className="h-4 w-4" />
-        </Button>
-      </div>
-    );
-  }
-  
-  // Render the expanded version
   return (
-    <div className="space-y-2 px-2 py-2">
-      {/* RoleIndicator/Switcher visible only for real admin users */}
-      {actualUserRole === 'admin' && (
-        <div className="px-1 pb-2 border-b border-border mb-2">
-          <RoleIndicator />
+    <div className="space-y-2 p-2">
+      {/* Role Switcher - Only for admins */}
+      {isAdmin && (
+        <div className={cn(
+          "mb-2 pb-2 border-b border-border",
+          isCollapsed ? "px-2" : "px-4"
+        )}>
+          <EnhancedRoleSimulator />
         </div>
       )}
 
-      {/* Language switcher */}
+      {/* Language Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="w-full justify-between pl-3 pr-2 py-2 text-muted-foreground hover:text-foreground h-auto font-medium"
+            className={cn(
+              "w-full font-normal",
+              isCollapsed ? "justify-center px-2" : "justify-between pl-4 pr-2"
+            )}
           >
-            <div className="flex items-center">
-              <Globe className="mr-2 h-4 w-4" />
-              <span>
-                {languages.find(l => l.code === currentLanguage)?.name || 'Idioma'}
-              </span>
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4" />
+              {!isCollapsed && <span>{languages.find(l => l.code === currentLanguage)?.name}</span>}
             </div>
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            {!isCollapsed && <ChevronDown className="h-4 w-4 opacity-50" />}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48 bg-popover border border-border/50">
+        <DropdownMenuContent align={isCollapsed ? "center" : "start"} className="w-48">
           {languages.map(lang => (
             <DropdownMenuItem
               key={lang.code}
               onClick={() => changeLanguage(lang.code)}
               className={cn(
-                "cursor-pointer flex items-center py-1.5",
+                "cursor-pointer",
                 lang.code === currentLanguage && "bg-muted font-medium"
               )}
             >
@@ -139,14 +80,17 @@ const SidebarFooterSection: React.FC<SidebarFooterProps> = ({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Logout button */}
+      {/* Logout Button */}
       <Button
         variant="ghost"
-        className="w-full justify-start pl-3 text-muted-foreground hover:text-destructive h-auto font-medium"
+        className={cn(
+          "w-full font-normal",
+          isCollapsed ? "justify-center px-2" : "justify-start pl-4"
+        )}
         onClick={logout}
       >
-        <LogOut className="mr-2 h-4 w-4" />
-        <span>Cerrar sesión</span>
+        <LogOut className="h-4 w-4 mr-2" />
+        {!isCollapsed && <span>Cerrar sesión</span>}
       </Button>
     </div>
   );

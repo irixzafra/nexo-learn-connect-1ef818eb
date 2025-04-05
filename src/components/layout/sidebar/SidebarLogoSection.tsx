@@ -1,28 +1,32 @@
 
 import React from 'react';
-import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { LucideIcon } from 'lucide-react';
 
 interface SidebarLogoSectionProps {
   isCollapsed: boolean;
-  toggleSidebar: () => void;
+  icon?: LucideIcon;
+  title?: string;
 }
 
 const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({ 
   isCollapsed,
-  toggleSidebar
+  icon: Icon,
+  title = "Nexo"
 }) => {
   return (
-    <div className="flex items-center justify-end p-2">
-      {!isCollapsed && (
-        <button
-          onClick={toggleSidebar}
-          className="rounded-full p-1.5 hover:bg-muted/50 text-muted-foreground transition-colors"
-          aria-label="Colapsar menú lateral"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-      )}
+    <div className="flex flex-col gap-2 px-2">
+      <div className={cn(
+        "flex h-14 items-center justify-between px-4",
+        isCollapsed && "justify-center"
+      )}>
+        {Icon && (
+          <Icon className="h-6 w-6" />
+        )}
+        {!isCollapsed && (
+          <span className="text-lg font-semibold">{title}</span>
+        )}
+      </div>
     </div>
   );
 };
