@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
 import AdminRoutes from './routes/AdminRoutes';
+import ModeratorRoutes from './routes/ModeratorRoutes';
 import SystemPagesPage from './pages/admin/SystemPagesPage';
 import ComingSoonPage from './pages/common/ComingSoonPage';
 import LearningPathsPage from './pages/student/LearningPathsPage';
@@ -32,7 +34,13 @@ const AppRoutes: React.FC = () => {
         
         {/* Admin Routes */}
         <Route path="admin/*" element={<AdminRoutes />} />
+        
+        {/* Moderator Routes - Added */}
+        <Route path="moderator/*" element={<ModeratorRoutes />} />
       </Route>
+
+      {/* Direct content-review route */}
+      <Route path="/content-review" element={<AppLayout><ModeratorRoutes /></AppLayout>} />
 
       {/* Catch direct /learning-paths URL without /app prefix */}
       <Route path="/learning-paths" element={<AppLayout><LearningPathsPage /></AppLayout>} />
