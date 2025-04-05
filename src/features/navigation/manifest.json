@@ -6,7 +6,7 @@
   "description": "Sistema de navegación de Nexo Learning",
   "maintainers": ["equipo_desarrollo"],
   "references": {
-    "ssot": ["NAVIGATION.md", "DESIGN_SYSTEM.md", "GLOSARY.md"],
+    "ssot": ["NAVIGATION.md", "DESIGN_SYSTEM.md", "GLOSARY.md", "WORKFLOW.md"],
     "components": ["sidebar", "header", "breadcrumbs", "footer"]
   },
   "components": [
@@ -154,5 +154,10 @@
       "Accordion", 
       "MenuSecundario"
     ]
+  },
+  "workflow": {
+    "documentationFlow": "SSOT-first",
+    "manifestUpdates": "synchronized-with-docs",
+    "processDefined": "WORKFLOW.md"
   }
 }

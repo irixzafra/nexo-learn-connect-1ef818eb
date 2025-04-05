@@ -1,0 +1,75 @@
+
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import { SidebarNavGroup } from './SidebarNavGroup';
+
+<Meta title="Navegación/SidebarNavGroup" component={SidebarNavGroup} />
+
+# SidebarNavGroup
+
+El componente `SidebarNavGroup` implementa el concepto de "Grupo de Navegación (Sidebar)" definido en el documento SSOT `NAVIGATION.md`. Este componente es responsable de:
+
+1. Mostrar un grupo colapsable de elementos de navegación en la barra lateral
+2. Gestionar el estado de expansión/colapso del grupo
+3. Adaptar su visualización según el estado de la barra lateral (expandida/colapsada)
+4. Aplicar los patrones visuales definidos para elementos activos
+
+## Definición SSOT
+
+Este componente implementa la definición oficial del elemento `sidebarNavGroup` descrito en:
+- Documento SSOT: `NAVIGATION.md` (sección "Componentes Principales de Navegación")
+- Manifiesto técnico: `features/navigation/manifest.json`
+
+## Comportamientos
+
+- **Colapsable:** El grupo puede expandirse/contraerse para mostrar/ocultar sus elementos hijos
+- **Persistencia de estado:** El estado abierto/cerrado se mantiene durante la sesión del usuario
+- **Resaltado activo:** Destaca visualmente cuando contiene un elemento activo
+- **Adaptativo:** Cambia su visualización dependiendo del estado colapsado/expandido de la sidebar
+
+## Props
+
+- `title`: Título del grupo de navegación
+- `icon`: Icono opcional (componente Lucide)
+- `defaultOpen`: Estado inicial (abierto/cerrado)
+- `id`: Identificador único del grupo
+- `items`: Array de elementos de navegación dentro del grupo
+- `isCollapsed`: Si la barra lateral está colapsada (opcional)
+
+## Ejemplos
+
+### Grupo Expandido
+
+<Canvas>
+  <Story name="Expandido">
+    {/* Historia existente desde el archivo SidebarNavGroup.stories.tsx */}
+  </Story>
+</Canvas>
+
+### Grupo Colapsado
+
+<Canvas>
+  <Story name="Colapsado">
+    {/* Historia existente desde el archivo SidebarNavGroup.stories.tsx */}
+  </Story>
+</Canvas>
+
+## Patrones CSS Aplicados
+
+Este componente implementa el patrón `groupCollapsible` definido en el manifiesto de navegación:
+
+```json
+"groupCollapsible": {
+  "description": "Comportamiento de grupos plegables/desplegables",
+  "implementationDetails": "useState con toggle y animación de rotación del icono ChevronRight"
+}
+```
+
+## Integración con el Flujo de Trabajo
+
+Cualquier cambio en este componente debe seguir el flujo definido en `WORKFLOW.md`:
+
+1. Verificar que el cambio sea consistente con la definición SSOT en `NAVIGATION.md`
+2. Actualizar el manifiesto `features/navigation/manifest.json` si es necesario
+3. Implementar los cambios en el código
+4. Actualizar la documentación y pruebas
+
