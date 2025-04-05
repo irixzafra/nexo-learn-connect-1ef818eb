@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { type UserRoleType } from '@/types/auth';
-import { Shield, UserCog, User, Terminal, Ghost } from 'lucide-react';
+import { Shield, UserCog, User, Ghost } from 'lucide-react';
 
 interface UserRoleDisplayProps {
   role: UserRoleType;
@@ -23,9 +24,9 @@ export const UserRoleDisplay: React.FC<UserRoleDisplayProps> = ({
         return 'secondary';
       case 'student':
         return 'outline';
-      case 'sistemas':
+      case 'moderator':
         return 'destructive';
-      case 'anonimo':
+      case 'guest':
         return 'outline';
       default:
         return 'outline';
@@ -38,9 +39,7 @@ export const UserRoleDisplay: React.FC<UserRoleDisplayProps> = ({
         return <Shield className="h-4 w-4 mr-1" />;
       case 'instructor':
         return <UserCog className="h-4 w-4 mr-1" />;
-      case 'sistemas':
-        return <Terminal className="h-4 w-4 mr-1" />;
-      case 'anonimo':
+      case 'guest':
         return <Ghost className="h-4 w-4 mr-1" />;
       case 'student':
         return <User className="h-4 w-4 mr-1" />;

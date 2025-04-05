@@ -1,84 +1,104 @@
 
-import { NavigationItemWithChildren } from '@/types/navigation-manager';
 import { UserRoleType } from '@/types/auth';
+import { NavigationItemWithChildren } from '@/types/navigation-manager';
 import { getNavigationByRole } from '@/config/navigation';
 
-// Function to fetch navigation items from API or local storage
-export const fetchNavigationItems = async (role: UserRoleType): Promise<NavigationItemWithChildren[]> => {
-  // For now, we'll convert the navigation menus to navigation items
-  // In a real implementation, this would come from the database
-  const navMenus = getNavigationByRole(role);
-  
-  // Convert NavigationMenus to NavigationItemWithChildren[]
-  const items: NavigationItemWithChildren[] = [];
-  
-  Object.entries(navMenus).forEach(([groupName, menuItems], groupIndex) => {
-    // Create a group item
-    const groupId = `group-${groupIndex}`;
-    const groupItem: NavigationItemWithChildren = {
-      id: groupId,
-      label: groupName,
-      sortOrder: groupIndex,
-      isActive: true,
-      isVisible: true,
-      itemType: 'group',
-      children: []
-    };
+// Fetch navigation items for a specific role
+export const fetchNavigationItems = async (
+  role: UserRoleType
+): Promise<NavigationItemWithChildren[]> => {
+  // In a real application, this would fetch from an API
+  // For now, we'll use the static configuration
+  try {
+    // Simulating API delay
+    await new Promise((resolve) => setTimeout(resolve, 300));
     
-    // Add child items
-    menuItems.forEach((menuItem, itemIndex) => {
-      const childId = `${groupId}-item-${itemIndex}`;
-      groupItem.children?.push({
-        id: childId,
-        label: menuItem.label,
-        iconName: menuItem.icon ? menuItem.icon.name : undefined,
-        path: menuItem.path,
-        sortOrder: itemIndex,
-        isActive: !menuItem.disabled,
+    // Convert the navigation structure from config to NavigationItemWithChildren
+    const navigationConfig = getNavigationByRole(role);
+    const navigationItems: NavigationItemWithChildren[] = [];
+    
+    // Process each section as a group
+    Object.entries(navigationConfig).forEach(([groupName, items], groupIndex) => {
+      const groupId = `group-${groupIndex}`;
+      
+      // Create a group item
+      const groupItem: NavigationItemWithChildren = {
+        id: groupId,
+        label: groupName,
+        iconName: 'FolderOpen',
+        itemType: 'group',
         isVisible: true,
-        itemType: 'link',
-        parentId: groupId,
-        visibleToRoles: Array.isArray(menuItem.requiredRole) 
-          ? menuItem.requiredRole 
-          : menuItem.requiredRole ? [menuItem.requiredRole] : undefined
+        isActive: true,
+        sortOrder: groupIndex,
+        visibleToRoles: [role],
+        children: []
+      };
+      
+      // Add menu items as children
+      items.forEach((item, itemIndex) => {
+        const childItem: NavigationItemWithChildren = {
+          id: `${groupId}-item-${itemIndex}`,
+          label: item.label,
+          iconName: 'ChevronRight', // Default icon
+          path: item.path,
+          itemType: 'link',
+          isVisible: true,
+          isActive: !item.disabled,
+          sortOrder: itemIndex,
+          parentId: groupId,
+          visibleToRoles: item.requiredRole ? item.requiredRole : [role]
+        };
+        
+        groupItem.children?.push(childItem);
       });
+      
+      navigationItems.push(groupItem);
     });
     
-    items.push(groupItem);
-  });
-  
-  return items;
+    return navigationItems;
+  } catch (error) {
+    console.error('Error fetching navigation items:', error);
+    return [];
+  }
 };
 
-// Function to save navigation items
-export const saveNavigationItems = async (role: UserRoleType, items: NavigationItemWithChildren[]): Promise<void> => {
-  console.log(`Saving navigation items for role: ${role}`, items);
-  // In a real application, this would be an API call to update the navigation
-  localStorage.setItem(`navigation_${role}`, JSON.stringify(items));
+// Save navigation items
+export const saveNavigationItems = async (
+  role: UserRoleType,
+  items: NavigationItemWithChildren[]
+): Promise<NavigationItemWithChildren[]> => {
+  // In a real application, this would save to an API
+  try {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    
+    console.log('Saved navigation items for role:', role, items);
+    return items;
+  } catch (error) {
+    console.error('Error saving navigation items:', error);
+    throw error;
+  }
 };
 
-// Function to sort navigation items
-export const sortNavigationItems = (items: NavigationItemWithChildren[]): NavigationItemWithChildren[] => {
-  return [...items].sort((a, b) => a.sortOrder - b.sortOrder);
+// Sync navigation from code (static configuration)
+export const syncNavigationFromCode = async (
+  role: UserRoleType
+): Promise<NavigationItemWithChildren[]> => {
+  try {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    
+    // This would typically fetch the latest navigation structure from code/config
+    // and merge it with any customizations stored in the database
+    return await fetchNavigationItems(role);
+  } catch (error) {
+    console.error('Error syncing navigation from code:', error);
+    throw error;
+  }
 };
 
-// Function to sync navigation from code definitions
-export const syncNavigationFromCode = async (role: UserRoleType): Promise<NavigationItemWithChildren[]> => {
-  // Get navigation from code definitions
-  const items = await fetchNavigationItems(role);
-  
-  // In a real application, this would merge existing customizations with the code definition
-  console.log(`Syncing navigation for role: ${role} with code definition`, items);
-  
-  // Pretend we're saving to the backend
-  await saveNavigationItems(role, items);
-  
-  return items;
-};
-
-export default {
-  fetchNavigationItems,
-  saveNavigationItems,
-  sortNavigationItems,
-  syncNavigationFromCode
+export const sortNavigationItems = (
+  items: NavigationItemWithChildren[]
+): NavigationItemWithChildren[] => {
+  return [...items].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 };

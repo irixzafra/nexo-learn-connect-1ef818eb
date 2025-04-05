@@ -9,16 +9,16 @@ export type NotificationType =
 
 export interface Notification {
   id: string;
-  user_id: string;
+  userId: string;
   type: NotificationType;
   title: string;
   content?: string;
-  is_read: boolean;
-  created_at: string;
-  resource_type?: string;
-  resource_id?: string;
-  action_url?: string;
-  sender_id?: string;
-  sender_name?: string;
-  sender_avatar?: string;
+  isRead: boolean;
+  createdAt: string;
+  resourceType?: string;
+  resourceId?: string;
+  actionUrl?: string;
+  senderId?: string;
+  senderName?: string;
+  senderAvatar?: string;
 }

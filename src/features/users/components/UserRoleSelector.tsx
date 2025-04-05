@@ -2,7 +2,7 @@
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Shield, User, BookOpen, Terminal, Users, Lightbulb, GraduationCap, Ghost } from 'lucide-react';
+import { Shield, User, BookOpen, Users, GraduationCap, Ghost, Sparkles } from 'lucide-react';
 
 interface UserRoleSelectorProps {
   value: UserRoleType;
@@ -19,11 +19,9 @@ export const UserRoleSelector: React.FC<UserRoleSelectorProps> = ({
     { value: 'admin', label: 'Administrador', icon: Shield },
     { value: 'instructor', label: 'Instructor', icon: BookOpen },
     { value: 'student', label: 'Estudiante', icon: GraduationCap },
-    { value: 'sistemas', label: 'Sistemas', icon: Terminal },
     { value: 'moderator', label: 'Moderador', icon: Users },
-    { value: 'content_creator', label: 'Creador de Contenido', icon: Lightbulb },
-    { value: 'guest', label: 'Invitado', icon: Ghost },
-    { value: 'anonimo', label: 'Anónimo', icon: Ghost }
+    { value: 'beta_tester', label: 'Beta Tester', icon: Sparkles },
+    { value: 'guest', label: 'Invitado', icon: Ghost }
   ];
 
   return (

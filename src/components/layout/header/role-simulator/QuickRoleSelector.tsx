@@ -5,7 +5,6 @@ import { UserRoleType } from '@/types/auth';
 import { getRoleIcon, getRoleName, getRoleBadgeColor } from './roleUtils';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 
 interface QuickRoleSelectorProps {
   effectiveRole: string;
@@ -16,7 +15,7 @@ interface QuickRoleSelectorProps {
 export const QuickRoleSelector: React.FC<QuickRoleSelectorProps> = ({ 
   effectiveRole, 
   handleSwitchRole,
-  availableRoles = ['admin', 'instructor', 'student', 'sistemas', 'moderator', 'content_creator', 'guest'],
+  availableRoles = ['admin', 'instructor', 'student', 'moderator', 'beta_tester', 'guest'],
 }) => {
   return (
     <CommandGroup heading="Roles disponibles" className="pb-2">

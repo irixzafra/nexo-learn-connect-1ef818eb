@@ -31,7 +31,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
     isLoading, 
     markAsRead, 
     markAllAsRead,
-    refreshNotifications
+    refresh 
   } = useNotifications();
   const navigate = useNavigate();
 
@@ -39,117 +39,139 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose })
     switch (type) {
       case 'message':
         return <MessageSquare className="h-4 w-4 text-blue-500" />;
-      case 'course_completed':
-        return <Trophy className="h-4 w-4 text-amber-500" />;
       case 'announcement':
-        return <BellRing className="h-4 w-4 text-purple-500" />;
+        return <Bell className="h-4 w-4 text-purple-500" />;
       case 'achievement':
-        return <Sparkles className="h-4 w-4 text-emerald-500" />;
+        return <Trophy className="h-4 w-4 text-amber-500" />;
+      case 'course_completed':
+        return <Sparkles className="h-4 w-4 text-green-500" />;
       default:
-        return <Info className="h-4 w-4 text-blue-500" />;
+        return <Info className="h-4 w-4 text-slate-500" />;
     }
   };
 
-  const formatDate = (date: string) => {
-    const notificationDate = new Date(date);
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
     
-    if (isToday(notificationDate)) {
-      return `Hoy, ${format(notificationDate, 'HH:mm')}`;
-    } else if (isYesterday(notificationDate)) {
-      return `Ayer, ${format(notificationDate, 'HH:mm')}`;
+    if (isToday(date)) {
+      return `Hoy, ${format(date, 'HH:mm')}`;
+    } else if (isYesterday(date)) {
+      return `Ayer, ${format(date, 'HH:mm')}`;
     } else {
-      return format(notificationDate, 'dd MMM, HH:mm', { locale: es });
+      return format(date, 'dd/MM/yyyy', { locale: es });
     }
   };
 
-  const handleNotificationClick = (notification: Notification) => {
-    markAsRead(notification.id);
+  const handleNotificationClick = async (notification: Notification) => {
+    // Mark as read
+    if (!notification.isRead) {
+      await markAsRead(notification.id);
+    }
     
-    if (notification.action_url) {
-      navigate(notification.action_url);
+    // Navigate if there's an action URL
+    if (notification.actionUrl) {
+      navigate(notification.actionUrl);
       if (onClose) onClose();
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-6 h-[300px]">
+        <div className="animate-spin">
+          <BellRing className="h-6 w-6 text-primary/50" />
+        </div>
+        <p className="text-sm text-muted-foreground mt-2">Cargando notificaciones...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col">
-      <div className="flex items-center justify-between px-4 py-3 border-b">
+    <div className="w-[350px] max-w-full flex flex-col max-h-[85vh]">
+      <div className="flex items-center justify-between px-4 py-2 border-b">
         <h3 className="font-medium">Notificaciones</h3>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center">
           <Button 
             variant="ghost" 
-            size="sm" 
-            onClick={refreshNotifications}
-            disabled={isLoading}
+            size="icon" 
+            onClick={() => refresh()}
+            className="h-8 w-8"
           >
-            <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
-            <span className="sr-only">Actualizar</span>
+            <RefreshCw className="h-4 w-4" />
           </Button>
+          
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={markAllAsRead}
-            className="text-xs"
+            onClick={() => markAllAsRead()}
+            className="text-xs h-8"
+            disabled={notifications.every(n => n.isRead)}
           >
-            Marcar todo como leído
+            <Check className="h-3.5 w-3.5 mr-1" />
+            Marcar todas como leídas
           </Button>
         </div>
       </div>
       
-      <ScrollArea className="max-h-[400px] overflow-auto">
-        {notifications.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
-            <Bell className="h-10 w-10 mb-2 opacity-20" />
-            <p>No tienes notificaciones</p>
-          </div>
-        ) : (
+      {notifications.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-6 h-[200px]">
+          <BellRing className="h-8 w-8 text-muted-foreground/50" />
+          <p className="text-sm text-muted-foreground mt-2">No tienes notificaciones</p>
+        </div>
+      ) : (
+        <ScrollArea className="flex-1 max-h-[400px]">
           <div className="flex flex-col">
             {notifications.map((notification) => (
-              <div key={notification.id} className="flex flex-col">
-                <button
-                  onClick={() => handleNotificationClick(notification)}
-                  className={cn(
-                    "flex items-center gap-3 p-3 hover:bg-accent/50 transition-colors",
-                    !notification.is_read && "bg-accent/30"
-                  )}
-                >
-                  <div className="flex-shrink-0">
-                    {getIcon(notification.type)}
-                  </div>
-                  <div className="flex flex-col items-start flex-1 min-w-0">
+              <div 
+                key={notification.id}
+                onClick={() => handleNotificationClick(notification)}
+                className={cn(
+                  "flex p-3 border-b border-border/60 cursor-pointer transition-colors",
+                  !notification.isRead ? "bg-muted/30" : "hover:bg-muted/30"
+                )}
+              >
+                <div className="mr-3 mt-0.5">
+                  {getIcon(notification.type)}
+                </div>
+                
+                <div className="flex-1 space-y-1">
+                  <div className="flex justify-between items-start">
                     <p className={cn(
-                      "text-sm",
-                      !notification.is_read && "font-medium"
+                      "text-sm line-clamp-2",
+                      !notification.isRead && "font-medium"
                     )}>
                       {notification.title}
                     </p>
-                    {notification.content && (
-                      <p className="text-xs text-muted-foreground truncate w-full text-left">
-                        {notification.content}
-                      </p>
-                    )}
-                    <span className="text-xs text-muted-foreground mt-1">
-                      {formatDate(notification.created_at)}
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap ml-2">
+                      {formatDate(notification.createdAt)}
                     </span>
                   </div>
-                  {notification.action_url && (
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  
+                  {notification.content && (
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {notification.content}
+                    </p>
                   )}
-                  {!notification.is_read && (
-                    <div className="h-2 w-2 rounded-full bg-primary" />
+                  
+                  {notification.actionUrl && (
+                    <div className="flex items-center text-xs text-primary font-medium">
+                      {!notification.isRead && <span className="h-1.5 w-1.5 rounded-full bg-primary mr-1"></span>}
+                      Ver detalles
+                      <ChevronRight className="h-3 w-3 ml-1" />
+                    </div>
                   )}
-                </button>
-                <Separator />
+                </div>
               </div>
             ))}
           </div>
-        )}
-      </ScrollArea>
-      <div className="p-2 border-t text-center">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-xs w-full"
+        </ScrollArea>
+      )}
+      
+      <Separator />
+      <div className="p-2">
+        <Button 
+          variant="ghost" 
+          className="w-full justify-center text-sm h-8"
           onClick={() => {
             navigate('/notifications');
             if (onClose) onClose();

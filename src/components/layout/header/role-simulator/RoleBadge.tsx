@@ -2,7 +2,7 @@
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import { cn } from '@/lib/utils';
-import { Shield, UserCog, GraduationCap, Ghost, Terminal, Users, Lightbulb } from 'lucide-react';
+import { Shield, UserCog, GraduationCap, Ghost, Users } from 'lucide-react';
 
 interface RoleBadgeProps {
   role: UserRoleType;
@@ -44,23 +44,11 @@ const RoleBadge: React.FC<RoleBadgeProps> = ({
       icon: GraduationCap,
       label: 'Estudiante'
     },
-    sistemas: {
-      bg: 'bg-purple-100 dark:bg-purple-900/20',
-      text: 'text-purple-800 dark:text-purple-300',
-      icon: Terminal,
-      label: 'Sistemas'
-    },
     moderator: {
       bg: 'bg-yellow-100 dark:bg-yellow-900/20',
       text: 'text-yellow-800 dark:text-yellow-300',
       icon: Users,
       label: 'Moderador'
-    },
-    content_creator: {
-      bg: 'bg-amber-100 dark:bg-amber-900/20',
-      text: 'text-amber-800 dark:text-amber-300',
-      icon: Lightbulb,
-      label: 'Creador'
     },
     guest: {
       bg: 'bg-gray-100 dark:bg-gray-900/20',
@@ -68,11 +56,11 @@ const RoleBadge: React.FC<RoleBadgeProps> = ({
       icon: Ghost,
       label: 'Invitado'
     },
-    anonimo: {
-      bg: 'bg-gray-100 dark:bg-gray-800/20',
-      text: 'text-gray-800 dark:text-gray-400',
+    beta_tester: {
+      bg: 'bg-purple-100 dark:bg-purple-900/20',
+      text: 'text-purple-800 dark:text-purple-300',
       icon: Ghost,
-      label: 'Anónimo'
+      label: 'Beta Tester'
     }
   };
 
