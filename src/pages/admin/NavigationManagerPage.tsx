@@ -14,7 +14,7 @@ const NavigationManager: React.FC = () => {
     <div className="space-y-4">
       <h2 className="text-lg font-medium">Secciones de Navegación</h2>
       <p className="text-muted-foreground">
-        Esta funcionalidad está en desarrollo. Pronto podrás gestionar la navegación del sistema aquí.
+        Esta funcionalidad está en desarrollo. Pronto podrás gestionar la navegación del sistema aquí según el SSOT definido en NAVIGATION.md.
       </p>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {['Público', 'Estudiante', 'Instructor', 'Administrador'].map((role) => (

@@ -20,6 +20,7 @@ const SystemSettings = lazy(() => import('@/pages/admin/SystemSettings'));
 const DeveloperSettingsPage = lazy(() => import('@/pages/admin/settings/developer'));
 const ComingSoonPage = lazy(() => import('@/pages/common/ComingSoonPage'));
 const PagesManagement = lazy(() => import('@/pages/admin/settings/pages'));
+const RoleManagement = lazy(() => import('@/pages/admin/RoleManagement'));
 
 // Routes that are part of the admin module
 const AdminRoutes = () => {
@@ -45,6 +46,8 @@ const AdminRoutes = () => {
         <Route path="security" element={<ComingSoonPage />} />
         <Route path="system/health" element={<ComingSoonPage />} />
         <Route path="system/logs" element={<ComingSoonPage />} />
+        <Route path="roles" element={<RoleManagement />} />
+        <Route path="instructors" element={<ComingSoonPage />} />
         <Route path="*" element={<Navigate to="/app/admin/dashboard" replace />} />
       </Routes>
     </Suspense>

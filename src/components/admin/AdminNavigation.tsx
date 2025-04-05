@@ -8,7 +8,6 @@ import {
   Settings, 
   FileText, 
   PanelLeft, 
-  Database, 
   Shield,
   School
 } from 'lucide-react';
