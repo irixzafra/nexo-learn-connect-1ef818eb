@@ -4,19 +4,22 @@ import { Link, useLocation } from 'react-router-dom';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
 
 interface MenuItemProps {
   to: string;
   icon: LucideIcon;
   label: string;
   isCollapsed?: boolean;
+  badge?: number;
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({ 
   to, 
   icon: Icon, 
   label, 
-  isCollapsed = false 
+  isCollapsed = false,
+  badge
 }) => {
   const location = useLocation();
   const isActive = location.pathname === to || location.pathname.startsWith(`${to}/`);
@@ -32,7 +35,16 @@ const MenuItem: React.FC<MenuItemProps> = ({
       )}
     >
       <Icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-muted-foreground")} />
-      {!isCollapsed && <span>{label}</span>}
+      {!isCollapsed && (
+        <div className="flex items-center justify-between w-full">
+          <span>{label}</span>
+          {badge !== undefined && badge > 0 && (
+            <Badge variant="outline" className="ml-auto text-xs">
+              {badge > 99 ? '99+' : badge}
+            </Badge>
+          )}
+        </div>
+      )}
     </Link>
   );
   
@@ -44,6 +56,11 @@ const MenuItem: React.FC<MenuItemProps> = ({
         </TooltipTrigger>
         <TooltipContent side="right">
           <p>{label}</p>
+          {badge !== undefined && badge > 0 && (
+            <Badge variant="outline" className="ml-2 text-xs">
+              {badge > 99 ? '99+' : badge}
+            </Badge>
+          )}
         </TooltipContent>
       </Tooltip>
     );
