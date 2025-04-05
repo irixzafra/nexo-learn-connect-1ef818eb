@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 
@@ -29,6 +29,13 @@ export const useSidebarNavigation = (
   // Get sidebar state
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  
+  // Update if viewAsRole changes
+  useEffect(() => {
+    if (viewAsRole !== undefined) {
+      setCurrentViewRole(viewAsRole);
+    }
+  }, [viewAsRole]);
 
   return {
     currentViewRole,

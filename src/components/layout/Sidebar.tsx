@@ -2,9 +2,9 @@
 import React from 'react';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { cn } from '@/lib/utils';
-import SidebarContent from './sidebar/SidebarContent';
 import SidebarNavigation from './sidebar/SidebarNavigation';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import SidebarFooter from './sidebar/SidebarFooter';
 
 const Sidebar: React.FC = () => {
   const { state } = useSidebar();
@@ -15,7 +15,7 @@ const Sidebar: React.FC = () => {
       {/* Actual sidebar */}
       <aside 
         className={cn(
-          "fixed inset-y-0 left-0 z-30 transform border-r border-border/70 transition-all duration-300 ease-in-out bg-background",
+          "fixed inset-y-0 left-0 z-30 flex flex-col transform border-r border-border/70 transition-all duration-300 ease-in-out bg-background",
           "md:static md:translate-x-0",
           isExpanded ? 'translate-x-0 shadow-md w-64' : '-translate-x-full md:w-20 md:translate-x-0',
           "focus-within:outline-none focus-within:ring-0"
@@ -27,7 +27,12 @@ const Sidebar: React.FC = () => {
             <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
           </div>
           
-          <SidebarNavigation />
+          <div className="flex-1 overflow-y-auto">
+            <SidebarNavigation />
+          </div>
+          
+          {/* Add the sidebar footer */}
+          <SidebarFooter />
         </div>
       </aside>
     </>

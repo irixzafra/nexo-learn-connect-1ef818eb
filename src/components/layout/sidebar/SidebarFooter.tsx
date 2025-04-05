@@ -1,14 +1,13 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/auth';
-import SidebarFooterSection from './SidebarFooterSection';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useNotifications } from '@/hooks/useNotifications';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
+import SidebarFooterSection from './SidebarFooterSection';
+import { SidebarFooter as ShadcnSidebarFooter } from '@/components/ui/sidebar';
 
-interface SidebarFooterProps {
-  isCollapsed: boolean;
-}
-
-const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
+const SidebarFooter: React.FC = () => {
   const { 
     userRole, 
     effectiveRole, 
@@ -18,7 +17,11 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
     setSimulatedRole
   } = useAuth();
 
-  // Use the actual language context
+  // Get sidebar collapse state
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
+  // Use the language context
   const { currentLanguage, changeLanguage } = useLanguage();
 
   // Language options mapping
@@ -36,7 +39,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
   };
 
   return (
-    <div className="border-t border-border mt-auto p-3">
+    <ShadcnSidebarFooter className="mt-auto border-t border-border">
       <SidebarFooterSection
         userRole={userRole}
         effectiveRole={effectiveRole}
@@ -49,7 +52,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ isCollapsed }) => {
         resetToOriginalRole={resetToOriginalRole}
         forceAdminRole={handleForceAdminRole}
       />
-    </div>
+    </ShadcnSidebarFooter>
   );
 };
 
