@@ -1,145 +1,137 @@
 
 import React from 'react';
-import AdminLayout from '@/layouts/AdminLayout';
-import { PageHeader } from '@/components/ui/page-header';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Code, Puzzle, Database, RefreshCw, FileCode, Package } from 'lucide-react';
+import AdminPageLayout from '@/layouts/AdminPageLayout';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Code, Navigation, CheckSquare, Layers, FileCode, Database, Activity, Globe } from 'lucide-react';
+import AdminMenu, { AdminMenuItem } from '@/components/ui/admin-menu/AdminMenu';
 
 const DevelopmentToolsPage: React.FC = () => {
+  // Navigation management tools
+  const navigationTools: AdminMenuItem[] = [
+    {
+      icon: Navigation,
+      label: 'Diagrama de Navegación',
+      href: '/app/admin/navigation-diagram',
+      description: 'Visualiza la estructura de navegación del sistema'
+    },
+    {
+      icon: CheckSquare,
+      label: 'Revisión de Elementos',
+      href: '/app/admin/review-elements',
+      description: 'Verifica la consistencia de los elementos UI'
+    },
+    {
+      icon: Layers,
+      label: 'Revisión de Huérfanos',
+      href: '/app/admin/orphan-review',
+      description: 'Identifica componentes sin referencia'
+    }
+  ];
+
+  // Technical tools
+  const technicalTools: AdminMenuItem[] = [
+    {
+      icon: Database,
+      label: 'Explorador de Base de Datos',
+      href: '/app/admin/database',
+      description: 'Visualiza y gestiona la estructura de datos',
+      badge: 'Próximo'
+    },
+    {
+      icon: Activity,
+      label: 'Registros del Sistema',
+      href: '/app/admin/system/logs',
+      description: 'Visualiza logs y eventos del sistema',
+      badge: 'Próximo'
+    },
+    {
+      icon: FileCode,
+      label: 'Editor de Código',
+      href: '/app/admin/code-editor',
+      description: 'Editor integrado para ajustes técnicos',
+      badge: 'Próximo'
+    },
+    {
+      icon: Globe,
+      label: 'API Explorer',
+      href: '/app/admin/api-explorer',
+      description: 'Explora y prueba los endpoints de la API',
+      badge: 'Próximo'
+    }
+  ];
+
   return (
-    <AdminLayout>
-      <div className="container mx-auto py-4">
-        <PageHeader
-          title="Herramientas de Desarrollo"
-          description="Conjunto de herramientas para los desarrolladores del sistema"
-        />
-        
-        <div className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Code className="h-5 w-5 text-primary" />
-                  Debug Console
-                </CardTitle>
-                <CardDescription>
-                  Consola avanzada para depuración del sistema
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Accede a registros detallados, inspecciona variables y evalúa expresiones en tiempo real.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full">Abrir consola</Button>
-              </CardFooter>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Puzzle className="h-5 w-5 text-primary" />
-                  Estado de componentes
-                </CardTitle>
-                <CardDescription>
-                  Visualiza el árbol de componentes y su estado
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Inspecciona el estado interno de los componentes React, sus props y sus relaciones.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full">Explorar componentes</Button>
-              </CardFooter>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Database className="h-5 w-5 text-primary" />
-                  Inspector de datos
-                </CardTitle>
-                <CardDescription>
-                  Explora y modifica datos del sistema
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Visualiza y manipula la estructura de datos, realiza consultas y prueba cambios.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full">Abrir inspector</Button>
-              </CardFooter>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <RefreshCw className="h-5 w-5 text-primary" />
-                  Ciclo de renderizado
-                </CardTitle>
-                <CardDescription>
-                  Análisis del ciclo de vida y renderizado
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Monitorea y optimiza el rendimiento del ciclo de renderizado de componentes.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full">Ver métricas</Button>
-              </CardFooter>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileCode className="h-5 w-5 text-primary" />
-                  Editor de código
-                </CardTitle>
-                <CardDescription>
-                  Modifica y prueba código en vivo
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Editor integrado con resaltado de sintaxis y herramientas de depuración.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full">Abrir editor</Button>
-              </CardFooter>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Package className="h-5 w-5 text-primary" />
-                  Gestión de módulos
-                </CardTitle>
-                <CardDescription>
-                  Administra y actualiza dependencias
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Revisa versiones, resuelve conflictos y actualiza paquetes del sistema.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full">Gestionar módulos</Button>
-              </CardFooter>
-            </Card>
-          </div>
+    <AdminPageLayout 
+      title="Herramientas de Desarrollo"
+      subtitle="Herramientas para desarrolladores y administradores técnicos del sistema"
+    >
+      <Tabs defaultValue="navigation" className="space-y-4">
+        <div className="flex justify-between items-center">
+          <TabsList>
+            <TabsTrigger value="navigation">Navegación</TabsTrigger>
+            <TabsTrigger value="technical">Herramientas Técnicas</TabsTrigger>
+            <TabsTrigger value="developer">Configuración Dev</TabsTrigger>
+          </TabsList>
         </div>
-      </div>
-    </AdminLayout>
+
+        <TabsContent value="navigation" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Navigation className="h-5 w-5 mr-2 text-primary" />
+                Gestión de Navegación
+              </CardTitle>
+              <CardDescription>
+                Herramientas para visualizar y gestionar la estructura de navegación del sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AdminMenu items={navigationTools} variant="cards" columns={3} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="technical" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Database className="h-5 w-5 mr-2 text-primary" />
+                Herramientas Técnicas
+              </CardTitle>
+              <CardDescription>
+                Herramientas avanzadas para la gestión técnica del sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AdminMenu items={technicalTools} variant="cards" columns={4} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="developer" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Code className="h-5 w-5 mr-2 text-primary" />
+                Configuración para Desarrolladores
+              </CardTitle>
+              <CardDescription>
+                Opciones y ajustes para el entorno de desarrollo
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Imported from the existing DeveloperSettings component */}
+              <iframe 
+                src="/app/admin/settings/developer" 
+                className="w-full min-h-[500px] border-none"
+                title="Developer Settings"
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </AdminPageLayout>
   );
 };
 

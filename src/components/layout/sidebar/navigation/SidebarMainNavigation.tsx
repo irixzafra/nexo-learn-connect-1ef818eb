@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavGroup from './SidebarNavGroup';
@@ -28,7 +29,12 @@ import {
   Navigation,
   CheckSquare,
   Layers,
-  Globe
+  Globe,
+  Code,
+  Database,
+  Sliders,
+  Shield,
+  ToggleLeft
 } from 'lucide-react';
 import { NavigationMenus } from '@/types/navigation';
 
