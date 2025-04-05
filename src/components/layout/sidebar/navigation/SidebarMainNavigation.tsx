@@ -2,6 +2,8 @@
 import React from 'react';
 import { UserRoleType } from '@/types/auth';
 import SidebarNavGroup from './SidebarNavGroup';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
+import { NavigationMenus } from '@/types/navigation';
 import { 
   Activity, 
   Home,
@@ -36,10 +38,8 @@ import {
   Shield,
   ToggleLeft
 } from 'lucide-react';
-import { NavigationMenus } from '@/types/navigation';
 
 interface SidebarMainNavigationProps {
-  isCollapsed?: boolean;
   effectiveRole?: UserRoleType;
   messagesCount?: number;
   notificationsCount?: number;
@@ -47,12 +47,13 @@ interface SidebarMainNavigationProps {
 }
 
 export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ 
-  isCollapsed = false,
   effectiveRole = 'student',
   messagesCount = 0,
   notificationsCount = 0,
   navigationMenus = {}
 }) => {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
   
   console.log('SidebarMainNavigation rendering with role:', effectiveRole);
   

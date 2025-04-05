@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import SidebarNavItem from './SidebarNavItem';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface NavItem {
   label: string;
@@ -47,19 +48,26 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
     return (
       <div className="mb-2">
         {/* Group Label */}
-        <div className="relative">
-          <div className="flex w-full items-center justify-center">
-            {Icon && (
-              <button
-                onClick={toggleGroup}
-                className="w-full p-2 hover:bg-muted/70 rounded-md flex items-center justify-center"
-                aria-label={title}
-              >
-                <Icon className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-        </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="relative">
+              <div className="flex w-full items-center justify-center">
+                {Icon && (
+                  <button
+                    onClick={toggleGroup}
+                    className="w-full p-2 hover:bg-muted/70 rounded-md flex items-center justify-center"
+                    aria-label={title}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>{title}</p>
+          </TooltipContent>
+        </Tooltip>
         
         {/* Group Items */}
         <div className="mt-1 space-y-1">

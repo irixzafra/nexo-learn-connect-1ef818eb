@@ -38,7 +38,7 @@ const SidebarFooter: React.FC = () => {
   };
 
   return (
-    <ShadcnSidebarFooter className="mt-auto border-t border-border">
+    <ShadcnSidebarFooter className="mt-auto border-t border-border/70">
       <SidebarFooterSection
         userRole={userRole}
         effectiveRole={effectiveRole}

@@ -12,6 +12,7 @@ import { ChevronDown, UserCog, GraduationCap, Shield, ArrowLeftRight } from 'luc
 import { cn } from '@/lib/utils';
 import { useUserSearch } from '@/hooks/useUserSearch';
 import RolePopoverContent from './RolePopoverContent';
+import RoleBadge from './RoleBadge';
 
 interface EnhancedRoleSimulatorProps {
   className?: string;
@@ -35,42 +36,6 @@ const EnhancedRoleSimulator: React.FC<EnhancedRoleSimulatorProps> = ({
   } = useUserSearch();
 
   if (!userRole || userRole !== 'admin') return null;
-
-  const getRoleIcon = (role: UserRoleType) => {
-    switch (role) {
-      case 'admin':
-        return <Shield className="h-4 w-4" />;
-      case 'instructor':
-        return <UserCog className="h-4 w-4" />;
-      case 'student':
-        return <GraduationCap className="h-4 w-4" />;
-      default:
-        return null;
-    }
-  };
-
-  const getRoleName = (role: UserRoleType): string => {
-    switch (role) {
-      case 'admin':
-        return 'Administrador';
-      case 'instructor':
-        return 'Instructor';
-      case 'student':
-        return 'Estudiante';
-      case 'sistemas':
-        return 'Sistemas';
-      case 'moderator':
-        return 'Moderador';
-      case 'content_creator':
-        return 'Creador de Contenido';
-      case 'guest':
-        return 'Invitado';
-      case 'anonimo':
-        return 'Anónimo';
-      default:
-        return role;
-    }
-  };
 
   const handleRoleChange = (role: UserRoleType) => {
     console.log("Changing role to:", role);
@@ -114,12 +79,8 @@ const EnhancedRoleSimulator: React.FC<EnhancedRoleSimulatorProps> = ({
             )}
           >
             <div className="flex items-center gap-2 truncate">
-              {getRoleIcon(effectiveRole as UserRoleType)}
-              {!compact && (
-                <span className="truncate">
-                  {getRoleName(effectiveRole as UserRoleType)}
-                </span>
-              )}
+              <RoleBadge role={effectiveRole as UserRoleType} showText={!compact} size={compact ? "sm" : "md"} />
+              {/* La leyenda de "Vista como:" no es necesaria en botón cuando es compacto */}
             </div>
             <ChevronDown className="h-4 w-4 opacity-50" />
           </Button>

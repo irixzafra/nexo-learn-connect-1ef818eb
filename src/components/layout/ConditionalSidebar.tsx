@@ -14,7 +14,6 @@ interface ConditionalSidebarProps {
   effectiveRole: UserRoleType;
   messagesCount: number;
   notificationsCount: number;
-  isCollapsed: boolean;
   currentViewRole: UserRoleType | null;
   getRoleName: (role: UserRoleType) => string;
   getHomePath: (role: UserRoleType) => string;
@@ -29,12 +28,11 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
   effectiveRole,
   messagesCount,
   notificationsCount,
-  isCollapsed,
 }) => {
   // Usar el hook de navegación dinámica
   const { navigationMenus } = useDynamicNavigation(effectiveRole);
   const { state } = useSidebar();
-  const collapsed = state === "collapsed";
+  const isCollapsed = state === "collapsed";
 
   console.log('ConditionalSidebar with effectiveRole:', effectiveRole, 'isCollapsed:', isCollapsed);
 
@@ -45,7 +43,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
     )}>
       {/* Espacio superior con logo y botón de toggle */}
       <div className="p-3 border-b border-border/30 mb-1">
-        <SidebarLogoSection isCollapsed={isCollapsed} />
+        <SidebarLogoSection />
       </div>
 
       {/* Main navigation based on role */}
@@ -54,7 +52,6 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
           effectiveRole={effectiveRole}
           messagesCount={messagesCount}
           notificationsCount={notificationsCount}
-          isCollapsed={isCollapsed}
           navigationMenus={navigationMenus}
         />
       </div>
