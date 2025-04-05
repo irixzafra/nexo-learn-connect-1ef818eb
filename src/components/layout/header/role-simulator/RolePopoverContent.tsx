@@ -1,18 +1,17 @@
 
 import React from 'react';
-import { Input } from '@/components/ui/input';
+import { Shield, Loader2, GraduationCap, UserCog, ArrowLeftRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { UserRoleType, toUserRoleType } from '@/types/auth';
-import { Search, X, RefreshCcw } from 'lucide-react';
-import { RoleBadge } from './RoleBadge';
+import { UserRoleType } from '@/types/auth';
+import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
 import { UserSearchResult } from './types';
+import RoleBadge from './RoleBadge';
 
 interface RolePopoverContentProps {
-  effectiveRole: UserRoleType | string;
+  effectiveRole: UserRoleType;
   isViewingAsOtherRole: boolean;
-  userRole: UserRoleType | string;
+  userRole: UserRoleType | null;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   userResults: UserSearchResult[];
@@ -23,7 +22,7 @@ interface RolePopoverContentProps {
   availableRoles: UserRoleType[];
 }
 
-export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
+const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
   effectiveRole,
   isViewingAsOtherRole,
   userRole,
@@ -36,105 +35,121 @@ export const RolePopoverContent: React.FC<RolePopoverContentProps> = ({
   handleClose,
   availableRoles
 }) => {
-  return (
-    <div className="text-sm">
-      <div className="flex items-center justify-between p-3 border-b">
-        <h3 className="font-semibold">Cambiar Rol</h3>
-        <Button variant="ghost" size="icon" onClick={handleClose} className="h-6 w-6">
-          <X className="h-4 w-4" />
+  // Renderizar los botones para cada rol disponible
+  const renderRoleButtons = () => {
+    return availableRoles.map((role) => {
+      let icon;
+      switch (role) {
+        case 'admin':
+          icon = <Shield className="h-4 w-4" />;
+          break;
+        case 'instructor':
+          icon = <UserCog className="h-4 w-4" />;
+          break;
+        case 'student':
+          icon = <GraduationCap className="h-4 w-4" />;
+          break;
+        default:
+          icon = null;
+      }
+
+      return (
+        <Button
+          key={role}
+          variant={effectiveRole === role ? "secondary" : "ghost"}
+          size="sm"
+          className="w-full justify-start"
+          onClick={() => {
+            handleSwitchRole(role);
+            handleClose();
+          }}
+        >
+          {icon}
+          <span className="ml-2 capitalize">{role}</span>
+          {effectiveRole === role && (
+            <span className="ml-auto text-xs bg-primary/20 px-2 py-0.5 rounded">Actual</span>
+          )}
         </Button>
+      );
+    });
+  };
+
+  return (
+    <div className="py-2">
+      {/* Header - Title */}
+      <div className="px-3 pb-2">
+        <h3 className="text-sm font-medium">Cambiar Vista de Rol</h3>
+        <p className="text-xs text-muted-foreground">Ver la aplicación con otro rol</p>
       </div>
       
+      {/* Reset to original role button when viewing as other role */}
       {isViewingAsOtherRole && (
-        <div className="p-3 bg-orange-50 border-b border-orange-100 flex items-center justify-between">
-          <div>
-            <p className="font-medium text-orange-800">Estás viendo como {effectiveRole}</p>
-            <p className="text-xs text-orange-600">Tu rol real es {userRole}</p>
-          </div>
+        <div className="px-2 pb-2">
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={resetToOriginalRole} 
-            className="h-8 text-xs border-orange-300 bg-white"
+            className="w-full justify-start"
+            onClick={() => {
+              resetToOriginalRole();
+              handleClose();
+            }}
           >
-            <RefreshCcw className="h-3 w-3 mr-1" />
-            Volver
+            <ArrowLeftRight className="h-4 w-4 mr-2" />
+            <span>Volver a mi rol ({userRole})</span>
           </Button>
         </div>
       )}
-
-      <Tabs defaultValue="roles" className="w-full">
-        <div className="px-3 pt-3">
-          <TabsList className="w-full">
-            <TabsTrigger value="roles" className="flex-1">Roles</TabsTrigger>
-            <TabsTrigger value="users" className="flex-1">Usuarios</TabsTrigger>
-          </TabsList>
-        </div>
+      
+      <Separator className="my-1" />
+      
+      {/* Role Buttons */}
+      <div className="px-2 py-1 space-y-1">
+        <p className="text-xs text-muted-foreground px-2">Roles del sistema</p>
+        {renderRoleButtons()}
+      </div>
+      
+      <Separator className="my-2" />
+      
+      {/* Search Users */}
+      <div className="px-3 pt-1 pb-2">
+        <p className="text-xs text-muted-foreground mb-2">Buscar usuario por nombre</p>
+        <Input
+          className="h-8 text-sm"
+          placeholder="Nombre de usuario..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
         
-        <TabsContent value="roles" className="p-3">
-          <div className="grid grid-cols-2 gap-2">
-            {availableRoles.map((role) => (
-              <div
-                key={role}
-                className="flex justify-center"
-                onClick={() => handleSwitchRole(role)}
-              >
-                <RoleBadge 
-                  role={role} 
-                  isSimulated={effectiveRole === role && isViewingAsOtherRole}
-                  size="md"
-                />
-              </div>
-            ))}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="users" className="focus:outline-none">
-          <div className="p-3 pb-0">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar usuario..."
-                className="pl-9 h-9"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+        {/* Search Results */}
+        <div className="mt-2 max-h-[180px] overflow-y-auto">
+          {isSearching ? (
+            <div className="flex justify-center items-center py-3">
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+              <span className="ml-2 text-xs text-muted-foreground">Buscando...</span>
             </div>
-          </div>
-          
-          <ScrollArea className="h-52 mt-3">
-            {isSearching ? (
-              <div className="flex justify-center items-center py-8">
-                <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-primary"></div>
-              </div>
-            ) : userResults.length > 0 ? (
-              <div className="px-3 space-y-1">
-                {userResults.map((user) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center justify-between p-2 hover:bg-muted rounded-md cursor-pointer"
-                    onClick={() => handleSwitchRole(toUserRoleType(user.role))}
-                  >
-                    <div>
-                      <p className="font-medium">{user.full_name || 'Usuario sin nombre'}</p>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
-                    </div>
-                    <RoleBadge role={toUserRoleType(user.role)} size="sm" />
-                  </div>
-                ))}
-              </div>
-            ) : searchQuery ? (
-              <div className="p-8 text-center text-muted-foreground">
-                No se encontraron usuarios
-              </div>
-            ) : (
-              <div className="p-8 text-center text-muted-foreground">
-                Busca por nombre o correo
-              </div>
-            )}
-          </ScrollArea>
-        </TabsContent>
-      </Tabs>
+          ) : userResults.length > 0 ? (
+            <div className="space-y-1">
+              {userResults.map((user) => (
+                <div
+                  key={user.id}
+                  className="flex items-center justify-between px-2 py-1.5 hover:bg-muted rounded cursor-pointer"
+                  onClick={() => {
+                    handleSwitchRole(user.role as UserRoleType);
+                    handleClose();
+                  }}
+                >
+                  <span className="text-sm truncate max-w-[160px]">{user.full_name}</span>
+                  <RoleBadge role={user.role as UserRoleType} />
+                </div>
+              ))}
+            </div>
+          ) : searchQuery ? (
+            <div className="text-center py-2 text-xs text-muted-foreground">
+              No se encontraron resultados
+            </div>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 };

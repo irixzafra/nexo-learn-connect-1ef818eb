@@ -2,7 +2,6 @@
 import React from 'react';
 import { useAuth } from '@/contexts/auth';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useNotifications } from '@/hooks/useNotifications';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import SidebarFooterSection from './SidebarFooterSection';
 import { SidebarFooter as ShadcnSidebarFooter } from '@/components/ui/sidebar';

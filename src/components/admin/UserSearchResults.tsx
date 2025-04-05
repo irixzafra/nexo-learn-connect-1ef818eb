@@ -3,12 +3,12 @@ import React from 'react';
 import { Loader2, SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserProfile } from '@/hooks/useUserSearch';
+import { UserSearchResult } from '@/components/layout/header/role-simulator/types';
 
 interface UserSearchResultsProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  searchResults: UserProfile[];
+  searchResults: UserSearchResult[];
   isSearching: boolean;
   noResults: boolean;
   searchError: string | null;

@@ -59,7 +59,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
         />
       </div>
       
-      {/* Footer Section with Role Switcher and Language Selector */}
+      {/* Footer Section - Solo un SidebarFooter */}
       <SidebarFooter />
     </div>
   );

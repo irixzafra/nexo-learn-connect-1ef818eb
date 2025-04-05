@@ -4,7 +4,6 @@ import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { cn } from '@/lib/utils';
 import SidebarNavigation from './sidebar/SidebarNavigation';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import SidebarFooter from './sidebar/SidebarFooter';
 
 const Sidebar: React.FC = () => {
   const { state } = useSidebar();
@@ -30,9 +29,6 @@ const Sidebar: React.FC = () => {
           <div className="flex-1 overflow-y-auto">
             <SidebarNavigation />
           </div>
-          
-          {/* Add the sidebar footer */}
-          <SidebarFooter />
         </div>
       </aside>
     </>
