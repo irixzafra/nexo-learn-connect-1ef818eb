@@ -42,7 +42,6 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
         try {
           const items = await getNavigationItemsByRole(effectiveRole);
           // Convert flat items to tree structure if needed
-          // For now, we'll just use them as is
           setNavigationItems(items as NavigationItemWithChildren[]);
         } catch (error) {
           console.error('Error fetching navigation:', error);

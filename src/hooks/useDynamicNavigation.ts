@@ -1,42 +1,64 @@
 
-// Si este archivo no existe, será necesario crearlo para completar la implementación
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { UserRoleType } from '@/types/auth';
-import { NavigationItemBase } from '@/types/navigation-manager';
-import { supabase } from '@/lib/supabase'; // Asumiendo que existe un cliente Supabase configurado
+import { NavigationItemWithChildren } from '@/types/navigation-manager';
+
+// Mock data - this would typically come from an API
+const navigationByRole: Record<UserRoleType, NavigationItemWithChildren[]> = {
+  admin: [
+    { label: 'Dashboard', path: '/admin/dashboard', icon: 'LayoutDashboard' },
+    { label: 'Users', path: '/admin/users', icon: 'Users' },
+    { label: 'Settings', path: '/admin/settings', icon: 'Settings' },
+  ],
+  instructor: [
+    { label: 'Dashboard', path: '/instructor/dashboard', icon: 'LayoutDashboard' },
+    { label: 'My Courses', path: '/instructor/courses', icon: 'BookOpen' },
+    { label: 'Students', path: '/instructor/students', icon: 'Users' },
+  ],
+  student: [
+    { label: 'Dashboard', path: '/dashboard', icon: 'LayoutDashboard' },
+    { label: 'My Courses', path: '/my-courses', icon: 'BookOpen' },
+    { label: 'Explore', path: '/explore', icon: 'Compass' },
+  ],
+  moderator: [
+    { label: 'Dashboard', path: '/moderator/dashboard', icon: 'LayoutDashboard' },
+    { label: 'Reports', path: '/moderator/reports', icon: 'Flag' },
+    { label: 'Content Review', path: '/moderator/review', icon: 'CheckSquare' },
+  ],
+  manager: [
+    { label: 'Dashboard', path: '/manager/dashboard', icon: 'LayoutDashboard' },
+    { label: 'Teams', path: '/manager/teams', icon: 'Users' },
+    { label: 'Reports', path: '/manager/reports', icon: 'BarChart' },
+  ],
+  anonymous: [
+    { label: 'Login', path: '/auth/login', icon: 'LogIn' },
+    { label: 'Register', path: '/auth/register', icon: 'UserPlus' },
+    { label: 'Explore', path: '/explore', icon: 'Compass' },
+  ],
+};
 
 export const useDynamicNavigation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  /**
-   * Obtiene los elementos de navegación para un rol específico
-   */
-  const getNavigationItemsByRole = async (role: UserRoleType): Promise<NavigationItemBase[]> => {
+  const getNavigationItemsByRole = useCallback(async (role: UserRoleType): Promise<NavigationItemWithChildren[]> => {
     setIsLoading(true);
     setError(null);
-
+    
     try {
-      // Consulta a la tabla de elementos de navegación
-      const { data, error } = await supabase
-        .from('navigation_items')
-        .select('*')
-        .eq('isActive', true)
-        .or(`visibleToRoles.cs.{${role}},visibleToRoles.is.null`); // Filtrar por rol o visible para todos
-
-      if (error) {
-        throw new Error(`Error al obtener navegación: ${error.message}`);
-      }
-
-      return data || [];
-    } catch (err: any) {
-      setError(err);
-      console.error('Error en useDynamicNavigation:', err);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Return navigation for the specified role, or empty array if not found
+      return navigationByRole[role] || [];
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to fetch navigation items');
+      setError(error);
       return [];
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   return {
     getNavigationItemsByRole,

@@ -1,37 +1,30 @@
 
+import { UserRoleType } from '@/types/auth';
 import { LucideIcon } from 'lucide-react';
-import { UserRoleType } from './auth';
+import { IconName } from '@/types/icon-types';
 
+// Base navigation item interface
 export interface NavigationItemBase {
-  id: string;
+  id?: string;
+  path: string;
   label: string;
-  iconName?: string; // Nombre del icono de Lucide
-  sortOrder: number;
-  isActive: boolean;
-  isVisible: boolean;
-  path?: string; // Solo para items tipo "link"
-  itemType: 'link' | 'group' | 'separator'; 
-  parentId?: string | null; // null para items de primer nivel
-  visibleToRoles?: UserRoleType[]; // Roles que pueden ver este elemento
+  icon?: IconName | LucideIcon | string;
+  requiredRole?: UserRoleType | UserRoleType[];
+  badge?: number;
+  isHighlighted?: boolean;
+  disabled?: boolean;
+  isVisible?: boolean;
+  isActive?: boolean;
+  sort?: number;
+  parent_id?: string | null;
 }
 
+// Navigation item with children support
 export interface NavigationItemWithChildren extends NavigationItemBase {
   children?: NavigationItemWithChildren[];
 }
 
-export interface NavigationGrouping {
-  id: string;
-  name: string;
-  description?: string;
-  items: NavigationItemWithChildren[];
-}
-
-export interface RoleNavigation {
-  role: UserRoleType;
-  structure: NavigationGrouping[];
-}
-
-export interface NavigationUpdate {
-  itemId: string;
-  changes: Partial<NavigationItemBase>;
+// Navigation menus organized by categories
+export interface NavigationMenus {
+  [category: string]: NavigationItemWithChildren[];
 }
