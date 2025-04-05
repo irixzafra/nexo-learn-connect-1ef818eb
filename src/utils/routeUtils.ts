@@ -67,7 +67,7 @@ export const routeMap = {
   adminDesignSystem: '/app/admin/design-system',
   adminDesignSystemButton: '/app/admin/design-system/components/button',
   adminNavigationDiagram: '/app/admin/navigation-diagram',
-  adminNavigationManager: '/app/admin/navigation-manager', // Nueva ruta de gestión de navegación
+  adminNavigationManager: '/app/admin/navigation-manager', // Ruta de gestión de navegación
   adminReviewElements: '/app/admin/review-elements',
   adminOrphanReview: '/app/admin/orphan-review',
   adminDevelopment: '/app/admin/development',

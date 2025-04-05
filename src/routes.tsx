@@ -33,14 +33,16 @@ const AppRoutes: React.FC = () => {
           <Route path="users" element={<div>AdminUsersPage</div>} />
           <Route path="courses" element={<div>AdminCoursesPage</div>} />
           <Route path="instructors" element={<div>AdminInstructorsPage</div>} />
-          <Route path="pages" element={<SystemPagesPage />} />
           <Route path="system-pages" element={<SystemPagesPage />} />
+          <Route path="pages" element={<SystemPagesPage />} />  {/* Alias for system-pages */}
           <Route path="settings/pages" element={<PagesManagement />} />
           <Route path="development" element={<div>AdminDevelopmentPage</div>} />
           <Route path="features" element={<div>Features</div>} />
           <Route path="orphan-review" element={<div>OrphanReviewPage</div>} />
           <Route path="navigation-manager" element={<NavigationManagerPage />} />
           <Route path="navigation-diagram" element={<div>NavigationDiagramPage</div>} />
+          <Route path="settings" element={<div>AdminSettingsPage</div>} />
+          <Route path="roles" element={<div>AdminRolesPage</div>} />
         </Route>
         
         {/* Accessibility Route (Example) */}

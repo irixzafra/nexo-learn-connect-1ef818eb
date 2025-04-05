@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -14,12 +14,15 @@ import {
 } from 'lucide-react';
 import { routeMap } from '@/utils/routeUtils';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface AdminNavigationProps {
   enabled?: boolean;
 }
 
 export const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true }) => {
+  const location = useLocation();
+  
   if (!enabled) return null;
 
   // Admin navigation items based on the SSOT in NAVIGATION.md
@@ -54,6 +57,11 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true
     }
   ];
 
+  // Helper to check if a route is active
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+  };
+
   return (
     <div className="space-y-6">
       {navigationGroups.map((group, index) => (
@@ -63,9 +71,12 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({ enabled = true
             {group.items.map((item, itemIndex) => (
               <Button 
                 key={itemIndex} 
-                variant="ghost" 
+                variant={isActive(item.path) ? "secondary" : "ghost"} 
                 asChild 
-                className="w-full justify-start"
+                className={cn(
+                  "w-full justify-start",
+                  isActive(item.path) ? "bg-muted" : ""
+                )}
                 size="sm"
               >
                 <Link to={item.path} className="flex items-center">

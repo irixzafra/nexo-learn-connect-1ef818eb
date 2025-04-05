@@ -1,10 +1,42 @@
 
 import React from 'react';
-import { NavigationManager } from '@/components/admin/navigation/NavigationManager';
 import { PageHeader } from '@/components/ui/page-header';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link } from 'react-router-dom';
 import { routeMap } from '@/utils/routeUtils';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { PanelLeft, FileText, Settings } from 'lucide-react';
+
+// Este es un componente placeholder hasta que se implemente el gestor de navegación real
+const NavigationManager: React.FC = () => {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-lg font-medium">Secciones de Navegación</h2>
+      <p className="text-muted-foreground">
+        Esta funcionalidad está en desarrollo. Pronto podrás gestionar la navegación del sistema aquí.
+      </p>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {['Público', 'Estudiante', 'Instructor', 'Administrador'].map((role) => (
+          <Card key={role} className="hover:shadow-md transition-all">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-2">
+                <PanelLeft className="h-5 w-5 text-primary" />
+                <h3 className="font-medium">{role}</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                Navegación para el rol de {role.toLowerCase()}
+              </p>
+              <Button variant="outline" className="w-full mt-4" disabled>
+                Editar Navegación
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const NavigationManagerPage: React.FC = () => {
   return (
