@@ -43,7 +43,7 @@ const ConditionalSidebar: React.FC<ConditionalSidebarProps> = ({
     )}>
       {/* Espacio superior con logo y botón de toggle */}
       <div className="p-3 border-b border-border/30 mb-1">
-        <SidebarLogoSection />
+        <SidebarLogoSection isCollapsed={isCollapsed} />
       </div>
 
       {/* Main navigation based on role */}

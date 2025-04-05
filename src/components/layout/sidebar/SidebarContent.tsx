@@ -21,7 +21,6 @@ const SidebarContent: React.FC = () => {
       
       <div className={cn("flex-1", isExpanded ? "px-3" : "px-1")}>
         <SidebarMainNavigation 
-          isCollapsed={!isExpanded} 
           effectiveRole={userRole as any}
         />
       </div>

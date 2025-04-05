@@ -4,14 +4,14 @@ import { cn } from '@/lib/utils';
 import { LucideIcon } from 'lucide-react';
 
 interface SidebarLogoSectionProps {
-  isCollapsed: boolean;
+  isCollapsed?: boolean;
   icon?: LucideIcon;
   title?: string;
-  toggleSidebar?: () => void;  // Added this prop
+  toggleSidebar?: () => void;
 }
 
 const SidebarLogoSection: React.FC<SidebarLogoSectionProps> = ({ 
-  isCollapsed,
+  isCollapsed = false,
   icon: Icon,
   title = "Nexo",
   toggleSidebar

@@ -13,7 +13,6 @@ const AdminSidebar: React.FC = () => {
   const { userRole, effectiveRole } = useAuth();
   const { unreadCount: notificationsCount } = useNotifications();
   const messagesCount = 3; // Demo value
-  const { state } = useSidebar();
   
   const {
     currentViewRole,
@@ -25,7 +24,6 @@ const AdminSidebar: React.FC = () => {
       effectiveRole={toUserRoleType(effectiveRole as string)}
       messagesCount={messagesCount}
       notificationsCount={notificationsCount}
-      isCollapsed={state === "collapsed"}
       currentViewRole={currentViewRole}
       getRoleName={getRoleName}
       getHomePath={getHomePathByRole}

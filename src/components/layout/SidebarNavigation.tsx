@@ -22,7 +22,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   const messagesCount = 3; // Fixed value for demonstration - replace with actual unread message count from a hook
   
   const {
-    isCollapsed,
     currentViewRole,
   } = useSidebarNavigation(
     toUserRoleType(userRole as string), 
@@ -36,7 +35,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       effectiveRole={effectiveRole || toUserRoleType(userRole as string)}
       messagesCount={messagesCount}
       notificationsCount={notificationsCount}
-      isCollapsed={isCollapsed}
       currentViewRole={currentViewRole}
       getRoleName={getRoleName}
       getHomePath={getHomePath}
