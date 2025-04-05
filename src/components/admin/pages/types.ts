@@ -10,7 +10,7 @@ export interface PageData {
   updated?: string;
   component?: string;
   accessType?: 'public' | 'authenticated' | 'admin' | 'student' | 'instructor';
-  navigation?: string;
+  navigation?: string | string[];
   content?: {
     blocks: PageBlock[];
   };

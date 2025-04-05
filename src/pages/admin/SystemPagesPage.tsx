@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import { PageHeader } from '@/components/ui/page-header';
 import { toast } from 'sonner';
@@ -12,7 +11,6 @@ import { useSupabaseTable } from '@/hooks/use-supabase-table';
 import PageEditorDrawer from '@/components/admin/pages/PageEditorDrawer';
 import { PageData } from '@/components/admin/pages/types';
 
-// Define types for page data
 interface SitePage {
   id: string;
   title: string;
@@ -39,7 +37,6 @@ const SystemPagesPage: React.FC = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [pageToDelete, setPageToDelete] = useState<string | null>(null);
 
-  // Use our custom hook to manage table data
   const {
     data: pages,
     isLoading,
@@ -51,7 +48,6 @@ const SystemPagesPage: React.FC = () => {
     orderBy: { column: 'updated_at', ascending: false }
   });
 
-  // Define columns for the pages table
   const columns: TableColumn<SitePage>[] = [
     {
       id: 'title',
@@ -158,9 +154,7 @@ const SystemPagesPage: React.FC = () => {
     }
   ];
 
-  // Handle edit page
   const handleEditPage = useCallback((page: SitePage) => {
-    // Convert to PageData format for the drawer
     const pageData: PageData = {
       id: page.id,
       title: page.title,
@@ -186,7 +180,6 @@ const SystemPagesPage: React.FC = () => {
     setIsDrawerOpen(true);
   }, []);
 
-  // Handle create page
   const handleCreatePage = () => {
     const newPage: PageData = {
       title: 'Nueva Página',
@@ -205,9 +198,7 @@ const SystemPagesPage: React.FC = () => {
     setIsDrawerOpen(true);
   };
 
-  // Handle view page
   const handleViewPage = (page: SitePage) => {
-    // Implementation to view the page
     const baseUrl = window.location.origin;
     const pageUrl = page.is_system_page
       ? `${baseUrl}/${page.slug || page.path}`
@@ -216,7 +207,6 @@ const SystemPagesPage: React.FC = () => {
     window.open(pageUrl, '_blank');
   };
 
-  // Handle delete page confirmation
   const handleDeleteConfirm = async () => {
     if (!pageToDelete) return;
     
@@ -226,7 +216,6 @@ const SystemPagesPage: React.FC = () => {
       setPageToDelete(null);
       toast.success("Página eliminada correctamente");
       
-      // Refresh the table data
       if (tableRef.current) {
         tableRef.current.refresh();
       }
@@ -235,15 +224,12 @@ const SystemPagesPage: React.FC = () => {
     }
   };
 
-  // Handle form submission (create/update)
   const handleSubmit = async (formData: Partial<SitePage>) => {
     try {
       if (selectedPage?.id) {
-        // Update existing page
         await update({ id: selectedPage.id, data: formData });
         toast.success("Página actualizada correctamente");
       } else {
-        // Create new page with default values
         const newPageData = {
           ...formData,
           content: formData.content || { blocks: [] },
@@ -256,7 +242,6 @@ const SystemPagesPage: React.FC = () => {
       
       setIsDrawerOpen(false);
       
-      // Refresh the table data
       if (tableRef.current) {
         tableRef.current.refresh();
       }
@@ -266,10 +251,8 @@ const SystemPagesPage: React.FC = () => {
     }
   };
 
-  // Handle save for PageEditorDrawer
   const handleSavePageEditor = async (updatedPage: PageData) => {
     try {
-      // Convert PageData to SitePage format for database update
       const pageData: Partial<SitePage> = {
         title: updatedPage.title,
         slug: updatedPage.path,
@@ -283,7 +266,6 @@ const SystemPagesPage: React.FC = () => {
         updated_at: new Date().toISOString()
       };
       
-      // Update the database
       if (updatedPage.id) {
         await update({ id: updatedPage.id, data: pageData });
       } else {
@@ -297,7 +279,6 @@ const SystemPagesPage: React.FC = () => {
       
       toast.success("Cambios guardados correctamente");
       
-      // Refresh the table data
       if (tableRef.current) {
         tableRef.current.refresh();
       }
@@ -310,7 +291,6 @@ const SystemPagesPage: React.FC = () => {
     }
   };
 
-  // Custom actions renderer
   const renderActions = (page: SitePage) => (
     <div className="flex space-x-2">
       <Button
@@ -380,7 +360,6 @@ const SystemPagesPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* Enhanced Page Editor Drawer */}
       <PageEditorDrawer
         page={selectedPage}
         open={isDrawerOpen}
@@ -388,7 +367,6 @@ const SystemPagesPage: React.FC = () => {
         onSave={handleSavePageEditor}
       />
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

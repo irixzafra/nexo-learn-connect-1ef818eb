@@ -11,13 +11,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { PageData, PageBlock as AdminPageBlock } from './types';
 import { PageBlock as GlobalPageBlock } from '@/types/pages';
-import { FileText, Eye, Save } from 'lucide-react';
+import { FileText, Eye, Save, Check, ChevronsUpDown, X } from 'lucide-react';
 import PagePreviewTab from './drawer-tabs/PagePreviewTab';
+import { cn } from '@/lib/utils';
 
 interface PageEditorDrawerProps {
   page: PageData | null;
@@ -34,6 +49,8 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
 }) => {
   const [editedPage, setEditedPage] = useState<PageData | null>(page);
   const [saving, setSaving] = useState(false);
+  const [selectedNavigations, setSelectedNavigations] = useState<string[]>([]);
+  const [navigationPopoverOpen, setNavigationPopoverOpen] = useState(false);
 
   useEffect(() => {
     if (page) {
@@ -45,9 +62,22 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
             ...block,
             id: block.id || `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
           }))
-        } : undefined
+        } : {
+          blocks: []
+        }
       };
       setEditedPage(processedPage);
+      
+      // Set selected navigations based on page.navigation
+      if (page.navigation) {
+        if (typeof page.navigation === 'string') {
+          setSelectedNavigations(page.navigation !== 'none' ? [page.navigation] : []);
+        } else if (Array.isArray(page.navigation)) {
+          setSelectedNavigations(page.navigation);
+        }
+      } else {
+        setSelectedNavigations([]);
+      }
     }
   }, [page]);
 
@@ -63,7 +93,14 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
     
     try {
       setSaving(true);
-      await onSave(editedPage);
+      
+      // Update the navigation field with the selected navigations
+      const updatedPage = {
+        ...editedPage,
+        navigation: selectedNavigations.length > 0 ? selectedNavigations : 'none'
+      };
+      
+      await onSave(updatedPage);
       toast.success('Página actualizada correctamente');
     } catch (error) {
       console.error('Error saving page:', error);
@@ -104,6 +141,28 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
     { value: 'account', label: 'Cuenta' },
     { value: 'marketing', label: 'Marketing' }
   ];
+
+  // Handle selection/deselection of navigation items
+  const toggleNavigationItem = (value: string) => {
+    setSelectedNavigations(current => {
+      // If selecting "none", clear all other selections
+      if (value === 'none') {
+        return ['none'];
+      }
+      
+      // If current selection includes "none" and selecting something else, remove "none"
+      if (current.includes('none')) {
+        return [value];
+      }
+      
+      // Toggle the selected value
+      const updatedSelections = current.includes(value)
+        ? current.filter(item => item !== value)
+        : [...current, value];
+        
+      return updatedSelections.length > 0 ? updatedSelections : ['none'];
+    });
+  };
 
   if (!editedPage) return null;
 
@@ -206,21 +265,66 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <Label htmlFor="navigation">Navegación</Label>
-                <Select 
-                  value={editedPage.navigation || "none"}
-                  onValueChange={(value) => handleFieldChange('navigation', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar menú" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {navigationMenus.map((menu) => (
-                      <SelectItem key={menu.value} value={menu.value}>
-                        {menu.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={navigationPopoverOpen} onOpenChange={setNavigationPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={navigationPopoverOpen}
+                      className="w-full justify-between"
+                    >
+                      {selectedNavigations.length > 0
+                        ? selectedNavigations.includes('none')
+                          ? 'No mostrar en navegación'
+                          : `${selectedNavigations.length} seleccionados`
+                        : "Seleccionar navegación"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Buscar navegación..." />
+                      <CommandEmpty>No se encontraron resultados.</CommandEmpty>
+                      <CommandGroup>
+                        {navigationMenus.map((item) => (
+                          <CommandItem
+                            key={item.value}
+                            value={item.value}
+                            onSelect={() => {
+                              toggleNavigationItem(item.value);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedNavigations.includes(item.value) ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {item.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                
+                {/* Display selected items as badges */}
+                {selectedNavigations.length > 0 && !selectedNavigations.includes('none') && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedNavigations.map((nav) => {
+                      const navItem = navigationMenus.find(item => item.value === nav);
+                      return navItem ? (
+                        <Badge key={nav} variant="secondary" className="px-2 py-1">
+                          {navItem.label}
+                          <X 
+                            className="ml-1 h-3 w-3 cursor-pointer" 
+                            onClick={() => toggleNavigationItem(nav)}
+                          />
+                        </Badge>
+                      ) : null;
+                    })}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-3">
