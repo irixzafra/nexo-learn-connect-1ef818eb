@@ -7,8 +7,8 @@ import {
   gamificationNavigation, 
   dashboardNavigation, 
   studentNavigation 
-} from '@/config/navigation';
-import { filterNavigationByRole } from '@/utils/navigationUtils';
+} from '@/config/navigation/index';
+import { filterNavigationByRole, getHomePathByRole } from '@/utils/navigationUtils';
 
 export const useRoleBasedNavigation = (role: UserRoleType) => {
   const [filteredNavigation, setFilteredNavigation] = useState({
@@ -30,5 +30,13 @@ export const useRoleBasedNavigation = (role: UserRoleType) => {
     });
   }, [role]);
 
-  return filteredNavigation;
+  // Add missing getRoleHomePath function
+  const getRoleHomePath = () => {
+    return getHomePathByRole(role);
+  };
+
+  return {
+    ...filteredNavigation,
+    getRoleHomePath
+  };
 };

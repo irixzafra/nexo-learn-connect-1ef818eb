@@ -8,6 +8,10 @@ import {
   getNavigationByRole,
   getHomePathByRole
 } from './roleBasedNavigation';
+import { dashboardNavigation } from './dashboardNavigation';
+import { learningNavigation } from './learningNavigation';
+import { communityNavigation } from './communityNavigation';
+import { gamificationNavigation } from './gamificationNavigation';
 
 /**
  * Filter menu items based on user role
@@ -39,6 +43,10 @@ export {
   adminNavigation,
   instructorNavigation,
   studentNavigation,
+  dashboardNavigation,
+  learningNavigation,
+  communityNavigation,
+  gamificationNavigation,
   getNavigationByRole,
   getHomePathByRole
 };

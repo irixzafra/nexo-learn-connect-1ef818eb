@@ -9,13 +9,13 @@ import { UserRoleType } from '@/types/auth';
 const Index = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, userRole } = useAuth();
-  const { getRoleHomePath } = useRoleBasedNavigation();
+  const navigation = useRoleBasedNavigation(userRole as UserRoleType);
   
   useEffect(() => {
     if (!isLoading) {
       if (isAuthenticated) {
         // Get role-specific home path
-        let homePath = getRoleHomePath();
+        let homePath = navigation.getRoleHomePath();
         
         // Make sure we're redirecting to a page with the sidebar
         if (homePath === '/home') {
@@ -52,7 +52,7 @@ const Index = () => {
         navigate(defaultLandingUrl);
       }
     }
-  }, [navigate, isAuthenticated, isLoading, getRoleHomePath, userRole]);
+  }, [navigate, isAuthenticated, isLoading, navigation, userRole]);
   
   // Loading state
   if (isLoading) {
