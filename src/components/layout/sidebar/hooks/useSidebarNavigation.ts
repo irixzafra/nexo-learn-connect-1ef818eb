@@ -5,7 +5,6 @@ import { useAuth } from '@/contexts/auth';
 import { UserRoleType } from '@/types/auth';
 import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
 import { getHomePathByRole } from '@/config/navigation/roleBasedNavigation';
-import { useInlineEditor } from '@/contexts/InlineEditorContext';
 
 export const useSidebarNavigation = (
   userRole: UserRoleType,
@@ -15,7 +14,6 @@ export const useSidebarNavigation = (
   const navigate = useNavigate();
   const { state, setState } = useSidebar();
   const { userRole: currentRole } = useAuth();
-  const { isEditModeEnabled } = useInlineEditor();
   
   const [currentLanguage, setCurrentLanguage] = useState<string>('es');
   const [currentViewRole, setCurrentViewRole] = useState<UserRoleType | null>(viewAsRole || null);
@@ -49,13 +47,6 @@ export const useSidebarNavigation = (
       setCurrentViewRole(viewAsRole);
     }
   }, [viewAsRole, currentViewRole]);
-
-  // Si estamos en modo edición, asegurarse de que la barra lateral esté expandida
-  useEffect(() => {
-    if (isEditModeEnabled && isCollapsed) {
-      setState("expanded");
-    }
-  }, [isEditModeEnabled, isCollapsed, setState]);
 
   return {
     isCollapsed,
