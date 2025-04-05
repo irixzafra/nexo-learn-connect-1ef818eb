@@ -10,7 +10,6 @@ const Footer: React.FC = () => {
   const legalLinks = [
     { path: routeMap.terms, label: 'Términos' },
     { path: routeMap.privacy, label: 'Privacidad' },
-    // Note: cookies and accessibility links were causing errors because they don't exist in routeMap
   ];
 
   const helpLinks = [
@@ -22,7 +21,7 @@ const Footer: React.FC = () => {
     <footer className="border-t py-6 md:py-0">
       <div className="container flex flex-col items-center justify-between gap-4 md:h-14 md:flex-row">
         <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-          &copy; {currentYear} Nexo Educativo. Todos los derechos reservados.
+          &copy; {currentYear} Nexo Learning. Todos los derechos reservados.
         </p>
         <div className="flex items-center gap-4">
           {legalLinks.map((link) => (
