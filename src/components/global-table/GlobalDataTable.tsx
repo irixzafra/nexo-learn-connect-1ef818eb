@@ -4,12 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { SortingState, ColumnFiltersState, VisibilityState } from '@tanstack/react-table';
 import { AdvancedDataTable } from '@/components/shared/AdvancedDataTable';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Plus } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
-import { Plus } from 'lucide-react';
 import { GlobalTableProps, GlobalTableRef, TableColumn } from './types';
-import { constructColumns } from './utils';
+import { constructColumns, CellData, ActionCellData } from './utils';
 import { renderCellContent, renderActions } from './renderers';
 
 const GlobalDataTable = forwardRef<GlobalTableRef, GlobalTableProps>((
@@ -135,8 +134,8 @@ const GlobalDataTable = forwardRef<GlobalTableRef, GlobalTableProps>((
       return {
         ...column,
         cell: (info) => {
-          const actionData = info.getValue();
-          if (typeof actionData === 'object' && actionData !== null) {
+          const actionData = info.getValue() as unknown as ActionCellData;
+          if (actionData && typeof actionData === 'object') {
             return renderActions(actionData);
           }
           return null;
@@ -146,7 +145,7 @@ const GlobalDataTable = forwardRef<GlobalTableRef, GlobalTableProps>((
       return {
         ...column,
         cell: (info) => {
-          const data = info.getValue();
+          const data = info.getValue() as unknown as CellData;
           if (data && typeof data === 'object' && 'value' in data && 'type' in data) {
             return renderCellContent(data.value, data.type, data.options);
           }

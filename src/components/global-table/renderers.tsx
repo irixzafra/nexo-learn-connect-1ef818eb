@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
+import { ActionCellData } from './utils';
 
 // Cell renderers for different column types
 export function renderCellContent(value: any, type: string, options?: { label: string; value: string | number | boolean }[]) {
@@ -40,23 +41,17 @@ export function renderCellContent(value: any, type: string, options?: { label: s
 }
 
 // Render actions dropdown
-export function renderActions({
-  item,
-  itemId,
-  hasEdit,
-  hasDelete,
-  onEdit,
-  onDelete,
-  renderCustomActions
-}: {
-  item: any;
-  itemId: string | number;
-  hasEdit?: boolean;
-  hasDelete?: boolean;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  renderCustomActions?: (data: any) => React.ReactNode;
-}) {
+export function renderActions(data: ActionCellData) {
+  const { 
+    item,
+    itemId,
+    hasEdit,
+    hasDelete,
+    onEdit,
+    onDelete,
+    renderCustomActions
+  } = data;
+
   return (
     <div className="flex justify-end">
       {renderCustomActions ? (

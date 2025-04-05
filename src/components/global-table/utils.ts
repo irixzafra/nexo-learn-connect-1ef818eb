@@ -4,6 +4,25 @@ import { TableColumn } from "./types";
 import { createColumn, createActionsColumn } from "@/components/shared/DataTableUtils";
 import { format } from "date-fns";
 
+// Type for cell data that will be passed to renderers
+export type CellData = {
+  value: any;
+  type: string;
+  options?: { label: string; value: string | number | boolean }[];
+  cellInfo: any;
+};
+
+// Type for action cell data
+export type ActionCellData = {
+  item: any;
+  itemId: string | number;
+  hasEdit: boolean;
+  hasDelete: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  renderCustomActions?: (data: any) => React.ReactNode;
+};
+
 // Function to construct TanStack table columns from our custom column format
 export function constructColumns<TData>(
   columns: TableColumn<TData>[],
@@ -24,13 +43,13 @@ export function constructColumns<TData>(
       cell: ({ row }) => {
         const value = row.getValue(column.accessorKey || column.id);
         
-        // Return a data object instead of JSX, the actual rendering will be done in the consuming component
+        // Return data object that will be rendered by a component
         return {
           value,
-          type: column.type,
+          type: column.type || 'text',
           options: column.options,
           cellInfo: row
-        };
+        } as unknown as React.ReactNode; // Cast to ReactNode to satisfy TypeScript
       },
       enableSorting: column.enableSorting !== false,
       enableFiltering: column.enableFiltering,
@@ -47,7 +66,6 @@ export function constructColumns<TData>(
         const itemId = (item as any).id;
         
         // Return the necessary data for rendering actions
-        // The actual JSX will be in the consuming component
         return { 
           item, 
           itemId, 
@@ -56,7 +74,7 @@ export function constructColumns<TData>(
           onEdit: onEdit ? () => onEdit(item) : undefined,
           onDelete: onDelete ? () => onDelete(itemId) : undefined,
           renderCustomActions
-        };
+        } as unknown as React.ReactNode; // Cast to ReactNode to satisfy TypeScript
       }
     });
     

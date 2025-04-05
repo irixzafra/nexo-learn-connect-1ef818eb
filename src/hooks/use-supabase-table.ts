@@ -56,12 +56,15 @@ export function useSupabaseTable<TData extends Record<string, any> = Record<stri
         
         if (queryError) throw queryError;
         
-        // Add type safety by first converting to unknown
-        if (transformer) {
-          return (queryData as unknown[]).map(item => transformer(item)) as TData[];
+        // Fix type safety by proper type assertion
+        if (transformer && queryData) {
+          // First convert to unknown to avoid direct type conversion
+          const unknownData = queryData as unknown[];
+          return unknownData.map(item => transformer(item)) as TData[];
         }
         
-        return queryData as unknown as TData[];
+        // Safely convert to TData[]
+        return (queryData || []) as unknown as TData[];
       } catch (error) {
         console.error('Error fetching data:', error);
         if (onError) onError(error as Error);
@@ -81,7 +84,7 @@ export function useSupabaseTable<TData extends Record<string, any> = Record<stri
           .select();
         
         if (error) throw error;
-        return newData[0] as TData;
+        return newData?.[0] as unknown as TData;
       } catch (error) {
         console.error('Error creating item:', error);
         throw error;
@@ -111,7 +114,7 @@ export function useSupabaseTable<TData extends Record<string, any> = Record<stri
           .select();
         
         if (error) throw error;
-        return updatedData[0] as TData;
+        return updatedData?.[0] as unknown as TData;
       } catch (error) {
         console.error('Error updating item:', error);
         throw error;
