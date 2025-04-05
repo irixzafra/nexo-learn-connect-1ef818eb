@@ -14,7 +14,7 @@ export const useSidebarNavigation = (
 ) => {
   const navigate = useNavigate();
   const { state, setState } = useSidebar();
-  const { switchUserRole, viewAs } = useAuth();
+  const { userRole: currentRole } = useAuth();
   const { isEditModeEnabled } = useInlineEditor();
   
   const [currentLanguage, setCurrentLanguage] = useState<string>('es');
@@ -37,14 +37,11 @@ export const useSidebarNavigation = (
       onRoleChange(role);
     }
     
-    // Usar la función viewAs del contexto de autenticación
-    viewAs(role);
-    
     // Navegar a la página de inicio correspondiente al rol
     const homePath = getHomePathByRole(role);
     navigate(homePath);
     
-  }, [navigate, onRoleChange, viewAs]);
+  }, [navigate, onRoleChange]);
 
   // Efecto para actualizar el rol actual cuando cambia externamente
   useEffect(() => {

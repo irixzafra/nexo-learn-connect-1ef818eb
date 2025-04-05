@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigationItems } from '@/hooks/useNavigationItems';
 import { UserRoleType } from '@/types/auth';
 import { Button } from '@/components/ui/button';
-import { EditIcon, SaveIcon, EyeIcon, EyeOffIcon, ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
+import { EditIcon, SaveIcon, EyeIcon, EyeOffIcon, ArrowUpIcon, ArrowDownIcon, Menu } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -62,7 +62,6 @@ export const InlineNavigationEditor: React.FC = () => {
       toast({
         title: "Cambios guardados",
         description: "Los cambios en la navegación se han guardado correctamente",
-        variant: "success",
       });
       setIsOpen(false);
     } catch (error) {
@@ -121,7 +120,6 @@ export const InlineNavigationEditor: React.FC = () => {
                 <Switch
                   checked={item.isVisible}
                   onCheckedChange={(checked) => updateItemVisibility(item.id, checked)}
-                  size="sm"
                   className="data-[state=checked]:bg-green-500"
                 />
               </TooltipTrigger>
@@ -165,12 +163,11 @@ export const InlineNavigationEditor: React.FC = () => {
       <SheetTrigger asChild>
         <Button 
           variant="outline" 
-          size="sm" 
-          className="fixed bottom-4 right-4 z-50 shadow-lg gap-2"
-          onClick={() => setIsOpen(true)}
+          size="icon"
+          className="fixed bottom-20 right-4 z-50 shadow-lg h-10 w-10 rounded-full bg-background"
         >
-          <EditIcon className="h-4 w-4" />
-          Editar Navegación
+          <Menu className="h-4 w-4" />
+          <span className="sr-only">Editar Navegación</span>
         </Button>
       </SheetTrigger>
       <SheetContent className="w-[350px] sm:w-[450px]">
