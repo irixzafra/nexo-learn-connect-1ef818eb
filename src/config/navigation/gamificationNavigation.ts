@@ -6,7 +6,7 @@ import {
   Zap, 
   Star
 } from 'lucide-react';
-import { MenuItem } from './types';
+import { MenuItem } from '@/types/navigation';
 
 /**
  * Menú de Gamificación

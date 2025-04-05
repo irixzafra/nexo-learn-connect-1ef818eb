@@ -1,4 +1,3 @@
-
 import { UserRoleType } from '@/types/auth';
 import { NavigationItemWithChildren } from '@/types/navigation-manager';
 import { getNavigationByRole } from '@/config/navigation';
@@ -8,7 +7,6 @@ export const fetchNavigationItems = async (
   role: UserRoleType
 ): Promise<NavigationItemWithChildren[]> => {
   // In a real application, this would fetch from an API
-  // For now, we'll use the static configuration
   try {
     // Simulating API delay
     await new Promise((resolve) => setTimeout(resolve, 300));
