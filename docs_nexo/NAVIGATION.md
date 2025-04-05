@@ -1,5 +1,4 @@
 
-
 # Navegación del Sistema Nexo Learning
 
 Este documento sirve como la fuente única de verdad (SSOT) para la estructura de navegación de Nexo Learning. Define los principios, componentes y organización de la navegación para todos los roles de usuario.
@@ -8,10 +7,10 @@ Este documento sirve como la fuente única de verdad (SSOT) para la estructura d
 
 La navegación de Nexo Learning se basa en cuatro principios fundamentales:
 
-1. **Simplicidad**: Máximo 2 niveles de navegación para evitar la complejidad.
-2. **Contextualidad**: Elementos de navegación específicos al contexto actual del usuario.
-3. **Consistencia**: Patrones de navegación similares en toda la aplicación.
-4. **Adaptabilidad**: Sistema de navegación único que se adapta a cada rol de usuario.
+1. **Simplicidad**: Máximo 2 niveles de navegación para evitar la [complejidad](docs_nexo/GLOSARY.md#complejidad).
+2. **Contextualidad**: Elementos de navegación específicos al contexto actual del [usuario](docs_nexo/GLOSARY.md#usuario).
+3. **Consistencia**: Patrones de navegación similares en toda la [aplicación](docs_nexo/GLOSARY.md#aplicación).
+4. **Adaptabilidad**: Sistema de navegación único que se adapta a cada [rol de usuario](docs_nexo/GLOSARY.md#rol-de-usuario).
 
 ## Componentes Principales de Navegación
 
@@ -25,7 +24,7 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
 ### Barra Superior (Header)
 - **MainHeader**: Barra superior con logo, búsqueda y acciones rápidas
 - **Breadcrumbs**: Navegación de ruta actual
-- **QuickActions**: Botones de acción rápida (notificaciones, mensajes, etc.)
+- **QuickActions**: Botones de acción rápida ([notificaciones](docs_nexo/GLOSARY.md#notificaciones), mensajes, etc.)
 - **UserMenu**: Menú desplegable de acciones del usuario
 
 ### Pie de Página (Footer)
@@ -45,7 +44,7 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
 
 **Header:**
 - Logo
-- Cursos
+- [Cursos](docs_nexo/features/courses/overview.md)
 - Rutas Aprendizaje
 - Sobre Nosotros
 - Ayuda
@@ -64,9 +63,9 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
 
 **Header:**
 - Logo
-- Buscador (Futuro)
-- Notificaciones (Placeholder)
-- Mensajes (Placeholder)
+- Buscador
+- [Notificaciones](docs_nexo/GLOSARY.md#notificaciones)
+- Mensajes
 - UserMenu (Perfil, Config, Ayuda, Logout)
 - Idioma
 - Tema
@@ -80,37 +79,37 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
    - Alertas y notificaciones importantes
 
 2. **Académico (LMS)**
-   - Gestión de cursos
-   - Contenido Global (Placeholder)
-   - Categorías (Placeholder)
-   - Rutas de Aprendizaje (Placeholder)
-   - Certificados (Placeholder)
+   - Gestión de [cursos](docs_nexo/features/courses/README.md)
+   - Contenido Global
+   - Categorías
+   - Rutas de Aprendizaje
+   - Certificados
    - Analíticas Académicas
 
 3. **Gestión Central (ERP)**
-   - Gestión de usuarios
-   - Roles y permisos
+   - Gestión de [usuarios](docs_nexo/features/users/README.md)
+   - [Roles y permisos](docs_nexo/GLOSARY.md#roles-y-permisos)
    - Analíticas de usuarios
-   - Comunicación (Placeholder)
+   - Comunicación
 
 4. **Finanzas**
-   - Transacciones (Placeholder)
-   - Suscripciones (Placeholder)
+   - Transacciones
+   - Suscripciones
    - Analíticas Financieras
-   - Configuración de pagos (Placeholder)
+   - Configuración de pagos
 
 5. **Sistema (Plataforma)**
-   - Configuración General (Ruta Unificada)
-   - Diseño (Placeholder)
-   - Páginas CMS (Ruta Unificada)
+   - Configuración General
+   - Diseño
+   - [Páginas CMS](docs_nexo/features/pages/README.md)
    - Gestión de Features
-   - Integraciones (Placeholder)
-   - Analíticas de Plataforma (Placeholder)
-   - Salud/Logs (Placeholder)
+   - Integraciones
+   - Analíticas de Plataforma
+   - Salud/Logs
 
-6. **Herramientas Dev (Opcional)**
+6. **Herramientas Dev**
    - Diagrama de navegación
-   - Revisión de elementos (Placeholder)
+   - Revisión de elementos
    - Herramientas de desarrollo
    - Configuraciones avanzadas
 
@@ -120,7 +119,7 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
 ### Sidebar - Rol Instructor (por Workflow)
 
 1. **Dashboard**
-   - Panel Instructor (`/app/instructor/dashboard`)
+   - Panel [Instructor](docs_nexo/features/instructor/README.md) (`/app/instructor/dashboard`)
    - Resumen de actividad reciente
    - Métricas de cursos
    - Próximas sesiones
@@ -129,19 +128,19 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
 2. **Gestión Académica**
    - Mis Cursos
    - Crear Curso
-   - Biblioteca de Contenido (Placeholder)
+   - Biblioteca de Contenido
 
 3. **Participantes**
    - Mis Participantes
-   - Progreso/Retroalimentación (Placeholder)
-   - Comunicación (Placeholder)
+   - Progreso/Retroalimentación
+   - Comunicación
 
 4. **Rendimiento**
-   - Analíticas de Cursos (Placeholder)
+   - Analíticas de Cursos
 
 5. **Cuenta**
    - Mi Perfil
-   - Mi Facturación (Placeholder)
+   - Mi Facturación
    - Configuración
 
 **Rutas principales**: `/app/instructor/*`  
@@ -157,26 +156,26 @@ La navegación de Nexo Learning se basa en cuatro principios fundamentales:
    - Notificaciones
 
 2. **Comunidad**
-   - Feed (Placeholder)
-   - Leaderboard (Placeholder)
-   - Mensajes (Placeholder)
-   - Notificaciones (Placeholder)
+   - Feed
+   - Leaderboard
+   - Mensajes
+   - Notificaciones
 
 3. **Aprendizaje**
    - Mis Cursos
    - Explorar Cursos
-   - Rutas de Aprendizaje (Placeholder)
-   - Calendario (Placeholder)
+   - Rutas de Aprendizaje
+   - Calendario
 
 4. **Mi Cuenta**
    - Mi Perfil
-   - Progreso/Certificados (Placeholder)
-   - Facturación/Participaciones (Placeholder)
+   - Progreso/Certificados
+   - Facturación/Participaciones
    - Configuración
 
 5. **Ayuda**
-   - Centro de Ayuda (Placeholder)
-   - Contactar Soporte (Placeholder)
+   - Centro de Ayuda
+   - Contactar Soporte
 
 **Rutas principales**: `/app/*`  
 **Componentes clave**: `ParticipanteDashboard`, `CoursePlayer`, `LearningPathViewer`
@@ -215,14 +214,6 @@ export const routeMap = {
 };
 ```
 
-### Validación de Rutas
-
-El sistema incluye herramientas para validar rutas y detectar:
-- Enlaces rotos
-- Rutas duplicadas
-- Rutas sin autorización adecuada
-- Rutas deprecadas
-
 ### Buenas Prácticas
 
 1. **Usar `routeMap`**: Siempre usar constantes de `routeMap` en lugar de hardcodear rutas
@@ -230,16 +221,16 @@ El sistema incluye herramientas para validar rutas y detectar:
 3. **Parámetros**: Para rutas dinámicas, usar funciones generadoras (ej: `courseDetail(id)`)
 4. **Breadcrumbs**: Mantener la coherencia con la estructura de navegación
 
-## Detalle de Rutas por Módulo
+## Enlaces a Documentación Detallada
 
 Para rutas específicas y detalladas de cada módulo, consultar la documentación correspondiente:
 
-- **Admin**: [Documentación de Administración](features/admin/README.md)
-- **Instructor**: [Documentación de Instructor](features/instructor/README.md)
-- **Cursos**: [Documentación de Cursos](features/courses/README.md)
-- **Autenticación**: [Documentación de Autenticación](features/authentication/README.md)
-- **Comunidad**: [Documentación de Comunidad](features/community/README.md)
-- **Usuarios**: [Documentación de Usuarios](features/users/README.md)
+- **Admin**: [Documentación de Administración](docs_nexo/features/admin/README.md)
+- **Instructor**: [Documentación de Instructor](docs_nexo/features/instructor/README.md)
+- **Cursos**: [Documentación de Cursos](docs_nexo/features/courses/README.md)
+- **Autenticación**: [Documentación de Autenticación](docs_nexo/features/authentication/README.md)
+- **Comunidad**: [Documentación de Comunidad](docs_nexo/features/community/README.md)
+- **Usuarios**: [Documentación de Usuarios](docs_nexo/features/users/README.md)
 
 ## Estado de Implementación
 
@@ -257,4 +248,3 @@ La implementación del sistema de navegación se encuentra en constante evoluci�
 *Este documento representa la fuente única de verdad sobre la navegación del sistema. Cualquier cambio en la estructura de navegación debe reflejarse aquí primero.*
 
 *Última actualización: Abril 2025*
-

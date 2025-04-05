@@ -7,6 +7,13 @@ import { routeMap } from '@/utils/routeUtils';
 const MinimalistFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
+  // Enlaces definidos según el SSOT (Navigation.md)
+  const footerLinks = [
+    { path: routeMap.terms, label: 'Términos' },
+    { path: routeMap.privacy, label: 'Privacidad' },
+    { path: routeMap.contact, label: 'Contacto' }
+  ];
+  
   return (
     <footer className="bg-white border-t py-6">
       <div className="container mx-auto px-4">
@@ -23,15 +30,15 @@ const MinimalistFooter: React.FC = () => {
           </div>
           
           <nav className="flex items-center space-x-6">
-            <Link to={routeMap.terms} className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
-              Términos
-            </Link>
-            <Link to={routeMap.privacy} className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
-              Privacidad
-            </Link>
-            <Link to={routeMap.contact} className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
-              Contacto
-            </Link>
+            {footerLinks.map(link => (
+              <Link 
+                key={link.path}
+                to={link.path} 
+                className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
         </div>
       </div>

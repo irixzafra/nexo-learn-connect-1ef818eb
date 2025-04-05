@@ -14,32 +14,33 @@ import {
   Map,
   Sparkles
 } from 'lucide-react';
+import { routeMap } from '@/utils/routeUtils';
 
 interface PublicNavigationProps {
   className?: string;
 }
 
 const PublicNavigation: React.FC<PublicNavigationProps> = ({ className }) => {
+  // Enlaces definidos según el SSOT (Navigation.md)
   const navItems = [
-    { path: '/', label: 'Inicio', icon: Home },
-    { path: '/courses', label: 'Cursos', icon: BookOpen },
-    { path: '/learning-paths', label: 'Rutas de Aprendizaje', icon: Map },
-    { path: '/about-us', label: 'Sobre Nosotros', icon: Users },
-    { path: '/certificates/verification-portal', label: 'Verificar Certificados', icon: Award },
-    { path: '/scholarships', label: 'Becas', icon: Sparkles },
-    { path: '/help', label: 'Ayuda', icon: HelpCircle },
-    { path: '/contact', label: 'Contacto', icon: FileText },
+    { path: routeMap.home, label: 'Inicio', icon: Home },
+    { path: routeMap.courses, label: 'Cursos', icon: BookOpen },
+    { path: routeMap.learningPaths, label: 'Rutas de Aprendizaje', icon: Map },
+    { path: routeMap.aboutUs, label: 'Sobre Nosotros', icon: Users },
+    { path: routeMap.certificates, label: 'Verificar Certificados', icon: Award },
+    { path: routeMap.help, label: 'Ayuda', icon: HelpCircle },
+    { path: routeMap.contact, label: 'Contacto', icon: FileText },
   ];
 
   const authItems = [
-    { path: '/auth/login', label: 'Iniciar Sesión', icon: LogIn, variant: 'outline' as const },
-    { path: '/auth/register', label: 'Registrarse', icon: UserPlus, variant: 'default' as const }
+    { path: routeMap.login, label: 'Iniciar Sesión', icon: LogIn, variant: 'outline' as const },
+    { path: routeMap.register, label: 'Registrarse', icon: UserPlus, variant: 'default' as const }
   ];
 
   return (
     <nav className={`flex items-center justify-between w-full px-4 py-2 ${className}`}>
       <div className="flex items-center space-x-1">
-        <Link to="/" className="mr-4 flex items-center">
+        <Link to={routeMap.home} className="mr-4 flex items-center">
           <span className="font-bold text-xl">Nexo Learning</span>
         </Link>
         
