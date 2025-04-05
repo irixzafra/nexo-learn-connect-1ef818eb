@@ -1,18 +1,17 @@
 
 import React, { useState } from 'react';
-import { AdvancedDataTable } from '@/components/shared/AdvancedDataTable';
+import { PageHeader } from '@/components/ui/page-header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { createColumn } from '@/components/shared/DataTableUtils';
-import { PageHeader } from '@/components/ui/page-header';
+import { Card, CardContent } from '@/components/ui/card';
 import { ExternalLink, Check, AlertTriangle, FileCog, FileCode, Trash2, Box } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { useSupabaseTable } from '@/hooks/use-supabase-table';
+import { GlobalDataTable, TableDrawer, TableColumn } from '@/components/global-table';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-// Tipos para elementos en revisión
+// Types for review elements
 type ElementStatus = 'obsolete' | 'deprecated' | 'review' | 'current';
 type ElementType = 'component' | 'page' | 'route' | 'hook' | 'util';
 
@@ -28,7 +27,7 @@ interface ReviewElement {
   description?: string;
 }
 
-// Componente para filtrar elementos
+// Component for filtering elements
 const ElementsFilter: React.FC<{
   search: string;
   setSearch: (value: string) => void;
@@ -41,7 +40,7 @@ const ElementsFilter: React.FC<{
     <div className="flex flex-col sm:flex-row gap-4 py-4">
       <div className="flex-1">
         <Input
-          placeholder="Buscar por nombre o ruta..."
+          placeholder="Search by name or path..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-md"
@@ -54,35 +53,35 @@ const ElementsFilter: React.FC<{
           className="cursor-pointer"
           onClick={() => setStatusFilter('all')}
         >
-          Todos
+          All
         </Badge>
         <Badge 
           variant={statusFilter === 'obsolete' ? 'destructive' : 'outline'}
           className="cursor-pointer"
           onClick={() => setStatusFilter('obsolete')}
         >
-          Obsoletos
+          Obsolete
         </Badge>
         <Badge 
           variant={statusFilter === 'deprecated' ? 'secondary' : 'outline'}
           className="cursor-pointer"
           onClick={() => setStatusFilter('deprecated')}
         >
-          Deprecados
+          Deprecated
         </Badge>
         <Badge 
           variant={statusFilter === 'review' ? 'default' : 'outline'}
           className="cursor-pointer"
           onClick={() => setStatusFilter('review')}
         >
-          En revisión
+          Under Review
         </Badge>
         <Badge 
           variant={statusFilter === 'current' ? 'outline' : 'outline'}
           className="cursor-pointer"
           onClick={() => setStatusFilter('current')}
         >
-          Actuales
+          Current
         </Badge>
       </div>
     </div>
@@ -94,93 +93,50 @@ const ReviewElementsPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<ElementStatus | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<ElementType | 'all'>('all');
   const [selectedElement, setSelectedElement] = useState<ReviewElement | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
   
-  // Realizar la consulta a la base de datos
-  const { data: elementsData, isLoading, error, refetch } = useQuery({
+  // Use our custom hook to interact with the database
+  const {
+    data: elementsData,
+    isLoading,
+    update,
+  } = useSupabaseTable<any>({
+    tableName: 'ui_components',
     queryKey: ['review-elements'],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from('ui_components')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (error) throw error;
-        
-        // Transformamos los datos al formato que necesitamos
-        return data.map((item: any) => ({
-          id: item.id,
-          name: item.name,
-          type: (item.type || 'component') as ElementType,
-          status: (item.status === 'active' ? 'current' : 'review') as ElementStatus,
-          path: item.path || '',
-          lastUpdated: item.updated_at || item.created_at,
-          usageCount: 0, // Podríamos calcular esto desde otra consulta
-          description: item.description || ''
-        })) as ReviewElement[];
-      } catch (error) {
-        console.error("Error fetching elements data:", error);
-        return [];
-      }
-    }
+    transformer: (item: any): ReviewElement => ({
+      id: item.id,
+      name: item.name,
+      type: (item.type || 'component') as ElementType,
+      status: (item.status === 'active' ? 'current' : 'review') as ElementStatus,
+      path: item.path || '',
+      lastUpdated: item.updated_at || item.created_at,
+      usageCount: 0, // Could calculate this from another query
+      description: item.description || ''
+    })
   });
-  
-  // Si hay error en la carga de datos
-  if (error) {
-    toast.error("Error al cargar los elementos", {
-      description: "No se pudieron obtener los elementos de la base de datos"
-    });
-  }
-  
-  // Filtrado de elementos
+
+  // Filter elements based on search and selected filters
   const filteredElements = elementsData ? elementsData.filter(el => {
     const matchesSearch = search.trim() === '' || 
       el.name.toLowerCase().includes(search.toLowerCase()) ||
       el.path.toLowerCase().includes(search.toLowerCase());
       
     const matchesStatus = statusFilter === 'all' || el.status === statusFilter;
-    const matchesType = typeFilter === 'all' || el.type === typeFilter;
+    const matchesType = typeFilter === 'all' || el.type === typeFilter || 
+      (activeTab !== 'all' && el.type === activeTab);
     
     return matchesSearch && matchesStatus && matchesType;
   }) : [];
-  
-  // Helper para mostrar badge según status
-  const getStatusBadge = (status: ElementStatus) => {
-    switch (status) {
-      case 'obsolete':
-        return <Badge variant="destructive">Obsoleto</Badge>;
-      case 'deprecated':
-        return <Badge variant="secondary">Deprecado</Badge>;
-      case 'review':
-        return <Badge variant="default">En revisión</Badge>;
-      case 'current':
-        return <Badge variant="outline">Actual</Badge>;
-    }
-  };
-  
-  // Helper para mostrar badge según tipo
-  const getTypeBadge = (type: ElementType) => {
-    switch (type) {
-      case 'component':
-        return <Badge variant="outline">Componente</Badge>;
-      case 'page':
-        return <Badge variant="outline">Página</Badge>;
-      case 'route':
-        return <Badge variant="outline">Ruta</Badge>;
-      case 'hook':
-        return <Badge variant="outline">Hook</Badge>;
-      case 'util':
-        return <Badge variant="outline">Utilidad</Badge>;
-      default:
-        return <Badge variant="outline">{type}</Badge>;
-    }
-  };
-  
-  // Definición de columnas para la tabla
-  const columns = [
-    createColumn<ReviewElement>({
-      accessorKey: "name",
-      header: "Nombre",
+
+  // Define columns for the table
+  const columns: TableColumn<ReviewElement>[] = [
+    {
+      id: 'name',
+      header: 'Name',
+      accessorKey: 'name',
+      editable: true,
+      required: true,
       cell: ({ row }) => (
         <div>
           <div className="font-medium">{row.original.name}</div>
@@ -189,77 +145,181 @@ const ReviewElementsPage: React.FC = () => {
           </div>
         </div>
       ),
-    }),
-    createColumn<ReviewElement>({
-      accessorKey: "type",
-      header: "Tipo",
-      cell: ({ row }) => getTypeBadge(row.original.type),
-    }),
-    createColumn<ReviewElement>({
-      accessorKey: "status",
-      header: "Estado",
-      cell: ({ row }) => getStatusBadge(row.original.status),
-    }),
-    createColumn<ReviewElement>({
-      accessorKey: "usageCount",
-      header: "Usos",
-      cell: ({ row }) => row.original.usageCount.toString(),
-    }),
-    createColumn<ReviewElement>({
-      accessorKey: "lastUpdated",
-      header: "Última Actualización",
+    },
+    {
+      id: 'type',
+      header: 'Type',
+      accessorKey: 'type',
+      type: 'select',
+      editable: true,
+      required: true,
+      options: [
+        { label: 'Component', value: 'component' },
+        { label: 'Page', value: 'page' },
+        { label: 'Route', value: 'route' },
+        { label: 'Hook', value: 'hook' },
+        { label: 'Utility', value: 'util' }
+      ],
       cell: ({ row }) => {
-        const date = new Date(row.original.lastUpdated);
-        return date.toLocaleDateString();
+        const type = row.original.type;
+        return <Badge variant="outline">{type}</Badge>;
+      }
+    },
+    {
+      id: 'status',
+      header: 'Status',
+      accessorKey: 'status',
+      type: 'select',
+      editable: true,
+      required: true,
+      options: [
+        { label: 'Current', value: 'current' },
+        { label: 'Under Review', value: 'review' },
+        { label: 'Deprecated', value: 'deprecated' },
+        { label: 'Obsolete', value: 'obsolete' }
+      ],
+      cell: ({ row }) => {
+        const status = row.original.status;
+        switch (status) {
+          case 'obsolete':
+            return <Badge variant="destructive">Obsolete</Badge>;
+          case 'deprecated':
+            return <Badge variant="secondary">Deprecated</Badge>;
+          case 'review':
+            return <Badge variant="default">Under Review</Badge>;
+          case 'current':
+            return <Badge variant="outline">Current</Badge>;
+          default:
+            return null;
+        }
       },
-    }),
-    createColumn<ReviewElement>({
-      accessorKey: "actions",
-      header: "Acciones",
-      cell: ({ row }) => (
-        <div className="flex space-x-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setSelectedElement(row.original)}
-          >
-            <ExternalLink className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => toast.info(`Marcando como actual: ${row.original.name}`)}
-          >
-            <Check className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => toast.info(`Eliminando: ${row.original.name}`)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
-    }),
+    },
+    {
+      id: 'path',
+      header: 'Path',
+      accessorKey: 'path',
+      type: 'text',
+      editable: true,
+      required: true,
+    },
+    {
+      id: 'replacedBy',
+      header: 'Replaced By',
+      accessorKey: 'replacedBy',
+      type: 'text',
+      editable: true,
+    },
+    {
+      id: 'usageCount',
+      header: 'Uses',
+      accessorKey: 'usageCount',
+      type: 'number',
+      editable: false,
+    },
+    {
+      id: 'lastUpdated',
+      header: 'Last Updated',
+      accessorKey: 'lastUpdated',
+      type: 'date',
+      editable: false,
+    },
+    {
+      id: 'description',
+      header: 'Description',
+      accessorKey: 'description',
+      type: 'text',
+      editable: true,
+      meta: { multiline: true },
+      hidden: true,
+    }
   ];
+
+  // Handle edit element
+  const handleEditElement = (element: ReviewElement) => {
+    setSelectedElement(element);
+    setIsDrawerOpen(true);
+  };
+  
+  // Custom actions renderer
+  const renderActions = (element: ReviewElement) => (
+    <div className="flex space-x-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={(e) => {
+          e.stopPropagation();
+          // View element logic
+          toast.info(`Viewing element: ${element.name}`);
+        }}
+      >
+        <ExternalLink className="h-4 w-4" />
+      </Button>
+      
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={(e) => {
+          e.stopPropagation();
+          // Mark as current
+          toast.info(`Marking as current: ${element.name}`);
+        }}
+      >
+        <Check className="h-4 w-4" />
+      </Button>
+      
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={(e) => {
+          e.stopPropagation();
+          // Delete element logic
+          toast.info(`Deleting: ${element.name}`);
+        }}
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+
+  // Handle form submission (update element)
+  const handleSubmit = async (formData: ReviewElement) => {
+    if (!selectedElement) return;
+    
+    try {
+      const updateData = {
+        name: formData.name,
+        type: formData.type,
+        status: formData.status === 'current' ? 'active' : formData.status,
+        path: formData.path,
+        // Map other fields from ReviewElement to ui_components fields
+        description: formData.description,
+        // replacedBy would need a column in ui_components
+      };
+      
+      await update({ id: selectedElement.id, data: updateData });
+      setIsDrawerOpen(false);
+    } catch (error) {
+      console.error('Error updating element:', error);
+      toast.error('Failed to update element');
+    }
+  };
 
   return (
     <div className="container mx-auto py-4">
       <PageHeader
-        title="Revisión de Elementos"
-        description="Lista de componentes, páginas, rutas, hooks y utilidades que requieren atención"
+        title="Components Review"
+        description="Review components, pages, routes, hooks, and utilities"
       />
       
       <div className="mt-6">
-        <Tabs defaultValue="all" className="w-full">
+        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-4">
-            <TabsTrigger value="all">Todos</TabsTrigger>
-            <TabsTrigger value="components">Componentes</TabsTrigger>
-            <TabsTrigger value="pages">Páginas</TabsTrigger>
-            <TabsTrigger value="routes">Rutas</TabsTrigger>
-            <TabsTrigger value="hooks">Hooks</TabsTrigger>
-            <TabsTrigger value="utils">Utilidades</TabsTrigger>
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="component">Components</TabsTrigger>
+            <TabsTrigger value="page">Pages</TabsTrigger>
+            <TabsTrigger value="route">Routes</TabsTrigger>
+            <TabsTrigger value="hook">Hooks</TabsTrigger>
+            <TabsTrigger value="util">Utilities</TabsTrigger>
           </TabsList>
           
           <ElementsFilter 
@@ -271,83 +331,45 @@ const ReviewElementsPage: React.FC = () => {
             setTypeFilter={setTypeFilter}
           />
           
-          <AdvancedDataTable
+          <Card>
+            <CardContent className="pt-6">
+              <GlobalDataTable
+                data={filteredElements}
+                columns={columns}
+                searchPlaceholder="Search by name or path..."
+                searchColumn="name"
+                exportFilename="review-elements"
+                onRowClick={handleEditElement}
+                renderCustomActions={renderActions}
+                emptyState={
+                  isLoading ? (
+                    <div className="text-center py-8">
+                      <div className="spinner mb-2"></div>
+                      <p className="text-muted-foreground">Loading elements...</p>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Box className="mx-auto h-10 w-10 text-muted-foreground mb-2" />
+                      <p className="text-muted-foreground">
+                        No elements found for the selected filters
+                      </p>
+                    </div>
+                  )
+                }
+              />
+            </CardContent>
+          </Card>
+          
+          {/* Element Details in Drawer */}
+          <TableDrawer
+            isOpen={isDrawerOpen}
+            onClose={() => setIsDrawerOpen(false)}
+            title="Edit Element"
+            data={selectedElement}
             columns={columns}
-            data={filteredElements}
-            searchPlaceholder="Buscar por nombre o ruta..."
-            emptyState={
-              isLoading ? (
-                <div className="text-center py-8">
-                  <div className="spinner mb-2"></div>
-                  <p className="text-muted-foreground">Cargando elementos...</p>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Box className="mx-auto h-10 w-10 text-muted-foreground mb-2" />
-                  <p className="text-muted-foreground">
-                    No se encontraron elementos para los filtros seleccionados
-                  </p>
-                </div>
-              )
-            }
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
           />
-
-          {selectedElement && (
-            <div className="mt-8 border p-4 rounded-lg">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                {selectedElement.name}
-                {getStatusBadge(selectedElement.status)}
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                {selectedElement.path}
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <p className="text-sm font-medium">Tipo</p>
-                  <div>{getTypeBadge(selectedElement.type)}</div>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Número de Usos</p>
-                  <div>{selectedElement.usageCount}</div>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Última Actualización</p>
-                  <div>{new Date(selectedElement.lastUpdated).toLocaleDateString()}</div>
-                </div>
-                {selectedElement.replacedBy && (
-                  <div>
-                    <p className="text-sm font-medium">Reemplazado por</p>
-                    <div className="font-mono text-sm">{selectedElement.replacedBy}</div>
-                  </div>
-                )}
-              </div>
-              
-              <div className="mt-4">
-                <p className="text-sm font-medium">Descripción</p>
-                <p className="mt-1 text-sm">
-                  {selectedElement.description || 'Sin descripción disponible'}
-                </p>
-              </div>
-              
-              <div className="mt-6 flex justify-end gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setSelectedElement(null)}
-                >
-                  Cerrar
-                </Button>
-                {selectedElement.status !== 'current' && (
-                  <Button onClick={() => {
-                    toast.info(`Marcando ${selectedElement.name} como Actual`);
-                    setSelectedElement(null);
-                  }}>
-                    Marcar como Actual
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
         </Tabs>
       </div>
     </div>
