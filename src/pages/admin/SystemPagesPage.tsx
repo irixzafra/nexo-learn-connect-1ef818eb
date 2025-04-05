@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { PageHeader } from '@/components/ui/page-header';
 import { toast } from 'sonner';
 import { GlobalDataTable, TableDrawer, TableColumn, GlobalTableRef } from '@/components/global-table';
@@ -28,7 +28,7 @@ interface SitePage {
   path?: string;
   category?: string;
   component?: string;
-  accessType?: string;
+  accessType?: 'public' | 'authenticated' | 'admin' | 'student' | 'instructor';
   navigation?: string;
 }
 
@@ -159,9 +159,10 @@ const SystemPagesPage: React.FC = () => {
   ];
 
   // Handle edit page
-  const handleEditPage = (page: SitePage) => {
+  const handleEditPage = useCallback((page: SitePage) => {
     // Convert to PageData format for the drawer
     const pageData: PageData = {
+      id: page.id,
       title: page.title,
       path: page.slug || page.path || '',
       description: page.description || page.meta_description || '',
@@ -172,7 +173,7 @@ const SystemPagesPage: React.FC = () => {
       component: page.component || '',
       accessType: page.accessType || 'public',
       content: page.content,
-      navigation: page.navigation,
+      navigation: page.navigation || 'none',
       permissions: {
         canView: ['all'],
         canEdit: ['admin'],
@@ -183,11 +184,24 @@ const SystemPagesPage: React.FC = () => {
     
     setSelectedPage(pageData);
     setIsDrawerOpen(true);
-  };
+  }, []);
 
   // Handle create page
   const handleCreatePage = () => {
-    setSelectedPage(null);
+    const newPage: PageData = {
+      title: 'Nueva Página',
+      path: '',
+      description: '',
+      status: 'draft',
+      category: 'general',
+      accessType: 'public',
+      navigation: 'none',
+      content: {
+        blocks: []
+      }
+    };
+    
+    setSelectedPage(newPage);
     setIsDrawerOpen(true);
   };
 
@@ -222,9 +236,9 @@ const SystemPagesPage: React.FC = () => {
   };
 
   // Handle form submission (create/update)
-  const handleSubmit = async (formData: SitePage) => {
+  const handleSubmit = async (formData: Partial<SitePage>) => {
     try {
-      if (selectedPage) {
+      if (selectedPage?.id) {
         // Update existing page
         await update({ id: selectedPage.id, data: formData });
         toast.success("Página actualizada correctamente");
@@ -248,19 +262,19 @@ const SystemPagesPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Error saving page:', error);
-      toast.error(`Error al ${selectedPage ? 'actualizar' : 'crear'} la página`);
+      toast.error(`Error al ${selectedPage?.id ? 'actualizar' : 'crear'} la página`);
     }
   };
 
   // Handle save for PageEditorDrawer
   const handleSavePageEditor = async (updatedPage: PageData) => {
     try {
-      // Convert back to SitePage format
-      const pageData = {
+      // Convert PageData to SitePage format for database update
+      const pageData: Partial<SitePage> = {
         title: updatedPage.title,
         slug: updatedPage.path,
         description: updatedPage.description,
-        status: updatedPage.status,
+        status: updatedPage.status as 'draft' | 'published' | 'archived',
         category: updatedPage.category,
         component: updatedPage.component,
         accessType: updatedPage.accessType,
@@ -269,7 +283,18 @@ const SystemPagesPage: React.FC = () => {
         updated_at: new Date().toISOString()
       };
       
-      // Here we would update in the database
+      // Update the database
+      if (updatedPage.id) {
+        await update({ id: updatedPage.id, data: pageData });
+      } else {
+        await create({
+          ...pageData,
+          is_system_page: false,
+          created_at: new Date().toISOString(),
+          layout: 'default'
+        });
+      }
+      
       toast.success("Cambios guardados correctamente");
       
       // Refresh the table data
@@ -356,14 +381,12 @@ const SystemPagesPage: React.FC = () => {
       </div>
 
       {/* Enhanced Page Editor Drawer */}
-      {selectedPage && (
-        <PageEditorDrawer
-          page={selectedPage}
-          open={isDrawerOpen}
-          onOpenChange={setIsDrawerOpen}
-          onSave={handleSavePageEditor}
-        />
-      )}
+      <PageEditorDrawer
+        page={selectedPage}
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        onSave={handleSavePageEditor}
+      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

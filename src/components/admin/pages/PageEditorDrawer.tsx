@@ -16,9 +16,10 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { PageData } from './types';
 import { FileText, Eye, Save } from 'lucide-react';
+import DraggableBlocksContainer from '@/components/admin/DraggableBlocksContainer';
 
 interface PageEditorDrawerProps {
-  page: PageData;
+  page: PageData | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave?: (updatedPage: PageData) => Promise<void>;
@@ -30,7 +31,7 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
   onOpenChange,
   onSave
 }) => {
-  const [editedPage, setEditedPage] = useState<PageData>(page);
+  const [editedPage, setEditedPage] = useState<PageData | null>(page);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -40,14 +41,14 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
   }, [page]);
 
   const handleFieldChange = (field: keyof PageData, value: any) => {
-    setEditedPage(prev => ({
+    setEditedPage(prev => prev ? {
       ...prev,
       [field]: value
-    }));
+    } : null);
   };
 
   const handleSave = async () => {
-    if (!onSave) return;
+    if (!onSave || !editedPage) return;
     
     try {
       setSaving(true);
@@ -66,7 +67,8 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
     { value: 'student', label: 'Navegación de Estudiante' },
     { value: 'instructor', label: 'Navegación de Instructor' },
     { value: 'admin', label: 'Navegación de Administrador' },
-    { value: 'footer', label: 'Pie de Página' }
+    { value: 'footer', label: 'Pie de Página' },
+    { value: 'none', label: 'No mostrar en navegación' }
   ];
   
   const accessTypes = [
@@ -91,6 +93,63 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
     { value: 'account', label: 'Cuenta' },
     { value: 'marketing', label: 'Marketing' }
   ];
+
+  const renderBlockContent = (block: any) => {
+    if (!block) return null;
+
+    switch (block.type) {
+      case 'text':
+        return (
+          <div className="p-4 border rounded mb-2">
+            <div className="font-medium text-sm text-muted-foreground mb-1">{block.type}</div>
+            <p>{typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}</p>
+          </div>
+        );
+      case 'heading':
+        return (
+          <div className="p-4 border rounded mb-2">
+            <div className="font-medium text-sm text-muted-foreground mb-1">{block.type}</div>
+            <h3 className="text-xl font-semibold">{typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}</h3>
+          </div>
+        );
+      case 'hero':
+        return (
+          <div className="p-4 border rounded mb-2 bg-primary/10">
+            <div className="font-medium text-sm text-muted-foreground mb-1">{block.type}</div>
+            <h2 className="text-2xl font-bold text-center py-8">{typeof block.content === 'string' ? block.content : block.content.title || 'Hero Content'}</h2>
+            {block.content.subtitle && <p className="text-center">{block.content.subtitle}</p>}
+          </div>
+        );
+      case 'features':
+        return (
+          <div className="p-4 border rounded mb-2">
+            <div className="font-medium text-sm text-muted-foreground mb-1">{block.type}</div>
+            <h3 className="font-medium mb-2">{block.content.title || 'Features Section'}</h3>
+            <div className="grid grid-cols-3 gap-2">
+              {Array.isArray(block.content.items) ? block.content.items.map((item: any, i: number) => (
+                <div key={i} className="p-2 border rounded">
+                  <div className="text-sm font-medium">{item.title}</div>
+                  <div className="text-xs text-muted-foreground">{item.description}</div>
+                </div>
+              )) : (
+                <div className="text-sm text-muted-foreground">No items defined</div>
+              )}
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <div className="p-4 border rounded mb-2">
+            <div className="font-medium text-sm text-muted-foreground mb-1">{block.type}</div>
+            <pre className="text-xs bg-muted p-2 rounded overflow-auto">
+              {JSON.stringify(block.content, null, 2)}
+            </pre>
+          </div>
+        );
+    }
+  };
+
+  if (!editedPage) return null;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -152,7 +211,7 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
               <div className="space-y-3">
                 <Label htmlFor="category">Categoría</Label>
                 <Select 
-                  value={editedPage.category} 
+                  value={editedPage.category || ''} 
                   onValueChange={(value) => handleFieldChange('category', value)}
                 >
                   <SelectTrigger>
@@ -171,7 +230,7 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
               <div className="space-y-3">
                 <Label htmlFor="status">Estado de publicación</Label>
                 <Select 
-                  value={editedPage.status} 
+                  value={editedPage.status || ''} 
                   onValueChange={(value) => handleFieldChange('status', value)}
                 >
                   <SelectTrigger>
@@ -192,7 +251,7 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
               <div className="space-y-3">
                 <Label htmlFor="navigation">Navegación</Label>
                 <Select 
-                  value={editedPage.navigation || "main"}
+                  value={editedPage.navigation || "none"}
                   onValueChange={(value) => handleFieldChange('navigation', value)}
                 >
                   <SelectTrigger>
@@ -212,7 +271,9 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
                 <Label htmlFor="accessType">Tipo de acceso</Label>
                 <Select 
                   value={editedPage.accessType || "public"} 
-                  onValueChange={(value) => handleFieldChange('accessType', value)}
+                  onValueChange={(value: 'public' | 'authenticated' | 'admin' | 'student' | 'instructor') => 
+                    handleFieldChange('accessType', value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar tipo de acceso" />
@@ -267,28 +328,13 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
               {editedPage.content?.blocks && editedPage.content.blocks.length > 0 ? (
                 <div className="bg-white p-6 rounded-md border shadow-sm min-h-[400px]">
                   <h1 className="text-2xl font-bold mb-4">{editedPage.title}</h1>
-                  {editedPage.content.blocks.map((block, index) => (
-                    <div key={index} className="mb-4">
-                      {block.type === 'text' && (
-                        <div className="prose">
-                          {typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}
-                        </div>
-                      )}
-                      {block.type === 'heading' && (
-                        <h2 className="text-xl font-semibold mb-2">
-                          {typeof block.content === 'string' ? block.content : JSON.stringify(block.content)}
-                        </h2>
-                      )}
-                      {block.type !== 'text' && block.type !== 'heading' && (
-                        <div className="p-3 bg-gray-100 rounded border border-dashed">
-                          <p className="text-sm font-medium">{block.type}</p>
-                          <pre className="text-xs overflow-auto mt-1">
-                            {JSON.stringify(block.content, null, 2)}
-                          </pre>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                  <DraggableBlocksContainer 
+                    blocks={editedPage.content.blocks} 
+                    onBlocksChange={(blocks) => {
+                      handleFieldChange('content', { blocks });
+                    }}
+                    renderBlockContent={renderBlockContent}
+                  />
                 </div>
               ) : (
                 <div className="text-center p-8 bg-muted/20 rounded-md border border-dashed flex flex-col items-center justify-center min-h-[400px]">
@@ -299,6 +345,14 @@ const PageEditorDrawer: React.FC<PageEditorDrawerProps> = ({
                   </p>
                 </div>
               )}
+
+              <div className="mt-6">
+                <iframe 
+                  src={`/pages/${editedPage.path}`}
+                  className="w-full border rounded h-[400px] mt-4"
+                  title={`Vista previa de ${editedPage.title}`}
+                />
+              </div>
             </div>
           </TabsContent>
         </Tabs>

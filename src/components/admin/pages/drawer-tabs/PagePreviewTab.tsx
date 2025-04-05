@@ -11,9 +11,10 @@ const PagePreviewTab: React.FC<PagePreviewTabProps> = ({ page }) => {
     <div className="p-4 border rounded-md min-h-[60vh]">
       <div className="flex flex-col items-center justify-center h-full">
         <iframe 
-          src={page.path} 
+          src={`/pages/${page.path}`} 
           className="w-full h-[60vh] border rounded" 
           title={`Vista previa de ${page.title}`}
+          sandbox="allow-same-origin allow-scripts"
         />
       </div>
     </div>
