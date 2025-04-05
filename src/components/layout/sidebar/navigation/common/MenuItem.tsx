@@ -1,77 +1,55 @@
 
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface MenuItemProps {
   to: string;
   icon: LucideIcon;
   label: string;
-  badge?: number; // Keep this as number type only
   isCollapsed?: boolean;
-  isHighlighted?: boolean;
-  disabled?: boolean;
-  onClick?: () => void;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({
-  to,
-  icon: Icon,
-  label,
-  badge,
-  isCollapsed = false,
-  isHighlighted = false,
-  disabled = false,
-  onClick
+const MenuItem: React.FC<MenuItemProps> = ({ 
+  to, 
+  icon: Icon, 
+  label, 
+  isCollapsed = false 
 }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (e: React.MouseEvent) => {
-    if (disabled) {
-      e.preventDefault();
-      toast.info(`La funcionalidad "${label}" estará disponible próximamente`);
-      return;
-    }
-
-    if (onClick) {
-      e.preventDefault();
-      onClick();
-    }
-  };
-
-  return (
-    <NavLink
-      to={disabled ? '#' : to}
-      className={({ isActive }) =>
-        cn(
-          "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
-          isActive
-            ? "bg-primary text-primary-foreground"
-            : "hover:bg-muted/50",
-          isHighlighted && "ring-2 ring-primary/30",
-          disabled && "opacity-60 cursor-not-allowed"
-        )
-      }
-      onClick={handleClick}
+  const location = useLocation();
+  const isActive = location.pathname === to || location.pathname.startsWith(`${to}/`);
+  
+  const itemContent = (
+    <Link
+      to={to}
+      className={cn(
+        "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200",
+        isActive 
+          ? "bg-primary/10 text-primary font-medium" 
+          : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
+      )}
     >
-      {Icon && (
-        <Icon className="h-4 w-4" />
-      )}
-      {!isCollapsed && (
-        <>
-          <span className="flex-1">{label}</span>
-          {badge !== undefined && badge > 0 && (
-            <Badge variant="secondary" className="ml-auto">
-              {badge}
-            </Badge>
-          )}
-        </>
-      )}
-    </NavLink>
+      <Icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-muted-foreground")} />
+      {!isCollapsed && <span>{label}</span>}
+    </Link>
   );
+  
+  if (isCollapsed) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {itemContent}
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          <p>{label}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+  
+  return itemContent;
 };
 
 export default MenuItem;

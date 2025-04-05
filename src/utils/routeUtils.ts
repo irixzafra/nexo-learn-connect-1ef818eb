@@ -96,7 +96,7 @@ export const routeMap = {
   courseLesson: (courseId: string, lessonId: string) => `/app/course/${courseId}/lesson/${lessonId}`,
   exploreCourses: '/app/courses',
   
-  // Rutas de certificados
+  // Certificados
   certificates: '/certificates',
   certificateDetail: (id: string) => `/app/certificate/${id}`,
   certificateVerificationPortal: '/certificates/verify',

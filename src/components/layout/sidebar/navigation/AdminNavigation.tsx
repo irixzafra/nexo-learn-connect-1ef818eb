@@ -16,6 +16,7 @@ import {
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import MenuItem from './common/MenuItem';
+import { routeMap } from '@/utils/routeUtils';
 
 interface AdminNavigationProps {
   isOpen: boolean;
@@ -38,30 +39,30 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({
     >
       <SidebarMenu>
         <MenuItem
-          to="/app/admin/dashboard"
+          to={routeMap.adminDashboard}
           icon={BarChart3}
           label="Panel Principal"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/app/admin/users"
+          to={routeMap.adminUsers}
           icon={Users}
           label="Gestión de Usuarios"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/app/admin/courses"
+          to={routeMap.adminCourses}
           icon={Layers}
           label="Gestión de Cursos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/app/admin/reports"
+          to={routeMap.adminSystemPages}
           icon={FileText}
-          label="Informes"
+          label="Páginas CMS"
           isCollapsed={isCollapsed}
         />
         
@@ -73,14 +74,14 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({
         />
         
         <MenuItem
-          to="/app/admin/review-elements"
+          to={routeMap.adminReviewElements}
           icon={ClipboardX}
           label="Revisión Elementos"
           isCollapsed={isCollapsed}
         />
         
         <MenuItem
-          to="/app/admin/settings"
+          to={routeMap.adminSettings}
           icon={Settings}
           label="Configuración del Sistema"
           isCollapsed={isCollapsed}

@@ -11,8 +11,8 @@ interface AdminLayoutProps {
 // which already provides the sidebar navigation
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-background w-full">
-      <main className="flex-1 p-6">
+    <div className="w-full">
+      <main className="p-6">
         {children || <Outlet />}
       </main>
       
