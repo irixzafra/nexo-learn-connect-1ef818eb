@@ -24,14 +24,39 @@ interface MenuItem {
 }
 
 interface SidebarNavItemProps {
-  item: MenuItem;
+  item?: MenuItem; // Make item optional
+  href?: string;   // Add alternative props for direct usage
+  icon?: LucideIcon;
+  label?: string;
+  badge?: number | string;
   isCollapsed?: boolean;
+  disabled?: boolean;
+  isHighlighted?: boolean;
 }
 
-const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ item, isCollapsed }) => {
-  const { icon: Icon, label, path, submenu } = item;
+const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ 
+  item, 
+  href, 
+  icon: IconProp, 
+  label: labelProp, 
+  badge, 
+  isCollapsed = false,
+  disabled = false,
+  isHighlighted = false
+}) => {
   const { state } = useSidebar();
-  isCollapsed = state === "collapsed";
+  isCollapsed = isCollapsed || state === "collapsed";
+  
+  // Use either from item or direct props
+  const Icon = item?.icon || IconProp;
+  const label = item?.label || labelProp || '';
+  const path = item?.path || href || '#';
+  const submenu = item?.submenu;
+
+  if (!Icon && !label) {
+    console.warn('SidebarNavItem: Missing both icon and label');
+    return null; // Don't render if no content
+  }
 
   if (isCollapsed) {
     if (submenu) {
@@ -67,14 +92,21 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ item, isCollapsed }) =>
             to={path}
             className={({ isActive }) => cn(
               "w-full p-2 hover:bg-accent rounded-md flex items-center justify-center",
-              isActive && "bg-accent"
+              isActive && "bg-accent",
+              disabled && "opacity-50 cursor-not-allowed"
             )}
+            onClick={(e) => disabled && e.preventDefault()}
           >
             {Icon && <Icon className="h-4 w-4" />}
+            {!Icon && label && <span className="text-xs">{label.charAt(0)}</span>}
+            {badge && (
+              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
+            )}
           </NavLink>
         </TooltipTrigger>
         <TooltipContent side="right">
           {label}
+          {badge && <span className="ml-1 text-xs">({badge})</span>}
         </TooltipContent>
       </Tooltip>
     );
@@ -85,11 +117,19 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ item, isCollapsed }) =>
       to={path}
       className={({ isActive }) => cn(
         "w-full p-2 hover:bg-accent rounded-md flex items-center gap-2",
-        isActive && "bg-accent"
+        isActive && "bg-accent",
+        isHighlighted && "font-medium text-primary",
+        disabled && "opacity-50 cursor-not-allowed"
       )}
+      onClick={(e) => disabled && e.preventDefault()}
     >
       {Icon && <Icon className="h-4 w-4" />}
-      <span>{label}</span>
+      <span className={cn(isHighlighted && "font-medium")}>{label}</span>
+      {badge && (
+        <span className="ml-auto bg-primary/10 text-primary text-xs px-1.5 py-0.5 rounded-md">
+          {badge}
+        </span>
+      )}
     </NavLink>
   );
 };
