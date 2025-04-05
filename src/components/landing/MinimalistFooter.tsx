@@ -25,7 +25,7 @@ const MinimalistFooter: React.FC = () => {
               animate={false}
             />
             <span className="ml-2 text-sm text-gray-600">
-              © {currentYear} Nexo
+              © {currentYear} Nexo Learning
             </span>
           </div>
           

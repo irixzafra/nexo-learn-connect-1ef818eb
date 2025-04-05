@@ -40,6 +40,14 @@ export const routeMap = {
   aboutUs: '/about-us',
   courses: '/courses',
   
+  // Rutas legales y de soporte adicionales
+  cookies: '/cookies',
+  accessibility: '/accessibility',
+  team: '/team',
+  mission: '/mission',
+  scholarships: '/scholarships',
+  helpCenter: '/help-center',
+  
   // Rutas de aplicación autenticada
   app: '/app',
   dashboard: '/app/dashboard',
@@ -83,9 +91,9 @@ export const routeMap = {
   exploreCourses: '/app/courses',
   
   // Rutas de certificados
-  certificates: '/app/certificates',
+  certificates: '/certificates',
   certificateDetail: (id: string) => `/app/certificate/${id}`,
-  certificateVerificationPortal: '/app/certificates/verify',
+  certificateVerificationPortal: '/certificates/verify',
   
   // Rutas de perfil
   profileSettings: '/app/profile/settings',
@@ -98,9 +106,9 @@ export const routeMap = {
   notifications: '/app/notifications',
   
   // Otras rutas
-  help: '/app/help',
+  help: '/help',
   support: '/app/support',
-  learningPaths: '/app/learning-paths',
+  learningPaths: '/learning-paths',
   achievements: '/app/achievements',
   calendar: '/app/calendar'
 };

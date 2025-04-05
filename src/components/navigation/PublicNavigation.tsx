@@ -11,8 +11,7 @@ import {
   HelpCircle,
   LogIn,
   UserPlus,
-  Map,
-  Sparkles
+  Map
 } from 'lucide-react';
 import { routeMap } from '@/utils/routeUtils';
 

@@ -10,8 +10,12 @@ const Footer: React.FC = () => {
   const legalLinks = [
     { path: routeMap.terms, label: 'Términos' },
     { path: routeMap.privacy, label: 'Privacidad' },
-    { path: routeMap.cookies, label: 'Cookies' },
-    { path: routeMap.accessibility, label: 'Accesibilidad' },
+    // Note: cookies and accessibility links were causing errors because they don't exist in routeMap
+  ];
+
+  const helpLinks = [
+    { path: routeMap.help, label: 'Ayuda' },
+    { path: routeMap.contact, label: 'Contacto' },
   ];
 
   return (
@@ -22,6 +26,15 @@ const Footer: React.FC = () => {
         </p>
         <div className="flex items-center gap-4">
           {legalLinks.map((link) => (
+            <Link 
+              key={link.path}
+              to={link.path}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              {link.label}
+            </Link>
+          ))}
+          {helpLinks.map((link) => (
             <Link 
               key={link.path}
               to={link.path}
