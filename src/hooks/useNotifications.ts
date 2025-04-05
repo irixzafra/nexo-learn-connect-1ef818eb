@@ -1,187 +1,61 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { Notification } from '@/types/notifications';
-import { supabase } from '@/lib/supabase';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useNotifications = () => {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const userId = user?.id;
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch notifications
-  const {
-    data: notifications = [],
-    isLoading,
-    isError,
-    refetch
-  } = useQuery({
-    queryKey: ['notifications', userId],
-    queryFn: async () => {
-      if (!userId) return [];
-      
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(30);
-      
-      if (error) {
-        console.error('Error fetching notifications:', error);
-        return [];
-      }
-      
-      return data as Notification[];
-    },
-    enabled: !!userId,
-  });
-
-  // Subscribe to real-time notifications
   useEffect(() => {
-    if (!userId) return;
+    // This is a mock implementation. In a real app, you would fetch notifications from an API
+    if (user) {
+      // Simulate loading
+      setIsLoading(true);
+      
+      // Mock data - replace with actual API call in production
+      setTimeout(() => {
+        const mockNotifications = [
+          { id: 1, read: false, message: 'Nueva calificación en tu curso', timestamp: new Date() },
+          { id: 2, read: false, message: 'Comentario nuevo en tu publicación', timestamp: new Date() },
+          { id: 3, read: true, message: 'Curso completado', timestamp: new Date() }
+        ];
+        
+        setNotifications(mockNotifications);
+        setUnreadCount(mockNotifications.filter(n => !n.read).length);
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [user]);
 
-    // Listen for new notifications
-    const channel = supabase
-      .channel('db-notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          // Update the cache with the new notification
-          const newNotification = payload.new as Notification;
-          
-          queryClient.setQueryData(
-            ['notifications', userId],
-            (old: Notification[] | undefined) => {
-              const currentNotifications = old || [];
-              // Add the new notification at the beginning of the array
-              return [newNotification, ...currentNotifications];
-            }
-          );
-          
-          // Show a toast notification
-          toast(newNotification.title, {
-            description: newNotification.content,
-            action: {
-              label: 'Ver',
-              onClick: () => {
-                if (newNotification.action_url) {
-                  window.location.href = newNotification.action_url;
-                }
-              },
-            },
-          });
-        }
+  const markAsRead = (notificationId: number) => {
+    setNotifications(prevNotifications => 
+      prevNotifications.map(notification => 
+        notification.id === notificationId 
+          ? { ...notification, read: true } 
+          : notification
       )
-      .subscribe();
+    );
+    
+    // Update unread count
+    setUnreadCount(prev => Math.max(0, prev - 1));
+  };
 
-    // Cleanup subscription
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [userId, queryClient]);
-
-  // Mark a notification as read
-  const markAsReadMutation = useMutation({
-    mutationFn: async (notificationId: string) => {
-      if (!userId) return;
-      
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', notificationId)
-        .eq('user_id', userId);
-      
-      if (error) {
-        console.error('Error marking notification as read:', error);
-        throw error;
-      }
-    },
-    onSuccess: (_, notificationId) => {
-      // Update the cache
-      queryClient.setQueryData(
-        ['notifications', userId],
-        (old: Notification[] | undefined) => {
-          if (!old) return [];
-          
-          return old.map((notification) => {
-            if (notification.id === notificationId) {
-              return { ...notification, is_read: true };
-            }
-            return notification;
-          });
-        }
-      );
-    },
-  });
-
-  // Mark all notifications as read
-  const markAllAsReadMutation = useMutation({
-    mutationFn: async () => {
-      if (!userId) return;
-      
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', userId)
-        .eq('is_read', false);
-      
-      if (error) {
-        console.error('Error marking all notifications as read:', error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      // Update the cache
-      queryClient.setQueryData(
-        ['notifications', userId],
-        (old: Notification[] | undefined) => {
-          if (!old) return [];
-          
-          return old.map((notification) => ({
-            ...notification,
-            is_read: true,
-          }));
-        }
-      );
-      
-      toast.success('Todas las notificaciones marcadas como leídas');
-    },
-  });
-
-  // Mark a notification as read
-  const markAsRead = useCallback((notificationId: string) => {
-    markAsReadMutation.mutate(notificationId);
-  }, [markAsReadMutation]);
-
-  // Mark all notifications as read
-  const markAllAsRead = useCallback(() => {
-    markAllAsReadMutation.mutate();
-  }, [markAllAsReadMutation]);
-
-  // Refresh notifications
-  const refreshNotifications = useCallback(() => {
-    refetch();
-  }, [refetch]);
-
-  // Calculate unread count
-  const unreadCount = notifications.filter(n => !n.is_read).length;
+  const markAllAsRead = () => {
+    setNotifications(prevNotifications => 
+      prevNotifications.map(notification => ({ ...notification, read: true }))
+    );
+    
+    // Reset unread count
+    setUnreadCount(0);
+  };
 
   return {
     notifications,
     unreadCount,
     isLoading,
-    isError,
     markAsRead,
-    markAllAsRead,
-    refreshNotifications,
+    markAllAsRead
   };
 };

@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { UserMenu } from './header/UserMenu';
-import { HeaderActions } from './header/HeaderActions';
-import { HeaderLogo } from './header/HeaderLogo';
+import UserMenu from './header/UserMenu';
+import HeaderActions from './header/HeaderActions';
+import HeaderLogo from './header/HeaderLogo';
 import { BreadcrumbHeader } from './header/BreadcrumbHeader';
-import { RoleIndicator } from './header/RoleIndicator';
+import RoleIndicator from './header/RoleIndicator';
 import { cn } from '@/lib/utils';
 
 interface AppHeaderProps {
