@@ -25,21 +25,20 @@ export interface AuthContextType {
   user: User | null;
   userRole: UserRoleType | null;
   profile: UserProfile | null;
-  userProfile: UserProfile | null;
   effectiveRole: UserRoleType | null;
   simulatedRole: UserRoleType | null;
   isViewingAsOtherRole: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
-  isInitialized: boolean;
   session: Session | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  register?: (email: string, password: string, name: string) => Promise<void>;
-  resetPassword?: (email: string) => Promise<void>;
-  setSimulatedRole: (role: UserRoleType | null) => void;
+  register: (email: string, password: string, name: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  setSimulatedRole: (role: UserRoleType | null) => Promise<void>;
   resetToOriginalRole: () => void;
-  forceUpdateRole: (email: string, role: UserRoleType) => Promise<{ success: boolean, error?: any }>;
+  forceUpdateRole: () => Promise<void>;
+  userProfile: UserProfile | null;
 }
 
 export function toUserRoleType(role: string | null): UserRoleType {

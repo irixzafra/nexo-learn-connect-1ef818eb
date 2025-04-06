@@ -1,77 +1,73 @@
 
 import React from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Globe } from "lucide-react";
-import { SupportedLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, SupportedLanguage, LANGUAGE_NAMES } from '@/contexts/LanguageContext';
 
 interface LanguageSelectorProps {
   currentLanguage: SupportedLanguage;
-  languages: { code: string; name: string }[];
+  languages: Array<{ code: string; name: string }>;
   onChange: (code: string) => void;
-  variant?: 'default' | 'minimal' | 'icon';
-  align?: 'start' | 'end' | 'center';
+  variant?: 'icon' | 'full' | 'minimal';
+  align?: 'start' | 'center' | 'end';
 }
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   currentLanguage,
   languages,
   onChange,
-  variant = 'default',
+  variant = 'icon',
   align = 'end'
 }) => {
-  const handleLanguageChange = (code: string) => {
-    onChange(code);
+  // Get language flag emoji based on language code
+  const getLanguageFlag = (code: string): string => {
+    switch (code) {
+      case 'es': return '🇪🇸';
+      case 'en': return '🇺🇸';
+      case 'pt': return '🇧🇷';
+      case 'fr': return '🇫🇷';
+      case 'de': return '🇩🇪';
+      default: return '🌐';
+    }
   };
-
-  if (variant === 'minimal') {
-    return (
-      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-        <Globe className="h-4 w-4" />
-      </Button>
-    );
-  }
-
-  if (variant === 'icon') {
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-            <Globe className="h-4 w-4" />
-            <span className="sr-only">Cambiar idioma</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align={align}>
-          {languages.map((language) => (
-            <DropdownMenuItem 
-              key={language.code}
-              className="cursor-pointer"
-              onClick={() => handleLanguageChange(language.code)}
-            >
-              {language.name}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
-  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8">
-          <Globe className="mr-2 h-4 w-4" />
-          {languages.find(l => l.code === currentLanguage)?.name || currentLanguage}
-        </Button>
+        {variant === 'icon' ? (
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+            <Globe className="h-4 w-4" />
+            <span className="sr-only">Cambiar idioma</span>
+          </Button>
+        ) : variant === 'minimal' ? (
+          <Button variant="ghost" size="sm" className="px-2 h-8">
+            {getLanguageFlag(currentLanguage)}
+            <span className="sr-only">Cambiar idioma</span>
+          </Button>
+        ) : (
+          <Button variant="outline" size="sm" className="gap-2">
+            {getLanguageFlag(currentLanguage)}
+            <span>{LANGUAGE_NAMES[currentLanguage]}</span>
+          </Button>
+        )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={align}>
-        {languages.map((language) => (
+      <DropdownMenuContent align={align} className="w-40">
+        {languages.map((lang) => (
           <DropdownMenuItem 
-            key={language.code}
-            className="cursor-pointer"
-            onClick={() => handleLanguageChange(language.code)}
+            key={lang.code}
+            onClick={() => onChange(lang.code)}
+            className={`cursor-pointer flex items-center gap-2 ${
+              currentLanguage === lang.code ? 'bg-accent text-accent-foreground' : ''
+            }`}
           >
-            {language.name}
+            <span>{getLanguageFlag(lang.code)}</span>
+            <span>{lang.name}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

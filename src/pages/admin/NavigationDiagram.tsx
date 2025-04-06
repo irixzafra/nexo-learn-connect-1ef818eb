@@ -9,10 +9,9 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import appRoutes from '@/routes/app';
 import { adminNavigation } from '@/config/navigation/adminNavigation';
 import { settingsNavigation } from '@/config/navigation/settingsNavigation';
-
-// Removed the invalid import: import appRoutes from '@/routes/app';
 
 const extractRoutes = (routes, parentPath = '') => {
   if (!routes) return [];
@@ -155,9 +154,7 @@ const NavigationDiagram: React.FC = () => {
   });
   
   useEffect(() => {
-    // Instead of using appRoutes directly, we can extract routes from current app routing
-    // For now, we'll work with empty routes until we have a proper routes structure
-    const extractedRoutes = []; // Was: extractRoutes(appRoutes);
+    const extractedRoutes = extractRoutes(appRoutes);
     const grouped = groupRoutesBySection(extractedRoutes);
     setRouteGroups(grouped);
   }, []);

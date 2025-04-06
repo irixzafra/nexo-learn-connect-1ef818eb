@@ -1,102 +1,56 @@
 
-import React from 'react';
+import React, { lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import AppLayout from "@/layouts/AppLayout";
-import SafeRouteWrapper from '@/components/SafeRouteWrapper';
-import NotFound from '@/pages/NotFound';
+import { Suspense } from 'react';
+import LoadingScreen from '@/components/LoadingScreen';
 
-// Admin pages (mantener solo los funcionales)
-import AdminDashboard from '@/pages/admin/Dashboard';
-import UserManagement from '@/pages/admin/UserManagement';
-import AdminCourses from '@/pages/admin/AdminCourses';
-import Features from '@/pages/admin/Features';
-import Settings from '@/pages/admin/Settings';
-import SystemSettings from '@/pages/admin/SystemSettings';
-import RoleManagement from '@/pages/admin/RoleManagement';
-import NavigationDiagram from '@/pages/admin/NavigationDiagram';
-import ReviewElementsPage from '@/pages/admin/ReviewElementsPage';
+// Lazy loaded pages
+const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
+const UsersPage = lazy(() => import('@/pages/admin/UsersPage'));
+const CoursesPage = lazy(() => import('@/pages/admin/CoursesPage'));
+const SystemPagesPage = lazy(() => import('@/pages/admin/SystemPagesPage'));
+const DesignSystemPage = lazy(() => import('@/pages/admin/DesignSystemPage'));
+const OrphanReviewPage = lazy(() => import('@/pages/admin/OrphanReviewPage'));
+const NavigationDiagramPage = lazy(() => import('@/pages/admin/NavigationDiagramPage'));
+const NavigationManagerPage = lazy(() => import('@/pages/admin/NavigationManagerPage'));
+const DevelopmentToolsPage = lazy(() => import('@/pages/admin/DevelopmentToolsPage'));
+const ReviewElementsPage = lazy(() => import('@/pages/admin/ReviewElementsPage'));
+const FeaturesPage = lazy(() => import('@/pages/admin/settings/features'));
+const SystemSettings = lazy(() => import('@/pages/admin/SystemSettings'));
+const DeveloperSettingsPage = lazy(() => import('@/pages/admin/settings/developer'));
+const ComingSoonPage = lazy(() => import('@/pages/common/ComingSoonPage'));
+const PagesManagement = lazy(() => import('@/pages/admin/settings/pages'));
+const RoleManagement = lazy(() => import('@/pages/admin/RoleManagement'));
 
-const AdminRoutes: React.FC = () => {
+// Routes that are part of the admin module
+const AdminRoutes = () => {
   return (
-    <Routes>
-      <Route path="/" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['admin']}>
-            <AdminDashboard />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/dashboard" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['admin']}>
-            <AdminDashboard />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/users" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['admin']}>
-            <UserManagement />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/courses" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['admin']}>
-            <AdminCourses />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/features" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['admin']}>
-            <Features />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/settings" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['admin']}>
-            <Settings />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/system-settings" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['admin']}>
-            <SystemSettings />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/roles" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['admin']}>
-            <RoleManagement />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/navigation-diagram" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['admin']}>
-            <NavigationDiagram />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      <Route path="/review-elements" element={
-        <AppLayout>
-          <SafeRouteWrapper requiredRole={['admin']}>
-            <ReviewElementsPage />
-          </SafeRouteWrapper>
-        </AppLayout>
-      } />
-      
-      {/* Catch-all route for admin routes not found */}
-      <Route path="*" element={
-        <AppLayout>
-          <Navigate to="/app/admin/dashboard" replace />
-        </AppLayout>
-      } />
-    </Routes>
+    <Suspense fallback={<LoadingScreen />}>
+      <Routes>
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="courses" element={<CoursesPage />} />
+        <Route path="pages" element={<SystemPagesPage />} />
+        <Route path="system-pages" element={<SystemPagesPage />} />
+        <Route path="settings/pages" element={<PagesManagement />} />
+        <Route path="design-system" element={<DesignSystemPage />} />
+        <Route path="navigation-diagram" element={<NavigationDiagramPage />} />
+        <Route path="navigation-manager" element={<NavigationManagerPage />} />
+        <Route path="orphan-review" element={<OrphanReviewPage />} />
+        <Route path="development" element={<DevelopmentToolsPage />} />
+        <Route path="features" element={<FeaturesPage />} />
+        <Route path="review-elements" element={<ReviewElementsPage />} />
+        <Route path="settings" element={<SystemSettings />} />
+        <Route path="settings/developer" element={<DeveloperSettingsPage />} />
+        <Route path="database" element={<ComingSoonPage />} />
+        <Route path="security" element={<ComingSoonPage />} />
+        <Route path="system/health" element={<ComingSoonPage />} />
+        <Route path="system/logs" element={<ComingSoonPage />} />
+        <Route path="roles" element={<RoleManagement />} />
+        <Route path="instructors" element={<ComingSoonPage />} />
+        <Route path="*" element={<Navigate to="/app/admin/dashboard" replace />} />
+      </Routes>
+    </Suspense>
   );
 };
 

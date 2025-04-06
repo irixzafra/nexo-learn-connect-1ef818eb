@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import AppLayout from '@/layouts/AppLayout';
 import ModeratorDashboard from '@/pages/moderator/Dashboard';
 import ContentReview from '@/pages/moderator/ContentReview';
 import CommunityManagement from '@/pages/moderator/CommunityManagement';
@@ -11,11 +12,31 @@ import NotFound from '@/pages/NotFound';
 const ModeratorRoutes: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<ModeratorDashboard />} />
-      <Route path="/content-review" element={<ContentReview />} />
-      <Route path="/community" element={<CommunityManagement />} />
-      <Route path="/reported-content" element={<ReportedContent />} />
-      <Route path="/user-warnings" element={<UserWarnings />} />
+      <Route path="/" element={
+        <AppLayout>
+          <ModeratorDashboard />
+        </AppLayout>
+      } />
+      <Route path="/content-review" element={
+        <AppLayout>
+          <ContentReview />
+        </AppLayout>
+      } />
+      <Route path="/community" element={
+        <AppLayout>
+          <CommunityManagement />
+        </AppLayout>
+      } />
+      <Route path="/reported-content" element={
+        <AppLayout>
+          <ReportedContent />
+        </AppLayout>
+      } />
+      <Route path="/user-warnings" element={
+        <AppLayout>
+          <UserWarnings />
+        </AppLayout>
+      } />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

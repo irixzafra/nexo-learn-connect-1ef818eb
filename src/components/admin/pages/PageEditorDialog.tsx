@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
@@ -14,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Code, Search, FileText, Eye } from 'lucide-react';
-import { SitePage, PageLayout, PageStatus } from '@/types/pages';
+import { SitePage, PageLayout } from '@/types/pages';
 import { getPageById, updatePage, isSlugUnique } from '@/features/admin/services/pagesService';
 import PageContentEditor from './PageContentEditor';
 import PageSeoEditor from './PageSeoEditor';
@@ -32,7 +33,7 @@ const formSchema = z.object({
   slug: z.string().min(2, 'El slug debe tener al menos 2 caracteres')
     .regex(/^[a-z0-9-]+$/, 'El slug solo puede contener letras minúsculas, números y guiones'),
   meta_description: z.string().max(160, 'La meta descripción no debe exceder los 160 caracteres').optional().or(z.literal('')),
-  status: z.enum(['draft', 'published', 'archived', 'scheduled'] as const) as z.ZodEnum<[PageStatus, ...PageStatus[]]>,
+  status: z.enum(['draft', 'published', 'archived', 'scheduled'] as const),
   layout: z.enum([
     'default', 
     'landing', 
@@ -46,7 +47,7 @@ const formSchema = z.object({
     'grid-2',
     'grid-3',
     'grid-4'
-  ] as const) as z.ZodEnum<[PageLayout, ...PageLayout[]]>,
+  ] as const),
   content: z.any(),
 });
 
@@ -69,7 +70,7 @@ const PageEditorDialog: React.FC<PageEditorProps> = ({
       title: '',
       slug: '',
       meta_description: '',
-      status: 'draft' as PageStatus,
+      status: 'draft',
       layout: 'default' as PageLayout,
       content: { blocks: [] },
     }
@@ -108,6 +109,7 @@ const PageEditorDialog: React.FC<PageEditorProps> = ({
     try {
       setSaving(true);
       
+      // Check if slug is unique (only if changed)
       if (data.slug !== page.slug) {
         const slugIsUnique = await isSlugUnique(data.slug, pageId);
         if (!slugIsUnique) {
@@ -120,7 +122,7 @@ const PageEditorDialog: React.FC<PageEditorProps> = ({
         }
       }
       
-      await updatePage(pageId, data as unknown as Partial<SitePage>);
+      await updatePage(pageId, data);
       toast.success('Página actualizada con éxito');
       onPageUpdated();
       onOpenChange(false);

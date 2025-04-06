@@ -1,18 +1,18 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import ProtectedRoute from "@/components/ProtectedRoute";
 import NotFound from "@/pages/NotFound";
 import AppLayout from "@/layouts/AppLayout";
 
 // Student pages
 import StudentDashboard from "@/pages/student/Dashboard";
-import StudentMyCourses from '@/pages/student/MyCourses';
-import LessonView from '@/pages/student/LessonView';
-import ProfileDashboard from '@/pages/profile/ProfileDashboard';
-import ProfileEdit from '@/pages/profile/ProfileEdit';
-import ProfileSecurity from '@/pages/profile/ProfileSecurity';
-import ProfileNotifications from '@/pages/profile/ProfileNotifications';
-import ProfileSubscriptions from '@/pages/profile/ProfileSubscriptions';
+import StudentCourses from "@/pages/student/Courses";
+import Invoices from "@/pages/student/Invoices";
+import Calendar from "@/pages/placeholder/Calendar";
+import Messages from "@/pages/placeholder/Messages";
+import Settings from "@/pages/placeholder/Settings";
+import Preferences from "@/pages/user/Preferences";
 
 const UserRoutes: React.FC = () => {
   return (
@@ -29,41 +29,35 @@ const UserRoutes: React.FC = () => {
       } />
       <Route path="/my-courses" element={
         <AppLayout>
-          <StudentMyCourses />
+          <StudentCourses />
         </AppLayout>
       } />
-      <Route path="/course/:courseId/lesson/:lessonId" element={
+      <Route path="/invoices" element={
         <AppLayout>
-          <LessonView />
+          <Invoices />
         </AppLayout>
       } />
-      <Route path="/profile" element={
+      <Route path="/calendar" element={
         <AppLayout>
-          <ProfileDashboard />
+          <Calendar />
         </AppLayout>
       } />
-      <Route path="/profile/edit" element={
+      <Route path="/messages" element={
         <AppLayout>
-          <ProfileEdit />
+          <Messages />
         </AppLayout>
       } />
-      <Route path="/profile/security" element={
+      <Route path="/settings" element={
         <AppLayout>
-          <ProfileSecurity />
+          <Settings />
         </AppLayout>
       } />
-      <Route path="/profile/notifications" element={
+      <Route path="/preferences" element={
         <AppLayout>
-          <ProfileNotifications />
+          <Preferences />
         </AppLayout>
       } />
-      <Route path="/profile/subscriptions" element={
-        <AppLayout>
-          <ProfileSubscriptions />
-        </AppLayout>
-      } />
-      
-      {/* Catch-all route for user routes not found */}
+      {/* Catch-all route para rutas de usuario no encontradas */}
       <Route path="*" element={
         <AppLayout>
           <NotFound />

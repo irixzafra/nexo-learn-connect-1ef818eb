@@ -1,7 +1,9 @@
 
 import React from 'react';
 import { BookOpen } from 'lucide-react';
-import { SidebarMenu } from '@/components/ui/sidebar';
+import { 
+  SidebarMenu
+} from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
 import { SidebarGroup } from '../SidebarGroup';
 import MenuItem from './common/MenuItem';
@@ -26,7 +28,21 @@ const MisCursosNavigation: React.FC<MisCursosNavigationProps> = ({ isOpen, onTog
         <MenuItem
           to="/app/my-courses"
           icon={BookOpen}
-          label="Mis Cursos"
+          label="Todos Mis Cursos"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/app/my-courses/in-progress"
+          icon={BookOpen}
+          label="En Progreso"
+          isCollapsed={isCollapsed}
+        />
+        
+        <MenuItem
+          to="/app/my-courses/completed"
+          icon={BookOpen}
+          label="Completados"
           isCollapsed={isCollapsed}
         />
       </SidebarMenu>

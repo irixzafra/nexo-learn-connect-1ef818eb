@@ -6,30 +6,20 @@ import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AdvancedDataTable } from '@/components/shared/AdvancedDataTable';
 import { PageData } from '@/components/admin/pages/types';
+import PageEditorDrawer from '@/components/admin/pages/PageEditorDrawer';
+import { createPageColumns } from '@/components/admin/pages/config/pageTableColumns';
 import { mockPagesData } from '@/components/admin/pages/data/mockPages';
 
-// Simple column definition to replace the imported one
-const createPageColumns = () => [
-  {
-    accessorKey: 'title',
-    header: 'Título'
-  },
-  {
-    accessorKey: 'path',
-    header: 'Ruta'
-  },
-  {
-    accessorKey: 'status',
-    header: 'Estado'
-  },
-  {
-    accessorKey: 'updated',
-    header: 'Actualizado'
-  }
-];
-
 const PagesManagement: React.FC = () => {
-  const columns = createPageColumns();
+  const [selectedPage, setSelectedPage] = useState<PageData | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleRowClick = (page: PageData) => {
+    setSelectedPage(page);
+    setDrawerOpen(true);
+  };
+
+  const columns = createPageColumns(handleRowClick);
 
   return (
     <div className="space-y-6">
@@ -56,9 +46,18 @@ const PagesManagement: React.FC = () => {
             data={mockPagesData}
             searchPlaceholder="Buscar página..."
             exportFilename="paginas-sistema"
+            onRowClick={handleRowClick}
           />
         </CardContent>
       </Card>
+
+      {selectedPage && (
+        <PageEditorDrawer
+          page={selectedPage}
+          open={drawerOpen}
+          onOpenChange={setDrawerOpen}
+        />
+      )}
     </div>
   );
 };

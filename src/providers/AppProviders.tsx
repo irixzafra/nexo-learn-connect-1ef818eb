@@ -2,51 +2,55 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { Toaster } from '@/components/ui/toaster';
-import { HelmetProvider } from 'react-helmet-async';
+import { EditModeProvider } from '@/contexts/EditModeContext';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { Toaster } from '@/components/ui/sonner';
+import { TestDataProvider } from '@/contexts/test-data';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import { AuthProvider } from '@/contexts/auth';
-import { LanguageProvider } from '@/contexts/LanguageContext';
+import { OnboardingProvider } from '@/contexts/OnboardingContext';
+import { KeyboardShortcuts } from '@/components/accessibility/KeyboardShortcuts';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { FeaturesProvider } from '@/contexts/features/FeaturesContext';
-import { TestDataProvider } from '@/contexts/test-data/TestDataProvider';
+import { LanguageProvider } from '@/contexts/LanguageContext';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000, // 1 minute
-      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
     },
   },
 });
 
-interface AppProvidersProps {
-  children: React.ReactNode;
-}
-
-const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
+const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
         <HelmetProvider>
           <ThemeProvider>
-            <TooltipProvider>
+            <TooltipProvider delayDuration={300}>
               <AuthProvider>
-                <LanguageProvider>
-                  <FeaturesProvider>
-                    <TestDataProvider>
-                      {children}
-                      <Toaster />
-                    </TestDataProvider>
-                  </FeaturesProvider>
-                </LanguageProvider>
+                <FeaturesProvider>
+                  <LanguageProvider>
+                    <EditModeProvider>
+                      <TestDataProvider>
+                        <OnboardingProvider>
+                          <KeyboardShortcuts />
+                          {children}
+                          <Toaster position="top-right" />
+                        </OnboardingProvider>
+                      </TestDataProvider>
+                    </EditModeProvider>
+                  </LanguageProvider>
+                </FeaturesProvider>
               </AuthProvider>
             </TooltipProvider>
           </ThemeProvider>
         </HelmetProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 

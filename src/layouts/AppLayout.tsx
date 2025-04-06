@@ -3,6 +3,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar/sidebar-provider';
+import { useAuth } from '@/contexts/auth';
 import Header from '@/components/layout/Header';
 
 interface AppLayoutProps {
@@ -10,6 +11,9 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+  const { userRole } = useAuth();
+  const isAdmin = userRole === 'admin';
+
   return (
     <SidebarProvider>
       <div className="flex h-screen flex-col">

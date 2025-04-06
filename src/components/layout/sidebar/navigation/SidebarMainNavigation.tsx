@@ -1,47 +1,58 @@
 
-import React, { useState } from 'react';
-import { useSidebar } from '@/components/ui/sidebar/use-sidebar';
-import { useAuth } from '@/contexts/auth';
+import React from 'react';
 import { UserRoleType } from '@/types/auth';
-import DashboardNavigation from './DashboardNavigation';
-import CursosNavigation from './CursosNavigation';
-import MisCursosNavigation from './MisCursosNavigation';
+import SidebarNavGroup from './SidebarNavGroup';
+import { useSidebar } from '@/components/ui/sidebar/sidebar-provider';
+import { NavigationMenus } from '@/types/navigation';
+import { useRoleBasedNavigation } from '@/hooks/useRoleBasedNavigation';
+import { 
+  getNavigationByRole 
+} from '@/config/navigation';
 
 interface SidebarMainNavigationProps {
   effectiveRole?: UserRoleType;
+  messagesCount?: number;
+  notificationsCount?: number;
 }
 
-export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ effectiveRole }) => {
+export const SidebarMainNavigation: React.FC<SidebarMainNavigationProps> = ({ 
+  effectiveRole = 'student',
+  messagesCount = 0,
+  notificationsCount = 0
+}) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const { userRole } = useAuth();
   
-  const role = effectiveRole || userRole as UserRoleType;
+  // Get navigation structure based on role from SSOT
+  const roleNavigation = getNavigationByRole(effectiveRole);
   
-  // Estados para controlar secciones expandidas
-  const [isDashboardOpen, setIsDashboardOpen] = useState(true);
-  const [isCursosOpen, setIsCursosOpen] = useState(false);
-  const [isMisCursosOpen, setIsMisCursosOpen] = useState(false);
+  console.log('SidebarMainNavigation rendering with role:', effectiveRole);
   
   return (
-    <div className="space-y-1">
-      {/* Sección Dashboard - siempre visible */}
-      <DashboardNavigation 
-        isOpen={isDashboardOpen} 
-        onToggle={() => setIsDashboardOpen(!isDashboardOpen)} 
-      />
-      
-      {/* Sección Cursos - visible para todos */}
-      <CursosNavigation 
-        isOpen={isCursosOpen}
-        onToggle={() => setIsCursosOpen(!isCursosOpen)}
-      />
-      
-      {/* Sección Mis Cursos - para estudiantes */}
-      <MisCursosNavigation 
-        isOpen={isMisCursosOpen}
-        onToggle={() => setIsMisCursosOpen(!isMisCursosOpen)}
-      />
+    <div className="space-y-1 py-2">
+      {/* Render navigation groups based on SSOT structure */}
+      {Object.entries(roleNavigation).map(([groupName, items], index) => (
+        <SidebarNavGroup
+          key={`${effectiveRole}-${groupName}`}
+          title={groupName.charAt(0).toUpperCase() + groupName.slice(1)} // Capitalize group name
+          icon={items[0]?.icon}
+          isCollapsed={isCollapsed}
+          defaultOpen={index === 0}
+          id={`${effectiveRole}-${groupName}`}
+          items={items.map(item => ({
+            label: item.label,
+            path: item.path || '#',
+            icon: item.icon,
+            badge: item.label.toLowerCase().includes('mensaje') ? messagesCount : 
+                   item.label.toLowerCase().includes('notificac') ? notificationsCount : 
+                   item.badge,
+            disabled: item.disabled,
+            isHighlighted: item.isHighlighted
+          }))}
+        />
+      ))}
     </div>
   );
 };
+
+export default SidebarMainNavigation;

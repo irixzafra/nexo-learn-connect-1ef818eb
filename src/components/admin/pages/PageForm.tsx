@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -66,12 +67,33 @@ interface PageFormProps {
 const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading }) => {
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   
+  // We need to ensure the layout is one of the valid values in our schema
+  const getSafeLayout = (layout?: string): PageLayout => {
+    const validLayouts: PageLayout[] = [
+      'default', 
+      'landing', 
+      'marketing', 
+      'documentation', 
+      'course', 
+      'sidebar', 
+      'full-width',
+      'column',
+      'row',
+      'grid-2',
+      'grid-3',
+      'grid-4'
+    ];
+    return layout && validLayouts.includes(layout as PageLayout) 
+      ? layout as PageLayout 
+      : 'default';
+  };
+
   const defaultValues: PageFormValues = {
     title: initialData?.title || '',
     slug: initialData?.slug || '',
     meta_description: initialData?.meta_description || '',
-    status: (initialData?.status as 'draft' | 'published' | 'archived' | 'scheduled') || 'draft',
-    layout: (initialData?.layout as PageLayout) || 'default',
+    status: initialData?.status || 'draft',
+    layout: getSafeLayout(initialData?.layout),
     content: initialData?.content || '',
   };
 
@@ -80,6 +102,7 @@ const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading })
     defaultValues,
   });
 
+  // Effect to update form when initialData changes
   useEffect(() => {
     if (initialData) {
       form.reset({
@@ -87,7 +110,7 @@ const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading })
         slug: initialData.slug,
         meta_description: initialData.meta_description || '',
         status: initialData.status,
-        layout: initialData.layout,
+        layout: getSafeLayout(initialData.layout),
         content: initialData.content,
       });
     }
@@ -180,6 +203,7 @@ const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading })
           />
         </div>
 
+        {/* Meta Description */}
         <FormField
           control={form.control}
           name="meta_description"
@@ -199,6 +223,7 @@ const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading })
           )}
         />
 
+        {/* Content - for now just a textarea */}
         <FormField
           control={form.control}
           name="content"
@@ -254,7 +279,6 @@ const PageForm: React.FC<PageFormProps> = ({ initialData, onSubmit, isLoading })
                     <SelectItem value="draft">Borrador</SelectItem>
                     <SelectItem value="published">Publicada</SelectItem>
                     <SelectItem value="archived">Archivada</SelectItem>
-                    <SelectItem value="scheduled">Programada</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
